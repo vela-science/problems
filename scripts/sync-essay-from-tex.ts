@@ -159,6 +159,28 @@ const replaceSimpleMacroWithToken = (
   return output;
 };
 
+const replaceInlineMacroWithToken = (
+  input: string,
+  macroName: string,
+  tokenPrefix: string,
+): string => {
+  let cursor = 0;
+  let output = "";
+  while (cursor < input.length) {
+    const index = input.indexOf(`\\${macroName}{`, cursor);
+    if (index === -1) {
+      output += input.slice(cursor);
+      break;
+    }
+    output += input.slice(cursor, index);
+    const braceIndex = index + 1 + macroName.length; // "\" + name + "{"
+    const { content, endIndexExclusive } = extractBraced(input, braceIndex);
+    output += `[[${tokenPrefix}:${content.trim()}]]`;
+    cursor = endIndexExclusive;
+  }
+  return output;
+};
+
 const replaceHfillLinesWithFlushright = (input: string): string => {
   const lines = input.split("\n");
   const outLines: string[] = [];
@@ -234,6 +256,11 @@ const replaceCenterTikzBlocksWithFigures = (input: string): string => {
 
 const replaceTokensToAstroBlocks = (html: string): string => {
   let output = html;
+
+  output = output.replaceAll(
+    /\[\[CLAIM:([^\]]+?)\]\]/g,
+    (_match, id: string) => `<ClaimMarker claimId="${escapeForAttribute(id.trim())}" />`,
+  );
 
   output = output.replaceAll(
     /<p>\s*\[\[DIVIDER\]\]\s*<\/p>/g,
@@ -338,6 +365,7 @@ import PullQuote from "../PullQuote.astro";
 import NumberCallout from "../NumberCallout.astro";
 import ClosingVerse from "../ClosingVerse.astro";
 import Sidenote from "../Sidenote.astro";
+import ClaimMarker from "../ClaimMarker.astro";
 ---
 
 <section id="${cfg.id}" class="prose mb-16">
@@ -407,6 +435,7 @@ const toAstroBody = (cfg: SectionConfig, sectionTexRaw: string, footnoteOffset: 
   sectionTex = replaceSimpleMacroWithToken(sectionTex, "numbercallout", "NUMBERCALLOUT");
   sectionTex = replaceSimpleMacroWithToken(sectionTex, "pullquote", "PULLQUOTE");
   sectionTex = replaceSimpleMacroWithToken(sectionTex, "closingverse", "CLOSINGVERSE");
+  sectionTex = replaceInlineMacroWithToken(sectionTex, "vigilclaim", "CLAIM");
 
   const html = runPandocLatexToHtml(sectionTex);
   let astro = replaceTokensToAstroBlocks(html);
