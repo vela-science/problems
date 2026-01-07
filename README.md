@@ -1,43 +1,42 @@
-# Astro Starter Kit: Minimal
+# Borrowed Light (Web)
 
-```sh
-bun create astro@latest -- --template minimal
-```
+Single-page static site for the essay *Constellations of Borrowed Light* (Astro + Bun + Tailwind v4).
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Source of Truth
 
-## 🚀 Project Structure
+- Canonical text: `docs/constellations.tex`
+- Web sections are generated into: `src/components/essay/*.astro`
 
-Inside of your Astro project, you'll see the following folders and files:
+Run `bun run sync:essay` after editing the LaTeX.
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+To verify nothing is drifting: `bun run sync:check`.
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Commands
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+- Dev: `bun run dev`
+- Build: `bun run build`
+- Sync essay: `bun run sync:essay`
+- Sync + verify clean diff: `bun run sync:check`
 
-Any static assets, like images, can be placed in the `public/` directory.
+## Diagrams (TikZ → SVG)
 
-## 🧞 Commands
+Diagram sources live in `diagrams/src/*.tex` and are built into `public/svgs/diagrams/*.svg`.
 
-All commands are run from the root of the project, from a terminal:
+- Build all: `./diagrams/build-diagrams.sh`
+- Build one: `./diagrams/build-diagrams.sh investment-bars`
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `bun install`             | Installs dependencies                            |
-| `bun dev`             | Starts local dev server at `localhost:4321`      |
-| `bun build`           | Build your production site to `./dist/`          |
-| `bun preview`         | Preview your build locally, before deploying     |
-| `bun astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `bun astro -- --help` | Get help using the Astro CLI                     |
+## Deployment / Crawlers
 
-## 👀 Want to learn more?
+- `public/robots.txt` and `public/sitemap.xml` are included for indexing.
+- SEO metadata and JSON-LD live in `src/layouts/Base.astro`.
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+## CI
+
+GitHub Actions runs:
+
+- `bun install --frozen-lockfile`
+- `bun run sync:check`
+- `bun run build`
+
+See `.github/workflows/ci.yml`.
+
