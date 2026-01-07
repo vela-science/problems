@@ -118,6 +118,20 @@ const escapeForAttribute = (value: string): string =>
     .slice(1, -1)
     .replaceAll('"', '\\"');
 
+const parseTrailRef = (
+  raw: string,
+): { trailId: string; stepIndex?: number } => {
+  const trimmed = raw.trim();
+  const [trailIdPart, rest] = trimmed.split("|", 2);
+  const trailId = trailIdPart.trim();
+  if (!rest) return { trailId };
+  const m = rest.match(/step\s*=\s*(\d+)/i);
+  if (!m) return { trailId };
+  const step1 = Number(m[1]);
+  if (!Number.isFinite(step1) || step1 <= 0) return { trailId };
+  return { trailId, stepIndex: step1 - 1 };
+};
+
 const extractBraced = (
   input: string,
   openBraceIndex: number,
@@ -263,6 +277,18 @@ const replaceTokensToAstroBlocks = (html: string): string => {
   );
 
   output = output.replaceAll(
+    /\[\[TRAIL:([^\]]+?)\]\]/g,
+    (_match, raw: string) => {
+      const { trailId, stepIndex } = parseTrailRef(raw);
+      const attrs = [`trailId="${escapeForAttribute(trailId)}"`];
+      if (typeof stepIndex === "number") {
+        attrs.push(`stepIndex="${stepIndex}"`);
+      }
+      return `<TrailMarker ${attrs.join(" ")} />`;
+    },
+  );
+
+  output = output.replaceAll(
     /<p>\s*\[\[DIVIDER\]\]\s*<\/p>/g,
     "<ConstellationDivider />",
   );
@@ -360,12 +386,13 @@ const inlineFootnotesAsSidenotes = (
 };
 
 const sectionTemplate = (cfg: SectionConfig, bodyAstro: string): string => `---
-import ConstellationDivider from "../ConstellationDivider.astro";
-import PullQuote from "../PullQuote.astro";
-import NumberCallout from "../NumberCallout.astro";
-import ClosingVerse from "../ClosingVerse.astro";
-import Sidenote from "../Sidenote.astro";
-import ClaimMarker from "../ClaimMarker.astro";
+	import ConstellationDivider from "../ConstellationDivider.astro";
+	import PullQuote from "../PullQuote.astro";
+	import NumberCallout from "../NumberCallout.astro";
+	import ClosingVerse from "../ClosingVerse.astro";
+	import Sidenote from "../Sidenote.astro";
+	import ClaimMarker from "../ClaimMarker.astro";
+	import TrailMarker from "../TrailMarker.astro";
 ---
 
 <section id="${cfg.id}" class="prose mb-16">
@@ -434,11 +461,12 @@ const toAstroBody = (cfg: SectionConfig, sectionTexRaw: string, footnoteOffset: 
   sectionTex = replaceSimpleMacroWithToken(sectionTex, "subhead", "SUBHEAD");
   sectionTex = replaceSimpleMacroWithToken(sectionTex, "numbercallout", "NUMBERCALLOUT");
   sectionTex = replaceSimpleMacroWithToken(sectionTex, "pullquote", "PULLQUOTE");
-  sectionTex = replaceSimpleMacroWithToken(sectionTex, "closingverse", "CLOSINGVERSE");
-  sectionTex = replaceInlineMacroWithToken(sectionTex, "vigilclaim", "CLAIM");
+	sectionTex = replaceSimpleMacroWithToken(sectionTex, "closingverse", "CLOSINGVERSE");
+	sectionTex = replaceInlineMacroWithToken(sectionTex, "vigilclaim", "CLAIM");
+	sectionTex = replaceInlineMacroWithToken(sectionTex, "vigiltrail", "TRAIL");
 
-  const html = runPandocLatexToHtml(sectionTex);
-  let astro = replaceTokensToAstroBlocks(html);
+	const html = runPandocLatexToHtml(sectionTex);
+	let astro = replaceTokensToAstroBlocks(html);
 
   const inlined = inlineFootnotesAsSidenotes(astro, footnoteOffset);
   astro = inlined.html;
