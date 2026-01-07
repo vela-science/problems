@@ -7,7 +7,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "sync:essay": "bun scripts/sync-essay-from-tex.ts"
+    "sync:essay": "bun scripts/sync-essay-from-tex.ts",
+    "sync:check": "bun run sync:essay && git diff --exit-code src/components/essay"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
