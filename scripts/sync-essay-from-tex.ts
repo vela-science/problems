@@ -99,6 +99,11 @@ const FIGURES: Record<
     alt: "Diagram showing how trails let later clinicians inherit earlier paths to diagnosis",
     maxWidthClass: "max-w-xl",
   },
+  "gigafactory-pipeline": {
+    src: "/svgs/diagrams/gigafactory-pipeline.svg",
+    alt: "Diagram showing a gigafactory pipeline: artifacts to extraction, validation, versioning, propagation, and a queryable frontier constellation",
+    maxWidthClass: "max-w-xl",
+  },
 };
 
 const readText = (filePath: string): string =>
@@ -255,6 +260,8 @@ const replaceCenterTikzBlocksWithFigures = (input: string): string => {
                     ? "claim-diagram"
                     : normalized.includes("Doctor 1") && normalized.includes("diagnosis")
                       ? "trail-diagram"
+                      : normalized.includes("GIGAFACTORY PIPELINE")
+                        ? "gigafactory-pipeline"
                       : null;
 
       if (!figureKey) {
