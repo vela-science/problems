@@ -343,7 +343,12 @@ const replaceTokensToAstroBlocks = (html: string): string => {
         throw new Error(`Unknown figure token: ${name}`);
       }
       const maxWidth = figure.maxWidthClass ?? "max-w-lg";
-      return `\n<figure class="my-12 flex justify-center">\n  <img src="${figure.src}" alt="${escapeForAttribute(figure.alt)}" loading="lazy" decoding="async" class="w-full ${maxWidth}" />\n</figure>\n`;
+      const baseSrc = figure.src;
+      const darkSrc = baseSrc.endsWith(".svg")
+        ? baseSrc.replace(/\.svg$/u, ".dark.svg")
+        : `${baseSrc}.dark`;
+      const alt = escapeForAttribute(figure.alt);
+      return `\n<figure class="my-12 flex justify-center">\n  <img src="${baseSrc}" alt="${alt}" loading="lazy" decoding="async" class="diagram-light w-full ${maxWidth}" />\n  <img src="${darkSrc}" alt="${alt}" loading="lazy" decoding="async" class="diagram-dark w-full ${maxWidth}" />\n</figure>\n`;
     },
   );
 

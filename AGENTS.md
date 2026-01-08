@@ -13,6 +13,7 @@
 - Do **not** hand-edit files in `public/svgs/diagrams/`. If a diagram needs to change:
   - Edit the corresponding `diagrams/src/<name>.tex`
   - Rebuild with `./diagrams/build-diagrams.sh <name>` (or build all diagrams with no args)
+  - The build generates both `public/svgs/diagrams/<name>.svg` (light) and `public/svgs/diagrams/<name>.dark.svg` (dark).
 
 ## Adding A New Diagram
 
@@ -23,4 +24,3 @@
 ## Product Constraints
 
 - No user accounts or user-generated notes. “Notes” refers to essay footnotes only.
-
