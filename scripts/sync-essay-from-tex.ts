@@ -265,10 +265,11 @@ const replaceCenterTikzBlocksWithFigures = (input: string): string => {
                   : normalized.includes("BRAF") && normalized.includes("vemurafenib")
                     ? "claim-diagram"
                     : normalized.includes("Doctor 1") && normalized.includes("diagnosis")
-                      ? "trail-diagram"
-                      : normalized.includes("GIGAFACTORY PIPELINE")
-                        ? "gigafactory-pipeline"
-                      : null;
+	                      ? "trail-diagram"
+	                      : normalized.includes("BEGIN_DIAGRAM gigafactory-pipeline") ||
+	                          normalized.includes("GIGAFACTORY PIPELINE")
+	                        ? "gigafactory-pipeline"
+	                      : null;
 
       if (!figureKey) {
         throw new Error(
