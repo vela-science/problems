@@ -101,7 +101,7 @@ const FIGURES: Record<
   },
   "gigafactory-pipeline": {
     src: "/svgs/diagrams/gigafactory-pipeline.svg",
-    alt: "Diagram showing a gigafactory pipeline: artifacts to extraction, validation, versioning, propagation, and a queryable frontier constellation",
+    alt: "Stylized gigafactory turning scientific artifacts into a constellation of versioned claims and auditable trails",
     maxWidthClass: "max-w-xl",
   },
 };
@@ -227,6 +227,12 @@ const replaceCenterTikzBlocksWithFigures = (input: string): string => {
   return input.replaceAll(
     /\\begin\{center\}[\s\S]*?\\end\{center\}/g,
     (block: string) => {
+      // Some diagrams are included via `\input{...}` so the TikZ environment won't
+      // appear in this file. Handle those explicitly so the web version stays in sync.
+      if (block.includes("gigafactory-pipeline.tikz")) {
+        return `\n\n[[FIGURE:gigafactory-pipeline]]\n\n`;
+      }
+
       if (!block.includes("\\begin{tikzpicture}")) return block;
 
       const normalized = block.replaceAll("\n", " ");
