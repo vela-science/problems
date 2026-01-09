@@ -53,10 +53,10 @@ const SECTIONS: SectionConfig[] = [
     outFile: "src/components/essay/CoalitionSection.astro",
   },
   {
-    id: "work",
-    title: "The Work Ahead",
+    id: "gigafactory",
+    title: "The Gigafactory",
     glyph: "work",
-    outFile: "src/components/essay/WorkAheadSection.astro",
+    outFile: "src/components/essay/GigafactorySection.astro",
   },
 ];
 
