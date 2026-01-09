@@ -227,10 +227,16 @@ const replaceCenterTikzBlocksWithFigures = (input: string): string => {
   return input.replaceAll(
     /\\begin\{center\}[\s\S]*?\\end\{center\}/g,
     (block: string) => {
-      // Some diagrams are included via `\input{...}` so the TikZ environment won't
-      // appear in this file. Handle those explicitly so the web version stays in sync.
-      if (block.includes("gigafactory-pipeline.tikz")) {
-        return `\n\n[[FIGURE:gigafactory-pipeline]]\n\n`;
+      // Diagrams included via `\input{...}` - extract the diagram name directly
+      const inputMatch = block.match(/\\input\{\.\.\/diagrams\/tikz\/([a-z-]+)\.tikz\}/);
+      if (inputMatch) {
+        const diagramName = inputMatch[1];
+        // Skip diagrams not in our FIGURES mapping (e.g., title-constellation)
+        if (FIGURES[diagramName]) {
+          return `\n\n[[FIGURE:${diagramName}]]\n\n`;
+        }
+        // Unknown input file - skip silently if not a known figure
+        return "";
       }
 
       if (!block.includes("\\begin{tikzpicture}")) return block;
@@ -247,6 +253,7 @@ const replaceCenterTikzBlocksWithFigures = (input: string): string => {
         return "";
       }
 
+      // Legacy fallback for any remaining inline TikZ (decorative elements)
       const figureKey =
         normalized.includes("without structure") && normalized.includes("with structure")
           ? "structure-comparison"
@@ -272,9 +279,9 @@ const replaceCenterTikzBlocksWithFigures = (input: string): string => {
 	                      : null;
 
       if (!figureKey) {
-        throw new Error(
-          `Unrecognized TikZ block; add a mapping. Snippet: ${normalized.slice(0, 160)}…`,
-        );
+        // For decorative inline TikZ (title elements, dividers), just return empty
+        // These are not mapped to web figures
+        return "";
       }
 
       return `\n\n[[FIGURE:${figureKey}]]\n\n`;
