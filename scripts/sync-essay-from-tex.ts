@@ -47,12 +47,6 @@ const SECTIONS: SectionConfig[] = [
     outFile: "src/components/essay/ConstellationSection.astro",
   },
   {
-    id: "coalition",
-    title: "The Coalition",
-    glyph: "coalition",
-    outFile: "src/components/essay/CoalitionSection.astro",
-  },
-  {
     id: "gigafactory",
     title: "The Gigafactory",
     glyph: "work",
