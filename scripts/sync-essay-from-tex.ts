@@ -297,17 +297,8 @@ const replaceTokensToAstroBlocks = (html: string): string => {
     (_match, id: string) => `<ClaimMarker claimId="${escapeForAttribute(id.trim())}" />`,
   );
 
-  output = output.replaceAll(
-    /\[\[TRAIL:([^\]]+?)\]\]/g,
-    (_match, raw: string) => {
-      const { trailId, stepIndex } = parseTrailRef(raw);
-      const attrs = [`trailId="${escapeForAttribute(trailId)}"`];
-      if (typeof stepIndex === "number") {
-        attrs.push(`stepIndex="${stepIndex}"`);
-      }
-      return `<TrailMarker ${attrs.join(" ")} />`;
-    },
-  );
+  // Trail markers are stripped from web output (trails show in claim panels instead)
+  output = output.replaceAll(/\[\[TRAIL:([^\]]+?)\]\]/g, "");
 
   output = output.replaceAll(
     /<p>\s*\[\[DIVIDER\]\]\s*<\/p>/g,
@@ -418,7 +409,6 @@ const sectionTemplate = (cfg: SectionConfig, bodyAstro: string): string => `---
 	import ClosingVerse from "../ClosingVerse.astro";
 	import Sidenote from "../Sidenote.astro";
 	import ClaimMarker from "../ClaimMarker.astro";
-	import TrailMarker from "../TrailMarker.astro";
 ---
 
 <section id="${cfg.id}" class="prose mb-16">
