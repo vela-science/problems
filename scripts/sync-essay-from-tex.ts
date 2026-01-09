@@ -264,7 +264,7 @@ const replaceCenterTikzBlocksWithFigures = (input: string): string => {
                   ? "investment-bars"
                   : normalized.includes("BRAF") && normalized.includes("vemurafenib")
                     ? "claim-diagram"
-                    : normalized.includes("Doctor 1") && normalized.includes("diagnosis")
+                    : normalized.includes("Visit 1") && normalized.includes("diagnosis")
 	                      ? "trail-diagram"
 	                      : normalized.includes("BEGIN_DIAGRAM gigafactory-pipeline") ||
 	                          normalized.includes("GIGAFACTORY PIPELINE")
