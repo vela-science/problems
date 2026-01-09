@@ -4,11 +4,12 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "bun run generate:llms && astro build",
     "preview": "astro preview",
     "astro": "astro",
     "sync:essay": "bun scripts/sync-essay-from-tex.ts",
-    "sync:check": "bun run sync:essay && git diff --exit-code src/components/essay"
+    "sync:check": "bun run sync:essay && git diff --exit-code src/components/essay",
+    "generate:llms": "bun scripts/generate-llms-txt.ts"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
