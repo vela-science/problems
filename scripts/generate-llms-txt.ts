@@ -1,6 +1,15 @@
-import { execFileSync } from "node:child_process";
-import { readFileSync, writeFileSync } from "node:fs";
+import { execFileSync, execSync } from "node:child_process";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
+
+const isPandocAvailable = (): boolean => {
+  try {
+    execSync("pandoc --version", { stdio: "ignore" });
+    return true;
+  } catch {
+    return false;
+  }
+};
 
 /**
  * Generate llms.txt and llms-full.txt from the LaTeX source.
@@ -207,6 +216,16 @@ For complete essay text optimized for LLM context, see [/llms-full.txt](/llms-fu
 };
 
 const main = () => {
+  // Check if pandoc is available - if not, skip generation (use pre-committed files)
+  if (!isPandocAvailable()) {
+    if (existsSync(LLMS_TXT_PATH) && existsSync(LLMS_FULL_PATH)) {
+      console.log("Pandoc not available, using pre-committed llms.txt files.");
+      return;
+    }
+    console.error("Error: pandoc not found and no pre-committed llms.txt files exist.");
+    process.exit(1);
+  }
+
   console.log("Generating llms.txt files from LaTeX source...");
 
   // Read and process LaTeX
