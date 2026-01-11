@@ -510,7 +510,7 @@ const main = () => {
     if (cfg.id === "inheritance") {
       // Preserve the web version's nicer opening epigraph styling.
       bodyAstro = `
-<blockquote class="text-center max-w-lg mx-auto mb-8 not-italic">
+<blockquote class="text-center mx-auto mb-8 not-italic">
   <p class="text-base italic text-ink-indigo leading-relaxed">
     Human knowledge is never contained in one person. It grows from the
     relationships we create between each other and the world, and still it
