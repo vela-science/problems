@@ -191,7 +191,7 @@ const generateLlmsTxt = (): string => {
 
 > Infrastructure for scientific knowledge—so discoveries can travel at the speed they're needed.
 
-This is the founding document for the Borrowed Light project, proposing a constellation of structured claims and trails to connect humanity's scattered knowledge.
+This is the founding document for the Borrowed Light project, proposing a constellation of structured points and trails to connect humanity's scattered knowledge.
 
 ## Sections
 
@@ -199,9 +199,8 @@ This is the founding document for the Borrowed Light project, proposing a conste
 - [The Pattern](#the-pattern): Historical context and why transmission fails
 - [What Software Learned](#what-software-learned): Git, GitHub, and the precedent for infrastructure
 - [Why Now](#why-now): The AI moment and closing window
-- [The Constellation](#the-constellation): The solution—claims, trails, and corrections
-- [The Coalition](#the-coalition): Who builds this and how to help
-- [The Work Ahead](#the-work-ahead): Roadmap and vision
+- [The Constellation](#the-constellation): The solution—points, trails, and corrections
+- [The Gigafactory](#the-gigafactory): The production system for knowledge
 
 ## Links
 

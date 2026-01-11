@@ -83,9 +83,9 @@ const FIGURES: Record<
     alt: "Bar chart showing AI infrastructure investment by 2030: $5–7T compute, $500B+ models, $100M+ national programs, and ~$0 knowledge infrastructure",
     maxWidthClass: "max-w-lg",
   },
-  "claim-diagram": {
-    src: "/svgs/diagrams/claim-diagram.svg",
-    alt: "Diagram showing a structured claim with statement, confidence, evidence, dissent, and lineage",
+  "point-diagram": {
+    src: "/svgs/diagrams/point-diagram.svg",
+    alt: "Diagram showing a structured point with statement, confidence, evidence, dissent, and lineage",
     maxWidthClass: "max-w-xl",
   },
   "trail-diagram": {
@@ -95,7 +95,7 @@ const FIGURES: Record<
   },
   "gigafactory-pipeline": {
     src: "/svgs/diagrams/gigafactory-pipeline.svg",
-    alt: "Stylized gigafactory turning scientific artifacts into a constellation of versioned claims and auditable trails",
+    alt: "Stylized gigafactory turning scientific artifacts into a constellation of versioned points and auditable trails",
     maxWidthClass: "max-w-xl",
   },
 };
@@ -264,7 +264,7 @@ const replaceCenterTikzBlocksWithFigures = (input: string): string => {
                     normalized.includes("compute")
                   ? "investment-bars"
                   : normalized.includes("BRAF") && normalized.includes("vemurafenib")
-                    ? "claim-diagram"
+                    ? "point-diagram"
                     : normalized.includes("Visit 1") && normalized.includes("diagnosis")
 	                      ? "trail-diagram"
 	                      : normalized.includes("BEGIN_DIAGRAM gigafactory-pipeline") ||
@@ -288,10 +288,10 @@ const replaceTokensToAstroBlocks = (html: string): string => {
 
   output = output.replaceAll(
     /\[\[CLAIM:([^\]]+?)\]\]/g,
-    (_match, id: string) => `<ClaimMarker claimId="${escapeForAttribute(id.trim())}" />`,
+    (_match, id: string) => `<PointMarker pointId="${escapeForAttribute(id.trim())}" />`,
   );
 
-  // Trail markers are stripped from web output (trails show in claim panels instead)
+  // Trail markers are stripped from web output (trails show in point panels instead)
   output = output.replaceAll(/\[\[TRAIL:([^\]]+?)\]\]/g, "");
 
   output = output.replaceAll(
@@ -402,7 +402,7 @@ const sectionTemplate = (cfg: SectionConfig, bodyAstro: string): string => `---
 	import NumberCallout from "../NumberCallout.astro";
 	import ClosingVerse from "../ClosingVerse.astro";
 	import Sidenote from "../Sidenote.astro";
-	import ClaimMarker from "../ClaimMarker.astro";
+	import PointMarker from "../PointMarker.astro";
 ---
 
 <section id="${cfg.id}" class="prose mb-16">
