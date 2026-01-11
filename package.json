@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "build": "bun run generate:llms && astro build",
+    "build": "bun run sync:essay && bun run generate:llms && astro build",
     "preview": "astro preview",
     "astro": "astro",
     "sync:essay": "bun scripts/sync-essay-from-tex.ts",
