@@ -104,6 +104,11 @@ const FIGURES: Record<
     alt: "Stylized gigafactory turning scientific artifacts into a constellation of versioned points and auditable trails",
     maxWidthClass: "max-w-xl",
   },
+  "the-fork": {
+    src: "/svgs/diagrams/the-fork.svg",
+    alt: "The fork: two diverging paths from now—documents leading to scattered noise, structure leading to connected AI science. There is no third path.",
+    maxWidthClass: "max-w-xl",
+  },
 };
 
 const readText = (filePath: string): string =>
