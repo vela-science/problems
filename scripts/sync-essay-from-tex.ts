@@ -101,7 +101,7 @@ const FIGURES: Record<
   },
   "gigafactory-pipeline": {
     src: "/svgs/diagrams/gigafactory-pipeline.svg",
-    alt: "Stylized gigafactory turning scientific artifacts into a constellation of versioned points and auditable trails",
+    alt: "The frontier map: dense constellation of known knowledge on the left, sparse frontier on the right, with agents converging toward the gaps.",
     maxWidthClass: "max-w-xl",
   },
   "the-fork": {
