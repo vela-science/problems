@@ -96,8 +96,8 @@ const FIGURES: Record<
   },
   "trail-diagram": {
     src: "/svgs/diagrams/trail-diagram.svg",
-    alt: "Diagram showing how trails let later clinicians inherit earlier paths to diagnosis",
-    maxWidthClass: "max-w-xl",
+    alt: "Two constellations side by side: left shows the connected pattern that existed in medical knowledge, right shows the same stars fragmented and isolated—what the doctors saw through siloed lenses",
+    maxWidthClass: "max-w-2xl",
   },
   "gigafactory-pipeline": {
     src: "/svgs/diagrams/gigafactory-pipeline.svg",
