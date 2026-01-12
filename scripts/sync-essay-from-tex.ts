@@ -91,7 +91,7 @@ const FIGURES: Record<
   },
   "point-diagram": {
     src: "/svgs/diagrams/point-diagram.svg",
-    alt: "Diagram showing a structured point with statement, confidence, evidence, dissent, and lineage",
+    alt: "Anatomy of a point: central assertion with entities, evidence, confidence, dissent, lineage, and chronicle showing how confidence evolved from uncertain (2010) to strengthened (2011) to complicated (2012) to refined (now).",
     maxWidthClass: "max-w-xl",
   },
   "trail-diagram": {
