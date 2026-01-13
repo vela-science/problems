@@ -55,7 +55,7 @@ const SECTIONS: SectionConfig[] = [
   {
     id: "gigafactory",
     title: "The Gigafactory",
-    glyph: "work",
+    glyph: "gigafactory",
     outFile: "src/components/essay/GigafactorySection.astro",
   },
 ];
