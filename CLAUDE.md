@@ -6,8 +6,41 @@ Single-page static website for "Constellations of Borrowed Light" essay using As
 ## Commands
 ```bash
 bun run dev      # Start dev server
-bun run build    # Build for production
+bun run build    # Build for production (diagrams + llms.txt + astro)
 ```
+
+## LaTeX → Web Pipeline
+
+The essay exists in two forms that must stay in sync:
+
+```
+docs/constellations.tex  (source of truth)
+         │
+         ├──► bun run sync:essay ──► src/components/essay/*.astro
+         │
+         └──► diagrams/build-diagrams.sh ──► public/svgs/diagrams/*.svg
+```
+
+### After editing constellations.tex:
+```bash
+bun run sync:essay           # Sync prose to Astro components
+cd diagrams && ./build-diagrams.sh  # Rebuild SVGs (if diagrams changed)
+```
+
+### What sync:essay does:
+- Extracts each `\section*{...}` from the LaTeX
+- Converts LaTeX → HTML via pandoc
+- Transforms to Astro components with:
+  - Sidenotes (from `\footnote{}`)
+  - Figures (from TikZ `\input{}` blocks)
+  - Custom components (`\constellationdivider`, `\pullquote{}`, etc.)
+- Outputs to `src/components/essay/{SectionName}Section.astro`
+
+### What build-diagrams.sh does:
+- Compiles each `.tex` in `diagrams/src/` to DVI
+- Converts to SVG via dvisvgm (requires Ghostscript)
+- Generates light and dark variants
+- Also extracts `% BEGIN_DIAGRAM name` ... `% END_DIAGRAM name` blocks from constellations.tex
 
 ## Converting TikZ Diagrams to SVG
 
