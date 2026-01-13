@@ -37,7 +37,7 @@ const SECTIONS: SectionConfig[] = [
   {
     id: "substrate",
     title: "The Substrate",
-    glyph: "crisis",
+    glyph: "substrate",
     outFile: "src/components/essay/SubstrateSection.astro",
   },
   {
@@ -419,11 +419,8 @@ const sectionTemplate = (cfg: SectionConfig, bodyAstro: string): string => `---
 <section id="${cfg.id}" class="prose mb-16">
   <header class="flex items-center justify-between mb-8">
     <h2 class="text-2xl tracking-wide m-0">${cfg.title}</h2>
-    <img
-      src="/svgs/glyphs/${cfg.glyph}.svg"
-      alt=""
-      class="w-10 h-10 opacity-80"
-    />
+    <img src="/svgs/glyphs/${cfg.glyph}.svg" alt="" class="diagram-light w-10 h-10 opacity-80" />
+    <img src="/svgs/glyphs/${cfg.glyph}.dark.svg" alt="" class="diagram-dark w-10 h-10 opacity-80" />
   </header>
 
 ${bodyAstro.trim()}
