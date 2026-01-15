@@ -99,6 +99,11 @@ const FIGURES: Record<
     alt: "Two constellations side by side: left shows the connected pattern that existed in medical knowledge, right shows the same stars fragmented and isolated—what the doctors saw through siloed lenses",
     maxWidthClass: "max-w-2xl",
   },
+  "observable-universe": {
+    src: "/svgs/diagrams/observable-universe.svg",
+    alt: "Two-panel diagram: a zoomed-out sky map showing multiple knowledge constellations, and a zoomed-in view of one constellation where gaps and trails are visible.",
+    maxWidthClass: "max-w-2xl",
+  },
   "gigafactory-pipeline": {
     src: "/svgs/diagrams/gigafactory-pipeline.svg",
     alt: "The frontier map: dense constellation of known knowledge on the left, sparse frontier on the right, with agents converging toward the gaps.",
