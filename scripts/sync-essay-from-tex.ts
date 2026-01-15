@@ -29,10 +29,10 @@ const SECTIONS: SectionConfig[] = [
     outFile: "src/components/essay/PatternSection.astro",
   },
   {
-    id: "software",
-    title: "What Software Learned",
+    id: "foundation",
+    title: "The Foundation",
     glyph: "software",
-    outFile: "src/components/essay/SoftwareSection.astro",
+    outFile: "src/components/essay/FoundationSection.astro",
   },
   {
     id: "substrate",
