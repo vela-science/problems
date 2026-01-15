@@ -41,10 +41,10 @@ const SECTIONS: SectionConfig[] = [
     outFile: "src/components/essay/SubstrateSection.astro",
   },
   {
-    id: "now",
-    title: "Why Now",
+    id: "convergence",
+    title: "The Convergence",
     glyph: "now",
-    outFile: "src/components/essay/WhyNowSection.astro",
+    outFile: "src/components/essay/ConvergenceSection.astro",
   },
   {
     id: "constellation",
