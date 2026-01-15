@@ -43,7 +43,7 @@ const SECTIONS: SectionConfig[] = [
   {
     id: "convergence",
     title: "The Convergence",
-    glyph: "now",
+    glyph: "convergence",
     outFile: "src/components/essay/ConvergenceSection.astro",
   },
   {
