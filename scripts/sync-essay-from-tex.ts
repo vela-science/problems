@@ -114,6 +114,11 @@ const FIGURES: Record<
     alt: "The fork: two diverging paths from now—documents leading to scattered noise, structure leading to connected AI science. There is no third path.",
     maxWidthClass: "max-w-xl",
   },
+  "confidence-laundering": {
+    src: "/svgs/diagrams/confidence-laundering.svg",
+    alt: "Confidence laundering: a tentative finding with wide uncertainty gets cited through several generations. At each step the uncertainty halo shrinks and the star brightens, until a tentative result looks like established fact. The uncertainty doesn't shrink—it vanishes.",
+    maxWidthClass: "max-w-xl",
+  },
 };
 
 const readText = (filePath: string): string =>
