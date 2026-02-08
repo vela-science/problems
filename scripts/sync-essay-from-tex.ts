@@ -20,7 +20,7 @@ const SECTIONS: SectionConfig[] = [
     title: "The Inheritance",
     glyph: "inheritance",
     outFile: "src/components/essay/InheritanceSection.astro",
-    startAt: "The knowledge to save your life exists. It almost didn't reach me.",
+    startAt: "The knowledge to save your life exists. It cannot reach you.",
   },
   {
     id: "pattern",
