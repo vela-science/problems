@@ -119,6 +119,11 @@ const FIGURES: Record<
     alt: "Confidence laundering: a tentative finding with wide uncertainty gets cited through several generations. At each step the uncertainty halo shrinks and the star brightens, until a tentative result looks like established fact. The uncertainty doesn't shrink—it vanishes.",
     maxWidthClass: "max-w-xl",
   },
+  "failure-shapes": {
+    src: "/svgs/diagrams/failure-shapes.svg",
+    alt: "Three shapes of the same failure: repeated (a loop where effort goes out and comes back), lost (a broken line where knowledge dissolves into nothing), stranded (two disconnected clusters with a gap between them)",
+    maxWidthClass: "max-w-xl",
+  },
 };
 
 const readText = (filePath: string): string =>
@@ -524,6 +529,19 @@ const main = () => {
     footnoteOffset += converted.footnoteCount;
 
     let bodyAstro = converted.astro;
+
+    if (cfg.id === "convergence") {
+      // Wrap the commitment paragraphs after the final ConstellationDivider
+      // in a styled frame (the background tint + border-bottom provide the
+      // visual container; the divider above is the opening boundary).
+      const dividerTag = "<ConstellationDivider />";
+      const lastDivider = bodyAstro.lastIndexOf(dividerTag);
+      if (lastDivider !== -1) {
+        const before = bodyAstro.slice(0, lastDivider + dividerTag.length);
+        const after = bodyAstro.slice(lastDivider + dividerTag.length);
+        bodyAstro = `${before}\n<div class="commitments-frame">\n${after.trim()}\n</div>`;
+      }
+    }
 
     if (cfg.id === "inheritance") {
       // Preserve the web version's nicer opening epigraph styling.
