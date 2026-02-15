@@ -54,7 +54,7 @@ const runPandocLatexToMarkdown = (latex: string): string => {
       "-f", "latex",
       "-t", "markdown",
       "--wrap=none",
-      "--atx-headers",
+      "--markdown-headings=atx",
     ],
     { input: latex, encoding: "utf8" },
   );
