@@ -529,19 +529,6 @@ const main = () => {
 
     let bodyAstro = converted.astro;
 
-    if (cfg.id === "convergence") {
-      // Wrap the commitment paragraphs after the final ConstellationDivider
-      // in a styled frame (the background tint + border-bottom provide the
-      // visual container; the divider above is the opening boundary).
-      const dividerTag = "<ConstellationDivider />";
-      const lastDivider = bodyAstro.lastIndexOf(dividerTag);
-      if (lastDivider !== -1) {
-        const before = bodyAstro.slice(0, lastDivider + dividerTag.length);
-        const after = bodyAstro.slice(lastDivider + dividerTag.length);
-        bodyAstro = `${before}\n<div class="commitments-frame">\n${after.trim()}\n</div>`;
-      }
-    }
-
     if (cfg.id === "inheritance") {
       // Preserve the web version's nicer opening epigraph styling.
       bodyAstro = `
