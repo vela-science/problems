@@ -76,7 +76,7 @@ const FIGURES: Record<
   },
   "civilizational-layers": {
     src: "/svgs/diagrams/civilizational-layers.svg",
-    alt: "Six civilizational layers stacked vertically: Writing, Printing, Scientific Method, Internet, Intelligence, and Integrity — each solving the problem the previous one created",
+    alt: "Six civilizational layers ascending: Writing, Printing, Method, Internet, Intelligence, and Constellation — each solving the problem the previous one created",
     maxWidthClass: "max-w-md",
   },
   "software-timeline": {
