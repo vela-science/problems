@@ -312,10 +312,8 @@ const replaceCenterTikzBlocksWithFigures = (input: string): string => {
 const replaceTokensToAstroBlocks = (html: string): string => {
   let output = html;
 
-  output = output.replaceAll(
-    /\[\[CLAIM:([^\]]+?)\]\]/g,
-    (_match, id: string) => `<PointMarker pointId="${escapeForAttribute(id.trim())}" />`,
-  );
+  // Strip vigil point markers entirely (they are LaTeX-only annotations).
+  output = output.replaceAll(/\[\[CLAIM:([^\]]+?)\]\]/g, "");
 
   // Trail markers are stripped from web output (trails show in point panels instead)
   output = output.replaceAll(/\[\[TRAIL:([^\]]+?)\]\]/g, "");
@@ -385,13 +383,15 @@ const inlineFootnotesAsSidenotes = (
   html: string,
   offset: number,
 ): { html: string; count: number } => {
+  // Pandoc may emit footnotes as <aside> (older) or <section> (newer versions).
   const asideMatch = html.match(
-    /<aside id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">[\s\S]*?<\/aside>/,
+    /<(?:aside|section)[^>]*class="footnotes[^"]*"[^>]*role="doc-endnotes"[^>]*>[\s\S]*?<\/(?:aside|section)>/,
   );
   if (!asideMatch) return { html, count: 0 };
 
   const asideHtml = asideMatch[0];
-  const items = [...asideHtml.matchAll(/<li id="fn(\d+)">([\s\S]*?)<\/li>/g)];
+  // Pandoc may add role="doc-endnote" or other attributes on <li>.
+  const items = [...asideHtml.matchAll(/<li id="fn(\d+)"[^>]*>([\s\S]*?)<\/li>/g)];
   const byIndex = new Map<number, string>();
   for (const item of items) {
     const n = Number(item[1]);
@@ -428,7 +428,6 @@ const sectionTemplate = (cfg: SectionConfig, bodyAstro: string): string => `---
 	import NumberCallout from "../NumberCallout.astro";
 	import ClosingVerse from "../ClosingVerse.astro";
 	import Sidenote from "../Sidenote.astro";
-	import PointMarker from "../PointMarker.astro";
 ---
 
 <section id="${cfg.id}" class="prose mb-16">
