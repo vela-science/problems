@@ -77,7 +77,7 @@ const FIGURES: Record<
   "civilizational-layers": {
     src: "/svgs/diagrams/civilizational-layers.svg",
     alt: "Six civilizational layers ascending: Writing, Printing, Method, Internet, Intelligence, and Constellation — each solving the problem the previous one created",
-    maxWidthClass: "max-w-md",
+    maxWidthClass: "max-w-2xl",
   },
   "software-timeline": {
     src: "/svgs/diagrams/software-timeline.svg",
