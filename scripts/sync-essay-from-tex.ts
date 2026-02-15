@@ -74,6 +74,11 @@ const FIGURES: Record<
     alt: "Bar chart showing gaps: 2 months from symptom to diagnosis, 17 years from discovery to practice, 32 years from discovery to approved drug",
     maxWidthClass: "max-w-lg",
   },
+  "civilizational-layers": {
+    src: "/svgs/diagrams/civilizational-layers.svg",
+    alt: "Six civilizational layers stacked vertically: Writing, Printing, Scientific Method, Internet, Intelligence, and Integrity — each solving the problem the previous one created",
+    maxWidthClass: "max-w-md",
+  },
   "software-timeline": {
     src: "/svgs/diagrams/software-timeline.svg",
     alt: "Timeline of software infrastructure: Git (2005), GitHub (2008), Hugging Face (2021), and AI coding agents (2025)",
