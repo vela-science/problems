@@ -80,6 +80,13 @@ const replaceEssayMacros = (tex: string): string => {
     (_match, value: string) => `\n\n\\begin{center}\n\\textbf{${value.trim()}}\n\\end{center}\n\n`,
   );
 
+  // Replace TikZ diagram blocks with image placeholders
+  // Matches \begin{center}\input{../diagrams/tikz/NAME.tikz}\end{center}
+  out = out.replaceAll(
+    /\\begin\{center\}\s*\\input\{\.\.\/diagrams\/tikz\/([a-z-]+)\.tikz\}\s*\\end\{center\}/g,
+    (_match, name: string) => `\n\nDIAGRAM_PLACEHOLDER_${name}\n\n`,
+  );
+
   // Strip decorative LaTeX commands
   out = out
     .replaceAll(/\\vspace\{[^}]*\}/g, "")
@@ -173,6 +180,30 @@ const main = () => {
 
   // Post-pandoc transforms
   md = cleanMarkdown(md);
+
+  // Replace diagram placeholders with responsive image HTML
+  const diagramMeta: Record<string, { alt: string; maxWidth: string }> = {
+    "shadow-person": {
+      alt: "Two views of the same researcher: on the left, what metrics see — isolated data points (h-index, citations, affiliation, grants). On the right, what the faculty sees — a trajectory arc with a turn, brightening toward the future.",
+      maxWidth: "max-w-2xl",
+    },
+    "landscape-concentration": {
+      alt: "The shape of the pipeline's blindness: a dense bright cluster of stars on one side (93% of researchers, concentrated in five institutions) and vast dark emptiness on the other (the rest of the world, with a lone star in Kraków).",
+      maxWidth: "max-w-xl",
+    },
+  };
+
+  md = md.replaceAll(
+    /DIAGRAM_PLACEHOLDER_([a-z-]+)/g,
+    (_match, name: string) => {
+      const meta = diagramMeta[name];
+      if (!meta) return "";
+      return `<figure class="diagram-figure ${meta.maxWidth} mx-auto my-12">
+<img src="/svgs/diagrams/${name}.svg" alt="${meta.alt}" class="diagram-light w-full" />
+<img src="/svgs/diagrams/${name}.dark.svg" alt="${meta.alt}" class="diagram-dark w-full" />
+</figure>`;
+    },
+  );
 
   // Assemble with frontmatter
   const frontmatter = `---
