@@ -60,6 +60,15 @@ const escapeForAttribute = (value: string): string =>
     .slice(1, -1)
     .replaceAll('"', '\\"');
 
+// ── Diagram metadata ─────────────────────────────────────────────────
+
+const FIGURES: Record<string, { alt: string; maxWidthClass?: string }> = {
+  "whitepaper-layers": {
+    alt: "Lux four-layer architecture: compiler, kernel (narrow waist), observers, and products.",
+    maxWidthClass: "max-w-2xl",
+  },
+};
+
 // ── Document parsing ─────────────────────────────────────────────────
 
 const extractDocumentBody = (tex: string): string => {
@@ -120,6 +129,24 @@ const preprocessSection = (sectionTex: string): string => {
     "",
   );
 
+  // Replace TikZ diagram blocks with figure tokens
+  tex = tex.replaceAll(
+    /\\begin\{center\}[\s\S]*?\\end\{center\}/g,
+    (block: string) => {
+      const inputMatch = block.match(
+        /\\input\{\.\.\/diagrams\/tikz\/([a-z-]+)\.tikz\}/,
+      );
+      if (inputMatch) {
+        const name = inputMatch[1];
+        if (FIGURES[name]) {
+          return `\n\n[[FIGURE:${name}]]\n\n`;
+        }
+        return "";
+      }
+      return block;
+    },
+  );
+
   // Strip \label{...}
   tex = tex.replaceAll(/\\label\{[^}]+\}/g, "");
 
@@ -152,6 +179,21 @@ const replaceTokensToAstroBlocks = (html: string): string => {
   output = output.replaceAll(
     /<p>\s*\[\[DIVIDER\]\]\s*<\/p>/g,
     "<ConstellationDivider />",
+  );
+
+  output = output.replaceAll(
+    /<p>\s*\[\[FIGURE:([^]+?)\]\]\s*<\/p>/g,
+    (_match, name: string) => {
+      const figure = FIGURES[name.trim()];
+      if (!figure) {
+        throw new Error(`Unknown figure token: ${name}`);
+      }
+      const maxWidth = figure.maxWidthClass ?? "max-w-lg";
+      const baseSrc = `/svgs/diagrams/${name.trim()}.svg`;
+      const darkSrc = baseSrc.replace(/\.svg$/u, ".dark.svg");
+      const alt = escapeForAttribute(figure.alt);
+      return `\n<figure class="my-12 flex justify-center">\n  <img src="${baseSrc}" alt="${alt}" loading="lazy" decoding="async" class="diagram-light w-full ${maxWidth}" />\n  <img src="${darkSrc}" alt="${alt}" loading="lazy" decoding="async" class="diagram-dark w-full ${maxWidth}" />\n</figure>\n`;
+    },
   );
 
   output = output.replaceAll(
@@ -230,6 +272,18 @@ const toAstroBody = (
   // Convert footnotes to inline sidenotes
   const inlined = inlineFootnotesAsSidenotes(astro, footnoteOffset);
   astro = inlined.html;
+
+  // Escape curly braces inside <pre><code> blocks (Astro treats them as JSX)
+  astro = astro.replaceAll(
+    /<pre><code>([\s\S]*?)<\/code><\/pre>/g,
+    (_match, content: string) => {
+      const escaped = content.replaceAll(
+        /[{}]/g,
+        (ch: string) => (ch === "{" ? "{'{'}" : "{'}'}"),
+      );
+      return `<pre><code>${escaped}</code></pre>`;
+    },
+  );
 
   // Remove empty paragraphs
   astro = astro.replaceAll(/<p>\s*<\/p>/g, "");
