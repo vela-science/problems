@@ -67,6 +67,18 @@ const FIGURES: Record<string, { alt: string; maxWidthClass?: string }> = {
     alt: "Lux four-layer architecture: compiler, kernel (narrow waist), observers, and products.",
     maxWidthClass: "max-w-2xl",
   },
+  "whitepaper-primitives": {
+    alt: "The three Lux primitives — points, typed links, and trails — as a navigable graph.",
+    maxWidthClass: "max-w-2xl",
+  },
+  "whitepaper-compiler": {
+    alt: "The compiler pipeline: five stages from paper ingestion through human validation into the constellation.",
+    maxWidthClass: "max-w-3xl",
+  },
+  "whitepaper-cascade": {
+    alt: "Before and after: disconnected papers in the current system vs. structured correction cascade in Lux.",
+    maxWidthClass: "max-w-3xl",
+  },
 };
 
 // ── Document parsing ─────────────────────────────────────────────────
