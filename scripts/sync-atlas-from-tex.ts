@@ -1,37 +1,149 @@
 /**
  * sync-atlas-from-tex.ts
  *
- * Converts docs/atlas/atlas.tex → src/content/atlas/atlas.md
+ * Converts docs/atlas/atlas.tex → src/components/atlas/*Section.astro
  *
- * The LaTeX document is the single source of truth. This script extracts the
- * document body, converts LaTeX → Markdown via pandoc, and performs post-processing
- * to handle custom macros (\pullquote, \constellationdivider, \closingverse, etc.).
+ * The LaTeX document is the single source of truth. This script extracts each
+ * \section*{} block, converts LaTeX → HTML via pandoc, converts footnotes to
+ * inline <Sidenote> components, and writes per-section Astro component files.
  *
- * Atlas uses galileo.sty in essay mode (\section*{} unnumbered sections).
+ * Architecture mirrors sync-essay-from-tex.ts (Constellations pipeline).
  */
 
 import { execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import path from "node:path";
 
+// ── Types ────────────────────────────────────────────────────────────
+
+type SectionConfig = {
+  id: string;
+  title: string;
+  glyph: string;
+  outFile: string;
+};
+
+// ── Section Config ───────────────────────────────────────────────────
+
+const SECTIONS: SectionConfig[] = [
+  {
+    id: "the-instrument",
+    title: "The Instrument",
+    glyph: "atlas-instrument",
+    outFile: "src/components/atlas/InstrumentSection.astro",
+  },
+  {
+    id: "the-faculty",
+    title: "The Faculty",
+    glyph: "atlas-faculty",
+    outFile: "src/components/atlas/FacultySection.astro",
+  },
+  {
+    id: "the-shadow",
+    title: "The Shadow",
+    glyph: "atlas-shadow",
+    outFile: "src/components/atlas/ShadowSection.astro",
+  },
+  {
+    id: "the-compiler",
+    title: "The Compiler",
+    glyph: "atlas-compiler",
+    outFile: "src/components/atlas/CompilerSection.astro",
+  },
+  {
+    id: "what-it-means-to-see",
+    title: "What It Means to See",
+    glyph: "atlas-arc",
+    outFile: "src/components/atlas/SeeingSection.astro",
+  },
+  {
+    id: "what-the-instrument-reveals",
+    title: "What the Instrument Reveals",
+    glyph: "atlas-landscape",
+    outFile: "src/components/atlas/RevealsSection.astro",
+  },
+  {
+    id: "the-choice",
+    title: "The Choice",
+    glyph: "atlas-choice",
+    outFile: "src/components/atlas/ChoiceSection.astro",
+  },
+];
+
+// ── Diagram metadata ─────────────────────────────────────────────────
+
+const FIGURES: Record<string, { alt: string; maxWidthClass?: string }> = {
+  "shadow-person": {
+    alt: "Two views of the same researcher: on the left, what metrics see — isolated data points. On the right, what the faculty sees — a trajectory arc with a turn, brightening toward the future.",
+    maxWidthClass: "max-w-2xl",
+  },
+  "landscape-concentration": {
+    alt: "The shape of the pipeline's blindness: a dense bright cluster on one side and vast dark emptiness on the other, with a lone star in Kraków.",
+    maxWidthClass: "max-w-xl",
+  },
+};
+
 // ── Helpers ──────────────────────────────────────────────────────────
 
 const readText = (filePath: string): string =>
   readFileSync(filePath, "utf8").replaceAll("\r\n", "\n");
 
-const runPandocLatexToMarkdown = (latex: string): string => {
+const runPandocLatexToHtml = (latex: string): string => {
   const output = execFileSync(
     "pandoc",
-    [
-      "-f", "latex",
-      "-t", "markdown",
-      "--wrap=none",
-      "--markdown-headings=atx",
-    ],
+    ["-f", "latex", "-t", "html", "--wrap=none"],
     { input: latex, encoding: "utf8" },
   );
   return String(output).trim();
 };
+
+const escapeForAttribute = (value: string): string =>
+  JSON.stringify(value)
+    .slice(1, -1)
+    .replaceAll('"', '\\"');
+
+const extractBraced = (
+  input: string,
+  openBraceIndex: number,
+): { content: string; endIndexExclusive: number } => {
+  if (input[openBraceIndex] !== "{") {
+    throw new Error(`Expected '{' at ${openBraceIndex}`);
+  }
+  let depth = 0;
+  for (let i = openBraceIndex; i < input.length; i += 1) {
+    const ch = input[i];
+    if (ch === "{") depth += 1;
+    if (ch === "}") depth -= 1;
+    if (depth === 0) {
+      return { content: input.slice(openBraceIndex + 1, i), endIndexExclusive: i + 1 };
+    }
+  }
+  throw new Error("Unterminated brace group");
+};
+
+const replaceSimpleMacroWithToken = (
+  input: string,
+  macroName: string,
+  tokenPrefix: string,
+): string => {
+  let cursor = 0;
+  let output = "";
+  while (cursor < input.length) {
+    const index = input.indexOf(`\\${macroName}{`, cursor);
+    if (index === -1) {
+      output += input.slice(cursor);
+      break;
+    }
+    output += input.slice(cursor, index);
+    const braceIndex = index + 1 + macroName.length;
+    const { content, endIndexExclusive } = extractBraced(input, braceIndex);
+    output += `\n\n[[${tokenPrefix}:${content.trim()}]]\n\n`;
+    cursor = endIndexExclusive;
+  }
+  return output;
+};
+
+// ── Document parsing ─────────────────────────────────────────────────
 
 const extractDocumentBody = (tex: string): string => {
   const begin = tex.indexOf("\\begin{document}");
@@ -42,183 +154,220 @@ const extractDocumentBody = (tex: string): string => {
   return tex.slice(begin + "\\begin{document}".length, end).trim();
 };
 
-// ── Pre-processing (LaTeX → LaTeX transforms before pandoc) ────────
+const extractSectionsByTitle = (docBody: string): Map<string, string> => {
+  const matches = [...docBody.matchAll(/\\section\*\{([^}]*)\}/g)];
+  const positions = matches.map((m) => ({
+    title: m[1].split("\\hfill")[0]?.trim() ?? "",
+    start: (m.index ?? 0) + m[0].length,
+  }));
 
-/**
- * Strip the title page (everything before the first \section*).
- */
-const stripTitlePage = (body: string): string => {
-  const idx = body.indexOf("\\section*{");
-  if (idx === -1) throw new Error("No \\section*{} found in document.");
-  return body.slice(idx).trim();
+  const sections = new Map<string, string>();
+  for (let i = 0; i < positions.length; i += 1) {
+    const cur = positions[i];
+    const next = positions[i + 1];
+    const slice = docBody.slice(
+      cur.start,
+      next ? next.start - matches[i + 1]![0].length : docBody.length,
+    );
+    sections.set(cur.title, slice.trim());
+  }
+  return sections;
 };
 
-/**
- * Replace essay macros with tokens that survive pandoc.
- */
-const replaceEssayMacros = (tex: string): string => {
-  let out = tex;
+// ── LaTeX pre-processing ─────────────────────────────────────────────
 
-  // Constellation divider → horizontal rule
-  out = out.replaceAll(/\\constellationdivider/g, "\n\n---\n\n");
+const replaceCenterTikzBlocksWithFigures = (input: string): string => {
+  return input.replaceAll(
+    /\\begin\{center\}[\s\S]*?\\end\{center\}/g,
+    (block: string) => {
+      const inputMatch = block.match(
+        /\\input\{\.\.\/diagrams\/tikz\/([a-z-]+)\.tikz\}/,
+      );
+      if (inputMatch) {
+        const name = inputMatch[1];
+        if (FIGURES[name]) {
+          return `\n\n[[FIGURE:${name}]]\n\n`;
+        }
+        return "";
+      }
+      return "";
+    },
+  );
+};
 
-  // Closing verse → blockquote
-  out = out.replaceAll(
-    /\\closingverse\{([^}]*)\}/g,
-    (_match, text: string) => `\n\n\\begin{quote}\n\\textit{${text.trim()}}\n\\end{quote}\n\n`,
+// ── HTML post-processing (tokens → Astro components) ─────────────────
+
+const replaceTokensToAstroBlocks = (html: string): string => {
+  let output = html;
+
+  output = output.replaceAll(
+    /<p>\s*\[\[DIVIDER\]\]\s*<\/p>/g,
+    "<ConstellationDivider />",
   );
 
-  // Pull quote → blockquote with emphasis
-  out = out.replaceAll(
-    /\\pullquote\{([^}]*)\}/g,
-    (_match, text: string) => `\n\n\\begin{quote}\n\\textit{${text.trim()}}\n\\end{quote}\n\n`,
+  output = output.replaceAll(
+    /<p>\s*\[\[CLOSINGVERSE:([^]+?)\]\]\s*<\/p>/g,
+    (_match, text: string) => {
+      const normalized = text
+        .trim()
+        .replaceAll("<br />", "\n")
+        .replaceAll("<br/>", "\n")
+        .replaceAll("\\\\", "\n");
+      const collapsed = normalized.replaceAll("\n\n", "\n");
+      return `<ClosingVerse text="${escapeForAttribute(collapsed)}" />`;
+    },
   );
 
-  // Number callout → bold centered paragraph
-  out = out.replaceAll(
-    /\\numbercallout\{([^}]*)\}/g,
-    (_match, value: string) => `\n\n\\begin{center}\n\\textbf{${value.trim()}}\n\\end{center}\n\n`,
+  output = output.replaceAll(
+    /<p>\s*\[\[FIGURE:([^]+?)\]\]\s*<\/p>/g,
+    (_match, name: string) => {
+      const figure = FIGURES[name.trim()];
+      if (!figure) {
+        throw new Error(`Unknown figure token: ${name}`);
+      }
+      const maxWidth = figure.maxWidthClass ?? "max-w-lg";
+      const baseSrc = `/svgs/diagrams/${name.trim()}.svg`;
+      const darkSrc = baseSrc.replace(/\.svg$/u, ".dark.svg");
+      const alt = escapeForAttribute(figure.alt);
+      return `\n<figure class="my-12 flex justify-center">\n  <img src="${baseSrc}" alt="${alt}" loading="lazy" decoding="async" class="diagram-light w-full ${maxWidth}" />\n  <img src="${darkSrc}" alt="${alt}" loading="lazy" decoding="async" class="diagram-dark w-full ${maxWidth}" />\n</figure>\n`;
+    },
   );
 
-  // Replace TikZ diagram blocks with image placeholders
-  // Matches \begin{center}\input{../diagrams/tikz/NAME.tikz}\end{center}
-  out = out.replaceAll(
-    /\\begin\{center\}\s*\\input\{\.\.\/diagrams\/tikz\/([a-z-]+)\.tikz\}\s*\\end\{center\}/g,
-    (_match, name: string) => `\n\nDIAGRAM_PLACEHOLDER_${name}\n\n`,
+  return output;
+};
+
+// ── Footnote → Sidenote conversion ──────────────────────────────────
+
+const inlineFootnotesAsSidenotes = (
+  html: string,
+  offset: number,
+): { html: string; count: number } => {
+  const asideMatch = html.match(
+    /<(?:aside|section)[^>]*class="footnotes[^"]*"[^>]*role="doc-endnotes"[^>]*>[\s\S]*?<\/(?:aside|section)>/,
+  );
+  if (!asideMatch) return { html, count: 0 };
+
+  const asideHtml = asideMatch[0];
+  const items = [...asideHtml.matchAll(/<li id="fn(\d+)"[^>]*>([\s\S]*?)<\/li>/g)];
+  const byIndex = new Map<number, string>();
+  for (const item of items) {
+    const n = Number(item[1]);
+    let content = item[2];
+    content = content.replaceAll(
+      /<a href="#fnref\d+" class="footnote-back" role="doc-backlink">[\s\S]*?<\/a>/g,
+      "",
+    );
+    content = content.trim();
+    const paragraphMatch = content.match(/^<p>([\s\S]*?)<\/p>$/);
+    if (paragraphMatch) content = paragraphMatch[1].trim();
+    byIndex.set(n, content);
+  }
+
+  let withoutAside = html.replace(asideMatch[0], "").trim();
+
+  const refRegex =
+    /<a href="#fn(\d+)" class="footnote-ref" id="fnref\d+" role="doc-noteref"><sup>\d+<\/sup><\/a>/g;
+  withoutAside = withoutAside.replaceAll(
+    refRegex,
+    (full: string, nRaw: string) => {
+      const n = Number(nRaw);
+      const content = byIndex.get(n);
+      if (!content) return full;
+      const id = offset + n;
+      return `<Sidenote id={${id}}>${content}</Sidenote>`;
+    },
   );
 
-  // Strip decorative LaTeX commands
-  out = out
+  return { html: withoutAside, count: byIndex.size };
+};
+
+// ── Section conversion ───────────────────────────────────────────────
+
+const toAstroBody = (
+  cfg: SectionConfig,
+  sectionTexRaw: string,
+  footnoteOffset: number,
+) => {
+  let sectionTex = sectionTexRaw.replaceAll("\\markboth{}{}", "").trim();
+
+  // Strip LaTeX-only layout commands
+  sectionTex = sectionTex
     .replaceAll(/\\vspace\{[^}]*\}/g, "")
     .replaceAll(/\\vspace\*\{[^}]*\}/g, "")
     .replaceAll(/\\vfill/g, "")
     .replaceAll(/\\clearpage/g, "")
-    .replaceAll(/\\medskip/g, "")
     .replaceAll(/\\noindent/g, "")
-    .replaceAll(/\\markboth\{[^}]*\}\{[^}]*\}/g, "")
-    .replaceAll(/\\thispagestyle\{[^}]*\}/g, "");
+    .replaceAll(/\\hspace\{[^}]*\}/g, "");
 
-  // Strip vigil markers (no-ops in PDF, no-ops on web for atlas)
-  out = out.replaceAll(/\\vigilclaim\{[^}]*\}/g, "");
-  out = out.replaceAll(/\\vigiltrail\{[^}]*\}/g, "");
+  // Replace TikZ diagram blocks with figure tokens
+  sectionTex = replaceCenterTikzBlocksWithFigures(sectionTex);
 
-  return out;
+  // Macro tokens
+  sectionTex = sectionTex.replaceAll("\\constellationdivider", "\n\n[[DIVIDER]]\n\n");
+  sectionTex = replaceSimpleMacroWithToken(sectionTex, "closingverse", "CLOSINGVERSE");
+
+  // Convert LaTeX → HTML via pandoc
+  const html = runPandocLatexToHtml(sectionTex);
+  let astro = replaceTokensToAstroBlocks(html);
+
+  // Convert footnotes to inline sidenotes
+  const inlined = inlineFootnotesAsSidenotes(astro, footnoteOffset);
+  astro = inlined.html;
+
+  // Remove empty paragraphs
+  astro = astro.replaceAll(/<p>\s*<\/p>/g, "");
+
+  return { astro, footnoteCount: inlined.count };
 };
 
-// ── Post-processing (Markdown → Markdown transforms after pandoc) ──
+// ── Template ─────────────────────────────────────────────────────────
 
-/**
- * Clean up pandoc markdown output.
- */
-const cleanMarkdown = (md: string): string => {
-  let out = md;
+const sectionTemplate = (cfg: SectionConfig, bodyAstro: string): string => `---
+import ConstellationDivider from "../ConstellationDivider.astro";
+import ClosingVerse from "../ClosingVerse.astro";
+import Sidenote from "../Sidenote.astro";
+---
 
-  // Fix escaped brackets
-  out = out.replaceAll(/\\\[/g, "[");
-  out = out.replaceAll(/\\\]/g, "]");
+<section id="${cfg.id}" class="prose mb-16">
+  <header class="flex items-center justify-between mb-8">
+    <h2 class="text-2xl tracking-wide m-0">${cfg.title}</h2>
+    <img src="/svgs/glyphs/${cfg.glyph}.svg" alt="" class="diagram-light w-10 h-10 opacity-80" />
+    <img src="/svgs/glyphs/${cfg.glyph}.dark.svg" alt="" class="diagram-dark w-10 h-10 opacity-80" />
+  </header>
 
-  // Fix double-escaped underscores
-  out = out.replaceAll(/\\_/g, "_");
-
-  // Fix dashes — protect horizontal rules (--- on own line) first
-  out = out.replaceAll(/^---$/gm, "HRULETOK");
-  out = out.replaceAll(/---/g, "—");
-  out = out.replaceAll(/--/g, "–");
-  out = out.replaceAll(/HRULETOK/g, "---");
-
-  // Clean escaped blockquotes/asterisks
-  out = out.replaceAll(/^\\> /gm, "> ");
-  out = out.replaceAll(/\\\*/g, "*");
-
-  // Strip pandoc's {#slug .unnumbered} attributes from headings
-  // Must happen BEFORE general brace removal
-  out = out.replaceAll(/ \{[^}]*\.unnumbered[^}]*\}/g, "");
-  out = out.replaceAll(/ \{#[^}]*\}/g, "");
-  // Also strip leftover #slug .unnumbered without braces (if braces already stripped)
-  out = out.replaceAll(/ #[a-z-]+ \.unnumbered/g, "");
-
-  // Remove leftover braces from pandoc
-  out = out.replaceAll(/\{([^{}]*)\}/g, "$1");
-
-  // Remove excessive blank lines (3+ → 2)
-  out = out.replaceAll(/\n{4,}/g, "\n\n\n");
-
-  // pandoc converts \section*{} to # (unnumbered). We want ## for content.
-  // Process deepest first
-  out = out.replaceAll(/^#### /gm, "##### ");
-  out = out.replaceAll(/^### /gm, "#### ");
-  out = out.replaceAll(/^## /gm, "### ");
-  out = out.replaceAll(/^# /gm, "## ");
-
-  // Fix $ signs that got escaped
-  out = out.replaceAll(/\\\$/g, "$");
-
-  return out.trim();
-};
+${bodyAstro.trim()}
+</section>
+`;
 
 // ── Main ─────────────────────────────────────────────────────────────
 
 const main = () => {
   const repoRoot = process.cwd();
   const sourcePath = path.join(repoRoot, "docs/atlas/atlas.tex");
-  const outDir = path.join(repoRoot, "src/content/atlas");
-  const outPath = path.join(outDir, "atlas.md");
+  const outDir = path.join(repoRoot, "src/components/atlas");
 
   mkdirSync(outDir, { recursive: true });
 
   const source = readText(sourcePath);
-  let body = extractDocumentBody(source);
+  const body = extractDocumentBody(source);
+  const byTitle = extractSectionsByTitle(body);
 
-  // Strip title page
-  body = stripTitlePage(body);
+  let footnoteOffset = 0;
+  for (const cfg of SECTIONS) {
+    const sectionTex = byTitle.get(cfg.title);
+    if (!sectionTex) {
+      throw new Error(`Missing section in LaTeX source: ${cfg.title}`);
+    }
 
-  // Pre-pandoc transforms
-  body = replaceEssayMacros(body);
+    const converted = toAstroBody(cfg, sectionTex, footnoteOffset);
+    footnoteOffset += converted.footnoteCount;
 
-  // Convert to markdown
-  let md = runPandocLatexToMarkdown(body);
-
-  // Post-pandoc transforms
-  md = cleanMarkdown(md);
-
-  // Replace diagram placeholders with responsive image HTML
-  const diagramMeta: Record<string, { alt: string; maxWidth: string }> = {
-    "shadow-person": {
-      alt: "Two views of the same researcher: on the left, what metrics see — isolated data points (h-index, citations, affiliation, grants). On the right, what the faculty sees — a trajectory arc with a turn, brightening toward the future.",
-      maxWidth: "max-w-2xl",
-    },
-    "landscape-concentration": {
-      alt: "The shape of the pipeline's blindness: a dense bright cluster of stars on one side (93% of researchers, concentrated in five institutions) and vast dark emptiness on the other (the rest of the world, with a lone star in Kraków).",
-      maxWidth: "max-w-xl",
-    },
-  };
-
-  md = md.replaceAll(
-    /DIAGRAM_PLACEHOLDER_([a-z-]+)/g,
-    (_match, name: string) => {
-      const meta = diagramMeta[name];
-      if (!meta) return "";
-      return `<figure class="diagram-figure ${meta.maxWidth} mx-auto my-12">
-<img src="/svgs/diagrams/${name}.svg" alt="${meta.alt}" class="diagram-light w-full" />
-<img src="/svgs/diagrams/${name}.dark.svg" alt="${meta.alt}" class="diagram-dark w-full" />
-</figure>`;
-    },
-  );
-
-  // Assemble with frontmatter
-  const frontmatter = `---
-title: "Atlas: An Instrument for Seeing"
-subtitle: "On building an instrument to see the people who carry knowledge forward"
-author: "William Blair"
-date: "February 2026"
----`;
-
-  const content = `${frontmatter}\n\n${md}\n`;
-
-  writeFileSync(outPath, content, "utf8");
+    const outPath = path.join(repoRoot, cfg.outFile);
+    writeFileSync(outPath, sectionTemplate(cfg, converted.astro), "utf8");
+  }
 
   console.log(
-    `Synced atlas essay from ${path.relative(repoRoot, sourcePath)} → ${path.relative(repoRoot, outPath)}`,
+    `Synced atlas sections from ${path.relative(repoRoot, sourcePath)} → ${path.relative(repoRoot, outDir)}/ (${footnoteOffset} sidenotes)`,
   );
 };
 
