@@ -129,6 +129,11 @@ const FIGURES: Record<
     alt: "Three shapes of the same failure: repeated (a loop where effort goes out and comes back), lost (a broken line where knowledge dissolves into nothing), stranded (two disconnected clusters with a gap between them)",
     maxWidthClass: "max-w-xl",
   },
+  "recovery-convergence": {
+    src: "/svgs/diagrams/recovery-convergence.svg",
+    alt: "RECOVERY timeline: 9 days from protocol to first patient, 100 days from enrollment to first result, hours from lunchtime announcement to saving lives. Mirrors the delay-bars but compressed—how far when the scaffold exists?",
+    maxWidthClass: "max-w-xl",
+  },
 };
 
 const readText = (filePath: string): string =>
