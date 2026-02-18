@@ -16,11 +16,8 @@
     "generate:llms": "bun scripts/generate-llms-txt.ts"
   },
   "dependencies": {
-    "@rollup/rollup-linux-arm64-gnu": "^4.57.1",
-    "@tailwindcss/oxide-linux-arm64-gnu": "^4.1.18",
     "@tailwindcss/vite": "^4.1.18",
     "astro": "^5.16.6",
-    "lightningcss-linux-arm64-gnu": "^1.31.1",
     "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
