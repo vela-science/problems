@@ -197,10 +197,9 @@ This is the founding document for the Borrowed Light project, proposing a conste
 
 - [The Inheritance](#the-inheritance): The problem—knowledge exists but cannot arrive
 - [The Pattern](#the-pattern): Historical context and why transmission fails
-- [The Foundation](#the-foundation): Git, GitHub, and the precedent for infrastructure
-- [The Convergence](#the-convergence): The AI moment and closing window
-- [The Constellation](#the-constellation): The solution—points, trails, and corrections
-- [The Gigafactory](#the-gigafactory): The production system for knowledge
+- [The Foundation](#the-foundation): The substrate, the compiler, and the stack
+- [The Constellation](#the-constellation): The navigable frontier—points, links, and trails
+- [The Gigafactory](#the-gigafactory): The physical execution layer for knowledge
 
 ## Links
 
