@@ -167,6 +167,16 @@ const postProcessMarkdown = (md: string): string => {
   clean = clean.replaceAll(/^\s*center\s*$/gm, "");
   clean = clean.replaceAll(/\n\s*center\s*\n/g, "\n");
 
+  // Fix a malformed attribution line emitted from the centered Kalanithi quote block.
+  clean = clean.replace(
+    /^knowledge is never contained in one person\. It grows from the relationships we create between each other and the world, and still it is never complete\.$/m,
+    "Human knowledge is never contained in one person. It grows from the relationships we create between each other and the world, and still it is never complete.",
+  );
+  clean = clean.replace(
+    /^---\s*\*?—?\s*Paul Kalanithi,\s*\*When Breath Becomes Air\*+\s*$/m,
+    "— Paul Kalanithi, *When Breath Becomes Air*",
+  );
+
   // Remove lines that are just formatting artifacts
   clean = clean.replaceAll(/^\s*of\s*$/gm, "");
   clean = clean.replaceAll(/^\s*Light\s*$/gm, "");
@@ -175,8 +185,11 @@ const postProcessMarkdown = (md: string): string => {
   clean = clean.replaceAll(/^---\s*---/gm, "---");
   clean = clean.replaceAll(/--- \*---/g, "---");
 
-  // Remove metadata block artifacts (Version, Publication date, etc at start)
-  clean = clean.replace(/^[\s\S]*?(?=## Reader's Guide)/m, "");
+  // Drop title-page / epigraph residue and start at the first real essay section.
+  const firstSectionIndex = clean.indexOf("## The Inheritance");
+  if (firstSectionIndex !== -1) {
+    clean = clean.slice(firstSectionIndex);
+  }
 
   // Clean up excessive whitespace
   clean = clean.replaceAll(/\n{3,}/g, "\n\n");
