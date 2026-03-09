@@ -64,7 +64,7 @@ const FIGURES: Record<
   },
   "civilizational-layers": {
     src: "/svgs/diagrams/civilizational-layers.svg",
-    alt: "Six civilizational layers ascending: Writing, Printing, Method, Internet, Intelligence, and Constellation — each solving the problem the previous one created",
+    alt: "A compact progression from Writing to Intelligence, paired with a panel showing the missing layer science still lacks: shared scientific state, addressable claims, propagating corrections, and a navigable frontier",
     maxWidthClass: "max-w-2xl",
   },
   "software-timeline": {
