@@ -202,7 +202,7 @@ const postProcessMarkdown = (md: string): string => {
 const generateLlmsTxt = (): string => {
   return `# Constellations of Borrowed Light
 
-> Infrastructure for scientific knowledge—so discoveries can travel at the speed they're needed.
+> Why science needs an open, correctable state layer for findings.
 
 This is the founding document for the Borrowed Light project, proposing a constellation of structured points and trails to connect humanity's scattered knowledge.
 
@@ -217,8 +217,9 @@ This is the founding document for the Borrowed Light project, proposing a conste
 ## Links
 
 - [Full Essay](https://borrowedlight.org): Read the complete essay
+- [Summary](https://borrowedlight.org/constellations-summary.md): Shareable key claims
+- [Companion Notes](https://borrowedlight.org/constellations-companion.md): Supporting architecture and protocol notes
 - [Protocol](https://borrowedlight.org/protocol): Technical specification
-- [Contribute](https://borrowedlight.org/contribute): How to help build this
 
 ## Full Content
 
@@ -251,7 +252,7 @@ const main = () => {
   // Add header to full content
   const llmsFullContent = `# Constellations of Borrowed Light
 
-> Infrastructure for scientific knowledge—so discoveries can travel at the speed they're needed.
+> Why science needs an open, correctable state layer for findings.
 
 ---
 

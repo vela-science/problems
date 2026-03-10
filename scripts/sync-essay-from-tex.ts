@@ -84,7 +84,7 @@ const FIGURES: Record<
   },
   "point-diagram": {
     src: "/svgs/diagrams/point-diagram.svg",
-    alt: "Anatomy of a point: central assertion with entities, evidence, confidence, dissent, lineage, and chronicle showing how confidence evolved from uncertain (2010) to strengthened (2011) to complicated (2012) to refined (now).",
+    alt: "Anatomy of a point: central assertion with entities, evidence, confidence, dissent, lineage, and evidence history showing how confidence evolved from uncertain (2010) to strengthened (2011) to complicated (2012) to refined (now).",
     maxWidthClass: "max-w-xl",
   },
   "trail-diagram": {
@@ -102,9 +102,14 @@ const FIGURES: Record<
     alt: "The frontier map: dense constellation of known knowledge on the left, sparse frontier on the right, with agents converging toward the gaps.",
     maxWidthClass: "max-w-xl",
   },
+  "gigafactory-loop": {
+    src: "/svgs/diagrams/gigafactory-loop.svg",
+    alt: "The execution loop: compiled finding flows to execution layer, produces a result that updates the frontier. Many labs inherit the new state.",
+    maxWidthClass: "max-w-lg",
+  },
   "the-fork": {
     src: "/svgs/diagrams/the-fork.svg",
-    alt: "The fork: two diverging paths from now—documents leading to scattered noise, structure leading to connected AI science. There is no third path.",
+    alt: "The fork: two diverging paths from now—documents leading to scattered noise, structure leading to connected AI science.",
     maxWidthClass: "max-w-xl",
   },
   "confidence-laundering": {
