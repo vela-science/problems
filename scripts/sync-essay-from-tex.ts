@@ -550,6 +550,23 @@ ${bodyAstro}
 `;
     }
 
+    // Add visual weight to key emotional sentences.
+    // These are the essay's pivot points — they need breathing room.
+    const WEIGHT_SENTENCES = [
+      "The knowledge to save your life exists. It cannot reach you.",
+      "The surgeon appeared at my bedside. I survived.",
+      "Families waited for treatments that kept not arriving. The knowledge existed. The corrections existed. Nothing carried them.",
+      "That is knowledge arriving in time to matter.",
+      "The light is borrowed. Our work is to make it arrive.",
+    ];
+
+    for (const sentence of WEIGHT_SENTENCES) {
+      bodyAstro = bodyAstro.replaceAll(
+        `<p>${sentence}</p>`,
+        `<p class="weight">${sentence}</p>`,
+      );
+    }
+
     const outPath = path.join(repoRoot, cfg.outFile);
     writeFileSync(outPath, sectionTemplate(cfg, bodyAstro), "utf8");
   }
