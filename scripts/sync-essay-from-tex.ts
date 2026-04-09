@@ -64,7 +64,7 @@ const FIGURES: Record<
   },
   "civilizational-layers": {
     src: "/svgs/diagrams/civilizational-layers.svg",
-    alt: "A compact progression from Writing to Intelligence, paired with a panel showing the missing layer science still lacks: shared scientific state, addressable claims, propagating corrections, and a navigable frontier",
+    alt: "A compact progression from Writing to Intelligence, paired with a panel showing the scientific operating system science still lacks: kernel, state layer, runtime, and network",
     maxWidthClass: "max-w-2xl",
   },
   "software-timeline": {
@@ -104,7 +104,7 @@ const FIGURES: Record<
   },
   "gigafactory-loop": {
     src: "/svgs/diagrams/gigafactory-loop.svg",
-    alt: "The execution loop: compiled finding flows to execution layer, produces a result that updates the frontier. Many labs inherit the new state.",
+    alt: "The runtime loop: shared scientific state feeds execution, produces a measured result, and the updated state propagates outward to other labs.",
     maxWidthClass: "max-w-lg",
   },
   "the-fork": {
