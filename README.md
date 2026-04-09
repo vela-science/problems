@@ -4,19 +4,19 @@ Single-page static site for the essay *Constellations of Borrowed Light* (Astro 
 
 ## Source of Truth
 
-- Canonical text: `docs/constellations.tex`
-- Web sections are generated into: `src/components/essay/*.astro`
+- Canonical essay source: `src/content/essays/constellations/index.mdx`
+- Shared reading UI: `src/components/essay/chrome/*` and `src/components/essay/blocks/*`
+- Secondary print target: `docs/constellations/constellations.tex`
+- Public PDF: `public/constellations.pdf`
 
-Run `bun run sync:essay` after editing the LaTeX.
-
-To verify nothing is drifting: `bun run sync:check`.
+The web essay is the primary artifact. TeX/PDF is exported from the MDX source.
 
 ## Commands
 
 - Dev: `bun run dev`
-- Build: `bun run build`
-- Sync essay: `bun run sync:essay`
-- Sync + verify clean diff: `bun run sync:check`
+- Build site: `bun run build`
+- Export TeX: `bun run export:constellations:tex`
+- Build PDF: `bun run build:pdf:constellations`
 
 ## Diagrams (TikZ → SVG)
 
@@ -35,8 +35,6 @@ Diagram sources live in `diagrams/src/*.tex` and are built into `public/svgs/dia
 GitHub Actions runs:
 
 - `bun install --frozen-lockfile`
-- `bun run sync:check`
 - `bun run build`
 
 See `.github/workflows/ci.yml`.
-

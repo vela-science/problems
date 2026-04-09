@@ -41,3 +41,9 @@ docs/*.log
 docs/*.synctex.gz
 docs/*.fls
 docs/*.fdb_latexmk
+docs/constellations/*.aux
+docs/constellations/*.log
+docs/constellations/*.synctex.gz
+docs/constellations/*.fls
+docs/constellations/*.fdb_latexmk
+docs/constellations/*.out

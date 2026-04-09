@@ -6,19 +6,21 @@
     "dev": "astro dev",
     "build": "bun run build:diagrams && bun run generate:llms && astro build",
     "build:diagrams": "cd diagrams && ./build-diagrams.sh",
+    "build:pdf:constellations": "bun run export:constellations:tex && cd docs/constellations && latexmk -pdf constellations.tex && cp constellations.pdf ../../public/constellations.pdf",
     "preview": "astro preview",
     "astro": "astro",
-    "sync:essay": "bun scripts/sync-essay-from-tex.ts",
+    "export:constellations:tex": "bun scripts/export-constellations-to-tex.ts",
     "sync:kernel": "bun scripts/sync-kernel-from-tex.ts",
     "sync:atlas": "bun scripts/sync-atlas-from-tex.ts",
     "sync:whitepaper": "bun scripts/sync-whitepaper-from-tex.ts",
-    "sync:check": "bun run sync:essay && git diff --exit-code src/components/essay",
     "generate:llms": "bun scripts/generate-llms-txt.ts"
   },
   "dependencies": {
+    "@astrojs/mdx": "^5.0.3",
     "@tailwindcss/vite": "^4.1.18",
     "astro": "^5.16.6",
     "gsap": "^3.14.2",
+    "remark-gfm": "^4.0.1",
     "tailwindcss": "^4.1.18",
     "three": "^0.183.2"
   },

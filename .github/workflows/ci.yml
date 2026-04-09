@@ -24,9 +24,5 @@ jobs:
       - name: Install
         run: bun install --frozen-lockfile
 
-      - name: Sync check
-        run: bun run sync:check
-
       - name: Build
         run: bun run build
-

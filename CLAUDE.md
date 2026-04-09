@@ -7,40 +7,41 @@ Single-page static website for "Constellations of Borrowed Light" essay using As
 ```bash
 bun run dev      # Start dev server
 bun run build    # Build for production (diagrams + llms.txt + astro)
+bun run export:constellations:tex  # Export print source from MDX
+bun run build:pdf:constellations   # Export TeX, compile PDF, copy to public/
 ```
 
-## LaTeX → Web Pipeline
+## MDX → Web / TeX Pipeline
 
-The essay exists in two forms that must stay in sync:
+The web essay is canonical. The PDF is a derived print artifact.
 
 ```
-docs/constellations.tex  (source of truth)
+src/content/essays/constellations/index.mdx  (source of truth)
          │
-         ├──► bun run sync:essay ──► src/components/essay/*.astro
+         ├──► astro build ──► /
          │
-         └──► diagrams/build-diagrams.sh ──► public/svgs/diagrams/*.svg
+         ├──► scripts/generate-llms-txt.ts ──► public/llms*.txt
+         │
+         └──► scripts/export-constellations-to-tex.ts ──► docs/constellations/constellations.tex ──► public/constellations.pdf
 ```
 
-### After editing constellations.tex:
+### After editing the essay:
 ```bash
-bun run sync:essay           # Sync prose to Astro components
-cd diagrams && ./build-diagrams.sh  # Rebuild SVGs (if diagrams changed)
+bun run build                # Rebuild site
+bun run build:pdf:constellations   # Rebuild print artifact if needed
 ```
 
-### What sync:essay does:
-- Extracts each `\section*{...}` from the LaTeX
-- Converts LaTeX → HTML via pandoc
-- Transforms to Astro components with:
-  - Sidenotes (from `\footnote{}`)
-  - Figures (from TikZ `\input{}` blocks)
-  - Custom components (`\constellationdivider`, `\pullquote{}`, etc.)
-- Outputs to `src/components/essay/{SectionName}Section.astro`
+### Authoring model
+- Prose lives in `src/content/essays/constellations/index.mdx`
+- Reading chrome lives in `src/components/essay/chrome/*`
+- Reusable essay blocks live in `src/components/essay/blocks/*`
+- Footnotes are authored in markdown and upgraded into the notes drawer on the web
+- The print source is generated into `docs/constellations/constellations.tex`
 
 ### What build-diagrams.sh does:
 - Compiles each `.tex` in `diagrams/src/` to DVI
 - Converts to SVG via dvisvgm (requires Ghostscript)
 - Generates light and dark variants
-- Also extracts `% BEGIN_DIAGRAM name` ... `% END_DIAGRAM name` blocks from constellations.tex
 
 ## Converting TikZ Diagrams to SVG
 
@@ -64,9 +65,11 @@ rsvg-convert input.svg -o output.png -w 1200 -h 630
 ```
 
 ## Key Files
-- `docs/constellations.tex` - Source LaTeX document
+- `src/content/essays/constellations/index.mdx` - Canonical essay source
+- `src/layouts/EssayLayout.astro` - Essay reading system layout
 - `docs/galileo.sty` - Color palette and component specs
-- `src/pages/index.astro` - Main essay page
+- `docs/constellations/constellations.tex` - Generated print source
+- `src/pages/index.astro` - Canonical essay route
 - `src/styles/global.css` - Tailwind v4 theme with Galileo colors
 
 ## Color Palette (Galileo)
