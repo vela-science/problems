@@ -2,6 +2,9 @@
   "name": "borrowed-light",
   "type": "module",
   "version": "0.0.1",
+  "engines": {
+    "node": ">=22.14.0"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "bun run build:diagrams && bun run generate:llms && astro build",
