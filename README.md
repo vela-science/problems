@@ -55,6 +55,7 @@ These documents define the recommended canonical public IA:
 - Summary (`/summary`)
 - Vela (`/vela`)
 - Proof (`/proof`)
+- Build (`/build`)
 - About (`/about`)
 
 ## CI
