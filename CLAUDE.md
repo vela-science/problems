@@ -67,7 +67,6 @@ rsvg-convert input.svg -o output.png -w 1200 -h 630
 ## Key Files
 - `src/content/essays/constellations/index.mdx` - Canonical essay source
 - `src/layouts/EssayLayout.astro` - Essay reading system layout
-- `docs/galileo.sty` - Color palette and component specs
 - `docs/constellations/constellations.tex` - Generated print source
 - `src/pages/index.astro` - Canonical essay route
 - `src/styles/global.css` - Tailwind v4 theme with Galileo colors
