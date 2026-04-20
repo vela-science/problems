@@ -22,7 +22,8 @@ bun run build
 ## Routes
 
 - `/` — essay
-- `/three-registers` — architecture page
+- `/architecture` — scientific state architecture
+- `/three-registers` — redirect to `/architecture`
 - `/constellation` — interactive corridor map
 
 ## Visuals
