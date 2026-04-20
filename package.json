@@ -7,11 +7,9 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "bun run build:diagrams && bun run generate:llms && astro build",
-    "build:diagrams": "cd diagrams && ./build-diagrams.sh",
+    "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro",
-    "generate:llms": "bun scripts/generate-llms-txt.ts"
+    "astro": "astro"
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.3",
@@ -19,10 +17,8 @@
     "@types/d3": "^7.4.3",
     "astro": "^5.16.6",
     "d3": "^7.9.0",
-    "gsap": "^3.14.2",
     "remark-gfm": "^4.0.1",
-    "tailwindcss": "^4.1.18",
-    "three": "^0.183.2"
+    "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
     "@types/bun": "^1.3.5"

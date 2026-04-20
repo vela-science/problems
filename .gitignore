@@ -1,2 +1,15 @@
 .claude/
 .DS_Store
+*.log
+
+# Dependencies
+node_modules/
+
+# Astro/build output
+.astro/
+dist/
+
+# Local editor and agent artifacts
+.vscode/
+.playwright-mcp/
+tmp/
