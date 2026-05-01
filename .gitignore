@@ -13,3 +13,5 @@ dist/
 .vscode/
 .playwright-mcp/
 tmp/
+output/
+prototypes/
