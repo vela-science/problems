@@ -1,10 +1,18 @@
 # Borrowed Light
 
-Static Astro site for *Constellations of Borrowed Light*.
+Static Astro site for the *Borrowed Light* trilogy:
+
+```text
+Record -> Engine -> Body
+```
+
+The first essay argues that science needs a shared record. The second specifies the engine that turns activity into governed state transitions. The third asks whether that engine reaches the physical world as an open public body or as closed private bodies first.
 
 ## Source of Truth
 
-- Canonical essay source: `src/content/essays/constellations/index.mdx`
+- Record essay source: `src/content/essays/constellations/index.mdx`
+- Engine essay source: `src/content/essays/discovery-engine/index.mdx`
+- Body essay source: `src/content/essays/gigafactories-for-science/index.mdx`
 - Shared reading UI: `src/components/essay/chrome/*` and `src/components/essay/blocks/*`
 
 ## Commands
@@ -21,10 +29,9 @@ bun run build
 
 ## Routes
 
-- `/` — essay
-- `/architecture` — scientific state architecture
-- `/three-registers` — redirect to `/architecture`
-- `/constellation` — interactive corridor map
+- `/` — *Constellations of Borrowed Light*, the shared-record essay
+- `/discovery-engine` — *The Discovery Engine*, the transition-engine essay
+- `/terafactories` — *The Terafactory Age*, the public-body essay
 
 ## Visuals
 
