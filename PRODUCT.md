@@ -21,6 +21,7 @@
 
 ## Product Rules
 
+- The site-level identity is Constellate; the essays sit underneath it.
 - The homepage essay is the flagship reading experience
 - Other pages should feel like adjacent chambers in the same house, not separate microsites
 - Navigation should be calm, explicit, and complete on desktop and mobile

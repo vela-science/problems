@@ -16,9 +16,9 @@ const expectedEssays = [
 ];
 
 const expectedSitemap = [
-  "https://borrowedlight.org/",
-  "https://borrowedlight.org/discovery-engine",
-  "https://borrowedlight.org/terafactories",
+  "https://constellate.science/",
+  "https://constellate.science/discovery-engine",
+  "https://constellate.science/terafactories",
 ];
 
 const expectedDistPages = [

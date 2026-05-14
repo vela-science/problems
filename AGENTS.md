@@ -1,4 +1,4 @@
-# Borrowed Light — Agent Instructions
+# Constellate — Agent Instructions
 
 ## Source Of Truth
 

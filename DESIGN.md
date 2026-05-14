@@ -1,7 +1,7 @@
 ---
 version: "alpha"
-name: "Borrowed Light"
-description: "A warm editorial atlas for a long-form essay about scientific state, inherited knowledge, and navigation after papers."
+name: "Constellate"
+description: "A warm editorial atlas for essays about scientific state, inherited knowledge, and navigation after papers."
 colors:
   primary: "#232B3A"
   on-primary: "#FCF8EE"
@@ -158,7 +158,7 @@ components:
 
 ## Overview
 
-Borrowed Light is a flagship reading surface, not a marketing site and not a product dashboard. The design register is warm editorial minimalism: cream paper, dark indigo ink, borrowed gold, restrained scientific marks, and generous negative space. The page should feel like an authored atlas plate inside a serious essay.
+Constellate is a flagship reading surface, not a marketing site and not a product dashboard. The design register is warm editorial minimalism: cream paper, dark indigo ink, borrowed gold, restrained scientific marks, and generous negative space. The page should feel like an authored atlas plate inside a serious essay.
 
 The primary design job is to help a technically literate reader stay oriented through a dense argument. Beauty matters, but it must come from hierarchy, rhythm, image quality, and diagram clarity rather than decoration. Scientific diagrams are part of the argument. They should make the essay more navigable, not merely illustrate its mood.
 
@@ -166,7 +166,7 @@ The physical scene is a long reading session on a laptop or tablet, likely in a 
 
 ## Colors
 
-The canonical palette is cream, ink, and gold. Cream is the reading ground, ink is the primary carrier of thought, and gold is the borrowed-light accent. Gold should mark orientation, section identity, constellation lines, indexes, and fine emphasis. It should not become a button color sprayed across the page.
+The canonical palette is cream, ink, and gold. Cream is the reading ground, ink is the primary carrier of thought, and gold is the navigational light accent. Gold should mark orientation, section identity, constellation lines, indexes, and fine emphasis. It should not become a button color sprayed across the page.
 
 - **Primary (#232B3A):** body ink and the default color for serious claims.
 - **Ink Strong (#14191F):** reserved for maximum contrast and rare anchoring moments.

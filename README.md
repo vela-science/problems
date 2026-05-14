@@ -1,6 +1,6 @@
-# Borrowed Light
+# Constellate
 
-Static Astro site for the *Borrowed Light* trilogy:
+Static Astro site for the Constellate essay sequence:
 
 ```text
 Record -> Engine -> Body
