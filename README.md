@@ -30,9 +30,9 @@ bun run build
 
 ## Routes
 
-- `/` — *Constellations of Borrowed Light*, the shared-record essay
-- `/discovery-engine` — *The Discovery Engine*, the transition-engine essay
-- `/terafactories` — *The Terafactory Age*, the public-body essay
+- `/`: *Constellations of Borrowed Light*, the shared-record essay
+- `/discovery-engine`: *The Discovery Engine*, the transition-engine essay
+- `/terafactories`: *The Terafactory Age*, the public-body essay
 
 ## Visuals
 
