@@ -46,6 +46,7 @@ Visuals are web-native Astro/HTML/SVG components. Do not add a separate diagram 
 - `docs/external-review-program.md` defines reviewer lanes and launch blockers.
 - `docs/external-review-outreach.md` tracks the live reviewer outreach queue.
 - `docs/reviewer-intake.md` lists the reviewer names/contact info needed before outreach.
+- `docs/reviewer-candidate-shortlist.md` suggests possible reviewer profiles and names to consider.
 - `docs/reviewer-emails.md` contains ready-to-send outreach drafts by lane.
 - `docs/review-packets.md` contains lane-specific prompts ready to send.
 - `docs/reviewer-claim-packet.md` lists the highest-priority claims for expert review.
