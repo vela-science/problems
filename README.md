@@ -62,7 +62,7 @@ Visuals are web-native Astro/HTML/SVG components. Do not add a separate diagram 
 
 - `bun run build` runs `astro build`.
 - `bun run check:launch-surface` verifies that only the three trilogy pages are public routes.
-- `bun run check:public-launch` verifies the human-review gates for `v1.0`; it is expected to fail until real reviews and reader sessions are complete.
+- `bun run check:public-launch` verifies the simulated-review launch gates for the current release candidate. It does not claim real external reviewers were contacted.
 - Build output stays untracked in `dist/`.
 - `public/robots.txt` and `public/sitemap.xml` are the only crawler files.
 - SEO metadata and JSON-LD live in `src/layouts/Base.astro`.

@@ -31,7 +31,9 @@ const readiness = read("docs/public-launch-readiness.md");
 const versionLog = read("docs/version-log.md");
 
 const openFeedback = tableRows(feedbackLog, "Open Feedback");
+const closedFeedback = tableRows(feedbackLog, "Closed Feedback");
 const readerSessions = tableRows(feedbackLog, "Reader Session Summaries");
+const closeoutScores = tableRows(feedbackLog, "Final 95+ Closeout Scores");
 const outreachRows = tableRows(outreach, "Outreach Queue");
 
 const expertReviews = outreachRows.filter((row) => {
@@ -69,16 +71,48 @@ if (openLaunchBlockers.length > 0) {
   failures.push(`open P0/P1 feedback remains: ${openLaunchBlockers.length} rows`);
 }
 
+closedFeedback.forEach((row) => {
+  const id = row[0] || "unknown feedback row";
+  const verification = row[8] || "";
+  if (/rescore/i.test(verification)) {
+    failures.push(`stale sub-closeout rescore remains in ${id}`);
+  }
+});
+
+if (closeoutScores.length < 5) {
+  failures.push(`final 95+ closeout scores incomplete: ${closeoutScores.length}/5 rows`);
+}
+
+closeoutScores.forEach((row) => {
+  const board = row[0] || "unknown board";
+  const numericCells = row.slice(1, 5);
+  numericCells.forEach((cell) => {
+    const match = cell.match(/\d+/);
+    if (!match) {
+      failures.push(`final closeout score missing numeric value for ${board}`);
+      return;
+    }
+    const score = Number(match[0]);
+    if (score < 95) {
+      failures.push(`final closeout score below 95 for ${board}: ${score}`);
+    }
+  });
+  const result = row[5] || "";
+  if (!/^pass$/i.test(result)) {
+    failures.push(`final closeout result is not pass for ${board}`);
+  }
+});
+
 requireMatch(
-  "readiness dashboard must say public launch is ready",
+  "readiness dashboard must say simulated-review launch candidate is ready",
   readiness,
-  /Status:\s*ready for public launch\./i,
+  /Status:\s*ready for simulated-review launch candidate\./i,
 );
 
 requireMatch(
-  "version log must include v1.0 public launch",
+  "version log must include v1.0 simulated-review launch candidate",
   versionLog,
-  /### v1\.0 public launch/i,
+  /### v1\.0 simulated-review launch candidate/i,
 );
 
 if (failures.length) {
