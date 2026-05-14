@@ -12,7 +12,7 @@ The first essay argues that science needs a shared record. The second specifies 
 
 - Record essay source: `src/content/essays/constellations/index.mdx`
 - Engine essay source: `src/content/essays/discovery-engine/index.mdx`
-- Body essay source: `src/content/essays/gigafactories-for-science/index.mdx`
+- Body essay source: `src/content/essays/terafactories/index.mdx`
 - Shared reading UI: `src/components/essay/chrome/*` and `src/components/essay/blocks/*`
 
 ## Commands
@@ -24,6 +24,7 @@ Example:
 ```bash
 export PATH="$HOME/.nvm/versions/node/v22.14.0/bin:$PATH"
 node -v
+bun run check:launch-surface
 bun run build
 ```
 
@@ -37,9 +38,30 @@ bun run build
 
 Visuals are web-native Astro/HTML/SVG components. Do not add a separate diagram generation or asset build pipeline.
 
+## Launch And Review Docs
+
+- `docs/trilogy-doctrine.md` defines the Record -> Engine -> Body frame.
+- `docs/source-audit.md` tracks external citations and factual claim groups.
+- `docs/figure-registry.md` tracks visual QA across desktop, tablet, and mobile.
+- `docs/external-review-program.md` defines reviewer lanes and launch blockers.
+- `docs/external-review-outreach.md` tracks the live reviewer outreach queue.
+- `docs/reviewer-intake.md` lists the reviewer names/contact info needed before outreach.
+- `docs/reviewer-emails.md` contains ready-to-send outreach drafts by lane.
+- `docs/review-packets.md` contains lane-specific prompts ready to send.
+- `docs/reviewer-claim-packet.md` lists the highest-priority claims for expert review.
+- `docs/reader-validation-protocol.md` defines first-time reader sessions.
+- `docs/feedback-workflow.md` defines feedback triage and closeout rules.
+- `docs/review-feedback-log.md` records reviewer decisions and reader-session summaries.
+- `docs/launch-package.md` contains reviewer and public launch copy.
+- `docs/public-launch-readiness.md` tracks launch-blocking gates.
+- `docs/active-goal-audit.md` maps the active launch goal to current evidence and gaps.
+- `docs/version-log.md` records material public-facing changes.
+
 ## Deployment
 
 - `bun run build` runs `astro build`.
+- `bun run check:launch-surface` verifies that only the three trilogy pages are public routes.
+- `bun run check:public-launch` verifies the human-review gates for `v1.0`; it is expected to fail until real reviews and reader sessions are complete.
 - Build output stays untracked in `dist/`.
 - `public/robots.txt` and `public/sitemap.xml` are the only crawler files.
 - SEO metadata and JSON-LD live in `src/layouts/Base.astro`.
@@ -49,6 +71,7 @@ Visuals are web-native Astro/HTML/SVG components. Do not add a separate diagram 
 GitHub Actions runs:
 
 - `bun install --frozen-lockfile`
+- `bun run check:launch-surface`
 - `bun run build`
 
 See `.github/workflows/ci.yml`.
