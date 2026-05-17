@@ -3,24 +3,26 @@ version: "alpha"
 name: "Constellate"
 description: "A warm editorial atlas for essays about scientific state, inherited knowledge, and navigation after papers."
 colors:
-  primary: "#232B3A"
-  on-primary: "#FCF8EE"
-  secondary: "#4A5568"
-  tertiary: "#C9A227"
-  neutral: "#F8F2E5"
-  neutral-raised: "#FCF8EE"
-  neutral-sunken: "#F1E9D6"
-  ink-strong: "#14191F"
-  ink-muted: "#3A4555"
-  gold-soft: "#E8D59E"
-  gold-night: "#F2C670"
-  cinnabar: "#B5443A"
-  moss: "#59634E"
-  brass: "#8A6A1F"
-  winter: "#8FA7B7"
-  stone: "#8A8176"
-  night: "#1F2E45"
-  night-deep: "#131E33"
+  primary: "oklch(26.5% 0.035 262)"
+  on-primary: "oklch(98.3% 0.017 88)"
+  secondary: "oklch(43.5% 0.030 258)"
+  tertiary: "oklch(70.5% 0.118 87)"
+  tertiary-ink: "oklch(46.8% 0.102 82)"
+  tertiary-line: "oklch(78.5% 0.072 88)"
+  neutral: "oklch(96.2% 0.024 88)"
+  neutral-raised: "oklch(98.3% 0.017 88)"
+  neutral-sunken: "oklch(90.7% 0.044 86)"
+  ink-strong: "oklch(22% 0.034 262)"
+  ink-muted: "oklch(35.5% 0.031 262)"
+  gold-soft: "oklch(89.6% 0.052 89)"
+  gold-night: "oklch(66.5% 0.110 84)"
+  cinnabar: "oklch(49.5% 0.128 35)"
+  moss: "oklch(43.5% 0.043 128)"
+  brass: "oklch(45.5% 0.082 83)"
+  winter: "oklch(68.5% 0.040 236)"
+  stone: "oklch(55% 0.022 80)"
+  night: "oklch(29% 0.050 260)"
+  night-deep: "oklch(21% 0.048 260)"
 typography:
   h1:
     fontFamily: "Cormorant Garamond"
@@ -119,7 +121,7 @@ components:
     typography: "{typography.note}"
     width: "12.25rem"
   margin-note-marker:
-    textColor: "{colors.cinnabar}"
+    textColor: "{colors.tertiary-ink}"
     typography: "{typography.mono-index}"
   left-rail-node:
     textColor: "{colors.secondary}"
@@ -166,7 +168,7 @@ The physical scene is a long reading session on a laptop or tablet, likely in a 
 
 ## Colors
 
-The canonical palette is cream, ink, and gold. Cream is the reading ground, ink is the primary carrier of thought, and gold is the navigational light accent. Gold should mark orientation, section identity, constellation lines, indexes, and fine emphasis. It should not become a button color sprayed across the page.
+The canonical palette is cream, ink, and gold. Cream is the reading ground, ink is the primary carrier of thought, and gold is the navigational light accent. Gold has three jobs: luminous gold for routes and glows, darker gold-ink for small readable markers, and soft gold-line for hairlines. It should not become a button color sprayed across the page.
 
 - **Primary (#232B3A):** body ink and the default color for serious claims.
 - **Ink Strong (#14191F):** reserved for maximum contrast and rare anchoring moments.
@@ -174,7 +176,9 @@ The canonical palette is cream, ink, and gold. Cream is the reading ground, ink 
 - **Neutral (#F8F2E5):** aged paper ground, warm but not beige-heavy.
 - **Neutral Raised (#FCF8EE):** sheets, subtle surfaces, skip link, and image-adjacent lift.
 - **Neutral Sunken (#F1E9D6):** hover and sunken paper states.
-- **Tertiary (#C9A227):** borrowed gold. Use as a single accent, mostly in hairlines, glyphs, figure routes, margin indexes, and small active states.
+- **Tertiary (oklch(70.5% 0.118 87)):** borrowed gold for luminous routes, nodes, and glows.
+- **Tertiary Ink (oklch(46.8% 0.102 82)):** readable gold for small note numbers, figure numbers, active rail states, and link hover.
+- **Tertiary Line (oklch(78.5% 0.072 88)):** pale gold for rules, hairlines, and underline texture.
 - **Cinnabar (#B5443A):** rare correction or alert accent. It should read as editorial annotation, not error UI.
 - **Moss, Brass, Winter, Stone:** semantic figure colors for replicated, contested, inferred, and stale states. Use inside diagrams, not as general brand colors.
 - **Night / Night Deep:** dark-mode atmosphere and edge canvas. Avoid neon or high-saturation AI aesthetics.
