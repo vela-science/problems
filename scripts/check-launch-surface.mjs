@@ -79,9 +79,12 @@ function assertExact(label, actual, expected) {
   }
 }
 
+const infrastructurePages = new Set(["src/pages/404.astro"]);
+
 const pageFiles = listFiles(path.join(root, "src/pages"))
   .filter((file) => file.endsWith(".astro"))
-  .map(relative);
+  .map(relative)
+  .filter((file) => !infrastructurePages.has(file));
 assertExact("public page files", pageFiles, expectedPages);
 
 const essayFiles = listFiles(path.join(root, "src/content/essays"))
@@ -122,4 +125,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log("Launch surface check passed: three public pages, three essay sources, three sitemap URLs.");
+console.log("Launch surface check passed: three public essay pages, three essay sources, three sitemap URLs.");

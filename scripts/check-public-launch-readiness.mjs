@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
@@ -114,6 +114,35 @@ requireMatch(
   versionLog,
   /### v1\.0 simulated-review launch candidate/i,
 );
+
+const referencedImages = new Set(
+  [
+    ...read("src/content/essays/constellations/index.mdx").matchAll(/["'](\/images\/constellations\/[^"']+\.(?:png|jpe?g))["']/gi),
+    ...read("src/content/essays/discovery-engine/index.mdx").matchAll(/["'](\/images\/constellations\/[^"']+\.(?:png|jpe?g))["']/gi),
+    ...read("src/content/essays/terafactories/index.mdx").matchAll(/["'](\/images\/constellations\/[^"']+\.(?:png|jpe?g))["']/gi),
+    ...read("src/pages/index.astro").matchAll(/["'](\/images\/constellations\/[^"']+\.(?:png|jpe?g))["']/gi),
+    ...read("src/pages/discovery-engine.astro").matchAll(/["'](\/images\/constellations\/[^"']+\.(?:png|jpe?g))["']/gi),
+    ...read("src/pages/terafactories.astro").matchAll(/["'](\/images\/constellations\/[^"']+\.(?:png|jpe?g))["']/gi),
+  ].map((match) => match[1]),
+);
+
+for (const image of referencedImages) {
+  const sourcePath = path.join(root, "public", image.replace(/^\//, ""));
+  const webpPath = sourcePath.replace(/\.(png|jpe?g)$/i, ".webp");
+  if (!existsSync(sourcePath)) {
+    failures.push(`referenced image is missing: ${image}`);
+    continue;
+  }
+  if (!existsSync(webpPath)) {
+    failures.push(`referenced image is missing optimized WebP pair: ${image}`);
+    continue;
+  }
+  const sourceSize = statSync(sourcePath).size;
+  const webpSize = statSync(webpPath).size;
+  if (sourceSize > 500_000 && webpSize >= sourceSize) {
+    failures.push(`optimized WebP is not smaller than large fallback: ${image}`);
+  }
+}
 
 if (failures.length) {
   console.error("Public launch readiness check failed:");
