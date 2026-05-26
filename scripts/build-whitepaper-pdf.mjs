@@ -2,9 +2,10 @@
 // =============================================================
 // scripts/build-whitepaper-pdf.mjs
 //
-// Build the Constellate whitepaper PDF from the MDX source.
+// Build the Constellate whitepaper PDF and its companion First
+// Corridor Pilot Plan PDF from a single Pandoc → Typst pipeline.
 //
-// Pipeline:
+// Whitepaper pipeline:
 //   1. Read src/content/whitepaper/index.mdx (single source of truth)
 //   2. Strip MDX frontmatter
 //   3. Extract <figure data-typst-figure="..."> blocks and replace
@@ -17,6 +18,14 @@
 //   8. Split body at the appendix boundary
 //   9. Strip manual section numbering and promote heading levels
 //   10. Compile constellate.typ → public/whitepaper/constellate-v0.1.pdf
+//
+// Pilot plan pipeline (simpler — pure prose, no figures, no appendix):
+//   1. Read whitepaper/pilot-plan-v0.1.md
+//   2. Strip the H1 title and metadata kicker (arkheion handles them)
+//   3. Extract "About This Document" as the abstract
+//   4. Strip section numbering (e.g. "## 1. Frontier" → "= Frontier")
+//   5. Remove horizontal rule separators around the closing block
+//   6. Compile pilot-plan.typ → public/whitepaper/pilot-plan-v0.1.pdf
 // =============================================================
 
 import { readFileSync, writeFileSync, mkdirSync, existsSync, unlinkSync } from "node:fs";
@@ -27,16 +36,23 @@ import { dirname, resolve, join } from "node:path";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, "..");
 
-const MDX_PATH      = join(root, "src/content/whitepaper/index.mdx");
-const TYPST_DIR     = join(root, "whitepaper/typst");
-const DIAGRAMS_DIR  = join(root, "public/whitepaper-diagrams");
-const ABSTRACT_PATH = join(TYPST_DIR, "body-abstract.typ");
-const MAIN_PATH     = join(TYPST_DIR, "body-main.typ");
-const APPENDIX_PATH = join(TYPST_DIR, "body-appendices.typ");
-const ENTRY_PATH    = join(TYPST_DIR, "constellate.typ");
-const PDF_OUT       = join(root, "public/whitepaper/constellate-v0.1.pdf");
-const TMP_MD        = join(TYPST_DIR, ".body.md");
-const TMP_TYP       = join(TYPST_DIR, ".body.typ");
+const MDX_PATH            = join(root, "src/content/whitepaper/index.mdx");
+const PILOT_MD_PATH       = join(root, "whitepaper/pilot-plan-v0.1.md");
+const TYPST_DIR           = join(root, "whitepaper/typst");
+const DIAGRAMS_DIR        = join(root, "public/whitepaper-diagrams");
+const ABSTRACT_PATH       = join(TYPST_DIR, "body-abstract.typ");
+const MAIN_PATH           = join(TYPST_DIR, "body-main.typ");
+const APPENDIX_PATH       = join(TYPST_DIR, "body-appendices.typ");
+const ENTRY_PATH          = join(TYPST_DIR, "constellate.typ");
+const PILOT_ENTRY_PATH    = join(TYPST_DIR, "pilot-plan.typ");
+const PILOT_ABSTRACT_PATH = join(TYPST_DIR, "body-pilot-abstract.typ");
+const PILOT_BODY_PATH     = join(TYPST_DIR, "body-pilot-plan.typ");
+const PDF_OUT             = join(root, "public/whitepaper/constellate-v0.1.pdf");
+const PILOT_PDF_OUT       = join(root, "public/whitepaper/pilot-plan-v0.1.pdf");
+const TMP_MD              = join(TYPST_DIR, ".body.md");
+const TMP_TYP             = join(TYPST_DIR, ".body.typ");
+const TMP_PILOT_MD        = join(TYPST_DIR, ".pilot.md");
+const TMP_PILOT_TYP       = join(TYPST_DIR, ".pilot.typ");
 
 // ── 1. Read MDX ───────────────────────────────────────────────
 console.log("→ Reading MDX source");
@@ -62,7 +78,7 @@ writeFileSync(TMP_MD, body, "utf8");
 
 // ── 4. Pandoc: markdown → Typst ──────────────────────────────
 console.log("→ Converting markdown → Typst");
-execFileSync("pandoc", ["-f", "gfm", "-t", "typst", TMP_MD, "-o", TMP_TYP], {
+execFileSync("pandoc", ["-f", "gfm-tex_math_dollars", "-t", "typst", TMP_MD, "-o", TMP_TYP], {
   stdio: "inherit",
 });
 
@@ -148,3 +164,70 @@ execFileSync(
 
 console.log(`✓ Wrote ${PDF_OUT}`);
 console.log(`  ${figures.length} figure(s) embedded`);
+
+// ── Pilot plan companion ────────────────────────────────────────
+console.log("\n→ Building pilot plan companion");
+
+let pilot = readFileSync(PILOT_MD_PATH, "utf8");
+
+// Strip the H1 title block — arkheion's template renders the title.
+// The block runs from "# The First Corridor Pilot Plan" through the
+// first horizontal rule that separates the title region from the
+// "About This Document" abstract.
+pilot = pilot.replace(/^#\s+The First Corridor Pilot Plan[\s\S]*?\n---\n/, "");
+
+// Extract "About This Document" → abstract; remove from body.
+const aboutMatch = pilot.match(/^##\s*About This Document\s*\n([\s\S]*?)(?=^##\s)/m);
+let pilotAbstract = "";
+if (aboutMatch) {
+  pilotAbstract = aboutMatch[1].trim();
+  pilot = pilot.replace(/^##\s*About This Document\s*\n[\s\S]*?(?=^##\s)/m, "");
+}
+
+// Strip the closing horizontal-rule + citation block; the arkheion
+// template's footer carries the version line already.
+pilot = pilot.replace(/\n+---\n+\*Cross-referenced[\s\S]*$/m, "\n");
+
+writeFileSync(TMP_PILOT_MD, pilot, "utf8");
+
+// Pandoc: markdown → Typst (abstract + body, separately).
+writeFileSync(join(TYPST_DIR, ".pilot-abstract.md"), pilotAbstract, "utf8");
+execFileSync("pandoc", [
+  "-f", "gfm-tex_math_dollars", "-t", "typst",
+  join(TYPST_DIR, ".pilot-abstract.md"),
+  "-o", join(TYPST_DIR, ".pilot-abstract.typ"),
+], { stdio: "inherit" });
+execFileSync("pandoc", [
+  "-f", "gfm-tex_math_dollars", "-t", "typst", TMP_PILOT_MD, "-o", TMP_PILOT_TYP,
+], { stdio: "inherit" });
+
+let pilotTyp = readFileSync(TMP_PILOT_TYP, "utf8");
+let pilotAbsTyp = readFileSync(join(TYPST_DIR, ".pilot-abstract.typ"), "utf8");
+
+// Clean pandoc artifacts: anchor labels + any stray horizontal rules.
+pilotTyp = pilotTyp.replace(/^<[a-z0-9-]+>\n/gm, "");
+pilotTyp = pilotTyp.replace(/^#horizontalrule\s*$/gm, "");
+pilotAbsTyp = pilotAbsTyp.replace(/^<[a-z0-9-]+>\n/gm, "");
+
+// Strip section numbering "== 1. Frontier" → "= Frontier"; promote
+// H2 → H1 so arkheion renders the section number itself.
+pilotTyp = pilotTyp.replace(/^==\s+\d+\.\s+(.+)$/gm, "= $1");
+
+writeFileSync(PILOT_ABSTRACT_PATH, pilotAbsTyp.trim() + "\n", "utf8");
+writeFileSync(PILOT_BODY_PATH,     pilotTyp.trim() + "\n", "utf8");
+
+for (const tmp of [
+  TMP_PILOT_MD, TMP_PILOT_TYP,
+  join(TYPST_DIR, ".pilot-abstract.md"),
+  join(TYPST_DIR, ".pilot-abstract.typ"),
+]) {
+  try { unlinkSync(tmp); } catch { /* non-fatal */ }
+}
+
+console.log("→ Compiling pilot plan Typst → PDF");
+execFileSync(
+  "typst",
+  ["compile", "--root", root, PILOT_ENTRY_PATH, PILOT_PDF_OUT],
+  { stdio: "inherit" },
+);
+console.log(`✓ Wrote ${PILOT_PDF_OUT}`);
