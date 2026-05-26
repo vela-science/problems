@@ -38,6 +38,7 @@ const root = resolve(__dirname, "..");
 
 const MDX_PATH            = join(root, "src/content/whitepaper/index.mdx");
 const PILOT_MD_PATH       = join(root, "whitepaper/pilot-plan-v0.1.md");
+const SPEC_MD_PATH        = join(root, "whitepaper/vela-specification-v0.5.md");
 const TYPST_DIR           = join(root, "whitepaper/typst");
 const DIAGRAMS_DIR        = join(root, "public/whitepaper-diagrams");
 const ABSTRACT_PATH       = join(TYPST_DIR, "body-abstract.typ");
@@ -47,12 +48,18 @@ const ENTRY_PATH          = join(TYPST_DIR, "constellate.typ");
 const PILOT_ENTRY_PATH    = join(TYPST_DIR, "pilot-plan.typ");
 const PILOT_ABSTRACT_PATH = join(TYPST_DIR, "body-pilot-abstract.typ");
 const PILOT_BODY_PATH     = join(TYPST_DIR, "body-pilot-plan.typ");
+const SPEC_ENTRY_PATH     = join(TYPST_DIR, "vela-specification.typ");
+const SPEC_ABSTRACT_PATH  = join(TYPST_DIR, "body-spec-abstract.typ");
+const SPEC_BODY_PATH      = join(TYPST_DIR, "body-spec.typ");
 const PDF_OUT             = join(root, "public/whitepaper/constellate-v0.1.pdf");
 const PILOT_PDF_OUT       = join(root, "public/whitepaper/pilot-plan-v0.1.pdf");
+const SPEC_PDF_OUT        = join(root, "public/whitepaper/vela-specification-v0.5.pdf");
 const TMP_MD              = join(TYPST_DIR, ".body.md");
 const TMP_TYP             = join(TYPST_DIR, ".body.typ");
 const TMP_PILOT_MD        = join(TYPST_DIR, ".pilot.md");
 const TMP_PILOT_TYP       = join(TYPST_DIR, ".pilot.typ");
+const TMP_SPEC_MD         = join(TYPST_DIR, ".spec.md");
+const TMP_SPEC_TYP        = join(TYPST_DIR, ".spec.typ");
 
 // ── 1. Read MDX ───────────────────────────────────────────────
 console.log("→ Reading MDX source");
@@ -231,3 +238,67 @@ execFileSync(
   { stdio: "inherit" },
 );
 console.log(`✓ Wrote ${PILOT_PDF_OUT}`);
+
+// ── Vela Protocol Specification companion ───────────────────────
+console.log("\n→ Building Vela protocol specification");
+
+let spec = readFileSync(SPEC_MD_PATH, "utf8");
+
+// Strip the H1 title block — arkheion's template renders the title.
+spec = spec.replace(/^#\s+The Vela Protocol Specification[\s\S]*?\n---\n/, "");
+
+// Extract "About This Document" → abstract; remove from body.
+const specAboutMatch = spec.match(/^##\s*About This Document\s*\n([\s\S]*?)(?=^##\s)/m);
+let specAbstract = "";
+if (specAboutMatch) {
+  specAbstract = specAboutMatch[1].trim();
+  spec = spec.replace(/^##\s*About This Document\s*\n[\s\S]*?(?=^##\s)/m, "");
+}
+
+// Strip closing horizontal-rule + citation block.
+spec = spec.replace(/\n+---\n+\*Cross-referenced[\s\S]*$/m, "\n");
+
+writeFileSync(TMP_SPEC_MD, spec, "utf8");
+writeFileSync(join(TYPST_DIR, ".spec-abstract.md"), specAbstract, "utf8");
+
+execFileSync("pandoc", [
+  "-f", "gfm-tex_math_dollars", "-t", "typst",
+  join(TYPST_DIR, ".spec-abstract.md"),
+  "-o", join(TYPST_DIR, ".spec-abstract.typ"),
+], { stdio: "inherit" });
+execFileSync("pandoc", [
+  "-f", "gfm-tex_math_dollars", "-t", "typst", TMP_SPEC_MD, "-o", TMP_SPEC_TYP,
+], { stdio: "inherit" });
+
+let specTyp = readFileSync(TMP_SPEC_TYP, "utf8");
+let specAbsTyp = readFileSync(join(TYPST_DIR, ".spec-abstract.typ"), "utf8");
+
+specTyp = specTyp.replace(/^<[a-z0-9-]+>\n/gm, "");
+specTyp = specTyp.replace(/^#horizontalrule\s*$/gm, "");
+specAbsTyp = specAbsTyp.replace(/^<[a-z0-9-]+>\n/gm, "");
+
+// Strip section numbering "== 1. Introduction" → "= Introduction"
+specTyp = specTyp.replace(/^==\s+\d+\.\s+(.+)$/gm, "= $1");
+// And "=== 7.1 Actor Records" → "== Actor Records" so arkheion auto-numbers
+specTyp = specTyp.replace(/^===\s+\d+\.\d+\s+(.+)$/gm, "== $1");
+// Promote appendix headings
+specTyp = specTyp.replace(/^==\s+Appendix\s+[A-Z]:\s+(.+)$/gm, "= $1");
+
+writeFileSync(SPEC_ABSTRACT_PATH, specAbsTyp.trim() + "\n", "utf8");
+writeFileSync(SPEC_BODY_PATH,     specTyp.trim() + "\n", "utf8");
+
+for (const tmp of [
+  TMP_SPEC_MD, TMP_SPEC_TYP,
+  join(TYPST_DIR, ".spec-abstract.md"),
+  join(TYPST_DIR, ".spec-abstract.typ"),
+]) {
+  try { unlinkSync(tmp); } catch { /* non-fatal */ }
+}
+
+console.log("→ Compiling specification Typst → PDF");
+execFileSync(
+  "typst",
+  ["compile", "--root", root, SPEC_ENTRY_PATH, SPEC_PDF_OUT],
+  { stdio: "inherit" },
+);
+console.log(`✓ Wrote ${SPEC_PDF_OUT}`);
