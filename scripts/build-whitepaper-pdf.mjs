@@ -37,8 +37,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, "..");
 
 const MDX_PATH            = join(root, "src/content/whitepaper/index.mdx");
-const PILOT_MD_PATH       = join(root, "whitepaper/pilot-plan-v0.1.md");
-const SPEC_MD_PATH        = join(root, "whitepaper/vela-specification-v0.5.md");
+const PILOT_MD_PATH       = join(root, "src/content/whitepaper/pilot-plan.mdx");
+const SPEC_MD_PATH        = join(root, "src/content/whitepaper/specification.mdx");
 const TYPST_DIR           = join(root, "whitepaper/typst");
 const DIAGRAMS_DIR        = join(root, "public/whitepaper-diagrams");
 const ABSTRACT_PATH       = join(TYPST_DIR, "body-abstract.typ");
@@ -177,11 +177,8 @@ console.log("\n→ Building pilot plan companion");
 
 let pilot = readFileSync(PILOT_MD_PATH, "utf8");
 
-// Strip the H1 title block — arkheion's template renders the title.
-// The block runs from "# The First Corridor Pilot Plan" through the
-// first horizontal rule that separates the title region from the
-// "About This Document" abstract.
-pilot = pilot.replace(/^#\s+The First Corridor Pilot Plan[\s\S]*?\n---\n/, "");
+// Strip MDX frontmatter (single source of truth lives in content collection).
+pilot = pilot.replace(/^---[\s\S]*?\n---\n/, "");
 
 // Extract "About This Document" → abstract; remove from body.
 const aboutMatch = pilot.match(/^##\s*About This Document\s*\n([\s\S]*?)(?=^##\s)/m);
@@ -244,8 +241,8 @@ console.log("\n→ Building Vela protocol specification");
 
 let spec = readFileSync(SPEC_MD_PATH, "utf8");
 
-// Strip the H1 title block — arkheion's template renders the title.
-spec = spec.replace(/^#\s+The Vela Protocol Specification[\s\S]*?\n---\n/, "");
+// Strip MDX frontmatter (single source of truth lives in content collection).
+spec = spec.replace(/^---[\s\S]*?\n---\n/, "");
 
 // Extract "About This Document" → abstract; remove from body.
 const specAboutMatch = spec.match(/^##\s*About This Document\s*\n([\s\S]*?)(?=^##\s)/m);
