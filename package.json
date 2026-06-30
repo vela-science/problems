@@ -8,7 +8,6 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "build:pdf": "node scripts/build-whitepaper-pdf.mjs",
     "check:launch-surface": "node scripts/check-launch-surface.mjs",
     "check:public-launch": "node scripts/check-public-launch-readiness.mjs",
     "check:rendered": "node scripts/check-rendered-surface.mjs",
