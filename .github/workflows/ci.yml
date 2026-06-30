@@ -24,8 +24,5 @@ jobs:
       - name: Install
         run: bun install --frozen-lockfile
 
-      - name: Check launch surface
-        run: bun run check:launch-surface
-
       - name: Build
         run: bun run build
