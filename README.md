@@ -46,25 +46,15 @@ Ten public pages:
 
 Visuals are web-native Astro/HTML/SVG components. Do not add a separate diagram generation or asset build pipeline.
 
-## Launch And Review Docs
+## Docs
 
-- `docs/trilogy-doctrine.md` defines the Record -> Engine -> Body frame.
-- `docs/source-audit.md` tracks external citations and factual claim groups.
-- `docs/figure-registry.md` tracks visual QA across desktop, tablet, and mobile.
-- `docs/external-review-program.md` defines reviewer lanes and launch blockers.
-- `docs/external-review-outreach.md` tracks the live reviewer outreach queue.
-- `docs/reviewer-intake.md` lists the reviewer names/contact info needed before outreach.
-- `docs/reviewer-candidate-shortlist.md` suggests possible reviewer profiles and names to consider.
-- `docs/reviewer-emails.md` contains ready-to-send outreach drafts by lane.
-- `docs/review-packets.md` contains lane-specific prompts ready to send.
-- `docs/reviewer-claim-packet.md` lists the highest-priority claims for expert review.
-- `docs/reader-validation-protocol.md` defines first-time reader sessions.
-- `docs/feedback-workflow.md` defines feedback triage and closeout rules.
-- `docs/review-feedback-log.md` records reviewer decisions and reader-session summaries.
-- `docs/launch-package.md` contains reviewer and public launch copy.
-- `docs/public-launch-readiness.md` tracks launch-blocking gates.
-- `docs/active-goal-audit.md` maps the active launch goal to current evidence and gaps.
-- `docs/version-log.md` records material public-facing changes.
+- `docs/design-handoff.md`: current UI/UX state and the handoff brief for the next agent.
+- `docs/trilogy-doctrine.md`: the Record -> Engine -> Body frame and the non-overlap rule.
+- `docs/essay-inspirations.md`: the writing voice and style alignment.
+- `docs/source-audit.md`: external citations and factual claim groups.
+- `docs/figure-registry.md`: visual QA across desktop, tablet, and mobile.
+- `docs/terafactories-watercolor-prompts.md`: art direction for the Terafactory plates.
+- `docs/version-log.md`: material public-facing changes.
 
 ## Deployment
 
