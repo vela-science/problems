@@ -24,15 +24,23 @@ Example:
 ```bash
 export PATH="$HOME/.nvm/versions/node/v22.14.0/bin:$PATH"
 node -v
-bun run check:launch-surface
 bun run build
 ```
 
 ## Routes
 
-- `/`: *Constellations of Borrowed Light*, the shared-record essay
+Ten public pages:
+
+- `/`: *Constellations of Borrowed Light*, the shared-record essay (the homepage redirects here)
 - `/discovery-engine`: *The Discovery Engine*, the transition-engine essay
 - `/terafactories`: *The Terafactory Age*, the public-body essay
+- `/whitepaper`: *The Constellate Architecture*, the single technical companion
+- `/case`: *The Case*, the four-minute argument
+- `/vela`: the Vela protocol landing
+- `/stack`: the six-layer ecosystem stack
+- `/facility`: an interactive 3D model of Meridian's first synthesis hall
+- `/catalog`: the index of every artifact
+- `/404`: not-found page
 
 ## Visuals
 
@@ -60,9 +68,7 @@ Visuals are web-native Astro/HTML/SVG components. Do not add a separate diagram 
 
 ## Deployment
 
-- `bun run build` runs `astro build`.
-- `bun run check:launch-surface` verifies that only the three trilogy pages are public routes.
-- `bun run check:public-launch` verifies the simulated-review launch gates for the current release candidate. It does not claim real external reviewers were contacted.
+- `bun run build` runs `astro build`; it is the build/correctness gate (CI runs install + build).
 - Build output stays untracked in `dist/`.
 - `public/robots.txt` and `public/sitemap.xml` are the only crawler files.
 - SEO metadata and JSON-LD live in `src/layouts/Base.astro`.
@@ -72,7 +78,6 @@ Visuals are web-native Astro/HTML/SVG components. Do not add a separate diagram 
 GitHub Actions runs:
 
 - `bun install --frozen-lockfile`
-- `bun run check:launch-surface`
 - `bun run build`
 
 See `.github/workflows/ci.yml`.

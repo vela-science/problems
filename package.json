@@ -8,8 +8,6 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "check:public-launch": "node scripts/check-public-launch-readiness.mjs",
-    "check:rendered": "node scripts/check-rendered-surface.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },
