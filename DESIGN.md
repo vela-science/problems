@@ -160,6 +160,11 @@ components:
 
 ## Overview
 
+**Precedence:** where this document conflicts with `src/styles/tokens.css`,
+tokens.css wins. It is the single source of truth for colors, type, motion,
+radii, and spacing; this document describes and motivates it. After changing
+tokens, update this file in the same commit.
+
 Constellate is a flagship reading surface, not a marketing site and not a product dashboard. The design register is warm editorial minimalism: cream paper, dark indigo ink, borrowed gold, restrained scientific marks, and generous negative space. The page should feel like an authored atlas plate inside a serious essay.
 
 The primary design job is to help a technically literate reader stay oriented through a dense argument. Beauty matters, but it must come from hierarchy, rhythm, image quality, and diagram clarity rather than decoration. Scientific diagrams are part of the argument. They should make the essay more navigable, not merely illustrate its mood.
@@ -254,6 +259,36 @@ Hairlines should use ink or gold with opacity. Avoid thick side-stripe borders a
 **Technical SVG Diagram:** use web-native SVG/HTML when labels, legends, responsiveness, or captions need to remain exact. Keep internal typography sans, labels small but legible, and all text inside the visual free from essay-body inheritance.
 
 **Closing Page:** a quiet return to the opening image language. It should feel like the final breath of the reading experience, not a dramatic poster.
+
+## Case law
+
+Rules paid for on 2026-07-10, written down so they are not paid for twice.
+
+**Marks are content; atmosphere is ambient.** Discrete ink — dots, lines,
+glyphs — appears only inside designed containers: figures, plates, the
+reading rail, navigation. Full-page ambient layers must be edgeless
+(heavily blurred wash only). The margin star atlas failed at every opacity:
+perceptible marks collided with the rail, margin notes, and wide figures;
+imperceptible marks were dead code. There is no vacant band in the margins
+of a reading layout; do not paint marks into them.
+
+**Perceptibility floor.** If an effect cannot be noticed by a reader, it
+does not ship. Subtle is a register, not a hiding place. The original
+ambient sky rendered near three percent effective alpha, was broken for its
+entire life, and nobody could tell, because working and broken looked
+identical.
+
+**Adaptive behavior must be demonstrable.** Any system keyed to scroll,
+time, or reading state must be verifiable as a measured value or screenshot
+in the browser, not as intent in a comment. Every such system is listed in
+`docs/living-systems.md` with its verification; add new ones there in the
+same commit that ships them.
+
+**Relocate, don't tune.** When feedback on an element is categorical
+("this conflicts," "this does nothing"), a number change — opacity, size,
+duration — is the wrong fix. Move the element's job to a medium that can
+hold it, or delete it. The composing-sky story survived the atlas's
+deletion by moving into the wash and the rail's visited trail.
 
 ## Do's and Don'ts
 
