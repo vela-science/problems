@@ -25,49 +25,49 @@ colors:
   night-deep: "oklch(21% 0.048 260)"
 typography:
   h1:
-    fontFamily: "Cormorant Garamond"
+    fontFamily: "Newsreader"
     fontSize: "4.35rem"
     fontWeight: "500"
     lineHeight: "1.02"
     letterSpacing: "-0.005em"
   h2:
-    fontFamily: "Cormorant Garamond"
+    fontFamily: "Newsreader"
     fontSize: "2.35rem"
     fontWeight: "500"
     lineHeight: "1.05"
     letterSpacing: "-0.005em"
   body-md:
-    fontFamily: "EB Garamond"
+    fontFamily: "Newsreader"
     fontSize: "1rem"
     fontWeight: "400"
     lineHeight: "1.75"
     letterSpacing: "0em"
   body-lg:
-    fontFamily: "EB Garamond"
+    fontFamily: "Newsreader"
     fontSize: "1.12rem"
     fontWeight: "400"
     lineHeight: "1.72"
     letterSpacing: "0em"
   caption:
-    fontFamily: "EB Garamond"
+    fontFamily: "Newsreader"
     fontSize: "0.86rem"
     fontWeight: "400"
     lineHeight: "1.5"
     letterSpacing: "0em"
   note:
-    fontFamily: "Inter Tight"
+    fontFamily: "Inter"
     fontSize: "0.68rem"
     fontWeight: "400"
     lineHeight: "1.46"
     letterSpacing: "0.005em"
   label-caps:
-    fontFamily: "Inter Tight"
+    fontFamily: "Inter"
     fontSize: "0.72rem"
     fontWeight: "500"
     lineHeight: "1"
     letterSpacing: "0.18em"
   mono-index:
-    fontFamily: "JetBrains Mono"
+    fontFamily: "IBM Plex Mono"
     fontSize: "0.68rem"
     fontWeight: "400"
     lineHeight: "1.2"
@@ -189,10 +189,10 @@ Do not use pure black or pure white. Do not introduce a second dominant accent w
 
 The typographic system is deliberately literary, with a technical counterweight.
 
-- **Cormorant Garamond** carries titles, section headings, and figure title fragments. It should feel like a chapter opening, not ornamental display type.
-- **EB Garamond** carries the essay body and captions. It is the voice of the argument.
-- **Inter Tight** carries navigation, uppercase metadata, margin notes, and diagram labels. It prevents the page from becoming too antique.
-- **JetBrains Mono** carries indexes, code-like state, figure coordinates, and numbered references.
+- **Newsreader** (display cuts, high optical size) carries titles, section headings, and figure title fragments. It should feel like a chapter opening, not ornamental display type.
+- **Newsreader** (text cuts) carries the essay body and captions. It is the voice of the argument.
+- **Inter** carries navigation, uppercase metadata, margin notes, and diagram labels. It prevents the page from becoming too antique.
+- **IBM Plex Mono** carries indexes, code-like state, figure coordinates, and numbered references.
 
 Body copy should stay within a humane measure. Desktop prose should sit around 41.5rem. Tablet prose can be narrower than figure width; figures may expand, paragraphs should not. Body line-height should remain generous enough for dense prose, generally around 1.7 to 1.75.
 
