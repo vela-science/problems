@@ -1,6 +1,6 @@
 ---
 version: "alpha"
-name: "Constellate"
+name: "Vela"
 description: "A light editorial atlas for essays about scientific state, inherited knowledge, and navigation after papers."
 colors:
   primary: "oklch(26.5% 0.035 262)"
@@ -165,7 +165,7 @@ tokens.css wins. It is the single source of truth for colors, type, motion,
 radii, and spacing; this document describes and motivates it. After changing
 tokens, update this file in the same commit.
 
-Constellate is a flagship reading surface, not a marketing site and not a product dashboard. The design register is light editorial instrumentation: mineral cream paper, dark indigo ink, directional gold, restrained scientific marks, and generous negative space. Painted plates carry atmosphere; technical figures use baselines, trajectories, nodes, lineage, convergence, and terminal axes to make state change legible.
+Vela is a flagship reading surface, not a marketing site and not a product dashboard. The design register is light editorial instrumentation: mineral cream paper, dark indigo ink, directional gold, restrained scientific marks, and generous negative space. Painted plates carry atmosphere; technical figures use baselines, trajectories, nodes, lineage, convergence, and terminal axes to make state change legible.
 
 The primary design job is to help a technically literate reader stay oriented through a dense argument. Beauty matters, but it must come from hierarchy, rhythm, image quality, and diagram clarity rather than decoration. Scientific diagrams are part of the argument. They should make the essay more navigable, not merely illustrate its mood.
 
@@ -248,7 +248,7 @@ Hairlines should use ink or gold with opacity. Avoid thick side-stripe borders a
 
 ## Components
 
-**Masthead:** one original Constellate route mark, one wordmark, and quiet essay context. No unfinished route links or product navigation. The route mark may use the shared baseline/trajectory grammar but must not reproduce the provisional Vela symbol.
+**Masthead:** the canonical Vela sail mark, the Vela wordmark, and quiet essay context. No unfinished route links or product navigation. Do not invent alternate route marks for publication surfaces.
 
 **Hero:** title, subtitle, and image plate. No marketing eyebrow. No CTA cluster. The hero is an opening page, not a conversion module.
 
@@ -256,7 +256,7 @@ Hairlines should use ink or gold with opacity. Avoid thick side-stripe borders a
 
 **Left Rail:** quiet table of contents with glyph plus title. Active state can strengthen opacity and gold glow, but the rail must never compete with the prose.
 
-**Margin Note:** visible in the right margin on desktop, inline toggle on smaller screens. It is reference infrastructure, not a decorative pull quote. Use sans text, numbered index, and a thin rule.
+**Margin Note:** progressively disclosed in the right margin on desktop through hover, focus, or a pinned click state; inline toggle on smaller screens. It is reference infrastructure, not a decorative pull quote. Use sans text, numbered index, and a thin rule. Never make hover the only access path.
 
 **Figure Plate:** figure identity belongs in the caption below the visual. Technical figures use the numbered `Fig. NN. Title. Explanation.` caption format. Do not put figure numbers or explanatory captions inside SVGs.
 
