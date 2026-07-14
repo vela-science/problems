@@ -247,6 +247,8 @@ Hairlines should use ink or gold with opacity. Avoid thick side-stripe borders a
 
 **Masthead:** the canonical Vela sail mark, the Vela wordmark, and quiet essay context. Use the full two-lineage construction reference at 32px and above and a hand-simplified sail for the favicon. No unfinished route links or product navigation. Do not invent alternate route marks for publication surfaces.
 
+**Browser and social identity:** every browser- and OS-facing asset uses the same Vela sail geometry and the canonical cream (`#F7F6F2`), ink (`#081224`), and gold (`#C9A664`). Keep SVG, PNG favicon, Apple touch, manifest, and pinned-tab exports synchronized. The social card may combine the exact sail with the essay's watercolor world, but must remain a true 1200×630 crop and carry readable Vela attribution. Never substitute the retired constellation polygon or an AI-redrawn sail.
+
 **Hero:** title, subtitle, and image plate. No marketing eyebrow. No CTA cluster. The hero is an opening page, not a conversion module.
 
 **Section Heading:** title on the left, one accumulating Vela bearing on the right, and one quiet gold/ink rule beneath. The bearing shows how much of the route has been inherited; it is not a repeated star ornament. The heading should not create extra vertical dead space.
