@@ -1,7 +1,7 @@
 ---
 version: "alpha"
 name: "Constellate"
-description: "A warm editorial atlas for essays about scientific state, inherited knowledge, and navigation after papers."
+description: "A light editorial atlas for essays about scientific state, inherited knowledge, and navigation after papers."
 colors:
   primary: "oklch(26.5% 0.035 262)"
   on-primary: "oklch(98.3% 0.017 88)"
@@ -9,9 +9,9 @@ colors:
   tertiary: "oklch(70.5% 0.118 87)"
   tertiary-ink: "oklch(46.8% 0.102 82)"
   tertiary-line: "oklch(78.5% 0.072 88)"
-  neutral: "oklch(96.2% 0.024 88)"
-  neutral-raised: "oklch(98.3% 0.017 88)"
-  neutral-sunken: "oklch(90.7% 0.044 86)"
+  neutral: "oklch(97.2% 0.013 88)"
+  neutral-raised: "oklch(98.8% 0.008 88)"
+  neutral-sunken: "oklch(92.4% 0.025 86)"
   ink-strong: "oklch(22% 0.034 262)"
   ink-muted: "oklch(35.5% 0.031 262)"
   gold-soft: "oklch(89.6% 0.052 89)"
@@ -165,7 +165,7 @@ tokens.css wins. It is the single source of truth for colors, type, motion,
 radii, and spacing; this document describes and motivates it. After changing
 tokens, update this file in the same commit.
 
-Constellate is a flagship reading surface, not a marketing site and not a product dashboard. The design register is warm editorial minimalism: cream paper, dark indigo ink, borrowed gold, restrained scientific marks, and generous negative space. The page should feel like an authored atlas plate inside a serious essay.
+Constellate is a flagship reading surface, not a marketing site and not a product dashboard. The design register is light editorial instrumentation: mineral cream paper, dark indigo ink, directional gold, restrained scientific marks, and generous negative space. Painted plates carry atmosphere; technical figures use baselines, trajectories, nodes, lineage, convergence, and terminal axes to make state change legible.
 
 The primary design job is to help a technically literate reader stay oriented through a dense argument. Beauty matters, but it must come from hierarchy, rhythm, image quality, and diagram clarity rather than decoration. Scientific diagrams are part of the argument. They should make the essay more navigable, not merely illustrate its mood.
 
@@ -178,9 +178,9 @@ The canonical palette is cream, ink, and gold. Cream is the reading ground, ink 
 - **Primary (#232B3A):** body ink and the default color for serious claims.
 - **Ink Strong (#14191F):** reserved for maximum contrast and rare anchoring moments.
 - **Secondary (#4A5568):** captions, rail labels, ticks, and quiet metadata.
-- **Neutral (#F8F2E5):** aged paper ground, warm but not beige-heavy.
-- **Neutral Raised (#FCF8EE):** sheets, subtle surfaces, skip link, and image-adjacent lift.
-- **Neutral Sunken (#F1E9D6):** hover and sunken paper states.
+- **Neutral (oklch(97.2% 0.013 88)):** light mineral cream ground, warm enough for the paintings without reading as parchment.
+- **Neutral Raised (oklch(98.8% 0.008 88)):** sheets, subtle surfaces, skip link, and image-adjacent lift.
+- **Neutral Sunken (oklch(92.4% 0.025 86)):** hover and sunken diagram states.
 - **Tertiary (oklch(70.5% 0.118 87)):** borrowed gold for luminous routes, nodes, and glows.
 - **Tertiary Ink (oklch(46.8% 0.102 82)):** readable gold for small note numbers, figure numbers, active rail states, and link hover.
 - **Tertiary Line (oklch(78.5% 0.072 88)):** pale gold for rules, hairlines, and underline texture.
@@ -231,6 +231,8 @@ Avoid glassmorphism, blur panels, heavy drop shadows, and framed section bands. 
 
 Shapes are print-shaped and sharp. Use no radius or tiny radius. Rounded rectangles are not part of the main visual language except for functional affordances such as skip links or small controls.
 
+Technical figures share one state-substrate grammar. A baseline establishes inherited state; trajectories carry claims, evidence, or lineage; nodes mark addressable findings or decisions; terminal axes mark changes in jurisdiction or ownership; parallel paths preserve plurality; gaps make missing context visible. Gradients may encode continuity, uncertainty, or density, but should not provide ambient decoration. Do not copy the provisional Vela symbol or use decorative star fields as a substitute for relationships.
+
 Glyphs should read as scientific sigils: simple gold nodes, thin connecting lines, and enough semantic distinction to work at 30px in the rail. They should track the essay's argument:
 
 - Inheritance: first light.
@@ -243,6 +245,8 @@ Glyphs should read as scientific sigils: simple gold nodes, thin connecting line
 Hairlines should use ink or gold with opacity. Avoid thick side-stripe borders and decorative dividers.
 
 ## Components
+
+**Masthead:** one original Constellate route mark, one wordmark, and quiet essay context. No unfinished route links or product navigation. The route mark may use the shared baseline/trajectory grammar but must not reproduce the provisional Vela symbol.
 
 **Hero:** title, subtitle, and image plate. No marketing eyebrow. No CTA cluster. The hero is an opening page, not a conversion module.
 
