@@ -235,26 +235,23 @@ Shapes are print-shaped and sharp. Use no radius or tiny radius. Rounded rectang
 
 Technical figures share one state-substrate grammar. A baseline establishes inherited state; trajectories carry claims, evidence, or lineage; nodes mark addressable findings or decisions; apertures expose shared conditions without implying equivalence; terminal axes mark changes in jurisdiction or ownership; parallel paths preserve plurality; gaps make missing context visible. Each figure must assign those marks a local semantic job rather than repeating a decorative route motif. Gradients may encode continuity, uncertainty, or density, but should not provide ambient decoration. Do not copy the provisional Vela symbol or use decorative star fields as a substitute for relationships.
 
-Glyphs should read as scientific sigils: simple gold nodes, thin connecting lines, and enough semantic distinction to work at 30px in the rail. They should track the essay's argument:
-
-- Inheritance: first light.
-- Pattern: scattered points becoming legible.
-- Substrate: layered state beneath the surface.
-- Constellation: navigable field structure.
-- Contact With Reality: experiment and feedback loop.
-- Arrival: destination, horizon, and resolved bearing.
+Editorial bearings use the Vela substrate, convex route, lineage echo, and
+terminal axis. They accumulate section by section instead of swapping among
+unrelated constellation glyphs. At rail scale, the active route must remain a
+quiet orientation signal; it must not expand into a decorative miniature
+diagram or acquire a glow.
 
 Hairlines should use ink or gold with opacity. Avoid thick side-stripe borders and decorative dividers.
 
 ## Components
 
-**Masthead:** the canonical Vela sail mark, the Vela wordmark, and quiet essay context. No unfinished route links or product navigation. Do not invent alternate route marks for publication surfaces.
+**Masthead:** the canonical Vela sail mark, the Vela wordmark, and quiet essay context. Use the full two-lineage construction reference at 32px and above and a hand-simplified sail for the favicon. No unfinished route links or product navigation. Do not invent alternate route marks for publication surfaces.
 
 **Hero:** title, subtitle, and image plate. No marketing eyebrow. No CTA cluster. The hero is an opening page, not a conversion module.
 
-**Section Heading:** title on the left, glyph on the right, one quiet gold/ink rule beneath. The glyph is identity, not decoration. The heading should not create extra vertical dead space.
+**Section Heading:** title on the left, one accumulating Vela bearing on the right, and one quiet gold/ink rule beneath. The bearing shows how much of the route has been inherited; it is not a repeated star ornament. The heading should not create extra vertical dead space.
 
-**Left Rail:** quiet table of contents with glyph plus title. Active state can strengthen opacity and gold glow, but the rail must never compete with the prose.
+**Left Rail:** quiet table of contents with the same compact accumulated bearing plus title. Active state strengthens opacity and one gold point; it does not add glow or shadow. The rail must remain above sticky figures without competing with the prose.
 
 **Margin Note:** progressively disclosed in the right margin on desktop through hover, focus, or a pinned click state; inline toggle on smaller screens. It is reference infrastructure, not a decorative pull quote. Use sans text, numbered index, and a thin rule. Never make hover the only access path.
 
@@ -264,7 +261,7 @@ Hairlines should use ink or gold with opacity. Avoid thick side-stripe borders a
 
 **Technical SVG Diagram:** use web-native SVG/HTML when labels, legends, responsiveness, or captions need to remain exact. Keep internal typography sans, labels small but legible, and all text inside the visual free from essay-body inheritance.
 
-**Closing Page:** a quiet return to the opening image language. It should feel like the final breath of the reading experience, not a dramatic poster.
+**Closing Page:** a quiet return to the opening image language. On Constellations, the accepted Figure 7 route arrives once, becomes a mast and sail at a light horizon, then holds still. It should feel like the final breath of the reading experience, not a dramatic poster.
 
 ## Case law
 
