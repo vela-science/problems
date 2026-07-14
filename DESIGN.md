@@ -199,6 +199,8 @@ The typographic system is deliberately literary, with a technical counterweight.
 - **Inter** carries navigation, uppercase metadata, margin notes, and diagram labels. It prevents the page from becoming too antique.
 - **IBM Plex Mono** carries indexes, code-like state, figure coordinates, and numbered references.
 
+Technical SVG labels use one shared viewBox scale: `--diagram-label-sm` at 10px for secondary gates and axes, and `--diagram-label` at 11px for primary stations and state roots. These are diagram coordinates rather than browser text sizes; mobile compositions must still remove labels that would read as thumbnails.
+
 Body copy should stay within a humane measure. Desktop prose should sit around 41.5rem. Tablet prose can be narrower than figure width; figures may expand, paragraphs should not. Body line-height should remain generous enough for dense prose, generally around 1.7 to 1.75.
 
 Avoid dramatic one-line fragments unless the essay truly needs a hinge. Avoid product-copy rhythm. Do not use italics as a default way to make citations or notes feel literary; margin notes should be clear reference text.
@@ -231,7 +233,7 @@ Avoid glassmorphism, blur panels, heavy drop shadows, and framed section bands. 
 
 Shapes are print-shaped and sharp. Use no radius or tiny radius. Rounded rectangles are not part of the main visual language except for functional affordances such as skip links or small controls.
 
-Technical figures share one state-substrate grammar. A baseline establishes inherited state; trajectories carry claims, evidence, or lineage; nodes mark addressable findings or decisions; terminal axes mark changes in jurisdiction or ownership; parallel paths preserve plurality; gaps make missing context visible. Gradients may encode continuity, uncertainty, or density, but should not provide ambient decoration. Do not copy the provisional Vela symbol or use decorative star fields as a substitute for relationships.
+Technical figures share one state-substrate grammar. A baseline establishes inherited state; trajectories carry claims, evidence, or lineage; nodes mark addressable findings or decisions; apertures expose shared conditions without implying equivalence; terminal axes mark changes in jurisdiction or ownership; parallel paths preserve plurality; gaps make missing context visible. Each figure must assign those marks a local semantic job rather than repeating a decorative route motif. Gradients may encode continuity, uncertainty, or density, but should not provide ambient decoration. Do not copy the provisional Vela symbol or use decorative star fields as a substitute for relationships.
 
 Glyphs should read as scientific sigils: simple gold nodes, thin connecting lines, and enough semantic distinction to work at 30px in the rail. They should track the essay's argument:
 
