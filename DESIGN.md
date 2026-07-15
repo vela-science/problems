@@ -210,6 +210,7 @@ The typographic system is deliberately literary, with a technical counterweight.
 - **Newsreader** (text cuts) carries the essay body and captions. It is the voice of the argument.
 - **Inter** carries navigation, uppercase metadata, margin notes, and diagram labels. It prevents the page from becoming too antique.
 - **IBM Plex Mono** carries indexes, code-like state, figure coordinates, and numbered references.
+- **Schibsted Grotesk** is the product voice on `/vela`: a clean, wind-cut sans for the adoption surface, used with IBM Plex Mono for coordinates and commands. It does not replace the literary essay typography.
 - The desktop reading rail uses the compact `--text-rail` step and keeps section names on one line. Below 1320 pixels it becomes the glyph-only bearing before those labels can enter the prose column.
 
 Technical SVG labels use one shared viewBox scale: `--diagram-label-xs` at 9px for compact secondary annotations, `--diagram-label-sm` at 10px for gates and axes, `--diagram-label` at 11px for primary stations and state roots, and `--diagram-title` at 15px for the rare serif station name. These are diagram coordinates rather than browser text sizes; mobile compositions must still remove labels that would read as thumbnails.
@@ -274,7 +275,7 @@ Hairlines should use ink or gold with opacity. Avoid thick side-stripe borders a
 
 ## Components
 
-**Masthead:** the canonical Vela sail mark and the Vela wordmark. On an essay, the mark returns to the flagship essay and the hero supplies the current essay title. Desktop navigation exposes the essay sequence, Architecture, Vela, and a quiet secondary publication index; current destinations use ink plus a one-pixel gold underline. Below the content-driven desktop breakpoint, one text-labelled Menu control expands a complete three-group index in normal flow so navigation never covers the reading surface. Use the full two-lineage construction reference at 32px and above and a hand-simplified sail for the favicon. Do not invent alternate route marks for publication surfaces.
+**Masthead:** the canonical Vela sail mark and the Vela wordmark. On an essay, the mark returns to the flagship essay and the hero supplies the current essay title. One static, script-free navigation row exposes Essays, Architecture, Catalog, and Vela; current destinations use ink plus a one-pixel gold underline. At narrow widths the same links remain visible in a horizontally scrollable row instead of hiding behind a menu. Use the full two-lineage construction reference at 32px and above and a hand-simplified sail for the favicon. Do not invent alternate route marks for publication surfaces.
 
 **Browser and social identity:** every browser- and OS-facing asset uses the same Vela sail geometry and the canonical cream (`#F7F6F2`), ink (`#081224`), and gold (`#C9A664`). Keep SVG, PNG favicon, Apple touch, manifest, and pinned-tab exports synchronized. The social card may combine the exact sail with the essay's watercolor world, but must remain a true 1200×630 crop and carry readable Vela attribution. Never substitute the retired constellation polygon or an AI-redrawn sail.
 
