@@ -124,7 +124,7 @@ components:
   figure-caption:
     textColor: "{colors.secondary}"
     typography: "{typography.caption}"
-    width: "36rem"
+    width: "follows the active prose measure"
   figure-title:
     textColor: "{colors.ink-strong}"
     typography: "{typography.caption}"
@@ -227,6 +227,8 @@ Spacing should create reading rhythm, not isolated cards. Sections need consiste
 Core layout measurements:
 
 - Prose measure: 41.5rem.
+- Figure caption measure: 41.5rem on desktop, 34rem on tablet, and the
+  available prose width on mobile.
 - Wide figure measure: 48rem to 52rem depending on the component.
 - Margin note width: about 12.25rem.
 - Desktop left rail appears only when it helps orientation, fades near the top and ending, and should remain quiet.
