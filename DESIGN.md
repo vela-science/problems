@@ -274,7 +274,7 @@ Hairlines should use ink or gold with opacity. Avoid thick side-stripe borders a
 
 ## Components
 
-**Masthead:** the canonical Vela sail mark and the Vela wordmark. On an essay, the mark returns to the flagship essay and the hero supplies the current essay title. Navigation stays sparse while exposing the publication sequence and adjacent technical surfaces. Use the full two-lineage construction reference at 32px and above and a hand-simplified sail for the favicon. Do not invent alternate route marks for publication surfaces.
+**Masthead:** the canonical Vela sail mark and the Vela wordmark. On an essay, the mark returns to the flagship essay and the hero supplies the current essay title. Desktop navigation exposes the essay sequence, Architecture, Vela, and a quiet secondary publication index; current destinations use ink plus a one-pixel gold underline. Below the content-driven desktop breakpoint, one text-labelled Menu control expands a complete three-group index in normal flow so navigation never covers the reading surface. Use the full two-lineage construction reference at 32px and above and a hand-simplified sail for the favicon. Do not invent alternate route marks for publication surfaces.
 
 **Browser and social identity:** every browser- and OS-facing asset uses the same Vela sail geometry and the canonical cream (`#F7F6F2`), ink (`#081224`), and gold (`#C9A664`). Keep SVG, PNG favicon, Apple touch, manifest, and pinned-tab exports synchronized. The social card may combine the exact sail with the essay's watercolor world, but must remain a true 1200×630 crop and carry readable Vela attribution. Never substitute the retired constellation polygon or an AI-redrawn sail.
 
