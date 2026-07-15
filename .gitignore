@@ -12,6 +12,8 @@ dist/
 # Local editor and agent artifacts
 .vscode/
 .playwright-mcp/
+.agents/skills/impeccable/
+.codex/hooks.json
 tmp/
 output/
 prototypes/

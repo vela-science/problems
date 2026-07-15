@@ -9,8 +9,8 @@ colors:
   tertiary: "oklch(70.5% 0.118 87)"
   tertiary-ink: "oklch(46.8% 0.102 82)"
   tertiary-line: "oklch(78.5% 0.072 88)"
-  neutral: "oklch(97.2% 0.013 88)"
-  neutral-raised: "oklch(98.8% 0.008 88)"
+  neutral: "oklch(96.2% 0.024 88)"
+  neutral-raised: "oklch(98.3% 0.017 88)"
   neutral-sunken: "oklch(92.4% 0.025 86)"
   ink-strong: "oklch(22% 0.034 262)"
   ink-muted: "oklch(35.5% 0.031 262)"
@@ -24,6 +24,12 @@ colors:
   night: "oklch(29% 0.050 260)"
   night-deep: "oklch(21% 0.048 260)"
 typography:
+  rail:
+    fontFamily: "Inter"
+    fontSize: "clamp(0.65rem, 0.72vw, 0.72rem)"
+    fontWeight: "500"
+    lineHeight: "1.28"
+    letterSpacing: "0.07em"
   h1:
     fontFamily: "Newsreader"
     fontSize: "4.35rem"
@@ -48,6 +54,12 @@ typography:
     fontWeight: "400"
     lineHeight: "1.72"
     letterSpacing: "0em"
+  h2-compact:
+    fontFamily: "Newsreader"
+    fontSize: "clamp(1.45rem, 7vw, 1.75rem)"
+    fontWeight: "500"
+    lineHeight: "1.05"
+    letterSpacing: "-0.005em"
   caption:
     fontFamily: "Newsreader"
     fontSize: "0.86rem"
@@ -198,8 +210,9 @@ The typographic system is deliberately literary, with a technical counterweight.
 - **Newsreader** (text cuts) carries the essay body and captions. It is the voice of the argument.
 - **Inter** carries navigation, uppercase metadata, margin notes, and diagram labels. It prevents the page from becoming too antique.
 - **IBM Plex Mono** carries indexes, code-like state, figure coordinates, and numbered references.
+- The desktop reading rail uses the compact `--text-rail` step and keeps section names on one line. Below 1320 pixels it becomes the glyph-only bearing before those labels can enter the prose column.
 
-Technical SVG labels use one shared viewBox scale: `--diagram-label-sm` at 10px for secondary gates and axes, and `--diagram-label` at 11px for primary stations and state roots. These are diagram coordinates rather than browser text sizes; mobile compositions must still remove labels that would read as thumbnails.
+Technical SVG labels use one shared viewBox scale: `--diagram-label-xs` at 9px for compact secondary annotations, `--diagram-label-sm` at 10px for gates and axes, `--diagram-label` at 11px for primary stations and state roots, and `--diagram-title` at 15px for the rare serif station name. These are diagram coordinates rather than browser text sizes; mobile compositions must still remove labels that would read as thumbnails.
 
 Body copy should stay within a humane measure. Desktop prose should sit around 41.5rem. Tablet prose can be narrower than figure width; figures may expand, paragraphs should not. Body line-height should remain generous enough for dense prose, generally around 1.7 to 1.75.
 
@@ -277,7 +290,7 @@ Hairlines should use ink or gold with opacity. Avoid thick side-stripe borders a
 
 **Technical SVG Diagram:** use web-native SVG/HTML when labels, legends, responsiveness, or captions need to remain exact. Keep internal typography sans, labels small but legible, and all text inside the visual free from essay-body inheritance.
 
-**Closing Page:** a quiet return to the opening image language. On Constellations, the accepted Figure 7 lineage is distilled to one gold route, reaches the horizon, and resolves into the canonical two-lineage sail and mast before holding still. The mobile close has authored geometry rather than a thumbnail of the desktop drawing. Hidden rail or margin lanes must not leave empty grid rows between the dedication and the close. It should feel like the final breath of the reading experience, not a dramatic poster.
+**Closing Page:** a restrained return to the opening image language on the same cream reading paper as the essay. Constellations uses the existing painted horizon: the distant sail carries the essay's gold route into open water while the atlas arcs resolve above it. The plate enters once with a small fade and vertical settle; it never loops, changes the page background, or introduces a separate end panel. Reduced motion and no-JavaScript states show the complete plate immediately. Hidden rail or margin lanes must not leave empty grid rows between the dedication and the close. It should feel like the final breath of the reading experience, not a promotional poster.
 
 ## Case law
 
