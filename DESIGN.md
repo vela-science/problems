@@ -217,7 +217,7 @@ Core layout measurements:
 - Wide figure measure: 48rem to 52rem depending on the component.
 - Margin note width: about 12.25rem.
 - Desktop left rail appears only when it helps orientation, fades near the top and ending, and should remain quiet.
-- Mobile figures can use nearly full viewport width, but text labels inside SVGs need mobile-specific simplification when they become thumbnails.
+- Mobile figures can use nearly full viewport width, but text labels inside SVGs need mobile-specific simplification when they become thumbnails. Quantitative fields must preserve the legibility of their repeated marks: redraw the geometry for the phone canvas instead of shrinking a desktop count into texture.
 
 The hero should reveal the essay soon enough that the reader understands there is a substantial argument below. Do not let the hero become a landing-page billboard.
 
@@ -235,25 +235,39 @@ Shapes are print-shaped and sharp. Use no radius or tiny radius. Rounded rectang
 
 Technical figures share one state-substrate grammar. A baseline establishes inherited state; trajectories carry claims, evidence, or lineage; nodes mark addressable findings or decisions; apertures expose shared conditions without implying equivalence; terminal axes mark changes in jurisdiction or ownership; parallel paths preserve plurality; gaps make missing context visible. Each figure must assign those marks a local semantic job rather than repeating a decorative route motif. Gradients may encode continuity, uncertainty, or density, but should not provide ambient decoration. Do not copy the provisional Vela symbol or use decorative star fields as a substitute for relationships.
 
-Editorial bearings use the Vela substrate, convex route, lineage echo, and
-terminal axis. They accumulate section by section instead of swapping among
-unrelated constellation glyphs. At rail scale, the active route must remain a
-quiet orientation signal; it must not expand into a decorative miniature
-diagram or acquire a glow.
+Every technical figure must expose its complete causal structure at rest. Direct
+controls may change emphasis, scale, or the inspected example, but they must not
+unlock meaning that is otherwise absent. Keep interaction patterns concept-led:
+a historical handoff uses a lineage selector, a queue uses scale, a jurisdiction
+comparison uses lanes, and plural authority uses attributed layers. Do not force
+different arguments into one repeated numbered-control template.
+
+When a one-shot draw reveals a route in stages, keep a faint static substrate of
+the complete route underneath it. The reader should understand the final causal
+shape immediately; motion may explain its order, but must never temporarily make
+the figure look broken or unfinished.
+
+Section glyphs are miniature argument diagrams, not alternate logos. Each one
+uses the Vela substrate grammar but assigns it a local operation: inheritance,
+handoff, pressure, jurisdiction, writable continuation, governed state, plural
+authority, or succession. They belong to the table of contents, where a compact
+square construction makes chapters addressable along one continuous reading
+route. They do not appear beside the literary section headings. The canonical
+sail remains reserved for identity and the closing resolution.
 
 Hairlines should use ink or gold with opacity. Avoid thick side-stripe borders and decorative dividers.
 
 ## Components
 
-**Masthead:** the canonical Vela sail mark, the Vela wordmark, and quiet essay context. Use the full two-lineage construction reference at 32px and above and a hand-simplified sail for the favicon. No unfinished route links or product navigation. Do not invent alternate route marks for publication surfaces.
+**Masthead:** the canonical Vela sail mark and the Vela wordmark. Do not repeat the current essay title in the opposite corner when the hero immediately supplies it. Use the full two-lineage construction reference at 32px and above and a hand-simplified sail for the favicon. No unfinished route links or product navigation. Do not invent alternate route marks for publication surfaces.
 
 **Browser and social identity:** every browser- and OS-facing asset uses the same Vela sail geometry and the canonical cream (`#F7F6F2`), ink (`#081224`), and gold (`#C9A664`). Keep SVG, PNG favicon, Apple touch, manifest, and pinned-tab exports synchronized. The social card may combine the exact sail with the essay's watercolor world, but must remain a true 1200×630 crop and carry readable Vela attribution. Never substitute the retired constellation polygon or an AI-redrawn sail.
 
 **Hero:** title, subtitle, and image plate. No marketing eyebrow. No CTA cluster. The hero is an opening page, not a conversion module.
 
-**Section Heading:** title on the left, one accumulating Vela bearing on the right, and one quiet gold/ink rule beneath. The bearing shows how much of the route has been inherited; it is not a repeated star ornament. The heading should not create extra vertical dead space.
+**Section Heading:** a literary title and one quiet gold/ink rule beneath. Keep it free of navigational marks so the title leads directly into the prose without creating extra vertical dead space.
 
-**Left Rail:** quiet table of contents with the same compact accumulated bearing plus title. Active state strengthens opacity and one gold point; it does not add glow or shadow. The rail must remain above sticky figures without competing with the prose.
+**Left Rail:** one quiet route with a compact semantic operation glyph and title for each section. Visited chapters warm slightly, the current glyph and title reach full ink, and future chapters remain quiet. The glyphs use a consistent square coordinate system and no enclosing cards. Do not reconstruct the Vela sail in the rail. The rail must remain above sticky figures without competing with the prose.
 
 **Margin Note:** progressively disclosed in the right margin on desktop through hover, focus, or a pinned click state; inline toggle on smaller screens. It is reference infrastructure, not a decorative pull quote. Use sans text, numbered index, and a thin rule. Never make hover the only access path.
 
@@ -263,7 +277,7 @@ Hairlines should use ink or gold with opacity. Avoid thick side-stripe borders a
 
 **Technical SVG Diagram:** use web-native SVG/HTML when labels, legends, responsiveness, or captions need to remain exact. Keep internal typography sans, labels small but legible, and all text inside the visual free from essay-body inheritance.
 
-**Closing Page:** a quiet return to the opening image language. On Constellations, the accepted Figure 7 route arrives once, becomes a mast and sail at a light horizon, then holds still. It should feel like the final breath of the reading experience, not a dramatic poster.
+**Closing Page:** a quiet return to the opening image language. On Constellations, the accepted Figure 7 lineage is distilled to one gold route, reaches the horizon, and resolves into the canonical two-lineage sail and mast before holding still. The mobile close has authored geometry rather than a thumbnail of the desktop drawing. Hidden rail or margin lanes must not leave empty grid rows between the dedication and the close. It should feel like the final breath of the reading experience, not a dramatic poster.
 
 ## Case law
 
