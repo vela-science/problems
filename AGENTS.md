@@ -1,24 +1,34 @@
-# Constellate — Agent Instructions
+# Vela Essays: agent instructions
 
-## Source Of Truth
+## Source of truth
 
-- Essay source: `src/content/essays/constellations/index.mdx`
-- Essay layout and blocks: `src/components/essay/chrome/*`, `src/components/essay/blocks/*`
-- Visuals: web-native Astro/HTML/SVG components under `src/components/essay/blocks/*`
+- Essay sources: `src/content/essays/*/index.mdx`
+- Whitepaper source: `src/content/whitepaper/index.mdx`
+- Root route: permanent redirect to `/constellations` in `astro.config.mjs`
+  and `vercel.json`
+- Essay layout and blocks: `src/components/essay/chrome/*` and
+  `src/components/essay/blocks/*`
+- Visuals: web-native Astro, HTML, and SVG components
+- Design contract: `PRODUCT.md`, `DESIGN.md`, and `src/styles/tokens.css`
+- Public metadata: `src/data/constants.ts`
 
-## Editing Workflow
+## Editing workflow
 
-- Edit the essay in `src/content/essays/constellations/index.mdx`.
-- Run `bun run build` to verify the web output when the change has MDX/component/build risk.
-- The repo is web-first. Do not introduce secondary export or diagram-generation build steps.
-- Diagram changes should be made as web-native HTML/SVG components.
+- Preserve the current Constellations visual system and provisional Vela sail.
+- Edit diagrams as web-native Astro, HTML, or SVG components.
+- Do not introduce secondary export or diagram-generation build steps.
+- Run `bun run build` for route, metadata, MDX, component, or build changes.
+- Keep verification focused. Do not add live-network or external-project tests.
 
-## Adding A New Diagram
+## Route contract
 
-1. Build the diagram as an Astro/HTML/SVG component.
-2. Reference it from the MDX essay using the relevant component import.
-3. Keep dimensions, labels, and mobile behavior verified in the browser.
+All current entrypoints under `src/pages` are intentional public surfaces.
+`scripts/check-public-routes.mjs` must be updated deliberately when a route is
+added, removed, or redirected. Do not hide existing essays or technical pages
+without explicit product direction.
 
-## Product Constraints
+## Product constraints
 
-- No user accounts or user-generated notes. “Notes” refers to essay footnotes only.
+- No user accounts or user-generated notes. “Notes” means essay footnotes.
+- The publication complements the Vela app; it does not duplicate app state.
+- Keep canonical and social metadata on `https://www.vela.space`.

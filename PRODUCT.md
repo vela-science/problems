@@ -1,3 +1,7 @@
+---
+register: brand
+---
+
 # Design Context
 
 ## Audience
@@ -22,10 +26,12 @@
 ## Product Rules
 
 - The site-level identity is Vela; the essays sit underneath it.
-- The homepage essay is the flagship reading experience
-- Other pages should feel like adjacent chambers in the same house, not separate microsites
+- The homepage is `/constellations`; `/` redirects there permanently.
+- Constellations is the flagship reading experience within a public trilogy, technical companion, case, stack, facility, protocol surface, and catalog.
+- Every publication surface should feel like an adjacent chamber in the same house, not a separate microsite.
 - Navigation should be calm, explicit, and complete on desktop and mobile
 - Use open editorial sections by default; reserve bordered panels for dense structured material
+- Keep dated protocol snapshots on the pages that own them, and update their source links and dates together.
 
 ## Anti-Patterns
 

@@ -1,5 +1,5 @@
 ---
-version: "alpha"
+version: "0.1.0"
 name: "Vela"
 description: "A light editorial atlas for essays about scientific state, inherited knowledge, and navigation after papers."
 colors:
@@ -177,11 +177,11 @@ tokens.css wins. It is the single source of truth for colors, type, motion,
 radii, and spacing; this document describes and motivates it. After changing
 tokens, update this file in the same commit.
 
-Vela is a flagship reading surface, not a marketing site and not a product dashboard. The design register is light editorial instrumentation: mineral cream paper, dark indigo ink, directional gold, restrained scientific marks, and generous negative space. Painted plates carry atmosphere; technical figures use baselines, trajectories, nodes, lineage, convergence, and terminal axes to make state change legible.
+Vela is a house of connected public chambers: a flagship reading surface, two companion essays, a technical paper, and denser catalog, protocol, stack, and facility views. None should collapse into a conversion funnel or generic product dashboard. The design register is light editorial instrumentation: mineral cream paper, dark indigo ink, directional gold, restrained scientific marks, and generous negative space. Painted plates carry atmosphere; technical figures use baselines, trajectories, nodes, lineage, convergence, and terminal axes to make state change legible.
 
 The primary design job is to help a technically literate reader stay oriented through a dense argument. Beauty matters, but it must come from hierarchy, rhythm, image quality, and diagram clarity rather than decoration. Scientific diagrams are part of the argument. They should make the essay more navigable, not merely illustrate its mood.
 
-The physical scene is a long reading session on a laptop or tablet, likely in a quiet room, where the reader is willing to think but will leave if the interface feels like a pitch deck, a SaaS landing page, or an over-designed AI artifact.
+The physical scene begins with a technically literate reader entering a long reading session in a quiet room, with adjacent routes available when they want the working app or a denser technical surface. They will leave if the publication feels like a pitch deck, a SaaS template, or an over-designed AI artifact.
 
 ## Colors
 
@@ -272,7 +272,7 @@ Hairlines should use ink or gold with opacity. Avoid thick side-stripe borders a
 
 ## Components
 
-**Masthead:** the canonical Vela sail mark and the Vela wordmark. Do not repeat the current essay title in the opposite corner when the hero immediately supplies it. Use the full two-lineage construction reference at 32px and above and a hand-simplified sail for the favicon. No unfinished route links or product navigation. Do not invent alternate route marks for publication surfaces.
+**Masthead:** the canonical Vela sail mark and the Vela wordmark. On an essay, the mark returns to the flagship essay and the hero supplies the current essay title. Navigation stays sparse while exposing the publication sequence and adjacent technical surfaces. Use the full two-lineage construction reference at 32px and above and a hand-simplified sail for the favicon. Do not invent alternate route marks for publication surfaces.
 
 **Browser and social identity:** every browser- and OS-facing asset uses the same Vela sail geometry and the canonical cream (`#F7F6F2`), ink (`#081224`), and gold (`#C9A664`). Keep SVG, PNG favicon, Apple touch, manifest, and pinned-tab exports synchronized. The social card may combine the exact sail with the essay's watercolor world, but must remain a true 1200×630 crop and carry readable Vela attribution. Never substitute the retired constellation polygon or an AI-redrawn sail.
 
