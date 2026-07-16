@@ -280,7 +280,7 @@ Hairlines should use ink or gold with opacity. Avoid thick side-stripe borders a
 
 **Browser and social identity:** every browser- and OS-facing asset uses the same Vela sail geometry and the canonical cream (`#F7F6F2`), ink (`#081224`), and gold (`#C9A664`). Keep SVG, PNG favicon, Apple touch, manifest, and pinned-tab exports synchronized. The social card may combine the exact sail with the essay's watercolor world, but must remain a true 1200×630 crop and carry readable Vela attribution. Never substitute the retired constellation polygon or an AI-redrawn sail.
 
-**Hero:** title, subtitle, and image plate. No marketing eyebrow. No CTA cluster. The hero is an opening page, not a conversion module.
+**Hero:** title, subtitle, and image plate. No marketing eyebrow. No CTA cluster. The hero is an opening page, not a conversion module. It arrives once on first load — a small fade and 12-pixel settle mirroring the closing plate — then holds; no-JS and reduced-motion readers see the finished hero immediately.
 
 **Section Heading:** a literary title and one quiet gold/ink rule beneath. Keep it free of navigational marks so the title leads directly into the prose without creating extra vertical dead space.
 
