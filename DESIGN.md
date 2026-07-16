@@ -278,8 +278,13 @@ banned, as are enclosing zone boxes and panels, icon-in-circle clip
 art, and gradients as decoration. Captions carry how-to-read and
 method, and a figure may open with a question-form kicker. Figures
 are statements first: every figure reads complete at rest and serves
-the paragraph beside it; at most one carries a pointer interaction,
-and it only re-weights what is already visible. A figure that restates
+the paragraph beside it. Pointer interaction is one shared gesture,
+isolation: on hover-capable fine pointers, resting on a strand,
+lane, or panel lets the others recede (Figs 01, 03, 05 — the three
+comparison figures). It only re-weights what is already visible,
+never adds tap stops inside aria-hidden art, and is guarded behind
+`(hover: hover) and (pointer: fine)` so touch never pins a dimmed
+state. A figure that restates
 the prose, or that makes an extrapolation or an invented value its
 centerpiece, is a tangent and gets cut or simplified. Where
 quantity appears, a reference line or labeled tick gives it a
