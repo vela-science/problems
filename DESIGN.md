@@ -288,13 +288,13 @@ but should not provide ambient decoration. Do not copy the provisional
 Vela symbol or use decorative star fields as a substitute for
 relationships.
 
-One figure ground is dark: the night plate (`.bl-fig-night-plate`),
-reserved for the figure whose subject is literally the sky (the
-same-sky chart). It is a night-deep panel behind a 1px gold hairline
-with sharp corners, set into the cream page; the plate div is the var
-remap boundary, so luminous structure and the dark-adapted quartet
-apply inside while page controls above it keep their cream values.
-Captions never enter the plate.
+A night plate exists in the kit (`.bl-fig-night-plate`: night-deep
+panel, 1px gold hairline, sharp corners, the plate div as the var
+remap boundary for luminous structure and the dark-adapted quartet)
+but no essay figure currently uses it: on the cream reading page a
+dark panel reads as an embedded widget, so the same-sky chart returned
+to paper. The plate remains available for a surface that is dark by
+nature, and captions never enter it.
 
 Every technical figure must expose its complete causal structure at rest. Direct
 controls may change emphasis, scale, or the inspected example, but they must not
