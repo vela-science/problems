@@ -339,7 +339,7 @@ Hairlines should use ink or gold with opacity. Avoid thick side-stripe borders a
 
 **Figure Plate:** figure identity belongs in the caption below the visual. Technical figures use the numbered `Fig. NN. Title. Explanation.` caption format. Do not put figure numbers or explanatory captions inside SVGs.
 
-**Image Plate:** emotional plates use generated or painted assets with deckled masks. They are not technical figures unless they carry exact labels, legends, or state.
+**Image Plate:** emotional plates use generated or painted assets with deckled masks. They are not technical figures unless they carry exact labels, legends, or state. The hero and section plates carry plate drift: they lag the page by up to 7px while scrolling, the one continuous scroll-linked motion allowed outside the background wash, because it layers ink over sky without ever animating an argument. Reduced motion never enters it, and the closing plate is excluded: the final breath holds still.
 
 **Technical SVG Diagram:** use web-native SVG/HTML when labels, legends, responsiveness, or captions need to remain exact. Keep internal typography sans, labels small but legible, and all text inside the visual free from essay-body inheritance.
 
