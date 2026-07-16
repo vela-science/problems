@@ -189,6 +189,17 @@ The primary design job is to help a technically literate reader stay oriented th
 
 The physical scene begins with a technically literate reader entering a long reading session in a quiet room, with adjacent routes available when they want the working app or a denser technical surface. They will leave if the publication feels like a pitch deck, a SaaS template, or an over-designed AI artifact.
 
+## Typography note: metric-matched fallbacks
+
+Every webfont stack carries a metric-matched local fallback face
+("Newsreader-fallback" over Georgia, "Schibsted-fallback" over Arial,
+"Inter-fallback" over Helvetica Neue) with empirically measured
+size-adjust and ascent/descent overrides, so the font-display: swap
+never shifts layout — text set in the fallback occupies the same
+space the webfont will claim. The overrides live in fonts.css; if a
+family changes, re-measure (canvas advance width + font bounding
+box) rather than guessing.
+
 ## Colors
 
 The canonical palette is cream, ink, and gold. Cream is the reading ground, ink is the primary carrier of thought, and gold is the navigational light accent. Gold has three jobs: luminous gold for routes and glows, darker gold-ink for small readable markers, and soft gold-line for hairlines. It should not become a button color sprayed across the page.
