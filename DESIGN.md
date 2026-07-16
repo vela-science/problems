@@ -280,8 +280,9 @@ method, and a figure may open with a question-form kicker. Figures
 are statements first: every figure reads complete at rest and serves
 the paragraph beside it. Pointer interaction is one shared gesture,
 isolation: on hover-capable fine pointers, resting on a strand,
-lane, or panel lets the others recede (Figs 01, 03, 05 — the three
-comparison figures). It only re-weights what is already visible,
+lane, panel, or propagation regime lets the others recede (Figs 01,
+03, 04, 05, 06 — every comparison figure; Fig 02, the one statement
+figure, stays still). It only re-weights what is already visible,
 never adds tap stops inside aria-hidden art, and is guarded behind
 `(hover: hover) and (pointer: fine)` so touch never pins a dimmed
 state. A figure that restates
@@ -349,7 +350,7 @@ Hairlines should use ink or gold with opacity. Avoid thick side-stripe borders a
 
 **Figure Plate:** figure identity belongs in the caption below the visual. Technical figures use the numbered `Fig. NN. Title. Explanation.` caption format. Do not put figure numbers or explanatory captions inside SVGs.
 
-**Image Plate:** emotional plates use generated or painted assets with deckled masks. They are not technical figures unless they carry exact labels, legends, or state. The hero and section plates carry plate drift: they lag the page by up to 7px while scrolling, the one continuous scroll-linked motion allowed outside the background wash, because it layers ink over sky without ever animating an argument. Reduced motion never enters it, and the closing plate is excluded: the final breath holds still.
+**Image Plate:** emotional plates use generated or painted assets with deckled masks. They are not technical figures unless they carry exact labels, legends, or state. Section plates arrive once (fade and 12px settle on first entry, script-claimed hidden state, complete for no-JS, reduced motion, and print) so every painted plate on the page speaks the same arrival language as the hero and the close. The hero and section plates carry plate drift: they lag the page by up to 7px while scrolling, the one continuous scroll-linked motion allowed outside the background wash, because it layers ink over sky without ever animating an argument. Reduced motion never enters it, and the closing plate is excluded: the final breath holds still.
 
 **Technical SVG Diagram:** use web-native SVG/HTML when labels, legends, responsiveness, or captions need to remain exact. Keep internal typography sans, labels small but legible, and all text inside the visual free from essay-body inheritance.
 
