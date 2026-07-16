@@ -320,6 +320,17 @@ a historical handoff uses a lineage selector, a queue uses scale, a jurisdiction
 comparison uses lanes, and plural authority uses attributed layers. Do not force
 different arguments into one repeated numbered-control template.
 
+One instrument, at most, per essay: an operable object where the reader
+performs the essay's mechanism once (Constellations: the handoff, in your
+hands — challenge a finding, watch the correction reach declared dependents,
+flip to document-only and watch it reach no one). An instrument is not a
+figure — it is unnumbered, carries its own mono eyebrow, and its resting
+state is a server-rendered worked example so no-JS, reduced motion, and
+print read the full argument without touching anything. It speaks the node
+kit's vocabulary, its propagation stagger is dropped (not the state) under
+reduced motion, and its selection is keyboard-operable. Do not add a second
+instrument; the singularity is what keeps it from reading as widgets.
+
 One figure carries the duration exception: the long handoff (Fig 01) may scrub
 its draw against scroll on fine viewports with motion allowed, pinning near the
 viewport centre while scroll distance maps to elapsed time and a gold year
