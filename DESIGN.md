@@ -231,7 +231,8 @@ Core layout measurements:
 - Figure caption measure: 41.5rem on desktop, 34rem on tablet, and the
   available prose width on mobile.
 - Wide figure measure: 48rem to 52rem depending on the component.
-- Margin note width: about 12.25rem.
+- Margin note width: about 12.25rem from 1440 pixels; a narrower 9rem band
+  geometry serves the 1320–1439 lane so 1366 laptops still get floated notes.
 - Desktop left rail appears only when it helps orientation, fades near the top and ending, and should remain quiet.
 - Mobile figures can use nearly full viewport width, but text labels inside SVGs need mobile-specific simplification when they become thumbnails. Quantitative fields must preserve the legibility of their repeated marks: redraw the geometry for the phone canvas instead of shrinking a desktop count into texture.
 
