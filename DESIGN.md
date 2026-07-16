@@ -276,7 +276,12 @@ on the marks (Inter micro-caps for names, IBM Plex Mono for identifiers
 and values, quoted short tokens for named concepts); legends are
 banned, as are enclosing zone boxes and panels, icon-in-circle clip
 art, and gradients as decoration. Captions carry how-to-read and
-method, and a figure may open with a question-form kicker. Where
+method, and a figure may open with a question-form kicker. Figures
+are statements first: every figure reads complete at rest and serves
+the paragraph beside it; at most one carries a pointer interaction,
+and it only re-weights what is already visible. A figure that restates
+the prose, or that makes an extrapolation or an invented value its
+centerpiece, is a tangent and gets cut or simplified. Where
 quantity appears, a reference line or labeled tick gives it a
 yardstick. Gradients may encode continuity, uncertainty, or density,
 but should not provide ambient decoration. Do not copy the provisional
