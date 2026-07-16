@@ -21,6 +21,12 @@ colors:
   brass: "oklch(45.5% 0.082 83)"
   winter: "oklch(68.5% 0.040 236)"
   stone: "oklch(55% 0.022 80)"
+  evidence: "oklch(60.5% 0.065 191)"
+  progress: "oklch(65.5% 0.08 149)"
+  caution: "oklch(64.5% 0.115 76)"
+  conflict: "oklch(49.5% 0.125 15)"
+  fig-night: "oklch(21% 0.048 260)"
+  fig-night-structure: "oklch(96.8% 0.004 90)"
   night: "oklch(29% 0.050 260)"
   night-deep: "oklch(21% 0.048 260)"
 typography:
@@ -197,7 +203,8 @@ The canonical palette is cream, ink, and gold. Cream is the reading ground, ink 
 - **Tertiary Ink (oklch(46.8% 0.102 82)):** readable gold for small note numbers, figure numbers, active rail states, and link hover.
 - **Tertiary Line (oklch(78.5% 0.072 88)):** pale gold for rules, hairlines, and underline texture.
 - **Cinnabar (#B5443A):** rare correction or alert accent. It should read as editorial annotation, not error UI.
-- **Moss, Brass, Winter, Stone:** semantic figure colors for replicated, contested, inferred, and stale states. Use inside diagrams, not as general brand colors.
+- **Moss, Brass, Winter, Stone:** legacy semantic figure colors for the older essays' diagrams; do not use in new figures.
+- **Evidence, Progress, Caution, Conflict:** the brand handoff v1.1 semantic quartet (teal, green, amber, red), the figure grammar's state colors. Fitted to the brand hexes and contrast-measured: base values serve fills and bands; `-ink` variants serve stroke marks and labels on cream (all clear 5.6:1); `-night` variants serve the night plate (all clear 5.3:1). Never encode meaning by color alone; pair every semantic color with shape, dash, or an on-mark label. Stable across data-time; only gold shifts with local light.
 - **Night / Night Deep:** dark-mode atmosphere and edge canvas. Avoid neon or high-saturation AI aesthetics.
 
 Do not use pure black or pure white. Do not introduce a second dominant accent without first reducing gold. If a new section feels flat, improve its composition before adding color.
@@ -250,7 +257,39 @@ Avoid glassmorphism, blur panels, heavy drop shadows, and framed section bands. 
 
 Shapes are print-shaped and sharp. Use no radius or tiny radius. Rounded rectangles are not part of the main visual language except for functional affordances such as skip links or small controls.
 
-Technical figures share one state-substrate grammar. A baseline establishes inherited state; trajectories carry claims, evidence, or lineage; nodes mark addressable findings or decisions; apertures expose shared conditions without implying equivalence; terminal axes mark changes in jurisdiction or ownership; parallel paths preserve plurality; gaps make missing context visible. Each figure must assign those marks a local semantic job rather than repeating a decorative route motif. Gradients may encode continuity, uncertainty, or density, but should not provide ambient decoration. Do not copy the provisional Vela symbol or use decorative star fields as a substitute for relationships.
+Technical figures share one state-substrate grammar, codified 2026-07-16
+from the brand handoff v1.1 and rebuilt across all seven Constellations
+figures. The anatomy is the sail's own construction: a substrate
+baseline (2px ink at the figure's foot) establishes inherited state;
+trajectories (2px ink, left to right) carry claims, records, or lineage;
+a terminal axis (1px vertical near the right edge) marks where
+jurisdiction or direction resolves; condition bands expose shared
+conditions without implying equivalence; uncertainty is dashed or
+ringed, never implied; negative space is the unknown and is never
+filled with decoration. One node kit serves every figure (shared
+classes in global.css): state is a filled disc, claim a 2px ring,
+evidence a teal tick, uncertainty a dashed ring, conflict an X seam.
+Exactly three stroke weights exist: 1px structure, 2px trajectory, and
+the 3.5px gold hero reserved for the single route the caption is about;
+gold means direction or current state and nothing else. Labels anchor
+on the marks (Inter micro-caps for names, IBM Plex Mono for identifiers
+and values, quoted short tokens for named concepts); legends are
+banned, as are enclosing zone boxes and panels, icon-in-circle clip
+art, and gradients as decoration. Captions carry how-to-read and
+method, and a figure may open with a question-form kicker. Where
+quantity appears, a reference line or labeled tick gives it a
+yardstick. Gradients may encode continuity, uncertainty, or density,
+but should not provide ambient decoration. Do not copy the provisional
+Vela symbol or use decorative star fields as a substitute for
+relationships.
+
+One figure ground is dark: the night plate (`.bl-fig-night-plate`),
+reserved for the figure whose subject is literally the sky (the
+same-sky chart). It is a night-deep panel behind a 1px gold hairline
+with sharp corners, set into the cream page; the plate div is the var
+remap boundary, so luminous structure and the dark-adapted quartet
+apply inside while page controls above it keep their cream values.
+Captions never enter the plate.
 
 Every technical figure must expose its complete causal structure at rest. Direct
 controls may change emphasis, scale, or the inspected example, but they must not
