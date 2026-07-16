@@ -308,6 +308,16 @@ a historical handoff uses a lineage selector, a queue uses scale, a jurisdiction
 comparison uses lanes, and plural authority uses attributed layers. Do not force
 different arguments into one repeated numbered-control template.
 
+One figure carries the duration exception: the long handoff (Fig 01) may scrub
+its draw against scroll on fine viewports with motion allowed, pinning near the
+viewport centre while scroll distance maps to elapsed time and a gold year
+cursor runs 245 BC to the proposed frontier. Nearly half its stage passes inside
+the 1,910-year catalog-to-journal silence, because the wait is the argument and
+scroll is the only channel that can make a reader feel duration. This exception
+extends to no other figure: it exists because Fig 01's subject IS elapsed time.
+Phones, reduced motion, no-JS, and print all keep the complete resting figure
+with its one-shot arrival.
+
 When a one-shot draw reveals a route in stages, keep a faint static substrate of
 the complete route underneath it. The reader should understand the final causal
 shape immediately; motion may explain its order, but must never temporarily make
