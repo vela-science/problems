@@ -137,7 +137,7 @@ components:
   margin-note:
     textColor: "{colors.ink-muted}"
     typography: "{typography.note}"
-    width: "12.25rem"
+    width: "21.5rem anchored overlay"
   margin-note-marker:
     textColor: "{colors.tertiary-ink}"
     typography: "{typography.mono-index}"
@@ -229,7 +229,7 @@ The typographic system is deliberately literary, with a technical counterweight.
 - **Inter** carries navigation, uppercase metadata, margin notes, and diagram labels. It prevents the page from becoming too antique.
 - **IBM Plex Mono** carries indexes, code-like state, figure coordinates, and numbered references.
 - **Schibsted Grotesk** is the product voice on `/vela`: a clean, wind-cut sans for the adoption surface, used with IBM Plex Mono for coordinates and commands. It does not replace the literary essay typography.
-- The desktop reading rail uses the compact `--text-rail` step and keeps section names on one line. Below 1320 pixels it becomes the glyph-only bearing before those labels can enter the prose column.
+- The desktop reading rail uses the compact `--text-rail` step and keeps section names on one line. Below 1320 pixels it becomes a compact current-section disclosure near the masthead; on mobile it returns to the document flow as a non-persistent contents entry.
 
 Technical SVG labels use one shared viewBox scale: `--diagram-label-xs` at 9px for compact secondary annotations, `--diagram-label-sm` at 10px for gates and axes, `--diagram-label` at 11px for primary stations and state roots, and `--diagram-title` at 15px for the rare serif station name. These are diagram coordinates rather than browser text sizes; mobile compositions must still remove labels that would read as thumbnails.
 
@@ -239,7 +239,7 @@ Avoid dramatic one-line fragments unless the essay truly needs a hinge. Avoid pr
 
 ## Layout
 
-The page is a three-column reading system on wide screens: left orientation rail, center reading column, and right margin for Tufte-style notes. On smaller screens, the page collapses to a single reading column and margin notes become inline toggles.
+The page is a three-column reading system on wide screens: left orientation rail, center reading column, and a balancing right gutter. Footnotes do not occupy that gutter; they open as transient cards anchored to their inline references. On smaller screens, the page collapses to a single reading column and footnotes open as bottom reference slips.
 
 Spacing should create reading rhythm, not isolated cards. Sections need consistent top and bottom breathing room. Figures and plates should use equal visual spacing above and below unless a specific narrative transition requires otherwise.
 
@@ -248,9 +248,12 @@ Core layout measurements:
 - Prose measure: 41.5rem.
 - Figure caption measure: 41.5rem on desktop, 34rem on tablet, and the
   available prose width on mobile.
-- Wide figure measure: 48rem to 52rem depending on the component.
-- Margin note width: about 12.25rem from 1440 pixels; a narrower 9rem band
-  geometry serves the 1320–1439 lane so 1366 laptops still get floated notes.
+- Figure widths use four explicit roles: `column` at the 41.5rem prose measure,
+  `wide` at 48rem to 52rem for ordinary explanatory diagrams, `page` at 64rem
+  for dense comparisons and interactive maps, and `screen` at up to 88rem with
+  a one-rem viewport inset for the one immersive long-handoff sequence.
+- Footnote card width: 21.5rem maximum, clamped inside a one-rem viewport
+  gutter and placed above or below its marker according to available space.
 - Desktop left rail appears only when it helps orientation, fades near the top and ending, and should remain quiet.
 - Mobile figures can use nearly full viewport width, but text labels inside SVGs need mobile-specific simplification when they become thumbnails. Quantitative fields must preserve the legibility of their repeated marks: redraw the geometry for the phone canvas instead of shrinking a desktop count into texture.
 
@@ -305,13 +308,19 @@ but should not provide ambient decoration. Do not copy the provisional
 Vela symbol or use decorative star fields as a substitute for
 relationships.
 
-A night plate exists in the kit (`.bl-fig-night-plate`: night-deep
-panel, 1px gold hairline, sharp corners, the plate div as the var
-remap boundary for luminous structure and the dark-adapted quartet)
-but no essay figure currently uses it: on the cream reading page a
-dark panel reads as an embedded widget, so the same-sky chart returned
-to paper. The plate remains available for a surface that is dark by
-nature, and captions never enter it.
+The same-sky chart uses the kit's single night plate
+(`.bl-fig-night-plate`: night-deep panel, 1px gold hairline, sharp
+corners, the plate div as the var-remap boundary for luminous structure
+and the dark-adapted quartet). It earns the exception because darkness
+is part of the figure's subject, not an ornamental theme change. No
+other essay figure should use the plate without the same by-nature
+reason, and captions never enter it.
+
+The literal Vela sail is an orientation mark, not a decorative logo.
+It may appear at three changes of scale: the opening departure, the
+long historical handoff where it carries the record through time, and
+the closing return. Do not stamp it onto technical diagrams; the
+constellation, finding, and update loop remain their canonical objects.
 
 Every technical figure must expose its complete causal structure at rest. Direct
 controls may change emphasis, scale, or the inspected example, but they must not
@@ -332,14 +341,15 @@ reduced motion, and its selection is keyboard-operable. Do not add a second
 instrument; the singularity is what keeps it from reading as widgets.
 
 One figure carries the duration exception: the long handoff (Fig 01) may scrub
-its draw against scroll on fine viewports with motion allowed, pinning near the
-viewport centre while scroll distance maps to elapsed time and a gold year
-cursor runs 245 BC to the proposed frontier. Nearly half its stage passes inside
-the 1,910-year catalog-to-journal silence, because the wait is the argument and
-scroll is the only channel that can make a reader feel duration. This exception
-extends to no other figure: it exists because Fig 01's subject IS elapsed time.
-Phones, reduced motion, no-JS, and print all keep the complete resting figure
-with its one-shot arrival.
+its passage against scroll on fine viewports with motion allowed. A chart pins
+near the viewport centre while one sail crosses six landfalls from 245 BC to the
+proposed frontier; its gold route remains behind as a recoverable wake and its
+manifest gains one inherited layer at every port. Nearly half the early passage
+sits inside the 1,910-year catalog-to-journal open water, because the wait is the
+argument and scroll is the only channel that can make a reader feel duration.
+The final route remains dashed and open. This exception extends to no other
+figure: it exists because Fig 01's subject is elapsed time and handoff. Phones,
+reduced motion, no-JS, and print keep the complete authored resting chart.
 
 When a one-shot draw reveals a route in stages, keep a faint static substrate of
 the complete route underneath it. The reader should understand the final causal
@@ -352,7 +362,9 @@ handoff, pressure, jurisdiction, writable continuation, governed state, plural
 authority, or succession. They belong to the table of contents, where a compact
 square construction makes chapters addressable along one continuous reading
 route. They do not appear beside the literary section headings. The canonical
-sail remains reserved for identity and the closing resolution.
+Vela mark remains reserved for identity and the closing resolution. Fig 01 may
+use a literal working vessel as its explanatory object; it must read as passage
+and inheritance, not as another stamped brand mark.
 
 Hairlines should use ink or gold with opacity. Avoid thick side-stripe borders and decorative dividers.
 
@@ -366,9 +378,9 @@ Hairlines should use ink or gold with opacity. Avoid thick side-stripe borders a
 
 **Section Heading:** a literary title and one quiet gold/ink rule beneath. Keep it free of navigational marks so the title leads directly into the prose without creating extra vertical dead space.
 
-**Left Rail:** one quiet route with a compact semantic operation glyph and title for each section. Visited chapters warm slightly, the current glyph and title reach full ink, and future chapters remain quiet. The glyphs use a consistent square coordinate system and no enclosing cards. Do not reconstruct the Vela sail in the rail. The rail must remain above sticky figures without competing with the prose.
+**Left Rail:** one quiet route with a compact semantic operation glyph and title for each section. Visited chapters warm slightly, the current glyph and title reach full ink, and future chapters remain quiet. The glyphs use a consistent square coordinate system and no enclosing cards. Do not reconstruct the Vela sail in the rail. The desktop rail sits toward the viewport edge and retracts its titles while a page-width figure occupies the reading field. On tablet, replace the rail with a compact current-section/contents disclosure at the top-left edge; on mobile, place that disclosure in flow before the prose. Hide either floating navigator while the immersive screen-width figure occupies the viewport so navigation never sits on top of the argument.
 
-**Margin Note:** progressively disclosed in the right margin on desktop through hover, focus, or a pinned click state; inline toggle on smaller screens. It is reference infrastructure, not a decorative pull quote. Use sans text, numbered index, and a thin rule. Never make hover the only access path.
+**Footnote Card:** progressively disclosed beside its inline marker through hover, focus, or a pinned click state. It uses fixed viewport positioning so wide figures and breakout layouts cannot push or clip it; the placement script clamps it to the viewport and flips it above the marker when needed. Phones use a bottom reference slip. It is reference infrastructure, not a decorative pull quote. Use a numbered index and quiet rule, preserve keyboard and Escape behavior, and never make hover the only access path.
 
 **Figure Plate:** figure identity belongs in the caption below the visual. Technical figures use the numbered `Fig. NN. Title. Explanation.` caption format. Do not put figure numbers or explanatory captions inside SVGs.
 
@@ -378,7 +390,7 @@ Hairlines should use ink or gold with opacity. Avoid thick side-stripe borders a
 
 **Landing (one day):** the /vela landing crosses exactly one day: night hero, one dawn, a light body that never flickers, one dusk, night close. Two sky changes on the whole page — a page that flips registers more often strobes, no matter how smooth each gradient is. The dawns are `.vl-band` strips: a true smootherstep ramp (nine stops, zero slope at both edges) over ~68vh, a wide faint soft-gold warmth at the horizon, stars crossing on the night side, and adjacent content rising into the band so the transition happens behind words, never as an empty interlude. Dark objects during the day (the voyage map, the code panel) keep night interiors as framed instruments on the paper; sections themselves stay transparent over the page's single paper ground (any tint that stops at a section edge prints a seam — corner washes were cut twice). Decorated night sections wash to their pure register color before a band begins (seam guards), and bands overlap both neighbors by 1px. The lane is the observatory ledger: star-atlas instrument on the house's paper — never neon dev-tool. The hero's snapshot row reads as the horizon instrument, the last thing the night shows before dawn. The landing night carries the site's one sanctioned loop: three hero stars breathe on 11-13s cycles after arrival, reduced motion excluded — extend looping motion nowhere else.
 
-**Closing Page:** a restrained return to the opening image language on the same cream reading paper as the essay. Constellations uses the existing painted horizon: the distant sail carries the essay's gold route into open water while the atlas arcs resolve above it. The plate enters once with a small fade and vertical settle; it never loops, changes the page background, or introduces a separate end panel. Reduced motion and no-JavaScript states show the complete plate immediately. Hidden rail or margin lanes must not leave empty grid rows between the dedication and the close. The sail exit is a real crossing: beneath the plate, one small wordless sail links to /vela — the page's final mark and its only exit, arriving a beat after the plate settles. It should feel like the final breath of the reading experience, not a promotional poster.
+**Closing Page:** a restrained return to the opening image language on the same cream reading paper as the essay. Constellations uses the existing painted horizon: the distant sail carries the essay's gold route into open water while the atlas arcs resolve above it. The plate enters once with a small fade and vertical settle; it never loops, changes the page background, introduces a separate end panel, or adds another Vela mark beneath the image. Reduced motion and no-JavaScript states show the complete plate immediately. Hidden rail or balancing gutters must not leave empty grid rows between the dedication and the close.
 
 ## Case law
 
