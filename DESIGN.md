@@ -504,11 +504,14 @@ Don't:
 
 The Constellations essay opens and closes in night. `NightBand.astro`
 (essay chrome) is a full-bleed sky band on the `--fig-night` ground,
-dissolving into `--paper-0` through a nine-stop oklab smootherstep
-(the /vela band primitive, remapped to essay tokens). The dawn holds
-a hand-placed star field with the Fig 01 trio arranged but unjoined;
-the dusk gathers the stars, joins the trio in gold, and carries the
-relocated dedication as the page's last mark. Bands are designed
+dissolving into `--paper-0` through the shared `.sky-fade`
+smootherstep. The dawn holds a hand-placed star field with the Fig
+01 trio arranged but unjoined; the dusk gathers only stars and
+carries the dedication as the page's last mark, its gold horizon
+rule drawing once — the route from the painted sail landing where
+"for M." rests. The joined trio and the "a Vela essay" colophon
+line were cut 2026-07-18 at Will's direction: the sail image is the
+ending, and the coda adds nothing that competes with it. Bands are designed
 containers, consistent with "marks are content; atmosphere is an
 edgeless wash" — the cream body remains untouched.
 
@@ -519,7 +522,9 @@ Case law amendments:
   nowhere else on the reading surface.
 - The hero carries no kicker: the "no eyebrow, no cartouche" ruling
   stands (a family label above the night masthead was tried 2026-07-18
-  and cut the same day; attribution lives in the coda's colophon line).
+  and cut the same day). The coda's "a Vela essay" colophon line was
+  also cut 2026-07-18 — the essay carries no attribution mark beyond
+  the masthead sail; do not re-propose either.
 - The masthead sail inverts to night ink (`data-ink="night"`) while
   over the prelude plateau; state, not motion.
 
