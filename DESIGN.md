@@ -274,7 +274,7 @@ Shapes are print-shaped and sharp. Use no radius or tiny radius. Rounded rectang
 Technical figures share one state-substrate grammar, codified 2026-07-16
 from the brand handoff v1.1 and rebuilt across the Constellations
 figures (the 2026-07-17 visual-world pass cut the route to the seven
-visuals that are the story — Figs 01–06 plus the instrument — and
+visuals that are the story — Figs 01–08 (the last of them the instrument) — and
 added the finding-record specimen and the torrent-and-ledger
 centerpiece). The anatomy is the sail's own construction: a substrate
 baseline (2px ink at the figure's foot) establishes inherited state;
@@ -349,7 +349,7 @@ crosses, ambient and unlabelled. The **manifest** (`ManifestRow.astro`,
 2px ink rule, micro-caps label, gold-disc items) is inherited context:
 its six canonical words — **Location · Claim · Path · History · Check ·
 State** — are the layers the voyage collects (Fig 02), the field groups
-of the finding record (Fig 04), and the completed strip above the
+of the finding record (Fig 05), and the completed strip above the
 closing imprint. If those six words ever change, all three sites change
 in the same commit. A motif appears only where its meaning applies.
 
@@ -404,7 +404,7 @@ Hairlines should use ink or gold with opacity. Avoid thick side-stripe borders a
 
 ## Components
 
-**Masthead:** the horizon masthead — wordless, on every page. The in-flow header is a spacer that preserves flow; two fixed pieces do the work. The bar carries the sail alone (returning to /vela) over a paper gradient scrim that dissolves scrolled prose instead of clipping it; the bar hides while the reader moves down the page and returns on any upward scroll, and at the very top the scrim is transparent so the bar melts into the page. The former 2px horizon progress line was removed 2026-07-17: reading position lives in the rail on essay pages, and a second always-on meter read as redundant chrome — do not re-propose it. Reduced motion never hides the bar; capture mode hides the bar; print hides the masthead entirely. No wordmark, no text links, no menu: a lockup with a mono wordmark and one contextual text link was built and rejected the same day (2026-07-16) — the glyph-only mark is the decided register, and text in the masthead should not be re-proposed. The landing's night variant re-inks spacer, scrim, and horizon through the `.vela-wrapper[data-variant="custom"]` overrides. Crossings between pages are cross-document view transitions (pure CSS, no client router — every navigation is real and every page's scripts run from scratch): the sail persists and morphs across, the rest crossfades over 320ms, and reduced motion turns the whole thing off. The favicon carries a dark-scheme variant (night ground, paper sail) so the tab mark never vanishes on dark browser chrome. Use the full two-lineage construction reference at 32px and above and a hand-simplified sail for the favicon. Do not invent alternate route marks for publication surfaces.
+**Masthead:** the horizon masthead — wordless, on every page. The in-flow header is a spacer that preserves flow; two fixed pieces do the work. The bar carries the sail alone (returning to /vela) over a paper gradient scrim that dissolves scrolled prose instead of clipping it; the bar hides while the reader moves down the page and returns on any upward scroll, and at the very top the scrim is transparent so the bar melts into the page. The former 2px horizon progress line was removed 2026-07-17: reading position lives in the rail on essay pages, and a second always-on meter read as redundant chrome — do not re-propose it. Reduced motion never hides the bar; capture mode hides the bar; print hides the masthead entirely. No wordmark, no text links, no menu: a lockup with a mono wordmark and one contextual text link was built and rejected the same day (2026-07-16) — the glyph-only mark is the decided register, and text in the masthead should not be re-proposed. The landing's night variant re-inks spacer, scrim, and horizon through the `.vela-wrapper[data-variant="custom"]` overrides. Crossings between pages are cross-document view transitions (pure CSS, no client router — every navigation is real and every page's scripts run from scratch): the sail persists and morphs across (300ms) while the root cuts instantly — a crossfade smeared night pages over cream and was removed 2026-07-18 — and reduced motion turns the whole thing off. The favicon carries a dark-scheme variant (night ground, paper sail) so the tab mark never vanishes on dark browser chrome. Use the full two-lineage construction reference at 32px and above and a hand-simplified sail for the favicon. Do not invent alternate route marks for publication surfaces.
 
 **Browser and social identity:** every browser- and OS-facing asset uses the same Vela sail geometry and the canonical cream (`#F7F6F2`), ink (`#081224`), and gold (`#C9A664`). Keep SVG, PNG favicon, Apple touch, manifest, and pinned-tab exports synchronized. The social card may combine the exact sail with the essay's watercolor world, but must remain a true 1200×630 crop and carry readable Vela attribution. Never substitute the retired constellation polygon or an AI-redrawn sail.
 
@@ -418,17 +418,17 @@ Hairlines should use ink or gold with opacity. Avoid thick side-stripe borders a
 
 **Figure Plate:** figure identity belongs in the caption below the visual. Technical figures use the numbered `Fig. NN. Title. Explanation.` caption format. Do not put figure numbers or explanatory captions inside SVGs.
 
-**Image Plate:** emotional plates use generated or painted assets with deckled masks. They are not technical figures unless they carry exact labels, legends, or state. Section plates arrive once (fade and 12px settle on first entry, script-claimed hidden state, complete for no-JS, reduced motion, and print) so every painted plate on the page speaks the same arrival language as the hero and the close. The hero and section plates carry plate drift: they lag the page by up to 7px while scrolling, the one continuous scroll-linked motion allowed outside the background wash, because it layers ink over sky without ever animating an argument. Reduced motion never enters it, and the closing plate is excluded: the final breath holds still.
+**Image Plate:** emotional plates use generated or painted assets with deckled masks. They are not technical figures unless they carry exact labels, legends, or state. Section plates arrive once (fade and 12px settle on first entry, script-claimed hidden state, complete for no-JS, reduced motion, and print) so every painted plate on the page speaks the same arrival language as the hero and the close. Plate drift (a ≤7px scroll lag on the painted plates) was removed 2026-07-18: at that amplitude it sat below the perceptibility floor while costing a scroll loop and a transform channel. Plates hold still; atmosphere breathes by opacity, never by position.
 
 **Technical SVG Diagram:** use web-native SVG/HTML when labels, legends, responsiveness, or captions need to remain exact. Keep internal typography sans, labels small but legible, and all text inside the visual free from essay-body inheritance.
 
-**Record specimen:** one figure per essay may be a typeset HTML inspection artifact rather than an SVG diagram — a finding rendered as a catalog-card-crossed-with-a-commit (`--paper-1` ground, one hairline top rule, sharp corners, mono values, real published example only). Constellations' is Fig 04, the finding record. It holds the reading measure (`layout="column"`), following the VelaEventCode width case law, and is a deliberate change of medium in the middle run; it is a statement, not a widget (no controls, complete at rest). Its field labels are the manifest words.
+**Record specimen:** one figure per essay may be a typeset HTML inspection artifact rather than an SVG diagram — a finding rendered as a catalog-card-crossed-with-a-commit (`--paper-1` ground, one hairline top rule, sharp corners, mono values, real published example only). Constellations' is Fig 05, the finding record. It holds the reading measure (`layout="column"`), following the VelaEventCode width case law, and is a deliberate change of medium in the middle run; it is a statement, not a widget (no controls, complete at rest). Its field labels are the manifest words.
 
 **Landing (one day):** the /vela landing crosses exactly one day: night hero, one dawn, a light body that never flickers, one dusk, night close. Two sky changes on the whole page — a page that flips registers more often strobes, no matter how smooth each gradient is. The dawns are `.vl-band` strips: a true smootherstep ramp (nine stops, zero slope at both edges) over ~68vh, a wide faint soft-gold warmth at the horizon, stars crossing on the night side, and adjacent content rising into the band so the transition happens behind words, never as an empty interlude. Dark objects during the day (the voyage map, the code panel) keep night interiors as framed instruments on the paper; sections themselves stay transparent over the page's single paper ground (any tint that stops at a section edge prints a seam — corner washes were cut twice). Decorated night sections wash to their pure register color before a band begins (seam guards), and bands overlap both neighbors by 1px. The lane is the observatory ledger: star-atlas instrument on the house's paper — never neon dev-tool. The hero's snapshot row reads as the horizon instrument, the last thing the night shows before dawn. The landing night carries the site's one sanctioned loop: three hero stars breathe on 11-13s cycles after arrival, reduced motion excluded — extend looping motion nowhere else.
 
 **Closing Page:** a restrained return to the opening image language on the same cream reading paper as the essay. Constellations uses the existing painted horizon: the distant sail carries the essay's gold route into open water while the atlas arcs resolve above it. The plate enters once with a small fade and vertical settle; it never loops, changes the page background, introduces a separate end panel, or adds another Vela mark beneath the image. The plate itself stays untouched: the motif return happens beside it, not over it. Reduced motion and no-JavaScript states show the complete plate immediately. Hidden rail or balancing gutters must not leave empty grid rows between the dedication and the close.
 
-**The chart handed on (colophon):** the §9 return is a silent in-flow composition (`ChartHandedOn.astro`) between the last paragraph and the dedication, not a numbered figure and not chrome. It is made only of earned motifs: the three findings from Fig 01 return, now joined by accepted lines with one gold seam on the current segment; the manifest returns complete; the baseline runs to the measure's edge and ends in one open ring (the work continues). No motion, no caption, no wordmark, no sail — the sail's third appearance stays inside the painted plate below. It reinterprets the opening without adding a new metaphor.
+**The chart handed on (colophon):** removed 2026-07-18. The drawn §9 colophon (`ChartHandedOn.astro`) that sat above the dedication was cut at Will's direction — a second ending image diluted the closing plate. Its job (the Fig 01 trio returning, joined) moved into the dusk NightBand, where the trio joins in gold among the gathering stars. Do not reintroduce an in-flow ending composition between the last paragraph and the close.
 
 ## Case law
 
@@ -461,7 +461,7 @@ hold it, or delete it. The composing-sky story survived the atlas's
 deletion by moving into the wash and the rail's visited trail.
 
 **Density is the argument, so the density must read.** Rules paid for
-2026-07-17. A cord (Fig 03) or a torrent (Fig 08) whose point is "many"
+2026-07-17. A cord (Fig 03) or a torrent (Fig 06) whose point is "many"
 fails if its marks are individually faint: 78 hairlines at 0.3 opacity /
 0.8px read as empty space, not as load. When a figure's argument is
 count or convergence, the marks carry weight — legible opacity and a
@@ -475,7 +475,7 @@ count-cord, then lanes, then a typeset table, then a painted plate, then
 a record specimen. No two consecutive visuals should share a template;
 the only thing that may repeat is a shape whose repetition accumulates
 meaning (the review waist, wide-in-narrow-out, recurs from Fig 03's cord
-to Fig 08's gate).
+to Fig 06's gate).
 
 ## Do's and Don'ts
 
@@ -522,3 +522,37 @@ Case law amendments:
   and cut the same day; attribution lives in the coda's colophon line).
 - The masthead sail inverts to night ink (`data-ink="night"`) while
   over the prelude plateau; state, not motion.
+
+## Amendment 2026-07-18 · One motion instrument
+
+The essay's motion collapses onto one scale. Four durations: **160ms**
+(micro feedback: hovers, traces, control presses), **240ms** (state
+transitions: rail reveal, mast bar, era-follow), **420ms** (draws: rules,
+threads, trio lines), **900ms** (arrivals: plates, pours, the dusk
+finale). Two curves: `--ease` for micro and transition, `--ease-arrive`
+for draw and arrival. The hero and closing painted plates alone keep
+`--dur-arrive` (1100ms) as plate weight. Two sanctioned loops: the night
+bands' star breathe and scroll-linked linear tracking (the Fig 02 sail).
+Anything off this scale is a defect, not a nuance — nine easing curves
+and thirty duration literals measured 2026-07-18 made every entrance a
+different instrument.
+
+One reveal geometry: entrance observers use `{ threshold: 0.1,
+rootMargin: "0px 0px 25% 0px" }` (NightBand dusk, ClosingPage,
+SectionHeading). The atlas controller's wide pre-trigger margin and
+scrub geometry are choreography, not reveals, and keep their own values.
+
+Staged cascades resolve within ~1.3s of visibility (TorrentLedger's
+2s tail was compressed): a reader mid-scroll should never wait on a
+figure still assembling. The bound applies to scroll-entered
+cascades; load-time bookend arrivals (the hero, the dawn prelude)
+carry plate weight and are exempt — the dusk coda is scroll-entered
+and complies. Two literals sit deliberately off the scale and are
+sanctioned by name: the Fig 02 sail's 110ms linear transform (the
+smoothing filter of its scroll-linked tracking, not an entrance)
+and the 300ms view-transition sail glide.
+
+Typography note (2026-07-18): italic Newsreader is NOT preloaded.
+Its first use is below the fold, the metric-matched Georgia
+fallback holds layout (CLS ≈ 0), and 147KB would contend with the
+night-prelude paint. Do not re-litigate without new evidence.
