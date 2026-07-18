@@ -499,3 +499,26 @@ Don't:
 - Do not make all diagrams share the same constellation-node shape if the section meanings differ.
 - Do not let global essay typography leak into SVG labels.
 - Do not add new sections, nav surfaces, or product affordances unless they serve the reading experience.
+
+## Amendment 2026-07-18 · The day arc (NightBand)
+
+The Constellations essay opens and closes in night. `NightBand.astro`
+(essay chrome) is a full-bleed sky band on the `--fig-night` ground,
+dissolving into `--paper-0` through a nine-stop oklab smootherstep
+(the /vela band primitive, remapped to essay tokens). The dawn holds
+a hand-placed star field with the Fig 01 trio arranged but unjoined;
+the dusk gathers the stars, joins the trio in gold, and carries the
+relocated dedication as the page's last mark. Bands are designed
+containers, consistent with "marks are content; atmosphere is an
+edgeless wash" — the cream body remains untouched.
+
+Case law amendments:
+- The sanctioned loop: the star-breathe keyframe (11-13s, alternate,
+  opacity only) is permitted in the two night bands, three designated
+  stars each, only after arrival, never under reduced motion, and
+  nowhere else on the reading surface.
+- The hero carries no kicker: the "no eyebrow, no cartouche" ruling
+  stands (a family label above the night masthead was tried 2026-07-18
+  and cut the same day; attribution lives in the coda's colophon line).
+- The masthead sail inverts to night ink (`data-ink="night"`) while
+  over the prelude plateau; state, not motion.
