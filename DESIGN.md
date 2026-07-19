@@ -560,7 +560,20 @@ No runtime filters on reading surfaces (2026-07-19): `filter: blur`
 holds full-viewport GPU layers alive, and `backdrop-filter` on a
 fixed or sticky element re-renders the page beneath it every
 scrolled frame. Bake softness into gradient stops; carry scrims
-with near-opaque paper. The bound applies to scroll-entered
+with near-opaque paper.
+
+Subtraction rulings (2026-07-19, "nothing tangential"):
+- The §1 "Three questions" aside was cut — it restated the thesis
+  stated one line above it. Do not reintroduce an opening aside
+  that paraphrases the essay's own claim.
+- Footnotes open on click, Enter, or focus — never hover. Margin
+  notes are 1–2 sentences; a citation is a coordinate, not an
+  essay-within-the-essay.
+- The scrolly rides ~1.6 viewports and lands its landfalls plainly:
+  the pulse rings, title crossfade, and crossing beat were cut. A
+  landfall is a fact, not a firework.
+- Machinery ships only if a figure consumes it: the atlas
+  controller is a visibility gate and an instant pin, nothing more. The bound applies to scroll-entered
 cascades; load-time bookend arrivals (the hero, the dawn prelude)
 carry plate weight and are exempt — the dusk coda is scroll-entered
 and complies. Two literals sit deliberately off the scale and are
