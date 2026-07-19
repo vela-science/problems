@@ -18,3 +18,4 @@ tmp/
 output/
 prototypes/
 .vercel
+public/.well-known/vela-site.json

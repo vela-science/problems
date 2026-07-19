@@ -1,61 +1,43 @@
-# Vela Essays
+# Vela Web
 
-Static Astro publication for the Vela essays, protocol narrative, and visual
-catalog at [`www.vela.space`](https://www.vela.space).
+The canonical public website for Vela. One Astro application combines the
+editorial essays with a static, exact-root reader over published frontiers.
+The site is a read-only projection: it never signs, accepts, or stores
+scientific authority.
 
-## Public routes
+- Production: <https://www.vela.space/>
+- Frontiers: <https://www.vela.space/frontiers>
+- Vela protocol and CLI: <https://github.com/vela-science/vela>
 
-- `/`: permanent redirect to `/constellations`
-- `/constellations`: *Constellations of Borrowed Light*
-- `/discovery-engine`: *The Discovery Engine*
-- `/gigafactories-for-science`: *Gigafactories for Science*
-- `/whitepaper`: *The Vela Architecture*
-- `/case`: the four-minute argument
-- `/vela`: the Vela protocol landing
-- `/stack`: the ecosystem stack
-- `/facility`: the interactive Meridian facility model
-- `/catalog`: the complete publication and artifact index
-- `/404`: the not-found document
-
-`/terafactories` and `/gigafactories` remain permanent aliases of
-`/gigafactories-for-science`.
-
-## Source of truth
-
-- Essay sources: `src/content/essays/*/index.mdx`
-- Whitepaper source: `src/content/whitepaper/index.mdx`
-- Root redirect: `astro.config.mjs` and `vercel.json`
-- Shared reading UI: `src/components/essay/chrome/*` and
-  `src/components/essay/blocks/*`
-- Design tokens: `src/styles/tokens.css`
-- Public metadata: `src/data/constants.ts`
-- Route contract: `scripts/check-public-routes.mjs`
-
-## Commands
-
-Node `>=22.14.0` is required (see `.nvmrc`).
+## Local verification
 
 ```bash
-bun install --frozen-lockfile
-bun run dev
-bun run build
+pnpm install --frozen-lockfile
+pnpm check
+pnpm check:brand
+pnpm check:bundle
+pnpm test
+pnpm build
 ```
 
-`bun run build` compiles the site and then verifies the exact generated HTML
-route set and retired-origin exposure.
+`data/site-frontier-bundle.v1.json` is generated from clean, pinned frontier
+checkouts with the exact released Vela binary. It remains a build-time input;
+pages are statically rendered and the full bundle is not sent to browsers.
 
-## Design
+The July 2026 designer handoff is recorded under `brand/reference/2026-07/`.
+`brand/vela.tokens.json` is the core token source. Production CSS is generated
+with `pnpm brand:generate`. Reference artwork is intentionally excluded.
 
-The site uses Vela's warm editorial system: mineral cream paper, deep indigo
-ink, directional gold, Newsreader for narrative voice, Inter for quiet chrome,
-IBM Plex Mono for indexes, and the provisional sail mark. The essays,
-technical surfaces, and catalog should feel like adjacent chambers in one
-house rather than separate microsites.
+## Licensing
 
-Read `PRODUCT.md`, `DESIGN.md`, and `docs/design-handoff.md` before changing the
-public interface.
+- Code: Apache-2.0 OR MIT, at your option.
+- Essays and original diagrams: CC BY 4.0.
+- The Vela name and marks: trademark rights reserved.
+- Fonts and third-party components: see `THIRD_PARTY_NOTICES.md`.
 
-## Deployment
+The exact-root projection was ported from `vela-science/vela-site` at commit
+`724e425c1661da6dcc0ea759e85f2f7f85d3e4c0`. That repository retains its
+independent history and its `v0.210.0` release.
 
-Vercel runs `bun run build`. Canonical URLs, Open Graph data, JSON-LD, robots,
-the manifest, and the sitemap use `https://www.vela.space`.
+Deployment, source-refresh, route, and canonical-host operations are documented
+in [`docs/WEB.md`](docs/WEB.md).
