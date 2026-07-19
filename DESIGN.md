@@ -507,8 +507,10 @@ The Constellations essay opens and closes in night. `NightBand.astro`
 (essay chrome) is a full-bleed sky band on the `--fig-night` ground,
 dissolving into `--paper-0` through the shared `.sky-fade`
 smootherstep. The dawn holds a hand-placed star field with the Fig
-01 trio arranged but unjoined; the dusk gathers only stars and
-carries the dedication as the page's last mark, its gold horizon
+01 trio arranged but unjoined; the dusk gathers over the painting itself
+(transparent-topped, overlapping the closing plate's lower water so
+sail, darkening, and dedication are one composition) and carries
+the dedication as the page's last mark, its gold horizon
 rule drawing once — the route from the painted sail landing where
 "for M." rests. The joined trio and the "a Vela essay" colophon
 line were cut 2026-07-18 at Will's direction: the sail image is the
@@ -573,7 +575,43 @@ Subtraction rulings (2026-07-19, "nothing tangential"):
   the pulse rings, title crossfade, and crossing beat were cut. A
   landfall is a fact, not a firework.
 - Machinery ships only if a figure consumes it: the atlas
-  controller is a visibility gate and an instant pin, nothing more. The bound applies to scroll-entered
+  controller is a visibility gate and an instant pin, nothing more.
+- The §3 Chiang epigraph was cut 2026-07-19 and its line woven into
+  the paragraph that discusses the story: a quote lands where the
+  prose earns it, not as a gate before an argument that hasn't
+  started. No section carries an epigraph; do not reintroduce one.
+
+## Amendment 2026-07-19 · The bare standard
+
+After nine passes the verdict on the annotation-rich instrument
+register was categorical. Every figure now states ONE claim, and
+any mark not serving that claim dies. The rules:
+
+- ≤5 text elements inside the drawing. Data labels that ARE the
+  object (stratum names, day letters, counts) count lightly;
+  explanation labels count double.
+- Sentence case; mono for numbers and ids only. No uppercase
+  micro-label systems.
+- Banned inside figures: kickers, header rows, margin rails,
+  readout sentences, field/atmosphere decoration, secondary
+  annotation lines, sub-labels under labels.
+- The structured caption carries ALL reading instruction — the
+  drawing never explains itself.
+- Ink spans the box: every viewBox trims to its content bounds
+  plus a uniform 8-unit frame, re-measured after any content
+  change.
+
+What died 2026-07-19 under this standard: the scrolly's entire
+header (kicker, stage title, year odometer, wait line) and its
+sky-wash/ripples; the finding record's masthead, six numbered
+field labels, every sub-annotation, and the challenge slip (the
+caption carries the story); the torrent's thirteen-element margin
+rail (two placed numbers replace it) and document-only row; the
+instrument's kicker, stage headers, node detail lines, and mono
+readout sentence; the pour's band fill, review bracket, and source
+lines; the soundings' and timeline's annotations and field curves;
+the tracings' sheet rectangles. Display-count numerals survive —
+the density law's numeral rule outranks minimalism. The bound applies to scroll-entered
 cascades; load-time bookend arrivals (the hero, the dawn prelude)
 carry plate weight and are exempt — the dusk coda is scroll-entered
 and complies. Two literals sit deliberately off the scale and are
