@@ -1,4 +1,5 @@
-import { readFile, readdir } from "node:fs/promises";
+import { spawnSync } from "node:child_process";
+import { access, readFile, readdir } from "node:fs/promises";
 import { join, relative, sep } from "node:path";
 
 const root = new URL("..", import.meta.url);
@@ -7,6 +8,22 @@ const required = new Set(["/", "/404", "/case", "/constellations", "/discovery-e
 const redirects = new Map([["/catalog", "/essays"], ["/vela", "/"], ["/gigafactories", "/gigafactories-for-science"], ["/terafactories", "/gigafactories-for-science"]]);
 const allowedDynamic = [/^\/frontiers\/[a-z0-9-]+$/u, /^\/frontiers\/[a-z0-9-]+\/(work|review|reproduce)$/u, /^\/frontiers\/[a-z0-9-]+\/findings\/[A-Za-z0-9_.:-]+$/u, /^\/frontiers\/erdos\/problems\/\d+$/u];
 const forbiddenReferences = ["https://app.vela.space", "https://constellate.science", "https://www.constellate.science", "https://app.constellate.science", "https://hub.constellate.science", "0.800.9"];
+
+try {
+  await access(dist);
+} catch {
+  const manifest = spawnSync(process.execPath, ["scripts/build-deployment-manifest.mjs"], {
+    cwd: root.pathname,
+    stdio: "inherit",
+  });
+  if (manifest.status !== 0) process.exit(manifest.status ?? 1);
+
+  const build = spawnSync("pnpm", ["exec", "astro", "build"], {
+    cwd: root.pathname,
+    stdio: "inherit",
+  });
+  if (build.status !== 0) process.exit(build.status ?? 1);
+}
 
 async function htmlFiles(directory) {
   const files = [];
