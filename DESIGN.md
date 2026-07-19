@@ -345,13 +345,14 @@ fades without disappearing), open (dashed ring). The **wake**
 accepted route left recoverable — the voyage's route, the record's
 provenance line, the ledger's step, the instrument's lit edges. The
 **chart-lines** (`ChartLines.astro`) are the unread field a route
-crosses, ambient and unlabelled. The **manifest** (`ManifestRow.astro`,
-2px ink rule, micro-caps label, gold-disc items) is inherited context:
-its six canonical words — **Location · Claim · Path · History · Check ·
-State** — are the layers the voyage collects (Fig 02), the field groups
-of the finding record (Fig 05), and the completed strip above the
-closing imprint. If those six words ever change, all three sites change
-in the same commit. A motif appears only where its meaning applies.
+crosses, ambient and unlabelled. The **manifest** is a vocabulary,
+not a component (the `ManifestRow.astro` primitive was retired
+2026-07-18 with the closing colophon, its last renderer): its six
+canonical words — **Location · Claim · Path · History · Check ·
+State** — are the layers the voyage collects (Fig 02) and the field
+groups of the finding record (Fig 05). If those six words ever change,
+both sites change in the same commit. A motif appears only where its
+meaning applies.
 
 Every technical figure must expose its complete causal structure at rest. Direct
 controls may change emphasis, scale, or the inspected example, but they must not
@@ -428,7 +429,7 @@ Hairlines should use ink or gold with opacity. Avoid thick side-stripe borders a
 
 **Closing Page:** a restrained return to the opening image language on the same cream reading paper as the essay. Constellations uses the existing painted horizon: the distant sail carries the essay's gold route into open water while the atlas arcs resolve above it. The plate enters once with a small fade and vertical settle; it never loops, changes the page background, introduces a separate end panel, or adds another Vela mark beneath the image. The plate itself stays untouched: the motif return happens beside it, not over it. Reduced motion and no-JavaScript states show the complete plate immediately. Hidden rail or balancing gutters must not leave empty grid rows between the dedication and the close.
 
-**The chart handed on (colophon):** removed 2026-07-18. The drawn §9 colophon (`ChartHandedOn.astro`) that sat above the dedication was cut at Will's direction — a second ending image diluted the closing plate. Its job (the Fig 01 trio returning, joined) moved into the dusk NightBand, where the trio joins in gold among the gathering stars. Do not reintroduce an in-flow ending composition between the last paragraph and the close.
+**The chart handed on (colophon):** removed 2026-07-18. The drawn §9 colophon (`ChartHandedOn.astro`) that sat above the dedication was cut at Will's direction — a second ending image diluted the closing plate. Its job passed to the dusk NightBand, which now carries only the gathering star field and the dedication (the joined trio was also tried there and cut 2026-07-18 — the painted sail is the ending). Do not reintroduce an in-flow ending composition between the last paragraph and the close.
 
 ## Case law
 
