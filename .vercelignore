@@ -1,0 +1,15 @@
+.astro/
+.agents/
+.claude/
+.codex/
+.git/
+.hallmark/
+.jj/
+.DS_Store
+dist/
+node_modules/
+output/
+plans/
+submissions/
+tmp/
+*.log
