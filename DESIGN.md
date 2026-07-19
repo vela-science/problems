@@ -479,6 +479,46 @@ language (a strung line, a mist with one gold pair, a starfield over
 one thread, reaches to different depths), never in a change of
 metaphor. Do not reintroduce medium variety for its own sake.
 
+**The geometry law — 2026-07-19, after 04/05/08 failed a third
+time.** Speaking the register's vocabulary is not enough; the
+GEOMETRY must be a sky's. The three figures that kept failing all
+wore star costumes over diagram skeletons: three rays from a common
+origin (a protractor), nine lines converging on one large disc (a
+hub-and-spoke), a mirror-symmetric node lattice with a toggle and a
+KPI readout (product UI). The loved figures share three structural
+facts the failures lacked, now mandatory: (1) every figure sits in
+a faint field — a hash-scattered background of quiet points, so the
+drawing is a sky, not marks floating in blank; (2) joins run STAR
+TO STAR in irregular chains and branches with bends — nothing
+converges on a point, nothing mirrors, no ray bundles, no hubs, no
+lattices; (3) no object breaks the motif scale — the brightest star
+is bright by contrast (a FindingStar near scale 1, everything else
+receded), never by size, and no UI chrome (toggles, readout bars,
+stage headers) stands in for meaning that two line grammars can
+carry in the drawing itself. Fig 08 is the proof: the frontier /
+paper-trail toggle became one solid grammar and one dashed
+citation line, both visible at rest, and the instrument's answer
+moved into the sky as a small mono numeral.
+
+**The scene law — 2026-07-19, after 04/05 failed a FOURTH time in
+correct register geometry.** A figure must depict ONE PARTICULAR
+SCENE OR EVENT, never a taxonomy and never an anatomy. Every
+accepted figure is a particular: twelve visits, one record over
+2,200 years, 39 proposals, one week, two hands, one worked
+frontier. The two repeat-failures were abstractions in sky
+costume: Fig 04 showed three labeled specimen asterisms side by
+side (a legend of check-kinds — small multiples in disguise), and
+Fig 05 showed the labeled parts of "a finding" (an anatomy — a
+spec sheet however it is drawn, even with atlas nomenclature).
+The fixes replaced the SUBJECT: 04 became one sky drawing itself
+at the speed of its checks (join density as the claim), 05 became
+the section's event — the correction landing, old star faded but
+kept, successor stepping on along the same diagonal, dependents
+ringed. Test before building: name the figure's subject in one
+sentence — if it names a category system or a concept's parts
+rather than something that happened somewhere, change the subject,
+not the drawing.
+
 ## Do's and Don'ts
 
 Do:
