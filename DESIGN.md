@@ -469,14 +469,15 @@ count or convergence, the marks carry weight — legible opacity and a
 stroke a notch above a reference line — and the count appears as
 typographic mass (large mono numerals), not a whispered label.
 
-**Vary the medium, not just the diagram.** A run of same-width SVG
-node-and-line figures blurs into one figure no matter how correct each
-is. The middle of an essay should change medium deliberately: a
-count-cord, then lanes, then a typeset table, then a painted plate, then
-a record specimen. No two consecutive visuals should share a template;
-the only thing that may repeat is a shape whose repetition accumulates
-meaning (the review waist, wide-in-narrow-out, recurs from Fig 03's cord
-to Fig 06's gate).
+**One language, varied — OVERTURNED "vary the medium" 2026-07-19.**
+The vary-the-medium rule produced eight competing metaphors (weave,
+soundings, weather-machine, network) and Will rejected most of them.
+His named register (Fig 07) now governs: every figure is a
+constellation-field variation — stars in open space, fine lines,
+meaning carried by geometry and count. Variation lives INSIDE the
+language (a strung line, a mist with one gold pair, a starfield over
+one thread, reaches to different depths), never in a change of
+metaphor. Do not reintroduce medium variety for its own sake.
 
 ## Do's and Don'ts
 
