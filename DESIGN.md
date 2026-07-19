@@ -548,9 +548,19 @@ rootMargin: "0px 0px 25% 0px" }` (NightBand dusk, ClosingPage,
 SectionHeading). The atlas controller's wide pre-trigger margin and
 scrub geometry are choreography, not reveals, and keep their own values.
 
-Staged cascades resolve within ~1.3s of visibility (TorrentLedger's
-2s tail was compressed): a reader mid-scroll should never wait on a
-figure still assembling. The bound applies to scroll-entered
+Staged cascades target ~0.9s of visibility (1.3s is the hard
+bound; tightened 2026-07-19 after "still heavy and slow"): a reader
+mid-scroll should never wait on a figure still assembling. Entrance
+choreography animates GROUPS, not populations — a 150-mark rain
+animates as 7 day-paths, a 78-filament weave settles as one — SVG
+animations run on the main thread and a population of them stutters
+scroll.
+
+No runtime filters on reading surfaces (2026-07-19): `filter: blur`
+holds full-viewport GPU layers alive, and `backdrop-filter` on a
+fixed or sticky element re-renders the page beneath it every
+scrolled frame. Bake softness into gradient stops; carry scrims
+with near-opaque paper. The bound applies to scroll-entered
 cascades; load-time bookend arrivals (the hero, the dawn prelude)
 carry plate weight and are exempt — the dusk coda is scroll-entered
 and complies. Two literals sit deliberately off the scale and are
