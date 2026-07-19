@@ -519,6 +519,23 @@ sentence — if it names a category system or a concept's parts
 rather than something that happened somewhere, change the subject,
 not the drawing.
 
+**One sky, complete — 2026-07-19, Will's direction ("apply it to
+all of them").** With the theme confirmed, every figure now sits
+in the shared field grammar: a deterministic hash scatter of quiet
+points (r 1.5, opacity ~0.16-0.45, bumped to r 2 under 560px)
+behind the drawing, motif stars or field-scale marks as the only
+objects, star-to-star joins, lowercase mono/sans labels. Fig 01
+lost the essay's last timeline apparatus (2px baseline, outlined
+discs, tick deposits, uppercase axis labels) and became the title
+scene: the pattern overhead, twelve visits passing as a low track,
+the recognition drawn at the twelfth. Fig 02 gained the static
+field behind the strung record (the silence is sky empty of
+landfalls, not empty paper). Fig 03 kept its mist as its sky but
+its endpoints joined the mark grammar (39 open rings, 30 small
+filled marks) and the last ground rule died. Baselines, axes,
+outlined discs, and uppercase label systems are extinct in the
+essay; do not reintroduce them.
+
 ## Do's and Don'ts
 
 Do:
