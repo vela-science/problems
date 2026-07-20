@@ -1,6 +1,6 @@
 {
   "name": "vela-web",
-  "version": "0.310.1",
+  "version": "0.330.0",
   "private": true,
   "type": "module",
   "packageManager": "bun@1.3.12",
@@ -21,6 +21,10 @@
     "check:bundle": "bun run --filter @vela/frontier-data check",
     "test:roots": "bun run --filter @vela/frontier-data test",
     "test:manifests": "bun run --filter @vela/www test:manifest && bun run --filter @vela/observatory test:manifest",
+    "test:e2e": "bun run --filter @vela/observatory test:e2e",
+    "test:a11y": "bun run --filter @vela/observatory test:a11y",
+    "test:visual": "bun run --filter @vela/observatory test:visual",
+    "test:budgets": "bun scripts/check-budgets.mjs",
     "test": "bun run --filter @vela/brand test && bun run --filter @vela/frontier-data test && bun run --filter @vela/www test && bun run --filter @vela/observatory test",
     "build": "bun run --filter @vela/brand build && bun run --filter @vela/frontier-data check && bun run --filter @vela/www build && bun run --filter @vela/observatory build",
     "format:check": "git diff --check"

@@ -4,7 +4,8 @@ import { resolve } from "node:path";
 const root = resolve(import.meta.dirname, "..");
 const tokens = JSON.parse(readFileSync(resolve(root, "vela.tokens.json"), "utf8"));
 const css = readFileSync(resolve(root, "generated/tokens.css"), "utf8");
-const fonts = readFileSync(resolve(root, "generated/fonts.css"), "utf8");
+const editorialFonts = readFileSync(resolve(root, "generated/fonts-editorial.css"), "utf8");
+const productFonts = readFileSync(resolve(root, "generated/fonts-product.css"), "utf8");
 const mark = readFileSync(resolve(root, "vela-mark-full.svg"), "utf8");
 const micro = readFileSync(resolve(root, "vela-mark-micro.svg"), "utf8");
 
@@ -30,10 +31,12 @@ assert(mark.includes(tokens.color.brand.stardust.$value), "full mark stardust dr
 assert(micro.includes(tokens.color.brand.midnight.$value), "micro mark midnight drift");
 assert(micro.includes(tokens.color.brand.stardust.$value), "micro mark stardust drift");
 for (const family of ["Newsreader Text", "Newsreader Display", "Inter", "IBM Plex Mono"]) {
-  assert(fonts.includes(`font-family: "${family}"`), `missing shared ${family} face`);
+  assert(editorialFonts.includes(`font-family: "${family}"`), `missing editorial ${family} face`);
 }
+for (const family of ["Inter", "IBM Plex Mono"]) assert(productFonts.includes(`font-family: "${family}"`), `missing product ${family} face`);
+for (const family of ["Newsreader Text", "Newsreader Display"]) assert(!productFonts.includes(family), `editorial font ${family} entered product profile`);
 for (const rejected of ["Spectral", "Space Grotesk", "JetBrains Mono", "Geist", "Schibsted"]) {
-  assert(!fonts.includes(rejected), `rejected font ${rejected} remains in shared output`);
+  assert(!editorialFonts.includes(rejected) && !productFonts.includes(rejected), `rejected font ${rejected} remains in generated output`);
 }
 assert(tokens.font.display.$value.startsWith("Newsreader"), "editorial display role drift");
 assert(tokens.font.sans.$value.startsWith("Inter"), "editorial sans role drift");

@@ -6,7 +6,8 @@ import test from "node:test";
 const root = resolve(import.meta.dirname, "..");
 const tokens = JSON.parse(readFileSync(resolve(root, "vela.tokens.json"), "utf8"));
 const css = readFileSync(resolve(root, "generated/tokens.css"), "utf8");
-const fonts = readFileSync(resolve(root, "generated/fonts.css"), "utf8");
+const editorialFonts = readFileSync(resolve(root, "generated/fonts-editorial.css"), "utf8");
+const productFonts = readFileSync(resolve(root, "generated/fonts-product.css"), "utf8");
 
 function channel(value) {
   const normalized = value / 255;
@@ -46,10 +47,11 @@ test("primary foreground pairs pass WCAG AA", () => {
     }
   }
   assert.notEqual(tokens.color.context.light.surfaceRaised.$value.toLowerCase(), "#ffffff");
-  assert.match(fonts, /font-family: "Newsreader Text";[\s\S]*?newsreader-text-400-latin\.woff2/u);
-  assert.match(fonts, /font-family: "Newsreader Text";[\s\S]*?newsreader-text-italic-400-latin\.woff2/u);
-  assert.match(fonts, /font-family: "Newsreader Display";[\s\S]*?newsreader-display-500-latin\.woff2/u);
-  assert.match(fonts, /font-family: "Newsreader Display";[\s\S]*?newsreader-display-italic-400-latin\.woff2/u);
+  assert.match(editorialFonts, /font-family: "Newsreader Text";[\s\S]*?newsreader-text-400-latin\.woff2/u);
+  assert.match(editorialFonts, /font-family: "Newsreader Text";[\s\S]*?newsreader-text-italic-400-latin\.woff2/u);
+  assert.match(editorialFonts, /font-family: "Newsreader Display";[\s\S]*?newsreader-display-500-latin\.woff2/u);
+  assert.match(editorialFonts, /font-family: "Newsreader Display";[\s\S]*?newsreader-display-italic-400-latin\.woff2/u);
+  assert.doesNotMatch(productFonts, /Newsreader/u);
 });
 
 test("status semantics are never represented as an unlabelled palette", () => {

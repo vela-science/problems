@@ -117,7 +117,7 @@ export const velaTokens = ${JSON.stringify(primitives, null, 2)} as const;
 export type VelaTokenName = keyof typeof velaTokens;
 `;
 
-const fonts = `/* Shared self-hosted Vela font faces. */
+const productFonts = `/* Vela product delivery profile. */
 @font-face {
   font-family: "IBM Plex Mono";
   font-style: normal;
@@ -139,6 +139,9 @@ const fonts = `/* Shared self-hosted Vela font faces. */
   font-display: swap;
   src: url("/assets/fonts/inter-300-700-latin.woff2") format("woff2");
 }
+`;
+
+const editorialFonts = `${productFonts.trimEnd()}
 @font-face {
   font-family: "Newsreader Text";
   font-style: normal;
@@ -172,7 +175,8 @@ const fonts = `/* Shared self-hosted Vela font faces. */
 const outputs = new Map([
   [resolve(root, "generated/tokens.css"), css],
   [resolve(root, "generated/tokens.ts"), ts],
-  [resolve(root, "generated/fonts.css"), fonts],
+  [resolve(root, "generated/fonts-product.css"), productFonts],
+  [resolve(root, "generated/fonts-editorial.css"), editorialFonts],
 ]);
 
 for (const [path, expected] of outputs) {

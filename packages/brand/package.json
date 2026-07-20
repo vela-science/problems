@@ -1,12 +1,15 @@
 {
   "name": "@vela/brand",
-  "version": "0.310.1",
+  "version": "0.330.0",
   "private": true,
   "type": "module",
   "exports": {
     "./tokens": "./generated/tokens.ts",
     "./tokens.css": "./generated/tokens.css",
-    "./fonts.css": "./generated/fonts.css",
+    "./fonts.css": "./generated/fonts-editorial.css",
+    "./fonts-editorial.css": "./generated/fonts-editorial.css",
+    "./fonts-product.css": "./generated/fonts-product.css",
+    "./integrity": "./src/integrity.ts",
     "./mark-full.svg": "./vela-mark-full.svg",
     "./mark-micro.svg": "./vela-mark-micro.svg"
   },
