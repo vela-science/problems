@@ -11,6 +11,10 @@
   "engines": {
     "node": ">=22.14.0"
   },
+  "overrides": {
+    "postcss": "8.5.20",
+    "esbuild": "0.28.1"
+  },
   "scripts": {
     "dev:www": "bun run --filter @vela/www dev",
     "dev:observatory": "bun run --filter @vela/observatory dev",
@@ -28,5 +32,8 @@
     "test": "bun run --filter @vela/brand test && bun run --filter @vela/frontier-data test && bun run --filter @vela/www test && bun run --filter @vela/observatory test",
     "build": "bun run --filter @vela/brand build && bun run --filter @vela/frontier-data check && bun run --filter @vela/www build && bun run --filter @vela/observatory build",
     "format:check": "git diff --check"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.1"
   }
 }
