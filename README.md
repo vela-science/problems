@@ -26,7 +26,7 @@ and two shared, framework-neutral packages.
 | `apps/www` | Astro | Product home, essays, and long-form editorial work |
 | `apps/observatory` | Next.js | Immutable frontier, finding, work, review, and replay views |
 | `packages/brand` | TypeScript and CSS | Governed sail, tokens, fonts, licenses, and deterministic exports |
-| `packages/frontier-data` | TypeScript | Sole validator and projector for `site.frontier-bundle.v1` |
+| `packages/frontier-data` | TypeScript | Sole validator and projector for frontier, search, work, and graph data |
 
 The applications share brand assets and exact facts. They do not share UI
 implementations, and neither one can sign, accept, or mutate scientific state.
@@ -56,6 +56,8 @@ clean frontier checkouts + released Vela binary
   key path, or private coordination payload.
 - The complete frontier bundle is validated at build time and never embedded
   as a universal browser payload.
+- Producer availability, active leases, and advice-only graph opportunities are
+  separate projections; graph rank never becomes work rank or authority.
 - The original Vela sail is the locked product mark; exported assets are
   derived from its canonical SVG sources.
 

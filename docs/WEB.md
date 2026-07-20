@@ -30,7 +30,9 @@ packages/frontier-data  exact frontier bundle, validation, search, and manifests
 ## Exact frontier state
 
 `packages/frontier-data/config/frontiers.v1.json` pins the Vela binary and four
-clean source frontiers. Refresh only from those exact checkouts:
+clean source frontiers. It is the sole owner of the bundle, generated search
+index, compact work availability, and rooted graph opportunity projection.
+Refresh only from those exact checkouts:
 
 ```bash
 bun packages/frontier-data/scripts/build-frontier-bundle.mjs
@@ -42,11 +44,13 @@ pins, packet drift, missing decision evidence, incomplete reviews, and root
 disagreement. `site.frontier-bundle.v1` remains build-time data; it is never
 shipped as a universal browser payload.
 
-The Observatory prebuilds the stable shell and four frontier overviews. Finding
+The public search copy under `apps/observatory/public/data/` is generated and
+ignored; the rooted package artifact is the only checked-in source. The
+Observatory prebuilds the stable shell and four frontier overviews. Finding
 and Erdős problem pages use release-bound immutable ISR: the first request
 materializes exact bundled bytes, later requests reuse that release cache, and
 the application performs no request-time frontier fetch. The current build
-contains 29 prebuilt HTML pages, below the enforced limit of 50.
+contains 32 prebuilt product pages, below the enforced limit of 50.
 
 ## Brand and assets
 

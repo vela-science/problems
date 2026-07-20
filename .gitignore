@@ -32,3 +32,4 @@ apps/www/public/.well-known/vela-site.json
 apps/observatory/public/.well-known/vela-site.json
 apps/*/public/assets/fonts/
 apps/observatory/public/favicon.svg
+apps/observatory/public/data/
