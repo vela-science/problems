@@ -57,8 +57,10 @@ statically verifies 4,070 exact product routes against its sitemap.
 4. Verify the production manifest before moving canonical domains.
 5. Keep the retired deployment available for the documented rollback window.
 
-The domain move is an ownership transfer, not a DNS rewrite. Move these domains
-from the released Astro project to the new editorial project: `www.vela.space`,
+The domain move is an ownership transfer, not a DNS rewrite. The active Vercel
+projects are `vela-web-www` and `vela-web-observatory`; the retired `vela-web`
+project remains frozen for the rollback window. Move these domains from the
+released Astro project to the new editorial project: `www.vela.space`,
 `vela.space`, `canopus.org`, `www.canopus.org`, `borrowedlight.org`,
 `www.borrowedlight.org`, `constellate.science`, and
 `www.constellate.science`. Move `app.vela.space` from that project and
