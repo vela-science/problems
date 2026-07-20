@@ -357,7 +357,8 @@ painting-heavy — the middle carries its argument in authored figures
 alone, and the two bookends gain force from being the only paintings.
 
 **Motif registry.** The Constellations spine is four persistent objects,
-each drawn from shared partials in `src/components/essay/blocks/motifs/`
+each drawn from shared partials in
+`apps/www/src/components/essay/blocks/motifs/`
 and painted by the `.m-*` classes in global.css, never redrawn ad hoc,
 so every return is literally the same object gaining meaning. The
 **finding-star** (`FindingStar.astro`, the long-handoff port geometry:

@@ -1,34 +1,62 @@
-# Vela Essays: agent instructions
+# Vela Web — agent instructions
+
+## Product boundary
+
+This repository is one Bun workspace with two static public applications:
+
+- `apps/www`: Astro editorial site for `www.vela.space`;
+- `apps/observatory`: Next.js read-only product for `app.vela.space`;
+- `packages/brand`: the only token, font, and mark source;
+- `packages/frontier-data`: the only frontier bundle, search, and deployment-manifest implementation.
+
+The applications share brand assets and generated facts, never framework UI.
+Neither application signs, accepts, or mutates scientific state.
 
 ## Source of truth
 
-- Essay sources: `src/content/essays/*/index.mdx`
-- Whitepaper source: `src/content/whitepaper/index.mdx`
-- Root route: permanent redirect to `/constellations` in `astro.config.mjs`
-  and `vercel.json`
-- Essay layout and blocks: `src/components/essay/chrome/*` and
-  `src/components/essay/blocks/*`
-- Visuals: web-native Astro, HTML, and SVG components
-- Design contract: `PRODUCT.md`, `DESIGN.md`, and `src/styles/tokens.css`
-- Public metadata: `src/data/constants.ts`
+- Editorial routes and content: `apps/www/src/pages`, `apps/www/src/content`
+- Editorial components and styles: `apps/www/src/components`, `apps/www/src/styles`
+- Observatory routes: `apps/observatory/src/app`
+- Observatory components: `apps/observatory/src/components`
+- Brand contract: `packages/brand/vela.tokens.json` and generated outputs
+- Frontier projection: `packages/frontier-data`
+- Product and design contracts: `PRODUCT.md`, `DESIGN.md`, and `docs/WEB.md`
+
+Historical plans and audits preserve the paths that were current when they were
+written. Do not mechanically rewrite them.
 
 ## Editing workflow
 
-- Preserve the current Constellations visual system and provisional Vela sail.
-- Edit diagrams as web-native Astro, HTML, or SVG components.
-- Do not introduce secondary export or diagram-generation build steps.
-- Run `bun run build` for route, metadata, MDX, component, or build changes.
-- Keep verification focused. Do not add live-network or external-project tests.
+- Use Bun only. Do not add npm, pnpm, Yarn, Turborepo, or app-local lockfiles.
+- Preserve the essay content and the Observatory's exact-state semantics.
+- Preserve the provisional Vela sail unless an approved brand pass replaces it.
+- Do not add accounts, a database, a signer, an authority API, or mutation UI.
+- Do not add a second frontier parser, search index, or manifest generator.
+- Ported Observatory behavior retains provenance to archived `vela-site@34e3f20`.
+- For Next.js work, read the relevant guide in `node_modules/next/dist/docs/`
+  before relying on remembered framework behavior.
 
-## Route contract
+## Verification
 
-All current entrypoints under `src/pages` are intentional public surfaces.
-`scripts/check-public-routes.mjs` must be updated deliberately when a route is
-added, removed, or redirected. Do not hide existing essays or technical pages
-without explicit product direction.
+```bash
+bun install --frozen-lockfile
+bun run lint
+bun run typecheck
+bun run test
+bun run build
+bun run test:roots
+bun run test:manifests
+git diff --check
+```
 
-## Product constraints
+Observatory browser suites live under `apps/observatory/tests`. Set
+`PLAYWRIGHT_BASE_URL` to test an already deployed read-only build; when it is
+unset the suite builds and serves the local static export.
 
-- No user accounts or user-generated notes. “Notes” means essay footnotes.
-- The publication complements the Vela app; it does not duplicate app state.
-- Keep canonical and social metadata on `https://www.vela.space`.
+## Release safety
+
+- RC deployments use noncanonical Vercel projects and domains.
+- Do not attach `www.vela.space` or `app.vela.space`, change DNS, or tag a final
+  release before the documented visual, exact-root, responsive, accessibility,
+  and deployed-manifest gates pass.
+- Keep the prior production deployments available for the rollback window.
