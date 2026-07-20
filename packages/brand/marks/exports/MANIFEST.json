@@ -1,0 +1,512 @@
+{
+  "schema": "vela.brand-export-manifest.v1",
+  "version": "0.330.0",
+  "generators": {
+    "rsvg_convert": "rsvg-convert version 2.62.1",
+    "imagemagick": "Version: ImageMagick 7.1.2-19 Q16-HDRI aarch64 23897 https://imagemagick.org"
+  },
+  "sources": [
+    {
+      "path": "source/vela-symbol-full.svg",
+      "sha256": "7281315e4ee41a3372fb491bc8542765f8f4fd8e9849a5aff555b20fc1277231",
+      "bytes": 484
+    },
+    {
+      "path": "source/vela-symbol-compact.svg",
+      "sha256": "967509f088b45fd0ef6125e9e1f97fb637c9b5e869144913074bb47995e92e6e",
+      "bytes": 396
+    },
+    {
+      "path": "source/vela-symbol-micro.svg",
+      "sha256": "69da7d33ce9d02955db5a397c72df3bbb1bfb8db3c97fb8b42896e6c4ff5dee1",
+      "bytes": 394
+    },
+    {
+      "path": "source/vela-symbol-favicon-16.svg",
+      "sha256": "0ee94277f0c4d34260f6d50c782faa373548b6e316f24b6391d6b0de2741f154",
+      "bytes": 293
+    },
+    {
+      "path": "source/vela-wordmark.svg",
+      "sha256": "6c58962b991155fe83bad10254c5fd72cec143dfd35b3d8c9bc7f918c2a3760d",
+      "bytes": 452
+    },
+    {
+      "path": "source/vela-lockup-horizontal.svg",
+      "sha256": "651f0a13473787e77b2d76fe1f38988e394b639c0038e798e9c6390760748a9c",
+      "bytes": 959
+    },
+    {
+      "path": "source/vela-lockup-stacked.svg",
+      "sha256": "830ed08541f6fca291ad190a78591be9cdd73b2b213978275913916ec30c9adf",
+      "bytes": 942
+    }
+  ],
+  "exports": [
+    {
+      "path": "approval/vela-identity-approval.pdf",
+      "sha256": "2ca8067e5a7a74d886414a6d256ce130858fce5ac6c3d89d8f3f580e7015e77e",
+      "bytes": 30037
+    },
+    {
+      "path": "approval/vela-identity-approval.png",
+      "sha256": "0a361239787dbc6c44486d2256860cde6a240b649450c9d2cd611df7144d2e27",
+      "bytes": 109429
+    },
+    {
+      "path": "approval/vela-identity-approval.svg",
+      "sha256": "9f622562e3ec89d947bb831a286d763cf96124df2584a64b407b4f39527ca00c",
+      "bytes": 4896
+    },
+    {
+      "path": "exports/png/apple-touch-icon.png",
+      "sha256": "9a57ec9ecb788a5210e0d2634040b0015bc38aee8b04d5362949d5f99e2397d7",
+      "bytes": 3902
+    },
+    {
+      "path": "exports/png/favicon-16.png",
+      "sha256": "d1fbf49bbb8c097a734a569ca1a482c5fc2f4d475c70ad1a3a051035c999fa23",
+      "bytes": 161
+    },
+    {
+      "path": "exports/png/favicon-20.png",
+      "sha256": "282483d6e3994c0096fb972407b650983270d545ea19bd4671f8590015b56ed8",
+      "bytes": 172
+    },
+    {
+      "path": "exports/png/favicon-32.png",
+      "sha256": "88ca318df00e9816c8d178c67caea98ecd3825b7f3546120646016af81c4b49f",
+      "bytes": 244
+    },
+    {
+      "path": "exports/png/favicon-48.png",
+      "sha256": "333c294bdd027b4ff59eb603e63115d90294f550305901b4047b764b28baa2ef",
+      "bytes": 326
+    },
+    {
+      "path": "exports/png/vela-lockup-horizontal-color.png",
+      "sha256": "2680a1607474f844e8bb5ab361a4a98db36a81b5a0fd87cb58c7995846d991fd",
+      "bytes": 28168
+    },
+    {
+      "path": "exports/png/vela-lockup-horizontal-monochrome.png",
+      "sha256": "203920f67d1bc7b7738b6bd0737555d51e05641304ee5a54d641fb18cbbb47d6",
+      "bytes": 27457
+    },
+    {
+      "path": "exports/png/vela-lockup-horizontal-reversed.png",
+      "sha256": "b039345b1e04b7141d2276b365edd6eae097b97b0fd89cc80a8adfc0f7eded3f",
+      "bytes": 27897
+    },
+    {
+      "path": "exports/png/vela-lockup-stacked-color.png",
+      "sha256": "3c7865f6b1e6de0da3890f5df45393c3331f150e8e91f4654f59321948970e99",
+      "bytes": 35787
+    },
+    {
+      "path": "exports/png/vela-lockup-stacked-monochrome.png",
+      "sha256": "a679a3e5cf209356a9f695325dc098776346d4688ed49ba608050a9d4d833a70",
+      "bytes": 34584
+    },
+    {
+      "path": "exports/png/vela-lockup-stacked-reversed.png",
+      "sha256": "bf3e9a5f118d7d5e2c41acd2c97721b2a2a81dad94b7beca5064f8acfc2d2af1",
+      "bytes": 35299
+    },
+    {
+      "path": "exports/png/vela-symbol-compact-color.png",
+      "sha256": "2fe09145c6ab798265b34843a517f0579f3546fc1a49f0c1f8e8ae7d566d36d0",
+      "bytes": 12059
+    },
+    {
+      "path": "exports/png/vela-symbol-compact-monochrome.png",
+      "sha256": "80c24fbc14f5a377cd19634b37c033d91862b1827c7e22a784d1e965fa53d579",
+      "bytes": 11575
+    },
+    {
+      "path": "exports/png/vela-symbol-compact-reversed.png",
+      "sha256": "12d2ca71afd5a415ff0610c3aef320d35ff0411db07f7e2396bf844e32bf73b6",
+      "bytes": 11989
+    },
+    {
+      "path": "exports/png/vela-symbol-favicon-16-color.png",
+      "sha256": "d1fbf49bbb8c097a734a569ca1a482c5fc2f4d475c70ad1a3a051035c999fa23",
+      "bytes": 161
+    },
+    {
+      "path": "exports/png/vela-symbol-favicon-16-monochrome.png",
+      "sha256": "150161142a0d7f3db0c7900da7fa64cea16b2b6fdc089b22b6734fc57d6fc84f",
+      "bytes": 151
+    },
+    {
+      "path": "exports/png/vela-symbol-favicon-16-reversed.png",
+      "sha256": "d14dfb30f8fa9ba216eccbde2daf97ac9f16b1e0adbb5b45dcfcd993d28867da",
+      "bytes": 161
+    },
+    {
+      "path": "exports/png/vela-symbol-full-color.png",
+      "sha256": "995c6495bfb7ac28d0c2246941cee1358fc1b4c930955411469078412d46a7cb",
+      "bytes": 29262
+    },
+    {
+      "path": "exports/png/vela-symbol-full-monochrome.png",
+      "sha256": "5be58b9f4de55f0842652b1df192b48cd8cc3e04ab3590e506359ad3c278810c",
+      "bytes": 27915
+    },
+    {
+      "path": "exports/png/vela-symbol-full-reversed.png",
+      "sha256": "b0c2f68eb691608be9407eb77bc076da5ebceade1a2fc92eeefd4da8d5c14b94",
+      "bytes": 29077
+    },
+    {
+      "path": "exports/png/vela-symbol-micro-color.png",
+      "sha256": "89f7a08e11fb5c63f1e5cd9ff6fc9aa9203b6caf5fe9cf379926ba86f338d00d",
+      "bytes": 5698
+    },
+    {
+      "path": "exports/png/vela-symbol-micro-monochrome.png",
+      "sha256": "c9a45a2e359adb1dfc055857eb3690cec8c865c777e853f58b5012c83fdbd397",
+      "bytes": 5488
+    },
+    {
+      "path": "exports/png/vela-symbol-micro-reversed.png",
+      "sha256": "2292004a19faabd4bc121763bb1362f8ad2bd46403eabdb9634a4a960ada16f2",
+      "bytes": 5611
+    },
+    {
+      "path": "exports/png/vela-wordmark-color.png",
+      "sha256": "2a7b1216f95469f48f1e26acd86dcd5faf03f751911113744d4d9ff1f8eee5e8",
+      "bytes": 19443
+    },
+    {
+      "path": "exports/png/vela-wordmark-monochrome.png",
+      "sha256": "2a7b1216f95469f48f1e26acd86dcd5faf03f751911113744d4d9ff1f8eee5e8",
+      "bytes": 19443
+    },
+    {
+      "path": "exports/png/vela-wordmark-reversed.png",
+      "sha256": "fc96cfb3687ace1bce70c07ab587e20dcf43d411eefd0beaccd5186cd82d97c8",
+      "bytes": 19347
+    },
+    {
+      "path": "exports/print/vela-lockup-horizontal-color.eps",
+      "sha256": "71f8b448ba87db2e0aa9bc21806a17b36516afeef14c47e685685bd0e09ecf60",
+      "bytes": 3710
+    },
+    {
+      "path": "exports/print/vela-lockup-horizontal-color.pdf",
+      "sha256": "6e942da27ba335d0439391ef9982227b53dbf9b4907ad90558512aaa72cf2fc7",
+      "bytes": 1512
+    },
+    {
+      "path": "exports/print/vela-lockup-horizontal-monochrome.eps",
+      "sha256": "9bf44640caf3c44cfced2b239ef60eb96994cedf2e6bd547d7dfcefc11210e2b",
+      "bytes": 3649
+    },
+    {
+      "path": "exports/print/vela-lockup-horizontal-monochrome.pdf",
+      "sha256": "b361004f7f47e01fc71ef9151e17e52ab92cdc05a796f4e53ebe2a2ad845b4f0",
+      "bytes": 1498
+    },
+    {
+      "path": "exports/print/vela-lockup-horizontal-reversed.eps",
+      "sha256": "52cf6be1abb526ec13df53971719f659b87da3d68b069ed54b2be9534f9cfbc2",
+      "bytes": 3704
+    },
+    {
+      "path": "exports/print/vela-lockup-horizontal-reversed.pdf",
+      "sha256": "424d6f8d2c72fcf85e89f63f365fea5e5e0247560d9f7a62470d5b4005048d72",
+      "bytes": 1511
+    },
+    {
+      "path": "exports/print/vela-lockup-stacked-color.eps",
+      "sha256": "bbe4e67b6b54a593dbb7eaa11c6cb0e44a00e10c02943625032aa4e4c4cb4955",
+      "bytes": 3519
+    },
+    {
+      "path": "exports/print/vela-lockup-stacked-color.pdf",
+      "sha256": "a7bad4bc5fadaf784109aa8a6cdd22c776630c20dfa9faee0bc8cce3a4015e6d",
+      "bytes": 1433
+    },
+    {
+      "path": "exports/print/vela-lockup-stacked-monochrome.eps",
+      "sha256": "1169c0c75093e39c84445b9375c2937d5af70f79b5068c21d9ab7f13329657c8",
+      "bytes": 3458
+    },
+    {
+      "path": "exports/print/vela-lockup-stacked-monochrome.pdf",
+      "sha256": "603ecb818570131455d4ba817990a7270181f59fcf288e08365e3bb7da1b063a",
+      "bytes": 1418
+    },
+    {
+      "path": "exports/print/vela-lockup-stacked-reversed.eps",
+      "sha256": "f29112420a01c041c10a2059f9d88018505c7373bc2d07bcde11ffeca8f6b61c",
+      "bytes": 3513
+    },
+    {
+      "path": "exports/print/vela-lockup-stacked-reversed.pdf",
+      "sha256": "4f6a24f974f6f76be9f8acf51e60b2e4a68bd109db218d4a231b313753fd7a85",
+      "bytes": 1431
+    },
+    {
+      "path": "exports/print/vela-symbol-compact-color.eps",
+      "sha256": "a475d4cf10ab612c576753e78a68762572a6cdfba6162ea9b43c23e3223fe165",
+      "bytes": 2756
+    },
+    {
+      "path": "exports/print/vela-symbol-compact-color.pdf",
+      "sha256": "8647b61f57799cb0abbc41dbce1dd70183b68a30a0767d9a40608097c0a9a8e4",
+      "bytes": 1180
+    },
+    {
+      "path": "exports/print/vela-symbol-compact-monochrome.eps",
+      "sha256": "9b1d80fdc65de7a85c0563cd7e04f5092962ff1b898a37851457244ae58294e2",
+      "bytes": 2727
+    },
+    {
+      "path": "exports/print/vela-symbol-compact-monochrome.pdf",
+      "sha256": "f8d6196e2b3cdcfa1d0086f3b6c8c0f60cd773b905e0860691955988192b6709",
+      "bytes": 1161
+    },
+    {
+      "path": "exports/print/vela-symbol-compact-reversed.eps",
+      "sha256": "45f9088df7d92fa3d8b56adcd495cc201ba0bcd3d0e4c6491bf2cc318bbc5b76",
+      "bytes": 2753
+    },
+    {
+      "path": "exports/print/vela-symbol-compact-reversed.pdf",
+      "sha256": "20316823283fc74aa3152368932924e7afc86e1c6fa610ea8d618cafcc1dc392",
+      "bytes": 1178
+    },
+    {
+      "path": "exports/print/vela-symbol-favicon-16-color.eps",
+      "sha256": "5f9ba978baef856ee5b22415e9c74cb746fac255676825cc34244aa745639d8a",
+      "bytes": 2729
+    },
+    {
+      "path": "exports/print/vela-symbol-favicon-16-color.pdf",
+      "sha256": "1dc40117548ee89a5e4ef55e5b0fe67ba5cb21aeb4da85b61bf70e8bf7513745",
+      "bytes": 1160
+    },
+    {
+      "path": "exports/print/vela-symbol-favicon-16-monochrome.eps",
+      "sha256": "a98b692b3b04fc823b91aecee252cf8901c88d5eefbeb0f448c471b5925eb15b",
+      "bytes": 2700
+    },
+    {
+      "path": "exports/print/vela-symbol-favicon-16-monochrome.pdf",
+      "sha256": "9d6e5be84beb06cf38714055826f8e22d06e51f41492e0753cc2546c6f90e8a3",
+      "bytes": 1147
+    },
+    {
+      "path": "exports/print/vela-symbol-favicon-16-reversed.eps",
+      "sha256": "c348036cc78d6c9bc69ee816df04056e1e69c5e7322cbcb3393eec08839faa30",
+      "bytes": 2726
+    },
+    {
+      "path": "exports/print/vela-symbol-favicon-16-reversed.pdf",
+      "sha256": "a35a442b4775706a45aca8438e1f0e73e9791366dff08c580e1637b039eb1d85",
+      "bytes": 1158
+    },
+    {
+      "path": "exports/print/vela-symbol-full-color.eps",
+      "sha256": "482a2edfed42d235129864c20e33a934a76df8505a60094a4b0b0d39537b05d8",
+      "bytes": 2861
+    },
+    {
+      "path": "exports/print/vela-symbol-full-color.pdf",
+      "sha256": "d92b4bca15bcb0f6f0915351685abe58495c8d7f983e3704bfa38e4aa01dd0f7",
+      "bytes": 1219
+    },
+    {
+      "path": "exports/print/vela-symbol-full-monochrome.eps",
+      "sha256": "1eb27afbeb7c263d4ebc6674106d9cdc11c8ade4d06299017d3da7b8858fba66",
+      "bytes": 2832
+    },
+    {
+      "path": "exports/print/vela-symbol-full-monochrome.pdf",
+      "sha256": "1d5dddaba3baddd700390ceacc76db3a45094e751c27fcb0bd966c6b12c241d1",
+      "bytes": 1205
+    },
+    {
+      "path": "exports/print/vela-symbol-full-reversed.eps",
+      "sha256": "82ccd8842ee2ffd1511c7759dec78d6aa610d30506198e408f3029eb1f80c20f",
+      "bytes": 2858
+    },
+    {
+      "path": "exports/print/vela-symbol-full-reversed.pdf",
+      "sha256": "dba0a6b47428e58b0dca41cfeaafa98a8fc6233c98745e55d0a81a2ef1e86f30",
+      "bytes": 1218
+    },
+    {
+      "path": "exports/print/vela-symbol-micro-color.eps",
+      "sha256": "3c887d1489749260ff70f7d80a611155a659b8107b02000a140d08c9d895a375",
+      "bytes": 2782
+    },
+    {
+      "path": "exports/print/vela-symbol-micro-color.pdf",
+      "sha256": "708daaf73fd048e3a44fdb327765a9cefa2f0495ed2c209e191326b830b91877",
+      "bytes": 1188
+    },
+    {
+      "path": "exports/print/vela-symbol-micro-monochrome.eps",
+      "sha256": "c195e5e3fa3e1e9c47a225b9ecf7300f7510864fff9240d575e0b4a840ea4326",
+      "bytes": 2753
+    },
+    {
+      "path": "exports/print/vela-symbol-micro-monochrome.pdf",
+      "sha256": "568f75be9d6faaab17de798e4afefc1e3a2751d3e3b915ec0dc42bbdf96cee08",
+      "bytes": 1169
+    },
+    {
+      "path": "exports/print/vela-symbol-micro-reversed.eps",
+      "sha256": "d9f001514aa387e3ae59b4e9069cc119bf0e20b3532b2e735535322633a15d5e",
+      "bytes": 2779
+    },
+    {
+      "path": "exports/print/vela-symbol-micro-reversed.pdf",
+      "sha256": "6d70e665270ad9d48c2c09a421b2cb2ffa71a89bfd2515695f5fcf8c3680cfb6",
+      "bytes": 1187
+    },
+    {
+      "path": "exports/print/vela-wordmark-color.eps",
+      "sha256": "82bb82c88dbb05b95737b8d46b3610f3ab6927db206fcc811ba28918312216e0",
+      "bytes": 2929
+    },
+    {
+      "path": "exports/print/vela-wordmark-color.pdf",
+      "sha256": "76aad0695ef06fdb5a06dc04929d81ea29b8b0fca0fabcfccc68746e7d68e681",
+      "bytes": 1200
+    },
+    {
+      "path": "exports/print/vela-wordmark-monochrome.eps",
+      "sha256": "82bb82c88dbb05b95737b8d46b3610f3ab6927db206fcc811ba28918312216e0",
+      "bytes": 2929
+    },
+    {
+      "path": "exports/print/vela-wordmark-monochrome.pdf",
+      "sha256": "76aad0695ef06fdb5a06dc04929d81ea29b8b0fca0fabcfccc68746e7d68e681",
+      "bytes": 1200
+    },
+    {
+      "path": "exports/print/vela-wordmark-reversed.eps",
+      "sha256": "9cd70038396908c9aded857b47b26d67c055ee024fde338135b7479d2d617dbf",
+      "bytes": 2926
+    },
+    {
+      "path": "exports/print/vela-wordmark-reversed.pdf",
+      "sha256": "194be19e6cc7ef75d36a9c9110efc879b7a8674bbb1f198b0019b0b75b09d15e",
+      "bytes": 1201
+    },
+    {
+      "path": "exports/svg/vela-lockup-horizontal-color.svg",
+      "sha256": "651f0a13473787e77b2d76fe1f38988e394b639c0038e798e9c6390760748a9c",
+      "bytes": 959
+    },
+    {
+      "path": "exports/svg/vela-lockup-horizontal-monochrome.svg",
+      "sha256": "a204d73610d080967e7df59b20620b58eb4fc0427a1d84e83b930db39bf9ed44",
+      "bytes": 959
+    },
+    {
+      "path": "exports/svg/vela-lockup-horizontal-reversed.svg",
+      "sha256": "8e08dc526c5c75c686505493a257eda3611599b469e863c5e848e9102aaab0a0",
+      "bytes": 959
+    },
+    {
+      "path": "exports/svg/vela-lockup-stacked-color.svg",
+      "sha256": "830ed08541f6fca291ad190a78591be9cdd73b2b213978275913916ec30c9adf",
+      "bytes": 942
+    },
+    {
+      "path": "exports/svg/vela-lockup-stacked-monochrome.svg",
+      "sha256": "db7ec2c58af14782a99f0755f81246b78befd1c4c155ef086f43352af53d32b5",
+      "bytes": 942
+    },
+    {
+      "path": "exports/svg/vela-lockup-stacked-reversed.svg",
+      "sha256": "970436e982d071992d9e7c7dcb731f81214e99f2b1f10834268f35683f7b93fd",
+      "bytes": 942
+    },
+    {
+      "path": "exports/svg/vela-symbol-compact-color.svg",
+      "sha256": "967509f088b45fd0ef6125e9e1f97fb637c9b5e869144913074bb47995e92e6e",
+      "bytes": 396
+    },
+    {
+      "path": "exports/svg/vela-symbol-compact-monochrome.svg",
+      "sha256": "66a4a4ab38f8f3bb4ec2d6aa70fb798a8db71f62076df7f5a13cf39720a947e8",
+      "bytes": 396
+    },
+    {
+      "path": "exports/svg/vela-symbol-compact-reversed.svg",
+      "sha256": "c588ebbce8e6b412aefdf1140347c36dceb29a165fb1f77b9dc83f2b8b6c7d6c",
+      "bytes": 396
+    },
+    {
+      "path": "exports/svg/vela-symbol-favicon-16-color.svg",
+      "sha256": "0ee94277f0c4d34260f6d50c782faa373548b6e316f24b6391d6b0de2741f154",
+      "bytes": 293
+    },
+    {
+      "path": "exports/svg/vela-symbol-favicon-16-monochrome.svg",
+      "sha256": "87564b84cb08c31cae380227f51a6015a684c5cf350de2248bfdd369ff296934",
+      "bytes": 293
+    },
+    {
+      "path": "exports/svg/vela-symbol-favicon-16-reversed.svg",
+      "sha256": "ccd964a18741bf746561dd707df72a0ed61e70a114cbf60772b69aa3e7bec935",
+      "bytes": 293
+    },
+    {
+      "path": "exports/svg/vela-symbol-full-color.svg",
+      "sha256": "7281315e4ee41a3372fb491bc8542765f8f4fd8e9849a5aff555b20fc1277231",
+      "bytes": 484
+    },
+    {
+      "path": "exports/svg/vela-symbol-full-monochrome.svg",
+      "sha256": "3ad8f767dd0872749d924bad9dfc45092d5d6ab2d1cff3f3ca631ac0337cfa1f",
+      "bytes": 484
+    },
+    {
+      "path": "exports/svg/vela-symbol-full-reversed.svg",
+      "sha256": "1517cf17797bc8eb92e27d54152cbbd01190fd457458a14b253573274e0e6ffb",
+      "bytes": 484
+    },
+    {
+      "path": "exports/svg/vela-symbol-micro-color.svg",
+      "sha256": "69da7d33ce9d02955db5a397c72df3bbb1bfb8db3c97fb8b42896e6c4ff5dee1",
+      "bytes": 394
+    },
+    {
+      "path": "exports/svg/vela-symbol-micro-monochrome.svg",
+      "sha256": "70c41812509faa2a1ad93ba139bd967aad08e78a424f7214d2335d50802fc1f0",
+      "bytes": 394
+    },
+    {
+      "path": "exports/svg/vela-symbol-micro-reversed.svg",
+      "sha256": "96668ae02a03bad91e585e0bddad891e21902c2be63f06b1b744ad6cfdc1b5f8",
+      "bytes": 394
+    },
+    {
+      "path": "exports/svg/vela-wordmark-color.svg",
+      "sha256": "6c58962b991155fe83bad10254c5fd72cec143dfd35b3d8c9bc7f918c2a3760d",
+      "bytes": 452
+    },
+    {
+      "path": "exports/svg/vela-wordmark-monochrome.svg",
+      "sha256": "6c58962b991155fe83bad10254c5fd72cec143dfd35b3d8c9bc7f918c2a3760d",
+      "bytes": 452
+    },
+    {
+      "path": "exports/svg/vela-wordmark-reversed.svg",
+      "sha256": "391475220890ce05ec9223c6c718ae865e1ad06329789f2817d06fec450ffdf2",
+      "bytes": 452
+    },
+    {
+      "path": "exports/vela.ico",
+      "sha256": "ec912c22eff98fa4fab9852e49df31ebecbb71298d276b4dde9fd13c1a1a6e41",
+      "bytes": 15086
+    }
+  ]
+}

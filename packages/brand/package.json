@@ -10,12 +10,16 @@
     "./fonts-editorial.css": "./generated/fonts-editorial.css",
     "./fonts-product.css": "./generated/fonts-product.css",
     "./integrity": "./src/integrity.ts",
-    "./mark-full.svg": "./vela-mark-full.svg",
-    "./mark-micro.svg": "./vela-mark-micro.svg"
+    "./mark-full.svg": "./marks/source/vela-symbol-full.svg",
+    "./mark-micro.svg": "./marks/source/vela-symbol-micro.svg"
   },
   "scripts": {
     "build": "bun scripts/generate-brand.mjs",
+    "build:marks": "bun scripts/export-marks.mjs",
     "check": "bun scripts/generate-brand.mjs --check && bun scripts/check-brand.mjs",
     "test": "bun test tests"
+  },
+  "devDependencies": {
+    "sharp": "0.34.5"
   }
 }

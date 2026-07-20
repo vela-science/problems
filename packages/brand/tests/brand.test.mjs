@@ -8,6 +8,7 @@ const tokens = JSON.parse(readFileSync(resolve(root, "vela.tokens.json"), "utf8"
 const css = readFileSync(resolve(root, "generated/tokens.css"), "utf8");
 const editorialFonts = readFileSync(resolve(root, "generated/fonts-editorial.css"), "utf8");
 const productFonts = readFileSync(resolve(root, "generated/fonts-product.css"), "utf8");
+const exportManifest = JSON.parse(readFileSync(resolve(root, "marks/exports/MANIFEST.json"), "utf8"));
 
 function channel(value) {
   const normalized = value / 255;
@@ -59,4 +60,23 @@ test("status semantics are never represented as an unlabelled palette", () => {
     assert.match(css, new RegExp(`--vela-color-${name}:`));
   }
   assert.match(css, /@media \(forced-colors: active\)/u);
+});
+
+test("identity masters and deterministic delivery exports are complete", () => {
+  const expectedSources = [
+    "source/vela-lockup-horizontal.svg",
+    "source/vela-lockup-stacked.svg",
+    "source/vela-symbol-compact.svg",
+    "source/vela-symbol-favicon-16.svg",
+    "source/vela-symbol-full.svg",
+    "source/vela-symbol-micro.svg",
+    "source/vela-wordmark.svg",
+  ];
+  assert.equal(exportManifest.schema, "vela.brand-export-manifest.v1");
+  assert.deepEqual(exportManifest.sources.map(({ path }) => path).sort(), expectedSources);
+  assert.ok(exportManifest.exports.length >= 90);
+  for (const source of exportManifest.sources) {
+    assert.match(source.sha256, /^[0-9a-f]{64}$/u);
+    assert.ok(source.bytes > 0);
+  }
 });

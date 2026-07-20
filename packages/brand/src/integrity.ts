@@ -6,8 +6,15 @@ export const brandRootSchema = "vela.brand-root.v2";
 
 const governedFiles = [
   "packages/brand/vela.tokens.json",
-  "packages/brand/vela-mark-full.svg",
-  "packages/brand/vela-mark-micro.svg",
+  "packages/brand/marks/source/vela-symbol-full.svg",
+  "packages/brand/marks/source/vela-symbol-compact.svg",
+  "packages/brand/marks/source/vela-symbol-micro.svg",
+  "packages/brand/marks/source/vela-symbol-favicon-16.svg",
+  "packages/brand/marks/source/vela-wordmark.svg",
+  "packages/brand/marks/source/vela-lockup-horizontal.svg",
+  "packages/brand/marks/source/vela-lockup-stacked.svg",
+  "packages/brand/marks/exports/MANIFEST.json",
+  "packages/brand/marks/exports/MANIFEST.sha256",
   "packages/brand/generated/fonts-editorial.css",
   "packages/brand/generated/fonts-product.css",
   "packages/brand/licenses/FONT-SOURCE-MANIFEST.sha256",

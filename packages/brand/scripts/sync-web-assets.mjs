@@ -43,7 +43,7 @@ if (JSON.stringify(delivered) !== JSON.stringify(profileFonts[profile].toSorted(
 
 const copied = ["assets/fonts"];
 if (process.argv.includes("--favicon")) {
-  copyFileSync(resolve(root, "vela-mark-micro.svg"), resolve(output, "favicon.svg"));
+  copyFileSync(resolve(root, "marks/source/vela-symbol-favicon-16.svg"), resolve(output, "favicon.svg"));
   copied.push("favicon.svg");
 }
 
