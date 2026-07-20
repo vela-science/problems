@@ -34,10 +34,13 @@ function toolVersion(command, args = ["--version"]) {
 
 function render(input, format, output, width) {
   execFileSync("rsvg-convert", ["--format", format, "--width", String(width), "--output", output, input], {
+    env: { ...process.env, SOURCE_DATE_EPOCH: "0" },
     stdio: "pipe",
   });
   if (format === "eps") {
-    const normalized = readFileSync(output, "utf8").replace(/[\t ]+(?=\r?\n|$)/gu, "");
+    const normalized = readFileSync(output, "utf8")
+      .replace(/^%%CreationDate:.*$/mu, "%%CreationDate: Thu Jan  1 00:00:00 1970")
+      .replace(/[\t ]+(?=\r?\n|$)/gu, "");
     writeFileSync(output, normalized);
   }
 }
