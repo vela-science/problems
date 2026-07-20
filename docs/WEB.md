@@ -1,26 +1,27 @@
 # Vela Web operations
 
-This is the current operations contract for the public Vela website. Earlier
+This is the current operations contract for the public Vela web workspace. Earlier
 design plans remain historical records.
 
 ## Product boundary
 
-- `www.vela.space` is canonical.
-- `vela.space`, `app.vela.space`, `constellate.science`, and
-  `app.constellate.science` permanently redirect to canonical paths.
-- The site is a static, read-only projection. It has no signer, authority API,
+- `www.vela.space` is canonical for editorial content.
+- `app.vela.space` is canonical for the read-only Observatory.
+- `vela.space` redirects to `www`; product paths on `www` redirect to `app`.
+- Both applications are static projections. They have no signer, authority API,
   scientific database, or write path.
 - Normative protocol and CLI documentation stays in the Vela repository at an
   exact release commit. This repository owns onboarding and explanation only.
 
 ## Refresh exact frontier state
 
-Install the exact Vela binary required by `config/frontiers.v1.json`, place the
+Install the exact Vela binary required by
+`packages/frontier-data/config/frontiers.v1.json`, place the
 four configured checkouts beside this repository, and run:
 
 ```bash
-node scripts/build-frontier-bundle.mjs
-pnpm check:bundle
+bun packages/frontier-data/scripts/build-frontier-bundle.mjs
+bun run check:bundle
 ```
 
 Generation refuses dirty or unpushed sources, wrong branches or remotes, stale
@@ -30,12 +31,12 @@ disagreement. Review the bundle and its manifest together.
 ## Verify and build
 
 ```bash
-pnpm install --frozen-lockfile
-pnpm check
-pnpm check:brand
-pnpm check:bundle
-pnpm test
-pnpm build
+bun install --frozen-lockfile
+bun run check
+bun run check:brand
+bun run check:bundle
+bun run test
+bun run build
 git diff --check
 ```
 

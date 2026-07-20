@@ -1,0 +1,233 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "meta": {
+    "name": "Vela Brand Tokens",
+    "version": "1.0.0",
+    "status": "designer handoff"
+  },
+  "color": {
+    "brand": {
+      "midnight": {
+        "$value": "#081224",
+        "$type": "color",
+        "$description": "Primary dark foundation"
+      },
+      "stardust": {
+        "$value": "#C9A664",
+        "$type": "color",
+        "$description": "Restrained accent; never primary body text on light backgrounds"
+      },
+      "light": {
+        "$value": "#F7F6F2",
+        "$type": "color",
+        "$description": "Warm primary light surface"
+      }
+    },
+    "neutral": {
+      "deepSpace": {
+        "$value": "#111827",
+        "$type": "color"
+      },
+      "slate": {
+        "$value": "#334155",
+        "$type": "color"
+      },
+      "mist": {
+        "$value": "#A1A7B0",
+        "$type": "color"
+      },
+      "fog": {
+        "$value": "#E9EBEF",
+        "$type": "color"
+      }
+    },
+    "semantic": {
+      "evidence": {
+        "$value": "#4F8F8B",
+        "$type": "color"
+      },
+      "progress": {
+        "$value": "#6E9F77",
+        "$type": "color"
+      },
+      "caution": {
+        "$value": "#B7832F",
+        "$type": "color"
+      },
+      "conflict": {
+        "$value": "#9C3F4A",
+        "$type": "color"
+      },
+      "linkOnLight": {
+        "$value": "#4E7499",
+        "$type": "color"
+      },
+      "linkOnDark": {
+        "$value": "#6B8FB3",
+        "$type": "color"
+      }
+    }
+  },
+  "font": {
+    "display": {
+      "$value": "Newsreader, Georgia, serif",
+      "$type": "fontFamily"
+    },
+    "sans": {
+      "$value": "Inter, Arial, sans-serif",
+      "$type": "fontFamily"
+    },
+    "mono": {
+      "$value": "IBM Plex Mono, SFMono-Regular, Consolas, monospace",
+      "$type": "fontFamily"
+    }
+  },
+  "space": {
+    "1": {
+      "$value": "4px",
+      "$type": "dimension"
+    },
+    "2": {
+      "$value": "8px",
+      "$type": "dimension"
+    },
+    "3": {
+      "$value": "12px",
+      "$type": "dimension"
+    },
+    "4": {
+      "$value": "16px",
+      "$type": "dimension"
+    },
+    "5": {
+      "$value": "20px",
+      "$type": "dimension"
+    },
+    "6": {
+      "$value": "24px",
+      "$type": "dimension"
+    },
+    "7": {
+      "$value": "28px",
+      "$type": "dimension"
+    },
+    "8": {
+      "$value": "32px",
+      "$type": "dimension"
+    },
+    "9": {
+      "$value": "36px",
+      "$type": "dimension"
+    },
+    "10": {
+      "$value": "40px",
+      "$type": "dimension"
+    },
+    "11": {
+      "$value": "44px",
+      "$type": "dimension"
+    },
+    "12": {
+      "$value": "48px",
+      "$type": "dimension"
+    },
+    "13": {
+      "$value": "52px",
+      "$type": "dimension"
+    },
+    "14": {
+      "$value": "56px",
+      "$type": "dimension"
+    },
+    "15": {
+      "$value": "60px",
+      "$type": "dimension"
+    },
+    "16": {
+      "$value": "64px",
+      "$type": "dimension"
+    },
+    "17": {
+      "$value": "68px",
+      "$type": "dimension"
+    },
+    "18": {
+      "$value": "72px",
+      "$type": "dimension"
+    },
+    "19": {
+      "$value": "76px",
+      "$type": "dimension"
+    },
+    "20": {
+      "$value": "80px",
+      "$type": "dimension"
+    },
+    "21": {
+      "$value": "84px",
+      "$type": "dimension"
+    },
+    "22": {
+      "$value": "88px",
+      "$type": "dimension"
+    },
+    "23": {
+      "$value": "92px",
+      "$type": "dimension"
+    },
+    "24": {
+      "$value": "96px",
+      "$type": "dimension"
+    }
+  },
+  "radius": {
+    "none": {
+      "$value": "0px",
+      "$type": "dimension"
+    },
+    "sm": {
+      "$value": "6px",
+      "$type": "dimension"
+    },
+    "md": {
+      "$value": "12px",
+      "$type": "dimension"
+    },
+    "lg": {
+      "$value": "18px",
+      "$type": "dimension"
+    },
+    "pill": {
+      "$value": "999px",
+      "$type": "dimension"
+    }
+  },
+  "motion": {
+    "fast": {
+      "$value": "140ms",
+      "$type": "duration"
+    },
+    "base": {
+      "$value": "240ms",
+      "$type": "duration"
+    },
+    "slow": {
+      "$value": "420ms",
+      "$type": "duration"
+    },
+    "hero": {
+      "$value": "1000ms",
+      "$type": "duration"
+    }
+  },
+  "easing": {
+    "standard": {
+      "$value": "cubic-bezier(0.2, 0.8, 0.2, 1)",
+      "$type": "cubicBezier"
+    },
+    "enter": {
+      "$value": "cubic-bezier(0.16, 1, 0.3, 1)",
+      "$type": "cubicBezier"
+    }
+  }
+}

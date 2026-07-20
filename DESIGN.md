@@ -178,22 +178,44 @@ components:
 
 ## Overview
 
-**Precedence:** where this document conflicts with `src/styles/tokens.css`,
-tokens.css wins. It is the single source of truth for colors, type, motion,
-radii, and spacing; this document describes and motivates it. After changing
-tokens, update this file in the same commit.
+**Precedence:** where this document conflicts with
+`packages/brand/vela.tokens.json`, the DTCG source wins. Generated CSS and
+TypeScript are outputs, never parallel token authorities. This document
+describes the editorial and Observatory applications that consume that shared
+brand source.
 
-Vela is a house of connected public chambers: a flagship reading surface, two companion essays, a technical paper, and denser catalog, protocol, stack, and facility views. None should collapse into a conversion funnel or generic product dashboard. The design register is light editorial instrumentation: mineral cream paper, dark indigo ink, directional gold, restrained scientific marks, and generous negative space. Painted plates carry atmosphere; technical figures use baselines, trajectories, nodes, lineage, convergence, and terminal axes to make state change legible.
+Vela is one public system with two different rooms. The Astro editorial site is
+a light, atmospheric reading surface. The Next.js Observatory is a dark,
+dense scientific-state instrument. They share the same sail, palette,
+typography families, status grammar, and exact facts, but they do not share UI
+implementations or force one framework to imitate the other. Neither should
+collapse into a conversion funnel or a generic dashboard.
 
 The primary design job is to help a technically literate reader stay oriented through a dense argument. Beauty matters, but it must come from hierarchy, rhythm, image quality, and diagram clarity rather than decoration. Scientific diagrams are part of the argument. They should make the essay more navigable, not merely illustrate its mood.
+
+### Observatory product register
+
+The Observatory defaults to Midnight and uses the inset, collapsible instrument
+shell recovered from the archived product. Newsreader carries the primary
+assertion; Inter carries interface copy; IBM Plex Mono carries identities and
+roots. Dense ledgers, open rules, and typographic grouping are preferred over
+dashboard-card grids. Stardust is reserved for direction, focus, active
+navigation, provenance seams, and the primary action.
+
+Base UI is the only default headless primitive layer. shadcn supplies open
+component source and composition, not a visual theme. Every imported primitive
+must be normalized into Vela tokens and tested in its interactive states. Do
+not add a parallel Radix implementation, a visual component suite, glass,
+glow, gradient text, generic cosmic imagery, decorative star fields, or status
+meaning conveyed by color alone.
 
 The physical scene begins with a technically literate reader entering a long reading session in a quiet room, with adjacent routes available when they want the working app or a denser technical surface. They will leave if the publication feels like a pitch deck, a SaaS template, or an over-designed AI artifact.
 
 ## Typography note: metric-matched fallbacks
 
 Every webfont stack carries a metric-matched local fallback face
-("Newsreader-fallback" over Georgia, "Schibsted-fallback" over Arial,
-"Inter-fallback" over Helvetica Neue) with empirically measured
+("Newsreader-fallback" over Georgia and "Inter-fallback" over Helvetica Neue)
+with empirically measured
 size-adjust and ascent/descent overrides, so the font-display: swap
 never shifts layout — text set in the fallback occupies the same
 space the webfont will claim. The overrides live in fonts.css; if a
@@ -228,7 +250,8 @@ The typographic system is deliberately literary, with a technical counterweight.
 - **Newsreader** (text cuts) carries the essay body and captions. It is the voice of the argument.
 - **Inter** carries navigation, uppercase metadata, margin notes, and diagram labels. It prevents the page from becoming too antique.
 - **IBM Plex Mono** carries indexes, code-like state, figure coordinates, and numbered references.
-- **Schibsted Grotesk** is the product voice on `/vela`: a clean, wind-cut sans for the adoption surface, used with IBM Plex Mono for coordinates and commands. It does not replace the literary essay typography.
+- **Inter** is also the Observatory product voice; IBM Plex Mono carries exact
+  identifiers, roots, commands, and count values.
 - The desktop reading rail uses the compact `--text-rail` step and keeps section names on one line. Below 1320 pixels it becomes a compact current-section disclosure near the masthead; on mobile it returns to the document flow as a non-persistent contents entry.
 
 Technical SVG labels use one shared viewBox scale: `--diagram-label-xs` at 9px for compact secondary annotations, `--diagram-label-sm` at 10px for gates and axes, `--diagram-label` at 11px for primary stations and state roots, and `--diagram-title` at 15px for the rare serif station name. These are diagram coordinates rather than browser text sizes; mobile compositions must still remove labels that would read as thumbnails.
@@ -540,7 +563,7 @@ essay; do not reintroduce them.
 
 Do:
 
-- Use the existing tokens in `src/styles/tokens.css` before inventing new values.
+- Use `packages/brand/vela.tokens.json` before introducing any app-specific extension.
 - Keep the palette restrained: cream, ink, gold, with semantic figure colors only when needed.
 - Let images and diagrams carry meaning. Every visual should map to an argument beat.
 - Keep prose width separate from figure width.

@@ -1,32 +1,43 @@
 # Vela Web
 
-The canonical public website for Vela. One Astro application combines the
-editorial essays with a static, exact-root reader over published frontiers.
-The site is a read-only projection: it never signs, accepts, or stores
-scientific authority.
+Vela's public web product is one Bun workspace with two purpose-built, static
+applications:
 
-- Production: <https://www.vela.space/>
-- Frontiers: <https://www.vela.space/frontiers>
-- Vela protocol and CLI: <https://github.com/vela-science/vela>
+- `apps/www`: the Astro editorial site for Vela, essays, and long-form work;
+- `apps/observatory`: the Next.js Observatory for exact frontier state;
+- `packages/brand`: the governed token, font, and mark source;
+- `packages/frontier-data`: the sole exact-root frontier projection.
+
+The applications share facts and brand assets, not framework-specific UI.
+Neither application signs, accepts, or mutates scientific state.
+
+- Editorial production: <https://www.vela.space/>
+- Observatory production: <https://app.vela.space/frontiers>
+- Protocol and CLI: <https://github.com/vela-science/vela>
 
 ## Local verification
 
+The repository pins Bun in `package.json` and `bun.lock`. Do not add npm, pnpm,
+Yarn, Turborepo, or per-application lockfiles.
+
 ```bash
-pnpm install --frozen-lockfile
-pnpm check
-pnpm check:brand
-pnpm check:bundle
-pnpm test
-pnpm build
+bun install --frozen-lockfile
+bun run check
+bun run lint
+bun run test
+bun run build
+git diff --check
 ```
 
-`data/site-frontier-bundle.v1.json` is generated from clean, pinned frontier
-checkouts with the exact released Vela binary. It remains a build-time input;
-pages are statically rendered and the full bundle is not sent to browsers.
+Run an application independently with `bun run dev:www` or
+`bun run dev:observatory`. The shared frontier package validates
+`site.frontier-bundle.v1` at build time; the complete bundle is never shipped
+as a universal browser payload.
 
-The July 2026 designer handoff is recorded under `brand/reference/2026-07/`.
-`brand/vela.tokens.json` is the core token source. Production CSS is generated
-with `pnpm brand:generate`. Reference artwork is intentionally excluded.
+The July 2026 v1.1 designer handoff is recorded under
+`packages/brand/reference/2026-07-v1.1/`. `packages/brand/vela.tokens.json` is
+the DTCG source. Reference artwork is deliberately excluded, and the current
+mark remains provisional.
 
 ## Licensing
 
@@ -35,9 +46,7 @@ with `pnpm brand:generate`. Reference artwork is intentionally excluded.
 - The Vela name and marks: trademark rights reserved.
 - Fonts and third-party components: see `THIRD_PARTY_NOTICES.md`.
 
-The exact-root projection was ported from `vela-science/vela-site` at commit
-`724e425c1661da6dcc0ea759e85f2f7f85d3e4c0`. That repository retains its
-independent history and its `v0.210.0` release.
-
-Deployment, source-refresh, route, and canonical-host operations are documented
-in [`docs/WEB.md`](docs/WEB.md).
+The Observatory product anatomy was studied from the archived `vela-site`
+commit `34e3f20`; ported code carries provenance without merging unrelated Git
+histories. See [`docs/observatory-provenance.md`](docs/observatory-provenance.md)
+and [`docs/WEB.md`](docs/WEB.md).

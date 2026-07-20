@@ -1,0 +1,18 @@
+{
+  "name": "@vela/brand",
+  "version": "0.310.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./tokens": "./generated/tokens.ts",
+    "./tokens.css": "./generated/tokens.css",
+    "./fonts.css": "./generated/fonts.css",
+    "./mark-full.svg": "./vela-mark-full.svg",
+    "./mark-micro.svg": "./vela-mark-micro.svg"
+  },
+  "scripts": {
+    "build": "bun scripts/generate-brand.mjs",
+    "check": "bun scripts/generate-brand.mjs --check && bun scripts/check-brand.mjs",
+    "test": "bun test tests"
+  }
+}

@@ -8,6 +8,15 @@ node_modules/
 # Astro/build output
 .astro/
 dist/
+apps/*/.astro/
+apps/*/.next/
+apps/*/dist/
+apps/*/out/
+apps/*/storybook-static/
+apps/*/test-results/
+apps/*/playwright-report/
+apps/*/next-env.d.ts
+*.tsbuildinfo
 
 # Local editor and agent artifacts
 .vscode/
@@ -18,4 +27,8 @@ tmp/
 output/
 prototypes/
 .vercel
-public/.well-known/vela-site.json
+apps/www/public/.well-known/vela-web.json
+apps/www/public/.well-known/vela-site.json
+apps/observatory/public/.well-known/vela-site.json
+apps/*/public/assets/fonts/
+apps/observatory/public/favicon.svg

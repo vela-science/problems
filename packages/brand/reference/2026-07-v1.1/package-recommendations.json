@@ -1,0 +1,45 @@
+{
+  "meta": {
+    "name": "Vela design-system package recommendations",
+    "date": "2026-07-15",
+    "note": "Capability map, not a command to install every package. Pin exact versions during implementation."
+  },
+  "adoptNow": {
+    "componentModel": ["shadcn/ui registry and open-code model"],
+    "primitives": ["@base-ui/react"],
+    "styling": ["tailwindcss", "class-variance-authority", "clsx", "tailwind-merge"],
+    "icons": ["lucide-react"],
+    "data": ["@tanstack/react-query", "@tanstack/react-table", "@tanstack/react-virtual"],
+    "forms": ["react-hook-form", "zod", "@hookform/resolvers"],
+    "documentationAndTesting": ["storybook", "@storybook/addon-a11y", "@playwright/test", "@testing-library/react", "axe-core", "vitest"]
+  },
+  "adoptBySurface": {
+    "accessibility": ["react-aria-components"],
+    "workbench": ["cmdk", "sonner", "react-resizable-panels", "@dnd-kit/core", "@dnd-kit/sortable", "motion", "@floating-ui/react"],
+    "graphs": ["@xyflow/react", "elkjs"],
+    "editor": ["@tiptap/react", "@tiptap/starter-kit"],
+    "code": ["@codemirror/state", "@codemirror/view", "shiki"],
+    "visualization": ["@observablehq/plot", "vega-lite", "vega-embed"]
+  },
+  "evaluate": {
+    "largeGraphs": ["sigma", "graphology", "cytoscape"],
+    "whiteboard": ["tldraw", "@excalidraw/excalidraw"],
+    "advancedCharts": ["echarts", "plotly.js"],
+    "enterpriseGrid": ["ag-grid-community", "ag-grid-react"],
+    "editorAlternative": ["lexical", "@lexical/react"],
+    "stylingAlternative": ["@pandacss/dev", "@vanilla-extract/css"]
+  },
+  "referenceOnly": [
+    "Mantine",
+    "MUI",
+    "Chakra UI",
+    "Ant Design",
+    "IBM Carbon",
+    "Adobe Spectrum",
+    "Microsoft Fluent",
+    "GitHub Primer",
+    "Shopify Polaris",
+    "GOV.UK Design System",
+    "US Web Design System"
+  ]
+}
