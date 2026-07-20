@@ -7,7 +7,7 @@
     },
     "apps/observatory": {
       "name": "@vela/observatory",
-      "version": "0.310.0",
+      "version": "0.310.1",
       "dependencies": {
         "@base-ui/react": "^1.6.0",
         "@tanstack/react-table": "^8.21.3",
@@ -50,7 +50,7 @@
     },
     "apps/www": {
       "name": "@vela/www",
-      "version": "0.310.0",
+      "version": "0.310.1",
       "dependencies": {
         "@astrojs/mdx": "^4.3.14",
         "@vela/brand": "workspace:*",
@@ -68,11 +68,11 @@
     },
     "packages/brand": {
       "name": "@vela/brand",
-      "version": "0.310.0",
+      "version": "0.310.1",
     },
     "packages/frontier-data": {
       "name": "@vela/frontier-data",
-      "version": "0.310.0",
+      "version": "0.310.1",
       "dependencies": {
         "zod": "^4.3.6",
       },
