@@ -13,6 +13,11 @@ Earlier design and migration plans live under `docs/history/`.
 - Normative protocol and CLI documentation remains in the Vela repository at
   an exact release commit. This repository owns onboarding and explanation.
 
+`bun run check:boundary` makes that product boundary executable. It rejects
+Route Handlers, Server Actions, request-scoped cookies or headers, runtime
+secret access, authentication/database dependencies, and request-time fetches
+other than the rooted same-origin search artifact.
+
 The repository is a Bun workspace with four maintained boundaries:
 
 ```text
@@ -98,8 +103,11 @@ Public manifests:
 The manifests use `vela.web-deployment.v2` and `vela.site-deployment.v2`; each
 records the exact release tag, Git commit, brand schema/root, deployment
 identity, and `immutable_isr` delivery mode. The Observatory manifest also
-binds the frontier bundle and search roots. A production release is incomplete
-until both deployed manifests identify the same approved tag and commit.
+binds the frontier bundle, search root, and retained Build Week projection.
+Validation requires the search artifact to name the same bundle root and the
+research projection to name the same site commit. A production release is
+incomplete until both deployed manifests identify the same approved tag and
+commit.
 
 Several legacy domains currently show Vercel's `DNS Change Recommended`
 advisory while resolving successfully. Treat DNS migration as a separate

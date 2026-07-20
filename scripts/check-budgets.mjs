@@ -46,10 +46,11 @@ if (facilityInitialGzip > 75 * 1024) throw new Error(`facility initial JavaScrip
 const browserFiles = [
   ...filesBelow(resolve(observatory, ".next/static")),
   ...filesBelow(resolve(observatory, "public")),
+  ...filesBelow(resolve(observatory, ".next/server/app")).filter((path) => path.endsWith(".html")),
 ].filter((path) => /\.(?:html|js|json)$/u.test(path));
 for (const path of browserFiles) {
   const content = readFileSync(path, "utf8");
-  if (content.includes('"schema":"site.frontier-bundle.v1"')) throw new Error(`${path}: embeds the full frontier bundle`);
+  if (content.includes("site.frontier-bundle.v1")) throw new Error(`${path}: embeds the full frontier bundle`);
 }
 
 console.log(JSON.stringify({
