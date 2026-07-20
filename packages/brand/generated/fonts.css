@@ -21,16 +21,30 @@
   src: url("/assets/fonts/inter-300-700-latin.woff2") format("woff2");
 }
 @font-face {
-  font-family: "Newsreader";
+  font-family: "Newsreader Text";
   font-style: normal;
-  font-weight: 200 800;
+  font-weight: 400;
   font-display: swap;
-  src: url("/assets/fonts/newsreader-200-800-latin.woff2") format("woff2");
+  src: url("/assets/fonts/newsreader-text-400-latin.woff2") format("woff2");
 }
 @font-face {
-  font-family: "Newsreader";
+  font-family: "Newsreader Text";
   font-style: italic;
-  font-weight: 200 800;
+  font-weight: 400;
+  font-display: optional;
+  src: url("/assets/fonts/newsreader-text-italic-400-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Newsreader Display";
+  font-style: normal;
+  font-weight: 500;
   font-display: swap;
-  src: url("/assets/fonts/newsreader-200-800-italic-latin.woff2") format("woff2");
+  src: url("/assets/fonts/newsreader-display-500-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Newsreader Display";
+  font-style: italic;
+  font-weight: 400;
+  font-display: optional;
+  src: url("/assets/fonts/newsreader-display-italic-400-latin.woff2") format("woff2");
 }

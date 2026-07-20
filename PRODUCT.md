@@ -26,12 +26,16 @@ register: brand
 ## Product Rules
 
 - The site-level identity is Vela; the essays sit underneath it.
-- The homepage is `/constellations`; `/` redirects there permanently.
+- `www.vela.space` is the editorial register. Its `/` route is the authored Vela home, and Constellations remains intact at `/constellations`.
+- `app.vela.space` is the product register. It is a read-only scientific-state instrument for exact frontier, work, review, finding, replay, search, and product-guidance routes.
+- The two applications share brand and exact generated data, never framework-specific UI or duplicated canonical routes.
 - Constellations is the flagship reading experience within a public trilogy, technical companion, case, stack, facility, protocol surface, and catalog.
 - Every publication surface should feel like an adjacent chamber in the same house, not a separate microsite.
 - Navigation should be calm, explicit, and complete on desktop and mobile
 - Use open editorial sections by default; reserve bordered panels for dense structured material
 - Keep dated protocol snapshots on the pages that own them, and update their source links and dates together.
+- The Observatory must preserve accepted, pending, rejected, withdrawn, replayed, verified, and strict-blocked as different states.
+- The website never signs, mutates a frontier, or interprets verifier success as scientific acceptance.
 
 ## Anti-Patterns
 
@@ -40,3 +44,5 @@ register: brand
 - Over-explained UI
 - Duplicated chrome
 - Dashboard framing on pages that are fundamentally for reading
+- Marketing chrome inside the Observatory
+- A second frontier parser, bundle generator, search index, or deployment-manifest implementation

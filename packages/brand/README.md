@@ -11,6 +11,13 @@ This keeps the package as the single source for self-hosted fonts and, where
 requested, the provisional favicon instead of checking duplicate copies into
 each application.
 
+The ordinary Newsreader text and display faces are static role instances of the
+checked-in Latin variable source at its intended optical sizes. They preserve
+the type design while avoiding 129 KiB normal and 147 KiB italic variable-font
+critical paths. The original variable sources remain checked in for future role
+instances and archival fidelity. Exact hashes and SIL OFL 1.1 status are
+recorded under `licenses/`.
+
 `reference/2026-07-v1.1/` preserves the current production brief, messaging rules, asset
 manifest, and acceptance checklist from the July 2026 designer handoff. Its
 `MANIFEST.sha256` records every original handoff file, including the PDF, DOCX,

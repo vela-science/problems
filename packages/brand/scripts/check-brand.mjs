@@ -29,7 +29,7 @@ assert(mark.includes(tokens.color.brand.midnight.$value), "full mark midnight dr
 assert(mark.includes(tokens.color.brand.stardust.$value), "full mark stardust drift");
 assert(micro.includes(tokens.color.brand.midnight.$value), "micro mark midnight drift");
 assert(micro.includes(tokens.color.brand.stardust.$value), "micro mark stardust drift");
-for (const family of ["Newsreader", "Inter", "IBM Plex Mono"]) {
+for (const family of ["Newsreader Text", "Newsreader Display", "Inter", "IBM Plex Mono"]) {
   assert(fonts.includes(`font-family: "${family}"`), `missing shared ${family} face`);
 }
 for (const rejected of ["Spectral", "Space Grotesk", "JetBrains Mono", "Geist", "Schibsted"]) {

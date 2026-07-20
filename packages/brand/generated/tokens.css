@@ -13,6 +13,23 @@
   --vela-color-conflict: #9C3F4A;
   --vela-color-link-light: #4E7499;
   --vela-color-link-dark: #6B8FB3;
+  --vela-color-light-surface-inset: #EEEDE7;
+  --vela-color-light-surface-raised: #FBFAF7;
+  --vela-color-light-text-secondary: #4B5565;
+  --vela-color-light-text-muted: #626A76;
+  --vela-color-light-evidence: #2F6F6B;
+  --vela-color-light-progress: #3F744B;
+  --vela-color-light-caution: #805A16;
+  --vela-color-light-conflict: #9C3F4A;
+  --vela-color-light-border-subtle: #D9DBDF;
+  --vela-color-light-border-strong: #B8BDC5;
+  --vela-color-light-direction: #8C6B20;
+  --vela-color-dark-surface-inset: #0B1629;
+  --vela-color-dark-surface-emphasis: #050C18;
+  --vela-color-dark-text-secondary: #C5CAD2;
+  --vela-color-dark-border-subtle: #263247;
+  --vela-color-dark-border-strong: #3A465A;
+  --vela-color-dark-conflict: #D97783;
   --vela-font-display: Newsreader, Georgia, serif;
   --vela-font-sans: Inter, Arial, sans-serif;
   --vela-font-mono: IBM Plex Mono, SFMono-Regular, Consolas, monospace;
@@ -64,34 +81,42 @@
   --brand-conflict: var(--vela-color-conflict);
 
   --vela-surface-canvas: var(--vela-color-light);
-  --vela-surface-inset: #EEEDE7;
-  --vela-surface-raised: #FFFFFF;
+  --vela-surface-inset: var(--vela-color-light-surface-inset);
+  --vela-surface-raised: var(--vela-color-light-surface-raised);
   --vela-surface-emphasis: var(--vela-color-midnight);
   --vela-text-primary: var(--vela-color-midnight);
-  --vela-text-secondary: #4B5565;
-  --vela-text-muted: #6D7480;
+  --vela-text-secondary: var(--vela-color-light-text-secondary);
+  --vela-text-muted: var(--vela-color-light-text-muted);
   --vela-text-inverse: var(--vela-color-light);
-  --vela-border-subtle: #D9DBDF;
-  --vela-border-strong: #B8BDC5;
+  --vela-border-subtle: var(--vela-color-light-border-subtle);
+  --vela-border-strong: var(--vela-color-light-border-strong);
   --vela-focus: var(--vela-color-stardust);
-  --vela-direction: #8C6B20;
+  --vela-direction: var(--vela-color-light-direction);
+  --vela-status-evidence: var(--vela-color-light-evidence);
+  --vela-status-progress: var(--vela-color-light-progress);
+  --vela-status-caution: var(--vela-color-light-caution);
+  --vela-status-conflict: var(--vela-color-light-conflict);
   --vela-selection: color-mix(in srgb, var(--vela-color-stardust) 24%, transparent);
   color-scheme: light;
 }
 
 [data-theme="dark"] {
   --vela-surface-canvas: var(--vela-color-midnight);
-  --vela-surface-inset: #0B1629;
+  --vela-surface-inset: var(--vela-color-dark-surface-inset);
   --vela-surface-raised: var(--vela-color-deep-space);
-  --vela-surface-emphasis: #050C18;
+  --vela-surface-emphasis: var(--vela-color-dark-surface-emphasis);
   --vela-text-primary: var(--vela-color-light);
-  --vela-text-secondary: #C5CAD2;
+  --vela-text-secondary: var(--vela-color-dark-text-secondary);
   --vela-text-muted: var(--vela-color-mist);
   --vela-text-inverse: var(--vela-color-midnight);
-  --vela-border-subtle: #263247;
-  --vela-border-strong: #3A465A;
+  --vela-border-subtle: var(--vela-color-dark-border-subtle);
+  --vela-border-strong: var(--vela-color-dark-border-strong);
   --vela-focus: var(--vela-color-stardust);
   --vela-direction: var(--vela-color-stardust);
+  --vela-status-evidence: var(--vela-color-evidence);
+  --vela-status-progress: var(--vela-color-progress);
+  --vela-status-caution: var(--vela-color-caution);
+  --vela-status-conflict: var(--vela-color-dark-conflict);
   --vela-selection: color-mix(in srgb, var(--vela-color-stardust) 24%, transparent);
   color-scheme: dark;
 }

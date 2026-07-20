@@ -41,8 +41,12 @@ git diff --check
 ```
 
 Production builds also require Vercel's exact 40-character Git commit and
-deployment identity. `/.well-known/vela-site.json` exposes the deployed tag,
-commit, bundle root, Vela binary root, and source frontier roots.
+deployment identity. `www.vela.space/.well-known/vela-web.json` exposes the
+editorial tag, commit, and brand root.
+`app.vela.space/.well-known/vela-site.json` preserves the Observatory manifest
+contract and exposes its tag, commit, bundle root, Vela binary root, and source
+frontier roots. The editorial build emits ten canonical pages; the Observatory
+statically verifies 4,070 exact product routes against its sitemap.
 
 ## Release
 
