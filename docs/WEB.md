@@ -1,23 +1,31 @@
 # Vela Web operations
 
-This is the current operations contract for the public Vela web workspace. Earlier
-design plans remain historical records.
+This is the current operations contract for the private Vela Web workspace.
+Earlier design and migration plans live under `docs/history/`.
 
 ## Product boundary
 
-- `www.vela.space` is canonical for editorial content.
-- `app.vela.space` is canonical for the read-only Observatory.
+- `www.vela.space` is the canonical Astro editorial site.
+- `app.vela.space` is the canonical Next.js Repository Observatory.
 - `vela.space` redirects to `www`; product paths on `www` redirect to `app`.
-- Both applications are static projections. They have no signer, authority API,
-  scientific database, or write path.
-- Normative protocol and CLI documentation stays in the Vela repository at an
-  exact release commit. This repository owns onboarding and explanation only.
+- Both applications are immutable, read-only projections. They expose no
+  signer, database, public mutation API, Server Action, or scientific authority.
+- Normative protocol and CLI documentation remains in the Vela repository at
+  an exact release commit. This repository owns onboarding and explanation.
 
-## Refresh exact frontier state
+The repository is a Bun workspace with four maintained boundaries:
 
-Install the exact Vela binary required by
-`packages/frontier-data/config/frontiers.v1.json`, place the
-four configured checkouts beside this repository, and run:
+```text
+apps/www                editorial Astro application
+apps/observatory        read-only Next.js application
+packages/brand          governed identity, tokens, fonts, and delivery assets
+packages/frontier-data  exact frontier bundle, validation, search, and manifests
+```
+
+## Exact frontier state
+
+`packages/frontier-data/config/frontiers.v1.json` pins the Vela binary and four
+clean source frontiers. Refresh only from those exact checkouts:
 
 ```bash
 bun packages/frontier-data/scripts/build-frontier-bundle.mjs
@@ -26,45 +34,103 @@ bun run check:bundle
 
 Generation refuses dirty or unpushed sources, wrong branches or remotes, stale
 pins, packet drift, missing decision evidence, incomplete reviews, and root
-disagreement. Review the bundle and its manifest together.
+disagreement. `site.frontier-bundle.v1` remains build-time data; it is never
+shipped as a universal browser payload.
+
+The Observatory prebuilds the stable shell and four frontier overviews. Finding
+and Erdős problem pages use release-bound immutable ISR: the first request
+materializes exact bundled bytes, later requests reuse that release cache, and
+the application performs no request-time frontier fetch. The current build
+contains 29 prebuilt HTML pages, below the enforced limit of 50.
+
+## Brand and assets
+
+`packages/brand/marks/source/vela-symbol-full.svg` is the exact original Vela
+sail released in `v0.300.2`. Do not redraw or reinterpret it. All delivery
+variants are generated and content-addressed.
+
+- Editorial delivery: Newsreader, Inter, and IBM Plex Mono.
+- Observatory delivery: Inter and IBM Plex Mono only.
+- Asset synchronization is a mirror and removes stale destination fonts.
+- `vela.brand-root.v2` binds canonical marks, DTCG tokens, delivered font bytes,
+  and their manifests.
+
+The sail remains provisional for trademark purposes; see the dated non-legal
+screen under `packages/brand/marks/audit/`.
 
 ## Verify and build
+
+Use Bun `1.3.12`:
 
 ```bash
 bun install --frozen-lockfile
 bun run check
-bun run check:brand
-bun run check:bundle
+bun run lint
+bun run typecheck
 bun run test
 bun run build
+bun run test:budgets
+bun run test:manifests
 git diff --check
 ```
 
-Production builds also require Vercel's exact 40-character Git commit and
-deployment identity. `www.vela.space/.well-known/vela-web.json` exposes the
-editorial tag, commit, and brand root.
-`app.vela.space/.well-known/vela-site.json` preserves the Observatory manifest
-contract and exposes its tag, commit, bundle root, Vela binary root, and source
-frontier roots. The retired www manifest path redirects to this exact app
-manifest rather than serving a duplicate copy. The editorial build emits ten canonical pages; the Observatory
-statically verifies 4,070 exact product routes against its sitemap.
+CI additionally runs the repository-owned functional and accessibility suites.
+Release candidates and design-affecting changes run the macOS visual baseline.
+Manual visual QA uses the Codex in-app Browser.
+
+## Deployment topology
+
+The `constellate-dc388081` Vercel team has two Vela Web projects:
+
+| Project | Application | Production domains |
+| --- | --- | --- |
+| `vela-web-www` | `apps/www` | `www.vela.space`, redirect aliases |
+| `vela-web-observatory` | `apps/observatory` | `app.vela.space`, `app.constellate.science` redirect |
+
+There is no active legacy Vela Vercel project. `prospect` and `snowchild` are
+unrelated and outside this workspace.
+
+Public manifests:
+
+- `https://www.vela.space/.well-known/vela-web.json`
+- `https://app.vela.space/.well-known/vela-site.json`
+
+The manifests use `vela.web-deployment.v2` and `vela.site-deployment.v2`; each
+records the exact release tag, Git commit, brand schema/root, deployment
+identity, and `immutable_isr` delivery mode. The Observatory manifest also
+binds the frontier bundle and search roots. A production release is incomplete
+until both deployed manifests identify the same approved tag and commit.
+
+Several legacy domains currently show Vercel's `DNS Change Recommended`
+advisory while resolving successfully. Treat DNS migration as a separate
+provider-controlled operation; do not combine it with a code release.
+
+## Fly sunset services
+
+Vela Web does not depend on Fly.io.
+
+- `vela-hub` serves only the published `410 Gone` sunset response at
+  `hub.constellate.science`. Keep it through the documented sunset window ending
+  2026-08-18, then remove its obsolete secrets and application.
+- `vela-hub-witness` has no public domain or current client. Its unique SQLite
+  state was integrity-checked and archived under
+  `~/Desktop/Constellate/Archives/vela-hub-witness-2026-07-20/`; its machine is
+  scaled to zero. Retain the unattached volume until the archive receives its
+  final deletion review.
+- `prospect-acceptance` is unrelated and must not be modified from this repo.
 
 ## Release
 
-1. Tag and deploy an RC without changing DNS.
-2. Verify all routes, redirects, roots, accessibility, and responsive states.
-3. Tag the final release and deploy the exact commit.
-4. Verify the production manifest before moving canonical domains.
-5. Keep the retired deployment available for the documented rollback window.
+1. Build and tag an unsigned release candidate on clean `main`.
+2. Deploy both applications from that exact commit without DNS changes.
+3. Verify routes, redirects, standing semantics, roots, accessibility, responsive
+   states, ISR cache isolation, and both staging manifests.
+4. Tag the final release from the approved commit and deploy both projects.
+5. Verify production manifests and canonical domains.
+6. Update the parent `ecosystem.lock.json` only after production verification.
+7. Remove generated dependencies and build output after the release audit.
 
-The domain move is an ownership transfer, not a DNS rewrite. The active Vercel
-projects are `vela-web-www` and `vela-web-observatory`; the retired `vela-web`
-project remains frozen for the rollback window. Move these domains from the
-released Astro project to the new editorial project: `www.vela.space`,
-`vela.space`, `canopus.org`, `www.canopus.org`, `borrowedlight.org`,
-`www.borrowedlight.org`, `constellate.science`, and
-`www.constellate.science`. Move `app.vela.space` from that project and
-`app.constellate.science` from the archived Observatory project to the new
-Observatory project. Keep both retired projects and their Vercel deployment
-URLs for the rollback window; do not leave a canonical or compatibility domain
-attached to them.
+Never publish a release if a manifest lacks the exact commit, any root drifts,
+verifier success is presented as acceptance, a canonical route is missing, or
+browser-delivered bytes expose custody, private coordination, or authority
+operations.
