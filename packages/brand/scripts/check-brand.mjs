@@ -35,5 +35,8 @@ for (const family of ["Newsreader Text", "Newsreader Display", "Inter", "IBM Ple
 for (const rejected of ["Spectral", "Space Grotesk", "JetBrains Mono", "Geist", "Schibsted"]) {
   assert(!fonts.includes(rejected), `rejected font ${rejected} remains in shared output`);
 }
+assert(tokens.font.display.$value.startsWith("Newsreader"), "editorial display role drift");
+assert(tokens.font.sans.$value.startsWith("Inter"), "editorial sans role drift");
+assert(tokens.font.mono.$value.startsWith("IBM Plex Mono"), "editorial mono role drift");
 
 console.log(JSON.stringify({ ok: true, schema: "vela.brand-check.v1", tokens: required }));

@@ -45,7 +45,8 @@ deployment identity. `www.vela.space/.well-known/vela-web.json` exposes the
 editorial tag, commit, and brand root.
 `app.vela.space/.well-known/vela-site.json` preserves the Observatory manifest
 contract and exposes its tag, commit, bundle root, Vela binary root, and source
-frontier roots. The editorial build emits ten canonical pages; the Observatory
+frontier roots. The retired www manifest path redirects to this exact app
+manifest rather than serving a duplicate copy. The editorial build emits ten canonical pages; the Observatory
 statically verifies 4,070 exact product routes against its sitemap.
 
 ## Release

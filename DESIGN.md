@@ -185,9 +185,9 @@ describes the editorial and Observatory applications that consume that shared
 brand source.
 
 Vela is one public system with two different rooms. The Astro editorial site is
-a light, atmospheric reading surface. The Next.js Observatory is a dark,
-dense scientific-state instrument. They share the same sail, palette,
-typography families, status grammar, and exact facts, but they do not share UI
+a light, atmospheric reading surface. The Next.js Observatory is a cool,
+first-light scientific-state instrument with a dense night mode. They share
+the same sail, brand governance, status grammar, and exact facts, but they do not share UI
 implementations or force one framework to imitate the other. Neither should
 collapse into a conversion funnel or a generic dashboard.
 
@@ -195,12 +195,34 @@ The primary design job is to help a technically literate reader stay oriented th
 
 ### Observatory product register
 
-The Observatory defaults to Midnight and uses the inset, collapsible instrument
-shell recovered from the archived product. Newsreader carries the primary
-assertion; Inter carries interface copy; IBM Plex Mono carries identities and
-roots. Dense ledgers, open rules, and typographic grouping are preferred over
-dashboard-card grids. Stardust is reserved for direction, focus, active
-navigation, provenance seams, and the primary action.
+The Observatory follows a repository-product register: the archived product's
+collapsible rail and contextual header provide orientation; GitHub-like
+repository hierarchy provides the structural backbone; and Hugging Face-like
+record pages keep scientific metadata close to the object it describes. This
+is design DNA, not pixel imitation. The result must remain unmistakably Vela
+through the sail, stardust focus and active states, semantic state marks, exact
+roots, and an explicit separation between verification and authority.
+
+The default is a cool first-light surface. Dark mode remains available as
+deep-prussian observatory night, but it is not the default. Product typography
+uses the native platform sans stack with Inter as its cross-platform fallback.
+IBM Plex Mono carries identities, roots, commands, and aligned values. No serif
+appears in the Observatory. Newsreader remains exclusive to the editorial
+application, and no product-only font family enters the shared brand package.
+
+Product type is fixed rather than fluid: body and controls use 0.875rem, page
+titles use 1.5rem, record names use 1.125rem, compact section headings use
+1rem, and exact metadata uses 0.75rem. Weight, proximity, rules, and source
+order carry hierarchy before scale. The 40px row rhythm governs repeated state.
+
+The app shell is flatter than a dashboard inset. The rail and contextual header
+remain distinct, but the working surface uses one quiet boundary, tiny radii,
+and no decorative shadow. Catalogue rows resemble repository records: one
+primary identity, one useful summary, nearby state, and exact provenance in a
+stable trailing column. Detail pages use contextual tabs and a sticky metadata
+rail when width permits. Dense ledgers, open rules, and typographic grouping are
+preferred over dashboard-card grids. Stardust is reserved for direction,
+focus, active navigation, provenance seams, and the primary action.
 
 Base UI is the only default headless primitive layer. shadcn supplies open
 component source and composition, not a visual theme. Every imported primitive
