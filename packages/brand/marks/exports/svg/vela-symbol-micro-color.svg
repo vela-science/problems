@@ -1,6 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none">
   <title>Vela micro symbol</title>
-  <path fill="#081224" d="M28 205 C82 202 145 175 206 30 C188 94 156 163 115 205 Z"/>
-  <path stroke="#081224" stroke-linecap="round" stroke-width="7" d="M211 45 L211 205"/>
-  <path stroke="#C9A664" stroke-linecap="round" stroke-width="7" d="M22 209 C88 207 157 201 231 214"/>
+  <path fill="#081224" d="M30 205 C88 203 151 169 207 30 C194 101 159 170 119 205 Z M211 43 H221 V205 H211 Z"/>
+  <path fill="#C9A664" d="M20 205 C91 204 163 202 234 211 L232 220 C164 212 91 213 21 216 Z"/>
 </svg>

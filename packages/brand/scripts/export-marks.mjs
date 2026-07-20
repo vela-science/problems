@@ -55,6 +55,11 @@ function approvalSheet(source) {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200">
   <rect width="1600" height="1200" fill="#F7F6F2"/>
   <rect x="800" width="800" height="1200" fill="#081224"/>
+  <defs>
+    <clipPath id="compact-tile"><rect width="176" height="176" rx="12"/></clipPath>
+    <clipPath id="micro-tile"><rect width="176" height="176" rx="12"/></clipPath>
+    <clipPath id="hinted-tile"><rect width="176" height="176" rx="12"/></clipPath>
+  </defs>
   <g font-family="Inter,Arial,sans-serif">
     <text x="72" y="82" fill="#081224" font-size="20" font-weight="600" letter-spacing="3">VELA IDENTITY APPROVAL / 2026-07</text>
     <text x="1528" y="82" fill="#F7F6F2" font-size="15" text-anchor="end" letter-spacing="2">STATE → DIRECTION</text>
@@ -65,21 +70,31 @@ function approvalSheet(source) {
     <line x1="72" y1="728" x2="1528" y2="728" stroke="#C9A664" stroke-width="2"/>
     <g transform="translate(72 770)">
       <rect width="176" height="176" rx="12" fill="#E9EBEF"/>
-      <g transform="translate(24 24) scale(.5)">${compact}</g>
+      <g clip-path="url(#compact-tile)">
+        <g transform="translate(24 24) scale(.5)">${compact}</g>
+        <g transform="translate(136 136) scale(.125)">${compact}</g>
+      </g>
       <text x="0" y="208" fill="#334155" font-size="15">Compact / 20–31 px</text>
     </g>
     <g transform="translate(320 770)">
       <rect width="176" height="176" rx="12" fill="#E9EBEF"/>
-      <g transform="translate(24 24)">${micro}</g>
+      <g clip-path="url(#micro-tile)">
+        <g transform="translate(24 24) scale(.5)">${micro}</g>
+        <g transform="translate(144 144) scale(.0625)">${micro}</g>
+      </g>
       <text x="0" y="208" fill="#334155" font-size="15">Micro / 12–19 px</text>
     </g>
     <g transform="translate(570 770)">
       <rect width="176" height="176" rx="12" fill="#E9EBEF"/>
-      <g transform="translate(0 0) scale(11)">${favicon}</g>
+      <g clip-path="url(#hinted-tile)">
+        <g transform="translate(16 16) scale(9)">${favicon}</g>
+        <g transform="translate(144 144)">${favicon}</g>
+      </g>
       <text x="0" y="208" fill="#334155" font-size="15">Hand-hinted / 16 px</text>
     </g>
     <g transform="translate(850 790) scale(.46)">${variants.reversed(horizontal)}</g>
     <text x="850" y="1038" fill="#A1A7B0" font-size="15">Horizontal lockup / one-color capable</text>
+    <text x="72" y="1038" fill="#64748B" font-size="13">Actual-size masters appear in each tile's lower-right corner.</text>
     <g transform="translate(72 1080)">
       <circle cx="8" cy="-5" r="7" fill="#4F8F8B"/><text x="28" fill="#334155" font-size="15">Evidence</text>
       <circle cx="154" cy="-5" r="7" fill="#6E9F77"/><text x="174" fill="#334155" font-size="15">Progress</text>

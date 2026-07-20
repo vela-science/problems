@@ -57,6 +57,10 @@ for (const [name, svg] of masters) {
 for (const name of ["vela-symbol-full", "vela-symbol-compact", "vela-symbol-micro", "vela-symbol-favicon-16"]) {
   assert(masters.get(name).includes(tokens.color.brand.stardust.$value), `${name} stardust drift`);
 }
+assert(
+  sha256(masters.get("vela-symbol-compact")) !== sha256(masters.get("vela-symbol-micro")),
+  "compact and micro masters must be optically distinct",
+);
 assert(manifest.schema === "vela.brand-export-manifest.v1", "brand export manifest schema drift");
 for (const entry of manifest.sources) {
   const bytes = readFileSync(resolve(root, "marks", entry.path));

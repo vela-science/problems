@@ -473,9 +473,9 @@ Hairlines should use ink or gold with opacity. Avoid thick side-stripe borders a
 
 **Landing (one day):** the editorial `/` landing crosses exactly one day: night hero, one dawn, a light body that never flickers, one dusk, night close. Two sky changes on the whole page — a page that flips registers more often strobes, no matter how smooth each gradient is. The dawns are `.vl-band` strips: a true smootherstep ramp (nine stops, zero slope at both edges) over ~68vh, a wide faint soft-gold warmth at the horizon, stars crossing on the night side, and adjacent content rising into the band so the transition happens behind words, never as an empty interlude. Dark objects during the day (the voyage map, the code panel) keep night interiors as framed instruments on the paper; sections themselves stay transparent over the page's single paper ground (any tint that stops at a section edge prints a seam — corner washes were cut twice). Decorated night sections wash to their pure register color before a band begins (seam guards), and bands overlap both neighbors by 1px. The lane is the observatory ledger: star-atlas instrument on the house's paper — never neon dev-tool. The hero's snapshot row reads as the horizon instrument, the last thing the night shows before dawn. The landing night carries the site's one sanctioned loop: three hero stars breathe on 11-13s cycles after arrival, reduced motion excluded — extend looping motion nowhere else.
 
-**Closing Page:** a restrained return to the opening image language on the same cream reading paper as the essay. Constellations uses the existing painted horizon: the distant sail carries the essay's gold route into open water while the atlas arcs resolve above it. The plate enters once with a small fade and vertical settle; it never loops, changes the page background, introduces a separate end panel, or adds another Vela mark beneath the image. The plate itself stays untouched: the motif return happens beside it, not over it. Reduced motion and no-JavaScript states show the complete plate immediately. Hidden rail or balancing gutters must not leave empty grid rows between the dedication and the close.
+**Closing Page:** a restrained return to the opening image language on the same cream reading paper as the essay. Constellations uses the existing painted horizon: the distant sail carries the essay's gold route into open water while the atlas arcs resolve above it. The plate enters once with a small fade and vertical settle; it never loops, changes the page background, introduces a separate end panel, or adds another Vela mark beneath the image. The plate itself stays untouched: the motif return happens beside it, not over it. Reduced motion and no-JavaScript states show the complete plate immediately. Hidden rail or balancing gutters must not leave empty grid rows between the final paragraph and the close.
 
-**The chart handed on (colophon):** removed 2026-07-18. The drawn §9 colophon (`ChartHandedOn.astro`) that sat above the dedication was cut at Will's direction — a second ending image diluted the closing plate. Its job passed to the dusk NightBand, which now carries only the gathering star field and the dedication (the joined trio was also tried there and cut 2026-07-18 — the painted sail is the ending). Do not reintroduce an in-flow ending composition between the last paragraph and the close.
+**The chart handed on (colophon):** removed 2026-07-18. The drawn §9 colophon (`ChartHandedOn.astro`) that sat above the dedication was cut at Will's direction — a second ending image diluted the closing plate. The later dusk NightBand and private dedication were removed 2026-07-20 for the same reason: they created another ending after the final sentence and painted horizon. The closing plate is the sole ending image. Do not reintroduce an in-flow ending composition or a second coda after it.
 
 ## Case law
 
@@ -605,33 +605,30 @@ Don't:
 - Do not let global essay typography leak into SVG labels.
 - Do not add new sections, nav surfaces, or product affordances unless they serve the reading experience.
 
-## Amendment 2026-07-18 · The day arc (NightBand)
+## Amendment 2026-07-20 · The open horizon (NightBand)
 
-The Constellations essay opens and closes in night. `NightBand.astro`
-(essay chrome) is a full-bleed sky band on the `--fig-night` ground,
-dissolving into `--paper-0` through the shared `.sky-fade`
-smootherstep. The dawn holds a hand-placed star field with the Fig
-01 trio arranged but unjoined; the dusk gathers over the painting itself
-(transparent-topped, overlapping the closing plate's lower water so
-sail, darkening, and dedication are one composition) and carries
-the dedication as the page's last mark, its gold horizon
-rule drawing once — the route from the painted sail landing where
-"for M." rests. The joined trio and the "a Vela essay" colophon
-line were cut 2026-07-18 at Will's direction: the sail image is the
-ending, and the coda adds nothing that competes with it. Bands are designed
-containers, consistent with "marks are content; atmosphere is an
-edgeless wash" — the cream body remains untouched.
+Constellations opens in night and resolves on the cream reading paper.
+`NightBand.astro` is now an opening-only full-bleed sky band on the
+`--fig-night` ground, dissolving into `--paper-0` through the shared
+`.sky-fade` smootherstep. Its field is sparse and edge-weighted: fourteen
+hand-placed stars leave silence around the title, while the Fig 01 trio
+remains arranged but unjoined at the upper-right edge. The closing painted
+horizon follows the final paragraph and ends the page. No dusk band,
+star-field coda, dedication, rule, attribution, or Vela mark follows it.
+
+This supersedes the closing half of the 2026-07-18 day arc. The return to
+night and `for M.` were removed because they made the reader cross a second
+threshold after the prose and painted horizon had already landed the ending.
 
 Case law amendments:
 - The sanctioned loop: the star-breathe keyframe (11-13s, alternate,
-  opacity only) is permitted in the two night bands, three designated
-  stars each, only after arrival, never under reduced motion, and
-  nowhere else on the reading surface.
+  opacity only) is permitted on three designated prelude stars, only after
+  arrival, never under reduced motion, and nowhere else on the reading
+  surface.
 - The hero carries no kicker: the "no eyebrow, no cartouche" ruling
   stands (a family label above the night masthead was tried 2026-07-18
-  and cut the same day). The coda's "a Vela essay" colophon line was
-  also cut 2026-07-18 — the essay carries no attribution mark beyond
-  the masthead sail; do not re-propose either.
+  and cut the same day). The essay carries no attribution mark beyond
+  the masthead sail; do not re-propose one at either end.
 - The masthead sail inverts to night ink (`data-ink="night"`) while
   over the prelude plateau; state, not motion.
 
@@ -640,18 +637,18 @@ Case law amendments:
 The essay's motion collapses onto one scale. Four durations: **160ms**
 (micro feedback: hovers, traces, control presses), **240ms** (state
 transitions: rail reveal, mast bar, era-follow), **420ms** (draws: rules,
-threads, trio lines), **900ms** (arrivals: plates, pours, the dusk
-finale). Two curves: `--ease` for micro and transition, `--ease-arrive`
+threads, trio lines), **900ms** (arrivals: plates and pours). Two curves:
+`--ease` for micro and transition, `--ease-arrive`
 for draw and arrival. The hero and closing painted plates alone keep
-`--dur-arrive` (1100ms) as plate weight. Two sanctioned loops: the night
-bands' star breathe and scroll-linked linear tracking (the Fig 02 sail).
+`--dur-arrive` (1100ms) as plate weight. Two sanctioned loops: the opening
+NightBand's star breathe and scroll-linked linear tracking (the Fig 02 sail).
 Anything off this scale is a defect, not a nuance — nine easing curves
 and thirty duration literals measured 2026-07-18 made every entrance a
 different instrument.
 
 One reveal geometry: entrance observers use `{ threshold: 0.1,
-rootMargin: "0px 0px 25% 0px" }` (NightBand dusk, ClosingPage,
-SectionHeading). The atlas controller's wide pre-trigger margin and
+rootMargin: "0px 0px 25% 0px" }` (ClosingPage, SectionHeading).
+The atlas controller's wide pre-trigger margin and
 scrub geometry are choreography, not reveals, and keep their own values.
 
 Staged cascades target ~0.9s of visibility (1.3s is the hard
@@ -717,8 +714,7 @@ lines; the soundings' and timeline's annotations and field curves;
 the tracings' sheet rectangles. Display-count numerals survive —
 the density law's numeral rule outranks minimalism. The bound applies to scroll-entered
 cascades; load-time bookend arrivals (the hero, the dawn prelude)
-carry plate weight and are exempt — the dusk coda is scroll-entered
-and complies. Two literals sit deliberately off the scale and are
+carry plate weight and are exempt. Two literals sit deliberately off the scale and are
 sanctioned by name: the Fig 02 sail's 110ms linear transform (the
 smoothing filter of its scroll-linked tracking, not an entrance)
 and the 300ms view-transition sail glide.

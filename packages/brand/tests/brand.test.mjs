@@ -75,6 +75,8 @@ test("identity masters and deterministic delivery exports are complete", () => {
   assert.equal(exportManifest.schema, "vela.brand-export-manifest.v1");
   assert.deepEqual(exportManifest.sources.map(({ path }) => path).sort(), expectedSources);
   assert.ok(exportManifest.exports.length >= 90);
+  const sourceHashes = Object.fromEntries(exportManifest.sources.map(({ path, sha256 }) => [path, sha256]));
+  assert.notEqual(sourceHashes["source/vela-symbol-compact.svg"], sourceHashes["source/vela-symbol-micro.svg"]);
   for (const source of exportManifest.sources) {
     assert.match(source.sha256, /^[0-9a-f]{64}$/u);
     assert.ok(source.bytes > 0);
