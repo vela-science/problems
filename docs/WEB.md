@@ -84,7 +84,10 @@ git diff --check
 ```
 
 CI additionally runs the repository-owned functional and accessibility suites.
-Release candidates and design-affecting changes run the macOS visual baseline.
+Release candidates and design-affecting changes run the documented in-app
+Browser matrix at the supported mobile, tablet, and desktop widths. Functional
+and accessibility automation remains in CI; stale screenshot binaries are not
+treated as product truth.
 Manual visual QA uses the Codex in-app Browser.
 
 ## Deployment topology

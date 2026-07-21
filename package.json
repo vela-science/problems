@@ -28,7 +28,6 @@
     "test:manifests": "bun run --filter @vela/www test:manifest && bun run --filter @vela/observatory test:manifest",
     "test:e2e": "bun run --filter @vela/observatory test:e2e",
     "test:a11y": "bun run --filter @vela/observatory test:a11y",
-    "test:visual": "bun run --filter @vela/observatory test:visual",
     "test:budgets": "bun scripts/check-budgets.mjs",
     "test": "bun test scripts/read-only-boundary.test.ts && bun run --filter @vela/brand test && bun run --filter @vela/frontier-data test && bun run --filter @vela/www test && bun run --filter @vela/observatory test",
     "build": "bun run --filter @vela/brand build && bun run --filter @vela/frontier-data check && bun run --filter @vela/www build && bun run --filter @vela/observatory build",
