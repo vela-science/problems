@@ -9,7 +9,7 @@ const requestStateCall = /\b(?:cookies|draftMode|headers)\s*\(/u;
 const runtimeEnvironment = /\bprocess\.env\b/u;
 const authorityDependency = /from\s+["'](?:next-auth|@auth\/|firebase(?:\/|["'])|@supabase\/|@prisma\/|prisma(?:\/|["'])|pg(?:\/|["'])|postgres(?:\/|["'])|mysql(?:2)?(?:\/|["'])|mongoose(?:\/|["']))/u;
 const fetchCall = /\bfetch\s*\(/gu;
-const allowedSearchFetch = /\bfetch\s*\(\s*`\/api\/search\?root=\$\{encodeURIComponent\(expectedRoot\)\}`\s*,/gu;
+const allowedSearchFetch = /\bfetch\s*\(\s*`\/api\/search\?root=\$\{encodeURIComponent\([A-Za-z_$][\w$]*\)\}`\s*,/gu;
 const searchFetcher = "apps/observatory/src/lib/search-index.ts";
 const searchRoute = "apps/observatory/src/app/api/search/route.ts";
 const mutationMethod = /export\s+(?:async\s+)?function\s+(?:POST|PUT|PATCH|DELETE)\b/u;

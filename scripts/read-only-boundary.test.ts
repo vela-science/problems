@@ -59,4 +59,15 @@ describe("Observatory read-only boundary", () => {
       expect.objectContaining({ rule: "request_time_fetch" }),
     ]);
   });
+
+  test("allows a renamed local root binding but not an unrooted search request", () => {
+    const allowed = fixture({
+      "apps/observatory/src/lib/search-index.ts": "export function load(projectionRoot) { return fetch(`/api/search?root=${encodeURIComponent(projectionRoot)}`, { cache: 'no-store' }); }\n",
+    });
+    const unrooted = fixture({
+      "apps/observatory/src/lib/search-index.ts": "export function load() { return fetch('/api/search', { cache: 'no-store' }); }\n",
+    });
+    expect(inspectReadOnlyBoundary(allowed)).toEqual([]);
+    expect(inspectReadOnlyBoundary(unrooted)).toEqual([expect.objectContaining({ rule: "request_time_fetch" })]);
+  });
 });
