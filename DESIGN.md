@@ -276,7 +276,18 @@ The typographic system is deliberately literary, with a technical counterweight.
   identifiers, roots, commands, and count values.
 - The desktop reading rail uses the compact `--text-rail` step and keeps section names on one line. Below 1320 pixels it becomes a compact current-section disclosure near the masthead; on mobile it returns to the document flow as a non-persistent contents entry.
 
-Technical SVG labels use one shared viewBox scale: `--diagram-label-xs` at 9px for compact secondary annotations, `--diagram-label-sm` at 10px for gates and axes, `--diagram-label` at 11px for primary stations and state roots, and `--diagram-title` at 15px for the rare serif station name. These are diagram coordinates rather than browser text sizes; mobile compositions must still remove labels that would read as thumbnails.
+Technical SVG labels obey a rendered floor, not a viewBox convention
+(amended 2026-07-21): every drawn label must RENDER at 12px or more at
+every viewport. SVG text scales with its canvas, so fixed viewBox sizes
+fail as the canvas narrows — the enforcement is structural. Desktop
+skies use ≥12px bases multiplied by `--svg-label-boost` (stepped up as
+the rendered canvas shrinks toward 681px); at ≤680px every figure
+switches to an authored phone sky (≈360-unit viewBox, near-1:1 render)
+whose labels use the stepped `--svg-mlabel`. Redraw the geometry for
+the phone canvas rather than shrinking a desktop count into texture;
+remove labels that would read as thumbnails. The legacy
+`--diagram-label-*` trio (9/10/11px) survives only in older essays'
+figures and must not enter new work.
 
 Body copy should stay within a humane measure. Desktop prose should sit around 41.5rem. Tablet prose can be narrower than figure width; figures may expand, paragraphs should not. Body line-height should remain generous enough for dense prose, generally around 1.7 to 1.75.
 
@@ -604,6 +615,26 @@ Don't:
 - Do not make all diagrams share the same constellation-node shape if the section meanings differ.
 - Do not let global essay typography leak into SVG labels.
 - Do not add new sections, nav surfaces, or product affordances unless they serve the reading experience.
+
+## Amendment 2026-07-21 · The rendered label floor and the one-box caption
+
+Two structural rules from the 95+ acceptance pass:
+
+- **Labels are read at render, not authored size.** The figure label
+  floor (Typography above) is enforced by `--svg-label-boost` /
+  `--svg-mlabel` in tokens.css and by authored phone skies at ≤680px
+  for every Constellations figure. A figure whose labels dip below
+  12px rendered at any of the audit viewports (1440/1280/1024/768/512/
+  414/390/375/320) is defective.
+- **The record essay's phone figure bleed is retired.** Every figure
+  now carries an authored phone sky whose type holds its size, so the
+  bleed no longer bought legibility — it only moved captions off the
+  prose box (a constant 13.5px left-edge error). At ≤640px figure,
+  caption, and paragraph share one column; the caption-edge law holds
+  by construction, not by compensation. Do not reintroduce the bleed
+  without also reintroducing a caption realignment proof.
+- The left rail's title retraction over wide figures (promised in
+  Left Rail above) is implemented and ledgered in living-systems.
 
 ## Amendment 2026-07-20 · The open horizon (NightBand)
 
