@@ -122,10 +122,13 @@ provider-controlled operation; do not combine it with a code release.
 
 ## Fly retirement
 
-Vela Web does not depend on Fly.io. The remaining `vela-hub` machine serves
-only a `410 Gone` tombstone and must be deleted after the Neon-backed Vercel
-deployment passes production route, manifest, and current-frontier checks.
-`prospect-acceptance` is unrelated and must not be modified from this repo.
+Vela Web does not depend on Fly.io. The legacy `vela-hub` and
+`vela-hub-witness` applications, their secrets, and the witness volume were
+removed on 2026-07-21 after the Neon-backed Vercel deployment passed production
+route, manifest, and current-frontier checks. The archived witness database and
+its SHA-256 manifest remain outside this repository under the Constellate
+archive. `prospect-acceptance` is unrelated and must not be modified from this
+repo.
 
 ## Release
 
