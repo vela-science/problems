@@ -137,14 +137,14 @@ components:
   margin-note:
     textColor: "{colors.ink-muted}"
     typography: "{typography.note}"
-    width: "21.5rem anchored overlay"
+    width: "reading measure inline disclosure"
   margin-note-marker:
     textColor: "{colors.tertiary-ink}"
     typography: "{typography.mono-index}"
   left-rail-node:
     textColor: "{colors.secondary}"
     typography: "{typography.note}"
-    height: "30px"
+    height: "44px"
   image-plate:
     backgroundColor: "{colors.neutral}"
     width: "52rem"
@@ -284,7 +284,7 @@ Avoid dramatic one-line fragments unless the essay truly needs a hinge. Avoid pr
 
 ## Layout
 
-The page is a three-column reading system on wide screens: left orientation rail, center reading column, and a balancing right gutter. Footnotes do not occupy that gutter; they open as transient cards anchored to their inline references. On smaller screens, the page collapses to a single reading column and footnotes open as bottom reference slips.
+The page is a three-column reading system on wide screens: left orientation rail, center reading column, and a balancing right gutter. Footnotes do not occupy that gutter; they disclose directly beneath their inline references and reflow the paragraph that follows. The same reading-order interaction holds when the page collapses to one column.
 
 Spacing should create reading rhythm, not isolated cards. Sections need consistent top and bottom breathing room. Figures and plates should use equal visual spacing above and below unless a specific narrative transition requires otherwise.
 
@@ -297,8 +297,8 @@ Core layout measurements:
   `wide` at 48rem to 52rem for ordinary explanatory diagrams, `page` at 64rem
   for dense comparisons and interactive maps, and `screen` at up to 88rem with
   a one-rem viewport inset for the one immersive long-handoff sequence.
-- Footnote card width: 21.5rem maximum, clamped inside a one-rem viewport
-  gutter and placed above or below its marker according to available space.
+- Footnote disclosure width: the active reading measure, carried in normal flow
+  beneath its marker with no separate card ground.
 - Desktop left rail appears only when it helps orientation, fades near the top and ending, and should remain quiet.
 - Mobile figures can use nearly full viewport width, but text labels inside SVGs need mobile-specific simplification when they become thumbnails. Quantitative fields must preserve the legibility of their repeated marks: redraw the geometry for the phone canvas instead of shrinking a desktop count into texture.
 
@@ -461,7 +461,7 @@ Hairlines should use ink or gold with opacity. Avoid thick side-stripe borders a
 
 **Left Rail:** one quiet route with a compact semantic operation glyph and title for each section. Visited chapters warm slightly, the current glyph and title reach full ink, and future chapters remain quiet. The glyphs use a consistent square coordinate system and no enclosing cards. Do not reconstruct the Vela sail in the rail. The desktop rail sits toward the viewport edge and retracts its titles while a page-width figure occupies the reading field. On tablet, replace the rail with a compact current-section/contents disclosure at the top-left edge; on mobile, place that disclosure in flow before the prose. Hide either floating navigator while the immersive screen-width figure occupies the viewport so navigation never sits on top of the argument.
 
-**Footnote Card:** progressively disclosed beside its inline marker through hover, focus, or a pinned click state. It uses fixed viewport positioning so wide figures and breakout layouts cannot push or clip it; the placement script clamps it to the viewport and flips it above the marker when needed. Phones use a bottom reference slip. It is reference infrastructure, not a decorative pull quote. Use a numbered index and quiet rule, preserve keyboard and Escape behavior, and never make hover the only access path.
+**Footnote Disclosure:** progressively disclosed directly beneath its inline marker through click or keyboard activation. It remains in normal document flow, uses the page ground rather than a card surface, and moves the following prose down while open. It is reference infrastructure, not a decorative pull quote. Use a numbered index and quiet rules, preserve keyboard and Escape behavior, and render every note open when JavaScript is unavailable or the essay is printed.
 
 **Figure Plate:** figure identity belongs in the caption below the visual. Technical figures use the numbered `Fig. NN. Title. Explanation.` caption format. Do not put figure numbers or explanatory captions inside SVGs.
 
