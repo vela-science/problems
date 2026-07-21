@@ -25,7 +25,7 @@ describe("Observatory read-only boundary", () => {
   test("allows the single rooted same-origin search artifact", () => {
     const root = fixture({
       "apps/observatory/src/app/page.tsx": "export default function Page() { return null; }\n",
-      "apps/observatory/src/lib/search-index.ts": "export const index = fetch('/data/site-search-index.v1.json', { cache: 'force-cache' });\n",
+      "apps/observatory/src/lib/search-index.ts": "export function load(expectedRoot) { return fetch(`/data/site-search-index.v1.json?root=${encodeURIComponent(expectedRoot)}`, { cache: 'force-cache' }); }\n",
     });
     expect(inspectReadOnlyBoundary(root)).toEqual([]);
   });

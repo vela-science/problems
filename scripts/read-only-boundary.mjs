@@ -9,7 +9,7 @@ const requestStateCall = /\b(?:cookies|draftMode|headers)\s*\(/u;
 const runtimeEnvironment = /\bprocess\.env\b/u;
 const authorityDependency = /from\s+["'](?:next-auth|@auth\/|firebase(?:\/|["'])|@supabase\/|@prisma\/|prisma(?:\/|["'])|pg(?:\/|["'])|postgres(?:\/|["'])|mysql(?:2)?(?:\/|["'])|mongoose(?:\/|["']))/u;
 const fetchCall = /\bfetch\s*\(/gu;
-const allowedSearchFetch = /\bfetch\s*\(\s*["']\/data\/site-search-index\.v1\.json["']\s*,/gu;
+const allowedSearchFetch = /\bfetch\s*\(\s*`\/data\/site-search-index\.v1\.json\?root=\$\{encodeURIComponent\(expectedRoot\)\}`\s*,/gu;
 const searchFetcher = "apps/observatory/src/lib/search-index.ts";
 
 function filesBelow(directory) {
