@@ -47,6 +47,9 @@ jobs:
       - name: Production builds
         run: bun run build
 
+      - name: Runtime route and projection smoke
+        run: bun run --filter @vela/observatory check:runtime
+
       - name: Release budgets and manifests
         run: bun run test:budgets && bun run test:manifests
 
