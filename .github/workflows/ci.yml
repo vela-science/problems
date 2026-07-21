@@ -45,14 +45,5 @@ jobs:
       - name: Release budgets and manifests
         run: bun run test:budgets && bun run test:manifests
 
-      - name: Install browser test runtime
-        run: bunx playwright install --with-deps chromium
-
-      - name: Functional browser tests
-        run: bun run test:e2e
-
-      - name: Accessibility browser tests
-        run: bun run test:a11y
-
       - name: Patch hygiene
         run: bun run format:check

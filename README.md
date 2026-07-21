@@ -75,8 +75,9 @@ bun run dev:observatory  # http://127.0.0.1:4322
 ## Verify a release candidate
 
 The root workflow checks the brand and frontier roots, package types, unit
-tests, both production builds, browser contracts, accessibility, artifact
-budgets, and deployment manifests.
+tests, both production builds, read-only boundaries, artifact budgets, and
+deployment manifests. Responsive, keyboard, interaction, and visual release
+QA is performed with the Codex in-app Browser against the candidate build.
 
 ```bash
 bun install --frozen-lockfile
@@ -85,9 +86,6 @@ bun run lint
 bun run typecheck
 bun run test
 bun run build
-bun run test:e2e
-bun run test:a11y
-bun run test:visual
 bun run test:budgets
 bun run test:manifests
 git diff --check

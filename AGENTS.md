@@ -49,9 +49,10 @@ bun run test:manifests
 git diff --check
 ```
 
-Observatory browser suites live under `apps/observatory/tests`. Set
-`PLAYWRIGHT_BASE_URL` to test an already deployed read-only build; when it is
-unset the suite builds and serves the local static export.
+Use the Codex in-app Browser for responsive, keyboard, interaction, and visual
+QA against local, release-candidate, and production builds. Keep the recorded
+viewport matrix and findings with the release evidence; browser automation is
+not part of this repository's installed toolchain.
 
 ## Release safety
 

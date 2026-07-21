@@ -13,14 +13,11 @@ apps/*/.next/
 apps/*/dist/
 apps/*/out/
 apps/*/storybook-static/
-apps/*/test-results/
-apps/*/playwright-report/
 apps/*/next-env.d.ts
 *.tsbuildinfo
 
 # Local editor and agent artifacts
 .vscode/
-.playwright-mcp/
 .agents/skills/impeccable/
 .codex/hooks.json
 tmp/
