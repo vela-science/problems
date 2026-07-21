@@ -8,15 +8,17 @@ Earlier design and migration plans live under `docs/history/`.
 - `www.vela.space` is the canonical Astro editorial site.
 - `app.vela.space` is the canonical Next.js Repository Observatory.
 - `vela.space` redirects to `www`; product paths on `www` redirect to `app`.
-- Both applications are immutable, read-only projections. They expose no
-  signer, database, public mutation API, Server Action, or scientific authority.
+- Both applications are read-only products. They expose no signer, public
+  mutation API, Server Action, or scientific authority. The Observatory reads
+  a bounded projection from Neon; canonical custody remains in the frontier
+  Git repositories.
 - Normative protocol and CLI documentation remains in the Vela repository at
   an exact release commit. This repository owns onboarding and explanation.
 
 `bun run check:boundary` makes that product boundary executable. It rejects
-Route Handlers, Server Actions, request-scoped cookies or headers, runtime
-secret access, authentication/database dependencies, and request-time fetches
-other than the rooted same-origin search artifact.
+Server Actions, request-scoped cookies or headers, authentication, mutation
+handlers, and arbitrary request-time fetches. The sole Route Handler is the
+read-only, same-origin search projection.
 
 The repository is a Bun workspace with four maintained boundaries:
 
@@ -24,33 +26,33 @@ The repository is a Bun workspace with four maintained boundaries:
 apps/www                editorial Astro application
 apps/observatory        read-only Next.js application
 packages/brand          governed identity, tokens, fonts, and delivery assets
-packages/frontier-data  exact frontier bundle, validation, search, and manifests
+packages/frontier-data  Git-to-Neon projection, validation, search, and manifests
 ```
 
 ## Exact frontier state
 
-`packages/frontier-data/config/frontiers.v1.json` pins the Vela binary and four
-clean source frontiers. It is the sole owner of the bundle, generated search
-index, compact work availability, and rooted graph opportunity projection.
-Refresh only from those exact checkouts:
+`packages/frontier-data/config/frontiers.v1.json` names the four canonical Git
+repositories. A scheduled or manual GitHub workflow checks out clean
+`origin/main` tips, verifies them with the pinned Vela release, and writes a
+content-addressed read projection to the `vela_projection` Neon database:
 
 ```bash
-bun packages/frontier-data/scripts/build-frontier-bundle.mjs
+bun packages/frontier-data/scripts/refresh-neon-projection.mjs
 bun run check:bundle
 ```
 
-Generation refuses dirty or unpushed sources, wrong branches or remotes, stale
-pins, packet drift, missing decision evidence, incomplete reviews, and root
-disagreement. `site.frontier-bundle.v1` remains build-time data; it is never
-shipped as a universal browser payload.
+Refresh refuses dirty or unpushed sources, wrong branches or remotes, Vela
+version drift, packet drift, missing decision evidence, incomplete reviews, and
+root disagreement. The writer is available only to the refresh workflow. The
+Vercel application receives a separate PostgreSQL role with `CONNECT`, schema
+`USAGE`, and `SELECT` only.
 
-The public search copy under `apps/observatory/public/data/` is generated and
-ignored; the rooted package artifact is the only checked-in source. The
-Observatory prebuilds the stable shell and four frontier overviews. Finding
-and Erdős problem pages use release-bound immutable ISR: the first request
-materializes exact bundled bytes, later requests reuse that release cache, and
-the application performs no request-time frontier fetch. The current build
-contains 32 prebuilt product pages, below the enforced limit of 50.
+There is no checked-in frontier snapshot, copied search index, or Build Week
+JSON. The Observatory reads the rooted release and frontier projections from
+Neon during rendering. `/api/search` derives its bounded response from the same
+read model. The database is a disposable projection: the exact Git commits,
+trees, event roots, and proposal roots identify every row, and the entire
+projection can be rebuilt from the source repositories.
 
 ## Brand and assets
 
@@ -109,30 +111,21 @@ Public manifests:
 
 The manifests use `vela.web-deployment.v2` and `vela.site-deployment.v2`; each
 records the exact release tag, Git commit, brand schema/root, deployment
-identity, and `immutable_isr` delivery mode. The Observatory manifest also
-binds the frontier bundle, search root, and retained Build Week projection.
-Validation requires the search artifact to name the same bundle root and the
-research projection to name the same site commit. A production release is
-incomplete until both deployed manifests identify the same approved tag and
-commit.
+identity, and delivery mode. The Observatory manifest additionally binds the
+Neon projection root, pinned Vela binary, and every source frontier commit and
+root. A production release is incomplete until its deployed manifest matches
+the approved tag, commit, and current projection exactly.
 
 Several legacy domains currently show Vercel's `DNS Change Recommended`
 advisory while resolving successfully. Treat DNS migration as a separate
 provider-controlled operation; do not combine it with a code release.
 
-## Fly sunset services
+## Fly retirement
 
-Vela Web does not depend on Fly.io.
-
-- `vela-hub` serves only the published `410 Gone` sunset response at
-  `hub.constellate.science`. Keep it through the documented sunset window ending
-  2026-08-18, then remove its obsolete secrets and application.
-- `vela-hub-witness` has no public domain or current client. Its unique SQLite
-  state was integrity-checked and archived under
-  `~/Desktop/Constellate/Archives/vela-hub-witness-2026-07-20/`; its machine is
-  scaled to zero. Retain the unattached volume until the archive receives its
-  final deletion review.
-- `prospect-acceptance` is unrelated and must not be modified from this repo.
+Vela Web does not depend on Fly.io. The remaining `vela-hub` machine serves
+only a `410 Gone` tombstone and must be deleted after the Neon-backed Vercel
+deployment passes production route, manifest, and current-frontier checks.
+`prospect-acceptance` is unrelated and must not be modified from this repo.
 
 ## Release
 

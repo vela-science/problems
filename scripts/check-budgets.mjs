@@ -1,6 +1,11 @@
 import { gzipSync } from "node:zlib";
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { resolve } from "node:path";
+import {
+  buildSiteSearchIndex,
+  observatoryProjectionManifest,
+  observatoryRelease,
+} from "../packages/frontier-data/src/index.ts";
 
 const repository = resolve(import.meta.dirname, "..");
 const observatory = resolve(repository, "apps/observatory");
@@ -22,7 +27,11 @@ if (prebuilt.length >= 50) throw new Error(`Observatory prebuild has ${prebuilt.
 
 const searchHtml = readFileSync(resolve(observatory, ".next/server/app/search.html"));
 if (searchHtml.byteLength > 96 * 1024) throw new Error(`search HTML is ${searchHtml.byteLength} bytes`);
-const searchIndex = readFileSync(resolve(observatory, "public/data/site-search-index.v1.json"));
+const [release, projectionManifest] = await Promise.all([
+  observatoryRelease(),
+  observatoryProjectionManifest(),
+]);
+const searchIndex = Buffer.from(JSON.stringify(buildSiteSearchIndex(release, projectionManifest.release_root)));
 if (searchIndex.byteLength > 1.5 * 1024 * 1024) throw new Error(`search index is ${searchIndex.byteLength} bytes`);
 const searchGzip = gzipSync(searchIndex).byteLength;
 if (searchGzip > 250 * 1024) throw new Error(`search index gzip is ${searchGzip} bytes`);
@@ -50,7 +59,9 @@ const browserFiles = [
 ].filter((path) => /\.(?:html|js|json)$/u.test(path));
 for (const path of browserFiles) {
   const content = readFileSync(path, "utf8");
-  if (content.includes("site.frontier-bundle.v1")) throw new Error(`${path}: embeds the full frontier bundle`);
+  if (content.includes('"schema":"vela.observatory-release.v1"')) {
+    throw new Error(`${path}: embeds the full frontier projection`);
+  }
 }
 
 console.log(JSON.stringify({

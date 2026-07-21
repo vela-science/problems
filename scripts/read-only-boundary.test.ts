@@ -22,10 +22,11 @@ afterEach(() => {
 });
 
 describe("Observatory read-only boundary", () => {
-  test("allows the single rooted same-origin search artifact", () => {
+  test("allows the single rooted same-origin read-only search endpoint", () => {
     const root = fixture({
       "apps/observatory/src/app/page.tsx": "export default function Page() { return null; }\n",
-      "apps/observatory/src/lib/search-index.ts": "export function load(expectedRoot) { return fetch(`/data/site-search-index.v1.json?root=${encodeURIComponent(expectedRoot)}`, { cache: 'force-cache' }); }\n",
+      "apps/observatory/src/app/api/search/route.ts": "import { NextResponse } from 'next/server';\nexport async function GET() { return NextResponse.json([]); }\n",
+      "apps/observatory/src/lib/search-index.ts": "export function load(expectedRoot) { return fetch(`/api/search?root=${encodeURIComponent(expectedRoot)}`, { cache: 'no-store' }); }\n",
     });
     expect(inspectReadOnlyBoundary(root)).toEqual([]);
   });
@@ -44,6 +45,7 @@ describe("Observatory read-only boundary", () => {
       "request_state",
       "request_time_fetch",
       "route_handler",
+      "mutation_handler",
       "runtime_environment",
       "server_action",
     ]));

@@ -4,13 +4,15 @@ import { relative, resolve, sep } from "node:path";
 const sourceExtensions = /\.[cm]?[jt]sx?$/u;
 const routeHandler = /(?:^|\/)app(?:\/.*)?\/route\.[cm]?[jt]sx?$/u;
 const serverDirective = /^\s*["']use server["'];?/mu;
-const requestStateImport = /from\s+["']next\/(?:headers|server)["']/u;
+const requestStateImport = /from\s+["']next\/headers["']/u;
 const requestStateCall = /\b(?:cookies|draftMode|headers)\s*\(/u;
 const runtimeEnvironment = /\bprocess\.env\b/u;
 const authorityDependency = /from\s+["'](?:next-auth|@auth\/|firebase(?:\/|["'])|@supabase\/|@prisma\/|prisma(?:\/|["'])|pg(?:\/|["'])|postgres(?:\/|["'])|mysql(?:2)?(?:\/|["'])|mongoose(?:\/|["']))/u;
 const fetchCall = /\bfetch\s*\(/gu;
-const allowedSearchFetch = /\bfetch\s*\(\s*`\/data\/site-search-index\.v1\.json\?root=\$\{encodeURIComponent\(expectedRoot\)\}`\s*,/gu;
+const allowedSearchFetch = /\bfetch\s*\(\s*`\/api\/search\?root=\$\{encodeURIComponent\(expectedRoot\)\}`\s*,/gu;
 const searchFetcher = "apps/observatory/src/lib/search-index.ts";
+const searchRoute = "apps/observatory/src/app/api/search/route.ts";
+const mutationMethod = /export\s+(?:async\s+)?function\s+(?:POST|PUT|PATCH|DELETE)\b/u;
 
 function filesBelow(directory) {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
@@ -32,7 +34,8 @@ export function inspectReadOnlyBoundary(repository) {
     const content = readFileSync(path, "utf8");
     const add = (rule, detail) => violations.push({ file, rule, detail });
 
-    if (routeHandler.test(file)) add("route_handler", "Route Handlers are outside the read-only product boundary");
+    if (routeHandler.test(file) && file !== searchRoute) add("route_handler", "Only the bounded read-only search Route Handler is allowed");
+    if (mutationMethod.test(content)) add("mutation_handler", "Mutation methods are outside the read-only product boundary");
     if (serverDirective.test(content)) add("server_action", "Server Actions are outside the read-only product boundary");
     if (requestStateImport.test(content) || requestStateCall.test(content)) {
       add("request_state", "request-scoped headers, cookies, and server helpers are not allowed");
@@ -44,7 +47,7 @@ export function inspectReadOnlyBoundary(repository) {
     if (!fetches) continue;
     const allowed = file === searchFetcher ? [...content.matchAll(allowedSearchFetch)].length : 0;
     if (file !== searchFetcher || fetches !== 1 || allowed !== 1) {
-      add("request_time_fetch", "only the rooted same-origin search artifact may be fetched at request time");
+      add("request_time_fetch", "only the rooted same-origin read-only search endpoint may be fetched at request time");
     }
   }
 
