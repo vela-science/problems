@@ -111,7 +111,10 @@ secret.
 disposable Neon branch, checks the current schema and preserved legacy reader,
 rehearses migration from an empty `observatory` schema, rebuilds the complete
 projection, proves a failed candidate cannot move `current_release`, and then
-deletes the branch. A refresh
+deletes the branch. The branch also expires after six hours if GitHub cleanup
+cannot run. Pull requests, including Dependabot, run the no-secret static
+contracts; only trusted main, release-candidate tag, or manual runs receive
+projection credentials. A refresh
 inserts a complete candidate, recomputes row roots and corpus counts, and only
 then atomically moves `current_release`. Failed refreshes leave the prior head
 unchanged. Structural ranking is stored separately as non-authoritative

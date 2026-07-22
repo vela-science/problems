@@ -20,8 +20,14 @@ function repository() {
   mkdirSync(resolve(path, "apps/observatory"), { recursive: true });
   mkdirSync(resolve(path, "apps/www"), { recursive: true });
   mkdirSync(resolve(path, "packages/brand"), { recursive: true });
+  mkdirSync(resolve(path, "packages/frontier-data/src"), { recursive: true });
+  mkdirSync(resolve(path, "packages/frontier-data/tests"), { recursive: true });
+  mkdirSync(resolve(path, ".github/workflows"), { recursive: true });
   writeFileSync(resolve(path, "apps/observatory/app.ts"), "one\n");
   writeFileSync(resolve(path, "apps/www/app.ts"), "one\n");
+  writeFileSync(resolve(path, "packages/frontier-data/src/index.ts"), "one\n");
+  writeFileSync(resolve(path, "packages/frontier-data/tests/projection.test.ts"), "one\n");
+  writeFileSync(resolve(path, ".github/workflows/ci.yml"), "one\n");
   writeFileSync(resolve(path, "README.md"), "one\n");
   execFileSync("git", ["add", "."], { cwd: path });
   execFileSync("git", ["commit", "-qm", "initial"], { cwd: path });
@@ -56,6 +62,26 @@ describe("Vercel workspace build selection", () => {
     expect(status(path, "www")).toBe(0);
     commit(path, "README.md", "two\n");
     expect(status(path, "observatory")).toBe(0);
+  });
+
+  test("skips workflow, documentation, and test-only changes", () => {
+    const path = repository();
+    commit(path, ".github/workflows/ci.yml", "two\n");
+    expect(status(path, "observatory")).toBe(0);
+    expect(status(path, "www")).toBe(0);
+    commit(path, "packages/frontier-data/tests/projection.test.ts", "two\n");
+    expect(status(path, "observatory")).toBe(0);
+    expect(status(path, "www")).toBe(0);
+    commit(path, "README.md", "two\n");
+    expect(status(path, "observatory")).toBe(0);
+    expect(status(path, "www")).toBe(0);
+  });
+
+  test("rebuilds both products for shared projection runtime changes", () => {
+    const path = repository();
+    commit(path, "packages/frontier-data/src/index.ts", "two\n");
+    expect(status(path, "observatory")).toBe(1);
+    expect(status(path, "www")).toBe(1);
   });
 
   test("honors an exact Vercel comparison range", () => {

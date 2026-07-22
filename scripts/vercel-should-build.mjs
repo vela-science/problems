@@ -5,8 +5,9 @@ const targets = {
   observatory: [
     "apps/observatory",
     "packages/brand",
-    "packages/frontier-data",
-    "scripts/vercel-should-build.mjs",
+    "packages/frontier-data/src",
+    "packages/frontier-data/config",
+    "packages/frontier-data/package.json",
     ".vercelignore",
     "package.json",
     "bun.lock",
@@ -14,7 +15,9 @@ const targets = {
   www: [
     "apps/www",
     "packages/brand",
-    "scripts/vercel-should-build.mjs",
+    "packages/frontier-data/src",
+    "packages/frontier-data/config",
+    "packages/frontier-data/package.json",
     ".vercelignore",
     "package.json",
     "bun.lock",
