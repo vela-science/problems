@@ -1,7 +1,7 @@
 ---
 version: "0.3.0"
 name: "Vela"
-description: "A light editorial atlas for essays about scientific state, inherited knowledge, and navigation after papers."
+description: "One Web product with an editorial home and a read-only scientific-state Observatory."
 colors:
   primary: "oklch(26.5% 0.035 262)"
   on-primary: "oklch(98.3% 0.017 88)"
@@ -198,12 +198,18 @@ repository workbench. They share the sail, the brand tokens in
 this document), the status grammar, and exact generated facts. They
 never share UI implementations.
 
+Both rooms serve the reuse end of one Vela product story: produce, preserve,
+check, decide, reuse. The editorial surface explains the system and its case.
+The Observatory lets a reader inspect, reproduce, and continue rooted work.
+Neither surface produces canonical state or participates in authority.
+
 ## Editorial product shell
 
 All `www` routes use the same explicit 60px masthead and the same mast-headed
-colophon footer. The labeled Vela wordmark links Home; the masthead exposes only
-Essays and Open Observatory. Manifesto and Whitepaper remain in the home flow and
-publication index; source links stay in the footer. The masthead never hides on scroll, changes ink based on viewport
+colophon footer. The labeled Vela wordmark links Home; the masthead exposes
+Home, Constellations, Manifesto, and Open Observatory. Whitepaper, Stack,
+Facility, and source remain durable routes outside the primary navigation.
+The masthead never hides on scroll, changes ink based on viewport
 position, or invents route-specific navigation. Dark openings choose the
 night variant in their layout; paper routes choose the paper variant.
 
@@ -214,6 +220,7 @@ The current shared vocabulary is deliberately small:
 - `PublicationFooter`
 - `PublicationShelf`
 - `ExactSnapshot`
+- `ArchitectureSnapshotNotice`
 
 `src/data/publications.ts` is the sole publication registry. The index, series
 continuation, route metadata, and home shelf derive from it. Do not recreate a

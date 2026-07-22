@@ -18,8 +18,8 @@
 
 ## What lives here
 
-Vela Web is one private Bun workspace with two independently deployed products
-and two shared, framework-neutral packages.
+Vela Web is one private Bun workspace with two independently deployed surfaces
+of one product and two shared, framework-neutral packages.
 
 | Path | Runtime | Purpose |
 | --- | --- | --- |
@@ -31,17 +31,34 @@ and two shared, framework-neutral packages.
 The applications share brand assets and exact facts. They do not share UI
 implementations, and neither one can sign, accept, or mutate scientific state.
 
+Vela follows one product story:
+
 ```text
-clean frontier checkouts + released Vela binary
-                    │
-                    ▼
-          @vela/frontier-data
-             │             │
-     compact summary   validated bundle
-             │             │
-             ▼             ▼
-       www.vela.space   app.vela.space
-          Astro          Next.js ISR
+produce  →  preserve  →  check  →  decide  →  reuse
+workbench   frontier Git   Vela     signed       read-only readers
+or Canopus  repository     replay   authority    and downstream work
+```
+
+Any suitable research tool may produce. Canopus supplies optional producer
+scaffolding. A canonical frontier Git repository preserves the work, the
+released Vela binary checks and replays it, and signed policy or a protected
+human decision controls accepted state. Vela Web serves the final reuse step.
+
+```text
+canonical frontier Git repositories
+                 +
+       released Vela binary
+                 │
+                 ▼
+        @vela/frontier-data
+          │              │
+ compact rooted      normalized release rows
+    summary                 │
+          │              ▼
+          │       SELECT-only Neon projection
+          ▼              │
+ www.vela.space             ▼
+      Astro         app.vela.space Observatory
 ```
 
 ## Product invariants
@@ -52,8 +69,9 @@ clean frontier checkouts + released Vela binary
   frontier fetch.
 - Verification, replay, proposal standing, and scientific acceptance remain
   distinct everywhere.
-- The web has no signer, Server Action, public mutation API, database, human
-  key path, or private coordination payload.
+- The web has no signer, Server Action, public mutation API, canonical or
+  writable scientific database, human key path, or private coordination
+  payload. Neon is a disposable, normalized read projection.
 - The complete frontier bundle is validated at build time and never embedded
   as a universal browser payload.
 - Producer availability, active leases, and advice-only graph opportunities are

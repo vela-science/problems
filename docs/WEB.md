@@ -5,10 +5,10 @@ Earlier design and migration plans live under `docs/history/`.
 
 ## Product boundary
 
-- `www.vela.space` is the canonical Astro editorial site.
-- `app.vela.space` is the canonical Next.js Repository Observatory.
+- `www.vela.space` is the canonical Astro editorial surface.
+- `app.vela.space` is the canonical Next.js Repository Observatory surface.
 - `vela.space` redirects to `www`; product paths on `www` redirect to `app`.
-- Both applications are read-only products. They expose no signer, public
+- Both applications are read-only surfaces of one Web product. They expose no signer, public
   mutation API, Server Action, or scientific authority. The Observatory reads
   a bounded projection from Neon; canonical custody remains in the frontier
   Git repositories.
@@ -29,6 +29,20 @@ packages/brand          governed identity, tokens, fonts, and delivery assets
 packages/frontier-data  Git-to-Neon projection, validation, search, and manifests
 ```
 
+The whole ecosystem follows one path:
+
+```text
+produce       preserve       check       decide                 reuse
+workbench  →  frontier Git  →  Vela  →  signed policy or human  →  Web
+Canopus       canonical      replay      protected approval     readers
+(optional)
+```
+
+Canopus is optional producer scaffolding. The frontier Git repository remains
+canonical. Released Vela performs checks and replay. Authority stays with
+signed policy or a protected human decision. Web owns only explanation and
+read-only reuse.
+
 The editorial application owns one current route vocabulary:
 
 ```text
@@ -38,6 +52,10 @@ The editorial application owns one current route vocabulary:
 /constellations, /discovery-engine, /gigafactories-for-science
 /whitepaper, /stack, /facility
 ```
+
+The primary masthead exposes Home, Constellations, Manifesto, and Open
+Observatory. The other listed routes remain addressable for durable links and
+the footer, but do not define a competing public journey.
 
 `/case` permanently redirects to `/manifesto`; `/catalog` permanently redirects
 to `/essays`. Neither legacy name belongs in current navigation or copy.
@@ -72,6 +90,10 @@ rendering a newer data head. The database is disposable: exact Git commits,
 trees, event roots, graph roots, and row roots identify the projection, and it
 can be rebuilt from canonical repositories.
 
+Neon is neither canonical nor writable by the public application. It is a
+disposable read model. The `@vela/frontier-data` projector is its only writer, and the
+Observatory receives a SELECT-only role scoped to the normalized projection.
+
 `packages/frontier-data/migrations/` owns the idempotent schema. CI creates a
 disposable Neon branch, checks the current schema and preserved legacy reader,
 rehearses migration from an empty `observatory` schema, rebuilds the complete
@@ -89,7 +111,8 @@ sail released in `v0.300.2`. Do not redraw or reinterpret it. All delivery
 variants are generated and content-addressed.
 
 - Editorial delivery: Newsreader, Inter, and IBM Plex Mono.
-- Observatory delivery: Inter and IBM Plex Mono only.
+- Observatory delivery: Geist for interface text and IBM Plex Mono for roots,
+  identifiers, commands, and exact values.
 - Asset synchronization is a mirror and removes stale destination fonts.
 - `vela.brand-root.v2` binds canonical marks, DTCG tokens, delivered font bytes,
   and their manifests.

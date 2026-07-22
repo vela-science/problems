@@ -28,16 +28,28 @@ register: brand
 - The site-level identity is Vela; the essays sit underneath it.
 - `www.vela.space` is the editorial register. Its `/` route is the authored Vela home, and Constellations remains intact at `/constellations`.
 - `app.vela.space` is the product register. It is a read-only scientific-state instrument for exact frontier, work, review, finding, replay, search, and product-guidance routes.
-- The two applications share brand and exact generated data, never framework-specific UI or duplicated canonical routes.
-- The public editorial path is Home → Manifesto → Trilogy → Architecture. Constellations remains the flagship reading experience; `/essays` is the publication index, not a product catalogue.
+- The two applications are independently deployed surfaces of one Web product. They share brand and exact generated data, never framework-specific UI or duplicated canonical routes.
+- The public editorial path is Home → Constellations or Manifesto → Observatory. `/essays`, Whitepaper, Stack, and Facility remain durable routes, but they do not compete with that primary path.
 - `/manifesto` is the concise entry document. `/case` is a permanent legacy redirect and must not return to primary navigation or current copy.
 - Every publication surface should feel like an adjacent chamber in the same house, not a separate microsite.
-- The Vela sail and wordmark are the clearly labeled Home affordance. Primary navigation contains only Essays and Open Observatory; Manifesto is a home-page and publication-index entry, while architecture and source links live in the publication index and footer.
+- The Vela sail and wordmark are the clearly labeled Home affordance. Primary navigation contains Home, Constellations, Manifesto, and Open Observatory. Architecture and source links live in durable routes and the footer.
 - Navigation should be calm, explicit, and complete on desktop and mobile.
 - Use open editorial sections by default; reserve bordered panels for dense structured material
 - Keep dated protocol snapshots on the pages that own them, and update their source links and dates together.
 - The Observatory must preserve accepted, pending, rejected, withdrawn, replayed, verified, and strict-blocked as different states.
 - The website never signs, mutates a frontier, or interprets verifier success as scientific acceptance.
+
+## Product Story
+
+Vela has one five-step path: produce → preserve → check → decide →
+reuse. A workbench or optional Canopus runner produces candidate work. A
+canonical frontier Git repository preserves it. Vela checks and replays it.
+Signed policy or a protected human decision decides accepted state. The
+Observatory and other replaceable readers support reuse.
+
+Every Web feature must serve the reuse step. It may explain, search, compare,
+or reproduce rooted state. It may not become a producer, canonical store,
+verifier, signer, or authority.
 
 ## Anti-Patterns
 
