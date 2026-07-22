@@ -35,7 +35,10 @@ function commit(path: string, file: string, value: string) {
 }
 
 function status(path: string, target: "observatory" | "www", environment: Record<string, string> = {}) {
-  return spawnSync("bun", [script, target], { cwd: path, env: { ...process.env, ...environment } }).status;
+  const inherited = { ...process.env };
+  delete inherited.VERCEL_GIT_COMMIT_SHA;
+  delete inherited.VERCEL_GIT_PREVIOUS_SHA;
+  return spawnSync("bun", [script, target], { cwd: path, env: { ...inherited, ...environment } }).status;
 }
 
 describe("Vercel workspace build selection", () => {
