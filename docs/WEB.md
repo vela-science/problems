@@ -102,6 +102,14 @@ branches do not represent releases: `main` is the only permanent branch,
 release-scoped rows provide rollback, and CI or migration rehearsal branches
 are disposable and time-bounded.
 
+The empty archived `event-first-hub-cutover` branch was deleted on 2026-07-22
+after explicit approval. The unused Neon-managed `observatory_reader` could not
+be converted to `NOLOGIN` by the project owner, so its password was rotated and
+the returned replacement discarded. Its old credential is invalid, no usable
+replacement is retained, and it has zero active sessions. The only remaining
+child branch is the `v0-370-read-model` rehearsal, which expires automatically
+on 2026-07-25.
+
 Those two URLs are the complete secret inventory for database access. The
 reader password is validated from the reader URL when provisioning the fixed
 `observatory_projection_reader` role; it is not stored as a third duplicate
