@@ -85,15 +85,7 @@ jobs:
         run: bun run db:provision:reader
 
       - name: Install released Vela verifier
-        run: |
-          mkdir -p tools
-          curl --fail --silent --show-error --location \
-            https://github.com/vela-science/vela/releases/download/v0.912.0/vela-linux-x86_64.tar.gz \
-            --output tools/vela-linux-x86_64.tar.gz
-          echo "faaec7d8d7503b5addd67d8b25fb18fb1abf4fbd24f6a41957fd7653e0be2502  tools/vela-linux-x86_64.tar.gz" | sha256sum --check --strict
-          tar --extract --gzip --file tools/vela-linux-x86_64.tar.gz --directory tools ./vela
-          test "$(tools/vela --version)" = "vela 0.912.0"
-          echo "VELA_BIN=${{ github.workspace }}/tools/vela" >> "$GITHUB_ENV"
+        run: bun run install:vela:linux
 
       - name: Current-schema and legacy compatibility
         run: bun run db:migrate:check && bun run legacy:verify
