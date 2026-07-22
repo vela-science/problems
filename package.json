@@ -1,6 +1,6 @@
 {
   "name": "vela-web",
-  "version": "0.390.0",
+  "version": "0.400.0",
   "private": true,
   "type": "module",
   "packageManager": "bun@1.3.12",
@@ -35,6 +35,7 @@
     "test:roots": "bun run --filter @vela/frontier-data test",
     "test:manifests": "bun run --filter @vela/www test:manifest && bun run --filter @vela/observatory test:manifest",
     "test:budgets": "bun scripts/check-budgets.mjs",
+    "test:budgets:observatory": "VELA_BUDGET_SCOPE=observatory bun scripts/check-budgets.mjs",
     "check:design-system": "bun scripts/check-observatory-design-system.mjs",
     "test": "bun test scripts/read-only-boundary.test.ts scripts/vercel-should-build.test.ts && bun run --filter @vela/brand test && bun run --filter @vela/frontier-data test && bun run --filter @vela/www test && bun run --filter @vela/observatory test",
     "build": "bun run --filter @vela/brand build && bun run --filter @vela/frontier-data check && bun run --filter @vela/www build && bun run --filter @vela/observatory build",

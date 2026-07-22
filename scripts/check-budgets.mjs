@@ -10,6 +10,8 @@ import {
 const repository = resolve(import.meta.dirname, "..");
 const observatory = resolve(repository, "apps/observatory");
 const editorial = resolve(repository, "apps/www");
+const scope = process.env.VELA_BUDGET_SCOPE ?? "all";
+if (scope !== "all" && scope !== "observatory") throw new Error(`unknown budget scope ${scope}`);
 
 function filesBelow(directory) {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
@@ -50,13 +52,17 @@ for (const rejected of ["spectral", "space-grotesk", "jetbrains", "newsreader-20
   if ([...productFonts, ...editorialFonts].some((name) => name.includes(rejected))) throw new Error(`rejected font ${rejected} entered delivery`);
 }
 
-const editorialBytes = bytesBelow(resolve(editorial, "dist"));
-if (editorialBytes > 12 * 1024 * 1024) throw new Error(`editorial build is ${editorialBytes} bytes`);
+let editorialBytes = null;
+let facilityInitialGzip = null;
+if (scope === "all") {
+  editorialBytes = bytesBelow(resolve(editorial, "dist"));
+  if (editorialBytes > 12 * 1024 * 1024) throw new Error(`editorial build is ${editorialBytes} bytes`);
 
-const facilityHtml = readFileSync(resolve(editorial, "dist/facility/index.html"), "utf8");
-const initialScripts = [...facilityHtml.matchAll(/src="([^"]+\.js)"/gu)].map((match) => resolve(editorial, "dist", match[1].replace(/^\//u, "")));
-const facilityInitialGzip = initialScripts.reduce((sum, path) => sum + gzipSync(readFileSync(path)).byteLength, 0);
-if (facilityInitialGzip > 75 * 1024) throw new Error(`facility initial JavaScript is ${facilityInitialGzip} bytes gzip`);
+  const facilityHtml = readFileSync(resolve(editorial, "dist/facility/index.html"), "utf8");
+  const initialScripts = [...facilityHtml.matchAll(/src="([^"]+\.js)"/gu)].map((match) => resolve(editorial, "dist", match[1].replace(/^\//u, "")));
+  facilityInitialGzip = initialScripts.reduce((sum, path) => sum + gzipSync(readFileSync(path)).byteLength, 0);
+  if (facilityInitialGzip > 75 * 1024) throw new Error(`facility initial JavaScript is ${facilityInitialGzip} bytes gzip`);
+}
 
 const browserFiles = [
   ...filesBelow(resolve(observatory, ".next/static")),
@@ -73,6 +79,7 @@ for (const path of browserFiles) {
 console.log(JSON.stringify({
   ok: true,
   schema: "vela.web-budgets.v1",
+  scope,
   observatory_prebuilt: prebuilt.length,
   search_html_bytes: searchHtml.byteLength,
   search_response_bytes: searchPayload.byteLength,
