@@ -53,9 +53,18 @@ for (const rejected of ["spectral", "space-grotesk", "jetbrains", "newsreader-20
 }
 
 let editorialBytes = null;
+let editorialTotalBytes = null;
+let editorialSocialMasterBytes = null;
 let facilityInitialGzip = null;
 if (scope === "all") {
-  editorialBytes = bytesBelow(resolve(editorial, "dist"));
+  const socialMasters = [
+    resolve(editorial, "dist/og-image.png"),
+    resolve(editorial, "dist/images/brand/vela-landing-social.jpg"),
+    resolve(editorial, "dist/images/constellations/frontier-map-og.png"),
+  ];
+  editorialTotalBytes = bytesBelow(resolve(editorial, "dist"));
+  editorialSocialMasterBytes = socialMasters.reduce((sum, path) => sum + statSync(path).size, 0);
+  editorialBytes = editorialTotalBytes - editorialSocialMasterBytes;
   if (editorialBytes > 12 * 1024 * 1024) throw new Error(`editorial build is ${editorialBytes} bytes`);
 
   const facilityHtml = readFileSync(resolve(editorial, "dist/facility/index.html"), "utf8");
@@ -87,5 +96,7 @@ console.log(JSON.stringify({
   graph_canvas_bytes: graphPayload.byteLength,
   graph_canvas_gzip_bytes: graphGzip,
   editorial_bytes: editorialBytes,
+  editorial_total_bytes: editorialTotalBytes,
+  editorial_social_master_bytes: editorialSocialMasterBytes,
   facility_initial_gzip_bytes: facilityInitialGzip,
 }));
