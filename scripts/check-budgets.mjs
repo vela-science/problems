@@ -2,9 +2,9 @@ import { gzipSync } from "node:zlib";
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 import {
-  buildSiteSearchIndex,
   observatoryProjectionManifest,
-  observatoryRelease,
+  graphRead,
+  searchRead,
 } from "../packages/frontier-data/src/index.ts";
 
 const repository = resolve(import.meta.dirname, "..");
@@ -27,14 +27,17 @@ if (prebuilt.length >= 50) throw new Error(`Observatory prebuild has ${prebuilt.
 
 const searchHtml = readFileSync(resolve(observatory, ".next/server/app/search.html"));
 if (searchHtml.byteLength > 96 * 1024) throw new Error(`search HTML is ${searchHtml.byteLength} bytes`);
-const [release, projectionManifest] = await Promise.all([
-  observatoryRelease(),
-  observatoryProjectionManifest(),
+const projectionManifest = await observatoryProjectionManifest();
+const [searchResult, graphResult] = await Promise.all([
+  searchRead({ root: projectionManifest.release_root, limit: 250 }),
+  graphRead({ root: projectionManifest.release_root, frontier: "erdos", view: "canvas", lens: "all", limit: 5000 }),
 ]);
-const searchIndex = Buffer.from(JSON.stringify(buildSiteSearchIndex(release, projectionManifest.release_root)));
-if (searchIndex.byteLength > 1.5 * 1024 * 1024) throw new Error(`search index is ${searchIndex.byteLength} bytes`);
-const searchGzip = gzipSync(searchIndex).byteLength;
-if (searchGzip > 250 * 1024) throw new Error(`search index gzip is ${searchGzip} bytes`);
+const searchPayload = Buffer.from(JSON.stringify(searchResult));
+const searchGzip = gzipSync(searchPayload).byteLength;
+if (searchGzip > 250 * 1024) throw new Error(`search response gzip is ${searchGzip} bytes`);
+const graphPayload = Buffer.from(JSON.stringify(graphResult));
+const graphGzip = gzipSync(graphPayload).byteLength;
+if (graphGzip > 500 * 1024) throw new Error(`graph canvas gzip is ${graphGzip} bytes`);
 
 const productFonts = readdirSync(resolve(observatory, "public/assets/fonts")).sort();
 const editorialFonts = readdirSync(resolve(editorial, "public/assets/fonts")).sort();
@@ -69,8 +72,10 @@ console.log(JSON.stringify({
   schema: "vela.web-budgets.v1",
   observatory_prebuilt: prebuilt.length,
   search_html_bytes: searchHtml.byteLength,
-  search_index_bytes: searchIndex.byteLength,
-  search_index_gzip_bytes: searchGzip,
+  search_response_bytes: searchPayload.byteLength,
+  search_response_gzip_bytes: searchGzip,
+  graph_canvas_bytes: graphPayload.byteLength,
+  graph_canvas_gzip_bytes: graphGzip,
   editorial_bytes: editorialBytes,
   facility_initial_gzip_bytes: facilityInitialGzip,
 }));
