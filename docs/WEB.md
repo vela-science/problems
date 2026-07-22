@@ -17,8 +17,8 @@ Earlier design and migration plans live under `docs/history/`.
 
 `bun run check:boundary` makes that product boundary executable. It rejects
 Server Actions, request-scoped cookies or headers, authentication, mutation
-handlers, and arbitrary request-time fetches. The sole Route Handler is the
-read-only, same-origin search projection.
+handlers, and arbitrary request-time fetches. The only Route Handlers are
+exact-root, same-origin reads for normalized search documents and graph slices.
 
 The repository is a Bun workspace with four maintained boundaries:
 
@@ -31,28 +31,43 @@ packages/frontier-data  Git-to-Neon projection, validation, search, and manifest
 
 ## Exact frontier state
 
-`packages/frontier-data/config/frontiers.v1.json` names the four canonical Git
-repositories. A scheduled or manual GitHub workflow checks out clean
-`origin/main` tips, verifies them with the pinned Vela release, and writes a
-content-addressed read projection to the `vela_projection` Neon database:
+`packages/frontier-data/src/registry.ts` is the typed registry for the four
+canonical Git repositories. A scheduled or manual GitHub workflow checks out
+clean `origin/main` tips, verifies them with the pinned Vela release, and writes
+a content-addressed normalized read model to the `vela_observatory` database in
+the `vela-observatory-projection` Neon project:
 
 ```bash
 bun packages/frontier-data/scripts/refresh-neon-projection.mjs
-bun run check:bundle
+bun run db:migrate:check
+bun run projection:verify
 ```
 
 Refresh refuses dirty or unpushed sources, wrong branches or remotes, Vela
 version drift, packet drift, missing decision evidence, incomplete reviews, and
 root disagreement. The writer is available only to the refresh workflow. The
-Vercel application receives a separate PostgreSQL role with `CONNECT`, schema
-`USAGE`, and `SELECT` only.
+Vercel application receives the native PostgreSQL role
+`observatory_projection_reader`; it does not inherit Neon's managed
+`neon_superuser` role and has schema `USAGE` plus table `SELECT` only. Production
+also uses a read-only compute endpoint.
 
 There is no checked-in frontier snapshot, copied search index, or Build Week
-JSON. The Observatory reads the rooted release and frontier projections from
-Neon during rendering. `/api/search` derives its bounded response from the same
-read model. The database is a disposable projection: the exact Git commits,
-trees, event roots, and proposal roots identify every row, and the entire
-projection can be rebuilt from the source repositories.
+JSON. The Observatory reads release-scoped rows from Neon during rendering.
+Each build compiles one exact release root, while `/api/search` and `/api/graph`
+accept only retained exact roots. This prevents an old deployment from silently
+rendering a newer data head. The database is disposable: exact Git commits,
+trees, event roots, graph roots, and row roots identify the projection, and it
+can be rebuilt from canonical repositories.
+
+`packages/frontier-data/migrations/` owns the idempotent schema. CI creates a
+disposable Neon branch, checks the current schema and preserved legacy reader,
+rehearses migration from an empty `observatory` schema, rebuilds the complete
+projection, proves a failed candidate cannot move `current_release`, and then
+deletes the branch. A refresh
+inserts a complete candidate, recomputes row roots and corpus counts, and only
+then atomically moves `current_release`. Failed refreshes leave the prior head
+unchanged. Structural ranking is stored separately as non-authoritative
+`structural_advice`; it never defines graph membership or producer work.
 
 ## Brand and assets
 
@@ -85,12 +100,10 @@ bun run test:manifests
 git diff --check
 ```
 
-CI additionally runs the repository-owned functional and accessibility suites.
-Release candidates and design-affecting changes run the documented in-app
-Browser matrix at the supported mobile, tablet, and desktop widths. Functional
-and accessibility automation remains in CI; stale screenshot binaries are not
-treated as product truth.
-Manual visual QA uses the Codex in-app Browser.
+CI additionally runs rooted runtime-route, migration, corpus, boundary, and
+semantic accessibility checks. Release candidates and design-affecting changes
+run the documented Codex in-app Browser matrix at the supported mobile, tablet,
+and desktop widths. Stale screenshot binaries are not treated as product truth.
 
 ## Deployment topology
 
@@ -109,12 +122,13 @@ Public manifests:
 - `https://www.vela.space/.well-known/vela-web.json`
 - `https://app.vela.space/.well-known/vela-site.json`
 
-The manifests use `vela.web-deployment.v2` and `vela.site-deployment.v2`; each
+The manifests use `vela.web-deployment.v2` and `vela.site-deployment.v3`; each
 records the exact release tag, Git commit, brand schema/root, deployment
-identity, and delivery mode. The Observatory manifest additionally binds the
-Neon projection root, pinned Vela binary, and every source frontier commit and
-root. A production release is incomplete until its deployed manifest matches
-the approved tag, commit, and current projection exactly.
+identity, and delivery mode. The Observatory manifest additionally embeds
+`vela.observatory-release-manifest.v2`, including normalized table roots, full
+graph roots and counts, the pinned Vela binary, and every canonical source
+commit and root. A production release is incomplete until its deployed
+manifest matches the approved tag, commit, and activated projection exactly.
 
 Several legacy domains currently show Vercel's `DNS Change Recommended`
 advisory while resolving successfully. Treat DNS migration as a separate
