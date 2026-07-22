@@ -94,6 +94,19 @@ Neon is neither canonical nor writable by the public application. It is a
 disposable read model. The `@vela/frontier-data` projector is its only writer, and the
 Observatory receives a SELECT-only role scoped to the normalized projection.
 
+The credential contract is intentionally closed: application reads and checks
+use only `VELA_PROJECTION_DATABASE_URL`; migration apply, refresh, activation,
+and pruning use only `VELA_PROJECTION_WRITER_DATABASE_URL`. Generic
+`DATABASE_URL` fallback and reader-as-writer fallback are unsupported. Neon
+branches do not represent releases: `main` is the only permanent branch,
+release-scoped rows provide rollback, and CI or migration rehearsal branches
+are disposable and time-bounded.
+
+Those two URLs are the complete secret inventory for database access. The
+reader password is validated from the reader URL when provisioning the fixed
+`observatory_projection_reader` role; it is not stored as a third duplicate
+secret.
+
 `packages/frontier-data/migrations/` owns the idempotent schema. CI creates a
 disposable Neon branch, checks the current schema and preserved legacy reader,
 rehearses migration from an empty `observatory` schema, rebuilds the complete

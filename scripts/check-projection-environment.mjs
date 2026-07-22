@@ -1,6 +1,5 @@
 const required = [
   "VELA_PROJECTION_WRITER_DATABASE_URL",
-  "VELA_PROJECTION_READER_PASSWORD",
   "VELA_PROJECTION_DATABASE_URL",
 ];
 
@@ -11,9 +10,12 @@ export function checkProjectionEnvironment(environment = process.env) {
 
   const writer = new URL(environment.VELA_PROJECTION_WRITER_DATABASE_URL);
   const reader = new URL(environment.VELA_PROJECTION_DATABASE_URL);
-  const readerPassword = environment.VELA_PROJECTION_READER_PASSWORD;
+  const readerPassword = decodeURIComponent(reader.password);
   if (writer.protocol !== "postgresql:" || reader.protocol !== "postgresql:") {
     throw new Error("projection credentials must use postgresql URLs");
+  }
+  if (decodeURIComponent(writer.username) !== "neondb_owner") {
+    throw new Error("projection writer credential has the wrong role");
   }
   if (decodeURIComponent(reader.username) !== "observatory_projection_reader") {
     throw new Error("projection reader credential has the wrong role");
@@ -24,10 +26,6 @@ export function checkProjectionEnvironment(environment = process.env) {
   if (!/^[0-9a-f]{64}$/u.test(readerPassword)) {
     throw new Error("projection reader password must be a 32-byte lowercase hex secret");
   }
-  if (decodeURIComponent(reader.password) !== readerPassword) {
-    throw new Error("projection reader URL password does not match VELA_PROJECTION_READER_PASSWORD");
-  }
-
   return { ok: true, schema: "vela.projection-environment-check.v1" };
 }
 

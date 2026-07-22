@@ -77,7 +77,6 @@ jobs:
           echo "::add-mask::$WRITER_URL"
           echo "VELA_EPHEMERAL_BRANCH_ID=$BRANCH_ID" >> "$GITHUB_ENV"
           echo "VELA_PROJECTION_WRITER_DATABASE_URL=$WRITER_URL" >> "$GITHUB_ENV"
-          echo "VELA_PROJECTION_READER_PASSWORD=$reader_password" >> "$GITHUB_ENV"
           echo "VELA_PROJECTION_DATABASE_URL=postgresql://observatory_projection_reader:$reader_password@$WRITER_HOST/vela_observatory?sslmode=require" >> "$GITHUB_ENV"
           echo "VELA_LEGACY_DATABASE_URL=postgresql://neondb_owner:$WRITER_PASSWORD@$WRITER_HOST/vela_projection?sslmode=require" >> "$GITHUB_ENV"
 
