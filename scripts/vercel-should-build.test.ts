@@ -66,6 +66,14 @@ describe("Vercel workspace build selection", () => {
     expect(status(path, "www", { VERCEL_GIT_PREVIOUS_SHA: previous, VERCEL_GIT_COMMIT_SHA: current })).toBe(1);
   });
 
+  test("rebuilds the Observatory for a same-commit projection hook", () => {
+    const path = repository();
+    const current = execFileSync("git", ["rev-parse", "HEAD"], { cwd: path, encoding: "utf8" }).trim();
+    const environment = { VERCEL_GIT_PREVIOUS_SHA: current, VERCEL_GIT_COMMIT_SHA: current };
+    expect(status(path, "observatory", environment)).toBe(1);
+    expect(status(path, "www", environment)).toBe(0);
+  });
+
   test("fails open for a first commit or invalid comparison", () => {
     const path = repository();
     expect(status(path, "observatory", { VERCEL_GIT_PREVIOUS_SHA: "bad", VERCEL_GIT_COMMIT_SHA: "bad" })).toBe(1);

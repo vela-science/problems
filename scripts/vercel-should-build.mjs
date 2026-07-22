@@ -6,6 +6,7 @@ const targets = {
     "apps/observatory",
     "packages/brand",
     "packages/frontier-data",
+    "scripts/vercel-should-build.mjs",
     ".vercelignore",
     "package.json",
     "bun.lock",
@@ -13,6 +14,7 @@ const targets = {
   www: [
     "apps/www",
     "packages/brand",
+    "scripts/vercel-should-build.mjs",
     ".vercelignore",
     "package.json",
     "bun.lock",
@@ -47,6 +49,15 @@ try {
     } catch {
       process.exit(1);
     }
+  }
+
+  // The projection refresh deploy hook rebuilds the current Observatory
+  // commit after atomically activating a new rooted data release. Vercel
+  // represents that hook as an exact same-commit comparison. It must build;
+  // otherwise a truthful data refresh can be activated in Neon but remain
+  // invisible behind the previous deployment manifest.
+  if (target === "observatory" && previous === current) {
+    process.exit(1);
   }
 
   git(["cat-file", "-e", `${previous}^{commit}`]);
