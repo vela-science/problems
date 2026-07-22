@@ -29,6 +29,19 @@ packages/brand          governed identity, tokens, fonts, and delivery assets
 packages/frontier-data  Git-to-Neon projection, validation, search, and manifests
 ```
 
+The editorial application owns one current route vocabulary:
+
+```text
+/              product-first home
+/manifesto     five concise theses
+/essays        publication index
+/constellations, /discovery-engine, /gigafactories-for-science
+/whitepaper, /stack, /facility
+```
+
+`/case` permanently redirects to `/manifesto`; `/catalog` permanently redirects
+to `/essays`. Neither legacy name belongs in current navigation or copy.
+
 ## Exact frontier state
 
 `packages/frontier-data/src/registry.ts` is the typed registry for the four
@@ -100,6 +113,12 @@ bun run test:manifests
 git diff --check
 ```
 
+Local builds need the read-only projection URL because the home derives its
+release facts from the same checked projection used by the Observatory. Export
+only `VELA_PROJECTION_DATABASE_URL`; do not source an entire Vercel environment
+file, because production-only identity variables intentionally activate stricter
+manifest checks. Local development should keep `VERCEL_ENV=development`.
+
 CI additionally runs rooted runtime-route, migration, corpus, boundary, and
 semantic accessibility checks. Release candidates and design-affecting changes
 run the documented Codex in-app Browser matrix at the supported mobile, tablet,
@@ -147,11 +166,14 @@ repo.
 ## Release
 
 1. Build and tag an unsigned release candidate on clean `main`.
-2. Deploy both applications from that exact commit without DNS changes.
-3. Verify routes, redirects, standing semantics, roots, accessibility, responsive
-   states, ISR cache isolation, and both staging manifests.
-4. Tag the final release from the approved commit and deploy both projects.
-5. Verify production manifests and canonical domains.
+2. Deploy only the application changed by the release from that exact commit.
+   A shared brand or data-contract change may require both; editorial-only work
+   must not redeploy the Observatory unnecessarily.
+3. Verify the changed routes, redirects, semantics, roots, accessibility,
+   responsive states, cache isolation, and staging manifest.
+4. Tag the final release from the approved commit and deploy the same scope.
+5. Verify production manifests and canonical domains. The untouched application
+   must retain its prior deployment identity and behavior.
 6. Update the parent `ecosystem.lock.json` only after production verification.
 7. Remove generated dependencies and build output after the release audit.
 

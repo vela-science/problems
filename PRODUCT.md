@@ -29,9 +29,11 @@ register: brand
 - `www.vela.space` is the editorial register. Its `/` route is the authored Vela home, and Constellations remains intact at `/constellations`.
 - `app.vela.space` is the product register. It is a read-only scientific-state instrument for exact frontier, work, review, finding, replay, search, and product-guidance routes.
 - The two applications share brand and exact generated data, never framework-specific UI or duplicated canonical routes.
-- Constellations is the flagship reading experience within a public trilogy, technical companion, case, stack, facility, protocol surface, and catalog.
+- The public editorial path is Home → Manifesto → Trilogy → Architecture. Constellations remains the flagship reading experience; `/essays` is the publication index, not a product catalogue.
+- `/manifesto` is the concise entry document. `/case` is a permanent legacy redirect and must not return to primary navigation or current copy.
 - Every publication surface should feel like an adjacent chamber in the same house, not a separate microsite.
-- Navigation should be calm, explicit, and complete on desktop and mobile
+- The Vela sail and wordmark are the clearly labeled Home affordance. Primary navigation contains only Essays and Open Observatory; Manifesto is a home-page and publication-index entry, while architecture and source links live in the publication index and footer.
+- Navigation should be calm, explicit, and complete on desktop and mobile.
 - Use open editorial sections by default; reserve bordered panels for dense structured material
 - Keep dated protocol snapshots on the pages that own them, and update their source links and dates together.
 - The Observatory must preserve accepted, pending, rejected, withdrawn, replayed, verified, and strict-blocked as different states.
@@ -46,3 +48,5 @@ register: brand
 - Dashboard framing on pages that are fundamentally for reading
 - Marketing chrome inside the Observatory
 - A second frontier parser, bundle generator, search index, or deployment-manifest implementation
+- Scroll-reactive or route-specific mastheads; editorial chrome is stable and shared
+- Parallel publication registries, catalogue components, or manually copied release facts

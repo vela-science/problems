@@ -1,5 +1,5 @@
 ---
-version: "0.2.0"
+version: "0.3.0"
 name: "Vela"
 description: "A light editorial atlas for essays about scientific state, inherited knowledge, and navigation after papers."
 colors:
@@ -197,6 +197,34 @@ repository workbench. They share the sail, the brand tokens in
 `packages/brand/vela.tokens.json` (the DTCG source always wins over
 this document), the status grammar, and exact generated facts. They
 never share UI implementations.
+
+## Editorial product shell
+
+All `www` routes use the same explicit 60px masthead and the same mast-headed
+colophon footer. The labeled Vela wordmark links Home; the masthead exposes only
+Essays and Open Observatory. Manifesto and Whitepaper remain in the home flow and
+publication index; source links stay in the footer. The masthead never hides on scroll, changes ink based on viewport
+position, or invents route-specific navigation. Dark openings choose the
+night variant in their layout; paper routes choose the paper variant.
+
+The current shared vocabulary is deliberately small:
+
+- `EditorialMasthead`
+- `PublicationHeader`
+- `PublicationFooter`
+- `PublicationShelf`
+- `ExactSnapshot`
+
+`src/data/publications.ts` is the sole publication registry. The index, series
+continuation, route metadata, and home shelf derive from it. Do not recreate a
+catalogue data file, alternate imprint, or second navigation component.
+
+The home uses a four-act Feature Stack: proposition and exact proof object;
+state to direction; one end-to-end receipt; demonstrated/open evidence plus
+publications. The removed audience-role chooser and duplicated night close are
+not patterns to restore. `/manifesto` is a numbered thesis page with no painted
+hero, rail, or essay chrome. `/essays` is an asymmetric Index-First publication
+surface. The authored essays remain Long Documents.
 
 The identity is Cajal meets Kawase: precise, information-dense
 scientific drawing on a calm atmospheric ground. The page is quiet so
