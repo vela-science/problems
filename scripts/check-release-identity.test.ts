@@ -28,7 +28,7 @@ function fixture() {
 
 describe("one Web release identity", () => {
   test("accepts one version across every private workspace", () => {
-    expect(checkReleaseIdentity(repository)).toMatchObject({ version: "0.410.0", tag: "v0.410.0" });
+    expect(checkReleaseIdentity(repository)).toMatchObject({ version: "0.410.1", tag: "v0.410.1" });
   });
 
   test("rejects an independently versioned internal package", () => {
@@ -37,6 +37,6 @@ describe("one Web release identity", () => {
     const manifest = JSON.parse(readFileSync(path, "utf8"));
     manifest.version = "0.400.0";
     writeFileSync(path, `${JSON.stringify(manifest, null, 2)}\n`);
-    expect(() => checkReleaseIdentity(root)).toThrow("differs from root 0.410.0");
+    expect(() => checkReleaseIdentity(root)).toThrow("differs from root 0.410.1");
   });
 });
