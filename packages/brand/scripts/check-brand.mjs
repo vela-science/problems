@@ -89,9 +89,9 @@ for (const size of [16, 20, 32, 48]) {
 for (const family of ["Newsreader Text", "Newsreader Display", "Inter", "IBM Plex Mono"]) {
   assert(editorialFonts.includes(`font-family: "${family}"`), `missing editorial ${family} face`);
 }
-for (const family of ["Inter", "IBM Plex Mono"]) assert(productFonts.includes(`font-family: "${family}"`), `missing product ${family} face`);
-for (const family of ["Newsreader Text", "Newsreader Display"]) assert(!productFonts.includes(family), `editorial font ${family} entered product profile`);
-for (const rejected of ["Spectral", "Space Grotesk", "JetBrains Mono", "Geist", "Schibsted"]) {
+assert(productFonts.includes('font-family: "IBM Plex Mono"'), "missing product IBM Plex Mono face");
+for (const family of ["Newsreader Text", "Newsreader Display", "Inter"]) assert(!productFonts.includes(family), `editorial font ${family} entered product profile`);
+for (const rejected of ["Spectral", "Space Grotesk", "JetBrains Mono", "Schibsted"]) {
   assert(!editorialFonts.includes(rejected) && !productFonts.includes(rejected), `rejected font ${rejected} remains in generated output`);
 }
 assert(tokens.font.display.$value.startsWith("Newsreader"), "editorial display role drift");

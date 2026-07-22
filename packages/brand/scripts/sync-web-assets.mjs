@@ -15,7 +15,6 @@ const profileFonts = {
   product: [
     "ibm-plex-mono-400-latin.woff2",
     "ibm-plex-mono-500-latin.woff2",
-    "inter-300-700-latin.woff2",
   ],
   editorial: [
     "ibm-plex-mono-400-latin.woff2",

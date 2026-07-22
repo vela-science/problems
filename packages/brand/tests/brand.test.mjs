@@ -53,6 +53,7 @@ test("primary foreground pairs pass WCAG AA", () => {
   assert.match(editorialFonts, /font-family: "Newsreader Display";[\s\S]*?newsreader-display-500-latin\.woff2/u);
   assert.match(editorialFonts, /font-family: "Newsreader Display";[\s\S]*?newsreader-display-italic-400-latin\.woff2/u);
   assert.doesNotMatch(productFonts, /Newsreader/u);
+  assert.doesNotMatch(productFonts, /Inter/u);
 });
 
 test("status semantics are never represented as an unlabelled palette", () => {

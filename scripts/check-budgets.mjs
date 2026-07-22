@@ -41,7 +41,10 @@ if (graphGzip > 500 * 1024) throw new Error(`graph canvas gzip is ${graphGzip} b
 
 const productFonts = readdirSync(resolve(observatory, "public/assets/fonts")).sort();
 const editorialFonts = readdirSync(resolve(editorial, "public/assets/fonts")).sort();
-const expectedProductFonts = ["ibm-plex-mono-400-latin.woff2", "ibm-plex-mono-500-latin.woff2", "inter-300-700-latin.woff2"];
+// Geist ships through Next's package integration. The Observatory's mirrored
+// public font profile therefore contains only the identifier face it serves
+// directly; Inter remains an editorial delivery asset.
+const expectedProductFonts = ["ibm-plex-mono-400-latin.woff2", "ibm-plex-mono-500-latin.woff2"];
 if (JSON.stringify(productFonts) !== JSON.stringify(expectedProductFonts)) throw new Error("Observatory font delivery profile drift");
 for (const rejected of ["spectral", "space-grotesk", "jetbrains", "newsreader-200-800"]) {
   if ([...productFonts, ...editorialFonts].some((name) => name.includes(rejected))) throw new Error(`rejected font ${rejected} entered delivery`);

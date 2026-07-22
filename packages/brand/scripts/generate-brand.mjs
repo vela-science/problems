@@ -117,7 +117,7 @@ export const velaTokens = ${JSON.stringify(primitives, null, 2)} as const;
 export type VelaTokenName = keyof typeof velaTokens;
 `;
 
-const productFonts = `/* Vela product delivery profile. */
+const monoFonts = `/* Vela product delivery profile. */
 @font-face {
   font-family: "IBM Plex Mono";
   font-style: normal;
@@ -132,6 +132,11 @@ const productFonts = `/* Vela product delivery profile. */
   font-display: swap;
   src: url("/assets/fonts/ibm-plex-mono-500-latin.woff2") format("woff2");
 }
+`;
+
+const productFonts = monoFonts;
+
+const editorialFonts = `${monoFonts.trimEnd()}
 @font-face {
   font-family: "Inter";
   font-style: normal;
@@ -139,9 +144,6 @@ const productFonts = `/* Vela product delivery profile. */
   font-display: swap;
   src: url("/assets/fonts/inter-300-700-latin.woff2") format("woff2");
 }
-`;
-
-const editorialFonts = `${productFonts.trimEnd()}
 @font-face {
   font-family: "Newsreader Text";
   font-style: normal;

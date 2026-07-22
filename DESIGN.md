@@ -78,6 +78,18 @@ typography:
     fontWeight: "400"
     lineHeight: "1.46"
     letterSpacing: "0.005em"
+  product-compact-action:
+    fontFamily: "Geist Sans"
+    fontSize: "0.8rem"
+    fontWeight: "500"
+    lineHeight: "1.25"
+    letterSpacing: "0em"
+  product-dashboard-value:
+    fontFamily: "IBM Plex Mono"
+    fontSize: "1.75rem"
+    fontWeight: "500"
+    lineHeight: "1.15"
+    letterSpacing: "-0.035em"
   label-caps:
     fontFamily: "Inter"
     fontSize: "0.72rem"
@@ -180,8 +192,8 @@ components:
 
 One system, two rooms. The Astro site (`www.vela.space`) is a warm
 editorial reading surface: cream paper, midnight ink, one gold accent.
-The Next.js Observatory (`app.vela.space`) is a cool, first-light
-scientific-state instrument. They share the sail, the brand tokens in
+The Next.js Observatory (`app.vela.space`) is a cool, light-first
+repository workbench. They share the sail, the brand tokens in
 `packages/brand/vela.tokens.json` (the DTCG source always wins over
 this document), the status grammar, and exact generated facts. They
 never share UI implementations.
@@ -205,10 +217,12 @@ label. No pure black, no pure white, no second dominant accent.
 ## Typography
 
 Newsreader (display cuts) for titles and section headings; Newsreader
-(text cuts) for body and captions; Inter for navigation, metadata, and
-diagram labels; IBM Plex Mono for identifiers, values, and counts.
-Prose measure 41.5rem, line-height about 1.7. The Observatory is sans
-and mono only; Newsreader never enters it.
+(text cuts) for body and captions; Inter for editorial navigation, metadata,
+and diagram labels; IBM Plex Mono for identifiers, values, and counts. Prose
+measure 41.5rem, line-height about 1.7. The Observatory is sans and mono only:
+Geist Sans carries product prose and controls, while IBM Plex Mono is reserved
+for identifiers, roots, commands, and exact numerical fields. Newsreader and
+Inter never enter the product app.
 
 Labels inside SVG figures must render at 12px or larger at every
 viewport. Desktop skies multiply a >=12px base by `--svg-label-boost`;
@@ -289,9 +303,11 @@ reduced motion everywhere; drop stagger, never state.
 
 Repository-product register: rail plus contextual header, GitHub-like
 hierarchy, record pages that keep metadata beside the object. Fixed
-type scale (0.875rem body, 1.5rem titles, 0.75rem metadata), 40px row
-rhythm, one quiet boundary, tiny radii, no decorative shadow. Base UI
-primitives normalized into Vela tokens. Gold is reserved for
+type scale (0.75rem metadata, 0.8rem compact actions, 0.875rem body,
+1.5rem titles, 1.75rem dashboard values), 40px row rhythm, one quiet
+boundary, restrained radii, and no decorative shadow. Current shadcn
+Base UI primitives remain registry-clean; Vela styling enters through
+tokens and composition. Gold is reserved for
 direction, focus, provenance seams, and the primary action. The
 Observatory never signs, never mutates a frontier, and never presents
 verifier success as scientific acceptance.
