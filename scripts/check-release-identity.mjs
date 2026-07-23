@@ -23,7 +23,16 @@ function git(repository, args) {
   return result.stdout.trim();
 }
 
-export function checkReleaseIdentity(repository, expectedTag = null) {
+function gitResult(repository, args) {
+  return spawnSync("git", ["-C", repository, ...args], { encoding: "utf8" });
+}
+
+export function checkReleaseIdentity(
+  repository,
+  expectedTag = null,
+  expectedCommit = null,
+  allowDetached = false,
+) {
   const manifests = WORKSPACE_MANIFESTS.map((path) => ({
     path,
     package: JSON.parse(readFileSync(resolve(repository, path), "utf8")),
@@ -41,9 +50,29 @@ export function checkReleaseIdentity(repository, expectedTag = null) {
   let commit = null;
   if (expectedTag !== null) {
     if (expectedTag !== tag) fail(`expected tag ${expectedTag} differs from ${tag}`);
-    commit = git(repository, ["rev-parse", `refs/tags/${tag}^{commit}`]);
-    const head = git(repository, ["rev-parse", "HEAD"]);
-    if (commit !== head) fail(`${tag} resolves to ${commit}, not HEAD ${head}`);
+    const taggedCommit = gitResult(repository, [
+      "rev-parse",
+      `refs/tags/${tag}^{commit}`,
+    ]);
+    if (taggedCommit.status === 0) {
+      commit = taggedCommit.stdout.trim();
+      const head = git(repository, ["rev-parse", "HEAD"]);
+      if (commit !== head) fail(`${tag} resolves to ${commit}, not HEAD ${head}`);
+    } else if (
+      allowDetached
+      && typeof expectedCommit === "string"
+      && /^[0-9a-f]{40}$/u.test(expectedCommit)
+    ) {
+      commit = expectedCommit;
+    } else {
+      fail(
+        taggedCommit.stderr.trim()
+        || `${tag} is unavailable and detached release identity is not allowed`,
+      );
+    }
+    if (expectedCommit !== null && commit !== expectedCommit) {
+      fail(`${tag} resolves to ${commit}, not registered commit ${expectedCommit}`);
+    }
   }
   return { ok: true, schema: "vela.web-release-identity.v1", version, tag, commit };
 }

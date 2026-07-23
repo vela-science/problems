@@ -69,4 +69,15 @@ describe("one Web release identity", () => {
     git(root, "commit", "-qm", "later commit");
     expect(() => checkReleaseIdentity(root, "v0.420.0")).toThrow("not HEAD");
   });
+
+  test("accepts a detached production builder only with the exact registered commit", () => {
+    const root = fixture();
+    const commit = "184be8b834092138c4b9775a699b6b6d9ec0d9f0";
+    expect(
+      checkReleaseIdentity(root, "v0.420.0", commit, true),
+    ).toMatchObject({ tag: "v0.420.0", commit });
+    expect(() =>
+      checkReleaseIdentity(root, "v0.420.0", `${"0".repeat(40)}`, false)
+    ).toThrow();
+  });
 });
