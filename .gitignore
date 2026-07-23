@@ -20,6 +20,7 @@ apps/*/next-env.d.ts
 .vscode/
 .agents/skills/impeccable/
 .codex/hooks.json
+.env*.local
 tmp/
 output/
 prototypes/

@@ -10,7 +10,7 @@
     },
     "apps/observatory": {
       "name": "@vela/observatory",
-      "version": "0.410.1",
+      "version": "0.420.0",
       "dependencies": {
         "@base-ui/react": "^1.6.0",
         "@hugeicons/core-free-icons": "4.2.3",
@@ -57,7 +57,7 @@
     },
     "apps/www": {
       "name": "@vela/www",
-      "version": "0.410.1",
+      "version": "0.420.0",
       "dependencies": {
         "@astrojs/mdx": "7.0.3",
         "@vela/brand": "workspace:*",
@@ -75,14 +75,14 @@
     },
     "packages/brand": {
       "name": "@vela/brand",
-      "version": "0.410.1",
+      "version": "0.420.0",
       "devDependencies": {
         "sharp": "0.35.0",
       },
     },
     "packages/frontier-data": {
       "name": "@vela/frontier-data",
-      "version": "0.410.1",
+      "version": "0.420.0",
       "dependencies": {
         "@neondatabase/serverless": "^1.1.0",
         "@vela/brand": "workspace:*",
