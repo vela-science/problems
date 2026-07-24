@@ -118,6 +118,9 @@ jobs:
       - name: Install released Vela verifier
         run: bun run install:vela:linux
 
+      - name: Install reviewed consumer trust pins
+        run: bun run --filter @vela/frontier-data trust:install
+
       - name: Current-schema and legacy compatibility
         run: bun run db:migrate:check && bun run legacy:verify
 
