@@ -217,14 +217,19 @@ The current shared vocabulary is deliberately small:
 
 - `EditorialMasthead`
 - `PublicationHeader`
-- `PublicationFooter`
+- `EditorialFooter`
 - `PublicationShelf`
 - `ExactSnapshot`
 - `ArchitectureSnapshotNotice`
 
-`src/data/publications.ts` is the sole publication registry. The index, series
-continuation, route metadata, and home shelf derive from it. Do not recreate a
-catalogue data file, alternate imprint, or second navigation component.
+Every route closes on the same `EditorialFooter`. There is no per-publication
+continuation footer: a reader who reaches the end of an essay is offered the
+same statement, the same two link groups, and the same line of exact state as
+everywhere else.
+
+`src/data/publications.ts` is the sole publication registry. The index, route
+metadata, and home shelf derive from it. Do not recreate a catalogue data file,
+alternate imprint, or second navigation component.
 
 The home uses a four-act Feature Stack: proposition and exact proof object;
 state to direction; one end-to-end receipt; demonstrated/open evidence plus
