@@ -1,6 +1,6 @@
 {
   "name": "@vela/brand",
-  "version": "0.420.1",
+  "version": "0.420.2",
   "private": true,
   "type": "module",
   "exports": {

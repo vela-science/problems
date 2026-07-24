@@ -4,10 +4,10 @@ import { linuxReleaseAssetUrl, loadVelaReleaseRecord } from "./install-recorded-
 describe("recorded Vela installer", () => {
   test("derives the Linux asset and both integrity checks from one release record", () => {
     const release = loadVelaReleaseRecord();
-    expect(release.version).toBe("0.914.0");
-    expect(release.tag).toBe("v0.914.0");
-    expect(release.linux_archive_sha256).toBe("sha256:c04338e952aae0fe52727be0dc4207854a4094e51147f6f86e9c3865aedb1556");
-    expect(release.generator_binary_sha256).toBe("sha256:29a351f0840d36beaa10156167a42de9ca1652d2a3c8953f1145725f3ada3470");
-    expect(linuxReleaseAssetUrl(release)).toBe("https://github.com/vela-science/vela/releases/download/v0.914.0/vela-linux-x86_64.tar.gz");
+    expect(release.version).toBe("0.914.1");
+    expect(release.tag).toBe("v0.914.1");
+    expect(release.linux_archive_sha256).toBe("sha256:b0886a25ea22eb0bd1be957e3a997a527ff21b265dc4dbdb3a948f9432dc2d52");
+    expect(release.generator_binary_sha256).toBe("sha256:d8bf9c6e708cff8837601b4cd675085dcaedc08d37368eeb4077d0219462d754");
+    expect(linuxReleaseAssetUrl(release)).toBe("https://github.com/vela-science/vela/releases/download/v0.914.1/vela-linux-x86_64.tar.gz");
   });
 });
