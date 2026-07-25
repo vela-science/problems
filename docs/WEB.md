@@ -119,7 +119,7 @@ invalidated; the control-plane replacement was discarded; no usable credential
 is retained; and it has zero active sessions. The empty role remains only
 because the immutable `0002_observatory_reader` migration names it. The only
 remaining child branch is the `v0-370-read-model` rehearsal, which is removed
-after the `v0.420.3` projection activation is verified.
+after the `v0.420.4` projection activation is verified.
 
 Those two URLs are the complete secret inventory for database access. The
 reader password is validated from the reader URL when provisioning the fixed
