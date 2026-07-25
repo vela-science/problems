@@ -38,7 +38,9 @@ export function checkReleaseIdentity(
     package: JSON.parse(readFileSync(resolve(repository, path), "utf8")),
   }));
   const version = manifests[0].package.version;
-  if (!/^0\.[0-9]+\.[0-9]+$/u.test(version)) fail("root version is not stable pre-1.0 SemVer");
+  if (!/^0\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?$/u.test(version)) {
+    fail("root version is not pre-1.0 SemVer");
+  }
   for (const manifest of manifests) {
     if (manifest.package.private !== true) fail(`${manifest.path} must remain private`);
     if (manifest.package.version !== version) {

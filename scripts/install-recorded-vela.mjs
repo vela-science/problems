@@ -28,7 +28,9 @@ export function loadVelaReleaseRecord(path = recordPath) {
   invariant(record.schema === "vela.release-record.v1", "unsupported Vela release record schema");
   invariant(record.tag === `v${record.version}`, "Vela release tag does not match its version");
   invariant(rootPattern.test(record.generator_binary_sha256), "Vela generator binary SHA-256 is malformed");
+  invariant(rootPattern.test(record.macos_generator_binary_sha256), "Vela macOS generator binary SHA-256 is malformed");
   invariant(rootPattern.test(record.linux_archive_sha256), "Vela Linux archive SHA-256 is malformed");
+  invariant(rootPattern.test(record.macos_archive_sha256), "Vela macOS archive SHA-256 is malformed");
   return record;
 }
 

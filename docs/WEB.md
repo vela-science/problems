@@ -241,10 +241,15 @@ Public manifests:
 The manifests use `vela.web-deployment.v2` and `vela.site-deployment.v3`; each
 records the exact release tag, Git commit, brand schema/root, deployment
 identity, and delivery mode. The Observatory manifest additionally embeds
-`vela.observatory-release-manifest.v2`, including normalized table roots, full
-graph roots and counts, the pinned Vela binary, and every canonical source
-commit and root. A production release is incomplete until its deployed
-manifest matches the approved tag, commit, and activated projection exactly.
+`vela.observatory-release-manifest.v3` over `observatory.v2`, including
+normalized table roots, full graph roots and counts, the pinned Vela binary,
+every canonical source commit and root, and any public repository-authority
+projection root. Repository authority is read-only product evidence: the
+projection may expose public keys, signed record roots, and restricted-policy
+identity, but never custody material, authentication context, a decision
+control, or an authority operation. A production release is incomplete until
+its deployed manifest matches the approved tag, commit, and activated
+projection exactly.
 
 Several legacy domains currently show Vercel's `DNS Change Recommended`
 advisory while resolving successfully. Treat DNS migration as a separate
