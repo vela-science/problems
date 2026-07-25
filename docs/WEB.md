@@ -150,6 +150,11 @@ The focused reference implementation independently reconstructs record and
 packet roots and rejects repository, Frontier identity, Git, graph, package,
 rules, and content-root substitutions.
 
+For the independent reconstruction test only,
+`VELA_PUBLICATION_PROJECTION_OUT=/tmp/projection.json` retains the already
+verified intermediate projection outside the repository. The option writes no
+database state and is not a public runtime contract.
+
 This experiment is not deployed or stored in Neon during its evidence phase.
 Deleting it changes no Frontier byte, replay result, production projection, or
 Observatory route. Promotion remains gated on the frozen cross-Frontier reader
