@@ -63,10 +63,11 @@ to `/essays`. Neither legacy name belongs in current navigation or copy.
 ## Exact frontier state
 
 `packages/frontier-data/src/registry.ts` is the typed registry for the four
-canonical Git repositories. A scheduled or manual GitHub workflow checks out
-clean `origin/main` tips, verifies them with the pinned Vela release, and writes
-a content-addressed normalized read model to the `vela_observatory` database in
-the `vela-observatory-projection` Neon project:
+canonical Git repositories. A three-hourly or manual GitHub workflow first
+binds itself to the exact deployed Observatory commit, then checks out clean
+`origin/main` Frontier tips, verifies them with the pinned Vela release, and
+writes a content-addressed normalized read model to the `vela_observatory`
+database in the `vela-observatory-projection` Neon project:
 
 ```bash
 bun packages/frontier-data/scripts/refresh-neon-projection.mjs
@@ -81,6 +82,15 @@ Vercel application receives the native PostgreSQL role
 `observatory_projection_reader`; it does not inherit Neon's managed
 `neon_superuser` role and has schema `USAGE` plus table `SELECT` only. Production
 also uses a read-only compute endpoint.
+
+Rebuilding unchanged source facts is a no-op. Observation time, activation
+time, and a newly computed candidate root do not create another retained
+release when the read-model schema, Vela binary, source Frontier identities,
+table roots, and source roots are identical. A changed release is deployed
+only from the exact application commit already identified by the production
+manifest. The workflow verifies the expected projection root from the live
+manifest after the deploy hook, so an ambiguous hook timeout is not treated as
+either success or failure by itself.
 
 There is no checked-in frontier snapshot, copied search index, or Build Week
 JSON. The Observatory reads release-scoped rows from Neon during rendering.
@@ -104,11 +114,12 @@ are disposable and time-bounded.
 
 The empty archived `event-first-hub-cutover` branch was deleted on 2026-07-22
 after explicit approval. The unused Neon-managed `observatory_reader` could not
-be converted to `NOLOGIN` by the project owner, so its password was rotated and
-the returned replacement discarded. Its old credential is invalid, no usable
-replacement is retained, and it has zero active sessions. The only remaining
-child branch is the `v0-370-read-model` rehearsal, which expires automatically
-on 2026-07-25.
+be converted to `NOLOGIN` by the project owner. Its old credential was
+invalidated; the control-plane replacement was discarded; no usable credential
+is retained; and it has zero active sessions. The empty role remains only
+because the immutable `0002_observatory_reader` migration names it. The only
+remaining child branch is the `v0-370-read-model` rehearsal, which is removed
+after the `v0.420.3` projection activation is verified.
 
 Those two URLs are the complete secret inventory for database access. The
 reader password is validated from the reader URL when provisioning the fixed
@@ -122,11 +133,12 @@ projection, proves a failed candidate cannot move `current_release`, and then
 deletes the branch. The branch also expires after six hours if GitHub cleanup
 cannot run. Pull requests, including Dependabot, run the no-secret static
 contracts; only trusted main, release-candidate tag, or manual runs receive
-projection credentials. A refresh
-inserts a complete candidate, recomputes row roots and corpus counts, and only
-then atomically moves `current_release`. Failed refreshes leave the prior head
-unchanged. Structural ranking is stored separately as non-authoritative
-`structural_advice`; it never defines graph membership or producer work.
+projection credentials. A changed refresh inserts a complete candidate,
+recomputes row roots and corpus counts, and only then atomically moves
+`current_release`. An unchanged refresh retains the current release root and
+skips deployment. Failed refreshes leave the prior head unchanged. Structural
+ranking is stored separately as non-authoritative `structural_advice`; it never
+defines graph membership or producer work.
 
 ### Experimental publication facts
 

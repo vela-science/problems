@@ -35,7 +35,7 @@ function git(repository: string, ...args: string[]) {
 
 describe("one Web release identity", () => {
   test("accepts one version across every private workspace", () => {
-    expect(checkReleaseIdentity(repository)).toMatchObject({ version: "0.420.2", tag: "v0.420.2" });
+    expect(checkReleaseIdentity(repository)).toMatchObject({ version: "0.420.3", tag: "v0.420.3" });
   });
 
   test("rejects an independently versioned internal package", () => {
@@ -44,7 +44,7 @@ describe("one Web release identity", () => {
     const manifest = JSON.parse(readFileSync(path, "utf8"));
     manifest.version = "0.400.0";
     writeFileSync(path, `${JSON.stringify(manifest, null, 2)}\n`);
-    expect(() => checkReleaseIdentity(root)).toThrow("differs from root 0.420.2");
+    expect(() => checkReleaseIdentity(root)).toThrow("differs from root 0.420.3");
   });
 
   test("requires the advertised production tag to resolve to the exact build commit", () => {
@@ -55,29 +55,29 @@ describe("one Web release identity", () => {
     git(root, "add", ".");
     git(root, "commit", "-qm", "fixture release");
 
-    expect(() => checkReleaseIdentity(root, "v0.420.2")).toThrow();
+    expect(() => checkReleaseIdentity(root, "v0.420.3")).toThrow();
 
-    git(root, "-c", "tag.gpgSign=false", "tag", "v0.420.2");
-    expect(checkReleaseIdentity(root, "v0.420.2")).toMatchObject({
-      version: "0.420.2",
-      tag: "v0.420.2",
+    git(root, "-c", "tag.gpgSign=false", "tag", "v0.420.3");
+    expect(checkReleaseIdentity(root, "v0.420.3")).toMatchObject({
+      version: "0.420.3",
+      tag: "v0.420.3",
       commit: git(root, "rev-parse", "HEAD"),
     });
 
     writeFileSync(resolve(root, "release-note"), "later commit\n");
     git(root, "add", "release-note");
     git(root, "commit", "-qm", "later commit");
-    expect(() => checkReleaseIdentity(root, "v0.420.2")).toThrow("not HEAD");
+    expect(() => checkReleaseIdentity(root, "v0.420.3")).toThrow("not HEAD");
   });
 
   test("accepts a detached production builder only with the exact registered commit", () => {
     const root = fixture();
     const commit = "184be8b834092138c4b9775a699b6b6d9ec0d9f0";
     expect(
-      checkReleaseIdentity(root, "v0.420.2", commit, true),
-    ).toMatchObject({ tag: "v0.420.2", commit });
+      checkReleaseIdentity(root, "v0.420.3", commit, true),
+    ).toMatchObject({ tag: "v0.420.3", commit });
     expect(() =>
-      checkReleaseIdentity(root, "v0.420.2", `${"0".repeat(40)}`, false)
+      checkReleaseIdentity(root, "v0.420.3", `${"0".repeat(40)}`, false)
     ).toThrow();
   });
 });
