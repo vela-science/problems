@@ -1,6 +1,6 @@
 {
   "name": "vela-web",
-  "version": "0.420.5",
+  "version": "0.420.6",
   "private": true,
   "type": "module",
   "packageManager": "bun@1.3.12",
