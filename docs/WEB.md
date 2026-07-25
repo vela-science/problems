@@ -155,6 +155,11 @@ For the independent reconstruction test only,
 verified intermediate projection outside the repository. The option writes no
 database state and is not a public runtime contract.
 
+`VELA_PUBLICATION_VELA_VERSION` may pin a later compatible released Vela for
+this source-local experiment when a current Frontier requires a released
+replay repair. It does not change the production projector's recorded release,
+and the packet binds the exact version and binary SHA-256 it actually used.
+
 This experiment is not deployed or stored in Neon during its evidence phase.
 Deleting it changes no Frontier byte, replay result, production projection, or
 Observatory route. Promotion remains gated on the frozen cross-Frontier reader
