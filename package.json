@@ -28,6 +28,7 @@
     "check:bundle": "bun run --filter @vela/frontier-data check",
     "check:boundary": "bun scripts/check-read-only-boundary.mjs",
     "check:tokens": "bun scripts/check-token-references.mjs",
+    "check:projection": "bun scripts/check-projection-compatibility.mjs",
     "install:vela:linux": "bun scripts/install-recorded-vela.mjs",
     "db:migrate:check": "bun run --filter @vela/frontier-data db:migrate:check",
     "db:migrate": "bun run --filter @vela/frontier-data db:migrate",
@@ -40,7 +41,7 @@
     "test:budgets": "bun scripts/check-budgets.mjs",
     "test:budgets:observatory": "VELA_BUDGET_SCOPE=observatory bun scripts/check-budgets.mjs",
     "check:design-system": "bun scripts/check-observatory-design-system.mjs",
-    "test": "bun test scripts/check-projection-environment.test.ts scripts/check-release-identity.test.ts scripts/install-recorded-vela.test.ts scripts/read-only-boundary.test.ts scripts/token-references.test.ts scripts/vercel-should-build.test.ts && bun run --filter @vela/brand test && bun run --filter @vela/frontier-data test && bun run --filter @vela/www test && bun run --filter @vela/observatory test",
+    "test": "bun test scripts/check-projection-environment.test.ts scripts/check-release-identity.test.ts scripts/install-recorded-vela.test.ts scripts/read-only-boundary.test.ts scripts/projection-compatibility.test.ts scripts/token-references.test.ts scripts/vercel-should-build.test.ts && bun run --filter @vela/brand test && bun run --filter @vela/frontier-data test && bun run --filter @vela/www test && bun run --filter @vela/observatory test",
     "build": "bun run --filter @vela/brand build && bun run --filter @vela/frontier-data check && bun run --filter @vela/www build && bun run --filter @vela/observatory build",
     "format:check": "git diff --check"
   },
