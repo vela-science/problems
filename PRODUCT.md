@@ -29,10 +29,10 @@ register: brand
 - `www.vela.space` is the editorial register. Its `/` route is the authored Vela home, and Constellations remains intact at `/constellations`.
 - `app.vela.space` is the product register. It is a read-only scientific-state instrument for exact frontier, work, review, finding, replay, search, and product-guidance routes.
 - The two applications are independently deployed surfaces of one Web product. They share brand and exact generated data, never framework-specific UI or duplicated canonical routes.
-- The public editorial path is Home → Constellations or Manifesto → Observatory. `/essays`, Whitepaper, Stack, and Facility remain durable routes, but they do not compete with that primary path.
-- `/manifesto` is the concise entry document. `/case` is a permanent legacy redirect and must not return to primary navigation or current copy.
+- The public editorial path is Home → Constellations → Observatory. `/essays`, Whitepaper, Stack, and Facility remain durable routes, but they do not compete with that primary path.
+- Constellations is the entry document. `/manifesto` was retired 2026-07-25 and now permanently redirects to it; `/case` was removed entirely. Neither may return to primary navigation or current copy.
 - Every publication surface should feel like an adjacent chamber in the same house, not a separate microsite.
-- The Vela sail and wordmark are the clearly labeled Home affordance. Primary navigation contains Home, Constellations, Manifesto, and Open Observatory. Architecture and source links live in durable routes and the footer.
+- The Vela sail and wordmark are the clearly labeled Home affordance, so navigation carries no separate Home link. Primary navigation contains Constellations and Open Observatory, which fit every width without a menu. Architecture and source links live in durable routes and the footer.
 - Navigation should be calm, explicit, and complete on desktop and mobile.
 - Use open editorial sections by default; reserve bordered panels for dense structured material
 - Keep dated protocol snapshots on the pages that own them, and update their source links and dates together.

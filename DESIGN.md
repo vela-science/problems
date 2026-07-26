@@ -205,10 +205,16 @@ Neither surface produces canonical state or participates in authority.
 
 ## Editorial product shell
 
-All `www` routes use the same explicit 60px masthead and the same mast-headed
-colophon footer. The labeled Vela wordmark links Home; the masthead exposes
-Home, Constellations, Manifesto, and Open Observatory. Whitepaper, Stack,
-Facility, and source remain durable routes outside the primary navigation.
+All `www` routes use the same masthead, whose single height is `--masthead-h`
+(3.25rem; anything measuring against the bar consumes the token, never a
+literal), and the same
+mast-headed colophon footer. The labeled Vela wordmark links Home and is set in
+the display serif, sentence case: it is a wordmark, not a tracked-out sans
+label, and it makes the bar's hierarchy one serif name above one sans wayfinding
+row. Because the wordmark is the Home affordance the masthead carries no Home
+link, and with only Constellations and Open Observatory left it needs no mobile
+menu at any width. Whitepaper, Stack, Facility, Essays, and source remain
+durable routes outside the primary navigation.
 The masthead never hides on scroll, changes ink based on viewport
 position, or invents route-specific navigation. Dark openings choose the
 night variant in their layout; paper routes choose the paper variant.
@@ -231,12 +237,18 @@ everywhere else.
 metadata, and home shelf derive from it. Do not recreate a catalogue data file,
 alternate imprint, or second navigation component.
 
-The home uses a four-act Feature Stack: proposition and exact proof object;
-state to direction; one end-to-end receipt; demonstrated/open evidence plus
-publications. The removed audience-role chooser and duplicated night close are
-not patterns to restore. `/manifesto` is a numbered thesis page with no painted
-hero, rail, or essay chrome. `/essays` is an asymmetric Index-First publication
-surface. The authored essays remain Long Documents.
+The home is a four-act Feature Stack: the proposition with its exact proof
+object; one record drawn once with four routes across it; demonstrated and open
+evidence; the closing colophon. The record's anatomy is drawn once, in the
+technical vocabulary the Observatory and the projection already use — claim,
+evidence, verifier, authority, root. It was previously drawn five times in three
+vocabularies across a premise act and a scroll-linked voyage, which is what made
+the page read as complicated. Operations are selected explicitly, never by scroll
+position, and every panel reads at rest so no-JS loses nothing. The removed
+audience-role chooser, the duplicated night close, the compact publication shelf,
+and the retired `/manifesto` are not patterns to restore. `/essays` is an
+asymmetric Index-First publication surface. The authored essays remain Long
+Documents.
 
 The identity is Cajal meets Kawase: precise, information-dense
 scientific drawing on a calm atmospheric ground. The page is quiet so
@@ -288,18 +300,10 @@ The current roster:
 
 1. Twelve visits: night-sky constellation (the title scene, the one
    dark plate in the essay).
-2. The long handoff: route chart across twenty-two centuries with a
-   six-landfall ledger; the one scroll-scrubbed figure.
-3. Absorption pressure: flow sheaf, 39 to at least 78 to 30, with
+2. Absorption pressure: flow sheaf, 39 to at least 78 to 30, with
    display-scale numerals.
-4. Three soundings: plumb lines on a log scale of time.
-5. The starting point, moved: the finding record itself, typeset
+3. The starting point, moved: the finding record itself, typeset
    (ruled matter on the page ground, no card).
-6. The torrent and the ledger: event rain over a step function.
-7. Two tracings: two hands tracing shared stars (the section is about
-   who draws the lines).
-8. A synthesis frontier: the one interactive instrument, a dependency
-   graph with keyboard-operable records.
 
 Principles:
 
@@ -311,8 +315,8 @@ Principles:
   instructions the drawing could have carried itself.
 - Axes, scales, rulers, and graticules are welcome wherever quantity
   appears. Give every number a yardstick.
-- Real names over abstractions. When history is the subject, name the
-  Library of Alexandria, the Philosophical Transactions, the Memex.
+- Real names over abstractions. When evidence is the subject, name the
+  study, check, artifact, or community whose work the figure depicts.
 - One shared kit across all forms: filled disc for state, ring for
   claim, teal tick for evidence, dashed ring for uncertainty and
   review, cinnabar X for conflict. Three stroke weights (1px
@@ -320,10 +324,8 @@ Principles:
   Mono for values, sentence case, no legends when direct labeling
   works.
 - Every figure is complete at rest: no-JS, reduced motion, and print
-  all read the full argument. Interaction re-weights what is already
-  visible. One instrument per essay (Fig 08), one scroll scrub
-  (Fig 02), hover isolation only on comparison figures, guarded by
-  `(hover: hover) and (pointer: fine)`.
+  all read the full argument. Interaction may re-weight what is already
+  visible but never carries required meaning.
 - The night plate (`.bl-fig-night-plate` in global.css) is the single
   dark ground, reserved for a figure whose subject is darkness. It
   remaps paper, inks, and gold to night values; captions stay on
