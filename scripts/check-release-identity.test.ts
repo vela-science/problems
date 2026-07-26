@@ -1,29 +1,27 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { execFileSync } from "node:child_process";
-import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 
 import { checkReleaseIdentity } from "./check-release-identity.mjs";
 
+/*
+  The suite that used to live here tested a gate that has been removed: a
+  hand-set release tag and commit which had to match VERCEL_GIT_COMMIT_SHA. It
+  also restated the version literal in eight places, so bumping the version made
+  the suite certifying a release fail that release. Both are gone; the version is
+  read from the manifest and the contract is now the two invariants that survive.
+*/
+
 const repository = resolve(import.meta.dirname, "..");
-const workspaces = [
-  "package.json",
+const ROOT = "package.json";
+const WORKSPACES = [
   "apps/www/package.json",
   "apps/observatory/package.json",
   "packages/brand/package.json",
   "packages/frontier-data/package.json",
 ];
 const temporary: string[] = [];
-
-/* Read the version under test from the manifest instead of restating it.
-   The fixtures copy the real workspace manifests, so a literal here has to be
-   edited in eight places on every release bump — and when it was not, this
-   suite failed the release it was meant to certify. */
-const VERSION: string = JSON.parse(
-  readFileSync(resolve(repository, "package.json"), "utf8"),
-).version;
-const TAG = `v${VERSION}`;
 
 afterEach(() => {
   for (const path of temporary.splice(0)) rmSync(path, { recursive: true, force: true });
@@ -32,61 +30,60 @@ afterEach(() => {
 function fixture() {
   const root = mkdtempSync(join(tmpdir(), "vela-web-release-identity-"));
   temporary.push(root);
-  for (const path of workspaces) cpSync(resolve(repository, path), resolve(root, path), { recursive: true });
+  for (const path of [ROOT, ...WORKSPACES]) {
+    const target = resolve(root, path);
+    mkdirSync(dirname(target), { recursive: true });
+    cpSync(resolve(repository, path), target);
+  }
   return root;
 }
 
-function git(repository: string, ...args: string[]) {
-  return execFileSync("git", ["-C", repository, ...args], {
-    encoding: "utf8",
-  }).trim();
+function patch(root: string, path: string, edit: (manifest: Record<string, unknown>) => void) {
+  const target = resolve(root, path);
+  const manifest = JSON.parse(readFileSync(target, "utf8"));
+  edit(manifest);
+  writeFileSync(target, `${JSON.stringify(manifest, null, 2)}\n`);
 }
 
 describe("one Web release identity", () => {
-  test("accepts one version across every private workspace", () => {
-    expect(checkReleaseIdentity(repository)).toMatchObject({ version: VERSION, tag: TAG });
-  });
-
-  test("rejects an independently versioned internal package", () => {
-    const root = fixture();
-    const path = resolve(root, "apps/observatory/package.json");
-    const manifest = JSON.parse(readFileSync(path, "utf8"));
-    manifest.version = "0.400.0";
-    writeFileSync(path, `${JSON.stringify(manifest, null, 2)}\n`);
-    expect(() => checkReleaseIdentity(root)).toThrow(`differs from root ${VERSION}`);
-  });
-
-  test("requires the advertised production tag to resolve to the exact build commit", () => {
-    const root = fixture();
-    git(root, "init", "-q");
-    git(root, "config", "user.name", "Vela release test");
-    git(root, "config", "user.email", "release-test@vela.invalid");
-    git(root, "add", ".");
-    git(root, "commit", "-qm", "fixture release");
-
-    expect(() => checkReleaseIdentity(root, TAG)).toThrow();
-
-    git(root, "-c", "tag.gpgSign=false", "tag", TAG);
-    expect(checkReleaseIdentity(root, TAG)).toMatchObject({
-      version: VERSION,
-      tag: TAG,
-      commit: git(root, "rev-parse", "HEAD"),
+  test("reports the root version and its derived tag", () => {
+    const version = JSON.parse(readFileSync(resolve(repository, ROOT), "utf8")).version;
+    expect(checkReleaseIdentity(repository)).toEqual({
+      ok: true,
+      schema: "vela.web-release-identity.v2",
+      version,
+      tag: `v${version}`,
     });
-
-    writeFileSync(resolve(root, "release-note"), "later commit\n");
-    git(root, "add", "release-note");
-    git(root, "commit", "-qm", "later commit");
-    expect(() => checkReleaseIdentity(root, TAG)).toThrow("not HEAD");
   });
 
-  test("accepts a detached production builder only with the exact registered commit", () => {
+  test("requires the root version to be pre-1.0 SemVer", () => {
+    for (const bad of ["1.0.0", "0.421", "", "latest"]) {
+      const root = fixture();
+      patch(root, ROOT, (manifest) => { manifest.version = bad; });
+      expect(() => checkReleaseIdentity(root)).toThrow("is not pre-1.0 SemVer");
+    }
+  });
+
+  test("keeps every manifest unpublishable", () => {
+    for (const path of [ROOT, ...WORKSPACES]) {
+      const root = fixture();
+      patch(root, path, (manifest) => { manifest.private = false; });
+      expect(() => checkReleaseIdentity(root)).toThrow(`${path} must remain private`);
+    }
+  });
+
+  test("rejects a workspace that reintroduces its own version", () => {
     const root = fixture();
-    const commit = "184be8b834092138c4b9775a699b6b6d9ec0d9f0";
-    expect(
-      checkReleaseIdentity(root, TAG, commit, true),
-    ).toMatchObject({ tag: TAG, commit });
-    expect(() =>
-      checkReleaseIdentity(root, TAG, `${"0".repeat(40)}`, false)
-    ).toThrow();
+    patch(root, "packages/brand/package.json", (manifest) => { manifest.version = "0.400.0"; });
+    expect(() => checkReleaseIdentity(root)).toThrow(
+      "packages/brand/package.json declares its own version",
+    );
+  });
+
+  test("rejects a workspace version even when it agrees with the root", () => {
+    const root = fixture();
+    const version = JSON.parse(readFileSync(resolve(root, ROOT), "utf8")).version;
+    patch(root, "apps/www/package.json", (manifest) => { manifest.version = version; });
+    expect(() => checkReleaseIdentity(root)).toThrow("declares its own version");
   });
 });
