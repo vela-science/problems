@@ -251,6 +251,15 @@ control, or an authority operation. A production release is incomplete until
 its deployed manifest matches the approved tag, commit, and activated
 projection exactly.
 
+None of that identity is set by hand. The tag is derived from the root
+`package.json` version — the only place a version lives — and the commit and
+deployment id come from `VERCEL_GIT_COMMIT_SHA` and `VERCEL_DEPLOYMENT_ID`, which
+`deploymentIdentity()` reads directly and which a production build refuses to go
+without. Shipping a commit therefore needs no version bump, no tag and no
+environment variable; `scripts/check-deployed-manifest.mjs` is what confirms
+afterwards that what is serving matches the repository. Cut a tag when a release
+means something, not to deploy.
+
 Several legacy domains currently show Vercel's `DNS Change Recommended`
 advisory while resolving successfully. Treat DNS migration as a separate
 provider-controlled operation; do not combine it with a code release.
