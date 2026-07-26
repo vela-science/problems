@@ -208,12 +208,12 @@ Neither surface produces canonical state or participates in authority.
 All `www` routes use the same masthead, whose single height is `--masthead-h`
 (3.25rem; anything measuring against the bar consumes the token, never a
 literal), and the same
-mast-headed colophon footer. The labeled Vela wordmark links Home and is set in
-the display serif, sentence case: it is a wordmark, not a tracked-out sans
-label, and it makes the bar's hierarchy one serif name above one sans wayfinding
-row. Because the wordmark is the Home affordance the masthead carries no Home
-link, and with only Constellations and Open Observatory left it needs no mobile
-menu at any width. Whitepaper, Stack, Facility, Essays, and source remain
+mast-headed colophon footer. The Vela sail alone links Home: no wordmark text,
+so the bar holds one mark and one sans wayfinding row and there is nothing extra
+to read. The anchor carries aria-label="Vela home" as its accessible name, since
+the mark's svg is aria-hidden. Because the mark is the Home affordance the
+masthead carries no Home link, and with only Constellations and Open Observatory
+left it needs no mobile menu at any width. Whitepaper, Stack, Facility, Essays, and source remain
 durable routes outside the primary navigation.
 The masthead never hides on scroll, changes ink based on viewport
 position, or invents route-specific navigation. Dark openings choose the
