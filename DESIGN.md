@@ -102,6 +102,18 @@ typography:
     fontWeight: "400"
     lineHeight: "1.2"
     letterSpacing: "0.16em"
+  figure-stat:
+    fontFamily: "IBM Plex Mono"
+    fontSize: "clamp(1.7rem, 3.4vw, 2.3rem)"
+    fontWeight: "450"
+    lineHeight: "1"
+    letterSpacing: "0em"
+  figure-stat-mobile:
+    fontFamily: "IBM Plex Mono"
+    fontSize: "1.6rem"
+    fontWeight: "450"
+    lineHeight: "1"
+    letterSpacing: "0em"
 rounded:
   none: "0px"
   xs: "2px"
