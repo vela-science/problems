@@ -22,7 +22,7 @@
     "dev:observatory": "bun run --filter @vela/observatory dev",
     "lint": "bun run --filter @vela/observatory lint",
     "typecheck": "bun run --filter @vela/www typecheck && bun run --filter @vela/observatory typecheck",
-    "check": "bun run check:release-identity && bun run check:brand && bun run check:bundle && bun run check:boundary && bun run check:tokens && bun run typecheck",
+    "check": "bun run check:release-identity && bun run check:brand && bun run check:bundle && bun run check:boundary && bun run check:tokens && bun run check:projection && bun run typecheck",
     "check:release-identity": "bun scripts/check-release-identity.mjs",
     "check:brand": "bun run --filter @vela/brand check",
     "check:bundle": "bun run --filter @vela/frontier-data check",

@@ -1,13 +1,21 @@
 /*
-  Release gate for projection/release skew.
+  Assert the committed editorial snapshot was produced by a Vela release the
+  site can vouch for.
 
-  Deliberately NOT part of `bun run check`: reading the projection version needs
-  VELA_PROJECTION_DATABASE_URL, and CI's pull-request job runs `check` without
-  secrets. It belongs in the build chain, which already requires the database —
-  which is also exactly where the old module-scope throw effectively fired.
+  This began as a module-scope throw in apps/www/src/data/substrate-state.ts — a
+  hand-maintained Set of literal version strings that took every route down on a
+  miss. It moved here to be a gate rather than a render-time exception.
+
+  Now that the summary is a committed snapshot rather than a query, this needs no
+  database: it compares two files in the repo, config/editorial-summary.v1.json
+  against config/vela-release.v1.json. So it can run in `bun run check`, which
+  CI executes on pull requests without secrets.
+
+  Imported by relative path, not by package specifier: root scripts/ has no
+  dependency on @vela/frontier-data, so the bare import does not resolve here.
 */
-import { editorialSummary } from "@vela/frontier-data/editorial";
-import { velaRelease } from "@vela/frontier-data/release";
+import { editorialSummary } from "../packages/frontier-data/src/editorial.ts";
+import { velaRelease } from "../packages/frontier-data/src/release.ts";
 import { assertProjectionCompatibility } from "./projection-compatibility.mjs";
 
 console.log(JSON.stringify(
