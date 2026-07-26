@@ -249,18 +249,29 @@ everywhere else.
 metadata, and home shelf derive from it. Do not recreate a catalogue data file,
 alternate imprint, or second navigation component.
 
-The home is a four-act Feature Stack: the proposition with its exact proof
-object; one record drawn once with four routes across it; demonstrated and open
-evidence; the closing colophon. The record's anatomy is drawn once, in the
-technical vocabulary the Observatory and the projection already use — claim,
-evidence, verifier, authority, root. It was previously drawn five times in three
-vocabularies across a premise act and a scroll-linked voyage, which is what made
-the page read as complicated. Operations are selected explicitly, never by scroll
-position, and every panel reads at rest so no-JS loses nothing. The removed
-audience-role chooser, the duplicated night close, the compact publication shelf,
-and the retired `/manifesto` are not patterns to restore. `/essays` is an
-asymmetric Index-First publication surface. The authored essays remain Long
-Documents.
+The home is a **register**: a typographic front page on one cream ground whose
+centre is the published state of the frontiers, read from the committed
+projection. Four sections — the record's dateline and proposition; the register
+itself; what is not settled, in counts and in judgements; and the commands to
+replay any row. Its one figure is a table. It carries no drawing, no button and
+no page-authored script, so completeness at rest under no-JS, reduced motion and
+print holds by construction rather than by maintenance. Every number on it is a
+field; the vocabulary in prose stays the technical one the Observatory and the
+projection already use — claim, evidence, verifier, authority, root.
+
+What that replaced is instructive and none of it is a pattern to restore: an
+abstract "evidence sail" of 21 paths and nine unlabelled witness curves, a
+28-star field on an infinite loop, a blend-mode texture, a five-button station
+strip whose values were hand-typed, a "Replay receipt" control that animated
+twenty paths and changed no data, a second drawing of the record's anatomy, and a
+two-value boundary plot. That page rendered eleven derived values and illustrated
+the rest, which is what made it read as a dashboard rather than a record. Also
+retired and not to be restored: the audience-role chooser, the duplicated night
+close, the compact publication shelf, `/manifesto`, and the night ground on this
+route — the dark plate belongs to Constellations, whose subject is darkness.
+
+`/essays` is an asymmetric Index-First publication surface. The authored essays
+remain Long Documents.
 
 The identity is Cajal meets Kawase: precise, information-dense
 scientific drawing on a calm atmospheric ground. The page is quiet so
@@ -283,7 +294,16 @@ label. No pure black, no pure white, no second dominant accent.
 Newsreader (display cuts) for titles and section headings; Newsreader
 (text cuts) for body and captions; Inter for editorial navigation, metadata,
 and diagram labels; IBM Plex Mono for identifiers, values, and counts. Prose
-measure 41.5rem, line-height about 1.7. The Observatory is sans and mono only:
+measure 41.5rem, line-height about 1.7.
+
+Both Newsreader faces ship as **static instances with no `fvar` table** — only
+Inter carries axes (`opsz` 14–32, `wght` 100–900). So `font-variation-settings:
+"opsz" …` is an inert no-op on a Newsreader face, and Newsreader Display has a
+single 500 cut: `font-weight: 400` merely resolves to it, and anything at 600 or
+above is browser-synthesised bold. Declare 500 explicitly on display type and do
+not reach for `opsz` to size it optically.
+
+The Observatory is sans and mono only:
 Geist Sans carries product prose and controls, while IBM Plex Mono is reserved
 for identifiers, roots, commands, and exact numerical fields. Newsreader and
 Inter never enter the product app.
