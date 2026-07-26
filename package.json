@@ -35,6 +35,7 @@
     "db:provision:reader": "bun run --filter @vela/frontier-data db:provision:reader",
     "db:reset:ephemeral": "bun run --filter @vela/frontier-data db:reset:ephemeral",
     "legacy:verify": "bun run --filter @vela/frontier-data legacy:verify",
+    "projection:snapshot": "bun run --filter @vela/frontier-data projection:snapshot",
     "projection:verify": "bun run --filter @vela/frontier-data verify",
     "test:roots": "bun run --filter @vela/frontier-data test",
     "test:manifests": "bun run --filter @vela/www test:manifest && bun run --filter @vela/observatory test:manifest",
