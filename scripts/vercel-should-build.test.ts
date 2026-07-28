@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { execFileSync, spawnSync } from "node:child_process";
-import { mkdtempSync, rmSync, writeFileSync, mkdirSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 
@@ -48,6 +48,15 @@ function status(path: string, target: "observatory" | "www", environment: Record
 }
 
 describe("Vercel workspace build selection", () => {
+  test("requires explicit staged release promotion for both public products", () => {
+    for (const application of ["www", "observatory"]) {
+      const config = JSON.parse(
+        readFileSync(resolve(import.meta.dir, `../apps/${application}/vercel.json`), "utf8"),
+      );
+      expect(config.git).toEqual({ deploymentEnabled: false });
+    }
+  });
+
   test("builds the Observatory for Observatory and shared changes", () => {
     const path = repository();
     commit(path, "apps/observatory/app.ts", "two\n");
