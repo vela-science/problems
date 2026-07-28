@@ -9,6 +9,8 @@ const roots: string[] = [];
 function fixture(files: Record<string, string>) {
   const root = mkdtempSync(resolve(tmpdir(), "vela-web-boundary-"));
   roots.push(root);
+  mkdirSync(resolve(root, "apps/observatory/src"), { recursive: true });
+  mkdirSync(resolve(root, "apps/www/src"), { recursive: true });
   for (const [path, content] of Object.entries(files)) {
     const target = resolve(root, path);
     mkdirSync(dirname(target), { recursive: true });
