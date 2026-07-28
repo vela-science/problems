@@ -4,12 +4,12 @@ import { linuxReleaseAssetUrl, loadVelaReleaseRecord } from "./install-recorded-
 describe("recorded Vela installer", () => {
   test("derives the Linux asset and both integrity checks from one release record", () => {
     const release = loadVelaReleaseRecord();
-    expect(release.version).toBe("0.940.4");
-    expect(release.tag).toBe("v0.940.4");
-    expect(release.linux_archive_sha256).toBe("sha256:a7c5ab84556d5e12d8cc4250c3afd2c30c665d36a87d8a90a78d3d88df26eead");
-    expect(release.generator_binary_sha256).toBe("sha256:26c72e02fce0107ebeb72a99aeb45a61992845354076217154ec34452392805d");
-    expect(release.macos_generator_binary_sha256).toBe("sha256:aa07602e0d38e740545618ce5715af8483bab33b09499db524869337261db4a6");
-    expect(release.macos_archive_sha256).toBe("sha256:fbbb8af469786f8dff65bc82e8ed869173647a7491c91d950b8d3b2dee0ea2ad");
-    expect(linuxReleaseAssetUrl(release)).toBe("https://github.com/vela-science/vela/releases/download/v0.940.4/vela-linux-x86_64.tar.gz");
+    expect(release.version).toBe("0.940.5");
+    expect(release.tag).toBe("v0.940.5");
+    expect(release.linux_archive_sha256).toBe("sha256:80d80a7aaaefbf981158bf985b8840d81a98afa84e54f803c1a53ef6bd1ade80");
+    expect(release.generator_binary_sha256).toBe("sha256:f607fda46e110935b753a4158fbea76e79cbb60286e15bc1cef3ca369e50ec20");
+    expect(release.macos_generator_binary_sha256).toBe("sha256:e5d8dfaa2a9aa60060579115ebdf730f0297cd5b8059f08fc063f4fdfd10cb25");
+    expect(release.macos_archive_sha256).toBe("sha256:882f93c788eb22b892d777613c3afd1890ade4862d47d802a7fa806e300d3d11");
+    expect(linuxReleaseAssetUrl(release)).toBe("https://github.com/vela-science/vela/releases/download/v0.940.5/vela-linux-x86_64.tar.gz");
   });
 });
