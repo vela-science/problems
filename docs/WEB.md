@@ -113,8 +113,47 @@ manifest. The workflow verifies the expected projection root from the live
 manifest after the deploy hook, so an ambiguous hook timeout is not treated as
 either success or failure by itself.
 
-There is no checked-in frontier snapshot, copied search index, or Build Week
-JSON. The Observatory reads release-scoped rows from Neon during rendering.
+### The editorial snapshot
+
+The Observatory reads Neon at build. `apps/www` does not: it is a static export
+and reads one committed file,
+`packages/frontier-data/config/editorial-summary.v2.json`, so the editorial site
+builds with no database credential at all.
+
+That file is the only projection data the public editorial site serves, which
+makes its staleness a correctness problem rather than a freshness one. It has
+failed that way once. Between 2026-07-25 and 2026-07-28 the protocol moved
+`status.roots.event_log` and the work counts out of `vela status`;
+`compactEditorialSummary` read both by hand, so `bun run projection:snapshot`
+started throwing, and the site went on serving the last values anyone had
+committed — 646 open targets on Erdős against a real 1, and 23 pending reviews
+on Sidon sets against a real 0.
+
+Three things now prevent that recurring:
+
+- The generator reads through `statusStateRoot()` and the `work` projection —
+  the same helpers the Observatory renders from — rather than reaching into
+  `status` by hand, so a field that moves breaks the build instead of
+  evaluating to `undefined`.
+- `packages/frontier-data/tests/editorial-summary.test.ts` runs the generator
+  against a status shaped like the one the emitter publishes today and asserts
+  the output satisfies the schema. It needs no database, so it runs in CI.
+- The scheduled refresh regenerates and commits the snapshot
+  (`.github/workflows/refresh-projection.yml`). Before this it refreshed Neon
+  and redeployed the Observatory only, which is precisely how www's numbers
+  froze while the Observatory's stayed current.
+
+v2 also keeps `open_work` nullable. Null means the frontier's target index is
+blocked and its inventory could not be read, which is not the same claim as
+zero open work; the landing page prints an em dash and says so rather than
+rendering unknown as none.
+
+Regenerate by hand with `bun run projection:snapshot` (needs
+`VELA_PROJECTION_DATABASE_URL` once).
+
+There is no checked-in frontier snapshot for the Observatory, no copied search
+index, and no Build Week JSON. The Observatory reads release-scoped rows from
+Neon during rendering.
 Each build compiles one exact release root, while `/api/search` and `/api/graph`
 accept only retained exact roots. This prevents an old deployment from silently
 rendering a newer data head. The database is disposable: exact Git commits,
