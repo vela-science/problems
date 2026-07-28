@@ -24,6 +24,10 @@ const components = JSON.parse(readFileSync(join(app, "components.json"), "utf8")
 if (components.iconLibrary !== "hugeicons") failures.push(`components.json must use the shadcn Hugeicons registry adapter, found ${components.iconLibrary}`);
 const packageManifest = JSON.parse(readFileSync(join(app, "package.json"), "utf8"));
 if (packageManifest.dependencies?.["lucide-react"]) failures.push("lucide-react remains installed beside the selected Hugeicons registry family");
+const itemSource = readFileSync(join(source, "components/ui/item.tsx"), "utf8");
+if (!/data-slot="item-content"[\s\S]{0,220}"flex min-w-0 flex-1/u.test(itemSource)) {
+  failures.push("shadcn ItemContent must retain min-w-0 so long scientific identifiers cannot clip mobile records");
+}
 
 const forbiddenFiles = [
   "components/vela/command-step.tsx",
