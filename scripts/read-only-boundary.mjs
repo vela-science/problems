@@ -23,20 +23,12 @@ const mutationMethod = /export\s+(?:async\s+)?function\s+(?:POST|PUT|PATCH|DELET
    bundler flag a later change could relax. */
 export const BOUNDARY_SOURCES = ["apps/observatory/src", "apps/www/src"];
 
+/* Throws on a missing source root, deliberately. Every fixture creates
+   both roots, so an absent one means an app was renamed or deleted
+   without updating BOUNDARY_SOURCES — and a gate that silently scans
+   nothing is worse than no gate at all. */
 function filesBelow(directory) {
-  /* A source root that is not present contributes no files. The unit
-     tests build partial fixtures — a temporary repository holding only
-     the Observatory tree — and a missing sibling app there is the
-     absence of a subject, not a violation. Whether the real repository
-     still has both apps is asserted below, where it can be stated
-     rather than inferred from a crash. */
-  let entries;
-  try {
-    entries = readdirSync(directory, { withFileTypes: true });
-  } catch {
-    return [];
-  }
-  return entries.flatMap((entry) => {
+  return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     const path = resolve(directory, entry.name);
     return entry.isDirectory() ? filesBelow(path) : [path];
   });
