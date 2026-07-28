@@ -141,42 +141,20 @@ skips deployment. Failed refreshes leave the prior head unchanged. Structural
 ranking is stored separately as non-authoritative `structural_advice`; it never
 defines graph membership or producer work.
 
-### Experimental publication facts
+### Historical publication-facts experiment
 
-`@vela/frontier-data` also owns the source-local
-`site.frontier-publication-facts.v1` experiment used by the minimum
-four-Frontier read-network gate. It is not a Vela protocol, database table,
-public API, or second projector. It reduces an already verified projection to
-public repository locations, exact Git and Vela roots, bounded scopes, corpus
-counts, access classes, and explicit availability limits:
+The source-local `site.frontier-publication-facts.v1` experiment is frozen at
+`vela-web v0.420.2`. Its exact inputs, roots, two-implementation evidence, and
+replay commands remain in the Vela
+`VELA_MINIMUM_READ_NETWORK_PHASE_1_PUBLICATION_FACTS_2026-07-24.md` report.
+It was never a protocol, database table, public API, or production projector.
 
-```bash
-bun run --filter @vela/frontier-data publication:build
-```
-
-The command requires clean exact `origin/main` checkouts, the recorded Vela
-binary, and a clean `vela-web` checkout. The resulting packet carries
-`authority: none` and `standing_effect: none`; standing must be read from the
-named pinned Frontier. Activation time is deliberately excluded from the
-publication root, so two builds from the same source facts are byte-identical.
-The focused reference implementation independently reconstructs record and
-packet roots and rejects repository, Frontier identity, Git, graph, package,
-rules, and content-root substitutions.
-
-For the independent reconstruction test only,
-`VELA_PUBLICATION_PROJECTION_OUT=/tmp/projection.json` retains the already
-verified intermediate projection outside the repository. The option writes no
-database state and is not a public runtime contract.
-
-`VELA_PUBLICATION_VELA_VERSION` may pin a later compatible released Vela for
-this source-local experiment when a current Frontier requires a released
-replay repair. It does not change the production projector's recorded release,
-and the packet binds the exact version and binary SHA-256 it actually used.
-
-This experiment is not deployed or stored in Neon during its evidence phase.
-Deleting it changes no Frontier byte, replay result, production projection, or
-Observatory route. Promotion remains gated on the frozen cross-Frontier reader
-tasks and two independently maintained consumers.
+The retired builder targeted the predecessor `observatory.v3` read model and
+is intentionally absent from current `main`. Replaying the historical
+experiment means checking out its recorded tag and exact Frontier commits, not
+adding a compatibility adapter to the current normalized read model.
+Promotion remains gated on the frozen cross-Frontier reader tasks and two
+independently maintained consumers.
 
 ## Brand and assets
 
