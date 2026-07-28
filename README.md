@@ -118,8 +118,10 @@ Builds are expected to leave a clean worktree. Release manifests are served at:
 
 ## Design and provenance
 
-[`DESIGN.md`](DESIGN.md) is the current visual and interaction contract. The
-July 2026 v1.1 designer handoff is recorded under
+[`DESIGN.md`](DESIGN.md) describes the design system — type roles, the figure
+kit, motion tiers, and the floors a page must clear. It deliberately does not
+adjudicate individual design decisions; those are made by building and
+looking. The July 2026 v1.1 designer handoff is recorded under
 `packages/brand/reference/2026-07-v1.1/`; reference artwork is excluded from
 production. The archived Observatory at `vela-site@34e3f20` supplied product
 anatomy, not a second active implementation. Porting provenance is recorded in
