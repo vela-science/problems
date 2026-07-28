@@ -69,35 +69,90 @@
     },
     "context": {
       "light": {
-        "surfaceInset": { "$value": "#EEEDE7", "$type": "color" },
-        "surfaceRaised": { "$value": "#FBFAF7", "$type": "color" },
-        "textSecondary": { "$value": "#4B5565", "$type": "color" },
-        "textMuted": { "$value": "#626A76", "$type": "color" },
-        "evidence": { "$value": "#2F6F6B", "$type": "color" },
-        "progress": { "$value": "#3F744B", "$type": "color" },
-        "caution": { "$value": "#805A16", "$type": "color" },
-        "conflict": { "$value": "#9C3F4A", "$type": "color" },
-        "borderSubtle": { "$value": "#D9DBDF", "$type": "color" },
-        "borderStrong": { "$value": "#B8BDC5", "$type": "color" },
-        "direction": { "$value": "#8C6B20", "$type": "color" }
+        "surfaceInset": {
+          "$value": "#EEEDE7",
+          "$type": "color"
+        },
+        "surfaceRaised": {
+          "$value": "#FBFAF7",
+          "$type": "color"
+        },
+        "textSecondary": {
+          "$value": "#4B5565",
+          "$type": "color"
+        },
+        "textMuted": {
+          "$value": "#626A76",
+          "$type": "color"
+        },
+        "evidence": {
+          "$value": "#2F6F6B",
+          "$type": "color"
+        },
+        "progress": {
+          "$value": "#3F744B",
+          "$type": "color"
+        },
+        "caution": {
+          "$value": "#805A16",
+          "$type": "color"
+        },
+        "conflict": {
+          "$value": "#9C3F4A",
+          "$type": "color"
+        },
+        "borderSubtle": {
+          "$value": "#D9DBDF",
+          "$type": "color"
+        },
+        "borderStrong": {
+          "$value": "#B8BDC5",
+          "$type": "color"
+        },
+        "direction": {
+          "$value": "#8C6B20",
+          "$type": "color"
+        }
       },
       "dark": {
-        "surfaceInset": { "$value": "#0B1629", "$type": "color" },
-        "surfaceEmphasis": { "$value": "#050C18", "$type": "color" },
-        "textSecondary": { "$value": "#C5CAD2", "$type": "color" },
-        "borderSubtle": { "$value": "#263247", "$type": "color" },
-        "borderStrong": { "$value": "#3A465A", "$type": "color" },
-        "conflict": { "$value": "#D97783", "$type": "color" }
+        "surfaceInset": {
+          "$value": "#0B1629",
+          "$type": "color"
+        },
+        "surfaceEmphasis": {
+          "$value": "#050C18",
+          "$type": "color"
+        },
+        "textSecondary": {
+          "$value": "#C5CAD2",
+          "$type": "color"
+        },
+        "borderSubtle": {
+          "$value": "#263247",
+          "$type": "color"
+        },
+        "borderStrong": {
+          "$value": "#3A465A",
+          "$type": "color"
+        },
+        "conflict": {
+          "$value": "#D97783",
+          "$type": "color"
+        }
       }
     }
   },
   "font": {
     "display": {
-      "$value": "Newsreader, Georgia, serif",
+      "$value": "Zodiak, Georgia, serif",
+      "$type": "fontFamily"
+    },
+    "body": {
+      "$value": "Gambetta, Georgia, serif",
       "$type": "fontFamily"
     },
     "sans": {
-      "$value": "Inter, Arial, sans-serif",
+      "$value": "Switzer, Arial, sans-serif",
       "$type": "fontFamily"
     },
     "mono": {

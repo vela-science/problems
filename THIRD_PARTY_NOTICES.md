@@ -9,9 +9,12 @@ This site uses the following open-source software and fonts:
   `sha512-FcdwCu7V0XzGfx3MNQ7qFuIA0IGnJ0yPu46jvDjfA33OlqIkcth096Mdpl1exR3HwLv2nbK2yJAKyBqdzk4DHw==`.
 - Hugeicons React 1.1.9 and Hugeicons Core Free Icons 4.2.3 under the MIT
   License. They are the Observatory's single interface icon system.
-- Inter, Newsreader, and IBM Plex Mono under the SIL Open
-  Font License 1.1. The served files are Latin subsets; their font names and
-  license terms remain those of their respective authors.
+- IBM Plex Mono under the SIL Open Font License 1.1. The served files are
+  Latin subsets; the font name and license terms remain those of its authors.
+- Zodiak, Gambetta, and Switzer, all Indian Type Foundry, under the ITF Free
+  Font License, which permits commercial use and self-hosting of the web font
+  files. They ship as their variable masters. They replaced Newsreader and
+  Inter on 2026-07-27.
 
 Images under `public/images/` and vector diagrams under `public/svgs/` are
 original project assets unless a nearby source note says otherwise. The July

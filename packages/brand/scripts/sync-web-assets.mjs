@@ -17,13 +17,14 @@ const profileFonts = {
     "ibm-plex-mono-500-latin.woff2",
   ],
   editorial: [
+    "gambetta-300-700-latin.woff2",
+    "gambetta-italic-300-700-latin.woff2",
     "ibm-plex-mono-400-latin.woff2",
     "ibm-plex-mono-500-latin.woff2",
-    "inter-300-700-latin.woff2",
-    "newsreader-display-500-latin.woff2",
-    "newsreader-display-italic-400-latin.woff2",
-    "newsreader-text-400-latin.woff2",
-    "newsreader-text-italic-400-latin.woff2",
+    "switzer-100-900-latin.woff2",
+    "switzer-italic-100-900-latin.woff2",
+    "zodiak-100-900-latin.woff2",
+    "zodiak-italic-100-900-latin.woff2",
   ],
 };
 

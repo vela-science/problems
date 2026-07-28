@@ -30,8 +30,9 @@
   --vela-color-dark-border-subtle: #263247;
   --vela-color-dark-border-strong: #3A465A;
   --vela-color-dark-conflict: #D97783;
-  --vela-font-display: Newsreader, Georgia, serif;
-  --vela-font-sans: Inter, Arial, sans-serif;
+  --vela-font-display: Zodiak, Georgia, serif;
+  --vela-font-body: Gambetta, Georgia, serif;
+  --vela-font-sans: Switzer, Arial, sans-serif;
   --vela-font-mono: IBM Plex Mono, SFMono-Regular, Consolas, monospace;
   --vela-space-1: 4px;
   --vela-space-2: 8px;

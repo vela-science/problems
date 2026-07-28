@@ -31,8 +31,9 @@ test("locked brand values survive DTCG generation", () => {
   assert.match(css, /--vela-color-midnight: #081224;/u);
   assert.match(css, /--vela-color-stardust: #C9A664;/u);
   assert.match(css, /--vela-color-light: #F7F6F2;/u);
-  assert.equal(tokens.font.display.$value.split(",")[0], "Newsreader");
-  assert.equal(tokens.font.sans.$value.split(",")[0], "Inter");
+  assert.equal(tokens.font.display.$value.split(",")[0], "Zodiak");
+  assert.equal(tokens.font.body.$value.split(",")[0], "Gambetta");
+  assert.equal(tokens.font.sans.$value.split(",")[0], "Switzer");
   assert.equal(tokens.font.mono.$value.split(",")[0], "IBM Plex Mono");
 });
 
@@ -48,12 +49,17 @@ test("primary foreground pairs pass WCAG AA", () => {
     }
   }
   assert.notEqual(tokens.color.context.light.surfaceRaised.$value.toLowerCase(), "#ffffff");
-  assert.match(editorialFonts, /font-family: "Newsreader Text";[\s\S]*?newsreader-text-400-latin\.woff2/u);
-  assert.match(editorialFonts, /font-family: "Newsreader Text";[\s\S]*?newsreader-text-italic-400-latin\.woff2/u);
-  assert.match(editorialFonts, /font-family: "Newsreader Display";[\s\S]*?newsreader-display-500-latin\.woff2/u);
-  assert.match(editorialFonts, /font-family: "Newsreader Display";[\s\S]*?newsreader-display-italic-400-latin\.woff2/u);
-  assert.doesNotMatch(productFonts, /Newsreader/u);
-  assert.doesNotMatch(productFonts, /Inter/u);
+  assert.match(editorialFonts, /font-family: "Gambetta";[\s\S]*?gambetta-300-700-latin\.woff2/u);
+  assert.match(editorialFonts, /font-family: "Gambetta";[\s\S]*?gambetta-italic-300-700-latin\.woff2/u);
+  assert.match(editorialFonts, /font-family: "Zodiak";[\s\S]*?zodiak-100-900-latin\.woff2/u);
+  assert.match(editorialFonts, /font-family: "Zodiak";[\s\S]*?zodiak-italic-100-900-latin\.woff2/u);
+  assert.match(editorialFonts, /font-family: "Switzer";[\s\S]*?switzer-100-900-latin\.woff2/u);
+  assert.doesNotMatch(productFonts, /Zodiak/u);
+  assert.doesNotMatch(productFonts, /Gambetta/u);
+  assert.doesNotMatch(productFonts, /Switzer/u);
+  // The two faces retired on 2026-07-27 must not reappear in either profile.
+  assert.doesNotMatch(editorialFonts, /Newsreader/u);
+  assert.doesNotMatch(editorialFonts, /Inter/u);
 });
 
 test("status semantics are never represented as an unlabelled palette", () => {

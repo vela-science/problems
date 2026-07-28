@@ -86,16 +86,20 @@ for (const size of [16, 20, 32, 48]) {
   }
   assert(visible >= Math.floor(size * size * 0.12), `favicon-${size} lost too much visible geometry`);
 }
-for (const family of ["Newsreader Text", "Newsreader Display", "Inter", "IBM Plex Mono"]) {
+for (const family of ["Gambetta", "Zodiak", "Switzer", "IBM Plex Mono"]) {
   assert(editorialFonts.includes(`font-family: "${family}"`), `missing editorial ${family} face`);
 }
 assert(productFonts.includes('font-family: "IBM Plex Mono"'), "missing product IBM Plex Mono face");
-for (const family of ["Newsreader Text", "Newsreader Display", "Inter"]) assert(!productFonts.includes(family), `editorial font ${family} entered product profile`);
-for (const rejected of ["Spectral", "Space Grotesk", "JetBrains Mono", "Schibsted"]) {
+for (const family of ["Gambetta", "Zodiak", "Switzer"]) assert(!productFonts.includes(family), `editorial font ${family} entered product profile`);
+/* Faces this project has decided against, including the two it retired on
+   2026-07-27: Newsreader read as a quiet book serif and Inter as the default
+   UI sans, and both are training-data defaults rather than choices. */
+for (const rejected of ["Spectral", "Space Grotesk", "JetBrains Mono", "Schibsted", "Newsreader", "Inter"]) {
   assert(!editorialFonts.includes(rejected) && !productFonts.includes(rejected), `rejected font ${rejected} remains in generated output`);
 }
-assert(tokens.font.display.$value.startsWith("Newsreader"), "editorial display role drift");
-assert(tokens.font.sans.$value.startsWith("Inter"), "editorial sans role drift");
+assert(tokens.font.display.$value.startsWith("Zodiak"), "editorial display role drift");
+assert(tokens.font.body.$value.startsWith("Gambetta"), "editorial body role drift");
+assert(tokens.font.sans.$value.startsWith("Switzer"), "editorial sans role drift");
 assert(tokens.font.mono.$value.startsWith("IBM Plex Mono"), "editorial mono role drift");
 
 console.log(JSON.stringify({

@@ -17,17 +17,15 @@ const governedFiles = [
   "packages/brand/marks/exports/MANIFEST.sha256",
   "packages/brand/generated/fonts-editorial.css",
   "packages/brand/generated/fonts-product.css",
-  "packages/brand/licenses/FONT-SOURCE-MANIFEST.sha256",
   "packages/brand/licenses/FONT-WEB-MANIFEST.sha256",
-  "packages/brand/fonts/source/newsreader-200-800-italic-latin.woff2",
-  "packages/brand/fonts/source/newsreader-200-800-latin.woff2",
+  "packages/brand/fonts/web/gambetta-300-700-latin.woff2",
+  "packages/brand/fonts/web/gambetta-italic-300-700-latin.woff2",
   "packages/brand/fonts/web/ibm-plex-mono-400-latin.woff2",
   "packages/brand/fonts/web/ibm-plex-mono-500-latin.woff2",
-  "packages/brand/fonts/web/inter-300-700-latin.woff2",
-  "packages/brand/fonts/web/newsreader-display-500-latin.woff2",
-  "packages/brand/fonts/web/newsreader-display-italic-400-latin.woff2",
-  "packages/brand/fonts/web/newsreader-text-400-latin.woff2",
-  "packages/brand/fonts/web/newsreader-text-italic-400-latin.woff2",
+  "packages/brand/fonts/web/switzer-100-900-latin.woff2",
+  "packages/brand/fonts/web/switzer-italic-100-900-latin.woff2",
+  "packages/brand/fonts/web/zodiak-100-900-latin.woff2",
+  "packages/brand/fonts/web/zodiak-italic-100-900-latin.woff2",
 ];
 
 export function computeBrandRoot(repositoryRoot: string): `sha256:${string}` {

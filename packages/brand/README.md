@@ -13,12 +13,15 @@ This keeps the package as the single source for self-hosted fonts and, where
 requested, the current favicon instead of checking duplicate copies into
 each application.
 
-The ordinary Newsreader text and display faces are static role instances of the
-checked-in Latin variable source at its intended optical sizes. They preserve
-the type design while avoiding 129 KiB normal and 147 KiB italic variable-font
-critical paths. The original variable sources remain checked in for future role
-instances and archival fidelity. Exact hashes and SIL OFL 1.1 status are
-recorded under `licenses/`.
+The three editorial faces (Zodiak, Gambetta, Switzer) ship as their upstream
+variable masters rather than as derived static instances, so the served file is
+the upstream file and there is no instancing step, no source-font copy, and no
+second manifest to keep in sync. Each is 33-45 KiB, which is smaller than the
+static role instances the previous family needed, and the critical path is
+three files rather than five because one master covers every weight. IBM Plex
+Mono stays a pair of static Latin subsets. Exact hashes are recorded in
+`licenses/FONT-WEB-MANIFEST.sha256`; the licence status of each face, ITF Free
+Font License or SIL OFL 1.1, is recorded in `licenses/README.md`.
 
 `reference/2026-07-v1.1/` preserves the current production brief, messaging rules, asset
 manifest, and acceptance checklist from the July 2026 designer handoff. Its

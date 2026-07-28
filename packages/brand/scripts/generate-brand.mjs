@@ -37,6 +37,7 @@ const primitives = {
   "color-dark-border-strong": tokens.color.context.dark.borderStrong.$value,
   "color-dark-conflict": tokens.color.context.dark.conflict.$value,
   "font-display": tokens.font.display.$value,
+  "font-body": tokens.font.body.$value,
   "font-sans": tokens.font.sans.$value,
   "font-mono": tokens.font.mono.$value,
   ...Object.fromEntries(Object.entries(tokens.space).map(([name, token]) => [`space-${name}`, token.$value])),
@@ -117,8 +118,12 @@ export const velaTokens = ${JSON.stringify(primitives, null, 2)} as const;
 export type VelaTokenName = keyof typeof velaTokens;
 `;
 
-const monoFonts = `/* Vela product delivery profile. */
-@font-face {
+/* The banner is per-file, not part of the shared face block: both profiles
+   serve the mono faces, so a banner baked into `monoFaces` labelled the
+   editorial stylesheet as the product profile. */
+const profileBanner = (profile) => `/* Vela ${profile} delivery profile. */\n`;
+
+const monoFaces = `@font-face {
   font-family: "IBM Plex Mono";
   font-style: normal;
   font-weight: 400;
@@ -134,43 +139,50 @@ const monoFonts = `/* Vela product delivery profile. */
 }
 `;
 
-const productFonts = monoFonts;
+const productFonts = `${profileBanner("product")}${monoFaces}`;
 
-const editorialFonts = `${monoFonts.trimEnd()}
+const editorialFonts = `${profileBanner("editorial")}${monoFaces.trimEnd()}
 @font-face {
-  font-family: "Inter";
+  font-family: "Switzer";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/assets/fonts/switzer-100-900-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Switzer";
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: optional;
+  src: url("/assets/fonts/switzer-italic-100-900-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Gambetta";
   font-style: normal;
   font-weight: 300 700;
   font-display: swap;
-  src: url("/assets/fonts/inter-300-700-latin.woff2") format("woff2");
+  src: url("/assets/fonts/gambetta-300-700-latin.woff2") format("woff2");
 }
 @font-face {
-  font-family: "Newsreader Text";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("/assets/fonts/newsreader-text-400-latin.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Newsreader Text";
+  font-family: "Gambetta";
   font-style: italic;
-  font-weight: 400;
+  font-weight: 300 700;
   font-display: optional;
-  src: url("/assets/fonts/newsreader-text-italic-400-latin.woff2") format("woff2");
+  src: url("/assets/fonts/gambetta-italic-300-700-latin.woff2") format("woff2");
 }
 @font-face {
-  font-family: "Newsreader Display";
+  font-family: "Zodiak";
   font-style: normal;
-  font-weight: 500;
+  font-weight: 100 900;
   font-display: swap;
-  src: url("/assets/fonts/newsreader-display-500-latin.woff2") format("woff2");
+  src: url("/assets/fonts/zodiak-100-900-latin.woff2") format("woff2");
 }
 @font-face {
-  font-family: "Newsreader Display";
+  font-family: "Zodiak";
   font-style: italic;
-  font-weight: 400;
+  font-weight: 100 900;
   font-display: optional;
-  src: url("/assets/fonts/newsreader-display-italic-400-latin.woff2") format("woff2");
+  src: url("/assets/fonts/zodiak-italic-100-900-latin.woff2") format("woff2");
 }
 `;
 
