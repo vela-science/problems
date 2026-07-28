@@ -24,7 +24,7 @@ of one product and two shared, framework-neutral packages.
 | Path | Runtime | Purpose |
 | --- | --- | --- |
 | `apps/www` | Astro | Product home, essays, and long-form editorial work |
-| `apps/observatory` | Next.js | Immutable frontier, finding, work, review, and replay views |
+| `apps/observatory` | Next.js | Root-bound frontier, Claim, work, review, graph, and replay views |
 | `packages/brand` | TypeScript and CSS | Governed sail, tokens, fonts, licenses, and deterministic exports |
 | `packages/frontier-data` | TypeScript | Sole validator and projector for frontier, search, work, and graph data |
 
@@ -40,9 +40,9 @@ or Canopus  repository     replay   authority    and downstream work
 ```
 
 Any suitable research tool may produce. Canopus supplies optional producer
-scaffolding. A canonical frontier Git repository preserves the work, the
-released Vela binary checks and replays it, and signed policy or a protected
-human decision controls accepted state. Vela Web serves the final reuse step.
+scaffolding. A canonical Frontier Git repository preserves the work, the
+released Vela binary checks and replays it, and an authorized repository
+Decision controls Standing. Vela Web serves the final reuse step.
 
 ```text
 canonical frontier Git repositories
@@ -65,15 +65,17 @@ canonical frontier Git repositories
 
 - `www.vela.space` is the canonical editorial host.
 - `app.vela.space` is the canonical Repository Observatory.
-- Frontier pages are immutable, release-bound projections with no request-time
-  frontier fetch.
+- Frontier pages are exact-root projections. The active data head moves only
+  through an atomic, verified projection release; every request remains bound
+  to one readable release root.
 - Verification, replay, proposal standing, and scientific acceptance remain
   distinct everywhere.
 - The web has no signer, Server Action, public mutation API, canonical or
   writable scientific database, human key path, or private coordination
   payload. Neon is a disposable, normalized read projection.
-- The complete frontier bundle is validated at build time and never embedded
-  as a universal browser payload.
+- Normalized projection rows are rebuilt from exact canonical Git commits and
+  validated before activation. No whole-Frontier document is embedded as a
+  universal browser payload.
 - Producer availability, active leases, and advice-only graph opportunities are
   separate projections; graph rank never becomes work rank or authority.
 - The original Vela sail is the locked product mark; exported assets are
