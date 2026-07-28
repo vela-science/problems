@@ -113,14 +113,13 @@ release-scoped rows provide rollback, and CI or migration rehearsal branches
 are disposable and time-bounded.
 
 The empty archived `event-first-hub-cutover` branch was deleted on 2026-07-22
-after explicit approval. The unused Neon-managed `observatory_reader` could not
-be converted to `NOLOGIN` by the project owner. Its old credential was
-invalidated; the control-plane replacement was discarded; no usable credential
-is retained; and it has zero active sessions. The empty role remains only
-because the immutable `0002_observatory_reader` migration names it. The
-`v0-370-read-model` rehearsal branch was deleted after the `v0.420.4`
-projection activation was verified. Neon now has no permanent branch other
-than `main`.
+after explicit approval. The unused Neon-managed `observatory_reader` login was
+deleted after its grants and ownership were proven empty. A local,
+credential-free `NOLOGIN` placeholder with no inheritance, database creation,
+or role creation privilege retains that exact name only so the immutable
+`0002_observatory_reader` migration still replays. The `v0-370-read-model`
+rehearsal branch was deleted after the `v0.420.4` projection activation was
+verified. Neon now has no permanent branch other than `main`.
 
 Those two URLs are the complete secret inventory for database access. The
 reader password is validated from the reader URL when provisioning the fixed
@@ -219,24 +218,23 @@ Public manifests:
 The manifests use `vela.web-deployment.v2` and `vela.site-deployment.v3`; each
 records the exact release tag, Git commit, brand schema/root, deployment
 identity, and delivery mode. The Observatory manifest additionally embeds
-`vela.observatory-release-manifest.v3` over `observatory.v2`, including
-normalized table roots, full graph roots and counts, the pinned Vela binary,
-every canonical source commit and root, and any public repository-authority
-projection root. Repository authority is read-only product evidence: the
-projection may expose public keys, signed record roots, and restricted-policy
-identity, but never custody material, authentication context, a decision
-control, or an authority operation. A production release is incomplete until
-its deployed manifest matches the approved tag, commit, and activated
-projection exactly.
+`vela.observatory-release-manifest.v5` over `observatory.v4`, including
+normalized Claim, Submission, Registration, Verification, review, work,
+search, graph, authority, and source-root identities. Repository authority is
+read-only product evidence: the projection may expose public keys, signed
+record roots, and restricted-policy identity, but never custody material,
+authentication context, a decision control, or an authority operation. A
+production release is incomplete until its deployed manifest matches the
+approved tag, commit, and activated projection exactly.
 
 None of that identity is set by hand. The tag is derived from the root
 `package.json` version — the only place a version lives — and the commit and
-deployment id come from `VERCEL_GIT_COMMIT_SHA` and `VERCEL_DEPLOYMENT_ID`, which
-`deploymentIdentity()` reads directly and which a production build refuses to go
-without. Shipping a commit therefore needs no version bump, no tag and no
-environment variable; `scripts/check-deployed-manifest.mjs` is what confirms
-afterwards that what is serving matches the repository. Cut a tag when a release
-means something, not to deploy.
+deployment id come from `VERCEL_GIT_COMMIT_SHA` and `VERCEL_DEPLOYMENT_ID`,
+which `deploymentIdentity()` reads directly and which a production build
+refuses to go without. An ordinary preview may deploy an untagged commit; a
+released composition must bump the root version and cut the matching tag.
+`scripts/check-deployed-manifest.mjs` confirms that the deployed bytes identify
+the exact repository commit and projection root.
 
 Several legacy domains currently show Vercel's `DNS Change Recommended`
 advisory while resolving successfully. Treat DNS migration as a separate
