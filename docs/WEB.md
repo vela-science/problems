@@ -47,21 +47,39 @@ read-only reuse.
 The editorial application owns one current route vocabulary:
 
 ```text
-/              product-first home
-/essays        publication index
-/constellations, /discovery-engine, /gigafactories-for-science
-/whitepaper, /stack, /facility
+/                the chart
+/constellations  Constellations of Borrowed Light
 ```
 
-The primary masthead exposes Constellations and Open Observatory, and the
-Vela sail is the only Home affordance. The other listed routes remain
-addressable for durable links and the footer, but do not define a competing
-public journey.
+The rebuild of 2026-07-28 reduced the surface to these two while the rest is
+rewritten. `apps/www/scripts/check-public-routes.mjs` holds the set as an
+executable contract: a route that ships without being added there fails the
+build, and so does a route in the set that stops shipping. Add each of
+`/essays`, `/discovery-engine`, `/gigafactories-for-science`, `/whitepaper`,
+`/stack` and `/facility` back to that set as its page returns.
+
+The masthead exposes Constellations, Documentation, GitHub and Observatory,
+and the Vela sail is the only Home affordance.
 
 `/manifesto` was retired 2026-07-25 and permanently redirects to
 `/constellations`; `/case` was removed entirely; `/catalog` permanently
 redirects to `/essays`. None of those legacy names belongs in current
 navigation or copy.
+
+### The essay is a component, not a document
+
+There is no MDX pipeline and no content collection. Constellations was
+measured at 51 plain paragraphs, 14 JSX components, 20 HTML elements and zero
+markdown constructs — no headings, lists, emphasis or links in markdown
+syntax — so MDX was compiling prose that was already JSX. Its plugins are
+local functions, which Turbopack refuses to serialize, and carrying them
+forced the entire application onto `next build --webpack`.
+
+`src/app/constellations/page.tsx` is therefore an ordinary route component
+and the build runs on Turbopack. A future essay follows the same shape:
+a `page.tsx` under its own segment, figures as components beside it, prose
+wrapped in `P`. If a document ever genuinely needs markdown authoring,
+reintroduce MDX for that route alone and keep the plugin list serializable.
 
 ## Exact frontier state
 
@@ -95,8 +113,47 @@ manifest. The workflow verifies the expected projection root from the live
 manifest after the deploy hook, so an ambiguous hook timeout is not treated as
 either success or failure by itself.
 
-There is no checked-in frontier snapshot, copied search index, or Build Week
-JSON. The Observatory reads release-scoped rows from Neon during rendering.
+### The editorial snapshot
+
+The Observatory reads Neon at build. `apps/www` does not: it is a static export
+and reads one committed file,
+`packages/frontier-data/config/editorial-summary.v2.json`, so the editorial site
+builds with no database credential at all.
+
+That file is the only projection data the public editorial site serves, which
+makes its staleness a correctness problem rather than a freshness one. It has
+failed that way once. Between 2026-07-25 and 2026-07-28 the protocol moved
+`status.roots.event_log` and the work counts out of `vela status`;
+`compactEditorialSummary` read both by hand, so `bun run projection:snapshot`
+started throwing, and the site went on serving the last values anyone had
+committed — 646 open targets on Erdős against a real 1, and 23 pending reviews
+on Sidon sets against a real 0.
+
+Three things now prevent that recurring:
+
+- The generator reads through `statusStateRoot()` and the `work` projection —
+  the same helpers the Observatory renders from — rather than reaching into
+  `status` by hand, so a field that moves breaks the build instead of
+  evaluating to `undefined`.
+- `packages/frontier-data/tests/editorial-summary.test.ts` runs the generator
+  against a status shaped like the one the emitter publishes today and asserts
+  the output satisfies the schema. It needs no database, so it runs in CI.
+- The scheduled refresh regenerates and commits the snapshot
+  (`.github/workflows/refresh-projection.yml`). Before this it refreshed Neon
+  and redeployed the Observatory only, which is precisely how www's numbers
+  froze while the Observatory's stayed current.
+
+v2 also keeps `open_work` nullable. Null means the frontier's target index is
+blocked and its inventory could not be read, which is not the same claim as
+zero open work; the landing page prints an em dash and says so rather than
+rendering unknown as none.
+
+Regenerate by hand with `bun run projection:snapshot` (needs
+`VELA_PROJECTION_DATABASE_URL` once).
+
+There is no checked-in frontier snapshot for the Observatory, no copied search
+index, and no Build Week JSON. The Observatory reads release-scoped rows from
+Neon during rendering.
 Each build compiles one exact release root, while `/api/search` and `/api/graph`
 accept only retained exact roots. This prevents an old deployment from silently
 rendering a newer data head. The database is disposable: exact Git commits,

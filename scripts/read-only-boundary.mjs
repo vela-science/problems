@@ -15,8 +15,28 @@ const searchRoute = "apps/observatory/src/app/api/search/route.ts";
 const graphRoute = "apps/observatory/src/app/api/graph/route.ts";
 const mutationMethod = /export\s+(?:async\s+)?function\s+(?:POST|PUT|PATCH|DELETE)\b/u;
 
+/* www used to be Astro, which could not express a Server Action or a
+   route handler, so the boundary only had to police the Observatory.
+   Both apps are Next now and both must be checked. www is additionally a
+   static export, so a violation there would fail the build anyway — but
+   the point of this gate is to state the boundary, not to rely on a
+   bundler flag a later change could relax. */
+export const BOUNDARY_SOURCES = ["apps/observatory/src", "apps/www/src"];
+
 function filesBelow(directory) {
-  return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+  /* A source root that is not present contributes no files. The unit
+     tests build partial fixtures — a temporary repository holding only
+     the Observatory tree — and a missing sibling app there is the
+     absence of a subject, not a violation. Whether the real repository
+     still has both apps is asserted below, where it can be stated
+     rather than inferred from a crash. */
+  let entries;
+  try {
+    entries = readdirSync(directory, { withFileTypes: true });
+  } catch {
+    return [];
+  }
+  return entries.flatMap((entry) => {
     const path = resolve(directory, entry.name);
     return entry.isDirectory() ? filesBelow(path) : [path];
   });
@@ -27,16 +47,7 @@ function repositoryPath(repository, path) {
 }
 
 export function inspectReadOnlyBoundary(repository) {
-  /* www used to be Astro, which could not express a Server Action or a
-     route handler, so the boundary only had to police the Observatory.
-     Both apps are Next now and both must be checked. www is additionally
-     a static export, so a violation there would fail the build anyway —
-     but the point of this gate is to state the boundary, not to rely on
-     a bundler flag that a later change could relax. */
-  const sources = [
-    resolve(repository, "apps/observatory/src"),
-    resolve(repository, "apps/www/src"),
-  ];
+  const sources = BOUNDARY_SOURCES.map((source) => resolve(repository, source));
   const violations = [];
 
   const candidates = sources.flatMap(filesBelow);
