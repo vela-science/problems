@@ -47,21 +47,39 @@ read-only reuse.
 The editorial application owns one current route vocabulary:
 
 ```text
-/              product-first home
-/essays        publication index
-/constellations, /discovery-engine, /gigafactories-for-science
-/whitepaper, /stack, /facility
+/                the chart
+/constellations  Constellations of Borrowed Light
 ```
 
-The primary masthead exposes Constellations and Open Observatory, and the
-Vela sail is the only Home affordance. The other listed routes remain
-addressable for durable links and the footer, but do not define a competing
-public journey.
+The rebuild of 2026-07-28 reduced the surface to these two while the rest is
+rewritten. `apps/www/scripts/check-public-routes.mjs` holds the set as an
+executable contract: a route that ships without being added there fails the
+build, and so does a route in the set that stops shipping. Add each of
+`/essays`, `/discovery-engine`, `/gigafactories-for-science`, `/whitepaper`,
+`/stack` and `/facility` back to that set as its page returns.
+
+The masthead exposes Constellations, Documentation, GitHub and Observatory,
+and the Vela sail is the only Home affordance.
 
 `/manifesto` was retired 2026-07-25 and permanently redirects to
 `/constellations`; `/case` was removed entirely; `/catalog` permanently
 redirects to `/essays`. None of those legacy names belongs in current
 navigation or copy.
+
+### The essay is a component, not a document
+
+There is no MDX pipeline and no content collection. Constellations was
+measured at 51 plain paragraphs, 14 JSX components, 20 HTML elements and zero
+markdown constructs — no headings, lists, emphasis or links in markdown
+syntax — so MDX was compiling prose that was already JSX. Its plugins are
+local functions, which Turbopack refuses to serialize, and carrying them
+forced the entire application onto `next build --webpack`.
+
+`src/app/constellations/page.tsx` is therefore an ordinary route component
+and the build runs on Turbopack. A future essay follows the same shape:
+a `page.tsx` under its own segment, figures as components beside it, prose
+wrapped in `P`. If a document ever genuinely needs markdown authoring,
+reintroduce MDX for that route alone and keep the plugin list serializable.
 
 ## Exact frontier state
 

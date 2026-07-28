@@ -229,64 +229,50 @@ Neither surface produces canonical state or participates in authority.
 
 ## Editorial product shell
 
-All `www` routes use the same masthead, whose single height is `--masthead-h`
-(3.25rem; anything measuring against the bar consumes the token, never a
-literal), and the same
-mast-headed colophon footer. The Vela sail alone links Home: no wordmark text,
-so the bar holds one mark and one sans wayfinding row and there is nothing extra
-to read. The anchor carries aria-label="Vela home" as its accessible name, since
-the mark's svg is aria-hidden. Because the mark is the Home affordance the
-masthead carries no Home link.
+The rebuild of 2026-07-28 removed the shared shell. There is no
+`EditorialMasthead`, no `EditorialFooter`, no `PublicationShelf`, and no
+publication registry, because there are two routes and a component
+abstracted over two instances is a component that exists to be filled in
+later. Each route carries its own header, sized to what it is: the chart
+opens with the sail and four wayfinding links on the night plate; the
+essay opens with the sail alone, because a reading surface should not
+begin with a menu.
 
-The nav is Essays, Whitepaper, Stack, and Open Observatory. It carried
-one link until 2026-07-28, which left the whitepaper, the stack, and two
-of the three essays reachable only by direct URL — a durable route
-archive is not the same thing as an unreachable one. Four items plus the
-mark do not fit a 3.25rem bar on a phone, so below 48rem the three
-internal links fold into a disclosure and the Observatory link stays
-visible. The disclosure is a `<details>`: the bar must work with no
-JavaScript, and the earlier argument for having no menu was that the nav
-could avoid one, not that a menu was forbidden.
+That is a reduction, not a repeal. When `/essays`, `/whitepaper`,
+`/stack` and `/facility` return, the shared masthead returns with them,
+and it returns under the rules the old one earned:
 
-The masthead never hides on scroll, changes ink based on viewport
-position, or invents route-specific navigation. Dark openings choose the
-night variant; paper routes choose the paper variant. On a night route
-the bar is transparent and the opening pulls itself up by `--masthead-h`
-so the sky runs unbroken behind the sail — a translucent plate there
-composites over the page ground instead and reads as a grey strip.
+- One height, `--masthead-h` (3.25rem), consumed as a token and never as
+  a literal.
+- The Vela sail alone links Home. No wordmark text. The anchor carries
+  `aria-label="Vela home"` because the mark's svg is aria-hidden, and the
+  bar carries no separate Home link.
+- It never hides on scroll, never changes ink by scroll position, and
+  never invents route-specific navigation.
+- On a night route the bar is transparent and the opening pulls itself up
+  by `--masthead-h` so the sky runs unbroken behind the sail. A
+  translucent plate composites over the page ground instead and reads as
+  a grey strip.
+- Whatever does not fit a 3.25rem bar on a phone folds into a
+  `<details>` disclosure, not a JavaScript menu. The bar has to work with
+  no JavaScript.
 
-The current shared vocabulary is deliberately small:
+`ExactSnapshot` and `ArchitectureSnapshotNotice` survive as the two
+components that state exact projection state, and every surface that
+names a count or a root uses one of them rather than typesetting the
+number itself.
 
-- `EditorialMasthead`
-- `PublicationHeader`
-- `EditorialFooter`
-- `PublicationShelf`
-- `ExactSnapshot`
-- `ArchitectureSnapshotNotice`
-
-Every route closes on the same `EditorialFooter`. There is no per-publication
-continuation footer: a reader who reaches the end of an essay is offered the
-same statement, the same two link groups, and the same line of exact state as
-everywhere else.
-
-`src/data/publications.ts` is the sole publication registry. The index, route
-metadata, and home shelf derive from it. Do not recreate a catalogue data file,
-alternate imprint, or second navigation component.
-
-The home runs one argument in order: show a result moving through Vela,
-then explain the system, then say what is not proven. Night hero with the
-A309370 route drawn as a state transition; the projected state line on
-the seam; the four-line ladder that names the missing layer; one complete
-worked example with its reproduction commands; the five-stage loop as a
-table whose authority column is the point; the invariants; the open
-tests; a night close. The civilisational claim sits below the working
-demonstration, never above it.
+The chart route runs one argument in order: the sky, then the table, then
+one opened claim, then the command, then where the open work is, then the
+test the system can fail. The civilisational claim sits below the working
+demonstration, never above it — and on this page it sits below in the
+literal sense too, as the last section, phrased as what remains unproved.
 
 The record's anatomy is drawn in the technical vocabulary the Observatory
-and the projection already use — claim, evidence, verifier, authority,
+and the projection already use: claim, evidence, verifier, authority,
 root. It was once drawn five times in three vocabularies across a premise
 act and a scroll-linked voyage, which is what made the page read as
-complicated. Every panel reads at rest so no-JS loses nothing.
+complicated. Every panel reads at rest, so no-JS loses nothing.
 
 Not patterns to restore: the audience-role chooser, the duplicated night
 close, the compact publication shelf, the retired `/manifesto`, the
@@ -294,8 +280,47 @@ five-cell station strip, and counts that animate up to their value — a
 spring arriving at an exact figure reads as a marketing gesture, and
 exactness is the claim the page is making.
 
-`/essays` is an asymmetric Index-First publication surface. The authored
-essays remain Long Documents.
+### The chart
+
+The landing is a chart of four published frontiers, and the rules that
+keep it a chart rather than a picture are executable in
+`src/data/frontier-chart.test.ts`:
+
+- Every mark decodes to a protocol state. A mark that decodes to nothing
+  does not belong in the sky.
+- Positions are hand-placed; strokes are generated from the marks. The
+  gold route is built out of exactly the findings that have standing, so
+  it cannot be drawn through one that does not.
+- Star counts are a sample and say so in the caption. State proportions
+  are not a sample: they are the frontier's real ratio of pending reviews
+  and open work, floored at one so a single pending decision never
+  vanishes.
+- A frontier absent from the projection throws at build. The chart must
+  not draw a frontier that does not exist.
+- The open leg never animates. It has not happened.
+- Below 680px the four-constellation sky becomes a stack of the same
+  geometry cropped one constellation at a time. There is no second set of
+  positions that could drift from the first.
+
+### The essay
+
+An essay is a route component, not a document: `page.tsx` under its own
+segment, figures as components beside it, prose wrapped in `P`. See
+`docs/WEB.md` for why the MDX pipeline was removed.
+
+The reading surface is three columns on wide screens — rail, prose,
+balancing gutter — and one column below. The rail's active marker answers
+"where am I", so there is no separate progress bar. Rail entries are
+navigation and clear 4.5:1 at rail size: `--ink-4` measures 2.42:1 on
+paper and is a decorative tier, not a text one.
+
+Chapter stations are glyphs, not ordinals. Each is a faint substrate, one
+ink operation, one directional gold mark, and addressable nodes. They
+stay in the rail and out of the section headings.
+
+Every figure is complete at rest. Footnotes render expanded in the server
+HTML and collapse only once `html[data-notes-enhanced]` is set, so a
+reader without JavaScript keeps every citation.
 
 The identity is Cajal meets Kawase: precise, information-dense
 scientific drawing on a calm atmospheric ground. The page is quiet so
