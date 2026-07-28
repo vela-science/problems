@@ -27,10 +27,20 @@ function repositoryPath(repository, path) {
 }
 
 export function inspectReadOnlyBoundary(repository) {
-  const source = resolve(repository, "apps/observatory/src");
+  /* www used to be Astro, which could not express a Server Action or a
+     route handler, so the boundary only had to police the Observatory.
+     Both apps are Next now and both must be checked. www is additionally
+     a static export, so a violation there would fail the build anyway —
+     but the point of this gate is to state the boundary, not to rely on
+     a bundler flag that a later change could relax. */
+  const sources = [
+    resolve(repository, "apps/observatory/src"),
+    resolve(repository, "apps/www/src"),
+  ];
   const violations = [];
 
-  for (const path of filesBelow(source).filter((candidate) => sourceExtensions.test(candidate))) {
+  const candidates = sources.flatMap(filesBelow);
+  for (const path of candidates.filter((candidate) => sourceExtensions.test(candidate))) {
     const file = repositoryPath(repository, path);
     const content = readFileSync(path, "utf8");
     const add = (rule, detail) => violations.push({ file, rule, detail });

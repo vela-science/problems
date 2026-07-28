@@ -1,5 +1,5 @@
 import { gzipSync } from "node:zlib";
-import { readFileSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 import {
   observatoryProjectionManifest,
@@ -45,10 +45,12 @@ const productFonts = readdirSync(resolve(observatory, "public/assets/fonts")).so
 const editorialFonts = readdirSync(resolve(editorial, "public/assets/fonts")).sort();
 // Geist ships through Next's package integration. The Observatory's mirrored
 // public font profile therefore contains only the identifier face it serves
-// directly; Inter remains an editorial delivery asset.
+// directly; the three editorial faces stay on the editorial profile.
 const expectedProductFonts = ["ibm-plex-mono-400-latin.woff2", "ibm-plex-mono-500-latin.woff2"];
 if (JSON.stringify(productFonts) !== JSON.stringify(expectedProductFonts)) throw new Error("Observatory font delivery profile drift");
-for (const rejected of ["spectral", "space-grotesk", "jetbrains", "newsreader-200-800"]) {
+/* Faces this project has decided against, including the two retired on
+   2026-07-27. */
+for (const rejected of ["spectral", "space-grotesk", "jetbrains", "newsreader", "inter-"]) {
   if ([...productFonts, ...editorialFonts].some((name) => name.includes(rejected))) throw new Error(`rejected font ${rejected} entered delivery`);
 }
 
@@ -57,20 +59,48 @@ let editorialTotalBytes = null;
 let editorialSocialMasterBytes = null;
 let facilityInitialGzip = null;
 if (scope === "all") {
+  /* Next's static export writes to out/, where Astro wrote dist/. */
   const socialMasters = [
-    resolve(editorial, "dist/og-image.png"),
-    resolve(editorial, "dist/images/brand/vela-landing-social.jpg"),
-    resolve(editorial, "dist/images/constellations/frontier-map-og.png"),
+    resolve(editorial, "out/og-image.png"),
+    resolve(editorial, "out/images/brand/vela-landing-social.jpg"),
+    resolve(editorial, "out/images/constellations/frontier-map-og.png"),
   ];
-  editorialTotalBytes = bytesBelow(resolve(editorial, "dist"));
-  editorialSocialMasterBytes = socialMasters.reduce((sum, path) => sum + statSync(path).size, 0);
+  editorialTotalBytes = bytesBelow(resolve(editorial, "out"));
+  editorialSocialMasterBytes = socialMasters.filter(existsSync).reduce((sum, path) => sum + statSync(path).size, 0);
   editorialBytes = editorialTotalBytes - editorialSocialMasterBytes;
   if (editorialBytes > 12 * 1024 * 1024) throw new Error(`editorial build is ${editorialBytes} bytes`);
 
-  const facilityHtml = readFileSync(resolve(editorial, "dist/facility/index.html"), "utf8");
-  const initialScripts = [...facilityHtml.matchAll(/src="([^"]+\.js)"/gu)].map((match) => resolve(editorial, "dist", match[1].replace(/^\//u, "")));
-  facilityInitialGzip = initialScripts.reduce((sum, path) => sum + gzipSync(readFileSync(path)).byteLength, 0);
-  if (facilityInitialGzip > 75 * 1024) throw new Error(`facility initial JavaScript is ${facilityInitialGzip} bytes gzip`);
+  /* The /facility ceiling was set against Astro, which shipped zero
+     framework JavaScript, so 75 KB gzip measured the three.js entry
+     alone. Under Next the same page's initial payload is ~187 KB gzip
+     and the landing's is ~186 KB — that is the React and App Router
+     baseline, not a facility regression, and no byte ceiling in that
+     range distinguishes the two.
+
+     So the byte budget is kept only as a coarse ceiling, and the
+     assertion that actually mattered is now made directly: none of the
+     initial chunks may contain the vendored three.js runtime. That is
+     the thing a careless refactor would break — hoisting the import out
+     of the effect would pull ~190 KB into every visitor's first load —
+     and it is checkable rather than inferred. */
+  /* /facility is temporarily absent while the editorial routes are
+     rebuilt. The check runs when the route exists rather than being
+     deleted, so it comes back automatically with the page. */
+  const facilityPath = resolve(editorial, "out/facility.html");
+  if (existsSync(facilityPath)) {
+    const facilityHtml = readFileSync(facilityPath, "utf8");
+    const initialScripts = [...facilityHtml.matchAll(/src="([^"]+\.js)"/gu)].map((match) => resolve(editorial, "out", match[1].replace(/^\//u, "")));
+    facilityInitialGzip = 0;
+    for (const path of initialScripts) {
+      const source = readFileSync(path);
+      facilityInitialGzip += gzipSync(source).byteLength;
+      const text = source.toString("utf8");
+      if (text.includes("WebGLRenderer") || text.includes("THREE.")) {
+        throw new Error(`${path}: three.js entered the /facility initial chunk`);
+      }
+    }
+    if (facilityInitialGzip > 220 * 1024) throw new Error(`facility initial JavaScript is ${facilityInitialGzip} bytes gzip`);
+  }
 }
 
 const browserFiles = [

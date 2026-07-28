@@ -20,7 +20,7 @@
   "scripts": {
     "dev:www": "bun run --filter @vela/www dev",
     "dev:observatory": "bun run --filter @vela/observatory dev",
-    "lint": "bun run --filter @vela/observatory lint",
+    "lint": "bun run --filter @vela/www lint && bun run --filter @vela/observatory lint",
     "typecheck": "bun run --filter @vela/www typecheck && bun run --filter @vela/observatory typecheck",
     "check": "bun run check:release-identity && bun run check:brand && bun run check:bundle && bun run check:boundary && bun run check:tokens && bun run check:projection && bun run typecheck",
     "check:release-identity": "bun scripts/check-release-identity.mjs",

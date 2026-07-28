@@ -31,49 +31,49 @@ colors:
   night-deep: "oklch(21% 0.048 260)"
 typography:
   rail:
-    fontFamily: "Inter"
+    fontFamily: "Switzer"
     fontSize: "clamp(0.65rem, 0.72vw, 0.72rem)"
     fontWeight: "500"
     lineHeight: "1.28"
     letterSpacing: "0.07em"
   h1:
-    fontFamily: "Newsreader"
+    fontFamily: "Zodiak"
     fontSize: "4.35rem"
     fontWeight: "500"
     lineHeight: "1.02"
     letterSpacing: "-0.005em"
   h2:
-    fontFamily: "Newsreader"
+    fontFamily: "Zodiak"
     fontSize: "2.35rem"
     fontWeight: "500"
     lineHeight: "1.05"
     letterSpacing: "-0.005em"
   body-md:
-    fontFamily: "Newsreader"
+    fontFamily: "Gambetta"
     fontSize: "1rem"
     fontWeight: "400"
     lineHeight: "1.75"
     letterSpacing: "0em"
   body-lg:
-    fontFamily: "Newsreader"
+    fontFamily: "Gambetta"
     fontSize: "1.12rem"
     fontWeight: "400"
     lineHeight: "1.72"
     letterSpacing: "0em"
   h2-compact:
-    fontFamily: "Newsreader"
+    fontFamily: "Zodiak"
     fontSize: "clamp(1.45rem, 7vw, 1.75rem)"
     fontWeight: "500"
     lineHeight: "1.05"
     letterSpacing: "-0.005em"
   caption:
-    fontFamily: "Newsreader"
+    fontFamily: "Gambetta"
     fontSize: "0.86rem"
     fontWeight: "400"
     lineHeight: "1.5"
     letterSpacing: "0em"
   note:
-    fontFamily: "Inter"
+    fontFamily: "Switzer"
     fontSize: "0.68rem"
     fontWeight: "400"
     lineHeight: "1.46"
@@ -91,7 +91,7 @@ typography:
     lineHeight: "1.15"
     letterSpacing: "-0.035em"
   label-caps:
-    fontFamily: "Inter"
+    fontFamily: "Switzer"
     fontSize: "0.72rem"
     fontWeight: "500"
     lineHeight: "1"
@@ -202,13 +202,25 @@ components:
 
 # Vela design
 
-One system, two rooms. The Astro site (`www.vela.space`) is a warm
-editorial reading surface: cream paper, midnight ink, one gold accent.
-The Next.js Observatory (`app.vela.space`) is a cool, light-first
-repository workbench. They share the sail, the brand tokens in
-`packages/brand/vela.tokens.json` (the DTCG source always wins over
-this document), the status grammar, and exact generated facts. They
-never share UI implementations.
+One system, two rooms. `www.vela.space` is a warm editorial reading
+surface: cream paper, midnight ink, one gold accent. The Observatory
+(`app.vela.space`) is a cool, light-first repository workbench. They
+share the sail, the brand tokens in `packages/brand/vela.tokens.json`
+(the DTCG source always wins over this document), the status grammar,
+and exact generated facts.
+
+Both rooms are Next.js on Tailwind v4 with shadcn primitives. www moved
+off Astro on 2026-07-28; the two apps now share a *mechanism* — one
+framework, one styling system, one component idiom — but still share no
+component. Each keeps its own `src/components/ui`, its own semantic
+ramp, and its own faces: the three editorial families never enter the
+product app, and Geist never enters the editorial one. What the shared
+mechanism buys is that a utility and a hand-authored rule resolve to the
+same token in either room. It does not license copying a surface from
+one into the other.
+
+The editorial app is a static export (`output: "export"`). Nothing on
+www runs at request time.
 
 Both rooms serve the reuse end of one Vela product story: produce, preserve,
 check, decide, reuse. The editorial surface explains the system and its case.
@@ -224,12 +236,24 @@ mast-headed colophon footer. The Vela sail alone links Home: no wordmark text,
 so the bar holds one mark and one sans wayfinding row and there is nothing extra
 to read. The anchor carries aria-label="Vela home" as its accessible name, since
 the mark's svg is aria-hidden. Because the mark is the Home affordance the
-masthead carries no Home link, and with only Constellations and Open Observatory
-left it needs no mobile menu at any width. Whitepaper, Stack, Facility, Essays, and source remain
-durable routes outside the primary navigation.
+masthead carries no Home link.
+
+The nav is Essays, Whitepaper, Stack, and Open Observatory. It carried
+one link until 2026-07-28, which left the whitepaper, the stack, and two
+of the three essays reachable only by direct URL — a durable route
+archive is not the same thing as an unreachable one. Four items plus the
+mark do not fit a 3.25rem bar on a phone, so below 48rem the three
+internal links fold into a disclosure and the Observatory link stays
+visible. The disclosure is a `<details>`: the bar must work with no
+JavaScript, and the earlier argument for having no menu was that the nav
+could avoid one, not that a menu was forbidden.
+
 The masthead never hides on scroll, changes ink based on viewport
 position, or invents route-specific navigation. Dark openings choose the
-night variant in their layout; paper routes choose the paper variant.
+night variant; paper routes choose the paper variant. On a night route
+the bar is transparent and the opening pulls itself up by `--masthead-h`
+so the sky runs unbroken behind the sail — a translucent plate there
+composites over the page ground instead and reads as a grey strip.
 
 The current shared vocabulary is deliberately small:
 
@@ -249,18 +273,29 @@ everywhere else.
 metadata, and home shelf derive from it. Do not recreate a catalogue data file,
 alternate imprint, or second navigation component.
 
-The home is a four-act Feature Stack: the proposition with its exact proof
-object; one record drawn once with four routes across it; demonstrated and open
-evidence; the closing colophon. The record's anatomy is drawn once, in the
-technical vocabulary the Observatory and the projection already use — claim,
-evidence, verifier, authority, root. It was previously drawn five times in three
-vocabularies across a premise act and a scroll-linked voyage, which is what made
-the page read as complicated. Operations are selected explicitly, never by scroll
-position, and every panel reads at rest so no-JS loses nothing. The removed
-audience-role chooser, the duplicated night close, the compact publication shelf,
-and the retired `/manifesto` are not patterns to restore. `/essays` is an
-asymmetric Index-First publication surface. The authored essays remain Long
-Documents.
+The home runs one argument in order: show a result moving through Vela,
+then explain the system, then say what is not proven. Night hero with the
+A309370 route drawn as a state transition; the projected state line on
+the seam; the four-line ladder that names the missing layer; one complete
+worked example with its reproduction commands; the five-stage loop as a
+table whose authority column is the point; the invariants; the open
+tests; a night close. The civilisational claim sits below the working
+demonstration, never above it.
+
+The record's anatomy is drawn in the technical vocabulary the Observatory
+and the projection already use — claim, evidence, verifier, authority,
+root. It was once drawn five times in three vocabularies across a premise
+act and a scroll-linked voyage, which is what made the page read as
+complicated. Every panel reads at rest so no-JS loses nothing.
+
+Not patterns to restore: the audience-role chooser, the duplicated night
+close, the compact publication shelf, the retired `/manifesto`, the
+five-cell station strip, and counts that animate up to their value — a
+spring arriving at an exact figure reads as a marketing gesture, and
+exactness is the claim the page is making.
+
+`/essays` is an asymmetric Index-First publication surface. The authored
+essays remain Long Documents.
 
 The identity is Cajal meets Kawase: precise, information-dense
 scientific drawing on a calm atmospheric ground. The page is quiet so
@@ -280,22 +315,35 @@ label. No pure black, no pure white, no second dominant accent.
 
 ## Typography
 
-Newsreader (display cuts) for titles and section headings; Newsreader
-(text cuts) for body and captions; Inter for editorial navigation, metadata,
-and diagram labels; IBM Plex Mono for identifiers, values, and counts. Prose
-measure 41.5rem, line-height about 1.7.
+Zodiak for titles and section headings; Gambetta for body and captions;
+Switzer for editorial navigation, metadata, and diagram labels; IBM Plex Mono
+for identifiers, values, and counts. Prose measure 41.5rem, line-height about
+1.7.
 
-Both Newsreader faces ship as **static instances with no `fvar` table** — only
-Inter carries axes (`opsz` 14–32, `wght` 100–900). So `font-variation-settings:
-"opsz" …` is an inert no-op on a Newsreader face, and Newsreader Display has a
-single 500 cut: `font-weight: 400` merely resolves to it, and anything at 600 or
-above is browser-synthesised bold. Declare 500 explicitly on display type and do
-not reach for `opsz` to size it optically.
+All three editorial faces are Indian Type Foundry, shipped as **variable
+masters**: Zodiak and Switzer carry `wght` 100–900, Gambetta 300–700, each with
+a matching italic. So every weight on the site is a real axis position and
+nothing is browser-synthesised. **None of them has an `opsz` axis**, so
+`font-variation-settings: "opsz" …` is an inert no-op; do not reach for it.
+Headings are sized by `font-size` alone.
+
+Zodiak is a high-contrast display serif with dramatic thick-thin transitions.
+It reads heavy at scale on its own, so display type sits at 400 and climbing
+past it thickens the stems until the hairlines look broken by comparison.
+Zodiak also sets noticeably wider than the face it replaced; check line counts
+after any size change.
+
+This replaced Newsreader (titles and body) and Inter (UI) on 2026-07-27.
+Newsreader is a quiet book serif and Inter the default UI sans, which made the
+pair legible but characterless, and both are training-data defaults rather than
+decisions. Neither may return. `packages/brand/scripts/check-brand.mjs` and
+`scripts/check-budgets.mjs` both fail the build if either name reappears in a
+generated stylesheet or a delivered font profile.
 
 The Observatory is sans and mono only:
 Geist Sans carries product prose and controls, while IBM Plex Mono is reserved
-for identifiers, roots, commands, and exact numerical fields. Newsreader and
-Inter never enter the product app.
+for identifiers, roots, commands, and exact numerical fields. Zodiak, Gambetta
+and Switzer never enter the product app.
 
 Labels inside SVG figures must render at 12px or larger at every
 viewport. Desktop skies multiply a >=12px base by `--svg-label-boost`;

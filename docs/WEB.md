@@ -5,7 +5,8 @@ Earlier design and migration plans live under `docs/history/`.
 
 ## Product boundary
 
-- `www.vela.space` is the canonical Astro editorial surface.
+- `www.vela.space` is the canonical editorial surface: Next.js 16, App
+  Router, static export (`output: "export"`). Moved off Astro 2026-07-28.
 - `app.vela.space` is the canonical Next.js Repository Observatory surface.
 - `vela.space` redirects to `www`; product paths on `www` redirect to `app`.
 - Both applications are read-only surfaces of one Web product. They expose no signer, public
@@ -23,7 +24,7 @@ exact-root, same-origin reads for normalized search documents and graph slices.
 The repository is a Bun workspace with four maintained boundaries:
 
 ```text
-apps/www                editorial Astro application
+apps/www                editorial Next.js application (static export)
 apps/observatory        read-only Next.js application
 packages/brand          governed identity, tokens, fonts, and delivery assets
 packages/frontier-data  Git-to-Neon projection, validation, search, and manifests
@@ -47,18 +48,20 @@ The editorial application owns one current route vocabulary:
 
 ```text
 /              product-first home
-/manifesto     five concise theses
 /essays        publication index
 /constellations, /discovery-engine, /gigafactories-for-science
 /whitepaper, /stack, /facility
 ```
 
-The primary masthead exposes Home, Constellations, Manifesto, and Open
-Observatory. The other listed routes remain addressable for durable links and
-the footer, but do not define a competing public journey.
+The primary masthead exposes Constellations and Open Observatory, and the
+Vela sail is the only Home affordance. The other listed routes remain
+addressable for durable links and the footer, but do not define a competing
+public journey.
 
-`/case` permanently redirects to `/manifesto`; `/catalog` permanently redirects
-to `/essays`. Neither legacy name belongs in current navigation or copy.
+`/manifesto` was retired 2026-07-25 and permanently redirects to
+`/constellations`; `/case` was removed entirely; `/catalog` permanently
+redirects to `/essays`. None of those legacy names belongs in current
+navigation or copy.
 
 ## Exact frontier state
 
@@ -161,7 +164,7 @@ independently maintained consumers.
 sail released in `v0.300.2`. Do not redraw or reinterpret it. All delivery
 variants are generated and content-addressed.
 
-- Editorial delivery: Newsreader, Inter, and IBM Plex Mono.
+- Editorial delivery: Zodiak, Gambetta, Switzer, and IBM Plex Mono.
 - Observatory delivery: Geist for interface text and IBM Plex Mono for roots,
   identifiers, commands, and exact values.
 - Asset synchronization is a mirror and removes stale destination fonts.

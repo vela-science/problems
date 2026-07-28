@@ -4,7 +4,7 @@
 
 This repository is one Bun workspace with two static public applications:
 
-- `apps/www`: Astro editorial site for `www.vela.space`;
+- `apps/www`: Next.js editorial site for `www.vela.space`, static export;
 - `apps/observatory`: Next.js read-only product for `app.vela.space`;
 - `packages/brand`: the only token, font, and mark source;
 - `packages/frontier-data`: the only frontier bundle, search, and deployment-manifest implementation.
