@@ -14,7 +14,8 @@ Earlier design and migration plans live under `docs/history/`.
   a bounded projection from Neon; canonical custody remains in the frontier
   Git repositories.
 - Normative protocol and CLI documentation remains in the Vela repository at
-  an exact release commit. This repository owns onboarding and explanation.
+  an exact release commit. This repository owns onboarding and explanation,
+  and serves it from `www.vela.space/docs`.
 
 `bun run check:boundary` makes that product boundary executable. It rejects
 Server Actions, request-scoped cookies or headers, authentication, mutation
@@ -47,8 +48,10 @@ read-only reuse.
 The editorial application owns one current route vocabulary:
 
 ```text
-/                the chart
-/constellations  Constellations of Borrowed Light
+/                 the chart
+/constellations   Constellations of Borrowed Light
+/docs             the five guides
+/docs/[section]   install · quickstart · produce · review · reproduce
 ```
 
 The rebuild of 2026-07-28 reduced the surface to these two while the rest is
@@ -61,25 +64,64 @@ build, and so does a route in the set that stops shipping. Add each of
 The masthead exposes Constellations, Documentation, GitHub and Observatory,
 and the Vela sail is the only Home affordance.
 
-`/manifesto` was retired 2026-07-25 and permanently redirects to
-`/constellations`; `/case` was removed entirely; `/catalog` permanently
-redirects to `/essays`. None of those legacy names belongs in current
-navigation or copy.
+### Docs moved off the Observatory, 2026-07-28
 
-### The essay is a component, not a document
+`/docs` used to redirect from www to `app.vela.space/docs`, where five
+hand-written guidance sections lived. It now lives here, and the Observatory
+redirects its old paths to www permanently, so existing links keep working in
+the direction they were written.
 
-There is no MDX pipeline and no content collection. Constellations was
-measured at 51 plain paragraphs, 14 JSX components, 20 HTML elements and zero
-markdown constructs — no headings, lists, emphasis or links in markdown
-syntax — so MDX was compiling prose that was already JSX. Its plugins are
-local functions, which Turbopack refuses to serialize, and carrying them
-forced the entire application onto `next build --webpack`.
+Two changes, not one. The route moved because the Observatory is a read-only
+view of projected state and should not also be the manual. The *content*
+changed because a paraphrase of a protocol is a second source of truth: the
+five guidance sections have been deleted, and the site now serves the Vela
+repository's own documentation.
 
-`src/app/constellations/page.tsx` is therefore an ordinary route component
-and the build runs on Turbopack. A future essay follows the same shape:
-a `page.tsx` under its own segment, figures as components beside it, prose
-wrapped in `P`. If a document ever genuinely needs markdown authoring,
-reintroduce MDX for that route alone and keep the plugin list serializable.
+**Vendored at the pinned commit.** `apps/www/scripts/sync-vela-docs.mjs`
+extracts 19 files with `git show <pin>:docs/<file>` from any Vela clone that
+contains the commit recorded in `vela-release.v1.json`, and writes them into
+`src/content/docs/manifest.json`. The working tree is never read — when this
+was built the local checkout was 1889 insertions across 19 files ahead of the
+pin, which is precisely the drift the script exists to prevent. The output is
+committed, so builds and CI need no Vela checkout, and the content is
+reviewable in a diff.
+
+Re-run it whenever the release pin moves:
+
+```bash
+bun apps/www/scripts/sync-vela-docs.mjs
+```
+
+`src/data/docs.test.ts` asserts the manifest commit equals `velaRelease.commit`,
+so a moved pin with a stale sync fails CI rather than shipping the manual for
+a release the site no longer advertises.
+
+**What is published.** The 19 pages are the quickstarts, the protocol, the
+evidence-and-authority set, the frontier-operations set, and the CLI
+reference. Excluded on purpose: the 23 architecture decision records, which
+are an internal history rather than instructions; `POSI_SELF_ASSESSMENT` and
+`HARDWARE_SIGNING_PROPOSAL`, an internal assessment and an unaccepted
+proposal; `EXIT_AND_EXPORT_DRILL`, an operator runbook; and `README`, an index
+this site replaces. Publishing an internal assessment is hard to walk back, so
+the default is conservative — add a file to `GROUPS` in the sync script to
+publish it.
+
+**Rendering.** Plain markdown through remark and rehype at build, with Shiki
+for code, themed to the editorial palette rather than to a shipped theme.
+Deliberately not MDX: its plugin options must be serializable for Turbopack,
+local plugin functions are not, and carrying them is what forced this
+application onto the webpack builder the last time it had a markdown pipeline.
+The bodies travel inside the manifest module rather than as sibling files,
+because `import.meta.dirname` is undefined in the static-export bundle and a
+path resolved at render time lands on a transient prerender chunk — the same
+trap already recorded in `packages/frontier-data/src/editorial.ts`.
+
+**Chrome.** Structure from Tailwind Plus Protocol — grouped section rail,
+content column, on-page contents, previous and next — and nothing else.
+Protocol is an API-reference template on zinc and emerald with its own prose
+theme and a dark mode; these are upstream markdown files on the editorial
+ground, so the shell is rebuilt in this site's vocabulary rather than
+reskinned.
 
 ## Exact frontier state
 
