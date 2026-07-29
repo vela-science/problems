@@ -48,6 +48,7 @@
     "docs:sync": "bun run --filter @vela/www docs:sync"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.20",
     "esbuild": "0.28.1"
   }
 }
