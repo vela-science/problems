@@ -140,14 +140,33 @@ writes a content-addressed normalized read model to the `vela_observatory`
 database in the `vela-observatory-projection` Neon project:
 
 ```bash
+adapter_directory="$(mktemp -d)/source-adapters"
+bun run sources:prepare -- \
+  --frontier-root "$VELA_FRONTIERS_ROOT" \
+  --output "$adapter_directory"
+bun run sources:verify-set -- "$adapter_directory/source-adapters.json"
+chmod -R a-w "$adapter_directory"
+export VELA_SOURCE_ADAPTER_SET="$adapter_directory/source-adapters.json"
+
+candidate="$(
+  VELA_PROJECTION_DRY_RUN=1 \
+    bun packages/frontier-data/scripts/refresh-neon-projection.mjs
+)"
+export VELA_EXPECTED_PROJECTION_ROOT="$(jq -r '.release_root' <<<"$candidate")"
+export VELA_EXPECTED_SOURCE_ADAPTER_SET_ROOT="$(
+  jq -r '.source_adapter_set_root' <<<"$candidate"
+)"
 bun packages/frontier-data/scripts/refresh-neon-projection.mjs
 bun run db:check
 bun run projection:verify
 ```
 
 Refresh refuses dirty or unpushed sources, wrong branches or remotes, Vela
-version drift, packet drift, missing decision evidence, incomplete reviews, and
-root disagreement. The writer is available only to the refresh workflow. The
+version or released-binary-byte drift, packet drift, missing decision evidence,
+incomplete reviews, and root disagreement. Every write requires both roots from
+a prior dry-run over the same verified, read-only adapter set; a direct write
+cannot silently reacquire mutable upstreams. The writer is available only to
+the refresh workflow. The
 Vercel application receives the native PostgreSQL role
 `observatory_projection_reader`; it does not inherit Neon's managed
 `neon_superuser` role and has schema `USAGE` plus table `SELECT` only. Production
