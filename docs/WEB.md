@@ -337,7 +337,7 @@ Public manifests:
 The manifests use `vela.web-deployment.v2` and `vela.site-deployment.v3`; each
 records the exact release tag, Git commit, brand schema/root, deployment
 identity, and delivery mode. The Observatory manifest additionally embeds
-`vela.observatory-release-manifest.v5` over `observatory.v4`, including
+`vela.observatory-release-manifest.v7` over `observatory.v6`, including
 normalized Claim, Submission, Registration, Verification, review, work,
 search, graph, authority, and source-root identities. Repository authority is
 read-only product evidence: the projection may expose public keys, signed
