@@ -1,4 +1,15 @@
-import { Alert02Icon, DashedLineCircleIcon, GitCommitHorizontalIcon, Shield01Icon, Tick02Icon } from "@hugeicons/core-free-icons";
+import {
+  Alert02Icon,
+  Audit02Icon,
+  CheckmarkBadge02Icon,
+  CircleDotIcon,
+  CircleSlashTwoIcon,
+  DashedLineCircleIcon,
+  GitCommitHorizontalIcon,
+  Refresh01Icon,
+  Shield01Icon,
+  Tick02Icon,
+} from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Badge } from "../ui/badge";
 import { cn } from "../../lib/utils";
@@ -21,15 +32,45 @@ const icons = {
   neutral: DashedLineCircleIcon,
 };
 
-export function StatusBadge({ tone, children, icon, className }: {
-  tone: StatusTone;
+const states: Record<string, { tone: StatusTone; icon: typeof Shield01Icon }> = {
+  accepted: { tone: "progress", icon: GitCommitHorizontalIcon },
+  applied: { tone: "progress", icon: GitCommitHorizontalIcon },
+  verified: { tone: "evidence", icon: Shield01Icon },
+  pass: { tone: "evidence", icon: Shield01Icon },
+  replayed: { tone: "evidence", icon: Refresh01Icon },
+  strict_pass: { tone: "evidence", icon: CheckmarkBadge02Icon },
+  reviewed: { tone: "neutral", icon: Audit02Icon },
+  recorded: { tone: "neutral", icon: CircleDotIcon },
+  pending_review: { tone: "caution", icon: Alert02Icon },
+  contested: { tone: "conflict", icon: Alert02Icon },
+  rejected: { tone: "conflict", icon: CircleSlashTwoIcon },
+  retracted: { tone: "conflict", icon: CircleSlashTwoIcon },
+  strict_blocked: { tone: "conflict", icon: Alert02Icon },
+  withdrawn: { tone: "conflict", icon: CircleSlashTwoIcon },
+};
+
+type StatusBadgeProps = {
   children: React.ReactNode;
   icon?: "commit";
   className?: string;
-}) {
-  const statusIcon = icon === "commit" ? GitCommitHorizontalIcon : icons[tone];
+} & (
+  | { state: string; tone?: never }
+  | { state?: never; tone: StatusTone }
+);
+
+export function StatusBadge({ tone, state, children, icon, className }: StatusBadgeProps) {
+  const semantics = state ? states[state] : undefined;
+  const resolvedTone = semantics?.tone ?? tone ?? "neutral";
+  const statusIcon = icon === "commit"
+    ? GitCommitHorizontalIcon
+    : semantics?.icon ?? icons[resolvedTone];
   return (
-    <Badge variant="outline" className={cn("h-6 gap-1.5 rounded px-2 text-xs font-medium leading-none", tones[tone], className)}>
+    <Badge
+      variant="outline"
+      data-state={state}
+      data-tone={resolvedTone}
+      className={cn("h-6 gap-1.5 rounded px-2 text-xs font-medium leading-none", tones[resolvedTone], className)}
+    >
       <HugeiconsIcon icon={statusIcon} aria-hidden className="size-3" />
       <span>{children}</span>
     </Badge>
