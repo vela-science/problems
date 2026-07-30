@@ -40,6 +40,7 @@
     "sources:verify": "bun run --filter @vela/frontier-data sources:verify",
     "sources:verify-set": "bun run --filter @vela/frontier-data sources:verify-set",
     "benchmark:atlas:capacity": "bun run --filter @vela/frontier-data benchmark:atlas:capacity",
+    "benchmark:atlas:postgres": "bun run --filter @vela/frontier-data benchmark:atlas:postgres",
     "test:roots": "bun run --filter @vela/frontier-data test",
     "test:manifests": "bun run --filter @vela/www test:manifest && bun run --filter @vela/observatory test:manifest",
     "test:budgets": "bun scripts/check-budgets.mjs",
