@@ -1,0 +1,45 @@
+{
+  "name": "@vela/ui",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#components/*": "./src/components/*.tsx",
+    "#ui/*": "./src/components/ui/*.tsx",
+    "#hooks/*": "./src/hooks/*.ts",
+    "#lib/*": "./src/lib/*.ts"
+  },
+  "exports": {
+    "./components/*": "./src/components/ui/*.tsx",
+    "./vela/*": "./src/components/vela/*.tsx",
+    "./hooks/*": "./src/hooks/*.ts",
+    "./lib/*": "./src/lib/*.ts",
+    "./product.css": "./src/styles/product.css"
+  },
+  "scripts": {
+    "check": "bunx shadcn@4.13.1 diff && bun scripts/check-registry.mjs && bun run typecheck",
+    "check:registry": "bun scripts/check-registry.mjs",
+    "test": "bun test tests",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "dependencies": {
+    "@base-ui/react": "^1.6.0",
+    "@hugeicons/core-free-icons": "4.2.3",
+    "@hugeicons/react": "1.1.9",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
+    "katex": "0.18.1",
+    "tailwind-merge": "^3.6.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "shadcn": "4.13.1",
+    "tailwindcss": "4.3.3",
+    "typescript": "^5"
+  }
+}

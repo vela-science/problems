@@ -26,6 +26,7 @@ const runtimeWrite = /setProperty\(\s*["'`](--[A-Za-z0-9_-]+)["'`]/gu;
 
 const scanned = [
   "packages/brand/generated",
+  "packages/ui/src",
   "apps/www/src",
   "apps/observatory/src",
 ];

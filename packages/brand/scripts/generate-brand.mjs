@@ -82,7 +82,8 @@ ${primitiveLines.join("\n")}
   color-scheme: light;
 }
 
-[data-theme="dark"] {
+[data-theme="dark"],
+.dark {
   --vela-surface-canvas: var(--vela-color-midnight);
   --vela-surface-inset: var(--vela-color-dark-surface-inset);
   --vela-surface-raised: var(--vela-color-deep-space);
@@ -105,7 +106,8 @@ ${primitiveLines.join("\n")}
 
 @media (forced-colors: active) {
   :root,
-  [data-theme="dark"] {
+  [data-theme="dark"],
+  .dark {
     --vela-focus: Highlight;
     --vela-border-subtle: CanvasText;
     --vela-border-strong: CanvasText;

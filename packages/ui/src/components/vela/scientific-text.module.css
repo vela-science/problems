@@ -1,0 +1,28 @@
+.root {
+  overflow-wrap: anywhere;
+}
+
+.root cite {
+  color: var(--primary);
+  font-family: var(--font-mono);
+  font-size: 0.78em;
+  font-style: normal;
+}
+
+.inline {
+  display: inline-block;
+  max-width: 100%;
+  vertical-align: -0.08em;
+}
+
+.display {
+  display: block;
+  max-width: 100%;
+  margin-block: 0.75rem;
+  overflow-x: auto;
+  padding-block: 0.25rem;
+}
+
+.display math {
+  white-space: nowrap;
+}
