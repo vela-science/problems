@@ -18,18 +18,21 @@
 
 ## What lives here
 
-Vela Web is one private Bun workspace with two independently deployed surfaces
-of one product and two shared, framework-neutral packages.
+Vela Web is one private Bun workspace with two independently deployed Next.js
+surfaces and three shared packages.
 
 | Path | Runtime | Purpose |
 | --- | --- | --- |
-| `apps/www` | Astro | Product home, essays, and long-form editorial work |
+| `apps/www` | Next.js static export | Product home, publications, and release-bound documentation |
 | `apps/observatory` | Next.js | Root-bound frontier, Claim, work, review, graph, and replay views |
-| `packages/brand` | TypeScript and CSS | Governed sail, tokens, fonts, licenses, and deterministic exports |
+| `packages/brand` | TypeScript and CSS | Framework-neutral sail, tokens, fonts, licenses, and deterministic exports |
+| `packages/ui` | React, shadcn, and Base UI | Private shared primitives and stable Vela presentation semantics |
 | `packages/frontier-data` | TypeScript | Sole validator and projector for frontier, search, work, and graph data |
 
-The applications share brand assets and exact facts. They do not share UI
-implementations, and neither one can sign, accept, or mutate scientific state.
+The applications share brand assets, exact facts, and eligible React
+primitives. Authored editorial and workbench route compositions stay with
+their owning application. Neither application can sign, accept, or mutate
+scientific state.
 
 Vela follows one product story:
 
@@ -58,7 +61,7 @@ canonical frontier Git repositories
           │       SELECT-only Neon projection
           ▼              │
  www.vela.space             ▼
-      Astro         app.vela.space Observatory
+ Next.js static     app.vela.space Observatory
 ```
 
 ## Product invariants
@@ -118,14 +121,19 @@ Builds are expected to leave a clean worktree. Release manifests are served at:
 
 ## Design and provenance
 
-[`DESIGN.md`](DESIGN.md) describes the design system — type roles, the figure
-kit, motion tiers, and the floors a page must clear. It deliberately does not
-adjudicate individual design decisions; those are made by building and
-looking. The July 2026 v1.1 designer handoff is recorded under
+[`DESIGN.md`](DESIGN.md) defines the shared thesis, profiles, visual language,
+and accessibility floors. [`docs/design-system.md`](docs/design-system.md)
+records the package, shadcn/Base UI, Tailwind, private-registry, and licensed
+source workflow. The July 2026 v1.1 designer handoff is recorded under
 `packages/brand/reference/2026-07-v1.1/`; reference artwork is excluded from
 production. The archived Observatory at `vela-site@34e3f20` supplied product
 anatomy, not a second active implementation. Porting provenance is recorded in
 [`docs/observatory-provenance.md`](docs/observatory-provenance.md).
+
+The internal Vela registry coordinates private product source. It is not a
+public registry or separately distributed component library. Licensed Tailwind
+Plus adaptations remain within the licensed private product and carry source
+provenance.
 
 ## Licensing
 

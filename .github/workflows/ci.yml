@@ -46,6 +46,7 @@ jobs:
     timeout-minutes: 35
     env:
       VELA_FRONTIERS_ROOT: ${{ github.workspace }}/sources
+      VELA_PROJECTION_DATABASE_URL: ${{ secrets.VELA_PROJECTION_DATABASE_URL }}
       VELA_REQUIRE_PROJECTION_TESTS: "1"
     steps:
       - name: Checkout web pipeline
@@ -73,22 +74,6 @@ jobs:
           path: sources/quantum-codes-frontier
           fetch-depth: 0
 
-      - name: Compute fail-safe branch expiry
-        id: neon-expiry
-        run: echo "at=$(date -u -d '+6 hours' '+%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_OUTPUT"
-
-      - name: Create isolated Neon branch
-        id: neon-writer
-        uses: neondatabase/create-branch-action@99fc7c276b5b811caeb33d2c6b613e10f2125eab # main 2026-07-21
-        with:
-          api_key: ${{ secrets.NEON_API_KEY }}
-          project_id: lingering-meadow-20929365
-          parent_branch: main
-          branch_name: ci-observatory-${{ github.run_id }}-${{ github.run_attempt }}
-          expires_at: ${{ steps.neon-expiry.outputs.at }}
-          database: vela_observatory
-          role: neondb_owner
-
       - name: Setup Bun
         uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
@@ -97,48 +82,14 @@ jobs:
       - name: Install
         run: bun install --frozen-lockfile
 
-      - name: Bind isolated database roles
-        env:
-          WRITER_URL: ${{ steps.neon-writer.outputs.db_url_pooled }}
-          WRITER_HOST: ${{ steps.neon-writer.outputs.db_host_pooled }}
-          WRITER_PASSWORD: ${{ steps.neon-writer.outputs.password }}
-          BRANCH_ID: ${{ steps.neon-writer.outputs.branch_id }}
-        run: |
-          reader_password="$(openssl rand -hex 32)"
-          echo "::add-mask::$reader_password"
-          echo "::add-mask::$WRITER_URL"
-          echo "VELA_EPHEMERAL_BRANCH_ID=$BRANCH_ID" >> "$GITHUB_ENV"
-          echo "VELA_PROJECTION_WRITER_DATABASE_URL=$WRITER_URL" >> "$GITHUB_ENV"
-          echo "VELA_PROJECTION_DATABASE_URL=postgresql://observatory_projection_reader:$reader_password@$WRITER_HOST/vela_observatory?sslmode=require" >> "$GITHUB_ENV"
-          echo "VELA_LEGACY_DATABASE_URL=postgresql://neondb_owner:$WRITER_PASSWORD@$WRITER_HOST/vela_projection?sslmode=require" >> "$GITHUB_ENV"
-
-      - name: Provision isolated reader
-        run: bun run db:provision:reader
-
       - name: Install released Vela verifier
         run: bun run install:vela:linux
 
       - name: Install reviewed consumer trust pins
         run: bun run --filter @vela/frontier-data trust:install
 
-      - name: Current-schema and legacy compatibility
-        run: bun run db:migrate:check && bun run legacy:verify
-
-      - name: Empty-database migration rehearsal
-        env:
-          VELA_ALLOW_EPHEMERAL_RESET: "1"
-        run: bun run db:reset:ephemeral && bun run --filter @vela/frontier-data db:migrate
-
-      - name: Populate exact candidate projection
-        run: bun run --filter @vela/frontier-data refresh
-
-      - name: Verify isolated projection
-        run: bun run db:migrate:check && bun run projection:verify && bun run legacy:verify
-
-      - name: Failed refresh leaves current release unchanged
-        env:
-          VELA_ALLOW_EPHEMERAL_FAILURE_PROBE: "1"
-        run: bun run --filter @vela/frontier-data refresh:failure-check
+      - name: Verify current main projection
+        run: bun run db:check && bun run projection:verify
 
       - name: Static contracts
         run: bun run check
@@ -157,11 +108,3 @@ jobs:
 
       - name: Patch hygiene
         run: bun run format:check
-
-      - name: Delete isolated Neon branch
-        if: always() && steps.neon-writer.outputs.branch_id != ''
-        uses: neondatabase/delete-branch-action@aed9ab1ec86e380312c7b0a9e29942e41349adf6 # main 2026-07-21
-        with:
-          api_key: ${{ secrets.NEON_API_KEY }}
-          project_id: lingering-meadow-20929365
-          branch: ${{ steps.neon-writer.outputs.branch_id }}

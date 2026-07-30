@@ -2,44 +2,83 @@
 
 ## Product boundary
 
-This repository is one Bun workspace with two static public applications:
+This private Bun workspace contains two independently deployed Next.js
+applications:
 
-- `apps/www`: Next.js editorial site for `www.vela.space`, static export;
-- `apps/observatory`: Next.js read-only product for `app.vela.space`;
-- `packages/brand`: the only token, font, and mark source;
-- `packages/frontier-data`: the only frontier bundle, search, and deployment-manifest implementation.
+- `apps/www`: static editorial site for `www.vela.space`;
+- `apps/observatory`: read-only scientific workbench for `app.vela.space`;
+- `packages/brand`: framework-neutral tokens, fonts, marks, and licenses;
+- `packages/ui`: shared React UI source built from shadcn `base-nova` on
+  Base UI, plus stable Vela presentation semantics;
+- `packages/frontier-data`: the only frontier, source-registry, search, graph,
+  and deployment-manifest implementation.
 
-The applications share brand assets and generated facts, never framework UI.
-Neither application signs, accepts, or mutates scientific state.
+Neither application signs, accepts, verifies, or mutates scientific state.
+Canonical custody and authority remain in Vela and the frontier Git
+repositories. Neon is a disposable read projection.
 
-## Source of truth
+## Sources of truth
 
-- Editorial routes and content: `apps/www/src/pages`, `apps/www/src/content`
-- Editorial components and styles: `apps/www/src/components`, `apps/www/src/styles`
-- Observatory routes: `apps/observatory/src/app`
-- Observatory components: `apps/observatory/src/components`
-- Brand contract: `packages/brand/vela.tokens.json` and generated outputs
-- Frontier projection: `packages/frontier-data`
-- Product and design contracts: `PRODUCT.md`, `DESIGN.md`, and `docs/WEB.md`
+- Editorial routes: `apps/www/src/app`
+- Editorial compositions and content: `apps/www/src/components`,
+  `apps/www/src/content`, `apps/www/src/styles`
+- Observatory routes and product compositions: `apps/observatory/src/app`,
+  `apps/observatory/src/components`
+- Brand contract: `packages/brand/vela.tokens.json` and its generated outputs
+- Shared React primitives and semantics: `packages/ui`
+- Frontier and math-source projections: `packages/frontier-data`
+- Product and design contracts: `PRODUCT.md`, `DESIGN.md`,
+  `docs/design-system.md`, and `docs/WEB.md`
 
-Historical plans and audits preserve the paths that were current when they were
-written. Do not mechanically rewrite them.
+Historical plans and audits preserve the paths and decisions that were current
+when they were written. Do not mechanically rewrite them.
+
+## Design-system workflow
+
+- Install or update generic primitives only from
+  `packages/ui/components.json`.
+- Prefer the shared `@vela/ui` primitive before adding a generic component to
+  an application. App-local code owns route composition, data controllers,
+  the Sigma instrument, and authored editorial figures.
+- Do not create a second primitive layer, app-local `components/ui`, copied
+  token palette, or parallel icon library.
+- The internal registry at `packages/ui/registry.json` inventories approved
+  Vela source for this private workspace and future private Vela applications.
+  It is not an installer, public package, or public component service.
+- Licensed Tailwind Plus source may be adapted inside this private repository.
+  Record the source and license, normalize interaction through shadcn/Base UI,
+  and keep one-off compositions app-local. Promote a composition into the
+  internal registry only after it is stable and reused.
+- Keep global styles to Tailwind imports, token/profile bridges, base
+  typography, accessibility, print, and true cross-route requirements.
+  Route presentation belongs with the route or component.
+- Vela's visual thesis is **direction through evidence**. Sails express
+  movement from state to direction; constellation lines express real
+  relationships. Decorative star fields or generic space styling are not a
+  substitute for information.
 
 ## Editing workflow
 
 - Use Bun only. Do not add npm, pnpm, Yarn, Turborepo, or app-local lockfiles.
-- Preserve the essay content and the Observatory's exact-state semantics.
-- Preserve the provisional Vela sail unless an approved brand pass replaces it.
-- Do not add accounts, a database, a signer, an authority API, or mutation UI.
-- Do not add a second frontier parser, search index, or manifest generator.
-- Ported Observatory behavior retains provenance to archived `vela-site@34e3f20`.
+- Preserve exact-state semantics and the distinction between verification and
+  acceptance.
+- Preserve the canonical Vela sail unless an approved brand pass replaces it.
+- Do not add accounts, a signer, mutation UI, a writable public API, or a
+  second frontier parser, index, or manifest generator.
 - For Next.js work, read the relevant guide in `node_modules/next/dist/docs/`
   before relying on remembered framework behavior.
+- Preserve unrelated dirty work. Use `git diff` to separate your changes.
 
 ## Verification
 
+Run focused checks while editing, then the relevant root checks before
+handoff:
+
 ```bash
 bun install --frozen-lockfile
+bun run check:brand
+bun run check:registry
+bun run check:design-system
 bun run lint
 bun run typecheck
 bun run test
@@ -50,14 +89,12 @@ git diff --check
 ```
 
 Use the Codex in-app Browser for responsive, keyboard, interaction, and visual
-QA against local, release-candidate, and production builds. Keep the recorded
-viewport matrix and findings with the release evidence; browser automation is
-not part of this repository's installed toolchain.
+QA. Browser automation is not part of the installed toolchain.
 
 ## Release safety
 
 - RC deployments use noncanonical Vercel projects and domains.
-- Do not attach `www.vela.space` or `app.vela.space`, change DNS, or tag a final
-  release before the documented visual, exact-root, responsive, accessibility,
-  and deployed-manifest gates pass.
+- Do not attach `www.vela.space` or `app.vela.space`, change DNS, or tag a
+  final release before exact-root, responsive, accessibility, visual, and
+  deployed-manifest gates pass.
 - Keep the prior production deployments available for the rollback window.

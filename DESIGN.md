@@ -1,134 +1,138 @@
-# Design
+# Vela design system
 
-This describes the system. It does not decide the work.
+Vela turns retained scientific state into legible direction. The design system
+does the same: it makes evidence, standing, relationships, and next actions
+clear without decorating uncertainty away.
 
-Read it to find out what the type roles are, which motion durations exist,
-what a filled disc means, and which floors a page has to clear. Do not read
-it to find out whether a particular figure should be dark, or how a section
-should open, or what belongs in a hero. Those are judgments, and they are
-made by building the thing and looking at it.
+The governing idea is **direction through evidence**.
 
-A document that answers design questions in advance produces work that all
-looks the same and cannot be argued with. This one has been rewritten twice
-for exactly that reason. If it starts accumulating rulings again — "the one
-dark plate", a roster naming what each figure must be, a list of what a
-section may contain — delete those parts. Rules that describe are useful;
-rules that adjudicate are not.
+- The sail represents movement from recorded state toward a bounded next
+  direction.
+- A constellation represents real relationships among records, never a
+  decorative star field.
+- Space is expressed through scale, quiet, contrast, and orientation, not
+  neon, particles, glow, or generic science-fiction styling.
+- Gold marks direction and provenance. It is not a general highlight color.
 
-## Where the truth actually lives
+This document defines the shared system. It does not prescribe every page
+composition.
 
-Colour, fonts, and delivery assets are governed in `packages/brand`, and
-`bun run check:brand` fails the build if they drift. The three-tier token
-architecture is `packages/brand/generated/tokens.css` → `apps/www/src/styles/
-tokens.css` → `apps/www/src/app/globals.css`, which bridges into Tailwind.
+## Architecture
 
-No values are copied into this file. A second list of hex codes in a document
-nobody validates is a list that goes quietly wrong.
+| Layer | Source | Responsibility |
+| --- | --- | --- |
+| Brand | `packages/brand` | DTCG-shaped tokens, type roles, fonts, sail geometry, state colors, licenses, deterministic exports |
+| React UI | `packages/ui` | Official shadcn `base-nova` primitives on Base UI and stable Vela presentation semantics |
+| Editorial composition | `apps/www` | Authored publications, figures, product narrative, and documentation layouts |
+| Product composition | `apps/observatory` | Read-only workbench shell, domain tables, URL state, and the Sigma graph |
+| Exact data | `packages/frontier-data` | Rooted projections consumed by both applications |
 
-## Two rooms
+`@vela/brand` is framework-neutral. `@vela/ui` is the shared React source for
+both Next.js applications and future private Vela applications. Applications
+share primitives and stable semantics; they do not share whole route layouts.
 
-`www.vela.space` is editorial: paper ground, near-black type, serif display
-and body, one gold accent. `app.vela.space` is the Observatory: sans and mono
-only, denser, closer to a repository interface.
+The internal registry in `packages/ui/registry.json` is another representation
+of the same source, not another implementation or public product. Its contract
+is in [`docs/design-system.md`](docs/design-system.md).
 
-They share the mechanism — Tailwind v4, shadcn primitives, the token bridge —
-and keep separate `components/ui` copies and separate type systems. Neither
-is a skin of the other.
+## Two registers
 
-## Type
+### Editorial
 
-Four roles, each with one job.
+`www.vela.space` is the authored register: paper and midnight grounds,
+Zodiak display, Gambetta body, Switzer metadata, and IBM Plex Mono for exact
+values. Its rhythm is spacious and asymmetric. Figures carry arguments.
 
-- **Zodiak** — display. High-contrast serif; sits at weight 400 because it
-  thickens fast, and sets wider than most faces, so check line counts after
-  any size change.
-- **Gambetta** — body and captions. Old-style numerals in prose, so dates sit
-  inside the line instead of shouting.
-- **Switzer** — metadata: wordmark, nav, eyebrows, diagram labels.
-- **IBM Plex Mono** — identifiers, roots, commands, exact numbers. Lining
-  numerals.
+### Product
 
-Newsreader and Inter may not return; two CI gates fail if either name appears
-in a generated stylesheet or a delivered font profile.
+`app.vela.space` is the instrument register: neutral light-first surfaces,
+Geist for interface text, IBM Plex Mono for identifiers and exact values,
+compact controls, and dense but readable ledgers. Dark mode is equivalent, not
+a separate aesthetic.
 
-## Layout
+The registers share the sail, state semantics, token source, accessible
+interaction, and exact data. They do not make the editorial site look like a
+dashboard or the Observatory look like an essay.
 
-The editorial reading surface is one column, with a section rail added when
-there is genuinely room for both. Prose stays between roughly 45 and 78
-characters a line — measure it with the real font rather than estimating, and
-be suspicious of any width where the column gets *narrower* as the window
-gets wider.
+## Token and style rules
 
-Figures have four width tiers: `column` (the prose measure), `wide` (48rem),
-`page` (64rem), `screen` (88rem, inset). Anything above `column` breaks out
-centred on the reading axis, which is not the viewport axis when a rail is
-present — a viewport-width guard alone will let a figure overhang.
+- Edit core values in `packages/brand/vela.tokens.json`, then regenerate.
+  Never copy brand values into prose documentation or route CSS.
+- `packages/ui/src/styles/product.css` owns the shadcn semantic bridge and
+  product theme profile.
+- Each application `globals.css` is an integration layer: imports, Tailwind
+  theme mapping, base typography, accessibility, print, and cross-route rules.
+  Route-specific presentation belongs beside its component.
+- Use semantic variables and utilities. Raw colors are reserved for token
+  definitions and derived data visualizations with an explicit legend.
+- Status always combines text with shape or icon and color. Verification must
+  never resemble scientific acceptance.
+- IBM Plex Mono is limited to roots, identifiers, commands, and exact tabular
+  values.
 
-Captions read `Fig. NN. Title. Explanation.` below the visual, never inside
-it. Depth is atmospheric: hairlines, paper, small opacity shifts. Sharp
-corners, no cards, no glass, no heavy shadows.
+## Components and compositions
 
-## The figure kit
+Generic interaction comes from official shadcn/Base UI source in `@vela/ui`:
+buttons, fields, dialogs, sheets, sidebar, command, selection, table,
+disclosure, tooltip, focus, and keyboard behavior.
 
-One vocabulary across every drawing, so a mark means the same thing wherever
-it appears:
+Vela-owned shared components are limited to stable scientific presentation
+semantics such as status, exact values, copy feedback, and bounded mathematical
+text. Shells, domain columns, source filters, graph controllers, reading rails,
+and authored figures stay with the application that owns them.
 
-- filled disc — a state something has reached
-- ring — a claim, not yet judged
-- dashed ring — open; nothing is there yet
-- gold stroke — the route that carries standing forward
-- plain stroke — a leg into a decision nobody has made
-- dashed stroke — a leg that has not happened
-- seam or cross — a conflict, never colour alone
+Tailwind Plus is licensed for use in this private repository. Its application
+and editorial patterns may be adapted where they improve a real surface.
+Adaptations must retain provenance, use the shared token system, and converge
+on shadcn/Base UI behavior instead of introducing Headless UI, Heroicons,
+Motion, or a second component suite by accident. One-off adaptations remain
+app-local; stable cross-app compositions may enter the internal registry.
 
-Three stroke weights: 1px structure, 2px trajectory, 3.5px for the single
-gold hero stroke.
+## Scientific visual language
 
-The rule that matters more than any of these: **every mark must decode to
-something real.** If a star, a line, or a field stands for nothing in the
-data, cut it. Derive geometry from the record where you can, so the drawing
-cannot disagree with the numbers beneath it.
+Use one small vocabulary across diagrams:
 
-Follow the Cajal standard otherwise — maximise data-ink, annotate directly on
-the drawing, name real studies and communities, give every quantity a
-yardstick. There is no label ceiling; captions carry argument, not decoding
-instructions the drawing could have carried itself.
+- filled disc — a state reached;
+- ring — a claim not yet judged;
+- dashed ring — an open or absent state;
+- gold stroke — the route carrying standing or direction forward;
+- plain stroke — a recorded relationship;
+- dashed stroke — a relationship not yet realized;
+- seam or cross — conflict, never communicated by color alone.
 
-## Motion
+Every mark must decode to a real record or relationship. Derive geometry and
+counts from rooted data where possible. Graph location, visual weight, and
+search rank never imply authority.
 
-Four durations — 160ms feedback, 240ms state change, 420ms draws, 900ms
-arrivals — and two curves, `--ease` and `--ease-arrive`. Painted plates may
-take 1100ms.
+Figures maximize data-ink, annotate directly, and include a caption below the
+visual. A complex visual must have a text or ledger equivalent.
 
-Stagger belongs at the feedback tier. Offsets compound: a stagger underneath
-a delay underneath a duration is how a two-second wait happens by accident.
-Time the result and read the number.
+## Layout, motion, and accessibility
 
-Prose never animates in. Honour `prefers-reduced-motion` everywhere: drop the
-stagger, never the state.
-
-## Floors
-
-These are not preferences, and each is measurable:
-
-- Text clears 4.5:1, or 3:1 at 24px and above. Composite alpha against the
-  *resolved* ground — a gradient surface leaves `backgroundColor`
-  transparent and will read as white-on-white if you let it.
-- SVG labels render at 12px or larger at every viewport. Below 680px switch
-  to an authored phone canvas; redraw the geometry rather than shrinking a
-  desktop drawing into texture.
-- Every figure reads complete at rest. Nothing important may depend on
-  JavaScript, an observer, or a hover.
-- No horizontal scroll at any width from 320px up.
-- One visible focus indicator wherever a keyboard can land. A custom
-  indicator is fine; no indicator is not.
+- Editorial prose stays within a readable measure; wide figures break out from
+  the reading axis, not blindly from the viewport.
+- Product pages use open tables and item groups before card grids. Cards are
+  for independently selectable records or overlays and are never nested.
+- UI feedback lasts 120–180ms. Authored state transitions may use 240ms;
+  evidence-path drawings 420ms; rare editorial arrivals 900ms.
+- Animate opacity or transform for controls. Prose never animates into
+  readability.
+- Honor `prefers-reduced-motion`, forced colors, keyboard navigation, and 200%
+  zoom.
+- Text clears WCAG contrast. Focus is visible immediately. No core content
+  depends on hover, JavaScript arrival, or horizontal scrolling.
+- At narrow widths, recompose diagrams and ledgers instead of shrinking a
+  desktop canvas into texture.
 
 ## Avoid
 
-Generic SaaS framing on reading pages. Dark-neon AI aesthetics, gradient
-text, glassmorphism, icon-card grids. Decorative star fields standing in for
-relationships. Captions inside SVGs. Essay typography leaking into figure
-labels. Em-dash-heavy or grandiose copy.
+- Generic admin-dashboard metrics as the primary hierarchy
+- Decorative stars, orbital lines, or space imagery without data meaning
+- Dark-neon AI styling, glass, glow, gradient text, or fake depth
+- Parallel primitive libraries, token palettes, icon systems, or global CSS
+  vocabularies
+- Repeated authority explanations and manually copied release facts
+- Hiding exact state instead of progressively disclosing it
 
-When something feels flat, add real content or better composition. Not
-decoration.
+When a surface feels flat, improve the evidence, hierarchy, or composition.
+Do not add decoration.

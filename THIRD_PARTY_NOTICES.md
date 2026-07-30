@@ -1,9 +1,10 @@
 # Third-party notices
 
-This site uses the following open-source software and fonts:
+This site uses the following third-party software, fonts, and licensed design
+references:
 
-- Astro, GSAP, Three.js, and other JavaScript dependencies under the licenses
-  recorded in their packages and lockfile.
+- Next.js, React, Tailwind CSS, shadcn, Base UI, and other JavaScript
+  dependencies under the licenses recorded in their packages and lockfile.
 - `react-activity-calendar` 3.2.1 under the MIT License. It renders the rooted
   Observatory run calendar; its npm integrity is
   `sha512-FcdwCu7V0XzGfx3MNQ7qFuIA0IGnJ0yPu46jvDjfA33OlqIkcth096Mdpl1exR3HwLv2nbK2yJAKyBqdzk4DHw==`.
@@ -15,6 +16,11 @@ This site uses the following open-source software and fonts:
   Font License, which permits commercial use and self-hosting of the web font
   files. They ship as their variable masters. They replaced Newsreader and
   Inter on 2026-07-27.
+- Tailwind Plus under a purchased commercial license. Selected source and
+  adaptations may form part of this private Vela end product and are recorded
+  in `docs/editorial-references.md` or nearby provenance. They are not
+  redistributed separately as templates, a UI library, or a public registry;
+  source access remains within the licensed person or team.
 
 Images under `public/images/` and vector diagrams under `public/svgs/` are
 original project assets unless a nearby source note says otherwise. The July

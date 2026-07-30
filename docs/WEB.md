@@ -22,14 +22,21 @@ Server Actions, request-scoped cookies or headers, authentication, mutation
 handlers, and arbitrary request-time fetches. The only Route Handlers are
 exact-root, same-origin reads for normalized search documents and graph slices.
 
-The repository is a Bun workspace with four maintained boundaries:
+The repository is a Bun workspace with five maintained boundaries:
 
 ```text
 apps/www                editorial Next.js application (static export)
 apps/observatory        read-only Next.js application
 packages/brand          governed identity, tokens, fonts, and delivery assets
+packages/ui             shared shadcn/Base UI source and Vela presentation semantics
 packages/frontier-data  Git-to-Neon projection, validation, search, and manifests
 ```
+
+`packages/brand` is framework-neutral. `packages/ui` is private React source
+shared by eligible interactions in the two applications and future private
+Vela applications. Route composition stays app-local. The internal registry is
+product-bound and is never published as a separate UI library; see
+[`design-system.md`](design-system.md).
 
 The whole ecosystem follows one path:
 
@@ -134,7 +141,7 @@ database in the `vela-observatory-projection` Neon project:
 
 ```bash
 bun packages/frontier-data/scripts/refresh-neon-projection.mjs
-bun run db:migrate:check
+bun run db:check
 bun run projection:verify
 ```
 
@@ -207,40 +214,31 @@ disposable read model. The `@vela/frontier-data` projector is its only writer, a
 Observatory receives a SELECT-only role scoped to the normalized projection.
 
 The credential contract is intentionally closed: application reads and checks
-use only `VELA_PROJECTION_DATABASE_URL`; migration apply, refresh, activation,
-and pruning use only `VELA_PROJECTION_WRITER_DATABASE_URL`. Generic
-`DATABASE_URL` fallback and reader-as-writer fallback are unsupported. Neon
-branches do not represent releases: `main` is the only permanent branch,
-release-scoped rows provide rollback, and CI or migration rehearsal branches
-are disposable and time-bounded.
-
-The empty archived `event-first-hub-cutover` branch was deleted on 2026-07-22
-after explicit approval. The unused Neon-managed `observatory_reader` login was
-deleted after its grants and ownership were proven empty. A local,
-credential-free `NOLOGIN` placeholder with no inheritance, database creation,
-or role creation privilege retains that exact name only so the immutable
-`0002_observatory_reader` migration still replays. The `v0-370-read-model`
-rehearsal branch was deleted after the `v0.420.4` projection activation was
-verified. Neon now has no permanent branch other than `main`.
+use only `VELA_PROJECTION_DATABASE_URL`; explicit schema sync, projection
+refresh, and pruning use only `VELA_PROJECTION_WRITER_DATABASE_URL`. Generic
+`DATABASE_URL` fallback and reader-as-writer fallback are unsupported. The Neon
+project has one branch, `main`. Release-scoped rows and `current_release`
+provide exact data identity and rollback without mapping application releases
+onto database branches.
 
 Those two URLs are the complete secret inventory for database access. The
-reader password is validated from the reader URL when provisioning the fixed
-`observatory_projection_reader` role; it is not stored as a third duplicate
-secret.
+fixed `observatory_projection_reader` role is managed directly in Neon and is
+not recreated during CI or scheduled refreshes.
 
-`packages/frontier-data/migrations/` owns the idempotent schema. CI creates a
-disposable Neon branch, checks the current schema and preserved legacy reader,
-rehearses migration from an empty `observatory` schema, rebuilds the complete
-projection, proves a failed candidate cannot move `current_release`, and then
-deletes the branch. The branch also expires after six hours if GitHub cleanup
-cannot run. Pull requests, including Dependabot, run the no-secret static
-contracts; only trusted main, release-candidate tag, or manual runs receive
-projection credentials. A changed refresh inserts a complete candidate,
-recomputes row roots and corpus counts, and only then atomically moves
-`current_release`. An unchanged refresh retains the current release root and
-skips deployment. Failed refreshes leave the prior head unchanged. Structural
-ranking is stored separately as non-authoritative `structural_advice`; it never
-defines graph membership or producer work.
+`packages/frontier-data/schema.sql` is the one idempotent desired-state schema.
+Apply iterative schema changes directly to Neon `main`, then mirror the exact
+desired state in that file. `bun run db:sync` remains an explicit
+schema-reconciliation command; it is not a recurring workflow step.
+`bun run db:check` verifies the required tables, indexes, and SELECT-only
+application role without writing. CI never creates or mutates a Neon branch:
+pull requests run no-secret static contracts, while trusted main and
+release-candidate runs verify the fixed read-only projection. A scheduled
+refresh inserts a complete candidate into `main`, recomputes row roots and
+corpus counts, and only then atomically moves `current_release`. An unchanged
+refresh retains the current release root and skips deployment. Failed
+refreshes leave the prior head unchanged. Structural ranking is stored
+separately as non-authoritative `structural_advice`; it never defines graph
+membership or producer work.
 
 ### Historical publication-facts experiment
 
@@ -295,7 +293,7 @@ only `VELA_PROJECTION_DATABASE_URL`; do not source an entire Vercel environment
 file, because production-only identity variables intentionally activate stricter
 manifest checks. Local development should keep `VERCEL_ENV=development`.
 
-CI additionally runs rooted runtime-route, migration, corpus, boundary, and
+CI additionally runs rooted runtime-route, projection, corpus, boundary, and
 semantic accessibility checks. Release candidates and design-affecting changes
 run the documented Codex in-app Browser matrix at the supported mobile, tablet,
 and desktop widths. Stale screenshot binaries are not treated as product truth.
