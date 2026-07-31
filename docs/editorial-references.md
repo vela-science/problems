@@ -32,3 +32,15 @@ publication shelf. A generated atmospheric background would be decorative,
 would compete with exact scientific objects, and would introduce an unrelated
 image language. Future image generation is reserved for a named missing asset
 with a structural job, not generic mood or filler.
+
+**Amended 2026-07-31.** The `/constellations` opening now carries a drawn
+sky behind the title (`components/essay/hero-sky.tsx`). The 0.410.0
+finding stands as written and this does not overturn it: nothing here is
+generated, and it is not a background image. It is authored SVG in the
+essay's own hairline vocabulary, seeded so it is identical between
+builds, and it exists because the opening had a real compositional
+problem — the title, and an illustration of a sky under it, with the
+whole upper right of the first screen empty. It shares the register of
+the painting it sits above rather than introducing a second image
+language. The rule it is held to is in DESIGN.md: behind the type, no
+labels, no quantities, does not print, and never mistakable for a figure.

@@ -8,8 +8,15 @@ The governing idea is **direction through evidence**.
 
 - The sail represents movement from recorded state toward a bounded next
   direction.
-- A constellation represents real relationships among records, never a
-  decorative star field.
+- In a figure, a constellation represents real relationships among
+  records. Every mark in a figure decodes to something a reader can
+  check.
+- Atmosphere is not a figure and is not held to that rule. An editorial
+  surface may carry a drawn sky whose job is the register of the page —
+  the opening of `/constellations` is one. It stays behind the type at
+  hairline weights, carries no labels, claims no quantities, and does not
+  print. A reader must never have to ask whether it is data. When in
+  doubt, it is not atmosphere, it is a figure, and it decodes.
 - Space is expressed through scale, quiet, contrast, and orientation, not
   neon, particles, glow, or generic science-fiction styling.
 - Gold marks direction and provenance. It is not a general highlight color.
@@ -127,12 +134,16 @@ visual. A complex visual must have a text or ledger equivalent.
 ## Avoid
 
 - Generic admin-dashboard metrics as the primary hierarchy
-- Decorative stars, orbital lines, or space imagery without data meaning
+- Stars, orbital lines, or space imagery inside a figure without data
+  meaning, or anywhere a reader could mistake them for evidence
 - Dark-neon AI styling, glass, glow, gradient text, or fake depth
 - Parallel primitive libraries, token palettes, icon systems, or global CSS
   vocabularies
 - Repeated authority explanations and manually copied release facts
 - Hiding exact state instead of progressively disclosing it
 
-When a surface feels flat, improve the evidence, hierarchy, or composition.
-Do not add decoration.
+When a surface feels flat, reach for evidence, hierarchy, and composition
+first. They are what usually fix it. Atmosphere is allowed to be the
+answer on an editorial opening, where the register of the page is part of
+what it is saying — but it is the answer least often, and never in place
+of an argument.
