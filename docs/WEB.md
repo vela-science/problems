@@ -329,6 +329,27 @@ The `constellate-dc388081` Vercel team has two Vela Web projects:
 There is no active legacy Vela Vercel project. `prospect` and `snowchild` are
 unrelated and outside this workspace.
 
+### Pushing deploys
+
+A push to `main` deploys. Both `vercel.json` files carried
+`git.deploymentEnabled: false` between 2026-07-28 and 2026-07-31, which is a
+hard off switch — Vercel creates no deployment for any push, on any branch —
+and the effect was invisible rather than loud: `www.vela.space` kept serving
+whichever commit had last been promoted by hand and drifted eighteen hours
+behind `main`. Deployments were still arriving through the projection refresh
+hook, which is why nothing looked broken.
+
+Unnecessary builds are stopped one layer down, by `scripts/vercel-should-build.mjs`
+via `ignoreCommand`. It compares the pushed range against the paths each
+application actually depends on and skips the build when none of them changed,
+which is the difference between not rebuilding and not deploying. The
+Observatory deliberately builds on an exact same-commit comparison, because
+that is how the refresh hook presents itself.
+
+Consequence worth knowing before pushing: `www.vela.space` is a production
+domain on `vela-web-www`, so a merge to `main` reaches it. `AGENTS.md` release
+safety still applies to attaching new domains and tagging final releases.
+
 Public manifests:
 
 - `https://www.vela.space/.well-known/vela-web.json`

@@ -48,12 +48,26 @@ function status(path: string, target: "observatory" | "www", environment: Record
 }
 
 describe("Vercel workspace build selection", () => {
-  test("requires explicit staged release promotion for both public products", () => {
+  /* Git deployments are on, and this asserts they stay on.
+
+     Both applications carried `git.deploymentEnabled: false`, which is a
+     hard off switch: Vercel creates no deployment for any push, on any
+     branch. The effect was that pushing to main did nothing visible —
+     www.vela.space kept serving whichever commit had last been promoted
+     by hand, and drifted eighteen hours behind the branch before anyone
+     noticed. Deployments still happened, but only through the projection
+     refresh hook, which is why the gap was easy to miss.
+
+     The build-selection script below is what stops unnecessary builds.
+     That is the right layer for it: it skips a build when nothing the
+     application depends on changed, rather than refusing to deploy at
+     all. */
+  test("keeps Git deployments enabled for both public products", () => {
     for (const application of ["www", "observatory"]) {
       const config = JSON.parse(
         readFileSync(resolve(import.meta.dir, `../apps/${application}/vercel.json`), "utf8"),
       );
-      expect(config.git).toEqual({ deploymentEnabled: false });
+      expect(config.git?.deploymentEnabled).not.toBe(false);
     }
   });
 
