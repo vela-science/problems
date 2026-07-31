@@ -12,6 +12,21 @@ templates, or visual identities.
 | [Tailwind Plus](https://tailwindcss.com/plus/templates) — licensed 2026-07-28 | `Container`, text roles, `Button` variants, and `PlusGrid` from **Radiant**, adapted into the private www application | Radius pinned to the sanctioned steps, shadow ramp flattened, Headless UI state replaced where shared shadcn/Base UI behavior is sufficient, and `PlusGrid` re-pointed at Vela rules | Radiant's page composition wholesale — bento grids, logo cloud, testimonials, gradient hero — and its Sanity CMS. `AnimatedNumber` was ported and then removed: a spring arriving at an exact count reads as marketing on a page whose claim is exactness |
 | Framer marketplace (Solra and the Documentation category), surveyed 2026-07-28 | Nothing | Nothing | Surveyed and declined. Solra's homepage is Hero → Intro → Features → Trust → Pricing → FAQ → CTA; removing the three sections Vela cannot honestly show leaves Hero → Features → CTA. The 147-template Documentation category and the `science` and `research` searches returned no template in this register |
 
+**Amended 2026-07-31.** A second pass took Radiant's *grammar* rather than
+more of its components: `Container`, the `Eyebrow`/`Heading`/`Lead` type
+roles, a `Section` rhythm and a `BentoCard`-derived `Card` with a graphic
+well, all in `components/editorial/sections.tsx` on Vela tokens and the Vela
+shell. Radiant's page composition stays rejected on the original grounds —
+hero into feature into bento into logo cloud into testimonials into pricing,
+four of which this product cannot fill without inventing claims.
+
+Adopted at the same time, from the repository's own `packages/ui` rather than
+from a template: the official shadcn/Base UI primitives now render this
+application's buttons, badges, sheet, command palette and copy control. `www`
+had carried vendored Tailwind Plus equivalents for all five while
+`apps/observatory` already used the shared library. Protocol remains the
+documentation shell; its search, mobile navigation, tag and button are gone.
+
 The Vela sail, Zodiak/Gambetta/Switzer/IBM Plex Mono typography, Cajal-like scientific
 drawing, exact rooted facts, and authority boundary remain project-owned. New
 references must be added here with a clear adopted/adapted/rejected decision.
