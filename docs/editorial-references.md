@@ -27,6 +27,25 @@ had carried vendored Tailwind Plus equivalents for all five while
 `apps/observatory` already used the shared library. Protocol remains the
 documentation shell; its search, mobile navigation, tag and button are gone.
 
+**Amended 2026-07-31, landing rebuild.** Salient, Primer and Radiant were read
+end to end for the home page and **all three rejected as page compositions**.
+Salient is Hero → Features → CTA → Testimonials → Pricing → FAQs; Primer is
+Hero → Intro → TOC → Testimonial → Screencasts; Radiant adds bento and a logo
+cloud. Every one is built to sell a product to many buyers using social proof,
+and four of those section types cannot be filled here without inventing claims.
+
+What replaced them is not another template but the product's own material,
+read out of the protocol repository: the tagline the README and `vela --help`
+both carry, the install line, the six-verb loop from `docs/TERMINOLOGY.md`, the
+"Required distinctions" block, and the boundary summary table from
+`paper/vela.md`. The reference class for a page like this is
+developer-infrastructure documentation, not a marketing template — lead with
+the claim, the install command and the real commands; differentiate with a
+comparison the project already wrote; close on what is not established.
+
+`docs/TERMINOLOGY.md` is an enforced dictionary with a banned list, so landing
+copy is quoted rather than paraphrased and is checked against that list.
+
 The Vela sail, Zodiak/Gambetta/Switzer/IBM Plex Mono typography, Cajal-like scientific
 drawing, exact rooted facts, and authority boundary remain project-owned. New
 references must be added here with a clear adopted/adapted/rejected decision.
