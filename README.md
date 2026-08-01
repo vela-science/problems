@@ -37,15 +37,15 @@ scientific state.
 Vela follows one product story:
 
 ```text
-produce  →  preserve  →  check  →  decide  →  reuse
-workbench   frontier Git   Vela     signed       read-only readers
-or Canopus  repository     replay   authority    and downstream work
+map -> target -> work -> submit -> verify -> decide -> remap
 ```
 
-Any suitable research tool may produce. Canopus supplies optional producer
-scaffolding. A canonical Frontier Git repository preserves the work, the
-released Vela binary checks and replays it, and an authorized repository
-Decision controls Standing. Vela Web serves the final reuse step.
+Any native human or machine workbench may do the work. The canonical Frontier
+Git repository preserves exact Submissions and scoped Verification evidence.
+Neither production nor Verification changes Standing. Only an authorized
+human Decision in that named Frontier changes Standing; deterministic replay
+derives the successor state and exact next Target. Vela Web provides the
+read-only map and review surfaces.
 
 ```text
 canonical frontier Git repositories

@@ -41,16 +41,14 @@ product-bound and is never published as a separate UI library; see
 The whole ecosystem follows one path:
 
 ```text
-produce       preserve       check       decide                 reuse
-workbench  →  frontier Git  →  Vela  →  signed policy or human  →  Web
-Canopus       canonical      replay      protected approval     readers
-(optional)
+map -> target -> work -> submit -> verify -> decide -> remap
 ```
 
-Canopus is optional producer scaffolding. The frontier Git repository remains
-canonical. Released Vela performs checks and replay. Authority stays with
-signed policy or a protected human decision. Web owns only explanation and
-read-only reuse.
+Native research tools and external harnesses remain replaceable. The Frontier
+Git repository is canonical. Vela binds exact Submissions and scoped
+Verification evidence, but neither changes Standing. Only an authorized human
+Decision in that named Frontier changes Standing; replay derives the successor
+state and next Target. Web owns only read-only explanation, review, and reuse.
 
 The editorial application owns one current route vocabulary:
 
