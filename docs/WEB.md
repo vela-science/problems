@@ -167,7 +167,7 @@ new projection root.
 
 The Observatory reads Neon at build. `apps/www` does not: it is a static export
 and reads one committed file,
-`packages/frontier-data/config/editorial-summary.v2.json`, so the editorial site
+`packages/frontier-data/config/editorial-summary.v3.json`, so the editorial site
 builds with no database credential at all.
 
 That file is the only projection data the public editorial site serves, which
@@ -343,7 +343,7 @@ Public manifests:
 The manifests use `vela.web-deployment.v3` and `vela.site-deployment.v4`; each
 records the exact Git commit, brand schema/root, deployment
 identity, and delivery mode. The Observatory manifest additionally embeds
-`vela.observatory-release-manifest.v8` over `observatory.v7`, including
+`vela.observatory-release-manifest.v9` over `observatory.v8`, including
 normalized Claim, Submission, Proposal, Verification, review, work,
 search, graph, authority, and source-root identities. Repository authority is
 read-only product evidence: the projection may expose public keys, signed
