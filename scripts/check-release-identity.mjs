@@ -71,7 +71,7 @@ export function checkReleaseIdentity(repository) {
     }
   }
 
-  return { ok: true, schema: "vela.web-release-identity.v2", version, tag: `v${version}` };
+  return { ok: true, schema: "vela.web-release-identity.v2", version };
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {

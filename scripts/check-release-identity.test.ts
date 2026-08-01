@@ -46,13 +46,12 @@ function patch(root: string, path: string, edit: (manifest: Record<string, unkno
 }
 
 describe("one Web release identity", () => {
-  test("reports the root version and its derived tag", () => {
+  test("reports the one root version without inventing a release tag", () => {
     const version = JSON.parse(readFileSync(resolve(repository, ROOT), "utf8")).version;
     expect(checkReleaseIdentity(repository)).toEqual({
       ok: true,
       schema: "vela.web-release-identity.v2",
       version,
-      tag: `v${version}`,
     });
   });
 

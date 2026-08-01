@@ -1,6 +1,7 @@
 import { gzipSync } from "node:zlib";
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { resolve } from "node:path";
+import { parseEnv } from "node:util";
 import {
   observatoryProjectionManifest,
   graphRead,
@@ -10,6 +11,13 @@ import {
 const repository = resolve(import.meta.dirname, "..");
 const observatory = resolve(repository, "apps/observatory");
 const editorial = resolve(repository, "apps/www");
+const localEnvironment = resolve(observatory, ".env.local");
+if (!process.env.VELA_PROJECTION_DATABASE_URL && existsSync(localEnvironment)) {
+  const localProjection = parseEnv(
+    readFileSync(localEnvironment, "utf8"),
+  ).VELA_PROJECTION_DATABASE_URL;
+  if (localProjection) process.env.VELA_PROJECTION_DATABASE_URL = localProjection;
+}
 const scope = process.env.VELA_BUDGET_SCOPE ?? "all";
 if (scope !== "all" && scope !== "observatory") throw new Error(`unknown budget scope ${scope}`);
 

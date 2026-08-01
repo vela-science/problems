@@ -85,9 +85,6 @@ jobs:
       - name: Install released Vela verifier
         run: bun run install:vela:linux
 
-      - name: Install reviewed consumer trust pins
-        run: bun run --filter @vela/frontier-data trust:install
-
       - name: Verify current main projection
         run: bun run db:check && bun run projection:verify
 

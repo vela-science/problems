@@ -355,8 +355,8 @@ Public manifests:
 - `https://www.vela.space/.well-known/vela-web.json`
 - `https://app.vela.space/.well-known/vela-site.json`
 
-The manifests use `vela.web-deployment.v2` and `vela.site-deployment.v3`; each
-records the exact release tag, Git commit, brand schema/root, deployment
+The manifests use `vela.web-deployment.v3` and `vela.site-deployment.v4`; each
+records the exact Git commit, brand schema/root, deployment
 identity, and delivery mode. The Observatory manifest additionally embeds
 `vela.observatory-release-manifest.v7` over `observatory.v6`, including
 normalized Claim, Submission, Registration, Verification, review, work,
@@ -367,12 +367,11 @@ authentication context, a decision control, or an authority operation. A
 production release is incomplete until its deployed manifest matches the
 approved tag, commit, and activated projection exactly.
 
-None of that identity is set by hand. The tag is derived from the root
-`package.json` version — the only place a version lives — and the commit and
-deployment id come from `VERCEL_GIT_COMMIT_SHA` and `VERCEL_DEPLOYMENT_ID`,
+None of that identity is set by hand. The root `package.json` is the only place
+a version lives; commit and deployment id come from `VERCEL_GIT_COMMIT_SHA` and `VERCEL_DEPLOYMENT_ID`,
 which `deploymentIdentity()` reads directly and which a production build
-refuses to go without. An ordinary preview may deploy an untagged commit; a
-released composition must bump the root version and cut the matching tag.
+refuses to go without. Git tags remain useful release pointers, but deployment
+truth is the exact commit rather than a tag inferred from a version string.
 `scripts/check-deployed-manifest.mjs` confirms that the deployed bytes identify
 the exact repository commit and projection root.
 
