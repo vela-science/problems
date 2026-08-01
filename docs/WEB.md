@@ -133,31 +133,13 @@ reskinned.
 ## Exact frontier state
 
 `packages/frontier-data/src/registry.ts` is the typed registry for the four
-canonical Git repositories. One manually triggered GitHub workflow first
-binds itself to the exact deployed Observatory commit, then checks out clean
-`origin/main` Frontier tips, verifies them with the pinned Vela release, and
-writes a content-addressed normalized read model to the `vela_observatory`
+canonical Git repositories. One manually triggered GitHub workflow checks out
+clean `origin/main` Frontier tips, verifies them with the pinned Vela release,
+and writes a content-addressed normalized read model to the `vela_observatory`
 database in the `vela-observatory-projection` Neon project:
 
 ```bash
-adapter_directory="$(mktemp -d)/source-adapters"
-bun packages/frontier-data/scripts/source-adapters.mjs refresh \
-  --frontier-root "$VELA_FRONTIERS_ROOT" \
-  --output "$adapter_directory" \
-  --artifact-directory "$(dirname "$adapter_directory")" \
-  | tee /tmp/vela-source-adapters.json
-adapter_json="$(tail -n 1 /tmp/vela-source-adapters.json)"
-chmod -R a-w "$adapter_directory"
-export VELA_SOURCE_ADAPTER_ARTIFACT="$(jq -r '.artifact_path' <<<"$adapter_json")"
-
-candidate="$(
-  VELA_PROJECTION_DRY_RUN=1 \
-    bun packages/frontier-data/scripts/refresh-neon-projection.mjs
-)"
-export VELA_EXPECTED_PROJECTION_ROOT="$(jq -r '.release_root' <<<"$candidate")"
-export VELA_EXPECTED_SOURCE_ADAPTER_SET_ROOT="$(
-  jq -r '.source_adapter_set_root' <<<"$candidate"
-)"
+bun run db:sync
 bun packages/frontier-data/scripts/refresh-neon-projection.mjs
 bun run db:check
 bun run projection:verify
@@ -165,10 +147,10 @@ bun run projection:verify
 
 Refresh refuses dirty or unpushed sources, wrong branches or remotes, Vela
 version or released-binary-byte drift, packet drift, missing decision evidence,
-incomplete reviews, and root disagreement. Every write requires both roots from
-a prior dry-run over the same verified, read-only adapter set; a direct write
-cannot silently reacquire mutable upstreams. The writer is available only to
-the refresh workflow. The
+incomplete reviews, and root disagreement. It acquires each source once, builds
+one candidate, inserts it in one transaction, verifies every stored table root,
+and only then moves `current_release`. A failure leaves the prior release
+current. The writer is available only to the refresh workflow. The
 Vercel application receives the native PostgreSQL role
 `observatory_projection_reader`; it does not inherit Neon's managed
 `neon_superuser` role and has schema `USAGE` plus table `SELECT` only. Production
@@ -177,11 +159,9 @@ also uses a read-only compute endpoint.
 Rebuilding unchanged source facts is a no-op. Observation time, activation
 time, and a newly computed candidate root do not create another retained
 release when the read-model schema, Vela binary, source Frontier identities,
-table roots, and source roots are identical. A changed release is deployed
-only from the exact application commit already identified by the production
-manifest. The workflow verifies the expected projection root from the live
-manifest after the deploy hook, so an ambiguous hook timeout is not treated as
-either success or failure by itself.
+table roots, and source roots are identical. After activation, the workflow
+deploys the current application and verifies that production serves the exact
+new projection root.
 
 ### The editorial snapshot
 
@@ -208,7 +188,7 @@ Three things now prevent that recurring:
 - `packages/frontier-data/tests/editorial-summary.test.ts` runs the generator
   against a status shaped like the one the emitter publishes today and asserts
   the output satisfies the schema. It needs no database, so it runs in CI.
-- The scheduled refresh regenerates and commits the snapshot
+- The manual refresh regenerates and commits the snapshot
   (`.github/workflows/refresh-projection.yml`). Before this it refreshed Neon
   and redeployed the Observatory only, which is precisely how www's numbers
   froze while the Observatory's stayed current.
@@ -248,8 +228,8 @@ not recreated during CI or scheduled refreshes.
 
 `packages/frontier-data/schema.sql` is the one idempotent desired-state schema.
 Apply iterative schema changes directly to Neon `main`, then mirror the exact
-desired state in that file. `bun run db:sync` remains an explicit
-schema-reconciliation command; it is not a recurring workflow step.
+desired state in that file. `bun run db:sync` is the idempotent first step of
+the manual refresh.
 `bun run db:check` verifies the required tables, indexes, and SELECT-only
 application role without writing. CI never creates or mutates a Neon branch:
 pull requests run no-secret static contracts, while trusted main and
