@@ -47,6 +47,13 @@ function status(path: string, target: "observatory" | "www", environment: Record
   return spawnSync("bun", [script, target], { cwd: path, env: { ...inherited, ...environment } }).status;
 }
 
+function equivalent(path: string, target: "observatory" | "www", previous: string, current: string) {
+  return spawnSync("bun", [script, target, "--equivalent", previous, current], {
+    cwd: path,
+    env: process.env,
+  }).status;
+}
+
 describe("Vercel workspace build selection", () => {
   /* Git deployments are on, and this asserts they stay on.
 
@@ -113,6 +120,18 @@ describe("Vercel workspace build selection", () => {
     commit(path, "apps/www/app.ts", "two\n");
     const current = execFileSync("git", ["rev-parse", "HEAD"], { cwd: path, encoding: "utf8" }).trim();
     expect(status(path, "www", { VERCEL_GIT_PREVIOUS_SHA: previous, VERCEL_GIT_COMMIT_SHA: current })).toBe(1);
+  });
+
+  test("compares an application surface independently of unrelated commits", () => {
+    const path = repository();
+    const deployed = execFileSync("git", ["rev-parse", "HEAD"], { cwd: path, encoding: "utf8" }).trim();
+    commit(path, "apps/www/app.ts", "two\n");
+    const editorial = execFileSync("git", ["rev-parse", "HEAD"], { cwd: path, encoding: "utf8" }).trim();
+    expect(equivalent(path, "observatory", deployed, editorial)).toBe(0);
+    expect(equivalent(path, "www", deployed, editorial)).toBe(1);
+    commit(path, "packages/frontier-data/src/index.ts", "two\n");
+    const shared = execFileSync("git", ["rev-parse", "HEAD"], { cwd: path, encoding: "utf8" }).trim();
+    expect(equivalent(path, "observatory", deployed, shared)).toBe(1);
   });
 
   test("rebuilds the Observatory for a same-commit projection hook", () => {

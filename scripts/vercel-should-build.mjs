@@ -37,8 +37,27 @@ function git(args) {
   return execFileSync("git", args, { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
 }
 
+function changedPaths(previous, current) {
+  git(["cat-file", "-e", `${previous}^{commit}`]);
+  git(["cat-file", "-e", `${current}^{commit}`]);
+  return git(["diff", "--name-only", previous, current, "--", ...targets[target]])
+    .split("\n")
+    .filter(Boolean);
+}
+
 try {
   git(["rev-parse", "--is-inside-work-tree"]);
+
+  // A data refresh may follow editorial-only commits. Compare the actual
+  // application dependency surface instead of the unrelated monorepo SHA.
+  if (process.argv[3] === "--equivalent") {
+    const previous = process.argv[4];
+    const current = process.argv[5];
+    if (!validCommit(previous) || !validCommit(current) || process.argv.length !== 6) {
+      throw new Error("--equivalent requires two exact commits");
+    }
+    process.exit(changedPaths(previous, current).length === 0 ? 0 : 1);
+  }
   const current = validCommit(process.env.VERCEL_GIT_COMMIT_SHA)
     ? process.env.VERCEL_GIT_COMMIT_SHA
     : git(["rev-parse", "HEAD"]);
@@ -63,11 +82,7 @@ try {
     process.exit(1);
   }
 
-  git(["cat-file", "-e", `${previous}^{commit}`]);
-  git(["cat-file", "-e", `${current}^{commit}`]);
-  const changed = git(["diff", "--name-only", previous, current, "--", ...targets[target]])
-    .split("\n")
-    .filter(Boolean);
+  const changed = changedPaths(previous, current);
 
   // Vercel's ignore command skips a build on zero and builds on one.
   process.exit(changed.length === 0 ? 0 : 1);
