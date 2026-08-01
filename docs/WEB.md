@@ -133,7 +133,7 @@ reskinned.
 ## Exact frontier state
 
 `packages/frontier-data/src/registry.ts` is the typed registry for the four
-canonical Git repositories. A three-hourly or manual GitHub workflow first
+canonical Git repositories. One manually triggered GitHub workflow first
 binds itself to the exact deployed Observatory commit, then checks out clean
 `origin/main` Frontier tips, verifies them with the pinned Vela release, and
 writes a content-addressed normalized read model to the `vela_observatory`
@@ -141,12 +141,14 @@ database in the `vela-observatory-projection` Neon project:
 
 ```bash
 adapter_directory="$(mktemp -d)/source-adapters"
-bun run sources:prepare -- \
+bun packages/frontier-data/scripts/source-adapters.mjs refresh \
   --frontier-root "$VELA_FRONTIERS_ROOT" \
-  --output "$adapter_directory"
-bun run sources:verify-set -- "$adapter_directory/source-adapters.json"
+  --output "$adapter_directory" \
+  --artifact-directory "$(dirname "$adapter_directory")" \
+  | tee /tmp/vela-source-adapters.json
+adapter_json="$(tail -n 1 /tmp/vela-source-adapters.json)"
 chmod -R a-w "$adapter_directory"
-export VELA_SOURCE_ADAPTER_SET="$adapter_directory/source-adapters.json"
+export VELA_SOURCE_ADAPTER_ARTIFACT="$(jq -r '.artifact_path' <<<"$adapter_json")"
 
 candidate="$(
   VELA_PROJECTION_DRY_RUN=1 \
