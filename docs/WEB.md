@@ -244,6 +244,25 @@ refreshes leave the prior head unchanged. Structural ranking is not persisted
 as a second projection layer; producer work comes from the exact Target Index,
 while graph position remains non-authoritative.
 
+Clean-room reconstruction is local and disposable. It does not create a Neon
+branch or touch production:
+
+```bash
+bun run projection:reconstruct \
+  --frontier-root /path/to/frontier-checkouts \
+  --vela /path/to/the-recorded-vela-binary \
+  --source-adapter-artifact /path/to/the-recorded-adapter-artifact \
+  --output /tmp/vela-atlas-clean-room.json
+```
+
+The command creates two empty temporary PostgreSQL clusters, applies the one
+desired-state schema, reconstructs and verifies the release twice, checks the
+SELECT-only reader boundary, and then removes both clusters. It reads the
+production manifest only to compare table roots, Frontier inputs, and source
+registry identity. A macOS reconstruction and the Linux production build have
+different release roots because the released platform binary is part of the
+release identity; their projected table roots must still be identical.
+
 ### Historical publication-facts experiment
 
 The source-local `site.frontier-publication-facts.v1` experiment is frozen at

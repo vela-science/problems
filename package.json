@@ -33,6 +33,7 @@
     "db:check": "bun run --filter @vela/frontier-data db:check",
     "db:sync": "bun run --filter @vela/frontier-data db:sync",
     "projection:snapshot": "bun run --filter @vela/frontier-data projection:snapshot",
+    "projection:reconstruct": "bun run --filter @vela/frontier-data reconstruct --",
     "projection:verify": "bun run --filter @vela/frontier-data verify",
     "sources:refresh": "bun run --filter @vela/frontier-data sources:refresh",
     "sources:verify": "bun run --filter @vela/frontier-data sources:verify",
