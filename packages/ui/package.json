@@ -16,8 +16,7 @@
     "./product.css": "./src/styles/product.css"
   },
   "scripts": {
-    "check": "bunx shadcn@4.13.1 diff && bun scripts/check-registry.mjs && bun run typecheck",
-    "check:registry": "bun scripts/check-registry.mjs",
+    "check": "bunx shadcn@4.13.1 diff && bun run typecheck",
     "test": "bun test tests",
     "typecheck": "tsc --noEmit"
   },

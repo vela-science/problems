@@ -42,13 +42,10 @@ when they were written. Do not mechanically rewrite them.
   the Sigma instrument, and authored editorial figures.
 - Do not create a second primitive layer, app-local `components/ui`, copied
   token palette, or parallel icon library.
-- The internal registry at `packages/ui/registry.json` inventories approved
-  Vela source for this private workspace and future private Vela applications.
-  It is not an installer, public package, or public component service.
 - Licensed Tailwind Plus source may be adapted inside this private repository.
   Record the source and license, normalize interaction through shadcn/Base UI,
-  and keep one-off compositions app-local. Promote a composition into the
-  internal registry only after it is stable and reused.
+  and keep one-off compositions app-local. Move a composition into `@vela/ui`
+  only after it is stable and reused.
 - Keep global styles to Tailwind imports, token/profile bridges, base
   typography, accessibility, print, and true cross-route requirements.
   Route presentation belongs with the route or component.
@@ -77,7 +74,6 @@ handoff:
 ```bash
 bun install --frozen-lockfile
 bun run check:brand
-bun run check:registry
 bun run check:design-system
 bun run lint
 bun run typecheck

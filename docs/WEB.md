@@ -253,11 +253,14 @@ application role without writing. CI never creates or mutates a Neon branch:
 pull requests run no-secret static contracts, while trusted main and
 release-candidate runs verify the fixed read-only projection. A scheduled
 refresh inserts a complete candidate into `main`, recomputes row roots and
-corpus counts, and only then atomically moves `current_release`. An unchanged
+corpus counts, and only then atomically moves `current_release`. The read
+contract retains only that current release and its two immediate activated
+predecessors; unactivated candidates are disposable and are removed by the
+next prune. An unchanged
 refresh retains the current release root and skips deployment. Failed
-refreshes leave the prior head unchanged. Structural ranking is stored
-separately as non-authoritative `structural_advice`; it never defines graph
-membership or producer work.
+refreshes leave the prior head unchanged. Structural ranking is not persisted
+as a second projection layer; producer work comes from the exact Target Index,
+while graph position remains non-authoritative.
 
 ### Historical publication-facts experiment
 

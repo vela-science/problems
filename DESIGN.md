@@ -38,9 +38,9 @@ composition.
 both Next.js applications and future private Vela applications. Applications
 share primitives and stable semantics; they do not share whole route layouts.
 
-The internal registry in `packages/ui/registry.json` is another representation
-of the same source, not another implementation or public product. Its contract
-is in [`docs/design-system.md`](docs/design-system.md).
+`packages/ui/components.json` is the only shadcn source configuration. Package
+exports are the shared API; Vela does not maintain a second component catalog
+or installable registry.
 
 ## Two registers
 
@@ -93,7 +93,7 @@ and editorial patterns may be adapted where they improve a real surface.
 Adaptations must retain provenance, use the shared token system, and converge
 on shadcn/Base UI behavior instead of introducing Headless UI, Heroicons,
 Motion, or a second component suite by accident. One-off adaptations remain
-app-local; stable cross-app compositions may enter the internal registry.
+app-local; stable cross-app compositions may enter `@vela/ui`.
 
 ## Scientific visual language
 

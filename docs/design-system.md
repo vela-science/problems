@@ -60,29 +60,11 @@ Base UI supplies primitive mechanics. Vela still owns names, descriptions,
 contrast, focus visibility, touch targets, route behavior, and end-to-end
 accessibility.
 
-## Internal registry
+## Shared source boundary
 
-`packages/ui/registry.json` is a private, product-bound source inventory for
-this monorepo and future private Vela applications. It indexes the same files
-exported by `@vela/ui`; it has no installer or distribution endpoint.
-
-It is:
-
-- versioned with `vela-web`;
-- checked for schema, source, and dependency drift;
-- used to reproduce a consistent Vela application foundation;
-- available only to the licensed Vela workspace/team.
-
-It is not:
-
-- a public registry endpoint;
-- a separately published package or UI library;
-- a second implementation;
-- a catalogue of speculative components;
-- an invitation for external consumers to depend on private source.
-
-The current shared Vela semantics are status, exact value and copy feedback,
-and bounded mathematical text. Add another item only when it:
+`@vela/ui` package exports are the shared API. The current shared Vela
+semantics are status, exact value and copy feedback, and bounded mathematical
+text. Add another export only when it:
 
 1. already serves a real Vela product;
 2. expresses a stable cross-application semantic or composition;
@@ -97,7 +79,7 @@ layouts remain app-local until reuse is demonstrated.
 
 The owner has a Tailwind Plus license and the repository is private. Licensed
 components may be copied and modified to build Vela end products, including
-private app-local source and private product-bound registry coordination.
+private app-local source.
 
 The license does not turn Tailwind Plus derivatives into a separately
 redistributable UI library. Therefore:
@@ -107,7 +89,7 @@ redistributable UI library. Therefore:
   published separately from the Vela end product;
 - every adaptation records its source template and the changes made;
 - app-local use is the default;
-- promotion to the internal registry requires real reuse and remains tied to
+- promotion to `@vela/ui` requires real reuse and remains tied to
   this private Vela product;
 - interaction should converge on shadcn/Base UI rather than retaining a
   parallel Headless UI, Heroicons, or Motion layer without a demonstrated need.
@@ -199,7 +181,6 @@ data contracts are domain-specific. It must include an equivalent record view.
 
 ```bash
 bun run check:brand
-bun run check:registry
 bun run check:design-system
 bun run check:tokens
 bun run typecheck
@@ -207,7 +188,7 @@ bun run test
 git diff --check
 ```
 
-The design-system check must fail on primitive registry drift, app-local
+The design-system check must fail on primitive source drift, app-local
 primitive copies, raw palette use outside token sources, internal navigation
 through `window.location`, and unsupported parallel UI packages.
 
