@@ -24,12 +24,13 @@ afterEach(() => {
 });
 
 describe("Observatory read-only boundary", () => {
-  test("allows the exact-root read-only search, graph, and source-registry endpoints", () => {
+  test("allows the live manifest and exact-root read-only data endpoints", () => {
     const root = fixture({
       "apps/observatory/src/app/page.tsx": "export default function Page() { return null; }\n",
       "apps/observatory/src/app/api/search/route.ts": "import { NextResponse } from 'next/server';\nexport async function GET() { return NextResponse.json([]); }\n",
       "apps/observatory/src/app/api/graph/route.ts": "import { NextResponse } from 'next/server';\nexport async function GET() { return NextResponse.json([]); }\n",
       "apps/observatory/src/app/sources.json/route.ts": "import { NextResponse } from 'next/server';\nexport async function GET() { return NextResponse.json([]); }\n",
+      "apps/observatory/src/app/.well-known/vela-site.json/route.ts": "export async function GET() { return Response.json({ authority: 'read_only_projection' }); }\n",
       "apps/observatory/src/lib/search-index.ts": "export function load(projectionRoot) { const params = new URLSearchParams({ root: projectionRoot }); const href = `/api/search?${params}`; return fetch(href, { cache: 'force-cache' }); }\n",
       "apps/observatory/src/lib/graph-client.ts": "export function loadGraph(input) { const params = new URLSearchParams({ root: input.root }); return fetch(`/api/graph?${params}`, { cache: 'force-cache' }); }\n",
     });

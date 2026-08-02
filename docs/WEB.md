@@ -359,7 +359,12 @@ Public manifests:
 
 The manifests use `vela.web-deployment.v3` and `vela.site-deployment.v4`; each
 records the exact Git commit, brand schema/root, deployment
-identity, and delivery mode. The Observatory manifest additionally embeds
+identity, and delivery mode. The editorial manifest is immutable deployment
+output. The Observatory manifest is a non-cached read-only route: it combines
+that deployment's immutable identity with the current Neon projection on every
+request, so a data-only projection activation cannot leave a copied public JSON
+file behind. Ordinary Observatory pages remain bound to the exact retained root
+selected at build time. The Observatory manifest additionally embeds
 `vela.observatory-release-manifest.v9` over `observatory.v8`, including
 normalized Claim, Submission, Proposal, Verification, review, work,
 search, graph, authority, and source-root identities. Repository authority is
@@ -371,8 +376,8 @@ approved tag, commit, and activated projection exactly.
 
 None of that identity is set by hand. The root `package.json` is the only place
 a version lives; commit and deployment id come from `VERCEL_GIT_COMMIT_SHA` and `VERCEL_DEPLOYMENT_ID`,
-which `deploymentIdentity()` reads directly and which a production build
-refuses to go without. Git tags remain useful release pointers, but deployment
+which `deploymentIdentity()` reads directly and which production manifest
+generation refuses to go without. Git tags remain useful release pointers, but deployment
 truth is the exact commit rather than a tag inferred from a version string.
 `scripts/check-deployed-manifest.mjs` confirms that the deployed bytes identify
 the exact repository commit and projection root.
