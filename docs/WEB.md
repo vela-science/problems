@@ -54,7 +54,7 @@ The editorial application owns one current route vocabulary:
 
 ```text
 /                 the chart
-/constellations   Constellations of Borrowed Light
+/constellations   Endless Frontiers
 /docs             the five guides
 /docs/[section]   install · quickstart · produce · review · reproduce
 ```
