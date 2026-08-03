@@ -253,6 +253,12 @@ bun run projection:reconstruct \
   --output /tmp/vela-atlas-clean-room.json
 ```
 
+For a deliberately noncanonical preactivation candidate, add
+`--production-parity skip`. This still performs and compares both empty-database
+reconstructions and the SELECT-only reader check, but records production parity
+as skipped. It does not authorize activation; a release candidate must rerun
+with the default required production comparison after its product gate passes.
+
 The command creates two empty temporary PostgreSQL clusters, applies the one
 desired-state schema, reconstructs and verifies the release twice, checks the
 SELECT-only reader boundary, and then removes both clusters. It reads the
@@ -365,9 +371,9 @@ that deployment's immutable identity with the current Neon projection on every
 request, so a data-only projection activation cannot leave a copied public JSON
 file behind. Ordinary Observatory pages remain bound to the exact retained root
 selected at build time. The Observatory manifest additionally embeds
-`vela.observatory-release-manifest.v9` over `observatory.v8`, including
-normalized Claim, Submission, Proposal, Verification, review, work,
-search, graph, authority, and source-root identities. Repository authority is
+`vela.observatory-release-manifest.v9` over `observatory.v9`, including
+normalized Claim, Submission, Proposal, Verification, non-authoritative Result
+Dossier, review, work, search, graph, authority, and source-root identities. Repository authority is
 read-only product evidence: the projection may expose public keys, signed
 record roots, and restricted-policy identity, but never custody material,
 authentication context, a decision control, or an authority operation. A
