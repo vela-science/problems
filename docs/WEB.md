@@ -339,24 +339,28 @@ unrelated and outside this workspace.
 
 ### Pushing deploys
 
-A push to `main` deploys. Both `vercel.json` files carried
-`git.deploymentEnabled: false` between 2026-07-28 and 2026-07-31, which is a
-hard off switch — Vercel creates no deployment for any push, on any branch —
-and the effect was invisible rather than loud: `www.vela.space` kept serving
-whichever commit had last been promoted by hand and drifted eighteen hours
-behind `main`. Deployments were still arriving through the projection refresh
-hook, which is why nothing looked broken.
+The two applications deliberately use different release paths:
 
-Unnecessary builds are stopped one layer down, by `scripts/vercel-should-build.mjs`
-via `ignoreCommand`. It compares the pushed range against the paths each
-application actually depends on and skips the build when none of them changed,
-which is the difference between not rebuilding and not deploying. The
-Observatory deliberately builds on an exact same-commit comparison, because
-that is how the refresh hook presents itself.
+- `www.vela.space` uses Vercel's Git deployment for relevant `main` changes.
+- `app.vela.space` has direct Git deployment disabled. Relevant `main` changes
+  trigger `refresh-projection.yml`, which synchronizes the additive schema,
+  builds and verifies the one current projection contract, activates its exact
+  release root, and only then invokes the Observatory deploy hook.
 
-Consequence worth knowing before pushing: `www.vela.space` is a production
-domain on `vela-web-www`, so a merge to `main` reaches it. `AGENTS.md` release
-safety still applies to attaching new domains and tagging final releases.
+This ordering is mandatory. It prevents current application code from racing a
+predecessor read model and makes one workflow own both projection activation and
+the corresponding deployment. `workflow_dispatch` remains available for an
+exact data-only refresh. The hook's exact-commit build is still filtered by
+`scripts/vercel-should-build.mjs`.
+
+Vela Web's `package.json` version is the operator-facing product version. The
+projection manifest and read-model identifiers are internal contract revisions,
+declared together in `packages/frontier-data/src/projection-contract.ts`; they
+are not competing product versions and are not shown as release names in the
+product UI.
+
+`AGENTS.md` release safety still applies to attaching domains and tagging final
+releases.
 
 Public manifests:
 
