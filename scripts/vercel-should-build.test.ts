@@ -40,14 +40,14 @@ function commit(path: string, file: string, value: string) {
   execFileSync("git", ["commit", "-qm", file], { cwd: path });
 }
 
-function status(path: string, target: "observatory" | "www", environment: Record<string, string> = {}) {
+function status(path: string, target: "www", environment: Record<string, string> = {}) {
   const inherited = { ...process.env };
   delete inherited.VERCEL_GIT_COMMIT_SHA;
   delete inherited.VERCEL_GIT_PREVIOUS_SHA;
   return spawnSync("bun", [script, target], { cwd: path, env: { ...inherited, ...environment } }).status;
 }
 
-function equivalent(path: string, target: "observatory" | "www", previous: string, current: string) {
+function equivalent(path: string, target: "www", previous: string, current: string) {
   return spawnSync("bun", [script, target, "--equivalent", previous, current], {
     cwd: path,
     env: process.env,
@@ -64,41 +64,39 @@ describe("Vercel workspace build selection", () => {
     );
     expect(editorial.git?.deploymentEnabled).not.toBe(false);
     expect(observatory.git?.deploymentEnabled).toBe(false);
+    expect(editorial.ignoreCommand).toContain("vercel-should-build.mjs www");
+    expect(observatory.ignoreCommand).toBeUndefined();
   });
 
-  test("builds the Observatory for Observatory and shared changes", () => {
+  test("builds the editorial site for editorial and shared changes", () => {
     const path = repository();
-    commit(path, "apps/observatory/app.ts", "two\n");
-    expect(status(path, "observatory")).toBe(1);
+    commit(path, "apps/www/app.ts", "two\n");
+    expect(status(path, "www")).toBe(1);
     commit(path, "packages/brand/token.ts", "shared\n");
-    expect(status(path, "observatory")).toBe(1);
+    expect(status(path, "www")).toBe(1);
   });
 
-  test("skips the unaffected application", () => {
+  test("skips Observatory-only and unrelated changes", () => {
     const path = repository();
     commit(path, "apps/observatory/app.ts", "two\n");
     expect(status(path, "www")).toBe(0);
     commit(path, "README.md", "two\n");
-    expect(status(path, "observatory")).toBe(0);
+    expect(status(path, "www")).toBe(0);
   });
 
   test("skips workflow, documentation, and test-only changes", () => {
     const path = repository();
     commit(path, ".github/workflows/ci.yml", "two\n");
-    expect(status(path, "observatory")).toBe(0);
     expect(status(path, "www")).toBe(0);
     commit(path, "packages/frontier-data/tests/projection.test.ts", "two\n");
-    expect(status(path, "observatory")).toBe(0);
     expect(status(path, "www")).toBe(0);
     commit(path, "README.md", "two\n");
-    expect(status(path, "observatory")).toBe(0);
     expect(status(path, "www")).toBe(0);
   });
 
-  test("rebuilds both products for shared projection runtime changes", () => {
+  test("rebuilds the editorial site for shared projection runtime changes", () => {
     const path = repository();
     commit(path, "packages/frontier-data/src/index.ts", "two\n");
-    expect(status(path, "observatory")).toBe(1);
     expect(status(path, "www")).toBe(1);
   });
 
@@ -110,30 +108,21 @@ describe("Vercel workspace build selection", () => {
     expect(status(path, "www", { VERCEL_GIT_PREVIOUS_SHA: previous, VERCEL_GIT_COMMIT_SHA: current })).toBe(1);
   });
 
-  test("compares an application surface independently of unrelated commits", () => {
+  test("compares the editorial surface independently of unrelated commits", () => {
     const path = repository();
     const deployed = execFileSync("git", ["rev-parse", "HEAD"], { cwd: path, encoding: "utf8" }).trim();
-    commit(path, "apps/www/app.ts", "two\n");
-    const editorial = execFileSync("git", ["rev-parse", "HEAD"], { cwd: path, encoding: "utf8" }).trim();
-    expect(equivalent(path, "observatory", deployed, editorial)).toBe(0);
-    expect(equivalent(path, "www", deployed, editorial)).toBe(1);
+    commit(path, "apps/observatory/app.ts", "two\n");
+    const observatory = execFileSync("git", ["rev-parse", "HEAD"], { cwd: path, encoding: "utf8" }).trim();
+    expect(equivalent(path, "www", deployed, observatory)).toBe(0);
     commit(path, "packages/frontier-data/src/index.ts", "two\n");
     const shared = execFileSync("git", ["rev-parse", "HEAD"], { cwd: path, encoding: "utf8" }).trim();
-    expect(equivalent(path, "observatory", deployed, shared)).toBe(1);
-  });
-
-  test("rebuilds the Observatory for a same-commit projection hook", () => {
-    const path = repository();
-    const current = execFileSync("git", ["rev-parse", "HEAD"], { cwd: path, encoding: "utf8" }).trim();
-    const environment = { VERCEL_GIT_PREVIOUS_SHA: current, VERCEL_GIT_COMMIT_SHA: current };
-    expect(status(path, "observatory", environment)).toBe(1);
-    expect(status(path, "www", environment)).toBe(0);
+    expect(equivalent(path, "www", deployed, shared)).toBe(1);
   });
 
   test("fails open for a first commit or invalid comparison", () => {
     const path = repository();
-    expect(status(path, "observatory", { VERCEL_GIT_PREVIOUS_SHA: "bad", VERCEL_GIT_COMMIT_SHA: "bad" })).toBe(1);
+    expect(status(path, "www", { VERCEL_GIT_PREVIOUS_SHA: "bad", VERCEL_GIT_COMMIT_SHA: "bad" })).toBe(1);
     rmSync(resolve(path, ".git"), { recursive: true, force: true });
-    expect(status(path, "observatory")).toBe(1);
+    expect(status(path, "www")).toBe(1);
   });
 });

@@ -2,16 +2,6 @@ import { execFileSync } from "node:child_process";
 
 const target = process.argv[2];
 const targets = {
-  observatory: [
-    "apps/observatory",
-    "packages/brand",
-    "packages/frontier-data/src",
-    "packages/frontier-data/config",
-    "packages/frontier-data/package.json",
-    ".vercelignore",
-    "package.json",
-    "bun.lock",
-  ],
   www: [
     "apps/www",
     "packages/brand",
@@ -25,7 +15,7 @@ const targets = {
 };
 
 if (!(target in targets)) {
-  console.error("usage: bun scripts/vercel-should-build.mjs <observatory|www>");
+  console.error("usage: bun scripts/vercel-should-build.mjs www");
   process.exit(1);
 }
 
@@ -71,15 +61,6 @@ try {
     } catch {
       process.exit(1);
     }
-  }
-
-  // The projection refresh deploy hook rebuilds the current Observatory
-  // commit after atomically activating a new rooted data release. Vercel
-  // represents that hook as an exact same-commit comparison. It must build;
-  // otherwise a truthful data refresh can be activated in Neon but remain
-  // invisible behind the previous deployment manifest.
-  if (target === "observatory" && previous === current) {
-    process.exit(1);
   }
 
   const changed = changedPaths(previous, current);
