@@ -31,7 +31,7 @@
     "check:projection": "bun scripts/check-projection-compatibility.mjs",
     "install:vela:linux": "bun scripts/install-recorded-vela.mjs",
     "db:check": "bun run --filter @vela/frontier-data db:check",
-    "db:sync": "bun run --filter @vela/frontier-data db:sync",
+    "db:migrate": "bun run --filter @vela/frontier-data db:migrate",
     "projection:snapshot": "bun run --filter @vela/frontier-data projection:snapshot",
     "projection:reconstruct": "bun run --filter @vela/frontier-data reconstruct --",
     "projection:verify": "bun run --filter @vela/frontier-data verify",

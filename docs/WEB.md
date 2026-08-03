@@ -137,7 +137,7 @@ and writes a content-addressed normalized read model to the `vela_observatory`
 database in the `vela-observatory-projection` Neon project:
 
 ```bash
-bun run db:sync
+bun run db:migrate
 bun packages/frontier-data/scripts/refresh-neon-projection.mjs
 bun run db:check
 bun run projection:verify
@@ -213,7 +213,7 @@ disposable read model. The `@vela/frontier-data` projector is its only writer, a
 Observatory receives a SELECT-only role scoped to the normalized projection.
 
 The credential contract is intentionally closed: application reads and checks
-use only `VELA_PROJECTION_DATABASE_URL`; explicit schema sync, projection
+use only `VELA_PROJECTION_DATABASE_URL`; explicit schema migration, projection
 refresh, and pruning use only `VELA_PROJECTION_WRITER_DATABASE_URL`. Generic
 `DATABASE_URL` fallback and reader-as-writer fallback are unsupported. The Neon
 project has one branch, `main`. Release-scoped rows and `current_release`
@@ -224,10 +224,10 @@ Those two URLs are the complete secret inventory for database access. The
 fixed `observatory_projection_reader` role is managed directly in Neon and is
 not recreated during CI or scheduled refreshes.
 
-`packages/frontier-data/schema.sql` is the one idempotent desired-state schema.
-Apply iterative schema changes directly to Neon `main`, then mirror the exact
-desired state in that file. `bun run db:sync` is the idempotent first step of
-the manual refresh.
+`packages/frontier-data/schema.sql` is the current desired-state schema.
+Forward changes live in `packages/frontier-data/migrations`; each applied file
+is recorded with its exact byte root. `bun run db:migrate` applies any missing
+rooted migrations before a refresh and rejects changed or unknown history.
 `bun run db:check` verifies the required tables, indexes, and SELECT-only
 application role without writing. CI never creates or mutates a Neon branch:
 pull requests run no-secret static contracts, while trusted main and
@@ -353,11 +353,11 @@ the corresponding deployment. `workflow_dispatch` remains available for an
 exact data-only refresh. The hook's exact-commit build is still filtered by
 `scripts/vercel-should-build.mjs`.
 
-Vela Web's `package.json` version is the operator-facing product version. The
-projection manifest and read-model identifiers are internal contract revisions,
-declared together in `packages/frontier-data/src/projection-contract.ts`; they
-are not competing product versions and are not shown as release names in the
-product UI.
+Vela Web's `package.json` contains the only product version. The disposable
+database has no parallel numbered release train: its current-only manifest is
+`vela.observatory-release-manifest`, and forward SQL migrations are recorded by
+identifier and exact content root in `observatory.schema_migrations`. Application
+code does not carry readers for predecessor shapes.
 
 `AGENTS.md` release safety still applies to attaching domains and tagging final
 releases.
@@ -374,8 +374,8 @@ output. The Observatory manifest is a non-cached read-only route: it combines
 that deployment's immutable identity with the current Neon projection on every
 request, so a data-only projection activation cannot leave a copied public JSON
 file behind. Ordinary Observatory pages remain bound to the exact retained root
-selected at build time. The Observatory manifest additionally embeds
-`vela.observatory-release-manifest.v9` over `observatory.v9`, including
+selected at build time. The Observatory manifest additionally embeds the
+current-only `vela.observatory-release-manifest`, including
 normalized Claim, Submission, Proposal, Verification, non-authoritative Result
 Dossier, review, work, search, graph, authority, and source-root identities. Repository authority is
 read-only product evidence: the projection may expose public keys, signed
