@@ -84,6 +84,11 @@ canonical frontier Git repositories
 - The original Vela sail is the locked product mark; exported assets are
   derived from its canonical SVG sources.
 
+Result Dossier product evidence and the next human-study gate are maintained in
+[`docs/result-dossier-qualification.md`](docs/result-dossier-qualification.md).
+The source Frontiers continue to own every scientific object the projection
+displays.
+
 ## Develop with Bun
 
 The repository pins Bun `1.3.12` in `package.json` and `bun.lock`. Do not add
