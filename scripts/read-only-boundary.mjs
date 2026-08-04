@@ -18,6 +18,7 @@ const deploymentManifestRoute = "apps/observatory/src/app/.well-known/vela-site.
 const resultDossierRoutes = [
   "apps/observatory/src/app/frontiers/erdos/dossiers/erdos-264.json/route.ts",
   "apps/observatory/src/app/frontiers/erdos/dossiers/erdos-730.json/route.ts",
+  "apps/observatory/src/app/frontiers/formal-conjectures/dossiers/erdos-521.json/route.ts",
 ];
 const readOnlyRoutes = new Set([searchRoute, graphRoute, sourceRegistryRoute, deploymentManifestRoute, ...resultDossierRoutes]);
 const mutationMethod = /export\s+(?:async\s+)?function\s+(?:POST|PUT|PATCH|DELETE)\b/u;
