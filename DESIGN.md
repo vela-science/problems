@@ -120,6 +120,9 @@ visual. A complex visual must have a text or ledger equivalent.
   the reading axis, not blindly from the viewport.
 - Product pages use open tables and item groups before card grids. Cards are
   for independently selectable records or overlays and are never nested.
+- Observatory breadcrumbs live only in the shared app header and contain
+  ancestors, never the current page. Every route body owns exactly one
+  descriptive `h1`; it does not repeat a breadcrumb or add a second back link.
 - UI feedback lasts 120–180ms. Authored state transitions may use 240ms;
   evidence-path drawings 420ms; rare editorial arrivals 900ms.
 - Animate opacity or transform for controls. Prose never animates into
