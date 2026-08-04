@@ -35,7 +35,7 @@ export function CopyButton({
       size={compact ? "icon-sm" : "sm"}
       onClick={copy}
       aria-label={stateLabel}
-      className="bg-transparent"
+      className={compact ? "bg-transparent max-md:min-h-11 max-md:min-w-11" : "bg-transparent"}
     >
       {state === "success" ? <HugeiconsIcon icon={Check} aria-hidden /> : <HugeiconsIcon icon={Copy} aria-hidden />}
       {compact ? null : stateLabel}
