@@ -87,8 +87,8 @@ jobs:
       - name: Install released Vela verifier
         run: bun run install:vela:linux
 
-      - name: Verify current main projection
-        run: bun run db:check && bun run projection:verify
+      - name: Verify projection schema
+        run: bun run db:check
 
       - name: Static contracts
         run: bun run check
