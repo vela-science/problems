@@ -60,8 +60,10 @@ when they were written. Do not mechanically rewrite them.
 - Preserve exact-state semantics and the distinction between verification and
   acceptance.
 - Preserve the canonical Vela sail unless an approved brand pass replaces it.
-- Do not add accounts, a signer, mutation UI, a writable public API, or a
-  second frontier parser, index, or manifest generator.
+- Human accounts may personalize the Observatory, but must remain separate
+  from Vela actor identity and repository authority. Do not add a signer,
+  scientific-state mutation UI, writable frontier API, or a second frontier
+  parser, index, or manifest generator.
 - For Next.js work, read the relevant guide in `node_modules/next/dist/docs/`
   before relying on remembered framework behavior.
 - Preserve unrelated dirty work. Use `git diff` to separate your changes.
