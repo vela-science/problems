@@ -42,6 +42,7 @@ const WORKSPACE_MANIFESTS = [
   "apps/observatory/package.json",
   "packages/brand/package.json",
   "packages/frontier-data/package.json",
+  "packages/ui/package.json",
 ];
 
 function fail(message) {
