@@ -21,12 +21,12 @@ const readOnlyRoutes = new Set([searchRoute, graphRoute, sourceRegistryRoute, de
 const accountRoute = "apps/observatory/src/app/api/account/route.ts";
 const authCallbackRoute = "apps/observatory/src/app/auth/callback/route.ts";
 const signInRoute = "apps/observatory/src/app/sign-in/route.ts";
-const signOutRoute = "apps/observatory/src/app/sign-out/route.ts";
+const signOutAction = "apps/observatory/src/app/actions/auth.ts";
 const authLibrary = "apps/observatory/src/lib/auth.ts";
 const accountMenu = "apps/observatory/src/components/vela/account-menu.tsx";
 const identityProxy = "apps/observatory/src/proxy.ts";
-const identityRoutes = new Set([accountRoute, authCallbackRoute, signInRoute, signOutRoute]);
-const productIdentityFiles = new Set([...identityRoutes, authLibrary, identityProxy]);
+const identityRoutes = new Set([accountRoute, authCallbackRoute, signInRoute]);
+const productIdentityFiles = new Set([...identityRoutes, signOutAction, authLibrary, identityProxy]);
 const mutationMethods = /export\s+(?:async\s+)?function\s+(POST|PUT|PATCH|DELETE)\b/gu;
 
 /* www used to be Astro, which could not express a Server Action or a
@@ -64,13 +64,11 @@ export function inspectReadOnlyBoundary(repository) {
 
     if (routeHandler.test(file) && !readOnlyRoutes.has(file) && !identityRoutes.has(file) && !resultDossierRoute.test(file)) add("route_handler", "Only declared read projections and isolated product-identity Route Handlers are allowed");
     const methods = [...content.matchAll(mutationMethods)].map((match) => match[1]);
-    const boundedSignOut = file === signOutRoute
-      && methods.length === 1
-      && methods[0] === "POST"
-      && content.includes("trustedRequestOrigin(request)")
-      && content.includes("signOut({ returnTo: `${origin}/problems` })");
-    if (methods.length && !boundedSignOut) add("mutation_handler", "Only the exact-origin product-session sign-out POST may mutate state; scientific mutation remains outside the Observatory boundary");
-    if (serverDirective.test(content)) add("server_action", "Server Actions are outside the read-only product boundary");
+    if (methods.length) add("mutation_handler", "Mutation Route Handlers are outside the read-only product boundary");
+    const boundedSignOutAction = file === signOutAction
+      && content.includes("export async function signOutAccount()")
+      && content.includes("await signOut({ returnTo })");
+    if (serverDirective.test(content) && !boundedSignOutAction) add("server_action", "Only the isolated AuthKit sign-out action is allowed; scientific Server Actions remain outside the read-only product boundary");
     if (requestStateImport.test(content) || requestStateCall.test(content)) {
       add("request_state", "request-scoped headers, cookies, and server helpers are not allowed");
     }
