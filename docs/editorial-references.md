@@ -56,6 +56,13 @@ private Vela end product with provenance. They are not published separately as
 a template, component library, or public registry, and source access remains
 within the licensed person or team.
 
+**Amended 2026-08-04, Observatory application patterns.** Work and Attention
+adapt Tailwind Plus Application UI v4's conventional multi-column shell and
+stacked-list composition; Activity adapts its simple feed structure. The
+implementation uses the existing shadcn/Base UI `Item`, `Sheet`, `Button`,
+`Select`, `StatusBadge`, and `CopyButton` primitives and Vela tokens. It adds no
+template-owned component layer, Headless UI runtime, or new visual hierarchy.
+
 ## Image-generation review
 
 The `v0.410.0` pass considered generated background art for the home,
