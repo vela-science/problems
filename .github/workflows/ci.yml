@@ -6,6 +6,8 @@ on:
   push:
     branches: [main]
     tags: ["v*-rc.*"]
+    paths-ignore:
+      - "apps/observatory/**"
 
 permissions:
   contents: read
