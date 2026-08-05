@@ -7,13 +7,18 @@ import { cn } from "../../lib/utils";
  *   core  = Verification outcome  — what a machine check reported
  *   cone  = the transitive state  — this Claim AND its whole upstream cone
  *
- * DESIGN.md:100-116 already fixes the vocabulary (filled disc, ring, dashed
- * ring, seam); this is that vocabulary drawn. Geometry carries the meaning and
- * colour only reinforces it, so the mark survives forced-colors, print and
- * greyscale — which is also what keeps `apps/observatory/DESIGN.md:61`
- * ("Verification and acceptance are never visually or verbally conflated")
- * enforceable rather than aspirational. It cannot be satisfied by a badge that
- * has one slot for both facts.
+ * Root DESIGN.md, "Scientific visual language", already fixes the vocabulary
+ * (ring, filled core, dashed ring, seam); this is that vocabulary drawn.
+ * Geometry carries the meaning and colour only reinforces it, so the mark
+ * survives forced-colors, print and greyscale — which is also what keeps
+ * apps/observatory/DESIGN.md's "State and evidence" rule ("Verification and
+ * acceptance are never visually or verbally conflated") enforceable rather than
+ * aspirational. It cannot be satisfied by a badge that has one slot for both
+ * facts.
+ *
+ * Both citations name their section rather than a line range. The ranges they
+ * carried before pointed past the end of one file and one line off in the
+ * other, because a document was rewritten and the comment was not.
  *
  * The mark is always aria-hidden: every caller pairs it with the words. */
 
