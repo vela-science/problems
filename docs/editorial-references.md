@@ -85,6 +85,17 @@ section was taken; no template source is committed. Radiant's `Container` and
 `Section` from `components/editorial/sections.tsx` continue to carry the shell
 and the band rhythm.
 
+The rest of that grammar went with the old page. `Eyebrow`, `Heading`, `Lead`,
+the composed `SectionHeader`, and the `BentoCard`-derived `Card` all lost their
+last consumer in the rebuild and are removed; the 2026-07-31 amendment above
+stands as the record of what was adapted then. What Radiant contributes to this
+application today is the container and the section rhythm, and nothing else —
+the essay register sets its own type. Removed with them:
+`components/StarField.tsx`, the Commit/Protocol star field, which was drawn
+`fill="white"` for a dark ground and never found a surface in this palette. The
+`motion` dependency it used stays — the vendored Protocol shell imports
+`motion/react` in four places.
+
 ## Image-generation review
 
 The `v0.410.0` pass considered generated background art for the home,
