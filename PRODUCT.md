@@ -10,15 +10,17 @@ reader, not an authority.
 ## Product story
 
 The protocol's own loop is `map → target → work → submit → verify → decide →
-remap`. For a reader of this product it compresses to one path:
+remap`. Vela's shorter compression of it is:
 
 ```text
-produce → preserve → check → decide → reuse
+MAP → ADVANCE → REMAP
 ```
 
-A research tool produces candidate work. A canonical frontier Git repository
-preserves it. Vela checks and replays it. Repository authority records a human
-Decision. Vela Web supports reuse by making the resulting state searchable,
+A reader maps the territory: exact state, dependencies, disagreement, and gaps.
+Advancing it is the span this product does not perform. A research tool produces
+candidate work, a canonical frontier Git repository preserves it, Vela verifies
+and replays it, and repository authority records a human Decision. The resulting
+root remaps the territory, and Vela Web is what makes that new map searchable,
 inspectable, and reproducible.
 
 Every feature in this repository serves explanation, inspection, comparison, or
