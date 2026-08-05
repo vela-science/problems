@@ -65,16 +65,25 @@ test("product focus rings remain distinct from gold and clear 3:1 at 50% opacity
       Number(match[3]),
     ])
   ))
-  const lightSurfaces = [
-    oklchToSrgb([0.985, 0, 0]),
-    oklchToSrgb([1, 0, 0]),
-    oklchToSrgb([0.97, 0, 0]),
-  ]
-  const darkSurfaces = [
-    oklchToSrgb([0.145, 0, 0]),
-    oklchToSrgb([0.205, 0, 0]),
-    oklchToSrgb([0.269, 0, 0]),
-  ]
+  /* Surfaces are read out of the stylesheet rather than restated here. Held
+     as literals they kept passing after the palette moved, verifying the ring
+     against three grounds the product no longer had. */
+  const surfaces = (block: string) => (
+    ["--background", "--card", "--muted"].map((name) => {
+      const found = block.match(
+        new RegExp(`${name}:\\s*oklch\\(([\\d.]+)\\s+([\\d.]+)\\s+([\\d.]+)\\)`, "u")
+      )
+      assert.ok(found, `${name} must be a literal oklch value the focus-ring test can measure`)
+      return oklchToSrgb([Number(found[1]), Number(found[2]), Number(found[3])])
+    })
+  )
+  const blockFor = (selector: string) => {
+    const found = productCss.match(new RegExp(`${selector}\\s*\\{([^}]*)\\}`, "u"))
+    assert.ok(found, `${selector} block must exist`)
+    return found[1]!
+  }
+  const lightSurfaces = surfaces(blockFor(":root"))
+  const darkSurfaces = surfaces(blockFor("\\.dark"))
 
   for (const surface of lightSurfaces) {
     assert.ok(contrast(composite(lightFocus!, surface, 0.5), surface) >= 3)

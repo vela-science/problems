@@ -120,6 +120,27 @@ export const velaTokens = ${JSON.stringify(primitives, null, 2)} as const;
 export type VelaTokenName = keyof typeof velaTokens;
 `;
 
+/* The product type scale ships as its own generated stylesheet rather than as
+   lines in packages/ui/src/styles/product.css. The design-system gate caps
+   authored CSS at 180 lines to stop route presentation accumulating there;
+   a scale derived from vela.tokens.json is generated, not authored, and
+   belongs with the tokens it comes from. Roles are named so none collides
+   with a Tailwind default size (xs/sm/base/lg/...), and the block is only
+   imported by the product profile so the editorial register keeps its own. */
+const textRoles = Object.entries(tokens.text);
+const productType = `/* Generated from @vela/brand/vela.tokens.json. Do not edit. */
+@theme {
+${textRoles.map(([role, spec]) => (
+  [
+    `  --text-${role}: ${spec.size.$value};`,
+    `  --text-${role}--line-height: ${spec.leading.$value};`,
+    `  --text-${role}--font-weight: ${spec.weight.$value};`,
+    spec.tracking.$value === "0" ? null : `  --text-${role}--letter-spacing: ${spec.tracking.$value};`,
+  ].filter(Boolean).join("\n")
+)).join("\n")}
+}
+`;
+
 /* The banner is per-file, not part of the shared face block: both profiles
    serve the mono faces, so a banner baked into `monoFaces` labelled the
    editorial stylesheet as the product profile. */
@@ -193,6 +214,7 @@ const outputs = new Map([
   [resolve(root, "generated/tokens.ts"), ts],
   [resolve(root, "generated/fonts-product.css"), productFonts],
   [resolve(root, "generated/fonts-editorial.css"), editorialFonts],
+  [resolve(root, "generated/type-product.css"), productType],
 ]);
 
 for (const [path, expected] of outputs) {

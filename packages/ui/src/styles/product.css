@@ -38,6 +38,7 @@
   --color-status-conflict: var(--status-conflict);
   --color-command: var(--command);
   --color-command-foreground: var(--command-foreground);
+  --color-direction: var(--direction);
   --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", SFMono-Regular, Consolas, monospace;
   --radius-sm: calc(var(--radius) * 0.6);
@@ -49,33 +50,37 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* Grounds and ink share one cool hue family (245-265), the way a chart is
+ * printed: pale sky paper, ink rules, midnight at night. Hue separation is
+ * what makes a 1.04:1 luminance step read. --direction has no foreground
+ * pair, so gold can only ever be a stroke, a glyph or a rule, never a fill. */
 :root {
   --radius: 0.5rem;
-  --background: oklch(0.985 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
+  --background: oklch(0.973 0.006 245);
+  --foreground: oklch(0.21 0.032 265);
+  --card: oklch(0.985 0.005 245);
   --card-foreground: var(--foreground);
   --popover: var(--card);
   --popover-foreground: var(--foreground);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
+  --primary: oklch(0.184 0.04 261);
+  --primary-foreground: oklch(0.973 0.006 245);
+  --secondary: oklch(0.945 0.01 245);
   --secondary-foreground: var(--foreground);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.45 0 0);
-  --accent: oklch(0.97 0 0);
+  --muted: oklch(0.945 0.01 245);
+  --muted-foreground: oklch(0.522 0.021 258);
+  --accent: oklch(0.945 0.01 245);
   --accent-foreground: var(--foreground);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.87 0 0);
-  --focus-ring: oklch(0.22 0.038 192);
+  --destructive: oklch(0.496 0.124 16);
+  --destructive-foreground: oklch(0.973 0.006 245);
+  --border: oklch(0.891 0.006 264);
+  --input: oklch(0.64 0.014 260);
+  --focus-ring: oklch(0.235 0.082 258);
   --ring: var(--focus-ring);
-  --sidebar: oklch(0.97 0 0);
+  --sidebar: oklch(0.945 0.01 245);
   --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--primary);
   --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: oklch(0.922 0 0);
+  --sidebar-accent: oklch(0.912 0.012 245);
   --sidebar-accent-foreground: var(--foreground);
   --sidebar-border: var(--border);
   --sidebar-ring: var(--ring);
@@ -83,53 +88,46 @@
   --status-progress: var(--vela-color-light-progress);
   --status-caution: var(--vela-color-light-caution);
   --status-conflict: var(--vela-color-light-conflict);
-  --activity-0: oklch(0.94 0 0);
-  --activity-1: oklch(0.88 0.035 84);
-  --activity-2: oklch(0.76 0.07 84);
-  --activity-3: oklch(0.64 0.095 84);
-  --activity-4: oklch(0.52 0.105 84);
-  --command: oklch(0.145 0 0);
-  --command-foreground: oklch(0.985 0 0);
+  --direction: var(--vela-color-light-direction);
+  --command: oklch(0.184 0.04 261);
+  --command-foreground: oklch(0.973 0.006 245);
 }
 
+/* Opaque borders: white-with-alpha desaturates a chromatic ground toward grey.
+ * --command lifts rather than sinks — pure black measures 1.12:1 on midnight. */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
+  --background: oklch(0.184 0.04 261);
+  --foreground: oklch(0.973 0.006 245);
+  --card: oklch(0.21 0.032 265);
   --card-foreground: var(--foreground);
   --popover: var(--card);
   --popover-foreground: var(--foreground);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
+  --primary: oklch(0.973 0.006 245);
+  --primary-foreground: oklch(0.184 0.04 261);
+  --secondary: oklch(0.256 0.034 262);
   --secondary-foreground: var(--foreground);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
+  --muted: oklch(0.256 0.034 262);
+  --muted-foreground: oklch(0.726 0.015 258);
+  --accent: oklch(0.256 0.034 262);
   --accent-foreground: var(--foreground);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --focus-ring: oklch(0.922 0.061 190);
-  --sidebar: oklch(0.205 0 0);
+  --destructive: oklch(0.682 0.122 13);
+  --destructive-foreground: oklch(0.184 0.04 261);
+  --border: oklch(0.316 0.041 261);
+  --input: oklch(0.55 0.038 260);
+  --focus-ring: oklch(0.88 0.045 259);
+  --sidebar: oklch(0.201 0.042 261);
   --sidebar-foreground: var(--foreground);
-  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent: oklch(0.256 0.034 262);
   --sidebar-accent-foreground: var(--foreground);
   --status-evidence: var(--vela-color-evidence);
   --status-progress: var(--vela-color-progress);
   --status-caution: var(--vela-color-caution);
   --status-conflict: var(--vela-color-dark-conflict);
-  --activity-0: oklch(0.269 0 0);
-  --activity-1: oklch(0.38 0.05 84);
-  --activity-2: oklch(0.49 0.075 84);
-  --activity-3: oklch(0.6 0.095 84);
-  --activity-4: oklch(0.72 0.105 84);
+  --direction: var(--vela-color-stardust);
+  --command: oklch(0.3 0.036 260);
   color-scheme: dark;
 }
 
 @media (forced-colors: active) {
-  :root, .dark {
-    --focus-ring: Highlight;
-  }
+  :root, .dark { --focus-ring: Highlight; --direction: LinkText; }
 }

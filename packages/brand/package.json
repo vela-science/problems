@@ -8,6 +8,7 @@
     "./fonts.css": "./generated/fonts-editorial.css",
     "./fonts-editorial.css": "./generated/fonts-editorial.css",
     "./fonts-product.css": "./generated/fonts-product.css",
+    "./type-product.css": "./generated/type-product.css",
     "./integrity": "./src/integrity.ts",
     "./mark-full.svg": "./marks/source/vela-symbol-full.svg",
     "./mark-micro.svg": "./marks/source/vela-symbol-micro.svg"

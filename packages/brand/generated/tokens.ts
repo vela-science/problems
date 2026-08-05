@@ -23,7 +23,7 @@ export const velaTokens = {
   "color-light-conflict": "#9C3F4A",
   "color-light-border-subtle": "#D9DBDF",
   "color-light-border-strong": "#B8BDC5",
-  "color-light-direction": "#8C6B20",
+  "color-light-direction": "#846315",
   "color-dark-surface-inset": "#0B1629",
   "color-dark-surface-emphasis": "#050C18",
   "color-dark-text-secondary": "#C5CAD2",

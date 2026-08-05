@@ -110,7 +110,7 @@
           "$type": "color"
         },
         "direction": {
-          "$value": "#8C6B20",
+          "$value": "#846315",
           "$type": "color"
         }
       },
@@ -158,6 +158,170 @@
     "mono": {
       "$value": "IBM Plex Mono, SFMono-Regular, Consolas, monospace",
       "$type": "fontFamily"
+    }
+  },
+  "text": {
+    "display": {
+      "size": {
+        "$value": "1.5rem",
+        "$type": "dimension"
+      },
+      "leading": {
+        "$value": "1.75rem",
+        "$type": "dimension"
+      },
+      "weight": {
+        "$value": "600",
+        "$type": "fontWeight"
+      },
+      "tracking": {
+        "$value": "-0.02em",
+        "$type": "dimension"
+      }
+    },
+    "title": {
+      "size": {
+        "$value": "1.125rem",
+        "$type": "dimension"
+      },
+      "leading": {
+        "$value": "1.5rem",
+        "$type": "dimension"
+      },
+      "weight": {
+        "$value": "600",
+        "$type": "fontWeight"
+      },
+      "tracking": {
+        "$value": "-0.01em",
+        "$type": "dimension"
+      }
+    },
+    "subtitle": {
+      "size": {
+        "$value": "0.9375rem",
+        "$type": "dimension"
+      },
+      "leading": {
+        "$value": "1.375rem",
+        "$type": "dimension"
+      },
+      "weight": {
+        "$value": "600",
+        "$type": "fontWeight"
+      },
+      "tracking": {
+        "$value": "0",
+        "$type": "dimension"
+      }
+    },
+    "body": {
+      "size": {
+        "$value": "0.875rem",
+        "$type": "dimension"
+      },
+      "leading": {
+        "$value": "1.375rem",
+        "$type": "dimension"
+      },
+      "weight": {
+        "$value": "400",
+        "$type": "fontWeight"
+      },
+      "tracking": {
+        "$value": "0",
+        "$type": "dimension"
+      }
+    },
+    "compact": {
+      "size": {
+        "$value": "0.8125rem",
+        "$type": "dimension"
+      },
+      "leading": {
+        "$value": "1.25rem",
+        "$type": "dimension"
+      },
+      "weight": {
+        "$value": "400",
+        "$type": "fontWeight"
+      },
+      "tracking": {
+        "$value": "0",
+        "$type": "dimension"
+      }
+    },
+    "label": {
+      "size": {
+        "$value": "0.75rem",
+        "$type": "dimension"
+      },
+      "leading": {
+        "$value": "1rem",
+        "$type": "dimension"
+      },
+      "weight": {
+        "$value": "500",
+        "$type": "fontWeight"
+      },
+      "tracking": {
+        "$value": "0",
+        "$type": "dimension"
+      }
+    },
+    "meta": {
+      "size": {
+        "$value": "0.75rem",
+        "$type": "dimension"
+      },
+      "leading": {
+        "$value": "1rem",
+        "$type": "dimension"
+      },
+      "weight": {
+        "$value": "400",
+        "$type": "fontWeight"
+      },
+      "tracking": {
+        "$value": "0",
+        "$type": "dimension"
+      }
+    },
+    "micro": {
+      "size": {
+        "$value": "0.6875rem",
+        "$type": "dimension"
+      },
+      "leading": {
+        "$value": "0.875rem",
+        "$type": "dimension"
+      },
+      "weight": {
+        "$value": "500",
+        "$type": "fontWeight"
+      },
+      "tracking": {
+        "$value": "0.01em",
+        "$type": "dimension"
+      }
+    },
+    "eyebrow": {
+      "size": {
+        "$value": "0.6875rem",
+        "$type": "dimension"
+      },
+      "leading": {
+        "$value": "1rem",
+        "$type": "dimension"
+      },
+      "weight": {
+        "$value": "500",
+        "$type": "fontWeight"
+      },
+      "tracking": {
+        "$value": "0.08em",
+        "$type": "dimension"
+      }
     }
   },
   "space": {

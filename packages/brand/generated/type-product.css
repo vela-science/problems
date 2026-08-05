@@ -1,0 +1,34 @@
+/* Generated from @vela/brand/vela.tokens.json. Do not edit. */
+@theme {
+  --text-display: 1.5rem;
+  --text-display--line-height: 1.75rem;
+  --text-display--font-weight: 600;
+  --text-display--letter-spacing: -0.02em;
+  --text-title: 1.125rem;
+  --text-title--line-height: 1.5rem;
+  --text-title--font-weight: 600;
+  --text-title--letter-spacing: -0.01em;
+  --text-subtitle: 0.9375rem;
+  --text-subtitle--line-height: 1.375rem;
+  --text-subtitle--font-weight: 600;
+  --text-body: 0.875rem;
+  --text-body--line-height: 1.375rem;
+  --text-body--font-weight: 400;
+  --text-compact: 0.8125rem;
+  --text-compact--line-height: 1.25rem;
+  --text-compact--font-weight: 400;
+  --text-label: 0.75rem;
+  --text-label--line-height: 1rem;
+  --text-label--font-weight: 500;
+  --text-meta: 0.75rem;
+  --text-meta--line-height: 1rem;
+  --text-meta--font-weight: 400;
+  --text-micro: 0.6875rem;
+  --text-micro--line-height: 0.875rem;
+  --text-micro--font-weight: 500;
+  --text-micro--letter-spacing: 0.01em;
+  --text-eyebrow: 0.6875rem;
+  --text-eyebrow--line-height: 1rem;
+  --text-eyebrow--font-weight: 500;
+  --text-eyebrow--letter-spacing: 0.08em;
+}

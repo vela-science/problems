@@ -63,6 +63,28 @@ implementation uses the existing shadcn/Base UI `Item`, `Sheet`, `Button`,
 `Select`, `StatusBadge`, and `CopyButton` primitives and Vela tokens. It adds no
 template-owned component layer, Headless UI runtime, or new visual hierarchy.
 
+**Amended 2026-08-05, home page rebuilt in the essay register.** The 0.436
+landing — chart, loop ring, command tour, required distinctions, boundary
+table, opened claim, boundary ledger — is gone. It was true throughout and it
+said all of it at once, which made an entry point read as a second manifesto
+beside the one already published at `/constellations`. The page now carries
+four bands, one argument each, at the interval and in the type the essay reads
+at: the published frontiers on a night plate, the five-act loop in prose, one
+copyable install-and-read block, and three routes out. Copy is still quoted
+from the protocol repository and every count still comes from the committed
+projection.
+
+The reference for the new page is `/constellations` itself, in this
+repository. One outside mechanic was adapted: Marketing UI v4
+`feature-sections/07.simple-three-column-with-small-icons`, for the closing
+routes — equal columns, each a flex column whose description takes `flex-auto`
+so the trailing action aligns across columns of unequal text. Its Heroicon was
+dropped for the hairline the band heads carry, its indigo and gray ramps for
+`--ink-*` and `--gold-*`, and its anchors for `next/link`. Nothing else of that
+section was taken; no template source is committed. Radiant's `Container` and
+`Section` from `components/editorial/sections.tsx` continue to carry the shell
+and the band rhythm.
+
 ## Image-generation review
 
 The `v0.410.0` pass considered generated background art for the home,

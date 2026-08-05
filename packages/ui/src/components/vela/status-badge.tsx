@@ -1,14 +1,22 @@
 import {
   Alert02Icon,
+  ArrowRight02Icon,
+  ArrowTurnBackwardIcon,
   Audit02Icon,
   CheckmarkBadge02Icon,
   CircleDotIcon,
   CircleSlashTwoIcon,
+  Clock01Icon,
   DashedLineCircleIcon,
   GitCommitHorizontalIcon,
+  HelpCircleIcon,
+  PencilEdit02Icon,
   Refresh01Icon,
   Shield01Icon,
+  ShieldBlockchainIcon,
+  ShieldMinusIcon,
   Tick02Icon,
+  UnavailableIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Badge } from "../ui/badge";
@@ -32,21 +40,53 @@ const icons = {
   neutral: DashedLineCircleIcon,
 };
 
-const states: Record<string, { tone: StatusTone; icon: typeof Shield01Icon }> = {
-  accepted: { tone: "progress", icon: GitCommitHorizontalIcon },
-  applied: { tone: "progress", icon: GitCommitHorizontalIcon },
-  verified: { tone: "evidence", icon: Shield01Icon },
-  pass: { tone: "evidence", icon: Shield01Icon },
-  replayed: { tone: "evidence", icon: Refresh01Icon },
-  strict_pass: { tone: "evidence", icon: CheckmarkBadge02Icon },
-  reviewed: { tone: "neutral", icon: Audit02Icon },
-  recorded: { tone: "neutral", icon: CircleDotIcon },
-  pending_review: { tone: "caution", icon: Alert02Icon },
-  contested: { tone: "conflict", icon: Alert02Icon },
-  rejected: { tone: "conflict", icon: CircleSlashTwoIcon },
-  retracted: { tone: "conflict", icon: CircleSlashTwoIcon },
-  strict_blocked: { tone: "conflict", icon: Alert02Icon },
-  withdrawn: { tone: "conflict", icon: CircleSlashTwoIcon },
+/* Vela keeps four independent state vocabularies and the protocol is explicit
+ * that collapsing them is the named failure mode. They are grouped here so the
+ * axis a state belongs to stays visible in the source, and so no two axes can
+ * quietly share a glyph:
+ *
+ *   standing     what an authorized human Decision established
+ *   verification what a scoped machine check reported
+ *   proposal     where a Proposal sits in the review lifecycle
+ *   integrity    whether the repository replays and passes strict checks
+ *
+ * Verification keeps the shield family and evidence teal; a Decision keeps the
+ * commit family and progress green. Different hue, different glyph, different
+ * word — so "verification passed" can never be read as "accepted".
+ *
+ * Every state also gets its own icon. Five states previously shared
+ * Alert02Icon, which left them separated by colour alone (WCAG 1.4.1). */
+export type StateAxis = "standing" | "verification" | "proposal" | "integrity";
+
+const states: Record<string, { tone: StatusTone; icon: typeof Shield01Icon; axis: StateAxis }> = {
+  /* standing — only a Decision moves these */
+  accepted: { tone: "progress", icon: GitCommitHorizontalIcon, axis: "standing" },
+  unassessed: { tone: "neutral", icon: DashedLineCircleIcon, axis: "standing" },
+  recorded: { tone: "neutral", icon: CircleDotIcon, axis: "standing" },
+  superseded: { tone: "neutral", icon: ArrowRight02Icon, axis: "standing" },
+  corrected: { tone: "caution", icon: PencilEdit02Icon, axis: "standing" },
+  contested: { tone: "conflict", icon: UnavailableIcon, axis: "standing" },
+  retracted: { tone: "conflict", icon: CircleSlashTwoIcon, axis: "standing" },
+
+  /* verification — scoped evidence, never acceptance */
+  verified: { tone: "evidence", icon: Shield01Icon, axis: "verification" },
+  pass: { tone: "evidence", icon: Shield01Icon, axis: "verification" },
+  fail: { tone: "conflict", icon: ShieldBlockchainIcon, axis: "verification" },
+  inconclusive: { tone: "neutral", icon: HelpCircleIcon, axis: "verification" },
+  error: { tone: "neutral", icon: Alert02Icon, axis: "verification" },
+  not_attempted: { tone: "neutral", icon: ShieldMinusIcon, axis: "verification" },
+
+  /* proposal — workflow position, no colour of its own beyond the terminal ones */
+  pending_review: { tone: "caution", icon: Clock01Icon, axis: "proposal" },
+  reviewed: { tone: "neutral", icon: Audit02Icon, axis: "proposal" },
+  rejected: { tone: "conflict", icon: CircleSlashTwoIcon, axis: "proposal" },
+  withdrawn: { tone: "neutral", icon: ArrowTurnBackwardIcon, axis: "proposal" },
+
+  /* integrity — replay and strict answer different questions than either above */
+  replayed: { tone: "evidence", icon: Refresh01Icon, axis: "integrity" },
+  strict_pass: { tone: "evidence", icon: CheckmarkBadge02Icon, axis: "integrity" },
+  strict_blocked: { tone: "conflict", icon: Alert02Icon, axis: "integrity" },
+  not_initialized: { tone: "neutral", icon: ShieldMinusIcon, axis: "integrity" },
 };
 
 type StatusBadgeProps = {
@@ -68,6 +108,7 @@ export function StatusBadge({ tone, state, children, icon, className }: StatusBa
     <Badge
       variant="outline"
       data-state={state}
+      data-axis={semantics?.axis}
       data-tone={resolvedTone}
       className={cn("h-6 gap-1.5 rounded px-2 text-xs font-medium leading-none", tones[resolvedTone], className)}
     >
