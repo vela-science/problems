@@ -62,3 +62,26 @@ test("accepted standing is progress green and a passing check is evidence teal",
   assert.equal(map.get("pass")?.tone, "evidence")
   assert.equal(map.get("verified")?.tone, "evidence")
 })
+
+test("the exported axis table is derived from the states map, not written twice", () => {
+  /* Observatory's `product-language` must name the axis in words, because the
+     search and graph ledgers write four axes into one projection column and a
+     `data-axis` attribute cannot be read aloud. It held its own copy of this
+     map; it reads `stateAxesByWord` now, so this pins that the export stays a
+     view of `states` rather than becoming a third literal. */
+  assert.match(
+    source,
+    /export const stateAxesByWord[^=]*=\s*Object\.fromEntries\(\s*Object\.entries\(states\)/u,
+  )
+})
+
+test("the exported tone table is derived from the states map, not written twice", () => {
+  /* The graph canvas paints states without rendering a badge, and it did that
+     from a second literal map that had the two hues above swapped. It reads
+     `stateTones` now, so this pins that `stateTones` is the same map read a
+     different way and cannot drift from it. */
+  assert.match(
+    source,
+    /export const stateTones[^=]*=\s*Object\.fromEntries\(\s*Object\.entries\(states\)/u,
+  )
+})

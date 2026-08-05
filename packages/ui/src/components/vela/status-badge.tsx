@@ -94,6 +94,23 @@ const states: Record<string, { tone: StatusTone; icon: typeof Shield01Icon; axis
   not_initialized: { tone: "neutral", icon: ShieldMinusIcon, axis: "integrity" },
 };
 
+/* The state → tone half of the map, for a surface that paints a state without
+   rendering a badge. A graph canvas takes literal colour rather than the class
+   strings above, and deriving the tone here is what stopped the map and the
+   badge over it from assigning the same word opposite hues. */
+export const stateTones: Record<string, StatusTone> = Object.fromEntries(
+  Object.entries(states).map(([state, semantics]) => [state, semantics.tone]),
+);
+
+/* The state → axis half, for a surface that must name the axis in words rather
+   than carry it in `data-axis`. A projection column written from four axes at
+   once (`search_documents.standing`, `graph_nodes.standing`) recovers the axis
+   from this rather than from a second literal, which is the drift `stateTones`
+   was introduced to stop one map over. */
+export const stateAxesByWord: Record<string, StateAxis> = Object.fromEntries(
+  Object.entries(states).map(([state, semantics]) => [state, semantics.axis]),
+);
+
 type StatusBadgeProps = {
   children: React.ReactNode;
   icon?: "commit";
