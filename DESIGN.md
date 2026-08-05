@@ -182,9 +182,11 @@ There is one navigation system, and one scope on screen at a time.
   The graph is the Claim ledger drawn as a graph, so it is reached from the
   ledger's toolbar and from the palette rather than from the sidebar. It renders
   on its own route, because it is an instrument carrying its own state.
-- Every route body owns exactly one descriptive `h1`. Where the trail already
-  names the page, that heading is visually hidden and carries its scope, so a
-  screen reader gets the orientation a sighted reader gets from the trail.
+- Every route body owns exactly one descriptive `h1`. On a collection the trail
+  already names the page, so that heading is visually hidden and carries its
+  scope; a screen reader then gets the orientation a sighted reader gets from
+  the trail. On a record or a Frontier the heading is the record's own content
+  and stays visible.
 - Every glyph in a navigation surface is distinct. A repeated mark reads as a
   repeated destination. Hugeicons is the interface icon family; a Vela-drawn
   icon is added only where no generic glyph can express a scientific state
@@ -208,6 +210,9 @@ teach a reader nothing about what is on them.
 - **Repository.** A Frontier's own page: name, integrity, and the clone
   affordance in the primary-action position, because the product's claim is that
   nothing sits between a reader and the record. Content left, exact facts right.
+  This is the one archetype whose heading is visible. A Frontier is the record,
+  not a page about one, so its name is the largest text on the screen for the
+  same reason a Claim's assertion is on a Claim page.
 - **Instrument.** A compact toolbar, the canvas, and a ledger equivalent for
   everything the canvas shows.
 

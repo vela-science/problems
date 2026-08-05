@@ -58,6 +58,11 @@ const icons = {
  * Alert02Icon, which left them separated by colour alone (WCAG 1.4.1). */
 export type StateAxis = "standing" | "verification" | "proposal" | "integrity";
 
+/* Three words are legal on more than one axis: a Proposal and a Claim can both
+ * be `accepted`, and `rejected` / `withdrawn` read as Proposal workflow here
+ * but are a Decision's wording elsewhere. The map can only carry one axis per
+ * word, so a caller rendering the other one passes `axis` explicitly rather
+ * than shipping a badge whose `data-axis` names the wrong vocabulary. */
 const states: Record<string, { tone: StatusTone; icon: typeof Shield01Icon; axis: StateAxis }> = {
   /* standing — only a Decision moves these */
   accepted: { tone: "progress", icon: GitCommitHorizontalIcon, axis: "standing" },
@@ -92,13 +97,15 @@ const states: Record<string, { tone: StatusTone; icon: typeof Shield01Icon; axis
 type StatusBadgeProps = {
   children: React.ReactNode;
   icon?: "commit";
+  /** Overrides the axis the state word maps to, for words legal on two axes. */
+  axis?: StateAxis;
   className?: string;
 } & (
   | { state: string; tone?: never }
   | { state?: never; tone: StatusTone }
 );
 
-export function StatusBadge({ tone, state, children, icon, className }: StatusBadgeProps) {
+export function StatusBadge({ tone, state, children, icon, axis, className }: StatusBadgeProps) {
   const semantics = state ? states[state] : undefined;
   const resolvedTone = semantics?.tone ?? tone ?? "neutral";
   const statusIcon = icon === "commit"
@@ -108,7 +115,7 @@ export function StatusBadge({ tone, state, children, icon, className }: StatusBa
     <Badge
       variant="outline"
       data-state={state}
-      data-axis={semantics?.axis}
+      data-axis={axis ?? semantics?.axis}
       data-tone={resolvedTone}
       className={cn("h-6 gap-1.5 rounded px-2 text-xs font-medium leading-none", tones[resolvedTone], className)}
     >

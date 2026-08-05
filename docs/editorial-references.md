@@ -63,6 +63,36 @@ implementation uses the existing shadcn/Base UI `Item`, `Sheet`, `Button`,
 `Select`, `StatusBadge`, and `CopyButton` primitives and Vela tokens. It adds no
 template-owned component layer, Headless UI runtime, or new visual hierarchy.
 
+**Amended 2026-08-05, the six Frontier surfaces.** Four adaptations from
+Tailwind Plus Application UI v4, all licensed for this repository, all carrying
+their provenance in a comment at the point of use:
+
+- `lists/stacked-lists/08-two-columns-with-links` → the source-binding rows on
+  the Frontier Overview. Taken: the row-wide link and a right-justified
+  secondary column that collapses under the primary at narrow widths. Rebuilt
+  on the shared `Item`/`ItemGroup`, Hugeicons, semantic tokens and `next/link`;
+  the chevron affordance dropped. Heroicons, the avatar column and the raw gray
+  ramp were not taken.
+- `lists/stacked-lists/03-with-links` → the problem ledger row. The anchor's
+  `::after` covers a positioned `Item` so the statement is the row's only link,
+  which is what let two per-row ghost buttons come off 1,217 rows without
+  nesting interactives. Its Heroicons and Headless UI are not used. This
+  supersedes the 2026-08-04 amendment's "stacked-list composition", which did
+  not record the overlay.
+- `lists/tables/07-with-stacked-columns-on-mobile` → the Proposal sweep's
+  parameter table. Taken: the `hidden md:table-cell` fold. Vela folds at `md`
+  rather than `sm`, because five mono integers and a badge do not fit at 640px
+  and a wrapped integer is a misread integer.
+- The claims toolbar's range-of-total sentence (`Showing 51–100 of 2,782`) is
+  Tailwind Plus phrasing, adapted.
+
+Nothing new was licensed for the Targets surface: `RecordFacts` is the only
+adapted pattern it uses and its entry already stands. The Dossier collection
+took no overlay, so the stretched-link row above does not extend to it — with
+three links per cell and two paragraphs of triage prose meant to be read, an
+overlay makes that prose unselectable and adds no tab stop the title does not
+already give.
+
 **Amended 2026-08-05, home page rebuilt in the essay register.** The 0.436
 landing — chart, loop ring, command tour, required distinctions, boundary
 table, opened claim, boundary ledger — is gone. It was true throughout and it

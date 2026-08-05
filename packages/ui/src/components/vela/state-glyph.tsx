@@ -117,3 +117,79 @@ export function StateGlyph({
     </svg>
   );
 }
+
+/* Proposal status is a different axis from Claim standing, and DESIGN.md names
+ * collapsing two axes as the protocol's failure mode. So the mark vocabulary is
+ * shared — ring, core, dash, seam mean the same thing everywhere — and the type
+ * system is not: `rejected` and `withdrawn` cannot be handed to `StateGlyph`,
+ * and a standing cannot be handed here.
+ *
+ * What the reader gets out of it: a rejected Proposal whose evidence passed
+ * draws a conflict ring, a seam, and a filled core. Evidence held; authority
+ * declined. That distinction is otherwise a red badge in a text table. */
+
+export type ProposalStatus =
+  | "pending_review"
+  | "accepted"
+  | "rejected"
+  | "withdrawn";
+
+const proposalStroke: Record<ProposalStatus, string> = {
+  pending_review: "text-muted-foreground",
+  accepted: "text-status-progress",
+  rejected: "text-status-conflict",
+  withdrawn: "text-muted-foreground",
+};
+
+/* Dashed means no repository authority has ruled: a Proposal still in review,
+   or one the producer closed itself. Only a rejection carries the seam, because
+   only a rejection is an authority refusing the change. */
+const proposalDashed: ReadonlySet<ProposalStatus> = new Set(["pending_review", "withdrawn"]);
+
+export function ProposalGlyph({
+  status,
+  verification = "not_attempted",
+  className,
+}: {
+  status: ProposalStatus;
+  verification?: VerificationOutcome;
+  className?: string;
+}) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      aria-hidden
+      focusable="false"
+      data-proposal={status}
+      data-verification={verification}
+      className={cn("size-4 shrink-0", proposalStroke[status], className)}
+    >
+      {/* ring — Proposal status */}
+      <circle
+        cx="8"
+        cy="8"
+        r="6.25"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeDasharray={proposalDashed.has(status) ? "2.2 2" : undefined}
+      />
+
+      {/* core — Verification outcome, the same encoding StateGlyph draws */}
+      {verification === "pass" ? <circle cx="8" cy="8" r="2.5" fill="currentColor" /> : null}
+      {verification === "inconclusive" ? <circle cx="8" cy="8" r="1.1" fill="currentColor" /> : null}
+      {verification === "error" ? <rect x="5.5" y="7.35" width="5" height="1.3" fill="currentColor" /> : null}
+      {verification === "fail" ? (
+        <>
+          <circle cx="8" cy="8" r="2.5" fill="none" stroke="currentColor" strokeWidth="1" />
+          <line x1="5.9" y1="10.1" x2="10.1" y2="5.9" stroke="currentColor" strokeWidth="1" />
+        </>
+      ) : null}
+
+      {/* seam — an authority refused the requested change */}
+      {status === "rejected" ? (
+        <line x1="3.2" y1="12.8" x2="12.8" y2="3.2" stroke="currentColor" strokeWidth="1.25" />
+      ) : null}
+    </svg>
+  );
+}
