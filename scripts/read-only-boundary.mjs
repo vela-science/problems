@@ -8,6 +8,7 @@ const requestStateImport = /from\s+["']next\/headers["']/u;
 const requestStateCall = /\b(?:cookies|draftMode|headers)\s*\(/u;
 const runtimeEnvironment = /\bprocess\.env\b/u;
 const authorityDependency = /from\s+["'](?:next-auth|@auth\/|firebase(?:\/|["'])|@supabase\/|@prisma\/|prisma(?:\/|["'])|pg(?:\/|["'])|postgres(?:\/|["'])|mysql(?:2)?(?:\/|["'])|mongoose(?:\/|["']))/u;
+const productIdentityDependency = /from\s+["']@workos-inc\//u;
 const fetchCall = /\bfetch\s*\(/gu;
 const searchFetcher = "apps/observatory/src/lib/search-index.ts";
 const graphFetcher = "apps/observatory/src/lib/graph-client.ts";
@@ -17,7 +18,16 @@ const sourceRegistryRoute = "apps/observatory/src/app/sources.json/route.ts";
 const deploymentManifestRoute = "apps/observatory/src/app/.well-known/vela-site.json/route.ts";
 const resultDossierRoute = /^apps\/observatory\/src\/app\/frontiers\/[^/]+\/dossiers\/[^/]+\.json\/route\.[cm]?[jt]sx?$/u;
 const readOnlyRoutes = new Set([searchRoute, graphRoute, sourceRegistryRoute, deploymentManifestRoute]);
-const mutationMethod = /export\s+(?:async\s+)?function\s+(?:POST|PUT|PATCH|DELETE)\b/u;
+const accountRoute = "apps/observatory/src/app/api/account/route.ts";
+const authCallbackRoute = "apps/observatory/src/app/auth/callback/route.ts";
+const signInRoute = "apps/observatory/src/app/sign-in/route.ts";
+const signOutRoute = "apps/observatory/src/app/sign-out/route.ts";
+const authLibrary = "apps/observatory/src/lib/auth.ts";
+const accountMenu = "apps/observatory/src/components/vela/account-menu.tsx";
+const identityProxy = "apps/observatory/src/proxy.ts";
+const identityRoutes = new Set([accountRoute, authCallbackRoute, signInRoute, signOutRoute]);
+const productIdentityFiles = new Set([...identityRoutes, authLibrary, identityProxy]);
+const mutationMethods = /export\s+(?:async\s+)?function\s+(POST|PUT|PATCH|DELETE)\b/gu;
 
 /* www used to be Astro, which could not express a Server Action or a
    route handler, so the boundary only had to police the Observatory.
@@ -52,21 +62,30 @@ export function inspectReadOnlyBoundary(repository) {
     const content = readFileSync(path, "utf8");
     const add = (rule, detail) => violations.push({ file, rule, detail });
 
-    if (routeHandler.test(file) && !readOnlyRoutes.has(file) && !resultDossierRoute.test(file)) add("route_handler", "Only the read-only deployment-manifest, search, graph, source-registry, and Result Dossier Route Handlers are allowed");
-    if (mutationMethod.test(content)) add("mutation_handler", "Mutation methods are outside the read-only product boundary");
+    if (routeHandler.test(file) && !readOnlyRoutes.has(file) && !identityRoutes.has(file) && !resultDossierRoute.test(file)) add("route_handler", "Only declared read projections and isolated product-identity Route Handlers are allowed");
+    const methods = [...content.matchAll(mutationMethods)].map((match) => match[1]);
+    const boundedSignOut = file === signOutRoute
+      && methods.length === 1
+      && methods[0] === "POST"
+      && content.includes("trustedRequestOrigin(request)")
+      && content.includes("signOut({ returnTo: `${origin}/problems` })");
+    if (methods.length && !boundedSignOut) add("mutation_handler", "Only the exact-origin product-session sign-out POST may mutate state; scientific mutation remains outside the Observatory boundary");
     if (serverDirective.test(content)) add("server_action", "Server Actions are outside the read-only product boundary");
     if (requestStateImport.test(content) || requestStateCall.test(content)) {
       add("request_state", "request-scoped headers, cookies, and server helpers are not allowed");
     }
-    if (runtimeEnvironment.test(content)) add("runtime_environment", "browser and route source must not depend on runtime secrets");
-    if (authorityDependency.test(content)) add("authority_dependency", "authentication and database dependencies are not allowed");
+    if (runtimeEnvironment.test(content) && file !== authLibrary) add("runtime_environment", "runtime secrets are confined to the server-only product-identity adapter");
+    if (authorityDependency.test(content)) add("authority_dependency", "database and scientific-authority dependencies are not allowed");
+    if (productIdentityDependency.test(content) && !productIdentityFiles.has(file)) add("product_identity_dependency", "the maintained identity provider is confined to the declared account boundary");
 
     const fetches = [...content.matchAll(fetchCall)].length;
     if (!fetches) continue;
     const isSearch = file === searchFetcher && content.includes("new URLSearchParams({ root: projectionRoot") && content.includes("`/api/search?${params}`") && content.includes("fetch(href,");
     const isGraph = file === graphFetcher && content.includes("new URLSearchParams({ root: input.root") && content.includes("`/api/graph?${params}`") && content.includes("fetch(`/api/graph?");
-    if (fetches !== 1 || (!isSearch && !isGraph)) {
-      add("request_time_fetch", "only exact-root same-origin GETs to the search and graph read contracts may be fetched at request time");
+    const isAccount = file === accountMenu
+      && content.includes('fetch("/api/account", { cache: "no-store", credentials: "same-origin" })');
+    if (fetches !== 1 || (!isSearch && !isGraph && !isAccount)) {
+      add("request_time_fetch", "request-time fetches are confined to exact-root read contracts and the minimal same-origin account session contract");
     }
   }
 

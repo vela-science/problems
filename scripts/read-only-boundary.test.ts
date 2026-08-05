@@ -35,10 +35,31 @@ describe("Observatory read-only boundary", () => {
       "apps/observatory/src/app/frontiers/erdos/dossiers/erdos-264.json/route.ts": "export async function GET() { return Response.json({ authority: 'read_only_projection' }); }\n",
       "apps/observatory/src/app/frontiers/erdos/dossiers/erdos-730.json/route.ts": "export async function GET() { return Response.json({ authority: 'read_only_projection' }); }\n",
       "apps/observatory/src/app/frontiers/formal-conjectures/dossiers/erdos-521.json/route.ts": "export async function GET() { return Response.json({ authority: 'read_only_projection' }); }\n",
+      "apps/observatory/src/app/api/account/route.ts": "export async function GET() { return Response.json({ status: 'signed_out' }); }\n",
+      "apps/observatory/src/app/auth/callback/route.ts": "import { handleAuth } from '@workos-inc/authkit-nextjs';\nexport async function GET(request) { return handleAuth()(request); }\n",
+      "apps/observatory/src/app/sign-in/route.ts": "import { getSignInUrl } from '@workos-inc/authkit-nextjs';\nexport async function GET() { return Response.redirect(await getSignInUrl()); }\n",
+      "apps/observatory/src/app/sign-out/route.ts": "import { signOut } from '@workos-inc/authkit-nextjs';\nimport { trustedRequestOrigin } from '@/lib/auth';\nexport async function POST(request) { const origin = trustedRequestOrigin(request); return signOut({ returnTo: `${origin}/problems` }); }\n",
+      "apps/observatory/src/lib/auth.ts": "import { WorkOS } from '@workos-inc/node';\nexport const configured = Boolean(process.env.WORKOS_API_KEY);\n",
+      "apps/observatory/src/proxy.ts": "import { authkitProxy } from '@workos-inc/authkit-nextjs';\nexport default authkitProxy();\n",
+      "apps/observatory/src/components/vela/account-menu.tsx": "export function loadAccount() { return fetch(\"/api/account\", { cache: \"no-store\", credentials: \"same-origin\" }); }\n",
       "apps/observatory/src/lib/search-index.ts": "export function load(projectionRoot) { const params = new URLSearchParams({ root: projectionRoot }); const href = `/api/search?${params}`; return fetch(href, { cache: 'force-cache' }); }\n",
       "apps/observatory/src/lib/graph-client.ts": "export function loadGraph(input) { const params = new URLSearchParams({ root: input.root }); return fetch(`/api/graph?${params}`, { cache: 'force-cache' }); }\n",
     });
     expect(inspectReadOnlyBoundary(root)).toEqual([]);
+  });
+
+  test("keeps the product identity exception narrow", () => {
+    const root = fixture({
+      "apps/observatory/src/app/api/account/route.ts": "export async function POST() { return new Response(); }\n",
+      "apps/observatory/src/app/sign-out/route.ts": "export async function POST() { return new Response(); }\n",
+      "apps/observatory/src/lib/other-provider.ts": "import { WorkOS } from '@workos-inc/node';\nexport const provider = new WorkOS();\n",
+      "apps/observatory/src/components/vela/account-menu.tsx": "export function loadAccount() { return fetch('https://example.com/account'); }\n",
+    });
+    expect(new Set(inspectReadOnlyBoundary(root).map(({ rule }) => rule))).toEqual(new Set([
+      "mutation_handler",
+      "product_identity_dependency",
+      "request_time_fetch",
+    ]));
   });
 
   test("rejects mutation, authority, secret, and external-fetch surfaces", () => {
