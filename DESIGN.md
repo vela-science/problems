@@ -143,14 +143,24 @@ protocol's named failure mode:
 
 | Axis | What it records | Values |
 | --- | --- | --- |
-| Claim standing | what an authorised human Decision established | unassessed, accepted, accepted with conditions, corrected, superseded, retracted |
+| Claim standing | what an authorised human Decision established | accepted, pending review, rejected, withdrawn, superseded |
 | Verification outcome | what a scoped machine check reported | pass, fail, inconclusive, error, not attempted |
 | Proposal status | where a candidate transition sits in review | pending review, accepted, rejected, and withdrawn as a separate appended record |
 | Repository integrity | whether the repository replays | replay verified or not initialised; strict pass or blocked, with blocker counts |
 
-Rejected and withdrawn belong to the proposal axis, never to standing. The
-current projection carries only part of the standing vocabulary, and a value
-absent from the data stays on its own axis rather than moving to another.
+The protocol declares that vocabulary; the CLI at 0.966.2 emits a different set.
+`unassessed`, `accepted with conditions`, `corrected` and `retracted` are
+declared and never emitted, and the implementation returns two Proposal-status
+words — pending review and withdrawn — as a Claim's standing, which is the axis
+crossing this table exists to prevent.
+
+Where the two disagree, the product renders the protocol's word, not the
+implementation's: a Claim whose only Proposal is undecided has no ruling, and
+that is `unassessed`. Translating it back onto the right axis is not inventing a
+state, it is refusing to repeat an upstream one. Nothing else is promoted:
+producer-side flags and Submission-authored conditions are shown as what they
+are, because reading them as `corrected` or `accepted with conditions` would say
+an authority had ruled where none has.
 
 A badge names exactly one axis and says which. Standing and verification never
 share a glyph, and neither appears without the word for its axis; the tone
