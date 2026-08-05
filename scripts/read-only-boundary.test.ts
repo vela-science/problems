@@ -31,8 +31,10 @@ describe("Observatory read-only boundary", () => {
       "apps/observatory/src/app/api/graph/route.ts": "import { NextResponse } from 'next/server';\nexport async function GET() { return NextResponse.json([]); }\n",
       "apps/observatory/src/app/sources.json/route.ts": "import { NextResponse } from 'next/server';\nexport async function GET() { return NextResponse.json([]); }\n",
       "apps/observatory/src/app/.well-known/vela-site.json/route.ts": "export async function GET() { return Response.json({ authority: 'read_only_projection' }); }\n",
+      "apps/observatory/src/app/frontiers/erdos/dossiers/erdos-203.json/route.ts": "export async function GET() { return Response.json({ authority: 'read_only_projection' }); }\n",
       "apps/observatory/src/app/frontiers/erdos/dossiers/erdos-264.json/route.ts": "export async function GET() { return Response.json({ authority: 'read_only_projection' }); }\n",
       "apps/observatory/src/app/frontiers/erdos/dossiers/erdos-730.json/route.ts": "export async function GET() { return Response.json({ authority: 'read_only_projection' }); }\n",
+      "apps/observatory/src/app/frontiers/formal-conjectures/dossiers/erdos-521.json/route.ts": "export async function GET() { return Response.json({ authority: 'read_only_projection' }); }\n",
       "apps/observatory/src/lib/search-index.ts": "export function load(projectionRoot) { const params = new URLSearchParams({ root: projectionRoot }); const href = `/api/search?${params}`; return fetch(href, { cache: 'force-cache' }); }\n",
       "apps/observatory/src/lib/graph-client.ts": "export function loadGraph(input) { const params = new URLSearchParams({ root: input.root }); return fetch(`/api/graph?${params}`, { cache: 'force-cache' }); }\n",
     });

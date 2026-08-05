@@ -15,12 +15,8 @@ const searchRoute = "apps/observatory/src/app/api/search/route.ts";
 const graphRoute = "apps/observatory/src/app/api/graph/route.ts";
 const sourceRegistryRoute = "apps/observatory/src/app/sources.json/route.ts";
 const deploymentManifestRoute = "apps/observatory/src/app/.well-known/vela-site.json/route.ts";
-const resultDossierRoutes = [
-  "apps/observatory/src/app/frontiers/erdos/dossiers/erdos-264.json/route.ts",
-  "apps/observatory/src/app/frontiers/erdos/dossiers/erdos-730.json/route.ts",
-  "apps/observatory/src/app/frontiers/formal-conjectures/dossiers/erdos-521.json/route.ts",
-];
-const readOnlyRoutes = new Set([searchRoute, graphRoute, sourceRegistryRoute, deploymentManifestRoute, ...resultDossierRoutes]);
+const resultDossierRoute = /^apps\/observatory\/src\/app\/frontiers\/[^/]+\/dossiers\/[^/]+\.json\/route\.[cm]?[jt]sx?$/u;
+const readOnlyRoutes = new Set([searchRoute, graphRoute, sourceRegistryRoute, deploymentManifestRoute]);
 const mutationMethod = /export\s+(?:async\s+)?function\s+(?:POST|PUT|PATCH|DELETE)\b/u;
 
 /* www used to be Astro, which could not express a Server Action or a
@@ -56,7 +52,7 @@ export function inspectReadOnlyBoundary(repository) {
     const content = readFileSync(path, "utf8");
     const add = (rule, detail) => violations.push({ file, rule, detail });
 
-    if (routeHandler.test(file) && !readOnlyRoutes.has(file)) add("route_handler", "Only the read-only deployment-manifest, search, graph, source-registry, and Result Dossier Route Handlers are allowed");
+    if (routeHandler.test(file) && !readOnlyRoutes.has(file) && !resultDossierRoute.test(file)) add("route_handler", "Only the read-only deployment-manifest, search, graph, source-registry, and Result Dossier Route Handlers are allowed");
     if (mutationMethod.test(content)) add("mutation_handler", "Mutation methods are outside the read-only product boundary");
     if (serverDirective.test(content)) add("server_action", "Server Actions are outside the read-only product boundary");
     if (requestStateImport.test(content) || requestStateCall.test(content)) {
