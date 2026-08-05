@@ -75,6 +75,27 @@ test("the exported axis table is derived from the states map, not written twice"
   )
 })
 
+test("the exported glyph table is derived from the states map, not written twice", () => {
+  /* The Decision stream draws a state's mark without a badge over it, and did
+     that from a private two-row map that put `accepted` and `rejected` on one
+     axis. It reads `stateIcons` now, so this pins that the export stays a view
+     of `states` rather than becoming another literal. */
+  assert.match(
+    source,
+    /export const stateIcons[^=]*=\s*Object\.fromEntries\(\s*Object\.entries\(states\)/u,
+  )
+})
+
+test("the tone fill table covers every tone exactly once", () => {
+  /* Two Observatory components painted tones as areas from their own tables and
+     one had no neutral row. This is keyed by tone rather than by state, so it
+     cannot be derived from `states`; what it can be held to is completeness. */
+  const block = source.match(/export const toneFills[^=]*=\s*\{([\s\S]*?)\n\};/u)
+  assert.ok(block, "status-badge must export a toneFills map")
+  const rows = [...block[1]!.matchAll(/(\w+):\s*"([^"]+)"/gu)].map(([, tone]) => tone!)
+  assert.deepEqual(rows.sort(), ["caution", "conflict", "evidence", "neutral", "progress"])
+})
+
 test("the exported tone table is derived from the states map, not written twice", () => {
   /* The graph canvas paints states without rendering a badge, and it did that
      from a second literal map that had the two hues above swapped. It reads

@@ -23,8 +23,8 @@ surfaces and three shared packages.
 
 | Path | Runtime | Purpose |
 | --- | --- | --- |
-| `apps/www` | Next.js static export | Product home, publications, and release-bound documentation |
-| `apps/observatory` | Next.js | Root-bound frontier, Claim, work, review, graph, and replay views |
+| `apps/www` | Next.js static export | Product home, the Constellations essay, and the vendored Vela documentation |
+| `apps/observatory` | Next.js | Root-bound Frontier, Claim, Target, Proposal, Decision, Dossier, Source, graph, and reproduce views |
 | `packages/brand` | TypeScript and CSS | Framework-neutral sail, tokens, fonts, licenses, and deterministic exports |
 | `packages/ui` | React, shadcn, and Base UI | Private shared primitives and stable Vela presentation semantics |
 | `packages/frontier-data` | TypeScript | Sole validator and projector for frontier, search, work, and graph data |
@@ -73,9 +73,10 @@ canonical frontier Git repositories
   to one readable release root.
 - Verification, replay, proposal standing, and scientific acceptance remain
   distinct everywhere.
-- The web has no signer, Server Action, public mutation API, canonical or
-  writable scientific database, human key path, or private coordination
-  payload. Neon is a disposable, normalized read projection.
+- The web has no signer, scientific Server Action, public mutation API,
+  canonical or writable scientific database, human key path, or private
+  coordination payload. The single isolated AuthKit sign-out action carries no
+  scientific state. Neon is a disposable, normalized read projection.
 - Normalized projection rows are rebuilt from exact canonical Git commits and
   validated before activation. No whole-Frontier document is embedded as a
   universal browser payload.

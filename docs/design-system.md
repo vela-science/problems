@@ -11,7 +11,7 @@ make evidence and direction legible; it is not a separately published product.
 | --- | --- | --- |
 | Brand | `packages/brand` | All Vela surfaces and exported assets |
 | React primitives and semantics | `packages/ui` | Observatory, eligible www interactions, future private React applications |
-| Editorial profile | `apps/www` | Home, publications, and exact release documentation |
+| Editorial profile | `apps/www` | Home, the Constellations essay, and the vendored Vela documentation |
 | Product profile | `packages/ui/src/styles/product.css` | Observatory and future private product surfaces |
 | Exact data | `packages/frontier-data` | Both applications |
 

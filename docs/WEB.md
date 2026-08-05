@@ -9,18 +9,23 @@ Earlier design and migration plans live under `docs/history/`.
   Router, static export (`output: "export"`). Moved off Astro 2026-07-28.
 - `app.vela.space` is the canonical Next.js Repository Observatory surface.
 - `vela.space` redirects to `www`; product paths on `www` redirect to `app`.
-- Both applications are read-only surfaces of one Web product. They expose no signer, public
-  mutation API, Server Action, or scientific authority. The Observatory reads
-  a bounded projection from Neon; canonical custody remains in the frontier
-  Git repositories.
+- Both applications are read-only surfaces of one Web product. They expose no
+  signer, public mutation API, scientific Server Action, or scientific
+  authority. The Observatory reads a bounded projection from Neon; canonical
+  custody remains in the frontier Git repositories.
 - Normative protocol and CLI documentation remains in the Vela repository at
   an exact release commit. This repository owns onboarding and explanation,
   and serves it from `www.vela.space/docs`.
 
 `bun run check:boundary` makes that product boundary executable. It rejects
-Server Actions, request-scoped cookies or headers, authentication, mutation
-handlers, and arbitrary request-time fetches. The only Route Handlers are
-exact-root, same-origin reads for normalized search documents and graph slices.
+scientific Server Actions, request-scoped cookies or headers, mutation Route
+Handlers, database and scientific-authority dependencies, and arbitrary
+request-time fetches. Route Handlers are limited to the declared exact-root
+reads — `/api/search`, `/api/graph`, `/sources.json`,
+`/.well-known/vela-site.json`, and the Result Dossier JSON exports — and to the
+three isolated product-identity routes `/api/account`, `/auth/callback` and
+`/sign-in`. One bounded AuthKit sign-out Server Action is allow-listed by name;
+runtime secrets are confined to the server-only identity adapter.
 
 The repository is a Bun workspace with five maintained boundaries:
 
@@ -55,19 +60,22 @@ The editorial application owns one current route vocabulary:
 ```text
 /                 the chart
 /constellations   Endless Frontiers
-/docs             the five guides
-/docs/[section]   install · quickstart · produce · review · reproduce
+/docs             the vendored Vela documentation
+/docs/[section]   16 pages in five groups, synced from the Vela release pin
 ```
 
-The rebuild of 2026-07-28 reduced the surface to these two while the rest is
-rewritten. `apps/www/scripts/check-public-routes.mjs` holds the set as an
-executable contract: a route that ships without being added there fails the
-build, and so does a route in the set that stops shipping. Add each of
+The rebuild of 2026-07-28 reduced the surface to the chart and Constellations;
+documentation moved here the same day. The rest is still being rewritten.
+`apps/www/scripts/check-public-routes.mjs` holds the set as an executable
+contract: a route that ships without being added there fails the build, and so
+does a route in the set that stops shipping. Add each of
 `/essays`, `/discovery-engine`, `/gigafactories-for-science`, `/whitepaper`,
 `/stack` and `/facility` back to that set as its page returns.
 
-The masthead exposes Constellations, Documentation, GitHub and Observatory,
-and the Vela sail is the only Home affordance.
+The masthead carries the sail as the Home affordance and exposes Chart, Endless
+Frontiers, Documentation, Observatory and GitHub. The current page stays a link,
+marked with `aria-current` and an underline, and it is the one label that drops
+below `sm`.
 
 ### Docs moved off the Observatory, 2026-07-28
 
@@ -83,7 +91,7 @@ five guidance sections have been deleted, and the site now serves the Vela
 repository's own documentation.
 
 **Vendored at the pinned commit.** `apps/www/scripts/sync-vela-docs.mjs`
-extracts 19 files with `git show <pin>:docs/<file>` from any Vela clone that
+extracts 16 files with `git show <pin>:docs/<file>` from any Vela clone that
 contains the commit recorded in `vela-release.v1.json`, and writes them into
 `src/content/docs/manifest.json`. The working tree is never read — when this
 was built the local checkout was 1889 insertions across 19 files ahead of the
@@ -101,15 +109,16 @@ bun apps/www/scripts/sync-vela-docs.mjs
 so a moved pin with a stale sync fails CI rather than shipping the manual for
 a release the site no longer advertises.
 
-**What is published.** The 19 pages are the quickstarts, the protocol, the
-evidence-and-authority set, the frontier-operations set, and the CLI
-reference. Excluded on purpose: the 23 architecture decision records, which
-are an internal history rather than instructions; `POSI_SELF_ASSESSMENT` and
-`HARDWARE_SIGNING_PROPOSAL`, an internal assessment and an unaccepted
-proposal; `EXIT_AND_EXPORT_DRILL`, an operator runbook; and `README`, an index
-this site replaces. Publishing an internal assessment is hard to walk back, so
-the default is conservative — add a file to `GROUPS` in the sync script to
-publish it.
+**What is published.** `GROUPS` in the sync script is the list, and the five
+groups are the quickstarts, the protocol, the evidence-and-authority set, the
+frontier-operations set, and the CLI reference. Excluded on purpose: everything
+under `docs/adr/`, an internal history of how choices were made rather than
+instructions; everything under `docs/history/`, which is where upstream now
+keeps `POSI_SELF_ASSESSMENT`, `HARDWARE_SIGNING_PROPOSAL` and
+`EXIT_AND_EXPORT_DRILL`; the campaign and roadmap documents; and `README`, an
+index this site replaces. Neither excluded directory is read by the script at
+all. Publishing an internal assessment is hard to walk back, so the default is
+conservative — add a file to `GROUPS` to publish it.
 
 **Rendering.** Plain markdown through remark and rehype at build, with Shiki
 for code, themed to the editorial palette rather than to a shipped theme.
@@ -131,8 +140,9 @@ reskinned.
 ## Exact frontier state
 
 `packages/frontier-data/src/registry.ts` is the typed registry for the four
-canonical Git repositories. One manually triggered GitHub workflow checks out
-clean `origin/main` Frontier tips, verifies them with the pinned Vela release,
+canonical Git repositories. One GitHub workflow — triggered by a relevant push
+to `main`, or by `workflow_dispatch` for a data-only refresh — checks out clean
+`origin/main` Frontier tips, verifies them with the pinned Vela release,
 and writes a content-addressed normalized read model to the `vela_observatory`
 database in the `vela-observatory-projection` Neon project:
 
@@ -222,7 +232,7 @@ onto database branches.
 
 Those two URLs are the complete secret inventory for database access. The
 fixed `observatory_projection_reader` role is managed directly in Neon and is
-not recreated during CI or scheduled refreshes.
+not recreated during CI or projection refreshes.
 
 `packages/frontier-data/schema.sql` is the current desired-state schema.
 Forward changes live in `packages/frontier-data/migrations`; each applied file
@@ -231,9 +241,9 @@ rooted migrations before a refresh and rejects changed or unknown history.
 `bun run db:check` verifies the required tables, indexes, and SELECT-only
 application role without writing. CI never creates or mutates a Neon branch:
 pull requests run no-secret static contracts, while trusted main and
-release-candidate runs verify the fixed read-only projection. A scheduled
-refresh inserts a complete candidate into `main`, recomputes row roots and
-corpus counts, and only then atomically moves `current_release`. The read
+release-candidate runs verify the fixed read-only projection. A refresh run
+inserts a complete candidate into `main`, recomputes row roots and corpus
+counts, and only then atomically moves `current_release`. The read
 contract retains only that current release and its two immediate activated
 predecessors; unactivated candidates are disposable and are removed by the
 next prune. An unchanged
@@ -350,8 +360,10 @@ The two applications deliberately use different release paths:
 This ordering is mandatory. It prevents current application code from racing a
 predecessor read model and makes one workflow own both projection activation and
 the corresponding deployment. `workflow_dispatch` remains available for an
-exact data-only refresh. The hook's exact-commit build is still filtered by
-`scripts/vercel-should-build.mjs`.
+exact data-only refresh. Only `apps/www/vercel.json` carries an
+`ignoreCommand`, so `scripts/vercel-should-build.mjs` filters the editorial
+build alone; the Observatory's scope comes from the workflow's own path
+filters, and every hook invocation builds.
 
 Vela Web's `package.json` contains the only product version. The disposable
 database has no parallel numbered release train: its current-only manifest is
@@ -382,15 +394,16 @@ read-only product evidence: the projection may expose public keys, signed
 record roots, and restricted-policy identity, but never custody material,
 authentication context, a decision control, or an authority operation. A
 production release is incomplete until its deployed manifest matches the
-approved tag, commit, and activated projection exactly.
+approved commit and activated projection exactly.
 
 None of that identity is set by hand. The root `package.json` is the only place
 a version lives; commit and deployment id come from `VERCEL_GIT_COMMIT_SHA` and `VERCEL_DEPLOYMENT_ID`,
 which `deploymentIdentity()` reads directly and which production manifest
 generation refuses to go without. Git tags remain useful release pointers, but deployment
 truth is the exact commit rather than a tag inferred from a version string.
-`scripts/check-deployed-manifest.mjs` confirms that the deployed bytes identify
-the exact repository commit and projection root.
+`apps/www/scripts/check-deployed-manifest.mjs` and
+`apps/observatory/scripts/check-deployed-manifest.mjs` confirm that the deployed
+bytes identify the exact repository commit and projection root.
 
 Several legacy domains currently show Vercel's `DNS Change Recommended`
 advisory while resolving successfully. Treat DNS migration as a separate
@@ -408,17 +421,24 @@ repo.
 
 ## Release
 
-1. Build and tag an unsigned release candidate on clean `main`.
-2. Deploy only the application changed by the release from that exact commit.
-   A shared brand or data-contract change may require both; editorial-only work
-   must not redeploy the Observatory unnecessarily.
-3. Verify the changed routes, redirects, semantics, roots, accessibility,
-   responsive states, cache isolation, and staging manifest.
-4. Tag the final release from the approved commit and deploy the same scope.
-5. Verify production manifests and canonical domains. The untouched application
+A release is a commit, not a ceremony. Nothing here is a precondition for
+shipping one; the preconditions are the gates.
+
+1. Verify the change on a branch: the full local gate, the changed routes,
+   redirects, semantics, roots, accessibility, responsive states, and cache
+   isolation. A release-candidate build is available on a `v*-rc.*` tag when a
+   change is worth exercising in CI before it lands.
+2. Merge to clean `main`. The two release paths ship the changed application on
+   their own, and the scope is decided for you — `vercel-should-build.mjs` for
+   the editorial site, `refresh-projection.yml`'s path filters for the
+   Observatory. A shared brand or data-contract change may deploy both;
+   editorial-only work does not redeploy the Observatory.
+3. Verify the production manifests and canonical domains against the exact
+   merged commit and the activated projection root. The untouched application
    must retain its prior deployment identity and behavior.
-6. Update the parent `ecosystem.lock.json` only after production verification.
-7. Remove generated dependencies and build output after the release audit.
+4. Cut a tag afterwards when the release means something. It is a pointer to
+   the commit, not the thing that shipped it.
+5. Remove generated dependencies and build output after the release audit.
 
 Never publish a release if a manifest lacks the exact commit, any root drifts,
 verifier success is presented as acceptance, a canonical route is missing, or

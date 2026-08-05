@@ -58,11 +58,14 @@ const icons = {
  * Alert02Icon, which left them separated by colour alone (WCAG 1.4.1). */
 export type StateAxis = "standing" | "verification" | "proposal" | "integrity";
 
-/* Three words are legal on more than one axis: a Proposal and a Claim can both
- * be `accepted`, and `rejected` / `withdrawn` read as Proposal workflow here
- * but are a Decision's wording elsewhere. The map can only carry one axis per
- * word, so a caller rendering the other one passes `axis` explicitly rather
- * than shipping a badge whose `data-axis` names the wrong vocabulary. */
+/* One word is legal on more than one axis: a Proposal and a Claim can both be
+ * `accepted`. The protocol's lifecycle vocabularies (vela docs/TERMINOLOGY.md,
+ * "Lifecycle vocabularies") name `rejected` and `withdrawn` on the Proposal
+ * axis only — Claim standing runs unassessed, accepted, accepted_with_conditions,
+ * retracted, superseded, corrected — so a Decision that rejects a Proposal is
+ * still a Proposal word. The map can only carry one axis per word, so a caller
+ * rendering `accepted` as Claim standing passes `axis` explicitly rather than
+ * shipping a badge whose `data-axis` names the wrong vocabulary. */
 const states: Record<string, { tone: StatusTone; icon: typeof Shield01Icon; axis: StateAxis }> = {
   /* standing — only a Decision moves these */
   accepted: { tone: "progress", icon: GitCommitHorizontalIcon, axis: "standing" },
@@ -110,6 +113,28 @@ export const stateTones: Record<string, StatusTone> = Object.fromEntries(
 export const stateAxesByWord: Record<string, StateAxis> = Object.fromEntries(
   Object.entries(states).map(([state, semantics]) => [state, semantics.axis]),
 );
+
+/* The state → glyph half, for a surface that draws a state's mark without
+   rendering a badge. The Decision stream carried its own two-row copy of this
+   and filed `accepted` and `rejected` on one axis, which is the conflation the
+   map above exists to prevent. */
+export const stateIcons: Record<string, typeof Shield01Icon> = Object.fromEntries(
+  Object.entries(states).map(([state, semantics]) => [state, semantics.icon]),
+);
+
+/* The tone → solid fill, for a surface that paints a tone as an area rather
+   than as a badge: a composition segment, a signal dot. Keyed by tone rather
+   than by state, so it cannot be derived from the map above. Two Observatory
+   components held their own copies and one was missing the neutral row, which
+   is why the vocabulary is declared once here and imported. Neutral has no
+   status hue by definition, so it takes the muted rule colour. */
+export const toneFills: Record<StatusTone, string> = {
+  evidence: "bg-status-evidence",
+  progress: "bg-status-progress",
+  caution: "bg-status-caution",
+  conflict: "bg-status-conflict",
+  neutral: "bg-muted-foreground/55",
+};
 
 type StatusBadgeProps = {
   children: React.ReactNode;
