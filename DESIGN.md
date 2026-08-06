@@ -148,24 +148,26 @@ protocol's named failure mode:
 
 | Axis | What it records | Values |
 | --- | --- | --- |
-| Claim standing | what an authorised human Decision established | accepted, pending review, rejected, withdrawn, superseded |
+| Claim standing | what an authorised human Decision established | unassessed, accepted, accepted with conditions, retracted, superseded, corrected |
 | Verification outcome | what a scoped machine check reported | pass, fail, inconclusive, error, not attempted |
 | Proposal status | where a candidate transition sits in review | pending review, accepted, rejected, and withdrawn as a separate appended record |
 | Repository integrity | whether the repository replays | replay verified or not initialised; strict pass or blocked, with blocker counts |
 
-The protocol declares that vocabulary; the CLI at 0.966.2 emits a different set.
-`unassessed`, `accepted with conditions`, `corrected` and `retracted` are
-declared and never emitted, and the implementation returns two Proposal-status
-words — pending review and withdrawn — as a Claim's standing, which is the axis
-crossing this table exists to prevent.
+The CLI emits four of those six: `accepted` after an accepted Decision on an
+addition or a revision, `retracted` after one on a withdrawal, `superseded`
+after a `finding.superseded` Event, and `unassessed` over every Claim no ruling
+stands over. `accepted with conditions` and `corrected` stay declared and
+underived, because a Decision records no conditions and `corrects` is a Claim
+relation no Decision reads.
 
-Where the two disagree, the product renders the protocol's word, not the
-implementation's: a Claim whose only Proposal is undecided has no ruling, and
-that is `unassessed`. Translating it back onto the right axis is not inventing a
-state, it is refusing to repeat an upstream one. Nothing else is promoted:
-producer-side flags and Submission-authored conditions are shown as what they
-are, because reading them as `corrected` or `accepted with conditions` would say
-an authority had ruled where none has.
+Through `0.966.3` the CLI answered this axis in the Proposal's words, returning
+pending review, rejected and withdrawn as a Claim's standing, and the product
+translated them back on read. Both halves are gone: the protocol took the
+decision upstream, and the projection now stores the declared word, so these
+surfaces render the column rather than a correction of it. Nothing is promoted
+onto the axis either — producer-side flags and Submission-authored conditions
+are shown as what they are, because reading them as `corrected` or `accepted
+with conditions` would say an authority had ruled where none has.
 
 A badge names exactly one axis and says which. Standing and verification never
 share a glyph, and neither appears without the word for its axis; the tone
