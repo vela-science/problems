@@ -43,7 +43,11 @@ jobs:
         run: bun run format:check
 
   projection:
-    if: github.event_name != 'pull_request'
+    # Pull requests and release candidates only. On a push to main the
+    # projection refresh runs this same set AFTER regenerating the projection,
+    # so running it here too raced that job over one live database and reported
+    # a red for a change that was correct until the refresh caught up.
+    if: github.event_name != 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 35
     env:
