@@ -31,6 +31,8 @@
     "check:projection": "bun scripts/check-projection-compatibility.mjs",
     "db:check": "bun run --filter @vela/frontier-data db:check",
     "db:migrate": "bun run --filter @vela/frontier-data db:migrate",
+    "db:migrate:local": "bun run --filter @vela/frontier-data db:migrate:local",
+    "db:sql": "bun run --filter @vela/frontier-data db:sql",
     "projection:snapshot": "bun run --filter @vela/frontier-data projection:snapshot",
     "projection:reconstruct": "bun run --filter @vela/frontier-data reconstruct --",
     "projection:verify": "bun run --filter @vela/frontier-data verify",

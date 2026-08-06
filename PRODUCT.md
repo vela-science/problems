@@ -95,10 +95,18 @@ the product's explanation against the protocol's own words.
 ### `app.vela.space`
 
 The Observatory is the read-only workbench over an exact, release-bound
-projection. Its destinations are Frontiers, Decisions, and Sources; inside a
-Frontier it opens Overview, Claims, Problems where the source has them, Targets,
-Proposals, Dossiers, and Reproduce, with search and the evidence graph reachable
-as tools rather than as places.
+projection. Its destinations are Frontiers, then Targets, Proposals, Dossiers
+and Decisions across the release, then Sources; inside a Frontier it opens
+Overview, Claims, Problems where the source has them, Targets, Proposals,
+Dossiers, and Reproduce, with search and the evidence graph reachable as tools
+rather than as places.
+
+The four release-wide roll-ups sit under a heading naming their scope. They were
+left out of the rail for a while after the Frontier tab bar was removed, on the
+reasoning that the three shared names had been the ambiguity; but the routes
+stayed, so a reader on one of them saw no rail entry for the page they were
+reading. The ambiguity was the two scopes being on screen together, which the
+contextual rail already prevents.
 
 Alongside the human surfaces it serves declared read endpoints: the deployment
 manifest, the source registry, the search and graph read contracts, and one JSON
@@ -115,10 +123,13 @@ remain distinct in language and presentation.
 
 One navigation system, one scope on screen. The sidebar is contextual: outside a
 Frontier it lists what is genuinely release-wide, and inside one it becomes that
-Frontier's own sections, grouped under the protocol's axes. The header carries
-one trail whose last element is the current page; inside a Frontier its first
-element is the Frontier switcher, a control rather than a link. No label means
-two scopes at once.
+Frontier's own sections, grouped under the protocol's axes. Both rails group
+rather than flatten, because a heading is what lets a shared name state its
+scope. The header carries one trail whose last element is the current page, and
+on a record that element is the record — a trail ending at the collection named
+the same three words on every one of a Frontier's 2,782 Claim pages. Inside a
+Frontier the trail's first element is the Frontier switcher, a control rather
+than a link. No label means two scopes at once.
 
 A noun appears at both release and Frontier level only when a reader with no
 Frontier in mind can act on it. When it does, the release view is a roll-up with
