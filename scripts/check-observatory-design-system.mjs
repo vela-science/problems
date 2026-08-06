@@ -114,11 +114,16 @@ function filesAt(directory) {
 for (const file of filesAt(source)) {
   const text = readFileSync(file, "utf8");
   const label = relative(root, file);
+  /* The retired icon family and the retired presentation components used to be
+     matched here too, by `from "lucide-react"` and a path substring. Both are
+     now `no-restricted-imports` entries in eslint.bans.mjs. The regex missed a
+     multi-line import — the exact shape `bunx shadcn add` writes — and neither
+     saw `await import(...)`; ESLint reads the tree and sees both. What stays
+     below is the text this file is really about: markup, palette literals and
+     navigation, none of which is a module. */
   if (/<select\b/u.test(text)) failures.push(`${label}: raw select bypasses the installed shadcn Select`);
-  if (/from ["']lucide-react["']/u.test(text)) failures.push(`${label}: imports the retired Lucide icon family`);
   if (/\b(?:bg|text|border|ring|fill|stroke)-(?:slate|gray|zinc|neutral|stone|red|green|blue|amber|yellow|white|black)(?:-|\/|\b)/u.test(text)) failures.push(`${label}: uses a raw palette color outside the theme contract`);
   if (/window\.location\.(?:href\s*=|replace\()/u.test(text)) failures.push(`${label}: performs internal navigation outside Next router semantics`);
-  if (/components\/vela\/(?:command-step|frontier-nav|global-review-ledger|object-header|provenance-trail|review-ledger|root-disclosure|status-distribution|summary-card|work-ledger)/u.test(text)) failures.push(`${label}: imports a retired presentation component`);
 }
 
 if (failures.length) {

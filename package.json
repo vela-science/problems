@@ -29,7 +29,6 @@
     "check:boundary": "bun scripts/check-read-only-boundary.mjs",
     "check:tokens": "bun scripts/check-token-references.mjs",
     "check:projection": "bun scripts/check-projection-compatibility.mjs",
-    "install:vela:linux": "bun scripts/install-recorded-vela.mjs",
     "db:check": "bun run --filter @vela/frontier-data db:check",
     "db:migrate": "bun run --filter @vela/frontier-data db:migrate",
     "projection:snapshot": "bun run --filter @vela/frontier-data projection:snapshot",

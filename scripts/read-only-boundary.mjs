@@ -5,11 +5,13 @@ import { filesBelow } from "./fs.mjs";
 const sourceExtensions = /\.[cm]?[jt]sx?$/u;
 const routeHandler = /(?:^|\/)app(?:\/.*)?\/route\.[cm]?[jt]sx?$/u;
 const serverDirective = /^\s*["']use server["'];?/mu;
-const requestStateImport = /from\s+["']next\/headers["']/u;
+/* The call, not the import. Which packages a file may reach for is now decided
+   by `no-restricted-imports` / `no-restricted-syntax` in eslint.bans.mjs, where
+   `await import("next/headers")` is the same fact as `from "next/headers"`; a
+   regex here saw only the second. What is left is the other half of the same
+   rule: a request-scoped helper reached through some other name. */
 const requestStateCall = /\b(?:cookies|draftMode|headers)\s*\(/u;
 const runtimeEnvironment = /\bprocess\.env\b/u;
-const authorityDependency = /from\s+["'](?:next-auth|@auth\/|firebase(?:\/|["'])|@supabase\/|@prisma\/|prisma(?:\/|["'])|pg(?:\/|["'])|postgres(?:\/|["'])|mysql(?:2)?(?:\/|["'])|mongoose(?:\/|["']))/u;
-const productIdentityDependency = /from\s+["']@workos-inc\//u;
 const fetchCall = /\bfetch\s*\(/gu;
 const searchFetcher = "apps/observatory/src/lib/search-index.ts";
 const graphFetcher = "apps/observatory/src/lib/graph-client.ts";
@@ -27,7 +29,16 @@ const authLibrary = "apps/observatory/src/lib/auth.ts";
 const accountMenu = "apps/observatory/src/components/vela/account-menu.tsx";
 const identityProxy = "apps/observatory/src/proxy.ts";
 const identityRoutes = new Set([accountRoute, authCallbackRoute, signInRoute]);
-const productIdentityFiles = new Set([...identityRoutes, signOutAction, authLibrary, identityProxy]);
+/* The account boundary: the only files that may reach the maintained identity
+   provider. Exported because apps/observatory/eslint.config.mjs needs the same
+   list to scope the import ban, and two lists of the same six files would be
+   one list and one stale list. */
+export const PRODUCT_IDENTITY_FILES = [
+  ...identityRoutes,
+  signOutAction,
+  authLibrary,
+  identityProxy,
+];
 const mutationMethods = /export\s+(?:async\s+)?function\s+(POST|PUT|PATCH|DELETE)\b/gu;
 
 /* www used to be Astro, which could not express a Server Action or a
@@ -62,12 +73,10 @@ export function inspectReadOnlyBoundary(repository) {
       && content.includes("export async function signOutAccount()")
       && content.includes("await signOut({ returnTo })");
     if (serverDirective.test(content) && !boundedSignOutAction) add("server_action", "Only the isolated AuthKit sign-out action is allowed; scientific Server Actions remain outside the read-only product boundary");
-    if (requestStateImport.test(content) || requestStateCall.test(content)) {
+    if (requestStateCall.test(content)) {
       add("request_state", "request-scoped headers, cookies, and server helpers are not allowed");
     }
     if (runtimeEnvironment.test(content) && file !== authLibrary) add("runtime_environment", "runtime secrets are confined to the server-only product-identity adapter");
-    if (authorityDependency.test(content)) add("authority_dependency", "database and scientific-authority dependencies are not allowed");
-    if (productIdentityDependency.test(content) && !productIdentityFiles.has(file)) add("product_identity_dependency", "the maintained identity provider is confined to the declared account boundary");
 
     const fetches = [...content.matchAll(fetchCall)].length;
     if (!fetches) continue;

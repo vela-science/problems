@@ -96,8 +96,11 @@ contains the commit recorded in `vela-release.v1.json`, and writes them into
 `src/content/docs/manifest.json`. The working tree is never read — when this
 was built the local checkout was 1889 insertions across 19 files ahead of the
 pin, which is precisely the drift the script exists to prevent. The output is
-committed, so builds and CI need no Vela checkout, and the content is
-reviewable in a diff.
+committed, so no build reads a Vela clone to render the manual, and the content
+is reviewable in a diff. (The projection job does check one out, at the pinned
+commit and for one file: `.github/actions/install-vela` runs Vela's own
+`install.sh` rather than reimplementing it. That checkout is the installer's,
+not the docs'.)
 
 Re-run it whenever the release pin moves:
 

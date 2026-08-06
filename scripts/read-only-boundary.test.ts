@@ -52,28 +52,30 @@ describe("Observatory read-only boundary", () => {
     const root = fixture({
       "apps/observatory/src/app/api/account/route.ts": "export async function POST() { return new Response(); }\n",
       "apps/observatory/src/app/actions/auth.ts": "'use server';\nexport async function signOutAccount() {}\n",
-      "apps/observatory/src/lib/other-provider.ts": "import { WorkOS } from '@workos-inc/node';\nexport const provider = new WorkOS();\n",
       "apps/observatory/src/components/vela/account-menu.tsx": "export function loadAccount() { return fetch('https://example.com/account'); }\n",
     });
     expect(new Set(inspectReadOnlyBoundary(root).map(({ rule }) => rule))).toEqual(new Set([
       "mutation_handler",
-      "product_identity_dependency",
       "request_time_fetch",
       "server_action",
     ]));
   });
 
-  test("rejects mutation, authority, secret, and external-fetch surfaces", () => {
+  /* Which packages a file may import is no longer decided here — see
+     eslint.bans.mjs and scripts/eslint-bans.test.ts, which hold the same
+     boundary across all four spellings of an import rather than the one a
+     regex could see. The fixture below keeps only what this file still owns,
+     so `request.ts` is present for the request-scoped *call* and not for the
+     import above it. */
+  test("rejects mutation, secret, and external-fetch surfaces", () => {
     const root = fixture({
       "apps/observatory/src/app/api/state/route.ts": "export async function POST() { return new Response(); }\n",
       "apps/observatory/src/app/action.ts": "'use server';\nexport async function mutate() {}\n",
-      "apps/observatory/src/lib/auth.ts": "import Auth from 'next-auth';\nexport default Auth;\n",
       "apps/observatory/src/lib/env.ts": "export const secret = process.env.SECRET;\n",
       "apps/observatory/src/lib/remote.ts": "export const state = fetch('https://example.com/state');\n",
-      "apps/observatory/src/lib/request.ts": "import { cookies } from 'next/headers';\nexport const state = cookies();\n",
+      "apps/observatory/src/lib/request.ts": "export const state = cookies();\n",
     });
     expect(new Set(inspectReadOnlyBoundary(root).map(({ rule }) => rule))).toEqual(new Set([
-      "authority_dependency",
       "request_state",
       "request_time_fetch",
       "route_handler",
