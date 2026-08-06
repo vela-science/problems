@@ -124,7 +124,11 @@ the essay register sets its own type. Removed with them:
 `components/StarField.tsx`, the Commit/Protocol star field, which was drawn
 `fill="white"` for a dark ground and never found a surface in this palette. The
 `motion` dependency it used stays — the vendored Protocol shell imports
-`motion/react` in four places.
+`motion/react` in three places (`Header.tsx`, `Layout.tsx`, `Navigation.tsx`).
+It was four until `components/protocol/Heading.tsx` was removed on 2026-08-05:
+that template component registered MDX headings, and this app has no MDX
+pipeline, so `RegisterHeadings.tsx` feeds the section store from the rendered
+DOM instead and nothing ever mounted it.
 
 ## Image-generation review
 

@@ -2,6 +2,7 @@ import { gzipSync } from "node:zlib";
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 import { parseEnv } from "node:util";
+import { filesBelow } from "./fs.mjs";
 import {
   observatoryProjectionManifest,
   graphRead,
@@ -20,13 +21,6 @@ if (!process.env.VELA_PROJECTION_DATABASE_URL && existsSync(localEnvironment)) {
 }
 const scope = process.env.VELA_BUDGET_SCOPE ?? "all";
 if (scope !== "all" && scope !== "observatory") throw new Error(`unknown budget scope ${scope}`);
-
-function filesBelow(directory) {
-  return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
-    const path = resolve(directory, entry.name);
-    return entry.isDirectory() ? filesBelow(path) : [path];
-  });
-}
 
 function bytesBelow(directory) {
   return filesBelow(directory).reduce((sum, path) => sum + statSync(path).size, 0);

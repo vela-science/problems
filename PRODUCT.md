@@ -59,9 +59,14 @@ The product records the workbench's own handle for it and no more.
 Current: Frontier, Claim, Problem, Target, Attempt, Submission, Proposal,
 Verification Record, Decision, Dossier, Source.
 
-Retired: Finding, Work, Review, Activity, Run, Bundle. Finding survives only as
-a protocol graph kind mapped to Claim on read, and inside retained `vf_`
-identifiers, which appear as exact values and never as a product word. Run is
+Retired: Finding, Work, Review, Activity, Run, Bundle. Finding survives as a
+protocol event-kind stem (`finding.asserted`, `finding.noted`,
+`finding.retracted`, `finding.superseded`) and inside retained `vf_`
+identifiers, both of which appear as exact values and never as product words;
+vela's own TERMINOLOGY.md keeps Finding as a view-only editorial label for a
+Claim with positive standing. The graph node kind `finding` is written by this
+repository's projection builder, not received from the protocol, and the reader
+relabels it to Claim in `apps/observatory/src/lib/product-language.ts`. Run is
 gone from interface text; the `/runs/` URL segment stays, because a published
 URL never stops resolving. Work, Review, and Activity are
 activities, and a reader cannot link to an activity, only to the record it acts

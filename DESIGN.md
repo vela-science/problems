@@ -74,9 +74,14 @@ cannot name what they are looking at cannot check it.
 **Current.** Frontier, Claim, Problem, Target, Attempt, Submission, Proposal,
 Verification Record, Decision, Dossier, Source.
 
-**Retired.** Finding is the predecessor era's name for a Claim; it survives only
-as a protocol graph kind mapped to Claim on read, and inside retained `vf_`
-identifiers, which appear as exact values and never as a product word. Work, Review, and
+**Retired.** Finding is the predecessor era's name for a Claim; it survives as a
+protocol event-kind stem (`finding.asserted`, `finding.noted`,
+`finding.retracted`, `finding.superseded`) and inside retained `vf_`
+identifiers, both of which appear as exact values and never as product words,
+and as vela's own view-only editorial label for a Claim with positive standing.
+The graph node kind `finding` is written by this repository's projection
+builder rather than received from the protocol, and the reader relabels it to
+Claim in `apps/observatory/src/lib/product-language.ts`. Work, Review, and
 Activity name no destination: they are activities, and a reader cannot link to
 an activity, only to the record it acts on. Run is an execution occurrence the
 protocol does not govern; the product word is Attempt, and the `/runs/` URL

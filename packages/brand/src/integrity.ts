@@ -38,7 +38,3 @@ export function computeBrandRoot(repositoryRoot: string): `sha256:${string}` {
   }
   return `sha256:${hash.digest("hex")}`;
 }
-
-export function governedBrandFiles() {
-  return [...governedFiles];
-}

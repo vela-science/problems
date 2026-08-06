@@ -19,6 +19,6 @@ references:
   redistributed separately as templates, a UI library, or a public registry;
   source access remains within the licensed person or team.
 
-Images under `public/images/` and vector diagrams under `public/svgs/` are
-original project assets unless a nearby source note says otherwise. The July
-2026 designer-handoff reference images are not shipped.
+Images under `public/images/` are original project assets unless a nearby
+source note says otherwise. The July 2026 designer-handoff reference images are
+not shipped.

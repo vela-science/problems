@@ -1,5 +1,6 @@
-import { readFileSync, readdirSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { relative, resolve, sep } from "node:path";
+import { filesBelow } from "./fs.mjs";
 
 const sourceExtensions = /\.[cm]?[jt]sx?$/u;
 const routeHandler = /(?:^|\/)app(?:\/.*)?\/route\.[cm]?[jt]sx?$/u;
@@ -37,17 +38,6 @@ const mutationMethods = /export\s+(?:async\s+)?function\s+(POST|PUT|PATCH|DELETE
    bundler flag a later change could relax. */
 export const BOUNDARY_SOURCES = ["apps/observatory/src", "apps/www/src"];
 
-/* Throws on a missing source root, deliberately. Every fixture creates
-   both roots, so an absent one means an app was renamed or deleted
-   without updating BOUNDARY_SOURCES — and a gate that silently scans
-   nothing is worse than no gate at all. */
-function filesBelow(directory) {
-  return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
-    const path = resolve(directory, entry.name);
-    return entry.isDirectory() ? filesBelow(path) : [path];
-  });
-}
-
 function repositoryPath(repository, path) {
   return relative(repository, path).split(sep).join("/");
 }
@@ -56,6 +46,9 @@ export function inspectReadOnlyBoundary(repository) {
   const sources = BOUNDARY_SOURCES.map((source) => resolve(repository, source));
   const violations = [];
 
+  /* Every fixture creates both roots, so an absent one means an app was
+     renamed or deleted without updating BOUNDARY_SOURCES. filesBelow throws
+     on it rather than scanning nothing. */
   const candidates = sources.flatMap(filesBelow);
   for (const path of candidates.filter((candidate) => sourceExtensions.test(candidate))) {
     const file = repositoryPath(repository, path);
