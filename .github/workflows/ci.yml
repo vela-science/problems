@@ -17,8 +17,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # A push to main runs this too, not only a pull request.
+  #
+  # Moving the projection job off `push` closed a race with the refresh and
+  # opened a gap: `apps/www/**` is in neither workflow's trigger paths, so the
+  # commit re-vendoring the docs ran no checks at all. Everything here reads
+  # committed files — `@vela/frontier-data/release` and `/editorial` are JSON in
+  # the tree, not the live projection — so it cannot race the refresh over the
+  # database, and there is nothing to order it after.
   verify:
-    if: github.event_name == 'pull_request'
+    if: github.event_name != 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
