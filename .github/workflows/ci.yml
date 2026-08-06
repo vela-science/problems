@@ -26,7 +26,6 @@ jobs:
   # the tree, not the live projection — so it cannot race the refresh over the
   # database, and there is nothing to order it after.
   verify:
-    if: github.event_name != 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -88,11 +87,12 @@ jobs:
         run: bun run format:check
 
   projection:
-    # Pull requests and release candidates only. On a push to main the
-    # projection refresh runs this same set AFTER regenerating the projection,
-    # so running it here too raced that job over one live database and reported
-    # a red for a change that was correct until the refresh caught up.
-    if: github.event_name != 'push'
+    # Release candidates and manual runs. On a push to main the projection
+    # refresh runs this same set AFTER regenerating the projection, so running
+    # it here too raced that job over one live database. On a pull request the
+    # branch has no business reading production state — that was the original
+    # split and it still holds.
+    if: github.event_name != 'push' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 35
     env:
