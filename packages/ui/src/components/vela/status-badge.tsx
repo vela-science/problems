@@ -1,4 +1,5 @@
 import {
+  Agreement02Icon,
   Alert02Icon,
   ArrowRight02Icon,
   ArrowTurnBackwardIcon,
@@ -65,16 +66,31 @@ export type StateAxis = "standing" | "verification" | "proposal" | "integrity";
  * retracted, superseded, corrected — so a Decision that rejects a Proposal is
  * still a Proposal word. The map can only carry one axis per word, so a caller
  * rendering `accepted` as Claim standing passes `axis` explicitly rather than
- * shipping a badge whose `data-axis` names the wrong vocabulary. */
-const states: Record<string, { tone: StatusTone; icon: typeof Shield01Icon; axis: StateAxis }> = {
-  /* standing — only a Decision moves these */
+ * shipping a badge whose `data-axis` names the wrong vocabulary.
+ *
+ * `axis` is optional because a word the protocol names on no axis has none,
+ * and saying so is not the same as leaving it out. `recorded` and `contested`
+ * were both filed under standing, three lines below a comment reciting the six
+ * words that axis actually runs — neither is among them. The cost was not
+ * theoretical: the projection writes `recorded` onto every Artifact and
+ * Problem node, so those rows rendered as "Claim standing · recorded", naming
+ * a vocabulary the row was never measured against. `recorded` says the
+ * repository retains the object; `contested` is a producer-side import flag on
+ * a Claim. Both are facts, neither is a ruling, and the surfaces that print
+ * them fall back to the bare word. */
+const states: Record<string, { tone: StatusTone; icon: typeof Shield01Icon; axis?: StateAxis }> = {
+  /* standing — only a Decision moves these. All six the protocol declares, so
+     a word arriving from a future Decision is not silently axis-less. */
   accepted: { tone: "progress", icon: GitCommitHorizontalIcon, axis: "standing" },
+  accepted_with_conditions: { tone: "caution", icon: Agreement02Icon, axis: "standing" },
   unassessed: { tone: "neutral", icon: DashedLineCircleIcon, axis: "standing" },
-  recorded: { tone: "neutral", icon: CircleDotIcon, axis: "standing" },
   superseded: { tone: "neutral", icon: ArrowRight02Icon, axis: "standing" },
   corrected: { tone: "caution", icon: PencilEdit02Icon, axis: "standing" },
-  contested: { tone: "conflict", icon: UnavailableIcon, axis: "standing" },
   retracted: { tone: "conflict", icon: CircleSlashTwoIcon, axis: "standing" },
+
+  /* no axis — retention and a producer flag, not a lifecycle position */
+  recorded: { tone: "neutral", icon: CircleDotIcon },
+  contested: { tone: "conflict", icon: UnavailableIcon },
 
   /* verification — scoped evidence, never acceptance */
   verified: { tone: "evidence", icon: Shield01Icon, axis: "verification" },
@@ -109,9 +125,16 @@ export const stateTones: Record<string, StatusTone> = Object.fromEntries(
    than carry it in `data-axis`. A projection column written from four axes at
    once (`search_documents.standing`, `graph_nodes.standing`) recovers the axis
    from this rather than from a second literal, which is the drift `stateTones`
-   was introduced to stop one map over. */
+   was introduced to stop one map over.
+
+   Words with no axis are absent rather than present-and-undefined, so a caller
+   asking this map whether a word has an axis gets `undefined` from a miss and
+   never an axis name it then has to disbelieve. */
 export const stateAxesByWord: Record<string, StateAxis> = Object.fromEntries(
-  Object.entries(states).map(([state, semantics]) => [state, semantics.axis]),
+  Object.entries(states)
+    .filter((entry): entry is [string, { tone: StatusTone; icon: typeof Shield01Icon; axis: StateAxis }] =>
+      entry[1].axis !== undefined)
+    .map(([state, semantics]) => [state, semantics.axis]),
 );
 
 /* The state → glyph half, for a surface that draws a state's mark without
