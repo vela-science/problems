@@ -57,59 +57,88 @@ const AUTHORITY =
   "database and scientific-authority dependencies are outside the read-only product boundary";
 const IDENTITY = "the maintained identity provider is confined to the declared account boundary";
 
+/* Every assertion here is its own `eslint` process loading the app's real flat
+   config, and that load is where the time goes: about 0.6s warm, three of them
+   in the identity test. That sat under bun's 5s default until the first run of
+   a cold checkout took 5482ms and failed — which is the condition every CI run
+   starts in, on slower hardware. The budget bounds a hung linter and nothing
+   else; a rule that stops working is caught by the assertion, not the clock. */
+const LINT_BUDGET_MS = 60_000;
+
 describe("import bans", () => {
   test.each([
     ["observatory", observatory, "src/lib/probe.ts"],
     ["www", www, "src/lib/probe.ts"],
-  ])("%s reports a database reached by any of the four import spellings", (_name, lint, file) => {
-    const messages = lint(probe, file);
-    expect(messages.filter((message) => message === AUTHORITY)).toHaveLength(5);
-  });
+  ])(
+    "%s reports a database reached by any of the four import spellings",
+    (_name, lint, file) => {
+      const messages = lint(probe, file);
+      expect(messages.filter((message) => message === AUTHORITY)).toHaveLength(5);
+    },
+    LINT_BUDGET_MS,
+  );
 
   test.each([
     ["observatory", observatory, "src/lib/probe.ts"],
     ["www", www, "src/lib/probe.ts"],
-  ])("%s stays quiet on a file that imports nothing banned", (_name, lint, file) => {
-    expect(lint('import { join } from "node:path";\nexport const p = join("a", "b");\n', file))
-      .toEqual([]);
-  });
+  ])(
+    "%s stays quiet on a file that imports nothing banned",
+    (_name, lint, file) => {
+      expect(lint('import { join } from "node:path";\nexport const p = join("a", "b");\n', file))
+        .toEqual([]);
+    },
+    LINT_BUDGET_MS,
+  );
 
-  test("request-scoped server state is banned statically and dynamically", () => {
-    const messages = observatory(
-      'import "next/headers";\nexport const later = () => import("next/headers");\n',
-      "src/lib/probe.ts",
-    );
-    expect(messages).toEqual([
-      "request-scoped headers, cookies, and server helpers are not allowed",
-      "request-scoped headers, cookies, and server helpers are not allowed",
-    ]);
-  });
+  test(
+    "request-scoped server state is banned statically and dynamically",
+    () => {
+      const messages = observatory(
+        'import "next/headers";\nexport const later = () => import("next/headers");\n',
+        "src/lib/probe.ts",
+      );
+      expect(messages).toEqual([
+        "request-scoped headers, cookies, and server helpers are not allowed",
+        "request-scoped headers, cookies, and server helpers are not allowed",
+      ]);
+    },
+    LINT_BUDGET_MS,
+  );
 
-  test("the Observatory's retired icon family and presentation components are banned", () => {
-    const messages = observatory(
-      [
-        "import {",
-        "  Home01Icon,",
-        "}",
-        "  from",
-        '  "lucide-react";',
-        'import { SummaryCard } from "@/components/vela/summary-card";',
-        "export const parts = [Home01Icon, SummaryCard];",
-      ].join("\n"),
-      "src/components/probe.tsx",
-    );
-    expect(messages).toEqual([
-      "the retired Lucide icon family; the installed registry family is Hugeicons",
-      "a retired presentation component",
-    ]);
-  });
+  test(
+    "the Observatory's retired icon family and presentation components are banned",
+    () => {
+      const messages = observatory(
+        [
+          "import {",
+          "  Home01Icon,",
+          "}",
+          "  from",
+          '  "lucide-react";',
+          'import { SummaryCard } from "@/components/vela/summary-card";',
+          "export const parts = [Home01Icon, SummaryCard];",
+        ].join("\n"),
+        "src/components/probe.tsx",
+      );
+      expect(messages).toEqual([
+        "the retired Lucide icon family; the installed registry family is Hugeicons",
+        "a retired presentation component",
+      ]);
+    },
+    LINT_BUDGET_MS,
+  );
 
-  test("the identity provider is allowed inside the account boundary and nowhere else", () => {
-    const source = 'import { WorkOS } from "@workos-inc/node";\nexport const client = new WorkOS();\n';
-    expect(observatory(source, "src/lib/auth.ts")).toEqual([]);
-    expect(observatory(source, "src/lib/other-provider.ts")).toEqual([IDENTITY]);
-    /* The exemption is for one package, not for the block: the account
-       boundary is still inside the read-only boundary. */
-    expect(observatory('import "pg";\n', "src/lib/auth.ts")).toEqual([AUTHORITY]);
-  });
+  test(
+    "the identity provider is allowed inside the account boundary and nowhere else",
+    () => {
+      const source =
+        'import { WorkOS } from "@workos-inc/node";\nexport const client = new WorkOS();\n';
+      expect(observatory(source, "src/lib/auth.ts")).toEqual([]);
+      expect(observatory(source, "src/lib/other-provider.ts")).toEqual([IDENTITY]);
+      /* The exemption is for one package, not for the block: the account
+         boundary is still inside the read-only boundary. */
+      expect(observatory('import "pg";\n', "src/lib/auth.ts")).toEqual([AUTHORITY]);
+    },
+    LINT_BUDGET_MS,
+  );
 });
