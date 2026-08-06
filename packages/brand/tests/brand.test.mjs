@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import test from "node:test";
+import { rejectedFontFamilies } from "../src/fonts.ts";
 
 const root = resolve(import.meta.dirname, "..");
 const tokens = JSON.parse(readFileSync(resolve(root, "vela.tokens.json"), "utf8"));
@@ -57,9 +58,13 @@ test("primary foreground pairs pass WCAG AA", () => {
   assert.doesNotMatch(productFonts, /Zodiak/u);
   assert.doesNotMatch(productFonts, /Gambetta/u);
   assert.doesNotMatch(productFonts, /Switzer/u);
-  // The two faces retired on 2026-07-27 must not reappear in either profile.
-  assert.doesNotMatch(editorialFonts, /Newsreader/u);
-  assert.doesNotMatch(editorialFonts, /Inter/u);
+  // No rejected face may appear in either profile. This named two of the six,
+  // Newsreader and Inter, which made it a third partial copy of a list that
+  // already existed twice; the list is `../src/fonts.ts`'s to declare.
+  for (const rejected of rejectedFontFamilies) {
+    assert.doesNotMatch(editorialFonts, new RegExp(rejected, "u"));
+    assert.doesNotMatch(productFonts, new RegExp(rejected, "u"));
+  }
 });
 
 test("status semantics are never represented as an unlabelled palette", () => {

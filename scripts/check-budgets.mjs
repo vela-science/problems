@@ -8,6 +8,7 @@ import {
   graphRead,
   searchRead,
 } from "../packages/frontier-data/src/index.ts";
+import { fontFileStem, rejectedFontFamilies, webFontProfiles } from "../packages/brand/src/fonts.ts";
 
 const repository = resolve(import.meta.dirname, "..");
 const observatory = resolve(repository, "apps/observatory");
@@ -54,13 +55,22 @@ const productFonts = readdirSync(resolve(observatory, "public/assets/fonts")).so
 const editorialFonts = readdirSync(resolve(editorial, "public/assets/fonts")).sort();
 // Geist ships through Next's package integration. The Observatory's mirrored
 // public font profile therefore contains only the identifier face it serves
-// directly; the three editorial faces stay on the editorial profile.
-const expectedProductFonts = ["ibm-plex-mono-400-latin.woff2", "ibm-plex-mono-500-latin.woff2"];
-if (JSON.stringify(productFonts) !== JSON.stringify(expectedProductFonts)) throw new Error("Observatory font delivery profile drift");
-/* Faces this project has decided against, including the two retired on
-   2026-07-27. */
-for (const rejected of ["spectral", "space-grotesk", "jetbrains", "newsreader", "inter-"]) {
-  if ([...productFonts, ...editorialFonts].some((name) => name.includes(rejected))) throw new Error(`rejected font ${rejected} entered delivery`);
+// directly; the three editorial faces stay on the editorial profile. The
+// profile itself is @vela/brand's to declare — this asserts delivery matches
+// it, rather than restating the two filenames a third time.
+if (JSON.stringify(productFonts) !== JSON.stringify([...webFontProfiles.product].sort())) {
+  throw new Error("Observatory font delivery profile drift");
+}
+/* Rejected faces, read from the one list that names them. This check looks at
+   delivered FILES while check-brand.mjs looks at generated CSS families, so
+   the filename form is derived from the family rather than spelled out again:
+   the second spelling that used to live here had lost Schibsted, and a
+   schibsted-*.woff2 would have shipped. */
+for (const family of rejectedFontFamilies) {
+  const stem = fontFileStem(family);
+  if ([...productFonts, ...editorialFonts].some((name) => name.startsWith(`${stem}-`))) {
+    throw new Error(`rejected font ${family} entered delivery`);
+  }
 }
 
 let editorialBytes = null;

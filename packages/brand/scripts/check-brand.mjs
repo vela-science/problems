@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import sharp from "sharp";
+import { editorialFontFamilies, rejectedFontFamilies } from "../src/fonts.ts";
 
 const root = resolve(import.meta.dirname, "..");
 const tokens = JSON.parse(readFileSync(resolve(root, "vela.tokens.json"), "utf8"));
@@ -86,15 +87,15 @@ for (const size of [16, 20, 32, 48]) {
   }
   assert(visible >= Math.floor(size * size * 0.12), `favicon-${size} lost too much visible geometry`);
 }
-for (const family of ["Gambetta", "Zodiak", "Switzer", "IBM Plex Mono"]) {
+for (const family of editorialFontFamilies) {
   assert(editorialFonts.includes(`font-family: "${family}"`), `missing editorial ${family} face`);
 }
 assert(productFonts.includes('font-family: "IBM Plex Mono"'), "missing product IBM Plex Mono face");
 for (const family of ["Gambetta", "Zodiak", "Switzer"]) assert(!productFonts.includes(family), `editorial font ${family} entered product profile`);
-/* Faces this project has decided against, including the two it retired on
-   2026-07-27: Newsreader read as a quiet book serif and Inter as the default
-   UI sans, and both are training-data defaults rather than choices. */
-for (const rejected of ["Spectral", "Space Grotesk", "JetBrains Mono", "Schibsted", "Newsreader", "Inter"]) {
+/* The rejected list is `packages/brand/src/fonts.ts`'s to declare. It used to
+   be written out here and again, in filename spellings, in
+   `scripts/check-budgets.mjs`, and the two had already drifted apart. */
+for (const rejected of rejectedFontFamilies) {
   assert(!editorialFonts.includes(rejected) && !productFonts.includes(rejected), `rejected font ${rejected} remains in generated output`);
 }
 assert(tokens.font.display.$value.startsWith("Zodiak"), "editorial display role drift");
