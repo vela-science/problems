@@ -41,6 +41,37 @@ export const PRODUCT_IDENTITY_FILES = [
 ];
 const mutationMethods = /export\s+(?:async\s+)?function\s+(POST|PUT|PATCH|DELETE)\b/gu;
 
+/* Every Server Action the product boundary allows, by file, by name, and by a
+   line of its body.
+ *
+ * This used to be two `content.includes` calls over the whole file, which is a
+ * membership test and not a boundary: a second exported action beside the
+ * sign-out one left both substrings present, so the file still passed while
+ * doing something the rule forbids. The gate now reads the file's exported
+ * symbols and requires the set to equal this list exactly, so adding an action
+ * is an edit here — visible in review — rather than a silent pass.
+ *
+ * `pin` is a line the body must contain. It is what keeps the entry honest: a
+ * name on its own would let `signOutAccount` be rewritten to do anything. */
+const PRODUCT_IDENTITY_ACTIONS = new Map([
+  [signOutAction, [{ name: "signOutAccount", pin: "await signOut({ returnTo })" }]],
+]);
+
+/* Function declarations and `export const` alike, because an action is an
+   exported binding and not only a `function`. A default export is captured as
+   `default` so an anonymous one cannot slip past a name check. */
+const exportedSymbols = /export\s+(?:(default)|(?:async\s+)?(?:function|const|let|var)\s+([A-Za-z0-9_$]+))/gu;
+
+function boundedIdentityActions(file, content) {
+  const allowed = PRODUCT_IDENTITY_ACTIONS.get(file);
+  if (!allowed) return false;
+  const exported = [...content.matchAll(exportedSymbols)].map((match) => match[1] ?? match[2]);
+  const names = new Set(exported);
+  return exported.length === allowed.length
+    && names.size === allowed.length
+    && allowed.every(({ name, pin }) => names.has(name) && content.includes(pin));
+}
+
 /* www used to be Astro, which could not express a Server Action or a
    route handler, so the boundary only had to police the Observatory.
    Both apps are Next now and both must be checked. www is additionally a
@@ -69,10 +100,7 @@ export function inspectReadOnlyBoundary(repository) {
     if (routeHandler.test(file) && !readOnlyRoutes.has(file) && !identityRoutes.has(file) && !resultDossierRoute.test(file)) add("route_handler", "Only declared read projections and isolated product-identity Route Handlers are allowed");
     const methods = [...content.matchAll(mutationMethods)].map((match) => match[1]);
     if (methods.length) add("mutation_handler", "Mutation Route Handlers are outside the read-only product boundary");
-    const boundedSignOutAction = file === signOutAction
-      && content.includes("export async function signOutAccount()")
-      && content.includes("await signOut({ returnTo })");
-    if (serverDirective.test(content) && !boundedSignOutAction) add("server_action", "Only the isolated AuthKit sign-out action is allowed; scientific Server Actions remain outside the read-only product boundary");
+    if (serverDirective.test(content) && !boundedIdentityActions(file, content)) add("server_action", "Only the named product-identity actions are allowed; scientific Server Actions remain outside the read-only product boundary");
     if (requestStateCall.test(content)) {
       add("request_state", "request-scoped headers, cookies, and server helpers are not allowed");
     }
