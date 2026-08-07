@@ -13,9 +13,9 @@
   },
   "overrides": {
     "@hono/node-server": "2.0.10",
-    "postcss": "8.5.23",
+    "postcss": "8.5.25",
     "esbuild": "0.28.1",
-    "sharp": "0.35.0"
+    "sharp": "0.35.3"
   },
   "scripts": {
     "dev:www": "bun run --filter @vela/www dev",
@@ -47,5 +47,9 @@
     "build": "bun run --filter @vela/brand build && bun run --filter @vela/frontier-data check && bun run --filter @vela/www build && bun run --filter @vela/observatory build",
     "format:check": "git diff --check",
     "docs:sync": "bun run --filter @vela/www docs:sync"
+  },
+  "dependencies": {
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4"
   }
 }
