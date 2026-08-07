@@ -5,7 +5,7 @@ import { frontierRegistry } from "../packages/frontier-data/src/registry";
 
 /*
   The composite checkout action names one repository and one path. The registry
-  names the same one, as `remote` and `directory`, and everything downstream of
+  names the same one, as `remotes` and `directory`, and everything downstream of
   the checkout reads them from there.
 
   So the roster is written twice. Consolidating the two workflow copies into
@@ -43,8 +43,12 @@ function values(document: string, key: string): string[] {
 describe("canonical Frontier checkout roster", () => {
   const action = readFileSync(ACTION, "utf8");
 
-  const expected = frontierRegistry.frontiers.map(({ remote, directory }) => ({
-    repository: new URL(remote).pathname.replace(/^\//u, "").replace(/\.git$/u, ""),
+  /* The first locator. `actions/checkout` takes one `owner/name` on GitHub, so
+     this holds the action to the locator a reader is shown; the mirrors exist
+     for rebuilding when that host is not reachable, which is not a thing this
+     action can do at all. */
+  const expected = frontierRegistry.frontiers.map(({ remotes, directory }) => ({
+    repository: new URL(remotes[0]).pathname.replace(/^\//u, "").replace(/\.git$/u, ""),
     path: `sources/${directory}`,
   }));
 
