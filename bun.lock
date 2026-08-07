@@ -4,10 +4,6 @@
   "workspaces": {
     "": {
       "name": "vela-web",
-      "dependencies": {
-        "@types/react": "^19.2.18",
-        "@types/react-dom": "^19.2.4",
-      },
     },
     "apps/observatory": {
       "name": "@vela/observatory",

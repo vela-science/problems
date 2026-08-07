@@ -47,9 +47,5 @@
     "build": "bun run --filter @vela/brand build && bun run --filter @vela/frontier-data check && bun run --filter @vela/www build && bun run --filter @vela/observatory build",
     "format:check": "git diff --check",
     "docs:sync": "bun run --filter @vela/www docs:sync"
-  },
-  "dependencies": {
-    "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.4"
   }
 }
