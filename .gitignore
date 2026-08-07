@@ -20,6 +20,11 @@ apps/*/next-env.d.ts
 .vscode/
 .agents/skills/impeccable/
 .codex/hooks.json
+# Written by the local design skill. `.vercelignore` already excluded it, and
+# nothing in the repository reads it — `preflight.json` names three components
+# that no longer exist, so it was a tracked file recording a tree from before
+# several deletions.
+.hallmark/
 .env*.local
 tmp/
 output/
