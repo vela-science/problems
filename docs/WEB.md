@@ -112,6 +112,31 @@ bun apps/www/scripts/sync-vela-docs.mjs
 so a moved pin with a stale sync fails CI rather than shipping the manual for
 a release the site no longer advertises.
 
+**The wire schemas, vendored the same way.** `vela.status.v4` is declared twice
+— once upstream, generated from the Rust type that emits it, and once here as
+the zod schema that parses it off the wire. Nothing held the two together, so
+upstream could rename a field and the first thing to notice would be a
+projection refresh failing after the release.
+`packages/frontier-data/scripts/sync-vela-schemas.mjs` vendors upstream's
+declaration at the pin, and `tests/status-schema.test.ts` holds the reader to
+it: a document missing any field upstream requires must be refused.
+
+```bash
+bun packages/frontier-data/scripts/sync-vela-schemas.mjs
+```
+
+`config/vela-schemas.v1.json` records the commit and a digest per file, and the
+same test asserts both — a moved pin fails on the commit, an edit made here
+instead of upstream fails on the digest.
+
+Only `required` is checked, and that asymmetry is deliberate: upstream's schema
+also closes the document with `additionalProperties: false` and this reader does
+not, because a field it has not been taught is the same document with more in
+it. Rejecting extras cost three fail-closed breaks of the refresh in six days.
+The opposite rule governs a signed preimage, where an added field is a different
+object with a different root; the two rules are stated together in the Vela
+repository's `docs/INTEROPERABILITY.md`.
+
 **What is published.** `GROUPS` in the sync script is the list, and the five
 groups are the quickstarts, the protocol, the evidence-and-authority set, the
 frontier-operations set, and the CLI reference. Excluded on purpose: everything
