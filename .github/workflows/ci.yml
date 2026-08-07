@@ -19,12 +19,24 @@ concurrency:
 jobs:
   # A push to main runs this too, not only a pull request.
   #
-  # Moving the projection job off `push` closed a race with the refresh and
-  # opened a gap: `apps/www/**` is in neither workflow's trigger paths, so the
-  # commit re-vendoring the docs ran no checks at all. Everything here reads
-  # committed files — `@vela/frontier-data/release` and `/editorial` are JSON in
-  # the tree, not the live projection — so it cannot race the refresh over the
-  # database, and there is nothing to order it after.
+  # Moving the projection job off `push` is what made that necessary: it closed
+  # a race with the refresh, and left every commit whose paths the refresh does
+  # not watch with nowhere else to be checked. The filter above is
+  # `paths-ignore`, and it skips a push only when EVERY changed path matches, so
+  # this job covers `apps/www/**`, `docs/**` and the root manifests — everything
+  # except an Observatory-only change, which refresh-projection.yml gates
+  # instead. (An earlier note here claimed `apps/www/**` was in neither
+  # workflow's trigger paths. It is in this one, by not being excluded from it.)
+  #
+  # Everything here reads committed files — `@vela/frontier-data/release` and
+  # `/editorial` are JSON in the tree, not the live projection — so it cannot
+  # race the refresh over the database, and there is nothing to order it after.
+  #
+  # One commit still escapes: the editorial snapshot that refresh-projection.yml
+  # pushes with GITHUB_TOKEN, which by design raises no workflow run of its own.
+  # That commit changes exactly one generated file, re-derived from a projection
+  # the same job already verified, and Vercel still builds the editorial site
+  # from it.
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 15

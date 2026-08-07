@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { parseEnv } from "node:util";
 import { filesBelow } from "./fs.mjs";
 import {
+  allFrontiers,
   observatoryProjectionManifest,
   graphRead,
   searchRead,
@@ -42,13 +43,29 @@ if (prebuilt.length >= 500) throw new Error(`Observatory prebuild has ${prebuilt
    profile must contain exactly its two identifier faces. */
 const searchHtml = readFileSync(resolve(observatory, ".next/server/app/search.html"));
 const projectionManifest = await observatoryProjectionManifest();
-const [searchResult, graphResult] = await Promise.all([
-  searchRead({ root: projectionManifest.release_root, limit: 250 }),
-  graphRead({ root: projectionManifest.release_root, frontier: "erdos", view: "canvas", lens: "all", limit: 5000 }),
-]);
+const root = projectionManifest.release_root;
+/* The heaviest canvas the release can actually serve, found by asking the
+   release which Frontiers it has.
+
+   This named `erdos` outright. `graphRead` rejects a slug the release does not
+   carry, so when the four topic repositories collapsed into one derived
+   Frontier this stopped measuring anything and started throwing "unknown
+   frontier" — failing `test:budgets` in the refresh gate and in CI's
+   projection job, on a projection that was correct. A budget check may not
+   hold an opinion about which records exist. */
+const frontiers = await allFrontiers();
+if (!frontiers.length) throw new Error("the projection publishes no Frontier to measure");
+const searchResult = await searchRead({ root, limit: 250 });
+const graphs = await Promise.all(frontiers.map(async ({ slug }) => ({
+  slug,
+  payload: Buffer.from(JSON.stringify(
+    await graphRead({ root, frontier: slug, view: "canvas", lens: "all", limit: 5000 }),
+  )),
+})));
+const heaviestGraph = graphs.reduce((a, b) => (b.payload.byteLength > a.payload.byteLength ? b : a));
 const searchPayload = Buffer.from(JSON.stringify(searchResult));
 const searchGzip = gzipSync(searchPayload).byteLength;
-const graphPayload = Buffer.from(JSON.stringify(graphResult));
+const graphPayload = heaviestGraph.payload;
 const graphGzip = gzipSync(graphPayload).byteLength;
 
 const productFonts = readdirSync(resolve(observatory, "public/assets/fonts")).sort();
@@ -142,6 +159,7 @@ console.log(JSON.stringify({
   search_html_bytes: searchHtml.byteLength,
   search_response_bytes: searchPayload.byteLength,
   search_response_gzip_bytes: searchGzip,
+  graph_canvas_frontier: heaviestGraph.slug,
   graph_canvas_bytes: graphPayload.byteLength,
   graph_canvas_gzip_bytes: graphGzip,
   editorial_bytes: editorialBytes,
