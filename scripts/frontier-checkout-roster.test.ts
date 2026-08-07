@@ -4,9 +4,9 @@ import { resolve } from "node:path";
 import { frontierRegistry } from "../packages/frontier-data/src/registry";
 
 /*
-  The composite checkout action names four repositories and four paths. The
-  registry names the same four, as `remote` and `directory`, and everything
-  downstream of the checkout reads them from there.
+  The composite checkout action names one repository and one path. The registry
+  names the same one, as `remote` and `directory`, and everything downstream of
+  the checkout reads them from there.
 
   So the roster is written twice. Consolidating the two workflow copies into
   the action was the right move and its description then claimed the roster
@@ -16,8 +16,14 @@ import { frontierRegistry } from "../packages/frontier-data/src/registry";
   `git clone` would trade a supply-chain property for tidiness. What it can do
   is stop the copy from drifting, which is all the duplication actually costs.
 
+  It was four of each until the four topic repositories collapsed into one
+  derived Frontier, and this file went on saying four for a while after — which
+  is the argument for the assertions below rather than for the paragraph above:
+  a count in prose goes stale silently, and `expected` is read from the registry
+  on every run.
+
   The registry is the declaration. This holds the action to it, so adding a
-  fifth Frontier to `registry.ts` reddens here until the action agrees, and no
+  second Frontier to `registry.ts` reddens here until the action agrees, and no
   edit to either file can leave the projection reading a directory CI never
   checked out.
 */

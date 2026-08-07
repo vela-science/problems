@@ -17,7 +17,11 @@ import { relative, resolve, sep } from "node:path";
    Case 3 is detected rather than allowlisted so scroll-driven properties like
    --rail-progress and --wake-progress do not need hand maintenance. */
 
-const styleExtensions = /\.(?:css|astro|tsx|ts|mdx)$/u;
+/* The three extensions the scanned surface actually has. `astro` and `mdx` were
+   here too, and both matched nothing: www was Astro before the move to Next,
+   and no MDX was ever authored. An extension that matches no file cannot be
+   wrong out loud — it just quietly widens what this claims to cover. */
+const styleExtensions = /\.(?:css|tsx|ts)$/u;
 /* The optional quote before the colon catches JSX style objects, where the
    property is written style={{ "--sidebar-width": WIDTH }}. */
 const definition = /(--[A-Za-z0-9_-]+)["'`]?\s*:/gu;

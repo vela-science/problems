@@ -35,19 +35,18 @@ function changedPaths(previous, current) {
     .filter(Boolean);
 }
 
+/* There was a second mode here, `--equivalent <previous> <current>`, which
+   compared two named commits instead of Vercel's pair. It existed for the
+   Observatory: a data refresh may follow editorial-only commits, so the
+   redeploy needed to ask whether the application surface had really changed
+   between the deployed commit and the one it was about to ship. The Observatory
+   has no Git deploy any more — apps/observatory/vercel.json sets
+   `git.deploymentEnabled: false` and carries no ignoreCommand, and its redeploy
+   is a hook fired from refresh-projection.yml, which refresh-integrity.test.ts
+   asserts does not invoke this script. Its last caller was its own test. */
 try {
   git(["rev-parse", "--is-inside-work-tree"]);
 
-  // A data refresh may follow editorial-only commits. Compare the actual
-  // application dependency surface instead of the unrelated monorepo SHA.
-  if (process.argv[3] === "--equivalent") {
-    const previous = process.argv[4];
-    const current = process.argv[5];
-    if (!validCommit(previous) || !validCommit(current) || process.argv.length !== 6) {
-      throw new Error("--equivalent requires two exact commits");
-    }
-    process.exit(changedPaths(previous, current).length === 0 ? 0 : 1);
-  }
   const current = validCommit(process.env.VERCEL_GIT_COMMIT_SHA)
     ? process.env.VERCEL_GIT_COMMIT_SHA
     : git(["rev-parse", "HEAD"]);

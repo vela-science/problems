@@ -47,13 +47,6 @@ function status(path: string, target: "www", environment: Record<string, string>
   return spawnSync("bun", [script, target], { cwd: path, env: { ...inherited, ...environment } }).status;
 }
 
-function equivalent(path: string, target: "www", previous: string, current: string) {
-  return spawnSync("bun", [script, target, "--equivalent", previous, current], {
-    cwd: path,
-    env: process.env,
-  }).status;
-}
-
 describe("Vercel workspace build selection", () => {
   test("keeps editorial Git deploys direct and Observatory deploys orchestrated", () => {
     const editorial = JSON.parse(
@@ -106,17 +99,6 @@ describe("Vercel workspace build selection", () => {
     commit(path, "apps/www/app.ts", "two\n");
     const current = execFileSync("git", ["rev-parse", "HEAD"], { cwd: path, encoding: "utf8" }).trim();
     expect(status(path, "www", { VERCEL_GIT_PREVIOUS_SHA: previous, VERCEL_GIT_COMMIT_SHA: current })).toBe(1);
-  });
-
-  test("compares the editorial surface independently of unrelated commits", () => {
-    const path = repository();
-    const deployed = execFileSync("git", ["rev-parse", "HEAD"], { cwd: path, encoding: "utf8" }).trim();
-    commit(path, "apps/observatory/app.ts", "two\n");
-    const observatory = execFileSync("git", ["rev-parse", "HEAD"], { cwd: path, encoding: "utf8" }).trim();
-    expect(equivalent(path, "www", deployed, observatory)).toBe(0);
-    commit(path, "packages/frontier-data/src/index.ts", "two\n");
-    const shared = execFileSync("git", ["rev-parse", "HEAD"], { cwd: path, encoding: "utf8" }).trim();
-    expect(equivalent(path, "www", deployed, shared)).toBe(1);
   });
 
   test("fails open for a first commit or invalid comparison", () => {

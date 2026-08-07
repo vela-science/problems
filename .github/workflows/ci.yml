@@ -32,11 +32,10 @@ jobs:
   # `/editorial` are JSON in the tree, not the live projection — so it cannot
   # race the refresh over the database, and there is nothing to order it after.
   #
-  # One commit still escapes: the editorial snapshot that refresh-projection.yml
-  # pushes with GITHUB_TOKEN, which by design raises no workflow run of its own.
-  # That commit changes exactly one generated file, re-derived from a projection
-  # the same job already verified, and Vercel still builds the editorial site
-  # from it.
+  # One commit reaches this workflow through no event at all: the editorial
+  # snapshot refresh-projection.yml pushes with GITHUB_TOKEN, which by design
+  # raises no workflow run. It is checked there instead — that workflow's `gate`
+  # checks out the commit its own `refresh` produced and builds it.
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -99,12 +98,17 @@ jobs:
         run: bun run format:check
 
   projection:
-    # Release candidates and manual runs. On a push to main the projection
-    # refresh runs this same set AFTER regenerating the projection, so running
-    # it here too raced that job over one live database. On a pull request the
-    # branch has no business reading production state — that was the original
-    # split and it still holds.
-    if: github.event_name != 'push' && github.event_name != 'pull_request'
+    # Manual runs only, which is narrower than it reads: a tag push is a `push`
+    # event, so the `v*-rc.*` trigger above reaches `verify` and never this job.
+    # That is deliberate rather than an oversight left standing. An RC tag names
+    # a commit already on main, and refresh-projection.yml ran this same set
+    # against the projection it activated at that commit; re-running it on the
+    # tag would read production secrets from a tag ref to re-derive an answer
+    # already given. On a push to main the same job is what makes running here
+    # a race over one live database, and on a pull request the branch has no
+    # business reading production state at all. So `workflow_dispatch` is the
+    # only event left that wants this: an operator asking the question directly.
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 35
     env:
