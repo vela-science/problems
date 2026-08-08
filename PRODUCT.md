@@ -42,7 +42,6 @@ navigation, headings, and URLs all follow it.
 | Proposal `vpr_` | **Proposal** | inside a Frontier; a release roll-up exists |
 | Verification Record `vvr_` | **Verification Record** | inside a Proposal |
 | Decision, admitted as Event `vev_` | **Decision** | release-wide |
-| workbench Attempt | **Attempt** | inside Targets |
 | — (exact rooted case record) | **Dossier** | inside a Frontier; a release roll-up exists |
 | — (release-scoped registry) | **Source** | release-wide |
 
@@ -51,24 +50,26 @@ Dossier is an exact rooted read projection with no authority. Sources is a
 release-scoped registry, sanctioned as a navigation grouping and nothing more. A
 grouping never implies authority.
 
-An Attempt is an execution occurrence the protocol does not create or govern.
-The product records the workbench's own handle for it and no more.
-
 ### Vocabulary
 
-Current: Frontier, Claim, Problem, Target, Attempt, Submission, Proposal,
+Current: Frontier, Claim, Problem, Target, Submission, Proposal,
 Verification Record, Decision, Dossier, Source.
 
-Retired: Finding, Work, Review, Activity, Run, Bundle. Finding survives as a
+Retired: Finding, Work, Review, Activity, Run, Attempt, Bundle. Finding survives as a
 protocol event-kind stem (`finding.asserted`, `finding.noted`,
 `finding.retracted`, `finding.superseded`) and inside retained `vf_`
 identifiers, both of which appear as exact values and never as product words;
 vela's own TERMINOLOGY.md keeps Finding as a view-only editorial label for a
 Claim with positive standing. The graph node kind `finding` is written by this
 repository's projection builder, not received from the protocol, and the reader
-relabels it to Claim in `apps/observatory/src/lib/product-language.ts`. Run is
-gone from interface text; the `/runs/` URL segment stays, because a published
-URL never stops resolving. Work, Review, and Activity are
+relabels it to Claim in `apps/observatory/src/lib/product-language.ts`. Run and Attempt both named an
+execution occurrence the protocol does not create or govern, and both are gone:
+the surface that displayed them was deleted along with the table behind it,
+which held zero rows in every release it was ever part of. The word survives
+only as `provenance.source_attempt` on a Submission — an exact value the
+producer's workbench supplies, never a product word and never a destination.
+The release-level `/runs` path still redirects permanently to `/decisions`; the
+frontier-scoped route published no record, so no durable URL was broken. Work, Review, and Activity are
 activities, and a reader cannot link to an activity, only to the record it acts
 on. Bundle is a protocol root and appears only as a labelled
 exact value.

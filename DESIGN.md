@@ -71,7 +71,7 @@ dashboard or the Observatory look like an essay.
 The words on screen are the product's first design decision. A reader who
 cannot name what they are looking at cannot check it.
 
-**Current.** Frontier, Claim, Problem, Target, Attempt, Submission, Proposal,
+**Current.** Frontier, Claim, Problem, Target, Submission, Proposal,
 Verification Record, Decision, Dossier, Source.
 
 **Retired.** Finding is the predecessor era's name for a Claim; it survives as a
@@ -83,9 +83,13 @@ The graph node kind `finding` is written by this repository's projection
 builder rather than received from the protocol, and the reader relabels it to
 Claim in `apps/observatory/src/lib/product-language.ts`. Work, Review, and
 Activity name no destination: they are activities, and a reader cannot link to
-an activity, only to the record it acts on. Run is an execution occurrence the
-protocol does not govern; the product word is Attempt, and the `/runs/` URL
-segment stays because a published URL never stops resolving. Bundle is a protocol root
+an activity, only to the record it acts on. Run and Attempt both named an
+execution occurrence the protocol does not govern, and both are gone: the
+surface that displayed them was deleted with the table behind it, which held
+zero rows in every release. The word survives only as
+`provenance.source_attempt` on a Submission, an exact value the producer
+supplies. The release-level `/runs` path still redirects to `/decisions`; the
+frontier-scoped route published no record, so no durable URL was broken. Bundle is a protocol root
 and may appear only as a labelled exact value.
 
 Two of the product's words have no protocol object behind them, and the product
