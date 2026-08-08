@@ -167,9 +167,12 @@ reskinned.
 
 ## Exact frontier state
 
-`packages/frontier-data/src/registry.ts` is the typed registry for the four
-canonical Git repositories. One GitHub workflow — triggered by a relevant push
-to `main`, or by `workflow_dispatch` for a data-only refresh — checks out clean
+`packages/frontier-data/src/registry.ts` is the typed registry for the canonical
+Git repositories. One today: `vela-science/math`, the single live mathematics
+authority. Four existed under the previous epoch and existed because there were
+four topics rather than four authorities. One GitHub workflow — on a daily
+schedule, on a relevant push to `main`, or by `workflow_dispatch` for a
+data-only refresh — checks out clean
 `origin/main` Frontier tips, verifies them with the pinned Vela release,
 and writes a content-addressed normalized read model to the `vela_observatory`
 database in the `vela-observatory-projection` Neon project:
@@ -183,7 +186,10 @@ bun run projection:verify
 
 Refresh refuses dirty or unpushed sources, wrong branches or remotes, Vela
 version or released-binary-byte drift, packet drift, missing decision evidence,
-incomplete reviews, and root disagreement. It acquires each source once, builds
+incomplete reviews, and root disagreement. It also refuses a release that drops
+below half the activated corpus on Claims, Problems or source records — a
+repository that legitimately empties is a decision somebody makes, so it takes
+an explicit `workflow_dispatch` override and a recorded reason. It acquires each source once, builds
 one candidate, inserts it in one transaction, verifies every stored table root,
 and only then moves `current_release`. A failure leaves the prior release
 current. The writer is available only to the refresh workflow. The
@@ -289,8 +295,12 @@ refreshes leave the prior head unchanged. Structural ranking is not persisted
 as a second projection layer; producer work comes from the exact Target Index,
 while graph position remains non-authoritative.
 
-Clean-room reconstruction is local and disposable. It does not create a Neon
-branch or touch production:
+Clean-room reconstruction is disposable and creates no Neon branch. It runs in
+CI after every refresh — `reconstruct-projection.yml`, following the refresh by
+`workflow_run` rather than sharing its run, because it rebuilds twice and would
+otherwise hold the projection concurrency group for an hour after the deploy was
+done. It is advisory: nothing waits on it, and a failure is a question for a
+person rather than a reason to hold a release. The same command runs locally:
 
 ```bash
 bun run projection:reconstruct \
