@@ -157,3 +157,50 @@ jobs:
 
       - name: Patch hygiene
         run: bun run format:check
+
+  # An audit nobody notices stopping is not an audit.
+  #
+  # "Reconstruct the projection" rebuilds the activated projection from nothing
+  # and compares the roots, and it can stop running without anyone hearing: it
+  # is `workflow_run`-triggered, so it produces `skipped` when the refresh
+  # failed, and it produced `cancelled` for three consecutive runs when the next
+  # refresh pre-empted it. GitHub notifies on `failure` and on neither of those.
+  #
+  # Nothing else in the repository asks whether it ever succeeded.
+  # `math-atlas-clean-room-evidence.test.ts` reads a frozen evidence document
+  # from 2026-08-02 pinned to a commit and a corpus that no longer exist, and it
+  # passes forever whether or not the audit runs again.
+  #
+  # This asks. It runs on every push and pull request, which is where a red mark
+  # is actually seen, and it is the only place the question is asked at all.
+  reconstruction-freshness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      # 48 hours, against a refresh that is scheduled daily and also fires on
+      # every push to main. One missed day is a schedule hiccup; two is the
+      # audit having stopped.
+      - name: The reconstruction has succeeded recently
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          latest="$(gh run list --repo "$GITHUB_REPOSITORY" \
+            --workflow reconstruct-projection.yml --status success \
+            --limit 1 --json updatedAt --jq '.[0].updatedAt // ""')"
+          if [ -z "$latest" ]; then
+            echo "::error::No successful reconstruction has ever been recorded." \
+                 "The projection's rebuild-and-compare obligation is unmet."
+            exit 1
+          fi
+          age=$(( ( $(date -u +%s) - $(date -u -d "$latest" +%s) ) / 3600 ))
+          echo "newest successful reconstruction: $latest (${age}h ago)"
+          if [ "$age" -gt 48 ]; then
+            echo "::error::The newest successful reconstruction is ${age}h old." \
+                 "It is cancelled, skipped, or failing — check the workflow, because" \
+                 "none of those conclusions notifies anyone on its own."
+            exit 1
+          fi
