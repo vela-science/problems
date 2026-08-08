@@ -36,3 +36,8 @@ apps/observatory/public/.well-known/vela-site.json
 apps/*/public/assets/fonts/
 apps/observatory/public/favicon.svg
 apps/observatory/public/data/
+
+# CI and local reconstructions check the canonical repositories out here.
+# `.github/actions/checkout-frontiers` writes sources/<slug>; committing one
+# would embed another repository in this one.
+/sources/
