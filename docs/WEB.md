@@ -199,6 +199,15 @@ table roots, and source roots are identical. After activation, the workflow
 deploys the current application and verifies that production serves the exact
 new projection root.
 
+A no-op still records that it happened. `current_release.confirmed_at` is
+written on both branches, and it is the instant the Observatory footer shows.
+The reason is that a reader takes the one date on the page for "how old is
+this", and `activated_at` cannot answer that: it stops moving the moment the
+source repositories go quiet, so a month with nothing to publish and a month
+with a broken refresh render identically. Confirmation keeps moving for as long
+as the pipeline is alive, which is the fact worth showing. It is wall-clock and
+deliberately outside the release identity, so it never enters a root.
+
 ### The editorial snapshot
 
 The Observatory reads Neon at build. `apps/www` does not: it is a static export
