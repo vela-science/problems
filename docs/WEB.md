@@ -129,10 +129,11 @@ bun packages/frontier-data/scripts/sync-vela-schemas.mjs
 same test asserts both — a moved pin fails on the commit, an edit made here
 instead of upstream fails on the digest.
 
-Only `required` is checked, and that asymmetry is deliberate: upstream's schema
-also closes the document with `additionalProperties: false` and this reader does
-not, because a field it has not been taught is the same document with more in
-it. Rejecting extras cost three fail-closed breaks of the refresh in six days.
+Only `required` is checked, and both sides leave it there: upstream keeps
+`vela.status.v4` open and so does this reader, because a field it has not been
+taught is the same document with more in it. Rejecting extras cost three
+fail-closed breaks of the refresh in six days and caught nothing the `required`
+list did not.
 The opposite rule governs a signed preimage, where an added field is a different
 object with a different root; the two rules are stated together in the Vela
 repository's `docs/INTEROPERABILITY.md`.
