@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { frontierRegistry } from "../packages/frontier-data/src/registry";
+import { frontierRegistry } from "../packages/observatory-data/src/registry";
 
 /*
   The composite checkout action names one repository and one path. The registry

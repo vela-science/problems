@@ -27,7 +27,7 @@ surfaces and three shared packages.
 | `apps/observatory` | Next.js | Root-bound Frontier, Claim, Target, Proposal, Decision, Dossier, Source, graph, and reproduce views |
 | `packages/brand` | TypeScript and CSS | Framework-neutral sail, tokens, fonts, licenses, and deterministic exports |
 | `packages/ui` | React, shadcn, and Base UI | Private shared primitives and stable Vela presentation semantics |
-| `packages/frontier-data` | TypeScript | Sole validator and projector for frontier, search, work, and graph data |
+| `packages/observatory-data` | TypeScript | Sole validator and projector for frontier, search, work, and graph data |
 
 The applications share brand assets, exact facts, and eligible React
 primitives. Authored editorial and workbench route compositions stay with
@@ -53,7 +53,7 @@ canonical frontier Git repositories
        released Vela binary
                  │
                  ▼
-        @vela/frontier-data
+        @vela/observatory-data
           │              │
  compact rooted      normalized release rows
     summary                 │

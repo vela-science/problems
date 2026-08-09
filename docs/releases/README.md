@@ -17,7 +17,7 @@ knows what changed.
 These are notes about this repository — the Observatory, the projection
 pipeline, the editorial site. The protocol's releases are `vela-science/vela`'s
 and are recorded there; the version this site pins is in
-`packages/frontier-data/config/vela-release.v1.json`.
+`packages/observatory-data/config/vela-release.v1.json`.
 
 Nothing links these into the published documentation, and that is deliberate.
 They are a log for people working on the repository, not a surface the site

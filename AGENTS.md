@@ -10,7 +10,7 @@ applications:
 - `packages/brand`: framework-neutral tokens, fonts, marks, and licenses;
 - `packages/ui`: shared React UI source built from shadcn `base-nova` on
   Base UI, plus stable Vela presentation semantics;
-- `packages/frontier-data`: the only frontier, source-registry, search, graph,
+- `packages/observatory-data`: the only frontier, source-registry, search, graph,
   and deployment-manifest implementation.
 
 Neither application signs, accepts, verifies, or mutates scientific state.
@@ -26,7 +26,7 @@ repositories. Neon is a disposable read projection.
   `apps/observatory/src/components`
 - Brand contract: `packages/brand/vela.tokens.json` and its generated outputs
 - Shared React primitives and semantics: `packages/ui`
-- Frontier and math-source projections: `packages/frontier-data`
+- Frontier and math-source projections: `packages/observatory-data`
 - Product and design contracts: `PRODUCT.md`, `DESIGN.md`,
   `docs/design-system.md`, and `docs/WEB.md`
 

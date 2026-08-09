@@ -19,7 +19,7 @@ const WORKSPACES = [
   "apps/www/package.json",
   "apps/observatory/package.json",
   "packages/brand/package.json",
-  "packages/frontier-data/package.json",
+  "packages/observatory-data/package.json",
 ];
 const temporary: string[] = [];
 

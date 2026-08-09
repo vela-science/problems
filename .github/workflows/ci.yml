@@ -28,7 +28,7 @@ jobs:
   # instead. (An earlier note here claimed `apps/www/**` was in neither
   # workflow's trigger paths. It is in this one, by not being excluded from it.)
   #
-  # Everything here reads committed files — `@vela/frontier-data/release` and
+  # Everything here reads committed files — `@vela/observatory-data/release` and
   # `/editorial` are JSON in the tree, not the live projection — so it cannot
   # race the refresh over the database, and there is nothing to order it after.
   #

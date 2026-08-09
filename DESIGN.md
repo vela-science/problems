@@ -31,7 +31,7 @@ composition.
 | React UI | `packages/ui` | Official shadcn `base-nova` primitives on Base UI and stable Vela presentation semantics |
 | Editorial composition | `apps/www` | Authored publications, figures, product narrative, and documentation layouts |
 | Product composition | `apps/observatory` | Read-only workbench shell, domain surfaces, URL state, and the Sigma graph |
-| Exact data | `packages/frontier-data` | Rooted projections consumed by both applications |
+| Exact data | `packages/observatory-data` | Rooted projections consumed by both applications |
 
 `@vela/brand` is framework-neutral. `@vela/ui` is the shared React source for
 both Next.js applications and future private Vela applications. Applications

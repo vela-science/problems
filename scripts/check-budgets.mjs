@@ -8,7 +8,7 @@ import {
   observatoryProjectionManifest,
   graphRead,
   searchRead,
-} from "../packages/frontier-data/src/index.ts";
+} from "../packages/observatory-data/src/index.ts";
 import { fontFileStem, rejectedFontFamilies, webFontProfiles } from "../packages/brand/src/fonts.ts";
 
 const repository = resolve(import.meta.dirname, "..");
