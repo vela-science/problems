@@ -13,7 +13,7 @@
         "@hugeicons/react": "1.1.9",
         "@react-sigma/core": "^5.0.5",
         "@vela/brand": "workspace:*",
-        "@vela/frontier-data": "workspace:*",
+        "@vela/observatory-data": "workspace:*",
         "@vela/ui": "workspace:*",
         "@workos-inc/authkit-nextjs": "4.3.1",
         "@workos-inc/node": "10.9.0",
@@ -54,7 +54,7 @@
       "name": "@vela/www",
       "dependencies": {
         "@vela/brand": "workspace:*",
-        "@vela/frontier-data": "workspace:*",
+        "@vela/observatory-data": "workspace:*",
         "@vela/ui": "workspace:*",
         "clsx": "^2.1.1",
         "flexsearch": "^0.8.212",
@@ -97,8 +97,8 @@
         "sharp": "0.35.0",
       },
     },
-    "packages/frontier-data": {
-      "name": "@vela/frontier-data",
+    "packages/observatory-data": {
+      "name": "@vela/observatory-data",
       "dependencies": {
         "@neondatabase/serverless": "^1.1.0",
         "graphology": "^0.26.0",
@@ -688,7 +688,7 @@
 
     "@vela/brand": ["@vela/brand@workspace:packages/brand"],
 
-    "@vela/frontier-data": ["@vela/frontier-data@workspace:packages/frontier-data"],
+    "@vela/observatory-data": ["@vela/observatory-data@workspace:packages/observatory-data"],
 
     "@vela/observatory": ["@vela/observatory@workspace:apps/observatory"],
 

@@ -5,9 +5,9 @@ const targets = {
   www: [
     "apps/www",
     "packages/brand",
-    "packages/frontier-data/src",
-    "packages/frontier-data/config",
-    "packages/frontier-data/package.json",
+    "packages/observatory-data/src",
+    "packages/observatory-data/config",
+    "packages/observatory-data/package.json",
     ".vercelignore",
     "package.json",
     "bun.lock",

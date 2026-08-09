@@ -1,9 +1,9 @@
 /* The database, and the two roles that reach it.
  *
  * Three files in this repository spell some of this out. Here it decides
- * whether a secret is accepted; `packages/frontier-data/src/deployment.ts`
+ * whether a secret is accepted; `packages/observatory-data/src/deployment.ts`
  * publishes the database and the reader role in the deployment manifest every
- * reader can fetch; `packages/frontier-data/package.json` writes both, plus the
+ * reader can fetch; `packages/observatory-data/package.json` writes both, plus the
  * Neon project id, into two `neonctl` invocations. None of them imports
  * another, and the projection is one database, so a rename that reaches two of
  * the three leaves the third pointing at nothing.

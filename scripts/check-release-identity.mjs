@@ -16,7 +16,7 @@
   build regression.
 
   Deployment identity was never coming from any of that. deploymentIdentity() in
-  packages/frontier-data/src/deployment.ts reads VERCEL_GIT_COMMIT_SHA and
+  packages/observatory-data/src/deployment.ts reads VERCEL_GIT_COMMIT_SHA and
   VERCEL_DEPLOYMENT_ID directly and throws when a production build cannot supply
   both, and the manifest schema independently requires a commit, a deployment id
   and environment === "production". That is automatic, cannot be typed wrong in a
@@ -41,7 +41,7 @@ const WORKSPACE_MANIFESTS = [
   "apps/www/package.json",
   "apps/observatory/package.json",
   "packages/brand/package.json",
-  "packages/frontier-data/package.json",
+  "packages/observatory-data/package.json",
   "packages/ui/package.json",
 ];
 

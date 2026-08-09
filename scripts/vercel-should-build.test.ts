@@ -20,13 +20,13 @@ function repository() {
   mkdirSync(resolve(path, "apps/observatory"), { recursive: true });
   mkdirSync(resolve(path, "apps/www"), { recursive: true });
   mkdirSync(resolve(path, "packages/brand"), { recursive: true });
-  mkdirSync(resolve(path, "packages/frontier-data/src"), { recursive: true });
-  mkdirSync(resolve(path, "packages/frontier-data/tests"), { recursive: true });
+  mkdirSync(resolve(path, "packages/observatory-data/src"), { recursive: true });
+  mkdirSync(resolve(path, "packages/observatory-data/tests"), { recursive: true });
   mkdirSync(resolve(path, ".github/workflows"), { recursive: true });
   writeFileSync(resolve(path, "apps/observatory/app.ts"), "one\n");
   writeFileSync(resolve(path, "apps/www/app.ts"), "one\n");
-  writeFileSync(resolve(path, "packages/frontier-data/src/index.ts"), "one\n");
-  writeFileSync(resolve(path, "packages/frontier-data/tests/projection.test.ts"), "one\n");
+  writeFileSync(resolve(path, "packages/observatory-data/src/index.ts"), "one\n");
+  writeFileSync(resolve(path, "packages/observatory-data/tests/projection.test.ts"), "one\n");
   writeFileSync(resolve(path, ".github/workflows/ci.yml"), "one\n");
   writeFileSync(resolve(path, "README.md"), "one\n");
   execFileSync("git", ["add", "."], { cwd: path });
@@ -81,7 +81,7 @@ describe("Vercel workspace build selection", () => {
     const path = repository();
     commit(path, ".github/workflows/ci.yml", "two\n");
     expect(status(path, "www")).toBe(0);
-    commit(path, "packages/frontier-data/tests/projection.test.ts", "two\n");
+    commit(path, "packages/observatory-data/tests/projection.test.ts", "two\n");
     expect(status(path, "www")).toBe(0);
     commit(path, "README.md", "two\n");
     expect(status(path, "www")).toBe(0);
@@ -89,7 +89,7 @@ describe("Vercel workspace build selection", () => {
 
   test("rebuilds the editorial site for shared projection runtime changes", () => {
     const path = repository();
-    commit(path, "packages/frontier-data/src/index.ts", "two\n");
+    commit(path, "packages/observatory-data/src/index.ts", "two\n");
     expect(status(path, "www")).toBe(1);
   });
 

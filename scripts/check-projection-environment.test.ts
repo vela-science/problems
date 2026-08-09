@@ -58,23 +58,23 @@ describe("projection credential binding", () => {
   The check above decides whether a secret is accepted. `deployment.ts` puts the
   project id, the database and the reader role into the manifest at
   /.well-known/vela-site.json, which is the public declaration of where these
-  pages are read from. `packages/frontier-data/package.json` writes the project
+  pages are read from. `packages/observatory-data/package.json` writes the project
   id, the database and the WRITER role into two `neonctl` invocations — twice,
   because `db:migrate:local` and `db:sql` each build their own connection
   string.
 
   Consolidating those two into the manifest's declaration is the right end
-  state and belongs in packages/frontier-data. Until then this is what the
+  state and belongs in packages/observatory-data. Until then this is what the
   duplication actually costs, removed: renaming the database or moving the
   project reddens here rather than in whichever operator script is run next.
 */
 const repository = resolve(import.meta.dirname, "..");
 const deploymentSource = readFileSync(
-  resolve(repository, "packages/frontier-data/src/deployment.ts"),
+  resolve(repository, "packages/observatory-data/src/deployment.ts"),
   "utf8",
 );
 const frontierDataScripts: Record<string, string> = JSON.parse(
-  readFileSync(resolve(repository, "packages/frontier-data/package.json"), "utf8"),
+  readFileSync(resolve(repository, "packages/observatory-data/package.json"), "utf8"),
 ).scripts;
 
 /** The `data_source` object literal the Observatory manifest publishes. */

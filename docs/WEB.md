@@ -34,7 +34,7 @@ apps/www                editorial Next.js application (static export)
 apps/observatory        read-only Next.js application
 packages/brand          governed identity, tokens, fonts, and delivery assets
 packages/ui             shared shadcn/Base UI source and Vela presentation semantics
-packages/frontier-data  Git-to-Neon projection, validation, search, and manifests
+packages/observatory-data  Git-to-Neon projection, validation, search, and manifests
 ```
 
 `packages/brand` is framework-neutral. `packages/ui` is private React source
@@ -117,12 +117,12 @@ a release the site no longer advertises.
 the zod schema that parses it off the wire. Nothing held the two together, so
 upstream could rename a field and the first thing to notice would be a
 projection refresh failing after the release.
-`packages/frontier-data/scripts/sync-vela-schemas.mjs` vendors upstream's
+`packages/observatory-data/scripts/sync-vela-schemas.mjs` vendors upstream's
 declaration at the pin, and `tests/status-schema.test.ts` holds the reader to
 it: a document missing any field upstream requires must be refused.
 
 ```bash
-bun packages/frontier-data/scripts/sync-vela-schemas.mjs
+bun packages/observatory-data/scripts/sync-vela-schemas.mjs
 ```
 
 `config/vela-schemas.v1.json` records the commit and a digest per file, and the
@@ -157,7 +157,7 @@ application onto the webpack builder the last time it had a markdown pipeline.
 The bodies travel inside the manifest module rather than as sibling files,
 because `import.meta.dirname` is undefined in the static-export bundle and a
 path resolved at render time lands on a transient prerender chunk — the same
-trap already recorded in `packages/frontier-data/src/editorial.ts`.
+trap already recorded in `packages/observatory-data/src/editorial.ts`.
 
 **Chrome.** Structure from Tailwind Plus Protocol — grouped section rail,
 content column, on-page contents, previous and next — and nothing else.
@@ -168,7 +168,7 @@ reskinned.
 
 ## Exact frontier state
 
-`packages/frontier-data/src/registry.ts` is the typed registry for the canonical
+`packages/observatory-data/src/registry.ts` is the typed registry for the canonical
 Git repositories. One today: `vela-science/math`, the single live mathematics
 authority. Four existed under the previous epoch and existed because there were
 four topics rather than four authorities. One GitHub workflow — on a daily
@@ -180,7 +180,7 @@ database in the `vela-observatory-projection` Neon project:
 
 ```bash
 bun run db:migrate
-bun packages/frontier-data/scripts/refresh-neon-projection.mjs
+bun packages/observatory-data/scripts/refresh-neon-projection.mjs
 bun run db:check
 bun run projection:verify
 ```
@@ -219,7 +219,7 @@ deliberately outside the release identity, so it never enters a root.
 
 The Observatory reads Neon at build. `apps/www` does not: it is a static export
 and reads one committed file,
-`packages/frontier-data/config/editorial-summary.v4.json`, so the editorial site
+`packages/observatory-data/config/editorial-summary.v4.json`, so the editorial site
 builds with no database credential at all.
 
 That file is the only projection data the public editorial site serves, which
@@ -237,7 +237,7 @@ Three things now prevent that recurring:
   the same helpers the Observatory renders from — rather than reaching into
   `status` by hand, so a field that moves breaks the build instead of
   evaluating to `undefined`.
-- `packages/frontier-data/tests/editorial-summary.test.ts` runs the generator
+- `packages/observatory-data/tests/editorial-summary.test.ts` runs the generator
   against a status shaped like the one the emitter publishes today and asserts
   the output satisfies the schema. It needs no database, so it runs in CI.
 - The manual refresh regenerates and commits the snapshot
@@ -263,7 +263,7 @@ trees, event roots, graph roots, and row roots identify the projection, and it
 can be rebuilt from canonical repositories.
 
 Neon is neither canonical nor writable by the public application. It is a
-disposable read model. The `@vela/frontier-data` projector is its only writer, and the
+disposable read model. The `@vela/observatory-data` projector is its only writer, and the
 Observatory receives a SELECT-only role scoped to the normalized projection.
 
 The credential contract is intentionally closed: application reads and checks
@@ -278,8 +278,8 @@ Those two URLs are the complete secret inventory for database access. The
 fixed `observatory_projection_reader` role is managed directly in Neon and is
 not recreated during CI or projection refreshes.
 
-`packages/frontier-data/schema.sql` is the current desired-state schema.
-Forward changes live in `packages/frontier-data/migrations`; each applied file
+`packages/observatory-data/schema.sql` is the current desired-state schema.
+Forward changes live in `packages/observatory-data/migrations`; each applied file
 is recorded with its exact byte root. `bun run db:migrate` applies any missing
 rooted migrations before a refresh and rejects changed or unknown history.
 `bun run db:check` verifies the required tables, indexes, and SELECT-only

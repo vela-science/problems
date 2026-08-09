@@ -13,7 +13,7 @@ make evidence and direction legible; it is not a separately published product.
 | React primitives and semantics | `packages/ui` | Observatory, eligible www interactions, future private React applications |
 | Editorial profile | `apps/www` | Home, the Constellations essay, and the vendored Vela documentation |
 | Product profile | `packages/ui/src/styles/product.css` | Observatory and future private product surfaces |
-| Exact data | `packages/frontier-data` | Both applications |
+| Exact data | `packages/observatory-data` | Both applications |
 
 `@vela/brand` is framework-neutral. It owns the DTCG-shaped token source,
 delivered fonts, canonical sail, mark exports, licenses, and integrity checks.

@@ -146,7 +146,7 @@ The two applications are independently deployed surfaces of one product:
   and marks;
 - `@vela/ui` supplies shared React primitives and stable Vela presentation
   semantics;
-- `@vela/frontier-data` supplies exact generated facts and projections.
+- `@vela/observatory-data` supplies exact generated facts and projections.
 
 Applications share foundations, not whole page implementations. Editorial
 compositions remain in `apps/www`; product shells, domain surfaces, and graph
@@ -188,7 +188,7 @@ documentation, not above every page that lists them.
 - Search order, graph position, model output, and verifier success never imply
   authority.
 - No second frontier parser, projection builder, search index, source registry,
-  or deployment-manifest implementation may appear outside `@vela/frontier-data`.
+  or deployment-manifest implementation may appear outside `@vela/observatory-data`.
 - Release identity and visible counts derive from checked artefacts rather than
   copied strings.
 
