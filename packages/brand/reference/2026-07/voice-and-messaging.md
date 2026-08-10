@@ -23,5 +23,5 @@ Vela records claims, evidence, provenance, uncertainty, and dependencies as dura
 Vela revolutionizes discovery with a magical AI-powered knowledge ecosystem.
 
 ## Vocabulary
-Prefer: state, finding, evidence, provenance, lineage, uncertainty, dependency, frontier, receipt, inheritance, direction, substrate.
+Prefer: state, finding, evidence, provenance, lineage, uncertainty, dependency, repository, receipt, inheritance, direction, substrate.
 Avoid: magic, disruption, autonomous scientist, revolutionary, infinite intelligence, one-click science, knowledge graph as an empty slogan.

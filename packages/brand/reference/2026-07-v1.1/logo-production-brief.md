@@ -11,7 +11,7 @@ Create an irreducible symbol that reads, in order, as:
 - A restrained baseline representing substrate and provenance.
 - One dominant convex growth curve.
 - One or two internal lineage trajectories, depending on optical size.
-- A terminal vertical or near-vertical boundary that can read as axis, frontier, constraint, and mast.
+- A terminal vertical or near-vertical boundary that can read as axis, repository, constraint, and mast.
 - Negative space that suggests a V without drawing a literal letter.
 
 ## Optical masters

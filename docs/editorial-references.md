@@ -63,12 +63,12 @@ implementation uses the existing shadcn/Base UI `Item`, `Sheet`, `Button`,
 `Select`, `StatusBadge`, and `CopyButton` primitives and Vela tokens. It adds no
 template-owned component layer, Headless UI runtime, or new visual hierarchy.
 
-**Amended 2026-08-05, the six Frontier surfaces.** Four adaptations from
+**Amended 2026-08-05, the six Repository surfaces.** Four adaptations from
 Tailwind Plus Application UI v4, all licensed for this repository, all carrying
 their provenance in a comment at the point of use:
 
 - `lists/stacked-lists/08-two-columns-with-links` → the source-binding rows on
-  the Frontier Overview. Taken: the row-wide link and a right-justified
+  the Repository Overview. Taken: the row-wide link and a right-justified
   secondary column that collapses under the primary at narrow widths. Rebuilt
   on the shared `Item`/`ItemGroup`, Hugeicons, semantic tokens and `next/link`;
   the chevron affordance dropped. Heroicons, the avatar column and the raw gray
@@ -99,7 +99,7 @@ table, opened claim, boundary ledger — is gone. It was true throughout and it
 said all of it at once, which made an entry point read as a second manifesto
 beside the one already published at `/constellations`. The page now carries
 four bands, one argument each, at the interval and in the type the essay reads
-at: the published frontiers on a night plate, the five-act loop in prose, one
+at: the published repositories on a night plate, the five-act loop in prose, one
 copyable install-and-read block, and three routes out. Copy is still quoted
 from the protocol repository and every count still comes from the committed
 projection.

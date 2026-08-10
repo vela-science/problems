@@ -2,7 +2,7 @@
 
 **Status:** Designer and engineering handoff supplement
 **Date:** 15 July 2026
-**Scope:** Web product UI, scientific state editing, provenance graphs, frontier maps, evidence views, data visualization, documentation, and brand surfaces.
+**Scope:** Web product UI, scientific state editing, provenance graphs, repository maps, evidence views, data visualization, documentation, and brand surfaces.
 
 This document maps the design systems, component libraries, and frontend packages most relevant to Vela. It is deliberately broader than the recommended dependency list. The purpose is to show what should be adopted, what should be evaluated for specific surfaces, and what should remain inspiration only.
 
@@ -194,7 +194,7 @@ Vela's graph layer is a core product surface, not a decorative visualization. Di
 | **ELK / elkjs** | Layered DAG layout, ports, orthogonal routing, compound graphs | Adopt alongside React Flow |
 | **Dagre** | Simpler directed graph layout | Use for small graphs or fallback |
 | **d3-force** | Force-directed exploratory layouts | Use selectively |
-| **Sigma.js + Graphology** | Large WebGL network exploration | Evaluate for large read-only frontiers |
+| **Sigma.js + Graphology** | Large WebGL network exploration | Evaluate for large read-only repositories |
 | **Cytoscape.js** | Graph analysis, rich graph interaction, biological networks, layout ecosystem | Evaluate for scientific network views |
 | **Graphology** | Graph data model and algorithms | Useful with Sigma.js or independently |
 | **PixiJS** | Custom high-performance 2D rendering | Use only if graph requirements exceed higher-level libraries |
@@ -202,7 +202,7 @@ Vela's graph layer is a core product surface, not a decorative visualization. Di
 
 ### Architecture decision
 
-Use **React Flow plus ELK** for the primary editable frontier and provenance interface. React Flow has the right interaction model for custom nodes, handles, edges, selection, grouping, contextual controls, and whiteboard-like features.
+Use **React Flow plus ELK** for the primary editable repository and provenance interface. React Flow has the right interaction model for custom nodes, handles, edges, selection, grouping, contextual controls, and whiteboard-like features.
 
 Use **Sigma.js** when the user needs to explore thousands or tens of thousands of nodes with WebGL rendering and relatively limited editing.
 
@@ -418,7 +418,7 @@ Generic icon libraries do not encode the Vela ontology. Create a custom set for:
 - instrument
 - observation
 - model
-- frontier
+- repository
 - unresolved
 - superseded
 - verified
@@ -859,7 +859,7 @@ The design system can start inside the product monorepo. Publish packages only w
 - finding and evidence components
 - version comparison and state diff
 
-## Phase 4: Frontier graph
+## Phase 4: Repository graph
 
 - React Flow adapter
 - ELK layouts

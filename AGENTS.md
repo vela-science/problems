@@ -10,11 +10,11 @@ applications:
 - `packages/brand`: framework-neutral tokens, fonts, marks, and licenses;
 - `packages/ui`: shared React UI source built from shadcn `base-nova` on
   Base UI, plus stable Vela presentation semantics;
-- `packages/observatory-data`: the only frontier, source-registry, search, graph,
+- `packages/observatory-data`: the only repository, source-registry, search, graph,
   and deployment-manifest implementation.
 
 Neither application signs, accepts, verifies, or mutates scientific state.
-Canonical custody and authority remain in Vela and the frontier Git
+Canonical custody and authority remain in Vela and the repository Git
 repositories. Neon is a disposable read projection.
 
 ## Sources of truth
@@ -26,7 +26,7 @@ repositories. Neon is a disposable read projection.
   `apps/observatory/src/components`
 - Brand contract: `packages/brand/vela.tokens.json` and its generated outputs
 - Shared React primitives and semantics: `packages/ui`
-- Frontier and math-source projections: `packages/observatory-data`
+- Repository and math-source projections: `packages/observatory-data`
 - Product and design contracts: `PRODUCT.md`, `DESIGN.md`,
   `docs/design-system.md`, and `docs/WEB.md`
 
@@ -62,7 +62,7 @@ when they were written. Do not mechanically rewrite them.
 - Preserve the canonical Vela sail unless an approved brand pass replaces it.
 - Human accounts may personalize the Observatory, but must remain separate
   from Vela actor identity and repository authority. Do not add a signer,
-  scientific-state mutation UI, writable frontier API, or a second frontier
+  scientific-state mutation UI, writable repository API, or a second repository
   parser, index, or manifest generator.
 - For Next.js work, read the relevant guide in `node_modules/next/dist/docs/`
   before relying on remembered framework behavior.

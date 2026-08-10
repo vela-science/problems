@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { frontierRegistry } from "../packages/observatory-data/src/registry";
+import { repositoryRegistry } from "../packages/observatory-data/src/registry";
 
 /*
   The composite checkout action names one repository and one path. The registry
@@ -17,18 +17,18 @@ import { frontierRegistry } from "../packages/observatory-data/src/registry";
   is stop the copy from drifting, which is all the duplication actually costs.
 
   It was four of each until the four topic repositories collapsed into one
-  derived Frontier, and this file went on saying four for a while after — which
+  derived Repository, and this file went on saying four for a while after — which
   is the argument for the assertions below rather than for the paragraph above:
   a count in prose goes stale silently, and `expected` is read from the registry
   on every run.
 
   The registry is the declaration. This holds the action to it, so adding a
-  second Frontier to `registry.ts` reddens here until the action agrees, and no
+  second Repository to `registry.ts` reddens here until the action agrees, and no
   edit to either file can leave the projection reading a directory CI never
   checked out.
 */
 
-const ACTION = resolve(import.meta.dirname, "../.github/actions/checkout-frontiers/action.yml");
+const ACTION = resolve(import.meta.dirname, "../.github/actions/checkout-repositories/action.yml");
 
 /** One `with:` value per step, in file order. Steps here carry no anchors or
  *  block scalars, so a line match is exact for them. */
@@ -40,14 +40,14 @@ function values(document: string, key: string): string[] {
     .map((line) => line.slice(key.length + 1).trim());
 }
 
-describe("canonical Frontier checkout roster", () => {
+describe("canonical Repository checkout roster", () => {
   const action = readFileSync(ACTION, "utf8");
 
   /* The first locator. `actions/checkout` takes one `owner/name` on GitHub, so
      this holds the action to the locator a reader is shown; the mirrors exist
      for rebuilding when that host is not reachable, which is not a thing this
      action can do at all. */
-  const expected = frontierRegistry.frontiers.map(({ remotes, directory }) => ({
+  const expected = repositoryRegistry.repositories.map(({ remotes, directory }) => ({
     repository: new URL(remotes[0]).pathname.replace(/^\//u, "").replace(/\.git$/u, ""),
     path: `sources/${directory}`,
   }));
