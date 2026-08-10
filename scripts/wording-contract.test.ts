@@ -91,8 +91,8 @@ const WHY_THE_WORD_STAYS: Array<[string, string]> = [
     "the retired-component ban list, which has to name what it bans",
   ],
   [
-    "packages/observatory-data/migrations/20260809_repository_uuidv4.sql",
-    "frozen once applied; db:migrate fails on a migration whose bytes changed",
+    "packages/observatory-data/scripts/schema.mjs",
+    "names the retired migration it retires, and the table that migration altered",
   ],
   [
     "packages/observatory-data/migrations/20260809_repository_vocabulary.sql",
