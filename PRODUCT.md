@@ -18,7 +18,7 @@ MAP → ADVANCE → REMAP
 
 A reader maps the territory: exact state, dependencies, disagreement, and gaps.
 Advancing it is the span this product does not perform. A research tool produces
-candidate work, a canonical frontier Git repository preserves it, Vela verifies
+candidate work, a canonical repository Git repository preserves it, Vela verifies
 and replays it, and repository authority records a human Decision. The resulting
 root remaps the territory, and Vela Web is what makes that new map searchable,
 inspectable, and reproducible.
@@ -34,15 +34,15 @@ navigation, headings, and URLs all follow it.
 
 | Protocol object | Product word | Lives at |
 | --- | --- | --- |
-| Frontier `vfr_` | **Frontier** | global list, and the container for everything below |
-| Claim Record `vcl_` | **Claim** | inside a Frontier |
-| source-native problem | **Problem** | inside a Frontier, where the source has them |
-| Target, and the Offer that ranks it | **Target** | inside a Frontier; a release roll-up exists |
+| Repository `vfr_` | **Repository** | global list, and the container for everything below |
+| Claim Record `vcl_` | **Claim** | inside a Repository |
+| source-native problem | **Problem** | inside a Repository, where the source has them |
+| Target, and the Offer that ranks it | **Target** | inside a Repository; a release roll-up exists |
 | Submission `vsb_` | **Submission** | inside a Proposal, and in a Claim's lineage |
-| Proposal `vpr_` | **Proposal** | inside a Frontier; a release roll-up exists |
+| Proposal `vpr_` | **Proposal** | inside a Repository; a release roll-up exists |
 | Verification Record `vvr_` | **Verification Record** | inside a Proposal |
 | Decision, admitted as Event `vev_` | **Decision** | release-wide |
-| — (exact rooted case record) | **Dossier** | inside a Frontier; a release roll-up exists |
+| — (exact rooted case record) | **Dossier** | inside a Repository; a release roll-up exists |
 | — (release-scoped registry) | **Source** | release-wide |
 
 Two entries have no protocol object behind them, and the product says so. A
@@ -52,7 +52,7 @@ grouping never implies authority.
 
 ### Vocabulary
 
-Current: Frontier, Claim, Problem, Target, Submission, Proposal,
+Current: Repository, Claim, Problem, Target, Submission, Proposal,
 Verification Record, Decision, Dossier, Source.
 
 Retired: Finding, Work, Review, Activity, Run, Attempt, Bundle. Finding survives as a
@@ -69,7 +69,7 @@ which held zero rows in every release it was ever part of. The word survives
 only as `provenance.source_attempt` on a Submission — an exact value the
 producer's workbench supplies, never a product word and never a destination.
 The release-level `/runs` path still redirects permanently to `/decisions`; the
-frontier-scoped route published no record, so no durable URL was broken. Work, Review, and Activity are
+repository-scoped route published no record, so no durable URL was broken. Work, Review, and Activity are
 activities, and a reader cannot link to an activity, only to the record it acts
 on. Bundle is a protocol root and appears only as a labelled
 exact value.
@@ -84,7 +84,7 @@ truth", "accepted by verifier", "AI approved", or an unqualified "verified",
 
 The editorial gateway explains why Vela exists and publishes the current
 authored work. It is a statically exported Next.js application with four
-content routes — the landing page, the `Endless Frontiers` essay at
+content routes — the landing page, the `Endless Repositories` essay at
 `/constellations`, and the documentation at `/docs` and `/docs/[section]` — plus
 a not-found page and a sitemap.
 
@@ -96,14 +96,14 @@ the product's explanation against the protocol's own words.
 ### `app.vela.space`
 
 The Observatory is the read-only workbench over an exact, release-bound
-projection. Its destinations are Frontiers, then Targets, Proposals, Dossiers
-and Decisions across the release, then Sources; inside a Frontier it opens
+projection. Its destinations are Repositories, then Targets, Proposals, Dossiers
+and Decisions across the release, then Sources; inside a Repository it opens
 Overview, Claims, Problems where the source has them, Targets, Proposals,
 Dossiers, and Reproduce, with search and the evidence graph reachable as tools
 rather than as places.
 
 The four release-wide roll-ups sit under a heading naming their scope. They were
-left out of the rail for a while after the Frontier tab bar was removed, on the
+left out of the rail for a while after the Repository tab bar was removed, on the
 reasoning that the three shared names had been the ambiguity; but the routes
 stayed, so a reader on one of them saw no rail entry for the page they were
 reading. The ambiguity was the two scopes being on screen together, which the
@@ -123,20 +123,20 @@ remain distinct in language and presentation.
 ### Navigation
 
 One navigation system, one scope on screen. The sidebar is contextual: outside a
-Frontier it lists what is genuinely release-wide, and inside one it becomes that
-Frontier's own sections, grouped under the protocol's axes. Both rails group
+Repository it lists what is genuinely release-wide, and inside one it becomes that
+Repository's own sections, grouped under the protocol's axes. Both rails group
 rather than flatten, because a heading is what lets a shared name state its
 scope. The header carries one trail whose last element is the current page, and
 on a record that element is the record — a trail ending at the collection named
-the same three words on every one of a Frontier's 2,782 Claim pages. Inside a
-Frontier the trail's first element is the Frontier switcher, a control rather
+the same three words on every one of a Repository's 2,782 Claim pages. Inside a
+Repository the trail's first element is the Repository switcher, a control rather
 than a link. No label means two scopes at once.
 
-A noun appears at both release and Frontier level only when a reader with no
-Frontier in mind can act on it. When it does, the release view is a roll-up with
+A noun appears at both release and Repository level only when a reader with no
+Repository in mind can act on it. When it does, the release view is a roll-up with
 its own component and its own default set, as Proposals is: an accordion across
-the release, a table inside a Frontier. Targets and Dossiers still render the
-Frontier's component at both scopes, which is a defect rather than a precedent.
+the release, a table inside a Repository. Targets and Dossiers still render the
+Repository's component at both scopes, which is a defect rather than a precedent.
 
 ## Shared system
 
@@ -171,7 +171,7 @@ documentation, not above every page that lists them.
 
 ## Non-negotiable boundaries
 
-- Canonical frontier Git repositories remain the scientific source of truth.
+- Canonical repository Git repositories remain the scientific source of truth.
 - Neon is a disposable, rebuildable, SELECT-only read projection for the public
   application. The reader role's lack of write privilege is asserted against the
   live database, not assumed.
@@ -187,7 +187,7 @@ documentation, not above every page that lists them.
   different facts, and no surface may collapse two of them.
 - Search order, graph position, model output, and verifier success never imply
   authority.
-- No second frontier parser, projection builder, search index, source registry,
+- No second repository parser, projection builder, search index, source registry,
   or deployment-manifest implementation may appear outside `@vela/observatory-data`.
 - Release identity and visible counts derive from checked artefacts rather than
   copied strings.
@@ -199,7 +199,7 @@ documentation, not above every page that lists them.
 - Editorial navigation stays small. Application navigation names records, never
   activities.
 - A page picks one archetype: a collection gets to its rows, a record opens with
-  the record, a Frontier opens as a repository whose most prominent action is
+  the record, a Repository opens as a repository whose most prominent action is
   getting the record, an instrument opens with its toolbar and canvas.
 - Use progressive disclosure for exact metadata; do not remove it.
 - Use open sections, tables, and item groups before card grids. The Observatory

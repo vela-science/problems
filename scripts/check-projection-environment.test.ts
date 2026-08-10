@@ -73,7 +73,7 @@ const deploymentSource = readFileSync(
   resolve(repository, "packages/observatory-data/src/deployment.ts"),
   "utf8",
 );
-const frontierDataScripts: Record<string, string> = JSON.parse(
+const repositoryDataScripts: Record<string, string> = JSON.parse(
   readFileSync(resolve(repository, "packages/observatory-data/package.json"), "utf8"),
 ).scripts;
 
@@ -88,7 +88,7 @@ function publishedDataSource() {
 
 /** Every `neonctl connection-string` invocation, as its parsed flags. */
 function neonctlInvocations() {
-  return Object.entries(frontierDataScripts)
+  return Object.entries(repositoryDataScripts)
     .filter(([, command]) => command.includes("neonctl connection-string"))
     .map(([name, command]) => [
       name,

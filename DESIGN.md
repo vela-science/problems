@@ -71,7 +71,7 @@ dashboard or the Observatory look like an essay.
 The words on screen are the product's first design decision. A reader who
 cannot name what they are looking at cannot check it.
 
-**Current.** Frontier, Claim, Problem, Target, Submission, Proposal,
+**Current.** Repository, Claim, Problem, Target, Submission, Proposal,
 Verification Record, Decision, Dossier, Source.
 
 **Retired.** Finding is the predecessor era's name for a Claim; it survives as a
@@ -89,7 +89,7 @@ surface that displayed them was deleted with the table behind it, which held
 zero rows in every release. The word survives only as
 `provenance.source_attempt` on a Submission, an exact value the producer
 supplies. The release-level `/runs` path still redirects to `/decisions`; the
-frontier-scoped route published no record, so no durable URL was broken. Bundle is a protocol root
+repository-scoped route published no record, so no durable URL was broken. Bundle is a protocol root
 and may appear only as a labelled exact value.
 
 Two of the product's words have no protocol object behind them, and the product
@@ -188,15 +188,15 @@ ring marks a transitive cone. A half core is acceptance with conditions.
 
 There is one navigation system, and one scope on screen at a time.
 
-- The **sidebar** is contextual. Outside a Frontier it lists release-wide
-  destinations. Inside a Frontier it becomes that Frontier's own sections,
+- The **sidebar** is contextual. Outside a Repository it lists release-wide
+  destinations. Inside a Repository it becomes that Repository's own sections,
   grouped under State, Direction, and Integrity, which are the protocol's axes
   rather than invented headings, so a group heading can never be mistaken for a
   page that is missing. No label ever means two scopes on one screen.
 - The **header** carries one trail, and beside it only tools that are not
   places: the navigation toggle, search-and-jump, notifications, theme, and
   account. The trail's last element is the current page as text marked
-  `aria-current="page"`. Inside a Frontier its first element is the Frontier
+  `aria-current="page"`. Inside a Repository its first element is the Repository
   switcher, a control rather than a link, which preserves the current section
   across a switch; outside one, the page name stands alone.
 - A view of a collection is entered from the collection, not listed beside it.
@@ -206,7 +206,7 @@ There is one navigation system, and one scope on screen at a time.
 - Every route body owns exactly one descriptive `h1`. On a collection the trail
   already names the page, so that heading is visually hidden and carries its
   scope; a screen reader then gets the orientation a sighted reader gets from
-  the trail. On a record or a Frontier the heading is the record's own content
+  the trail. On a record or a Repository the heading is the record's own content
   and stays visible.
 - Every glyph in a navigation surface is distinct. A repeated mark reads as a
   repeated destination. Hugeicons is the interface icon family; a Vela-drawn
@@ -228,10 +228,10 @@ teach a reader nothing about what is on them.
 - **Record.** Opens with the record. Its kind is a small eyebrow above, its own
   content is the largest text on the screen, and provenance is one line of small
   facts beneath. The largest text is never the word for the record's type.
-- **Repository.** A Frontier's own page: name, integrity, and the clone
+- **Repository.** A Repository's own page: name, integrity, and the clone
   affordance in the primary-action position, because the product's claim is that
   nothing sits between a reader and the record. Content left, exact facts right.
-  This is the one archetype whose heading is visible. A Frontier is the record,
+  This is the one archetype whose heading is visible. A Repository is the record,
   not a page about one, so its name is the largest text on the screen for the
   same reason a Claim's assertion is on a Claim page.
 - **Instrument.** A compact toolbar, the canvas, and a ledger equivalent for

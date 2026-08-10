@@ -4,7 +4,7 @@ import { resolve } from "node:path";
 import { parseEnv } from "node:util";
 import { filesBelow } from "./fs.mjs";
 import {
-  allFrontiers,
+  allRepositories,
   observatoryProjectionManifest,
   graphRead,
   searchRead,
@@ -45,21 +45,21 @@ const searchHtml = readFileSync(resolve(observatory, ".next/server/app/search.ht
 const projectionManifest = await observatoryProjectionManifest();
 const root = projectionManifest.release_root;
 /* The heaviest canvas the release can actually serve, found by asking the
-   release which Frontiers it has.
+   release which Repositories it has.
 
    This named `erdos` outright. `graphRead` rejects a slug the release does not
    carry, so when the four topic repositories collapsed into one derived
-   Frontier this stopped measuring anything and started throwing "unknown
-   frontier" — failing `test:budgets` in the refresh gate and in CI's
+   Repository this stopped measuring anything and started throwing "unknown
+   repository" — failing `test:budgets` in the refresh gate and in CI's
    projection job, on a projection that was correct. A budget check may not
    hold an opinion about which records exist. */
-const frontiers = await allFrontiers();
-if (!frontiers.length) throw new Error("the projection publishes no Frontier to measure");
+const repositories = await allRepositories();
+if (!repositories.length) throw new Error("the projection publishes no Repository to measure");
 const searchResult = await searchRead({ root, limit: 250 });
-const graphs = await Promise.all(frontiers.map(async ({ slug }) => ({
+const graphs = await Promise.all(repositories.map(async ({ slug }) => ({
   slug,
   payload: Buffer.from(JSON.stringify(
-    await graphRead({ root, frontier: slug, view: "canvas", lens: "all", limit: 5000 }),
+    await graphRead({ root, repository: slug, view: "canvas", lens: "all", limit: 5000 }),
   )),
 })));
 const heaviestGraph = graphs.reduce((a, b) => (b.payload.byteLength > a.payload.byteLength ? b : a));
@@ -99,7 +99,7 @@ if (scope === "all") {
   const socialMasters = [
     resolve(editorial, "out/og-image.png"),
     resolve(editorial, "out/images/brand/vela-landing-social.jpg"),
-    resolve(editorial, "out/images/constellations/frontier-map-og.png"),
+    resolve(editorial, "out/images/constellations/repository-map-og.png"),
   ];
   editorialTotalBytes = bytesBelow(resolve(editorial, "out"));
   editorialSocialMasterBytes = socialMasters.filter(existsSync).reduce((sum, path) => sum + statSync(path).size, 0);
@@ -147,7 +147,7 @@ const browserFiles = [
 for (const path of browserFiles) {
   const content = readFileSync(path, "utf8");
   if (content.includes('"schema":"vela.observatory-release.v1"')) {
-    throw new Error(`${path}: embeds the full frontier projection`);
+    throw new Error(`${path}: embeds the full repository projection`);
   }
 }
 
@@ -159,7 +159,7 @@ console.log(JSON.stringify({
   search_html_bytes: searchHtml.byteLength,
   search_response_bytes: searchPayload.byteLength,
   search_response_gzip_bytes: searchGzip,
-  graph_canvas_frontier: heaviestGraph.slug,
+  graph_canvas_repository: heaviestGraph.slug,
   graph_canvas_bytes: graphPayload.byteLength,
   graph_canvas_gzip_bytes: graphGzip,
   editorial_bytes: editorialBytes,

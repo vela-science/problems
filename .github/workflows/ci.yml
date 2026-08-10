@@ -46,7 +46,7 @@ jobs:
           persist-credentials: false
 
       # Nothing else in this repository audits its own Actions contracts, so
-      # everything the four Frontiers are held to through the vela action was
+      # everything the four Repositories are held to through the vela action was
       # unchecked in the pipeline that consumes them. Same tool and the same
       # threshold; uv only because zizmor is not on the Bun toolchain.
       #
@@ -55,7 +55,7 @@ jobs:
       # conformance/pyproject.toml, resolved through a uv.lock that Dependabot
       # advances; here it is a literal inside a `run:`, which no ecosystem
       # updates and nothing compares against vela's. So the two will diverge,
-      # and that is fine: what a Frontier is held to is decided by the vela
+      # and that is fine: what a Repository is held to is decided by the vela
       # release it pins, not by this job. A shared pin would mean shipping a
       # uv project and a lockfile into a Bun workspace to keep one linter's
       # version agreeing across two repositories, which costs more than the
@@ -112,7 +112,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     env:
-      VELA_FRONTIERS_ROOT: ${{ github.workspace }}/sources
+      VELA_REPOSITORIES_ROOT: ${{ github.workspace }}/sources
       VELA_PROJECTION_DATABASE_URL: ${{ secrets.VELA_PROJECTION_DATABASE_URL }}
       VELA_REQUIRE_PROJECTION_TESTS: "1"
     steps:
@@ -121,8 +121,8 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Checkout canonical frontiers
-        uses: ./.github/actions/checkout-frontiers
+      - name: Checkout canonical repositories
+        uses: ./.github/actions/checkout-repositories
 
       # Same false positive as the `verify` job above, and less reachable: this
       # job does not run on a push at all.

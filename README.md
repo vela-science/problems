@@ -11,7 +11,7 @@
 
 <p align="center">
   <a href="https://www.vela.space/">Editorial</a> ·
-  <a href="https://app.vela.space/frontiers">Observatory</a> ·
+  <a href="https://app.vela.space/repositories">Observatory</a> ·
   <a href="https://github.com/vela-science/vela">Protocol and CLI</a> ·
   <a href="docs/WEB.md">Web operations</a>
 </p>
@@ -24,10 +24,10 @@ surfaces and three shared packages.
 | Path | Runtime | Purpose |
 | --- | --- | --- |
 | `apps/www` | Next.js static export | Product home, the Constellations essay, and the vendored Vela documentation |
-| `apps/observatory` | Next.js | Root-bound Frontier, Claim, Target, Proposal, Decision, Dossier, Source, graph, and reproduce views |
+| `apps/observatory` | Next.js | Root-bound Repository, Claim, Target, Proposal, Decision, Dossier, Source, graph, and reproduce views |
 | `packages/brand` | TypeScript and CSS | Framework-neutral sail, tokens, fonts, licenses, and deterministic exports |
 | `packages/ui` | React, shadcn, and Base UI | Private shared primitives and stable Vela presentation semantics |
-| `packages/observatory-data` | TypeScript | Sole validator and projector for frontier, search, work, and graph data |
+| `packages/observatory-data` | TypeScript | Sole validator and projector for repository, search, work, and graph data |
 
 The applications share brand assets, exact facts, and eligible React
 primitives. Authored editorial and workbench route compositions stay with
@@ -40,15 +40,15 @@ Vela follows one product story:
 map -> target -> work -> submit -> verify -> decide -> remap
 ```
 
-Any native human or machine workbench may do the work. The canonical Frontier
+Any native human or machine workbench may do the work. The canonical Repository
 Git repository preserves exact Submissions and scoped Verification evidence.
 Neither production nor Verification changes Standing. Only an authorized
-human Decision in that named Frontier changes Standing; deterministic replay
+human Decision in that named Repository changes Standing; deterministic replay
 derives the successor state and exact next Target. Vela Web provides the
 read-only map and review surfaces.
 
 ```text
-canonical frontier Git repositories
+canonical repository Git repositories
                  +
        released Vela binary
                  │
@@ -68,7 +68,7 @@ canonical frontier Git repositories
 
 - `www.vela.space` is the canonical editorial host.
 - `app.vela.space` is the canonical Repository Observatory.
-- Frontier pages are exact-root projections. The active data head moves only
+- Repository pages are exact-root projections. The active data head moves only
   through an atomic, verified projection release; every request remains bound
   to one readable release root.
 - Verification, replay, proposal standing, and scientific acceptance remain
@@ -78,7 +78,7 @@ canonical frontier Git repositories
   coordination payload. The single isolated AuthKit sign-out action carries no
   scientific state. Neon is a disposable, normalized read projection.
 - Normalized projection rows are rebuilt from exact canonical Git commits and
-  validated before activation. No whole-Frontier document is embedded as a
+  validated before activation. No whole-Repository document is embedded as a
   universal browser payload.
 - Producer availability, active leases, and advice-only graph opportunities are
   separate projections; graph rank never becomes work rank or authority.
@@ -87,7 +87,7 @@ canonical frontier Git repositories
 
 Result Dossier product evidence and the next human-study gate are maintained in
 [`docs/result-dossier-qualification.md`](docs/result-dossier-qualification.md).
-The source Frontiers continue to own every scientific object the projection
+The source Repositories continue to own every scientific object the projection
 displays.
 
 ## Develop with Bun
@@ -103,7 +103,7 @@ bun run dev:observatory  # http://127.0.0.1:4322
 
 ## Verify a release candidate
 
-The root workflow checks the brand and frontier roots, package types, unit
+The root workflow checks the brand and repository roots, package types, unit
 tests, both production builds, read-only boundaries, artifact budgets, and
 deployment manifests. Responsive, keyboard, interaction, and visual release
 QA is performed with the Codex in-app Browser against the candidate build.

@@ -68,7 +68,7 @@ if (!/data-slot="item-content"[\s\S]{0,220}"flex min-w-0 flex-1/u.test(itemSourc
 
 const forbiddenFiles = [
   "components/vela/command-step.tsx",
-  "components/vela/frontier-nav.tsx",
+  "components/vela/repository-nav.tsx",
   "components/vela/global-review-ledger.tsx",
   "components/vela/object-header.tsx",
   "components/vela/provenance-trail.tsx",
