@@ -2,7 +2,7 @@
 
 Status: current private-workspace contract.
 
-Vela has one design system with two application profiles. The system exists to
+Vela has one design system with three application profiles. The system exists to
 make evidence and direction legible; it is not a separately published product.
 
 ## Package boundaries
@@ -10,10 +10,11 @@ make evidence and direction legible; it is not a separately published product.
 | Layer | Canonical source | Consumers |
 | --- | --- | --- |
 | Brand | `packages/brand` | All Vela surfaces and exported assets |
-| React primitives and semantics | `packages/ui` | Observatory, eligible www interactions, future private React applications |
+| React primitives and semantics | `packages/ui` | Observatory, Problems, eligible www interactions, future private React applications |
 | Editorial profile | `apps/www` | Home, the Constellations essay, and the vendored Vela documentation |
-| Product profile | `packages/ui/src/styles/product.css` | Observatory and future private product surfaces |
-| Exact data | `packages/observatory-data` | Both applications |
+| Product profile | `packages/ui/src/styles/product.css` | Observatory, Problems, and future private product surfaces |
+| Exact data | `packages/observatory-data` | www, Observatory, and Problems State mode |
+| Activity data | `packages/activity-data` | Problems Work mode; no visual primitives |
 
 `@vela/brand` is framework-neutral. It owns the DTCG-shaped token source,
 delivered fonts, canonical sail, mark exports, licenses, and integrity checks.
@@ -22,7 +23,7 @@ delivered fonts, canonical sail, mark exports, licenses, and integrity checks.
 shadcn/Base UI primitives and the small set of stable Vela presentation
 semantics. Application shells and route compositions remain app-local.
 
-Both public applications currently use Next.js 16 and React 19. That shared
+The three applications use Next.js 16 and React 19. That shared
 runtime makes a common primitive source useful; it does not justify merging the
 editorial and workbench composition systems.
 
@@ -52,9 +53,10 @@ close to upstream; put Vela semantics in composition rather than forking a
 generic primitive.
 
 `apps/observatory/components.json` is a consumer map. It points UI and utility
-aliases at `@vela/ui`; it is not a second installation destination. `apps/www`
-adopts shared primitives when a generic interaction is migrated, while
-authored editorial elements remain local.
+aliases at `@vela/ui`; it is not a second installation destination. Problems
+also consumes package exports and does not create an app-local primitive
+directory. `apps/www` adopts shared primitives when a generic interaction is
+migrated, while authored editorial elements remain local.
 
 Base UI supplies primitive mechanics. Vela still owns names, descriptions,
 contrast, focus visibility, touch targets, route behavior, and end-to-end
@@ -164,6 +166,20 @@ when doing so reduces code and preserves the editorial register.
 
 The Sigma graph is an application-owned instrument because its rendering and
 data contracts are domain-specific. It must include an equivalent record view.
+
+### Problems
+
+- the same Geist and IBM Plex Mono product typography as the Observatory
+- one explicit State or Work mode on each Problem page
+- exact scientific state rendered with the Observatory's labels and roots
+- editable activity presented as a separate workbench layer
+- stale-anchor, idempotent-retry, and version-conflict states in plain language
+- tables, Item groups, fields, and disclosures before dashboard cards
+
+State mode cannot contain mutation controls. Work mode may edit hosted activity
+through `@vela/activity-data`; its controls never use scientific Standing,
+Verification, or Decision styling. Submission export ends with an unsigned
+local-signing handoff rather than a hosted success state.
 
 ## Icons, marks, and imagery
 

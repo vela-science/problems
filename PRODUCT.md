@@ -4,8 +4,8 @@ register: product
 
 # Vela Web product contract
 
-Vela Web helps people understand and reuse exact scientific state. It is a
-reader, not an authority.
+Vela Web helps people inspect exact scientific state and coordinate work on it.
+Hosted Vela is non-authoritative.
 
 ## Product story
 
@@ -16,16 +16,26 @@ remap`. Vela's shorter compression of it is:
 MAP → ADVANCE → REMAP
 ```
 
-A reader maps the territory: exact state, dependencies, disagreement, and gaps.
-Advancing it is the span this product does not perform. A research tool produces
-candidate work, a canonical repository Git repository preserves it, Vela verifies
-and replays it, and repository authority records a human Decision. The resulting
-root remaps the territory, and Vela Web is what makes that new map searchable,
-inspectable, and reproducible.
+A reader maps exact state, dependencies, disagreement, and gaps. Problems users
+then coordinate approaches, attempts, reproduction, and candidate results in a
+separate activity plane. A user can export a valid unsigned Submission payload
+and sign it with a local key. The receiving Repository, Vela verification, and
+an authorized human Decision remain the only route to new Standing.
 
-Every feature in this repository serves explanation, inspection, comparison, or
-reproduction. Nothing here becomes a producer, canonical store, verifier,
-signer, or decision-maker.
+The ecosystem has four surfaces:
+
+1. `www.vela.space` publishes editorial and protocol documentation.
+2. `app.vela.space` reads an exact scientific projection.
+3. `problems.science` reads that projection and writes hosted research activity.
+4. The local Vela and Repository surface signs, verifies, decides, publishes,
+   and replays canonical scientific state outside the hosted service.
+
+The hosted product spans two planes. The scientific-state plane contains exact
+Repository, Claim, Submission, Verification, Decision, and Standing records.
+The activity plane contains hosted accounts, workspaces, follows, approaches,
+attempts, discussion, assignments, artifact metadata, external session references, and
+unsigned drafts. Activity may refer to exact scientific roots. It cannot change
+them.
 
 ## The object model
 
@@ -52,31 +62,35 @@ grouping never implies authority.
 
 ### Vocabulary
 
-Current: Repository, Claim, Problem, Target, Submission, Proposal,
-Verification Record, Decision, Dossier, Source.
+Scientific-state vocabulary: Repository, Claim, Problem, Target, Submission,
+Proposal, Verification Record, Decision, Dossier, Source.
 
-Retired: Finding, Work, Review, Activity, Run, Attempt, Bundle. Finding survives as a
-protocol event-kind stem (`finding.asserted`, `finding.noted`,
-`finding.retracted`, `finding.superseded`) and inside retained `vf_`
-identifiers, both of which appear as exact values and never as product words;
-vela's own TERMINOLOGY.md keeps Finding as a view-only editorial label for a
-Claim with positive standing. The graph node kind `finding` is written by this
-repository's projection builder, not received from the protocol, and the reader
-relabels it to Claim in `apps/observatory/src/lib/product-language.ts`. Run and Attempt both named an
-execution occurrence the protocol does not create or govern, and both are gone:
-the surface that displayed them was deleted along with the table behind it,
-which held zero rows in every release it was ever part of. The word survives
-only as `provenance.source_attempt` on a Submission — an exact value the
-producer's workbench supplies, never a product word and never a destination.
-The release-level `/runs` path still redirects permanently to `/decisions`; the
-repository-scoped route published no record, so no durable URL was broken. Work, Review, and Activity are
-activities, and a reader cannot link to an activity, only to the record it acts
-on. Bundle is a protocol root and appears only as a labelled
-exact value.
+The Observatory does not use Work, Activity, Run, or Attempt as scientific
+objects. Problems may use Work, Activity, and Attempt for hosted records in the
+non-authoritative plane. Finding remains a retained protocol value and a
+view-only upstream term; the interface calls the record a Claim. Bundle is a
+protocol root and appears only as a labelled exact value. The release-level
+`/runs` path remains a permanent redirect to `/decisions` for the retired
+Observatory route.
 
 The protocol's own banned wording holds here: never "landed finding", "verified
 truth", "accepted by verifier", "AI approved", or an unqualified "verified",
 "valid", "approved", or "complete".
+
+### Activity vocabulary
+
+Problems uses product records that carry no Vela authority: Account, Workspace,
+Membership, Follow, Approach, Attempt, Comment, Note, Assignment, Reproduction
+Request, Artifact, and Submission Draft. An Attempt may carry a provider-neutral
+external session reference. Each activity record
+binds the exact Repository, Problem, Claim where present, and projection roots
+the user saw. The interface marks the record stale after those canonical roots
+advance.
+
+An Account is a WorkOS-hosted identity. A Vela actor identity belongs to a
+signed protocol object and remains separate. A Submission Draft must contain an
+explicit public Vela signer identity before export; the hosted account does not
+supply one.
 
 ## Surfaces
 
@@ -113,12 +127,42 @@ Alongside the human surfaces it serves declared read endpoints: the deployment
 manifest, the source registry, the search and graph read contracts, and one JSON
 export per published Dossier. They are the read contract, not an API. Beside
 them sit three isolated product-identity handlers, for sign-in, the provider
-callback, and the same-origin account session, each named in the read-only
+callback, and the same-origin account session, each named in the scientific-authority
 boundary gate. No other route handler may be added.
 
 The Observatory exposes scientific state; it does not control it. Accepted,
 pending, rejected, withdrawn, replayed, verified, recorded, and strict-blocked
 remain distinct in language and presentation.
+
+### `problems.science`
+
+Problems is the writable, non-authoritative workbench. Each Problem page has
+two explicit modes:
+
+- **State** reads the same exact Repository and projection facts as the
+  Observatory.
+- **Work** requires a hosted account and writes activity through
+  `@vela/activity-data`.
+
+Work mode supports workspace membership, follows, approaches and forks,
+attempt lifecycle, comments and notes, assignments and reproduction requests,
+rooted external artifact metadata, provider-neutral external session references on Attempts, and
+portable Submission drafts. Idempotency keys make retries safe. Version fields
+make concurrent edits fail with an explicit conflict.
+
+Problems stores no artifact bytes, Vela Event, Verification Record, Decision,
+or Standing. It has no repository authority credential. Draft export validates
+the full `vela.submission.v2` payload against the pinned public schema, then
+hands the canonical unsigned bytes to a local signer. Hosted code never imports
+that signing helper.
+
+### Local Vela and Repository authority
+
+The authority crossing occurs on a user's machine or another explicit
+institutional signing boundary. A signed Submission may enter a Repository as a
+Proposal. Verification records scoped evidence. An authorized human Decision
+changes Standing, and replay derives the successor state. Deleting the hosted
+activity database cannot remove or change that state.
 
 ### Navigation
 
@@ -140,17 +184,20 @@ Repository's component at both scopes, which is a defect rather than a precedent
 
 ## Shared system
 
-The two applications are independently deployed surfaces of one product:
+The three applications are independently deployable surfaces of one product:
 
 - `@vela/brand` supplies framework-neutral identity, tokens, type roles, fonts,
   and marks;
 - `@vela/ui` supplies shared React primitives and stable Vela presentation
   semantics;
-- `@vela/observatory-data` supplies exact generated facts and projections.
+- `@vela/observatory-data` supplies exact generated facts and projections;
+- `@vela/activity-data` owns hosted mutable product records, activity
+  migrations, tenant authorization, and unsigned Submission drafts.
 
 Applications share foundations, not whole page implementations. Editorial
-compositions remain in `apps/www`; product shells, domain surfaces, and graph
-controllers remain in `apps/observatory`.
+compositions remain in `apps/www`; Observatory shells and graph controllers
+remain in `apps/observatory`; Problem state and workbench compositions remain
+in `apps/problems`.
 
 The Vela design system is private and product-bound. `packages/ui` is source
 shared by this workspace and future private Vela applications, consumed through
@@ -172,23 +219,28 @@ documentation, not above every page that lists them.
 ## Non-negotiable boundaries
 
 - Canonical repository Git repositories remain the scientific source of truth.
-- Neon is a disposable, rebuildable, SELECT-only read projection for the public
-  application. The reader role's lack of write privilege is asserted against the
-  live database, not assumed.
-- The web has no signer, authority key path, public mutation API, or private
-  coordination payload. The read-only boundary is executable and scans both
-  applications' source.
-- A signed-in account personalises the product only. It is not a Vela actor
-  identity, carries no repository authority, and cannot sign a Submission, issue
-  a Decision, or reach an authority key. Every route that shows scientific
-  state, every JSON twin, and every read endpoint is available without signing
-  in; only the account page itself requires a session.
+- `vela_observatory` is a disposable, rebuildable, SELECT-only Neon projection.
+  The Observatory reader role cannot write it.
+- `vela_activity` is a separate mutable database. `@vela/activity-data` owns
+  its schema and application writes. Its roles cannot write the Observatory or
+  read authority credentials.
+- Hosted code has no repository authority key or server signer. The local-only
+  signer reads a user-named key file and never enters an application bundle.
+- A signed-in account may own hosted activity. It is not a Vela actor identity,
+  carries no repository authority, and cannot issue a Decision or write
+  Standing.
+- The profile boundary is executable: www stays static; Observatory routes stay
+  exact and read-only; Problems mutations cross `@vela/activity-data`.
 - Verification, replay, proposal standing, and scientific acceptance are
   different facts, and no surface may collapse two of them.
 - Search order, graph position, model output, and verifier success never imply
   authority.
 - No second repository parser, projection builder, search index, source registry,
   or deployment-manifest implementation may appear outside `@vela/observatory-data`.
+- No second mutable store or product mutation implementation may appear outside
+  `@vela/activity-data`.
+- Removing activity leaves Standing intact. Rebuilding the Observatory leaves
+  activity intact.
 - Release identity and visible counts derive from checked artefacts rather than
   copied strings.
 
@@ -196,8 +248,9 @@ documentation, not above every page that lists them.
 
 - The Vela sail is the Home affordance on both surfaces. In the Observatory it
   is the mark alone, sized to the sidebar's icon column, with no wordmark.
-- Editorial navigation stays small. Application navigation names records, never
-  activities.
+- Editorial navigation stays small. Observatory navigation names scientific
+  records. Problems navigation may name activity while keeping State and Work
+  modes explicit.
 - A page picks one archetype: a collection gets to its rows, a record opens with
   the record, a Repository opens as a repository whose most prominent action is
   getting the record, an instrument opens with its toolbar and canvas.
@@ -241,7 +294,8 @@ face.
 - Decorative science, space, or constellation imagery anywhere a reader could
   mistake it for evidence
 - A public design-system product or component catalogue
-- A writable web service presented as Vela
+- Hosted activity presented as Verification, Decision, Standing, or repository
+  authority
 
 ## Related contracts
 
