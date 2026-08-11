@@ -1,0 +1,32 @@
+{
+  "name": "@vela/activity-data",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./contracts": "./src/contracts.ts",
+    "./drafts": "./src/draft-submission.ts",
+    "./local-signing": "./src/local-signing.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "bun test src tests",
+    "check": "bun run typecheck && bun run test",
+    "db:migrate": "bun scripts/schema.mjs --migrate",
+    "db:check": "bun scripts/schema.mjs --check",
+    "db:verify": "bun scripts/verify-roles.mjs",
+    "db:live-proof": "bun --conditions=react-server scripts/live-proof.mjs",
+    "submission:sign-local": "bun scripts/sign-submission-draft.mjs"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.1.0",
+    "@vela/observatory-data": "workspace:*",
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
+    "server-only": "0.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "typescript": "^5"
+  }
+}
