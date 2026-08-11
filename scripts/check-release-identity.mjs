@@ -40,7 +40,9 @@ const ROOT_MANIFEST = "package.json";
 const WORKSPACE_MANIFESTS = [
   "apps/www/package.json",
   "apps/observatory/package.json",
+  "apps/problems/package.json",
   "packages/brand/package.json",
+  "packages/activity-data/package.json",
   "packages/observatory-data/package.json",
   "packages/ui/package.json",
 ];

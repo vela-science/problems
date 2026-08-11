@@ -41,6 +41,7 @@ function eslintFor(app: string) {
 
 const observatory = eslintFor("observatory");
 const www = eslintFor("www");
+const problems = eslintFor("problems");
 
 /* One package per spelling, so a rule that only handles static imports cannot
    pass by reporting the same module four times. */
@@ -53,8 +54,9 @@ const probe = [
   "}",
 ].join("\n");
 
-const AUTHORITY =
-  "database and scientific-authority dependencies are outside the read-only product boundary";
+const DATABASE = "applications reach Postgres only through their declared data package";
+const SIGNING =
+  "hosted applications may export an unsigned handoff but may not import signing or authority machinery";
 const IDENTITY = "the maintained identity provider is confined to the declared account boundary";
 
 /* Every assertion here is its own `eslint` process loading the app's real flat
@@ -68,18 +70,20 @@ const LINT_BUDGET_MS = 60_000;
 describe("import bans", () => {
   test.each([
     ["observatory", observatory, "src/lib/probe.ts"],
+    ["problems", problems, "src/lib/probe.ts"],
     ["www", www, "src/lib/probe.ts"],
   ])(
     "%s reports a database reached by any of the four import spellings",
     (_name, lint, file) => {
       const messages = lint(probe, file);
-      expect(messages.filter((message) => message === AUTHORITY)).toHaveLength(5);
+      expect(messages.filter((message) => message === DATABASE)).toHaveLength(5);
     },
     LINT_BUDGET_MS,
   );
 
   test.each([
     ["observatory", observatory, "src/lib/probe.ts"],
+    ["problems", problems, "src/lib/probe.ts"],
     ["www", www, "src/lib/probe.ts"],
   ])(
     "%s stays quiet on a file that imports nothing banned",
@@ -137,7 +141,25 @@ describe("import bans", () => {
       expect(observatory(source, "src/lib/other-provider.ts")).toEqual([IDENTITY]);
       /* The exemption is for one package, not for the block: the account
          boundary is still inside the read-only boundary. */
-      expect(observatory('import "pg";\n', "src/lib/auth.ts")).toEqual([AUTHORITY]);
+      expect(observatory('import "pg";\n', "src/lib/auth.ts")).toEqual([DATABASE]);
+    },
+    LINT_BUDGET_MS,
+  );
+
+  test(
+    "Problems confines WorkOS to auth files and rejects hosted signing",
+    () => {
+      const workos = 'import { WorkOS } from "@workos-inc/node";\nexport const client = new WorkOS();\n';
+      expect(problems(workos, "src/lib/auth.ts")).toEqual([]);
+      expect(problems(workos, "src/lib/workbench.ts")).toEqual([IDENTITY]);
+      expect(problems(
+        'import { signSubmissionDraftLocally } from "@vela/activity-data/local-signing";\nexport { signSubmissionDraftLocally };\n',
+        "src/lib/workbench.ts",
+      )).toEqual([SIGNING]);
+      expect(problems(
+        'import { saveSubmissionDraft } from "@vela/activity-data";\nimport { problemDetail } from "@vela/observatory-data";\nexport const allowed = [saveSubmissionDraft, problemDetail];\n',
+        "src/lib/workbench.ts",
+      )).toEqual([]);
     },
     LINT_BUDGET_MS,
   );

@@ -1,0 +1,314 @@
+import { existsSync, readFileSync } from "node:fs";
+import { relative, resolve, sep } from "node:path";
+import { filesBelow } from "./fs.mjs";
+
+const sourceExtensions = /\.[cm]?[jt]sx?$/u;
+const routeHandler = /(?:^|\/)app(?:\/.*)?\/route\.[cm]?[jt]sx?$/u;
+const serverDirective = /^\s*["']use server["'];?/mu;
+const requestStateCall = /\b(?:cookies|draftMode|headers)\s*\(/u;
+const runtimeEnvironment = /\bprocess\.env\b/u;
+const fetchCall = /\bfetch\s*\(/gu;
+const mutationMethods = /export\s+(?:(?:async\s+)?function\s+|(?:const|let|var)\s+)(POST|PUT|PATCH|DELETE)\b/gu;
+const exportedSymbols = /export\s+(?:(default)|(?:async\s+)?(?:function|const|let|var)\s+([A-Za-z0-9_$]+))/gu;
+const activityImport = /(?:from\s*|import\s*\(\s*)["']@vela\/activity-data(?:\/[^"']*)?["']/u;
+const forbiddenScientificSchema = /["']vela\.(?:decision|event|standing|verification-record|repository)(?:\.[^"']*)?["']/iu;
+const forbiddenAuthoritySymbol = /\b(?:create|emit|issue|record|sign|write|accept|reject|decide)[A-Za-z0-9_$]*(?:Decision|Standing|ScientificEvent)\b/iu;
+const forbiddenSigningCall = /\b(?:createPrivateKey|generateKeyPair|generateKeyPairSync|sign)\s*\(/u;
+const forbiddenSigningImport = /(?:from\s*|import\s*\(\s*)["'](?:@noble\/ed25519|tweetnacl|libsodium|sodium-native|node:child_process|node:crypto)(?:\/[^"']*)?["']/u;
+const forbiddenSecretEnvironment = /\bprocess\.env\.(?:[A-Z0-9_]*(?:AUTHORITY|PRIVATE|SIGNING)[A-Z0-9_]*KEY[A-Z0-9_]*|[A-Z0-9_]*SEED[A-Z0-9_]*)\b/u;
+const localSigningModule = "packages/activity-data/src/local-signing.ts";
+
+const searchFetcher = "apps/observatory/src/lib/search-index.ts";
+const graphFetcher = "apps/observatory/src/lib/graph-client.ts";
+const accountMenu = "apps/observatory/src/components/vela/account-menu.tsx";
+const observatoryReadRoutes = new Set([
+  "apps/observatory/src/app/api/search/route.ts",
+  "apps/observatory/src/app/api/graph/route.ts",
+  "apps/observatory/src/app/sources.json/route.ts",
+  "apps/observatory/src/app/.well-known/vela-site.json/route.ts",
+]);
+const resultDossierRoute = /^apps\/observatory\/src\/app\/repositories\/[^/]+\/dossiers\/[^/]+\.json\/route\.[cm]?[jt]sx?$/u;
+
+const observatoryAccountRoute = "apps/observatory/src/app/api/account/route.ts";
+const observatoryAuthCallbackRoute = "apps/observatory/src/app/auth/callback/route.ts";
+const observatorySignInRoute = "apps/observatory/src/app/sign-in/route.ts";
+const observatorySignOutAction = "apps/observatory/src/app/actions/auth.ts";
+const observatoryAuthLibrary = "apps/observatory/src/lib/auth.ts";
+const observatoryIdentityProxy = "apps/observatory/src/proxy.ts";
+const problemsAuthCallbackRoute = "apps/problems/src/app/auth/callback/route.ts";
+const problemsSignInRoute = "apps/problems/src/app/sign-in/route.ts";
+const problemsSignOutAction = "apps/problems/src/app/actions/auth.ts";
+const problemsAuthLibrary = "apps/problems/src/lib/auth.ts";
+const problemsIdentityProxy = "apps/problems/src/proxy.ts";
+
+export const OBSERVATORY_IDENTITY_FILES = [
+  observatoryAccountRoute,
+  observatoryAuthCallbackRoute,
+  observatorySignInRoute,
+  observatorySignOutAction,
+  observatoryAuthLibrary,
+  observatoryIdentityProxy,
+];
+
+/* Kept as an export while the Observatory ESLint config migrates with this
+   boundary. It is the Observatory list, not a workspace-wide identity list. */
+export const PRODUCT_IDENTITY_FILES = OBSERVATORY_IDENTITY_FILES;
+
+export const PROBLEMS_IDENTITY_FILES = [
+  problemsAuthCallbackRoute,
+  problemsSignInRoute,
+  problemsSignOutAction,
+  problemsAuthLibrary,
+  problemsIdentityProxy,
+];
+
+const OBSERVATORY_IDENTITY_ROUTES = new Set([
+  observatoryAccountRoute,
+  observatoryAuthCallbackRoute,
+  observatorySignInRoute,
+]);
+
+const ALLOWED_IDENTITY_ACTIONS = new Map([
+  [observatorySignOutAction, [{ name: "signOutAccount", pin: "await signOut({ returnTo })" }]],
+  [problemsSignOutAction, [{ name: "signOutAccount", pin: "await signOut({ returnTo })" }]],
+]);
+
+export const BOUNDARY_PROFILES = Object.freeze([
+  { name: "www_static", root: "apps/www/src" },
+  { name: "observatory_exact_read", root: "apps/observatory/src" },
+  { name: "problems_activity_write", root: "apps/problems/src" },
+  { name: "activity_data_owner", root: "packages/activity-data/src" },
+]);
+
+export const BOUNDARY_SOURCES = BOUNDARY_PROFILES.map(({ root }) => root);
+
+function boundedIdentityActions(file, content) {
+  const allowed = ALLOWED_IDENTITY_ACTIONS.get(file);
+  if (!allowed) return false;
+  const exported = [...content.matchAll(exportedSymbols)].map((match) => match[1] ?? match[2]);
+  const names = new Set(exported);
+  return exported.length === allowed.length
+    && names.size === allowed.length
+    && allowed.every(({ name, pin }) => names.has(name) && content.includes(pin));
+}
+
+function repositoryPath(repository, path) {
+  return relative(repository, path).split(sep).join("/");
+}
+
+function importedSpecifiers(content) {
+  return [...content.matchAll(/(?:from\s*|import\s*(?:\(\s*)?|require\s*\(\s*)["']([^"']+)["']/gu)]
+    .map((match) => match[1]);
+}
+
+function importsPackage(specifiers, name) {
+  return specifiers.some((specifier) => specifier === name || specifier.startsWith(`${name}/`));
+}
+
+function profileFor(file) {
+  return BOUNDARY_PROFILES.find(({ root }) => file === root || file.startsWith(`${root}/`));
+}
+
+function exactObservatoryFetch(file, content, fetches) {
+  if (fetches !== 1) return false;
+  if (file === searchFetcher) {
+    return content.includes("new URLSearchParams({ root: projectionRoot")
+      && content.includes("`/api/search?${params}`")
+      && content.includes("fetch(href,");
+  }
+  if (file === graphFetcher) {
+    return content.includes("new URLSearchParams({ root: input.root")
+      && content.includes("`/api/graph?${params}`")
+      && content.includes("fetch(`/api/graph?");
+  }
+  return file === accountMenu
+    && content.includes('fetch("/api/account", { cache: "no-store", credentials: "same-origin" })');
+}
+
+function sameOriginProblemsFetch(content, fetches) {
+  const literalCalls = [...content.matchAll(/\bfetch\s*\(\s*["']([^"']+)["']/gu)];
+  return literalCalls.length === fetches
+    && literalCalls.every((match) => match[1].startsWith("/api/"));
+}
+
+function inspectStatic(file, content, add) {
+  if (routeHandler.test(file)) add("static_route_handler", "www is a static export and may not define Route Handlers");
+  if (serverDirective.test(content)) add("static_server_action", "www may not define Server Actions");
+  if (requestStateCall.test(content)) add("static_request_state", "www may not read request-scoped state");
+  if (runtimeEnvironment.test(content)) add("static_runtime_environment", "www source may not read runtime secrets");
+  if ([...content.matchAll(fetchCall)].length) add("static_request_fetch", "www source may not perform request-time fetches");
+}
+
+function inspectObservatory(file, content, add) {
+  const allowedRoute = observatoryReadRoutes.has(file)
+    || OBSERVATORY_IDENTITY_ROUTES.has(file)
+    || resultDossierRoute.test(file);
+  if (routeHandler.test(file) && !allowedRoute) {
+    add("observatory_route_handler", "Observatory Route Handlers are confined to declared exact reads and product identity");
+  }
+  const methods = [...content.matchAll(mutationMethods)].map((match) => match[1]);
+  if (methods.length) add("observatory_mutation", "Observatory may not expose product or scientific mutation handlers");
+  if (serverDirective.test(content) && !boundedIdentityActions(file, content)) {
+    add("observatory_server_action", "Observatory permits only its named sign-out action");
+  }
+  if (requestStateCall.test(content)) add("observatory_request_state", "Observatory scientific reads may not depend on request state");
+  if (runtimeEnvironment.test(content) && file !== observatoryAuthLibrary) {
+    add("observatory_runtime_environment", "Observatory runtime secrets are confined to its identity adapter");
+  }
+  const fetches = [...content.matchAll(fetchCall)].length;
+  if (fetches && !exactObservatoryFetch(file, content, fetches)) {
+    add("observatory_request_fetch", "Observatory fetches are confined to exact-root reads and its account session");
+  }
+}
+
+function inspectProblems(file, content, add) {
+  const methods = [...content.matchAll(mutationMethods)].map((match) => match[1]);
+  const mutationFile = methods.length > 0
+    || (serverDirective.test(content) && !boundedIdentityActions(file, content));
+  if (mutationFile && !activityImport.test(content)) {
+    add("problems_mutation_owner", "Problems mutations must call @vela/activity-data");
+  }
+  const fetches = [...content.matchAll(fetchCall)].length;
+  if (fetches && !sameOriginProblemsFetch(content, fetches)) {
+    add("problems_external_fetch", "Problems client fetches must stay on its declared same-origin API");
+  }
+}
+
+function inspectActivityAuthority(file, content, add) {
+  if (forbiddenScientificSchema.test(content)) {
+    add("scientific_object_emission", "Activity code may emit only the public Submission draft payload");
+  }
+  if (forbiddenAuthoritySymbol.test(content)) {
+    add("scientific_authority_symbol", "Activity code may not expose Decision, Event, or Standing write operations");
+  }
+  if (
+    file !== localSigningModule
+    && (forbiddenSigningCall.test(content) || forbiddenSigningImport.test(content))
+  ) {
+    add("server_signing", "Hosted activity code may hash roots but may not hold or use signing machinery");
+  }
+  if (forbiddenSecretEnvironment.test(content)) {
+    add("authority_secret", "Hosted activity code may not read authority, signing, private-key, or seed secrets");
+  }
+}
+
+function inspectDependencyDirection(file, content, add) {
+  const imports = importedSpecifiers(content);
+  if (
+    (file.startsWith("apps/www/") || file.startsWith("apps/observatory/"))
+    && importsPackage(imports, "@vela/activity-data")
+  ) {
+    add("activity_plane_dependency", "www and Observatory may not depend on the mutable activity plane");
+  }
+  if (
+    file.startsWith("apps/")
+    && importsPackage(imports, "@vela/activity-data/local-signing")
+  ) {
+    add("hosted_signing_dependency", "applications may export a handoff but may not import the local signing helper");
+  }
+  if (
+    file.startsWith("packages/activity-data/")
+    && imports.some((specifier) => (
+      importsPackage([specifier], "@vela/observatory-data")
+      && specifier !== "@vela/observatory-data/canonical"
+      && specifier !== "@vela/observatory-data/read-contracts"
+    ))
+  ) {
+    add("data_plane_dependency", "activity-data may reuse only observatory-data canonical and read contracts");
+  }
+  if (
+    file.startsWith("packages/observatory-data/")
+    && importsPackage(imports, "@vela/activity-data")
+  ) {
+    add("data_plane_cycle", "observatory-data may not depend on mutable activity-data");
+  }
+}
+
+function inspectActivitySchema(repository, violations) {
+  const sqlRoot = resolve(repository, "packages/activity-data");
+  if (!existsSync(sqlRoot)) return;
+  const sqlFiles = filesBelow(sqlRoot).filter((path) => /\.sql$/u.test(path));
+  for (const path of sqlFiles) {
+    const file = repositoryPath(repository, path);
+    const content = readFileSync(path, "utf8");
+    const add = (rule, detail) => violations.push({
+      file,
+      profile: "activity_data_owner",
+      rule,
+      detail,
+    });
+    const forbiddenRelations = [...content.matchAll(/CREATE\s+TABLE(?:\s+IF\s+NOT\s+EXISTS)?\s+activity\.([a-z_]+)/giu)]
+      .map((match) => match[1])
+      .filter((name) => /(?:decision|event|standing|verification|proposal)/u.test(name));
+    if (forbiddenRelations.length) {
+      add("scientific_state_relation", `activity schema defines forbidden relations: ${forbiddenRelations.join(", ")}`);
+    }
+    const forbiddenFunctions = [...content.matchAll(/CREATE(?:\s+OR\s+REPLACE)?\s+FUNCTION\s+activity(?:_api)?\.([a-z_]+)/giu)]
+      .map((match) => match[1])
+      .filter((name) => /(?:decision|event|standing|verification|proposal)/u.test(name));
+    if (forbiddenFunctions.length) {
+      add("scientific_state_function", `activity schema defines forbidden functions: ${forbiddenFunctions.join(", ")}`);
+    }
+    if (forbiddenScientificSchema.test(content)) {
+      add("scientific_object_emission", "activity SQL may not construct Vela Event, Decision, Verification, Standing, or Repository objects");
+    }
+    if (/\b(?:authority_(?:private_)?key|private_key|signing_key|seed)\b/iu.test(content)) {
+      add("authority_key_storage", "activity schema may store public roots and signer metadata, but no authority or private keys");
+    }
+    if (/\b(?:bytea|artifact_bytes|content_bytes|transcript_bytes)\b/iu.test(content)) {
+      add("artifact_byte_storage", "activity schema stores artifact roots, metadata, and locators only");
+    }
+  }
+}
+
+export function inspectScientificAuthorityBoundary(repository) {
+  const violations = [];
+  const candidates = [];
+  for (const { name, root } of BOUNDARY_PROFILES) {
+    const absolute = resolve(repository, root);
+    if (!existsSync(absolute)) {
+      violations.push({ file: root, profile: name, rule: "missing_profile_root", detail: "declared boundary root is missing" });
+      continue;
+    }
+    candidates.push(...filesBelow(absolute));
+  }
+
+  /* Include the projection package only for the dependency-direction check.
+     Its reader/projector authority checks remain in its own exact-root suite. */
+  const observatoryData = resolve(repository, "packages/observatory-data/src");
+  if (existsSync(observatoryData)) candidates.push(...filesBelow(observatoryData));
+
+  for (const path of candidates.filter((candidate) => sourceExtensions.test(candidate))) {
+    const file = repositoryPath(repository, path);
+    const content = readFileSync(path, "utf8");
+    const profile = profileFor(file)?.name ?? "dependency_direction";
+    const add = (rule, detail) => violations.push({ file, profile, rule, detail });
+
+    inspectDependencyDirection(file, content, add);
+    if (profile === "www_static") inspectStatic(file, content, add);
+    if (profile === "observatory_exact_read") inspectObservatory(file, content, add);
+    if (profile === "problems_activity_write") {
+      inspectProblems(file, content, add);
+      inspectActivityAuthority(file, content, add);
+    }
+    if (profile === "activity_data_owner") inspectActivityAuthority(file, content, add);
+  }
+
+  inspectActivitySchema(repository, violations);
+  return violations.sort((left, right) => (
+    `${left.file}:${left.rule}`.localeCompare(`${right.file}:${right.rule}`)
+  ));
+}
+
+export function assertScientificAuthorityBoundary(repository) {
+  const violations = inspectScientificAuthorityBoundary(repository);
+  if (violations.length) {
+    throw new Error([
+      "Vela scientific-authority boundary failed:",
+      ...violations.map(({ file, profile, rule, detail }) => (
+        `- ${file}: ${profile}:${rule}: ${detail}`
+      )),
+    ].join("\n"));
+  }
+  return { ok: true, schema: "vela.web-scientific-authority-boundary.v1" };
+}
