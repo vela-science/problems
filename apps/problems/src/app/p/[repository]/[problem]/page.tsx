@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Badge } from "@vela/ui/components/badge";
+import { ScientificText } from "@vela/ui/vela/scientific-text";
+import { decodeHtmlEntities } from "@vela/ui/lib/html-entities";
 import { ModeSwitcher } from "@/components/mode-switcher";
 import { ProblemState } from "@/components/problem-state";
 import { Workbench } from "@/components/workbench";
@@ -26,15 +28,21 @@ export default async function ProblemPage({
   const account = mode === "work" ? await currentHostedAccount() : null;
   const feature = featuredProblems.find((entry) => entry.repository === repository && entry.problem === problem);
 
-  return <article className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:py-12">
-    <div className="flex flex-wrap items-start justify-between gap-5 border-b pb-7">
+  return <article className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:py-12">
+    <header className="border-b pb-7">
+      <div className="grid gap-7 lg:grid-cols-[minmax(0,1fr)_17rem] lg:items-start">
       <div>
-        <div className="flex flex-wrap items-center gap-2"><Badge variant="outline">Problem {problem}</Badge><span className="text-meta text-muted-foreground">{state.repositoryName}</span></div>
-        <h1 className="mt-3 text-display">Problem {problem}</h1>
-        <p className="mt-2 max-w-2xl text-body text-muted-foreground">One exact canonical state, with a separate hosted activity plane for useful contribution.</p>
+        <div className="flex flex-wrap items-center gap-2"><span className="text-eyebrow uppercase text-muted-foreground">{state.repositoryName}</span><span aria-hidden>·</span><Badge variant="outline">Problem {problem}</Badge></div>
+        <h1 className="mt-4 max-w-5xl text-display leading-tight"><ScientificText text={decodeHtmlEntities(state.source.summary?.trim() || state.problem.statement || state.source.title)} /></h1>
       </div>
-      <ModeSwitcher repository={repository} problem={problem} mode={mode} />
-    </div>
+      <dl className="grid grid-cols-3 gap-3 border-l-2 border-foreground/80 pl-5 lg:grid-cols-1">
+        <div><dt className="text-eyebrow uppercase text-muted-foreground">State</dt><dd className="mt-1 text-label capitalize">{state.problem.declared_status}</dd></div>
+        <div><dt className="text-eyebrow uppercase text-muted-foreground">Source</dt><dd className="mt-1 text-label">{state.problem.formalized ? "Formalized" : "Not formalized"}</dd></div>
+        <div><dt className="text-eyebrow uppercase text-muted-foreground">Open</dt><dd className="mt-1 text-label">{state.problem.offer_count} {state.problem.offer_count === 1 ? "target" : "targets"}</dd></div>
+      </dl>
+      </div>
+      <div className="mt-7"><ModeSwitcher repository={repository} problem={problem} mode={mode} /></div>
+    </header>
     {mode === "state"
       ? <ProblemState
           state={state}

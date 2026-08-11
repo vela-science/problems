@@ -3,15 +3,24 @@ import Link from "next/link";
 import { ArrowRight01Icon as ArrowRight } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Badge } from "@vela/ui/components/badge";
-import { Button } from "@vela/ui/components/button";
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemGroup,
+  ItemMedia,
+  ItemTitle,
+} from "@vela/ui/components/item";
 import { ScientificText } from "@vela/ui/vela/scientific-text";
+import { StateGlyph } from "@vela/ui/vela/state-glyph";
 import { decodeHtmlEntities } from "@vela/ui/lib/html-entities";
 import { featuredProblems, scientificProblemState } from "@/lib/scientific-state";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
-  title: "Exact Problems, open work",
-  description: "Five exact Problem pages where state stays canonical and hosted collaboration stays non-authoritative.",
+  title: "Problems",
+  description: "Choose a scientific Problem, read its current State, or enter Work.",
 };
 
 export default async function ProblemsIndex() {
@@ -19,46 +28,52 @@ export default async function ProblemsIndex() {
     feature,
     state: await scientificProblemState(feature.repository, feature.problem),
   })));
-  return <div>
-    <section className="border-b bg-muted/20">
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[minmax(0,1fr)_22rem] lg:py-16">
-        <div>
-          <p className="text-eyebrow uppercase tracking-[0.14em] text-muted-foreground">State → work → portable contribution</p>
-          <h1 className="mt-3 max-w-4xl text-display tracking-tight sm:text-5xl">Work from exact scientific state without handing authority to the website.</h1>
-          <p className="mt-5 max-w-2xl text-body leading-7 text-muted-foreground">Read immutable repository evidence, follow a Problem, fork an approach, record attempts and rooted artifacts, then export a public-schema Submission draft for local signing. Hosted activity never changes Standing.</p>
-        </div>
-        <aside className="border-l-2 border-foreground pl-5">
-          <p className="text-subtitle">Two planes, one page</p>
-          <dl className="mt-4 space-y-4 text-meta">
-            <div><dt className="font-semibold">Scientific state</dt><dd className="mt-1 text-muted-foreground">Exact, rebuildable, SELECT-only Observatory projection.</dd></div>
-            <div><dt className="font-semibold">Hosted activity</dt><dd className="mt-1 text-muted-foreground">Writable coordination that is portable and safe to delete.</dd></div>
-          </dl>
-        </aside>
-      </div>
-    </section>
+  return <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:py-14">
+    <header className="max-w-3xl">
+      <p className="text-eyebrow uppercase text-muted-foreground">Vela</p>
+      <h1 className="mt-2 text-display">Problems</h1>
+      <p className="mt-3 text-body text-muted-foreground">Choose a Problem. Read its State, or enter Work.</p>
+    </header>
 
-    <section aria-labelledby="grounded-problems" className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:py-14">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div><p className="text-eyebrow uppercase text-muted-foreground">First workbench set</p><h2 id="grounded-problems" className="mt-1 text-title">Five deeply grounded Problems</h2></div>
-        <a className="text-meta underline underline-offset-4" href="https://app.vela.space/repositories">Browse all exact state in Observatory</a>
+    <section aria-labelledby="problem-list" className="mt-12">
+      <div className="flex flex-wrap items-end justify-between gap-4 border-b pb-4">
+        <h2 id="problem-list" className="text-subtitle">Available now</h2>
+        <p className="text-meta text-muted-foreground">
+          <span className="font-mono text-foreground">{states.filter(({ state }) => state).length}</span> exact scientific records
+        </p>
       </div>
-      <ol className="mt-6 grid gap-4 lg:grid-cols-2">
-        {states.map(({ feature, state }, index) => state ? <li key={`${feature.repository}/${feature.problem}`} className={index === 0 ? "lg:col-span-2" : ""}>
-          <article className="group flex h-full flex-col border bg-background p-5 transition-colors hover:border-foreground sm:p-6">
+      {/* Composition adapted from Tailwind Plus Application UI's stacked-list
+          rhythm. The interactive foundation remains the shared shadcn/Base UI
+          Item primitive. */}
+      <ItemGroup className="mt-2 gap-0 divide-y">
+        {states.map(({ feature, state }) => state ? <Item
+          key={`${feature.repository}/${feature.problem}`}
+          render={<Link href={`/p/${feature.repository}/${feature.problem}`} />}
+          className="group rounded-none border-0 px-0 py-6 sm:flex-nowrap sm:gap-5"
+        >
+          <ItemMedia className="w-16 self-start gap-3 pt-0.5 sm:w-20">
+            <StateGlyph standing={state.claims[0]?.standing ?? "unassessed"} verification="not_attempted" />
+            <span className="font-mono text-title tabular-nums text-muted-foreground transition-colors group-hover:text-foreground">{feature.problem}</span>
+          </ItemMedia>
+          <ItemContent className="gap-2">
             <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="outline">Problem {feature.problem}</Badge>
-              <Badge variant="secondary">{state.repositoryName}</Badge>
-              <span className="ml-auto font-mono text-micro text-muted-foreground">{state.anchor.projectionReleaseRoot.slice(0, 18)}…</span>
+              <span className="text-eyebrow uppercase text-muted-foreground">{feature.theme}</span>
+              <Badge variant="secondary">{state.problem.declared_status}</Badge>
             </div>
-            <h3 className="mt-5 text-title"><ScientificText text={decodeHtmlEntities(state.problem.statement || state.source.title)} /></h3>
-            <p className="mt-3 text-meta text-muted-foreground">{feature.theme} · {state.problem.declared_status} · {state.problem.formalized ? "formalized" : "not formalized"}</p>
-            <div className="mt-auto flex flex-wrap items-center gap-3 pt-6">
-              <Button nativeButton={false} render={<Link href={`/p/${feature.repository}/${feature.problem}?mode=state`} />}>Open exact Problem <HugeiconsIcon icon={ArrowRight} aria-hidden data-icon="inline-end" /></Button>
-              <Button nativeButton={false} variant="outline" render={<Link href={`/p/${feature.repository}/${feature.problem}?mode=work`} />}>Enter Work mode</Button>
-            </div>
-          </article>
-        </li> : null)}
-      </ol>
+            <ItemTitle className="line-clamp-none max-w-[76ch] text-subtitle leading-snug">
+              <ScientificText text={decodeHtmlEntities(state.source.summary?.trim() || state.problem.statement || state.source.title)} />
+            </ItemTitle>
+            <ItemDescription className="line-clamp-none flex flex-wrap items-center gap-x-2 gap-y-1">
+                {state.problem.formalized ? <span>formalized</span> : <span>not formalized</span>}
+                <span aria-hidden>·</span>
+                <span>{state.problem.offer_count} open {state.problem.offer_count === 1 ? "target" : "targets"}</span>
+            </ItemDescription>
+          </ItemContent>
+          <ItemActions className="ml-auto self-center text-meta font-medium">
+            <span>Open</span><HugeiconsIcon icon={ArrowRight} aria-hidden className="size-4 transition-transform duration-200 group-hover:translate-x-1" />
+          </ItemActions>
+        </Item> : null)}
+      </ItemGroup>
     </section>
-  </div>;
+  </main>;
 }

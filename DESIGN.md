@@ -185,9 +185,15 @@ not infer a change in Standing.
 
 ## Navigation
 
-The Observatory uses one contextual navigation system and one scope at a time.
-Problems uses the same orientation rules, with a visible State or Work mode on
-each Problem page.
+The visible product model is **Problem → State | Work**. Problems is the only
+primary destination. State and Work are modes of the same Problem, never
+parallel products, domains, or sidebars. Repository and protocol records appear
+as context and progressive detail. About, exact-record inspection, search, and
+account are utilities.
+
+The Observatory uses one contextual navigation system and one scope at a time
+as an advanced records inspector. Its object collections do not define the
+Problems navigation.
 
 - The **sidebar** is contextual. Outside a Repository it lists release-wide
   destinations. Inside a Repository it becomes that Repository's own sections,
@@ -312,9 +318,11 @@ compositions may enter `@vela/ui`. Raw template source is never committed.
   the reading axis, not blindly from the viewport.
 - Editorial motion has five tiers in `apps/www/src/styles/tokens.css`: 160ms
   feedback, 240ms standard, 420ms deliberate settle, 900ms for an evidence path
-  drawing itself, and 1100ms for the one arrival a plate is allowed. The
-  product applications author none of them. They take the primitives'
-  transitions unmodified and own only the reduced-motion clamp.
+  drawing itself, and 1100ms for the one arrival a plate is allowed. Product
+  applications keep motion to bounded 160–240ms state transitions: mode
+  continuity, disclosures, mutation feedback, and loading. Problems may use
+  Motion for layout continuity while shared controls retain shadcn/Base UI
+  interaction behaviour. Every app owns its reduced-motion clamp.
 - Animate opacity or transform for controls. Prose never animates into
   readability.
 - Honour `prefers-reduced-motion`, forced colours, keyboard navigation, and 200%

@@ -37,10 +37,31 @@ attempts, discussion, assignments, artifact metadata, external session reference
 unsigned drafts. Activity may refer to exact scientific roots. It cannot change
 them.
 
-## The object model
+## The visible product model
 
-The product's nouns are the protocol's objects. This table is the spine:
-navigation, headings, and URLs all follow it.
+The product has one front door and one unit of orientation: **Problems**. A
+reader chooses a Problem, then chooses **State** or **Work** on that same page.
+
+- **State** answers what is currently known, what remains open, and which exact
+  records support that view.
+- **Work** answers what people and agents are trying now, and provides the
+  bounded actions needed to contribute.
+
+That is the complete primary navigation model. Repository is source context,
+not a prerequisite destination. Claims, Targets, Proposals, Verification
+Records, Decisions, Dossiers, Sources, roots, and graphs remain inspectable
+inside State or through an advanced records view. They do not compete with
+Problems in primary navigation.
+
+The four deployment surfaces and the two storage planes are architecture. They
+must not become four products or two conceptual models that users have to learn.
+Editorial explains Vela, Problems is the product, Observatory is the advanced
+records inspector, and local Vela is the authority handoff.
+
+## The protocol record model
+
+The protocol objects remain the exact vocabulary of scientific records. This
+table governs record labels and durable URLs, not the primary site map.
 
 | Protocol object | Product word | Lives at |
 | --- | --- | --- |
@@ -109,12 +130,11 @@ the product's explanation against the protocol's own words.
 
 ### `app.vela.space`
 
-The Observatory is the read-only workbench over an exact, release-bound
-projection. Its destinations are Repositories, then Targets, Proposals, Dossiers
-and Decisions across the release, then Sources; inside a Repository it opens
-Overview, Claims, Problems where the source has them, Targets, Proposals,
-Dossiers, and Reproduce, with search and the evidence graph reachable as tools
-rather than as places.
+The Observatory is the advanced records inspector over an exact, release-bound
+projection. It preserves durable record routes, search, graph, reproduction,
+and release-wide ledgers for expert inspection. It is not the product front
+door, and its protocol-object collections are not mirrored into the primary
+Problems navigation.
 
 The four release-wide roll-ups sit under a heading naming their scope. They were
 left out of the rail for a while after the Repository tab bar was removed, on the
@@ -166,21 +186,15 @@ activity database cannot remove or change that state.
 
 ### Navigation
 
-One navigation system, one scope on screen. The sidebar is contextual: outside a
-Repository it lists what is genuinely release-wide, and inside one it becomes that
-Repository's own sections, grouped under the protocol's axes. Both rails group
-rather than flatten, because a heading is what lets a shared name state its
-scope. The header carries one trail whose last element is the current page, and
-on a record that element is the record — a trail ending at the collection named
-the same three words on every one of a Repository's 2,782 Claim pages. Inside a
-Repository the trail's first element is the Repository switcher, a control rather
-than a link. No label means two scopes at once.
+Problems has one primary destination: Problems. A Problem page owns the State
+and Work mode switch. Account controls and search are tools, not destinations.
+About and advanced records are quiet outbound links, not peers of Problems.
 
-A noun appears at both release and Repository level only when a reader with no
-Repository in mind can act on it. When it does, the release view is a roll-up with
-its own component and its own default set, as Proposals is: an accordion across
-the release, a table inside a Repository. Targets and Dossiers still render the
-Repository's component at both scopes, which is a defect rather than a precedent.
+The Observatory keeps one contextual record-navigation system for expert use.
+Outside a Repository it may expose release-wide ledgers; inside one it becomes
+that Repository's records. Those routes remain durable, but the public product
+does not ask a reader to traverse them before understanding or working on a
+Problem.
 
 ## Shared system
 

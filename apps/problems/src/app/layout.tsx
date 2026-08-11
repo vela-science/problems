@@ -7,7 +7,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://problems.science"),
   title: { default: "Vela Problems", template: "%s · Vela Problems" },
-  description: "Exact scientific state with a writable, non-authoritative collaboration plane.",
+  description: "Read exact scientific state and coordinate work without confusing activity with accepted results.",
   icons: { icon: "/favicon.svg" },
 };
 
@@ -22,7 +22,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       <SiteHeader account={account} authAvailable={authEnabled()} />
       <main id="main-content">{children}</main>
       <footer className="border-t px-4 py-6 text-center text-meta text-muted-foreground">
-        Hosted activity can be deleted without changing any Repository Standing. Canonical work remains ordinary Git and <code>.vela</code>.
+        Work is coordination. Scientific Standing changes only through an explicit repository Decision.
       </footer>
     </body>
   </html>;
