@@ -30,11 +30,13 @@ composition.
 | Brand | `packages/brand` | DTCG-shaped tokens, type roles, fonts, sail geometry, state colours, licences, deterministic exports |
 | React UI | `packages/ui` | Official shadcn `base-nova` primitives on Base UI and stable Vela presentation semantics |
 | Editorial composition | `apps/www` | Authored publications, figures, product narrative, and documentation layouts |
-| Product composition | `apps/observatory` | Read-only workbench shell, domain surfaces, URL state, and the Sigma graph |
-| Exact data | `packages/observatory-data` | Rooted projections consumed by both applications |
+| Observatory composition | `apps/observatory` | Exact-read shell, scientific records, URL state, and the Sigma graph |
+| Problems composition | `apps/problems` | Problem State and Work modes, hosted activity, and local-signing handoff |
+| Exact data | `packages/observatory-data` | Rooted scientific projections consumed by all three applications |
+| Activity data | `packages/activity-data` | Mutable hosted workspaces, attempts, discussion, rooted metadata, and unsigned drafts |
 
 `@vela/brand` is framework-neutral. `@vela/ui` is the shared React source for
-both Next.js applications and future private Vela applications. Applications
+the three Next.js applications and future private Vela applications. Applications
 share primitives and stable semantics; they do not share whole route layouts.
 
 `packages/ui/components.json` is the only shadcn source configuration. Vela
@@ -56,41 +58,33 @@ projection. Nothing on it is written about the product.
 
 ### Product
 
-`app.vela.space` is the instrument register: a cool-tinted light ground and an
-equivalent midnight one, both drawn from a single hue family so a small
+`app.vela.space` and `problems.science` use the instrument register: a
+cool-tinted light ground and an equivalent midnight one, both drawn from a single hue family so a small
 luminance step still reads as a step; Geist for interface text, IBM Plex Mono
 for identifiers and exact values, compact controls, and dense but readable
 ledgers. Dark mode is equivalent, not a separate aesthetic.
 
 The registers share the sail, state semantics, token source, accessible
-interaction, and exact data. They do not make the editorial site look like a
-dashboard or the Observatory look like an essay.
+interaction, and exact data. Problems adds writable controls without changing
+the scientific-state presentation.
 
 ## Vocabulary
 
 The words on screen are the product's first design decision. A reader who
 cannot name what they are looking at cannot check it.
 
-**Current.** Repository, Claim, Problem, Target, Submission, Proposal,
+**Scientific state.** Repository, Claim, Problem, Target, Submission, Proposal,
 Verification Record, Decision, Dossier, Source.
 
-**Retired.** Finding is the predecessor era's name for a Claim; it survives as a
-protocol event-kind stem (`finding.asserted`, `finding.noted`,
-`finding.retracted`, `finding.superseded`) and inside retained `vf_`
-identifiers, both of which appear as exact values and never as product words,
-and as vela's own view-only editorial label for a Claim with positive standing.
-The graph node kind `finding` is written by this repository's projection
-builder rather than received from the protocol, and the reader relabels it to
-Claim in `apps/observatory/src/lib/product-language.ts`. Work, Review, and
-Activity name no destination: they are activities, and a reader cannot link to
-an activity, only to the record it acts on. Run and Attempt both named an
-execution occurrence the protocol does not govern, and both are gone: the
-surface that displayed them was deleted with the table behind it, which held
-zero rows in every release. The word survives only as
-`provenance.source_attempt` on a Submission, an exact value the producer
-supplies. The release-level `/runs` path still redirects to `/decisions`; the
-repository-scoped route published no record, so no durable URL was broken. Bundle is a protocol root
-and may appear only as a labelled exact value.
+**Hosted activity.** Account, Workspace, Follow, Approach, Attempt, Comment,
+Note, Assignment, Reproduction Request, Artifact, Agent Session, Submission
+Draft. Activity nouns appear in Problems Work mode and never label a scientific
+state axis.
+
+**Retired reader terms.** Finding is the predecessor name for a Claim. It may
+appear as an exact retained value, while the interface calls the record a
+Claim. Bundle is a protocol root and may appear only as a labelled exact value.
+The Observatory `/runs` path remains a redirect to `/decisions`.
 
 Two of the product's words have no protocol object behind them, and the product
 says so rather than implying authority a grouping cannot confer. A Dossier is an
@@ -104,8 +98,8 @@ appears beside it as the exact value.
 ## Type
 
 The product register has nine roles, generated from `packages/brand/vela.tokens.json`
-into `@vela/brand/type-product.css` and imported by the Observatory's
-`globals.css`:
+into `@vela/brand/type-product.css` and imported by the product applications'
+`globals.css` files:
 
 `display`, `title`, `subtitle`, `body`, `compact`, `label`, `meta`, `micro`,
 `eyebrow`.
@@ -184,9 +178,16 @@ The state glyph encodes two axes in one mark so a ledger row can carry both
 without two badges: the ring is standing, the core is verification, and an inner
 ring marks a transitive cone. A half core is acceptance with conditions.
 
+Activity status and anchor freshness use separate labels. An active Attempt is
+not a pending Proposal. A completed Attempt is not a passing Verification or an
+accepted Claim. A stale activity anchor names a newer canonical root; it does
+not infer a change in Standing.
+
 ## Navigation
 
-There is one navigation system, and one scope on screen at a time.
+The Observatory uses one contextual navigation system and one scope at a time.
+Problems uses the same orientation rules, with a visible State or Work mode on
+each Problem page.
 
 - The **sidebar** is contextual. Outside a Repository it lists release-wide
   destinations. Inside a Repository it becomes that Repository's own sections,
@@ -234,6 +235,9 @@ teach a reader nothing about what is on them.
   This is the one archetype whose heading is visible. A Repository is the record,
   not a page about one, so its name is the largest text on the screen for the
   same reason a Claim's assertion is on a Claim page.
+- **Workbench.** Opens with the exact Problem identity, a State or Work mode,
+  and one current activity context. Mutation controls live in Work mode. Each
+  saved record carries its anchor freshness and version conflict state.
 - **Instrument.** A compact toolbar, the canvas, and a ledger equivalent for
   everything the canvas shows.
 
@@ -291,6 +295,10 @@ The Observatory ships no Card. A record row is an article or an Item on
 hairlines; a boxed surface is reserved for genuinely detachable overlays, and is
 never nested.
 
+Problems may use a bounded panel for an editable activity record. It does not
+wrap exact State content in dashboard cards or use card prominence to imply
+scientific authority.
+
 Tailwind Plus is licensed for use in this private repository. Its patterns may
 be adapted where they improve a real surface. Adaptations retain provenance in a
 comment, use the shared token system, and converge on shadcn/Base UI behaviour
@@ -305,8 +313,8 @@ compositions may enter `@vela/ui`. Raw template source is never committed.
 - Editorial motion has five tiers in `apps/www/src/styles/tokens.css`: 160ms
   feedback, 240ms standard, 420ms deliberate settle, 900ms for an evidence path
   drawing itself, and 1100ms for the one arrival a plate is allowed. The
-  Observatory authors none of them. It takes the primitives' transitions
-  unmodified and owns only the reduced-motion clamp.
+  product applications author none of them. They take the primitives'
+  transitions unmodified and own only the reduced-motion clamp.
 - Animate opacity or transform for controls. Prose never animates into
   readability.
 - Honour `prefers-reduced-motion`, forced colours, keyboard navigation, and 200%
@@ -341,6 +349,7 @@ route presentation cannot accumulate in a global stylesheet.
 - Repeated authority explanations and manually copied release facts
 - A band above a page that repeats what the header already said
 - Hiding exact state instead of progressively disclosing it
+- Styling hosted activity as a Decision, Verification, or Standing change
 
 When a surface feels flat, reach for evidence, hierarchy, and composition first.
 They are what usually fix it. Atmosphere is allowed to be the answer on an

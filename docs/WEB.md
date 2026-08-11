@@ -8,37 +8,39 @@ Earlier design and migration plans live under `docs/history/`.
 - `www.vela.space` is the canonical editorial surface: Next.js 16, App
   Router, static export (`output: "export"`). Moved off Astro 2026-07-28.
 - `app.vela.space` is the canonical Next.js Repository Observatory surface.
-- `vela.space` redirects to `www`; product paths on `www` redirect to `app`.
-- Both applications are read-only surfaces of one Web product. They expose no
-  signer, public mutation API, scientific Server Action, or scientific
-  authority. The Observatory reads a bounded projection from Neon; canonical
-  custody remains in the repository Git repositories.
+- `problems.science` is the target domain for the authenticated Problems
+  workbench. No production domain is attached without user authorization.
+- `vela.space` redirects to `www`; Observatory paths on `www` redirect to `app`.
+- Hosted Vela is non-authoritative. The Observatory reads a bounded SELECT-only
+  projection from Neon. Problems writes hosted research activity through
+  `@vela/activity-data`. Canonical custody remains in Repository Git
+  repositories.
 - Normative protocol and CLI documentation remains in the Vela repository at
   an exact release commit. This repository owns onboarding and explanation,
   and serves it from `www.vela.space/docs`.
 
-`bun run check:boundary` makes that product boundary executable. It rejects
-scientific Server Actions, request-scoped cookies or headers, mutation Route
-Handlers, database and scientific-authority dependencies, and arbitrary
-request-time fetches. Route Handlers are limited to the declared exact-root
-reads — `/api/search`, `/api/graph`, `/sources.json`,
-`/.well-known/vela-site.json`, and the Result Dossier JSON exports — and to the
-three isolated product-identity routes `/api/account`, `/auth/callback` and
-`/sign-in`. One bounded AuthKit sign-out Server Action is allow-listed by name;
-runtime secrets are confined to the server-only identity adapter.
+`bun run check:boundary` applies one profile per surface. It keeps www static,
+limits Observatory Route Handlers to declared exact-root reads and identity,
+and requires Problems mutations to call `@vela/activity-data`. ESLint blocks
+direct database clients, hosted signing machinery, and WorkOS imports outside
+the named identity files. The package-direction check keeps
+`@vela/observatory-data` independent of mutable activity and limits
+`@vela/activity-data` reuse to exact canonical and read contracts.
 
-The repository is a Bun workspace with five maintained boundaries:
+The repository is a Bun workspace with seven maintained boundaries:
 
 ```text
 apps/www                editorial Next.js application (static export)
 apps/observatory        read-only Next.js application
+apps/problems           writable, non-authoritative Problems workbench
 packages/brand          governed identity, tokens, fonts, and delivery assets
 packages/ui             shared shadcn/Base UI source and Vela presentation semantics
 packages/observatory-data  Git-to-Neon projection, validation, search, and manifests
+packages/activity-data  hosted activity schema, authorization, and mutation API
 ```
 
 `packages/brand` is framework-neutral. `packages/ui` is private React source
-shared by eligible interactions in the two applications and future private
+shared by eligible interactions in the three applications and future private
 Vela applications. Route composition stays app-local. The internal registry is
 product-bound and is never published as a separate UI library; see
 [`design-system.md`](design-system.md).
@@ -53,7 +55,8 @@ Native research tools and external harnesses remain replaceable. The Repository
 Git repository is canonical. Vela binds exact Submissions and scoped
 Verification evidence, but neither changes Standing. Only an authorized human
 Decision in that named Repository changes Standing; replay derives the successor
-state and next Target. Web owns only read-only explanation, review, and reuse.
+state and next Target. Problems may coordinate candidate work, but hosted state
+cannot issue a Vela Event or Decision, change Standing, or sign as a user.
 
 The editorial application owns one current route vocabulary:
 
@@ -305,9 +308,10 @@ project has one branch, `main`. Release-scoped rows and `current_release`
 provide exact data identity and rollback without mapping application releases
 onto database branches.
 
-Those two URLs are the complete secret inventory for database access. The
-fixed `observatory_projection_reader` role is managed directly in Neon and is
-not recreated during CI or projection refreshes.
+Those two URLs are the complete secret inventory for Observatory projection
+access. Activity uses two separately scoped URLs described below. The fixed
+`observatory_projection_reader` role is managed directly in Neon and is not
+recreated during CI or projection refreshes.
 
 `packages/observatory-data/schema.sql` is the current desired-state schema.
 Forward changes live in `packages/observatory-data/migrations`; each applied file
@@ -371,6 +375,75 @@ adding a compatibility adapter to the current normalized read model.
 Promotion remains gated on the frozen cross-Repository reader tasks and two
 independently maintained consumers.
 
+## Hosted activity data
+
+`@vela/activity-data` is the sole mutable data owner for Problems. It uses a
+separate `vela_activity` database on the existing Neon project's `main` branch.
+No preview or child database branches are part of the workflow. The two hosted
+planes remain distinct: Observatory projection roles cannot connect to
+`vela_activity`, and activity roles cannot connect to `vela_observatory`.
+
+The credential contract has two activity-only URLs:
+
+- `VELA_ACTIVITY_DATABASE_URL` belongs to the least-privilege application role;
+- `VELA_ACTIVITY_MIGRATOR_DATABASE_URL` belongs to the migrator role and is
+  present only during an explicit migration or role check.
+
+The application role receives `CONNECT` to `vela_activity`, `USAGE` on the
+bounded API schema, and `EXECUTE` on its named functions. It has no direct
+table grants. The migrator can assume the no-login owner role for rooted schema
+changes but cannot create databases, create roles, or inherit authority by
+default. Provision the roles once through `packages/activity-data/roles.sql`,
+create `vela_activity` as one standalone administrative statement, and apply
+`packages/activity-data/database-privileges.sql` while connected to that new
+database. Database creation stays outside the migration runner because it
+cannot run inside the migration transaction. After bootstrap, use the package
+commands:
+
+```bash
+bun run activity:db:migrate
+bun run activity:db:check
+bun run activity:db:verify
+```
+
+Activity rows record hosted accounts and workspace membership, follows,
+approaches and forks, attempt lifecycle, comments and private notes,
+assignments and reproduction requests, artifact roots and locators, and
+unsigned Submission drafts. Every mutation carries an idempotency key and
+request root. Mutable records advance an expected version, and the audit log
+is append-only. API calls verify membership inside the transaction, so a
+workspace identifier supplied by another account is not authorization.
+
+Each activity thread binds the exact projection release, Repository identity
+and root, source commit and tree, Problem record root, and any Claim root that
+was visible when the work began. Problems compares that anchor with the current
+exact read and marks it stale when canonical state advances. It never rewrites
+the old anchor to make activity appear current.
+
+Large artifact bytes stay outside Postgres. The database stores content and
+metadata roots, bounded descriptive metadata, paths, media types, sizes, and
+optional locators only. Attempt provider and external-session fields are
+neutral records; they do not embed a Modal, Buzz, or other runtime.
+
+An exported draft must validate against the public `vela.submission.v2` schema
+vendored from the exact Vela release pin. The hosted service exports canonical,
+unsigned bytes with their payload root. A user may pass those bytes to the
+explicit local helper:
+
+```bash
+bun run activity:submission:sign-local -- \
+  /path/to/vela-submission-draft.json \
+  --private-key /path/to/user-controlled-key.pem \
+  --output /path/to/signed-submission.json
+```
+
+The helper is not exported from the package root, and applications are barred
+from importing its subpath. Hosted accounts do not become Vela actors. The
+activity schema and API cannot emit a Vela Event, Decision, Verification, or
+Standing, cannot access an authority key, and cannot write the Observatory.
+Deleting `vela_activity` leaves Repository Standing intact; rebuilding
+`vela_observatory` leaves hosted activity intact.
+
 ## Brand and assets
 
 `packages/brand/marks/source/vela-symbol-full.svg` is the exact original Vela
@@ -394,6 +467,8 @@ Use Bun `1.3.12`:
 ```bash
 bun install --frozen-lockfile
 bun run check
+bun run check:boundary
+bun run check:activity
 bun run lint
 bun run typecheck
 bun run test
@@ -408,6 +483,9 @@ release facts from the same checked projection used by the Observatory. Export
 only `VELA_PROJECTION_DATABASE_URL`; do not source an entire Vercel environment
 file, because production-only identity variables intentionally activate stricter
 manifest checks. Local development should keep `VERCEL_ENV=development`.
+Problems runtime mutations additionally require `VELA_ACTIVITY_DATABASE_URL`.
+Only schema work receives `VELA_ACTIVITY_MIGRATOR_DATABASE_URL`; it is not an
+application or build credential.
 
 CI additionally runs rooted runtime-route, projection, corpus, boundary, and
 semantic accessibility checks. Release candidates and design-affecting changes
@@ -416,25 +494,32 @@ and desktop widths. Stale screenshot binaries are not treated as product truth.
 
 ## Deployment topology
 
-The `constellate-dc388081` Vercel team has two Vela Web projects:
+The `constellate-dc388081` Vercel team has two active Vela Web projects.
+Problems has no production project or domain attached in this milestone:
 
 | Project | Application | Production domains |
 | --- | --- | --- |
 | `vela-web-www` | `apps/www` | `www.vela.space`, redirect aliases |
 | `vela-web-observatory` | `apps/observatory` | `app.vela.space`, `app.constellate.science` redirect |
+| Not attached | `apps/problems` | None |
 
 There is no active legacy Vela Vercel project. `prospect` and `snowchild` are
 unrelated and outside this workspace.
 
 ### Pushing deploys
 
-The two applications deliberately use different release paths:
+The two active applications deliberately use different release paths:
 
 - `www.vela.space` uses Vercel's Git deployment for relevant `main` changes.
 - `app.vela.space` has direct Git deployment disabled. Relevant `main` changes
   trigger `refresh-projection.yml`, which synchronizes the additive schema,
   builds and verifies the one current projection contract, activates its exact
   release root, and only then invokes the Observatory deploy hook.
+
+Problems remains on local and noncanonical release-candidate builds until a
+separate deployment and domain attachment is explicitly authorized. Adding it
+to the workspace does not authorize a Vercel project, production environment,
+`problems.science` DNS, or a public manifest contract.
 
 This ordering is mandatory. It prevents current application code from racing a
 predecessor read model and makes one workflow own both projection activation and
@@ -444,11 +529,12 @@ exact data-only refresh. Only `apps/www/vercel.json` carries an
 build alone; the Observatory's scope comes from the workflow's own path
 filters, and every hook invocation builds.
 
-Vela Web's `package.json` contains the only product version. The disposable
-database has no parallel numbered release train: its current-only manifest is
+Vela Web's `package.json` contains the only product version. Neither database
+has a parallel numbered release train. The projection's current-only manifest is
 `vela.observatory-release-manifest`, and forward SQL migrations are recorded by
-identifier and exact content root in `observatory.schema_migrations`. Application
-code does not carry readers for predecessor shapes.
+identifier and exact content root in `observatory.schema_migrations`. Activity
+migrations are independently rooted in `activity.schema_migrations`.
+Application code does not carry readers for predecessor shapes.
 
 `AGENTS.md` release safety still applies to attaching domains and tagging final
 releases.
@@ -507,11 +593,12 @@ shipping one; the preconditions are the gates.
    redirects, semantics, roots, accessibility, responsive states, and cache
    isolation. A release-candidate build is available on a `v*-rc.*` tag when a
    change is worth exercising in CI before it lands.
-2. Merge to clean `main`. The two release paths ship the changed application on
+2. Merge to clean `main`. The two active release paths ship the changed application on
    their own, and the scope is decided for you — `vercel-should-build.mjs` for
    the editorial site, `refresh-projection.yml`'s path filters for the
    Observatory. A shared brand or data-contract change may deploy both;
-   editorial-only work does not redeploy the Observatory.
+   editorial-only work does not redeploy the Observatory. Problems does not
+   deploy until its separate production attachment is authorized.
 3. Verify the production manifests and canonical domains against the exact
    merged commit and the activated projection root. The untouched application
    must retain its prior deployment identity and behavior.
