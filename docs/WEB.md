@@ -215,6 +215,37 @@ with a broken refresh render identically. Confirmation keeps moving for as long
 as the pipeline is alive, which is the fact worth showing. It is wall-clock and
 deliberately outside the release identity, so it never enters a root.
 
+Every changed refresh also carries the exact release root it observed as
+current into the final activation statement. The pointer moves only if that
+expected root still matches; the candidate's first-live timestamp and the
+pointer update share the same transaction. Losing that comparison leaves the
+candidate stored but never activated and leaves the prior pointer unchanged.
+
+Historical selection is an explicit operator action, never part of refresh or
+pruning:
+
+```bash
+VELA_PROJECTION_WRITER_DATABASE_URL=... \
+  bun run --filter @vela/observatory-data releases:select -- \
+  --expected-current sha256:<current> \
+  --target sha256:<previously-activated-release>
+```
+
+The command takes two exact roots so it cannot infer authority from ambient
+state. In one serializable transaction it locks the current pointer and target,
+re-verifies the target with the ordinary stored-release verifier, requires that
+the target was previously activated, preserves its original first-live
+`activated_at`, and records a new `confirmed_at`. A comparison loss or any
+verification failure rolls the transaction back. It never inserts a candidate,
+prunes, or changes a release's first-live timestamp.
+
+Do not prune between selecting an older release and re-selecting the later one.
+The reader window is current plus the two releases at or before the current
+release's first-live timestamp. Selecting an older root therefore makes later
+roots temporarily unreadable; pruning in that interval deletes them and removes
+the forward route. Exact-root selection and any later pruning are separate
+operator decisions.
+
 ### The editorial snapshot
 
 The Observatory reads Neon at build. `apps/www` does not: it is a static export
