@@ -98,7 +98,7 @@ if (scope === "all") {
   /* Next's static export writes to out/, where Astro wrote dist/. */
   const socialMasters = [
     resolve(editorial, "out/og-image.png"),
-    resolve(editorial, "out/images/constellations/endless-map-og.png"),
+    resolve(editorial, "out/images/constellations/endless-og.png"),
   ];
   editorialTotalBytes = bytesBelow(resolve(editorial, "out"));
   editorialSocialMasterBytes = socialMasters.filter(existsSync).reduce((sum, path) => sum + statSync(path).size, 0);
