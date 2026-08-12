@@ -12,7 +12,7 @@ const mutationMethods = /export\s+(?:(?:async\s+)?function\s+|(?:const|let|var)\
 const exportedSymbols = /export\s+(?:(default)|(?:async\s+)?(?:function|const|let|var)\s+([A-Za-z0-9_$]+))/gu;
 const activityImport = /(?:from\s*|import\s*\(\s*)["']@vela\/activity-data(?:\/[^"']*)?["']/u;
 const forbiddenScientificSchema = /["']vela\.(?:decision|event|standing|verification-record|repository)(?:\.[^"']*)?["']/iu;
-const forbiddenAuthoritySymbol = /\b(?:create|emit|issue|record|sign|write|accept|reject|decide)[A-Za-z0-9_$]*(?:Decision|Standing|ScientificEvent)\b/iu;
+const forbiddenAuthoritySymbol = /\b(?:create|emit|issue|record|sign|write|accept|reject|decide)[A-Za-z0-9_$]*(?:Decision|Standing|ScientificEvent|Verification|Proposal)\b/iu;
 const forbiddenSigningCall = /\b(?:createPrivateKey|generateKeyPair|generateKeyPairSync|sign)\s*\(/u;
 const forbiddenSigningImport = /(?:from\s*|import\s*\(\s*)["'](?:@noble\/ed25519|tweetnacl|libsodium|sodium-native|node:child_process|node:crypto)(?:\/[^"']*)?["']/u;
 const forbiddenSecretEnvironment = /\bprocess\.env\.(?:[A-Z0-9_]*(?:AUTHORITY|PRIVATE|SIGNING)[A-Z0-9_]*KEY[A-Z0-9_]*|[A-Z0-9_]*SEED[A-Z0-9_]*)\b/u;
@@ -160,7 +160,7 @@ function inspectActivityAuthority(file, content, add) {
     add("scientific_object_emission", "Activity code may emit only the public Submission draft payload");
   }
   if (forbiddenAuthoritySymbol.test(content)) {
-    add("scientific_authority_symbol", "Activity code may not expose Decision, Event, or Standing write operations");
+    add("scientific_authority_symbol", "Activity code may not expose Proposal, Verification, Decision, Event, or Standing write operations");
   }
   if (
     file !== localSigningModule

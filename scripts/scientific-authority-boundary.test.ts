@@ -93,7 +93,7 @@ describe("scientific-authority profiles", () => {
 
   test("rejects hosted signing and scientific-state emission", () => {
     const root = fixture({
-      "packages/activity-data/src/signer.ts": "import { createPrivateKey, sign } from 'node:crypto';\nexport const event = { schema: 'vela.event.v1' };\nexport const signStanding = () => sign(null, new Uint8Array(), createPrivateKey('x'));\n",
+      "packages/activity-data/src/signer.ts": "import { createPrivateKey, sign } from 'node:crypto';\nexport const event = { schema: 'vela.event.v1' };\nexport const issueVerification = () => null;\nexport const signStanding = () => sign(null, new Uint8Array(), createPrivateKey('x'));\n",
       "packages/activity-data/src/env.ts": "export const key = process.env.VELA_AUTHORITY_PRIVATE_KEY;\n",
     });
     const rules = inspectScientificAuthorityBoundary(root).map(({ rule }) => rule);

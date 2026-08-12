@@ -119,6 +119,14 @@ await denied(
   }),
   "cross-tenant activity read",
 );
+await denied(
+  createApproach({ accountId: accountB.id, workspaceId: workspaceA.id }, {
+    anchor,
+    title: "Cross-tenant write must fail",
+    summary: "A non-member cannot create activity in another Workspace.",
+  }, command()),
+  "cross-tenant activity write",
+);
 
 const approachCommand = command();
 const approach = await createApproach(contextA, {
@@ -277,6 +285,10 @@ const expectedExport = createSubmissionDraftExport(payload);
 const draft = await saveSubmissionDraft(contextA, { anchor, payload }, command());
 const exported = await exportSubmissionDraft(contextA, String(draft.id));
 if (exported.payloadRoot !== expectedExport.payloadRoot) throw new Error("draft export changed canonical payload bytes");
+await denied(
+  exportSubmissionDraft({ accountId: accountB.id, workspaceId: workspaceA.id }, String(draft.id)),
+  "unsigned draft export without membership",
+);
 
 await denied(appSql.query("SELECT count(*) FROM activity.accounts"), "app base-table read");
 await denied(appSql.query("UPDATE activity.activity_audit_entries SET operation=operation"), "audit mutation");
@@ -328,6 +340,8 @@ console.log(JSON.stringify({
   payloadRoot: exported.payloadRoot,
   standing: standingAfter,
   crossTenantDenied: true,
+  crossTenantWriteDenied: true,
+  unsignedExportDenied: true,
   removedMemberDenied: true,
   privateNoteIsolated: true,
   idempotencyProved: true,

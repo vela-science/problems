@@ -80,4 +80,15 @@ describe("vela.submission.v2 drafts", () => {
       .toEqual(fixture(publicKeyHex));
     expect(createPublicKey(privateKey).asymmetricKeyType).toBe("ed25519");
   });
+
+  test("refuses a local key that does not match the draft's declared identity", () => {
+    const declared = generateKeyPairSync("ed25519");
+    const actual = generateKeyPairSync("ed25519");
+    const declaredSpki = declared.publicKey.export({ format: "der", type: "spki" });
+    const declaredPublicKeyHex = Buffer.from(declaredSpki).subarray(-32).toString("hex");
+    const actualPrivateKeyPem = actual.privateKey.export({ format: "pem", type: "pkcs8" }).toString();
+
+    expect(() => signSubmissionDraftLocally(fixture(declaredPublicKeyHex), actualPrivateKeyPem))
+      .toThrow("local signing key does not match identity.public_key_hex");
+  });
 });
