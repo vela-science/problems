@@ -15,7 +15,10 @@ const commonRules = [
   ["repository authority key name", /\b(?:VELA_AUTHORITY_PRIVATE_KEY|VELA_SIGNING_PRIVATE_KEY|PRIVATE_KEY_HEX)\b/gu],
 ];
 const activityPrivacyRules = [
-  ["hosted account identifier", /\buser_[A-Za-z0-9]{12,}\b/gu],
+  /* WorkOS user ids carry a `user_01…` ULID-like payload. Requiring that
+     shape avoids treating scientific fields such as `user_verification` as
+     private account data while still refusing real hosted identities. */
+  ["hosted account identifier", /\buser_01[0-9A-HJKMNP-TV-Z]{12,}\b/gu],
   ["email address", /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/giu],
   ["live proof fixture", /\bliveproof\b/giu],
 ];

@@ -31,7 +31,10 @@ function fixture(entries: Record<string, string> = {}) {
 
 describe("public output secret and privacy scan", () => {
   test("accepts delivered output without server or account material", () => {
-    expect(scanPublicOutput(fixture())).toMatchObject({
+    expect(scanPublicOutput(fixture({
+      "apps/observatory/.next/server/app/p/math/321/index.rsc":
+        "user_verification is absent; no hosted account identifier is published",
+    }))).toMatchObject({
       ok: true,
       profiles: ["app", "www"],
     });
