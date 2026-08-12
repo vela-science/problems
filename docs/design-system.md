@@ -23,7 +23,7 @@ delivered fonts, canonical sail, mark exports, licenses, and integrity checks.
 shadcn/Base UI primitives and the small set of stable Vela presentation
 semantics. Application shells and route compositions remain app-local.
 
-The three applications use Next.js 16 and React 19. That shared
+The two applications use Next.js 16 and React 19. That shared
 runtime makes a common primitive source useful; it does not justify merging the
 editorial and workbench composition systems.
 

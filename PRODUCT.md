@@ -22,12 +22,13 @@ separate activity plane. A user can export a valid unsigned Submission payload
 and sign it with a local key. The receiving Repository, Vela verification, and
 an authorized human Decision remain the only route to new Standing.
 
-The ecosystem has four surfaces:
+The ecosystem has three surfaces:
 
 1. `www.vela.space` publishes editorial and protocol documentation.
-2. `app.vela.space` reads an exact scientific projection.
-3. `problems.science` reads that projection and writes hosted research activity.
-4. The local Vela and Repository surface signs, verifies, decides, publishes,
+2. The Vela product application, served at `app.vela.space` and
+   `problems.science`, reads exact scientific State and writes hosted research
+   activity.
+3. The local Vela and Repository surface signs, verifies, decides, publishes,
    and replays canonical scientific state outside the hosted service.
 
 The hosted product spans two planes. The scientific-state plane contains exact
@@ -39,24 +40,36 @@ them.
 
 ## The visible product model
 
-The product has one front door and one unit of orientation: **Problems**. A
-reader chooses a Problem, then chooses **State** or **Work** on that same page.
+The product has one conceptual center: **Problems**. A reader chooses a Problem,
+then chooses **State** or **Work** on that same page. The global application has
+five user-intent destinations that make the network legible without exposing a
+protocol object taxonomy:
+
+- **Home** answers what changed, what matters, and what needs attention.
+- **Problems** is the cross-domain scientific-question directory.
+- **Work** shows where approaches, attempts, and requests are active.
+- **Hubs** organizes communities and collections without conferring authority.
+- **Activity** is a typed change feed across scientific state and hosted work.
+
+Repositories and Sources form a quieter provenance **Library**. Contributors,
+Following, and Your work join that navigation only when their retained product
+records are populated enough to make the pages useful.
 
 - **State** answers what is currently known, what remains open, and which exact
   records support that view.
 - **Work** answers what people and agents are trying now, and provides the
   bounded actions needed to contribute.
 
-That is the complete primary navigation model. Repository is source context,
-not a prerequisite destination. Claims, Targets, Proposals, Verification
+Repository is source context, not a prerequisite destination. Claims, Targets, Proposals, Verification
 Records, Decisions, Dossiers, Sources, roots, and graphs remain inspectable
 inside State or through an advanced records view. They do not compete with
 Problems in primary navigation.
 
-The four deployment surfaces and the two storage planes are architecture. They
-must not become four products or two conceptual models that users have to learn.
-Editorial explains Vela, Problems is the product, Observatory is the advanced
-records inspector, and local Vela is the authority handoff.
+The domains and the two storage planes are architecture. They must not become
+parallel products or conceptual models that users have to learn. Editorial
+explains Vela, Home orients the live network, Problems is the conceptual
+center, Records is the advanced inspector, and local Vela is the authority
+handoff.
 
 ## The protocol record model
 
@@ -128,13 +141,13 @@ an exact pinned release and rendered without paraphrase; only the duplicate
 title heading is dropped, because the route already sets it. A reader compares
 the product's explanation against the protocol's own words.
 
-### `app.vela.space`
+### `app.vela.space` and `problems.science`
 
-The Observatory is the advanced records inspector over an exact, release-bound
-projection. It preserves durable record routes, search, graph, reproduction,
-and release-wide ledgers for expert inspection. It is not the product front
-door, and its protocol-object collections are not mirrored into the primary
-Problems navigation.
+These domains serve one Vela product application. Home is its front door and
+Problems is its conceptual center.
+The same application preserves durable record routes, search, graph,
+reproduction, and release-wide ledgers as an advanced Records layer. Protocol
+collections do not compete with Problems in primary navigation.
 
 The four release-wide roll-ups sit under a heading naming their scope. They were
 left out of the rail for a while after the Repository tab bar was removed, on the
@@ -154,10 +167,7 @@ The Observatory exposes scientific state; it does not control it. Accepted,
 pending, rejected, withdrawn, replayed, verified, recorded, and strict-blocked
 remain distinct in language and presentation.
 
-### `problems.science`
-
-Problems is the writable, non-authoritative workbench. Each Problem page has
-two explicit modes:
+Each Problem page has two explicit modes:
 
 - **State** reads the same exact Repository and projection facts as the
   Observatory.
@@ -186,11 +196,13 @@ activity database cannot remove or change that state.
 
 ### Navigation
 
-Problems has one primary destination: Problems. A Problem page owns the State
-and Work mode switch. Account controls and search are tools, not destinations.
-About and advanced records are quiet outbound links, not peers of Problems.
+The global sidebar follows user intent: Home, Problems, Work, Hubs, and Activity,
+with Repositories and Sources visually subordinated as Library. A Problem page
+replaces that global list with contextual State and Work navigation plus links
+to its exact records. Account controls and search are tools, not destinations.
+Advanced record collections do not become global peers of Problems.
 
-The Observatory keeps one contextual record-navigation system for expert use.
+Records keeps one contextual record-navigation system for expert use.
 Outside a Repository it may expose release-wide ledgers; inside one it becomes
 that Repository's records. Those routes remain durable, but the public product
 does not ask a reader to traverse them before understanding or working on a
@@ -198,7 +210,7 @@ Problem.
 
 ## Shared system
 
-The three applications are independently deployable surfaces of one product:
+The two applications are independently deployable surfaces of one product:
 
 - `@vela/brand` supplies framework-neutral identity, tokens, type roles, fonts,
   and marks;
@@ -209,9 +221,8 @@ The three applications are independently deployable surfaces of one product:
   migrations, tenant authorization, and unsigned Submission drafts.
 
 Applications share foundations, not whole page implementations. Editorial
-compositions remain in `apps/www`; Observatory shells and graph controllers
-remain in `apps/observatory`; Problem state and workbench compositions remain
-in `apps/problems`.
+compositions remain in `apps/www`; Problem State, Work, record inspection,
+search, and graph compositions live together in `apps/observatory`.
 
 The Vela design system is private and product-bound. `packages/ui` is source
 shared by this workspace and future private Vela applications, consumed through
@@ -243,8 +254,8 @@ documentation, not above every page that lists them.
 - A signed-in account may own hosted activity. It is not a Vela actor identity,
   carries no repository authority, and cannot issue a Decision or write
   Standing.
-- The profile boundary is executable: www stays static; Observatory routes stay
-  exact and read-only; Problems mutations cross `@vela/activity-data`.
+- The profile boundary is executable: www stays static; the Vela application
+  reads exact scientific State; Work mutations cross `@vela/activity-data`.
 - Verification, replay, proposal standing, and scientific acceptance are
   different facts, and no surface may collapse two of them.
 - Search order, graph position, model output, and verifier success never imply
@@ -262,9 +273,9 @@ documentation, not above every page that lists them.
 
 - The Vela sail is the Home affordance on both surfaces. In the Observatory it
   is the mark alone, sized to the sidebar's icon column, with no wordmark.
-- Editorial navigation stays small. Observatory navigation names scientific
-  records. Problems navigation may name activity while keeping State and Work
-  modes explicit.
+- Editorial navigation stays small. The application leads with Problems and
+  keeps advanced record navigation secondary. State and Work remain explicit
+  modes of the same Problem.
 - A page picks one archetype: a collection gets to its rows, a record opens with
   the record, a Repository opens as a repository whose most prominent action is
   getting the record, an instrument opens with its toolbar and canvas.

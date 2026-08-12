@@ -12,7 +12,6 @@ function fixture(files: Record<string, string>) {
   for (const directory of [
     "apps/www/src",
     "apps/observatory/src",
-    "apps/problems/src",
     "packages/activity-data/src",
     "packages/observatory-data/src",
   ]) {
@@ -31,14 +30,13 @@ afterEach(() => {
 });
 
 describe("scientific-authority profiles", () => {
-  test("allows static www, exact Observatory reads, and activity-owned Problems mutations", () => {
+  test("allows static www, exact State reads, and the declared activity action", () => {
     const root = fixture({
       "apps/www/src/app/page.tsx": "export default function Page() { return null; }\n",
       "apps/observatory/src/app/api/search/route.ts": "export async function GET() { return Response.json([]); }\n",
       "apps/observatory/src/app/.well-known/vela-site.json/route.ts": "export async function GET() { return Response.json({ authority: 'read_only_projection' }); }\n",
       "apps/observatory/src/app/repositories/erdos/dossiers/one.json/route.ts": "export async function GET() { return Response.json({ authority: 'read_only_projection' }); }\n",
-      "apps/problems/src/app/api/attempts/route.ts": "import { createAttempt } from '@vela/activity-data';\nexport async function POST() { return Response.json(await createAttempt()); }\n",
-      "apps/problems/src/components/save.tsx": "export function save() { return fetch('/api/attempts', { method: 'POST' }); }\n",
+      "apps/observatory/src/app/actions/activity.ts": "'use server';\nimport { createAttempt } from '@vela/activity-data';\nexport async function save() { return createAttempt(); }\n",
       "packages/activity-data/src/contracts.ts": "import { canonicalJson } from '@vela/observatory-data/canonical';\nexport const root = canonicalJson({});\n",
     });
     expect(inspectScientificAuthorityBoundary(root)).toEqual([]);
@@ -61,7 +59,7 @@ describe("scientific-authority profiles", () => {
     ]));
   });
 
-  test("keeps Observatory scientific routes exact and read-only", () => {
+  test("keeps Vela scientific routes exact and confines mutation", () => {
     const root = fixture({
       "apps/observatory/src/app/api/state/route.ts": "export const POST = async () => new Response();\n",
       "apps/observatory/src/app/action.ts": "'use server';\nexport async function mutate() {}\n",
@@ -70,32 +68,32 @@ describe("scientific-authority profiles", () => {
       "apps/observatory/src/lib/remote.ts": "export const state = fetch('/api/unrooted');\n",
     });
     expect(new Set(inspectScientificAuthorityBoundary(root).map(({ rule }) => rule))).toEqual(new Set([
-      "observatory_route_handler",
-      "observatory_mutation",
+      "app_route_handler",
+      "app_mutation",
       "observatory_server_action",
-      "observatory_request_state",
-      "observatory_runtime_environment",
-      "observatory_request_fetch",
+      "app_request_state",
+      "app_runtime_environment",
+      "app_request_fetch",
     ]));
   });
 
-  test("requires Problems mutations to cross activity-data", () => {
+  test("confines Work mutations and remote fetches to the declared boundary", () => {
     const root = fixture({
-      "apps/problems/src/app/api/attempts/route.ts": "export async function POST() { return new Response(); }\n",
-      "apps/problems/src/app/action.ts": "'use server';\nexport async function save() {}\n",
-      "apps/problems/src/lib/remote.ts": "export const result = fetch('https://worker.invalid/run');\n",
+      "apps/observatory/src/app/actions/other.ts": "'use server';\nexport async function save() {}\n",
+      "apps/observatory/src/app/api/attempts/route.ts": "export async function POST() { return new Response(); }\n",
+      "apps/observatory/src/lib/remote.ts": "export const result = fetch('https://worker.invalid/run');\n",
     });
-    expect(inspectScientificAuthorityBoundary(root)).toEqual([
-      expect.objectContaining({ file: "apps/problems/src/app/action.ts", rule: "problems_mutation_owner" }),
-      expect.objectContaining({ file: "apps/problems/src/app/api/attempts/route.ts", rule: "problems_mutation_owner" }),
-      expect.objectContaining({ file: "apps/problems/src/lib/remote.ts", rule: "problems_external_fetch" }),
-    ]);
+    expect(new Set(inspectScientificAuthorityBoundary(root).map(({ rule }) => rule))).toEqual(new Set([
+      "observatory_server_action",
+      "app_route_handler",
+      "app_mutation",
+      "app_request_fetch",
+    ]));
   });
 
   test("rejects hosted signing and scientific-state emission", () => {
     const root = fixture({
-      "apps/problems/src/lib/decision.ts": "export const emitDecision = () => ({ schema: 'vela.event.v1' });\n",
-      "packages/activity-data/src/signer.ts": "import { createPrivateKey, sign } from 'node:crypto';\nexport const signStanding = () => sign(null, new Uint8Array(), createPrivateKey('x'));\n",
+      "packages/activity-data/src/signer.ts": "import { createPrivateKey, sign } from 'node:crypto';\nexport const event = { schema: 'vela.event.v1' };\nexport const signStanding = () => sign(null, new Uint8Array(), createPrivateKey('x'));\n",
       "packages/activity-data/src/env.ts": "export const key = process.env.VELA_AUTHORITY_PRIVATE_KEY;\n",
     });
     const rules = inspectScientificAuthorityBoundary(root).map(({ rule }) => rule);
@@ -109,7 +107,7 @@ describe("scientific-authority profiles", () => {
     const root = fixture({
       "apps/www/src/lib/activity.ts": "import '@vela/activity-data';\n",
       "apps/observatory/src/lib/activity.ts": "export * from '@vela/activity-data/contracts';\n",
-      "apps/problems/src/lib/sign.ts": "import('@vela/activity-data/local-signing');\n",
+      "apps/observatory/src/lib/sign.ts": "import('@vela/activity-data/local-signing');\n",
       "packages/activity-data/src/projection.ts": "import { canonicalJson } from '@vela/observatory-data/canonical';\nimport { load } from '@vela/observatory-data';\nexport { canonicalJson, load };\n",
       "packages/observatory-data/src/activity.ts": "import('@vela/activity-data');\n",
     });

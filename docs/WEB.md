@@ -7,32 +7,33 @@ Earlier design and migration plans live under `docs/history/`.
 
 - `www.vela.space` is the canonical editorial surface: Next.js 16, App
   Router, static export (`output: "export"`). Moved off Astro 2026-07-28.
-- `app.vela.space` is the canonical Next.js Repository Observatory surface.
-- `problems.science` is the target domain for the authenticated Problems
-  workbench. No production domain is attached without user authorization.
+- `app.vela.space` and `problems.science` serve the same Vela application.
+  Problems is its conceptual center, while Home orients readers across current
+  change, open work, communities, and the exact scientific record. Advanced
+  records remain available in the same runtime.
 - `vela.space` redirects to `www`; Observatory paths on `www` redirect to `app`.
 - Hosted Vela is non-authoritative. The Observatory reads a bounded SELECT-only
-  projection from Neon. Problems writes hosted research activity through
+  projection from Neon. Work mode writes hosted research activity through
   `@vela/activity-data`. Canonical custody remains in Repository Git
   repositories.
 - Normative protocol and CLI documentation remains in the Vela repository at
   an exact release commit. This repository owns onboarding and explanation,
   and serves it from `www.vela.space/docs`.
 
-`bun run check:boundary` applies one profile per surface. It keeps www static,
-limits Observatory Route Handlers to declared exact-root reads and identity,
-and requires Problems mutations to call `@vela/activity-data`. ESLint blocks
+`bun run check:boundary` applies one profile per deployable application. It
+keeps www static, limits Vela Route Handlers to declared exact-root reads,
+identity, and draft export, and requires Work mutations to call
+`@vela/activity-data`. ESLint blocks
 direct database clients, hosted signing machinery, and WorkOS imports outside
 the named identity files. The package-direction check keeps
 `@vela/observatory-data` independent of mutable activity and limits
 `@vela/activity-data` reuse to exact canonical and read contracts.
 
-The repository is a Bun workspace with seven maintained boundaries:
+The repository is a Bun workspace with six maintained boundaries:
 
 ```text
 apps/www                editorial Next.js application (static export)
-apps/observatory        read-only Next.js application
-apps/problems           writable, non-authoritative Problems workbench
+apps/observatory        unified Vela application: Problem State, Work, and Records
 packages/brand          governed identity, tokens, fonts, and delivery assets
 packages/ui             shared shadcn/Base UI source and Vela presentation semantics
 packages/observatory-data  Git-to-Neon projection, validation, search, and manifests
@@ -40,7 +41,7 @@ packages/activity-data  hosted activity schema, authorization, and mutation API
 ```
 
 `packages/brand` is framework-neutral. `packages/ui` is private React source
-shared by eligible interactions in the three applications and future private
+shared by eligible interactions in the two applications and future private
 Vela applications. Route composition stays app-local. The internal registry is
 product-bound and is never published as a separate UI library; see
 [`design-system.md`](design-system.md).
@@ -494,14 +495,12 @@ and desktop widths. Stale screenshot binaries are not treated as product truth.
 
 ## Deployment topology
 
-The `constellate-dc388081` Vercel team has two active Vela Web projects.
-Problems has no production project or domain attached in this milestone:
+The `constellate-dc388081` Vercel team has two active Vela Web projects:
 
 | Project | Application | Production domains |
 | --- | --- | --- |
 | `vela-web-www` | `apps/www` | `www.vela.space`, redirect aliases |
-| `vela-web-observatory` | `apps/observatory` | `app.vela.space`, `app.constellate.science` redirect |
-| Not attached | `apps/problems` | None |
+| `vela-web-observatory` | `apps/observatory` | `app.vela.space`, `problems.science`, `app.constellate.science` redirect |
 
 There is no active legacy Vela Vercel project. `prospect` and `snowchild` are
 unrelated and outside this workspace.
@@ -511,15 +510,11 @@ unrelated and outside this workspace.
 The two active applications deliberately use different release paths:
 
 - `www.vela.space` uses Vercel's Git deployment for relevant `main` changes.
-- `app.vela.space` has direct Git deployment disabled. Relevant `main` changes
+- The unified application has direct Git deployment disabled. Relevant `main` changes
   trigger `refresh-projection.yml`, which synchronizes the additive schema,
   builds and verifies the one current projection contract, activates its exact
-  release root, and only then invokes the Observatory deploy hook.
-
-Problems remains on local and noncanonical release-candidate builds until a
-separate deployment and domain attachment is explicitly authorized. Adding it
-to the workspace does not authorize a Vercel project, production environment,
-`problems.science` DNS, or a public manifest contract.
+  release root, and only then invokes the application deploy hook. That single
+  deployment serves both product domains.
 
 This ordering is mandatory. It prevents current application code from racing a
 predecessor read model and makes one workflow own both projection activation and
@@ -596,9 +591,8 @@ shipping one; the preconditions are the gates.
 2. Merge to clean `main`. The two active release paths ship the changed application on
    their own, and the scope is decided for you — `vercel-should-build.mjs` for
    the editorial site, `refresh-projection.yml`'s path filters for the
-   Observatory. A shared brand or data-contract change may deploy both;
-   editorial-only work does not redeploy the Observatory. Problems does not
-   deploy until its separate production attachment is authorized.
+   Vela application. A shared brand or data-contract change may deploy both;
+   editorial-only work does not redeploy the Vela application.
 3. Verify the production manifests and canonical domains against the exact
    merged commit and the activated projection root. The untouched application
    must retain its prior deployment identity and behavior.

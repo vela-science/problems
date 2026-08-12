@@ -13,7 +13,6 @@ import { fontFileStem, rejectedFontFamilies, webFontProfiles } from "../packages
 
 const repository = resolve(import.meta.dirname, "..");
 const observatory = resolve(repository, "apps/observatory");
-const problems = resolve(repository, "apps/problems");
 const editorial = resolve(repository, "apps/www");
 const localEnvironment = resolve(observatory, ".env.local");
 if (!process.env.VELA_PROJECTION_DATABASE_URL && existsSync(localEnvironment)) {
@@ -33,11 +32,7 @@ const prebuilt = filesBelow(resolve(observatory, ".next/server/app")).filter((pa
 /* A ceiling here IS meaningful — prerendering per-record pages would put
    thousands of files in the build — but it bounds a category error rather than
    a byte count, so it sits well above ordinary growth. */
-if (prebuilt.length >= 500) throw new Error(`Observatory prebuild has ${prebuilt.length} pages; per-record routes must stay dynamic`);
-const problemPrebuilt = scope === "all"
-  ? filesBelow(resolve(problems, ".next/server/app")).filter((path) => path.endsWith(".html"))
-  : [];
-if (problemPrebuilt.length >= 50) throw new Error(`Problems prebuild has ${problemPrebuilt.length} pages; exact Problem routes must stay dynamic`);
+if (prebuilt.length >= 500) throw new Error(`Vela app prebuild has ${prebuilt.length} pages; per-record and exact Problem routes must stay dynamic`);
 
 /* Sizes are still measured and reported — a number in CI output is useful for
    noticing drift. None of them fails the build: a threshold picked once cannot
@@ -82,12 +77,6 @@ const editorialFonts = readdirSync(resolve(editorial, "public/assets/fonts")).so
 // it, rather than restating the two filenames a third time.
 if (JSON.stringify(productFonts) !== JSON.stringify([...webFontProfiles.product].sort())) {
   throw new Error("Observatory font delivery profile drift");
-}
-if (scope === "all") {
-  const problemFonts = readdirSync(resolve(problems, "public/assets/fonts")).sort();
-  if (JSON.stringify(problemFonts) !== JSON.stringify([...webFontProfiles.product].sort())) {
-    throw new Error("Problems font delivery profile drift");
-  }
 }
 /* Rejected faces, read from the one list that names them. This check looks at
    delivered FILES while check-brand.mjs looks at generated CSS families, so
@@ -167,7 +156,6 @@ console.log(JSON.stringify({
   schema: "vela.web-budgets.v1",
   scope,
   observatory_prebuilt: prebuilt.length,
-  problems_prebuilt: problemPrebuilt.length,
   search_html_bytes: searchHtml.byteLength,
   search_response_bytes: searchPayload.byteLength,
   search_response_gzip_bytes: searchGzip,

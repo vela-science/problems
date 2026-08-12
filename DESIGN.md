@@ -30,13 +30,12 @@ composition.
 | Brand | `packages/brand` | DTCG-shaped tokens, type roles, fonts, sail geometry, state colours, licences, deterministic exports |
 | React UI | `packages/ui` | Official shadcn `base-nova` primitives on Base UI and stable Vela presentation semantics |
 | Editorial composition | `apps/www` | Authored publications, figures, product narrative, and documentation layouts |
-| Observatory composition | `apps/observatory` | Exact-read shell, scientific records, URL state, and the Sigma graph |
-| Problems composition | `apps/problems` | Problem State and Work modes, hosted activity, and local-signing handoff |
-| Exact data | `packages/observatory-data` | Rooted scientific projections consumed by all three applications |
+| Vela application | `apps/observatory` | Problem State and Work, advanced records, hosted activity, URL state, local-signing handoff, and the Sigma graph |
+| Exact data | `packages/observatory-data` | Rooted scientific projections consumed by both applications |
 | Activity data | `packages/activity-data` | Mutable hosted workspaces, attempts, discussion, rooted metadata, and unsigned drafts |
 
 `@vela/brand` is framework-neutral. `@vela/ui` is the shared React source for
-the three Next.js applications and future private Vela applications. Applications
+the two Next.js applications and future private Vela applications. Applications
 share primitives and stable semantics; they do not share whole route layouts.
 
 `packages/ui/components.json` is the only shadcn source configuration. Vela
@@ -58,14 +57,14 @@ projection. Nothing on it is written about the product.
 
 ### Product
 
-`app.vela.space` and `problems.science` use the instrument register: a
+`app.vela.space` and `problems.science` serve the same application and use the instrument register: a
 cool-tinted light ground and an equivalent midnight one, both drawn from a single hue family so a small
 luminance step still reads as a step; Geist for interface text, IBM Plex Mono
 for identifiers and exact values, compact controls, and dense but readable
 ledgers. Dark mode is equivalent, not a separate aesthetic.
 
 The registers share the sail, state semantics, token source, accessible
-interaction, and exact data. Problems adds writable controls without changing
+interaction, and exact data. Work mode adds writable controls without changing
 the scientific-state presentation.
 
 ## Vocabulary
@@ -185,15 +184,15 @@ not infer a change in Standing.
 
 ## Navigation
 
-The visible product model is **Problem → State | Work**. Problems is the only
-primary destination. State and Work are modes of the same Problem, never
-parallel products, domains, or sidebars. Repository and protocol records appear
-as context and progressive detail. About, exact-record inspection, search, and
-account are utilities.
+The visible product model is **Home → Problem → State | Work**. Global navigation
+answers five user intents—Home, Problems, Work, Hubs, and Activity—then visually
+subordinates Repositories and Sources as provenance Library. State and Work are
+modes of the same Problem, never parallel products or domains. Inside a Problem
+the sidebar becomes local to that Problem. Protocol records appear as context
+and progressive detail; search and account remain utilities.
 
-The Observatory uses one contextual navigation system and one scope at a time
-as an advanced records inspector. Its object collections do not define the
-Problems navigation.
+The advanced Records layer uses one contextual navigation system and one scope
+at a time. Its object collections do not define the primary Problems navigation.
 
 - The **sidebar** is contextual. Outside a Repository it lists release-wide
   destinations. Inside a Repository it becomes that Repository's own sections,

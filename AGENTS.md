@@ -2,14 +2,13 @@
 
 ## Product boundary
 
-This private Bun workspace contains three independently deployable Next.js
+This private Bun workspace contains two independently deployable Next.js
 applications and four shared packages:
 
 - `apps/www`: static editorial site for `www.vela.space`;
-- `apps/observatory`: exact, read-only scientific Observatory for
-  `app.vela.space`;
-- `apps/problems`: authenticated, writable research activity workbench for
-  `problems.science`;
+- `apps/observatory`: the unified Vela product application for
+  `app.vela.space` and `problems.science`, combining exact scientific State,
+  non-authoritative Work, and advanced record inspection;
 - `packages/brand`: framework-neutral tokens, fonts, marks, and licenses;
 - `packages/ui`: shared React UI source built from shadcn `base-nova` on Base
   UI, plus stable Vela presentation semantics;
@@ -23,7 +22,7 @@ provider-neutral session-reference, and unsigned Submission-draft records throug
 `@vela/activity-data`. It cannot issue a Vela Event or Decision, change
 Standing, sign on a user's behalf, or hold a repository authority key.
 
-The Observatory remains an exact SELECT-only projection. Canonical scientific
+The scientific-state plane remains an exact SELECT-only projection. Canonical scientific
 custody and authority remain in Vela Repository Git repositories. Hosted
 accounts remain separate from Vela actor identities.
 
@@ -32,10 +31,8 @@ accounts remain separate from Vela actor identities.
 - Editorial routes: `apps/www/src/app`
 - Editorial compositions and content: `apps/www/src/components`,
   `apps/www/src/content`, `apps/www/src/styles`
-- Observatory routes and product compositions: `apps/observatory/src/app`,
+- Vela product routes and compositions: `apps/observatory/src/app`,
   `apps/observatory/src/components`
-- Problems routes and workbench compositions: `apps/problems/src/app`,
-  `apps/problems/src/components`
 - Brand contract: `packages/brand/vela.tokens.json` and its generated outputs
 - Shared React primitives and semantics: `packages/ui`
 - Repository and math-source projections: `packages/observatory-data`
@@ -72,7 +69,7 @@ when their authors wrote them. Do not rewrite them to match the current system.
 - Preserve exact-state semantics and the distinction between Verification and
   acceptance.
 - Preserve the canonical Vela sail unless an approved brand pass replaces it.
-- Problems mutations must cross `@vela/activity-data`. Do not connect an
+- Work mutations must cross `@vela/activity-data`. Do not connect an
   application to Postgres, add another activity store, or let
   `@vela/observatory-data` depend on mutable activity.
 - Reuse `@vela/observatory-data` exact reads and canonical contracts. Do not add

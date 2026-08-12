@@ -14,7 +14,7 @@ const commonRules = [
   ["server database environment name", /\bVELA_(?:ACTIVITY|PROJECTION)(?:_WRITER)?_DATABASE_URL\b/gu],
   ["repository authority key name", /\b(?:VELA_AUTHORITY_PRIVATE_KEY|VELA_SIGNING_PRIVATE_KEY|PRIVATE_KEY_HEX)\b/gu],
 ];
-const problemsPrivacyRules = [
+const activityPrivacyRules = [
   ["hosted account identifier", /\buser_[A-Za-z0-9]{12,}\b/gu],
   ["email address", /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/giu],
   ["live proof fixture", /\bliveproof\b/giu],
@@ -32,8 +32,7 @@ function deliveredFiles(repository) {
     ...filesBelow(resolve(app("www"), "out"))
       .filter((path) => deliveredExtensions.test(path) && !path.endsWith(".map"))
       .map((path) => ({ path, profile: "www" })),
-    ...nextFiles("observatory").map((path) => ({ path, profile: "observatory" })),
-    ...nextFiles("problems").map((path) => ({ path, profile: "problems" })),
+    ...nextFiles("observatory").map((path) => ({ path, profile: "app" })),
   ];
 }
 
@@ -42,8 +41,8 @@ export function scanPublicOutput(repository) {
   const files = deliveredFiles(repository);
   for (const file of files) {
     const content = readFileSync(file.path, "utf8");
-    const rules = file.profile === "problems"
-      ? [...commonRules, ...problemsPrivacyRules]
+    const rules = file.profile === "app"
+      ? [...commonRules, ...activityPrivacyRules]
       : commonRules;
     for (const [rule, pattern] of rules) {
       pattern.lastIndex = 0;
