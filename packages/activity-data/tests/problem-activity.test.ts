@@ -30,6 +30,8 @@ function fixture() {
       id: "approach-1", workspace_id: workspaceId, anchor_root: anchorRoot,
       parent_approach_id: null, created_by_account_id: accountId,
       title: "Finite reduction", summary: "Test a bounded obstruction.", state: "open",
+      target_id: null, target_packet_root: null, target_record_root: null,
+      authority_effect: "none",
       version: 2, created_at: createdAt, updated_at: createdAt,
     }],
     attempts: [{
@@ -74,7 +76,13 @@ describe("problem activity response contract", () => {
   test("maps every activity row into stable camel-case records", () => {
     const activity = parseProblemActivity(fixture(), anchorRoot);
     expect(activity.following).toBe(true);
-    expect(activity.approaches[0]).toMatchObject({ id: "approach-1", anchorRoot, version: 2 });
+    expect(activity.approaches[0]).toMatchObject({
+      id: "approach-1",
+      anchorRoot,
+      version: 2,
+      target: { kind: "unbound", targetId: null, targetPacketRoot: null, targetRecordRoot: null },
+      authorityEffect: "none",
+    });
     expect(activity.attempts[0]).toMatchObject({ id: "attempt-1", approachId: "approach-1" });
     expect(activity.discussion[0]).toMatchObject({ id: "discussion-1", approachId: "approach-1" });
     expect(activity.workRequests[0]).toMatchObject({ id: "request-1", kind: "reproduction" });
@@ -113,6 +121,42 @@ describe("problem activity response contract", () => {
     const nullableSubject = fixture();
     (nullableSubject.audit[0] as { subject_kind: string | null }).subject_kind = null;
     expect(() => parseProblemActivity(nullableSubject, anchorRoot)).toThrow("audit subject_kind");
+  });
+
+  test("parses exact Target bindings and refuses partial or authoritative rows", () => {
+    const bound = fixture();
+    bound.approaches[0]!.target_id = "erdos:321:bounded-search";
+    bound.approaches[0]!.target_packet_root = root("b");
+    bound.approaches[0]!.target_record_root = root("c");
+    expect(parseProblemActivity(bound, anchorRoot).approaches[0]?.target).toEqual({
+      kind: "target",
+      targetId: "erdos:321:bounded-search",
+      targetPacketRoot: root("b"),
+      targetRecordRoot: root("c"),
+    });
+
+    const partial = fixture();
+    partial.approaches[0]!.target_id = "erdos:321:bounded-search";
+    expect(() => parseProblemActivity(partial, anchorRoot)).toThrow("Target binding");
+
+    const malformed = fixture();
+    malformed.approaches[0]!.target_id = "erdos:321:bounded-search";
+    malformed.approaches[0]!.target_packet_root = "sha256:short" as typeof anchorRoot;
+    expect(() => parseProblemActivity(malformed, anchorRoot)).toThrow("target_packet_root");
+
+    const emptyTarget = fixture();
+    emptyTarget.approaches[0]!.target_id = "   ";
+    emptyTarget.approaches[0]!.target_packet_root = root("b");
+    expect(() => parseProblemActivity(emptyTarget, anchorRoot)).toThrow("Target binding");
+
+    const paddedTarget = fixture();
+    paddedTarget.approaches[0]!.target_id = " erdos:321:bounded-search ";
+    paddedTarget.approaches[0]!.target_packet_root = root("b");
+    expect(() => parseProblemActivity(paddedTarget, anchorRoot)).toThrow("Target binding");
+
+    const authorityCreep = fixture();
+    authorityCreep.approaches[0]!.authority_effect = "standing";
+    expect(() => parseProblemActivity(authorityCreep, anchorRoot)).toThrow("authority_effect");
   });
 
   test("refuses JavaScript-coercible counters and nonpositive versions", () => {

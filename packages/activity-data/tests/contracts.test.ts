@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import {
   assessAnchorFreshness,
+  commandRequestRoot,
   followsCurrentAnchor,
   scientificAnchorRoot,
   type ScientificAnchor,
@@ -48,5 +49,32 @@ describe("scientific activity anchors", () => {
       state: "unavailable",
       fields: ["current_anchor"],
     });
+  });
+});
+
+describe("Approach Target command identity", () => {
+  test("roots every optional binding field independently", () => {
+    const unbound = {
+      anchor: { root: root("a") },
+      title: "Finite reduction",
+      summary: "Test a bounded obstruction.",
+      target_id: null,
+      target_packet_root: null,
+      target_record_root: null,
+    };
+    const target = {
+      ...unbound,
+      target_id: "erdos:321:bounded-search",
+      target_packet_root: root("b"),
+    };
+    const unboundRoot = commandRequestRoot("approach.create", unbound);
+    const targetRoot = commandRequestRoot("approach.create", target);
+    expect(targetRoot).not.toBe(unboundRoot);
+    expect(commandRequestRoot("approach.create", { ...target, target_id: "erdos:321:other" }))
+      .not.toBe(targetRoot);
+    expect(commandRequestRoot("approach.create", { ...target, target_packet_root: root("c") }))
+      .not.toBe(targetRoot);
+    expect(commandRequestRoot("approach.create", { ...target, target_record_root: root("d") }))
+      .not.toBe(targetRoot);
   });
 });

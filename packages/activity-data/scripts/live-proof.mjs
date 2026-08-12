@@ -3,6 +3,7 @@ import { neon } from "@neondatabase/serverless";
 import {
   addDiscussionEntry,
   attachArtifact,
+  commandRequestRoot,
   createApproach,
   createAttempt,
   createSubmissionDraftExport,
@@ -10,6 +11,7 @@ import {
   ensureCurrentAccount,
   exportSubmissionDraft,
   followProblem,
+  forkApproach,
   getProblemActivity,
   saveSubmissionDraft,
   scientificAnchorRoot,
@@ -62,6 +64,14 @@ async function ownerTransaction(statements) {
   ]);
 }
 
+const preEnableCountResults = await ownerTransaction((transaction) => [transaction.query(
+  "SELECT count(*)::integer AS bound_approaches FROM activity.approaches WHERE target_id IS NOT NULL",
+)]);
+const preEnableBoundApproaches = Number(preEnableCountResults.at(-1)?.[0]?.bound_approaches);
+if (preEnableBoundApproaches !== 0) {
+  throw new Error(`Target-bound write enablement requires zero existing bound rows, found ${preEnableBoundApproaches}`);
+}
+
 async function standingSnapshot() {
   const [current] = await projectionSql.query(
     "SELECT release_root FROM observatory.current_release",
@@ -108,6 +118,20 @@ const anchor = {
   claimStanding: null,
 };
 const currentAnchorRoot = scientificAnchorRoot(anchor);
+const commandAnchor = {
+  root: currentAnchorRoot,
+  projection_release_root: anchor.projectionReleaseRoot,
+  repository_id: anchor.repositoryId,
+  repository_root: anchor.repositoryRoot,
+  source_commit: anchor.sourceCommit,
+  source_tree: anchor.sourceTree,
+  problem_id: anchor.problemId,
+  problem_record_root: anchor.problemRecordRoot,
+  source_observation_root: anchor.sourceObservationRoot,
+  claim_id: anchor.claimId,
+  claim_root: anchor.claimRoot,
+  claim_standing: anchor.claimStanding,
+};
 
 await denied(
   getProblemActivity({
@@ -145,6 +169,120 @@ await denied(createApproach(contextA, {
   title: "Changed request",
   summary: "The same idempotency key must reject changed bytes.",
 }, approachCommand), "idempotency key reuse");
+
+const boundTarget = {
+  kind: "target",
+  targetId: `erdos:321:live-proof:${suffix}`,
+  targetPacketRoot: root("8"),
+  targetRecordRoot: null,
+};
+const boundTitle = "Live proof Target-bound approach";
+const boundSummary = "Exact Target packet provenance with no authority effect.";
+const boundPayload = {
+  anchor: commandAnchor,
+  title: boundTitle,
+  summary: boundSummary,
+  target_id: boundTarget.targetId,
+  target_packet_root: boundTarget.targetPacketRoot,
+  target_record_root: null,
+};
+const boundRequestRoot = commandRequestRoot("approach.create", boundPayload);
+const boundCommand = command();
+const boundApproach = await createApproach(contextA, {
+  anchor,
+  title: boundTitle,
+  summary: boundSummary,
+  target: boundTarget,
+}, boundCommand);
+if (
+  boundApproach.target_id !== boundTarget.targetId
+  || boundApproach.target_packet_root !== boundTarget.targetPacketRoot
+  || boundApproach.target_record_root !== null
+  || boundApproach.authority_effect !== "none"
+) {
+  throw new Error(`Target-bound create returned inexact provenance: ${JSON.stringify(boundApproach)}`);
+}
+const retriedBoundApproach = await createApproach(contextA, {
+  anchor,
+  title: boundTitle,
+  summary: boundSummary,
+  target: boundTarget,
+}, boundCommand);
+if (retriedBoundApproach.id !== boundApproach.id) {
+  throw new Error("exact Target-bound retry returned a different resource");
+}
+const changedBoundTarget = { ...boundTarget, targetPacketRoot: root("9") };
+const changedBoundRequestRoot = commandRequestRoot("approach.create", {
+  ...boundPayload,
+  target_packet_root: changedBoundTarget.targetPacketRoot,
+});
+if (changedBoundRequestRoot === boundRequestRoot) {
+  throw new Error("changed Target packet did not change the command request root");
+}
+await denied(createApproach(contextA, {
+  anchor,
+  title: boundTitle,
+  summary: boundSummary,
+  target: changedBoundTarget,
+}, boundCommand), "Target-bound packet and request-root change");
+
+await denied(createApproach({ accountId: accountB.id, workspaceId: workspaceA.id }, {
+  anchor,
+  title: "Cross-tenant Target-bound write must fail",
+  summary: "A non-member cannot retain Target provenance in another Workspace.",
+  target: boundTarget,
+}, command()), "cross-tenant Target-bound activity write");
+await denied(getProblemActivity({
+  accountId: accountB.id,
+  workspaceId: workspaceA.id,
+  repositoryId: anchor.repositoryId,
+  problemId: anchor.problemId,
+  currentAnchorRoot,
+}), "cross-tenant Target-bound activity read");
+
+const forkTitle = "Live proof Target-bound fork";
+const forkSummary = "The immutable exact Target binding must be inherited.";
+const forkExpectedVersion = Number(boundApproach.version);
+const forkRequestRoot = commandRequestRoot("approach.fork", {
+  source_approach_id: boundApproach.id,
+  title: forkTitle,
+  summary: forkSummary,
+}, forkExpectedVersion);
+const boundFork = await forkApproach(contextA, {
+  sourceApproachId: String(boundApproach.id),
+  expectedVersion: forkExpectedVersion,
+  title: forkTitle,
+  summary: forkSummary,
+}, command());
+if (
+  boundFork.parent_approach_id !== boundApproach.id
+  || boundFork.target_id !== boundTarget.targetId
+  || boundFork.target_packet_root !== boundTarget.targetPacketRoot
+  || boundFork.target_record_root !== null
+  || boundFork.authority_effect !== "none"
+) {
+  throw new Error(`Target-bound fork changed immutable provenance: ${JSON.stringify(boundFork)}`);
+}
+
+const boundReadView = await getProblemActivity({
+  accountId: accountA.id,
+  workspaceId: workspaceA.id,
+  repositoryId: anchor.repositoryId,
+  problemId: anchor.problemId,
+  currentAnchorRoot,
+});
+for (const id of [boundApproach.id, boundFork.id]) {
+  const retained = boundReadView.approaches.find((entry) => entry.id === id);
+  if (
+    retained?.target.kind !== "target"
+    || retained.target.targetId !== boundTarget.targetId
+    || retained.target.targetPacketRoot !== boundTarget.targetPacketRoot
+    || retained.target.targetRecordRoot !== null
+    || retained.authorityEffect !== "none"
+  ) {
+    throw new Error(`Target-bound read lost exact provenance for ${id}`);
+  }
+}
 
 const attempt = await createAttempt(contextA, {
   approachId: String(approach.id),
@@ -315,8 +453,22 @@ const activity = await getProblemActivity({
   problemId: anchor.problemId,
   currentAnchorRoot,
 });
-const approachAudits = activity.audit.filter((entry) => entry.operation === "approach.create");
+const approachAudits = activity.audit.filter(
+  (entry) => entry.operation === "approach.create" && entry.subjectId === approach.id,
+);
 if (approachAudits.length !== 1) throw new Error("idempotent retry appended a duplicate audit entry");
+const boundAudits = activity.audit.filter(
+  (entry) => entry.operation === "approach.create" && entry.subjectId === boundApproach.id,
+);
+if (boundAudits.length !== 1 || boundAudits[0]?.requestRoot !== boundRequestRoot) {
+  throw new Error("Target-bound create audit did not retain the exact request root once");
+}
+const forkAudits = activity.audit.filter(
+  (entry) => entry.operation === "approach.fork" && entry.subjectId === boundFork.id,
+);
+if (forkAudits.length !== 1 || forkAudits[0]?.requestRoot !== forkRequestRoot) {
+  throw new Error("Target-bound fork audit did not retain the exact request root once");
+}
 const standingAfter = await standingSnapshot();
 if (canonicalJson(standingAfter) !== canonicalJson(standingBefore)) {
   throw new Error("activity proof changed Observatory Standing");
@@ -331,6 +483,7 @@ console.log(JSON.stringify({
   accountB: accountB.id,
   activityCounts: {
     approaches: activity.approaches.length,
+    targetBoundApproaches: activity.approaches.filter((entry) => entry.target.kind === "target").length,
     attempts: activity.attempts.length,
     privateDiscussionForAuthor: activity.discussion.length,
     artifacts: activity.artifacts.length,
@@ -341,10 +494,15 @@ console.log(JSON.stringify({
   standing: standingAfter,
   crossTenantDenied: true,
   crossTenantWriteDenied: true,
+  crossTenantTargetBoundReadDenied: true,
+  crossTenantTargetBoundWriteDenied: true,
   unsignedExportDenied: true,
   removedMemberDenied: true,
   privateNoteIsolated: true,
   idempotencyProved: true,
+  targetBoundIdempotencyAndAuditProved: true,
+  targetBoundForkInheritanceProved: true,
+  preEnableBoundApproaches,
   optimisticVersioningProved: true,
   exactAnchorFollowingProved: true,
   appBaseTablesDenied: true,

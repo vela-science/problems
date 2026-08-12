@@ -1,6 +1,6 @@
 # ADR: Bind a Workspace Approach to one exact Target packet
 
-**Status:** proposed; design reviewed; database migration not created or applied
+**Status:** implementation candidate; database migration created but not applied
 
 **Date:** 2026-08-12
 
@@ -12,9 +12,10 @@
 
 ## Context
 
-The current Workspace roots every Approach in one exact scientific anchor, but
-does not persist which Target caused the Approach to exist. The UI therefore
-correctly calls every Approach unbound. Current source-owned Targets already
+At the design baseline, the Workspace rooted every Approach in one exact
+scientific anchor, but did not persist which Target caused the Approach to
+exist. The UI therefore correctly called every Approach unbound. Current
+source-owned Targets already
 arrive as `WorkOffer` rows containing `target_id` and an exact rooted packet
 (`packet.sha256`, path, and schema) in
 `packages/observatory-data/src/index.ts`. The mutable activity database cannot
@@ -144,11 +145,26 @@ The database still validates the all-or-nothing shape and roots. It does not
 claim the Target exists or is current; a compromised app credential can bypass
 the application read, which remains an explicit residual risk in GOV-03.
 
-## Database migration design
+### Server-only write gate
 
-No migration file is added or applied by this Phase 0 design tranche. When the
-implementation gate opens, create one new immutable migration after
-`20260812_current_anchor_read.sql`; never rewrite either applied migration.
+Target-bound creation is independently gated by
+`VELA_TARGET_BOUND_APPROACH_ENABLED`. Only the exact string `true` enables the
+write. An absent value, `false`, whitespace, case drift, or any malformed value
+is disabled. `createTargetApproachAction` checks this gate before loading
+scientific State, resolving hosted identity, or calling activity data, so a
+direct form post cannot bypass the UI state. The Workspace may still read and
+render exact bound rows while writes are disabled; the form is absent and the
+UI says that binding-aware reads are active but Target-bound creation is
+unavailable. Unbound creation remains available from Workspace Overview.
+
+## Database migration
+
+The implementation candidate adds the immutable, additive
+`20260812_target_bound_approach.sql` after
+`20260812_current_anchor_read.sql`; neither applied predecessor was rewritten.
+The new migration has not been applied to Neon or any live database. It remains
+frozen for review and disposable-local database proof before an operator may
+run the rooted migration entrypoint.
 
 The additive DDL should be equivalent to:
 
@@ -169,6 +185,7 @@ ALTER TABLE activity.approaches
       target_id IS NOT NULL
       AND target_packet_root IS NOT NULL
       AND length(btrim(target_id)) BETWEEN 1 AND 1000
+      AND target_id = btrim(target_id)
       AND target_packet_root ~ '^sha256:[0-9a-f]{64}$'
       AND (
         target_record_root IS NULL
@@ -200,36 +217,67 @@ API functions, and it receives no base-table access.
 ## Deployment and compatibility sequence
 
 1. Freeze the migration bytes and run the rooted migration-plan tests.
-2. Verify old application code against a migrated database. Old creation calls
-   omit binding fields and therefore create unbound rows; old parsers ignore
-   additive JSON keys.
+2. Keep `VELA_TARGET_BOUND_APPROACH_ENABLED` absent or exactly `false`. Through
+   the migrator/owner proof path, verify the live count of
+   `activity.approaches.target_id IS NOT NULL` is exactly zero. Do not broaden
+   the application role's base-table privileges to perform this check.
 3. Apply the additive migration through
    `VELA_ACTIVITY_MIGRATOR_DATABASE_URL` on the fixed `vela_activity` database.
-4. Run `activity:db:check`, `activity:db:verify`, and
-   `activity:db:live-proof` before deploying new app code.
-5. Deploy the typed parser, current-offer guard, bound-create action, and UI.
-6. Run signed-out, bound, unbound, stale, narrow-screen, keyboard, and forced-
-   colors browser QA.
+   Run `activity:db:check` and `activity:db:verify`. During this zero-bound-row
+   window the old application may remain deployed: its create payload omits
+   binding fields and remains unbound after migration.
+4. Deploy the binding-aware parser, current-offer guard, default-off action,
+   and UI with writes still disabled. This reader build cannot precede the
+   migration: its fail-closed parser requires the additive columns in every
+   Approach row.
+5. Finish the rollback-window checks against the migrated schema, including an
+   old-client unbound create/read and accurate disabled UI. Then run
+   `activity:db:live-proof`. The proof first reasserts that the live bound-row
+   count is zero through the migrator role; it then creates and reads the first
+   exact bound row, proves fork inheritance, retry/conflict behavior,
+   cross-tenant denial, and audit/request-root linkage without changing app
+   ACLs.
+6. Once the live proof creates its bound row, advance the rollback floor: the
+   only safe application rollback is this binding-aware build with the flag
+   absent/false. Never deploy the pre-binding `9feb6975` reader again, because
+   it would silently present retained bound provenance as unbound.
+7. Run signed-out, disabled, bound, unbound, current/stale-offer, narrow-screen,
+   keyboard, and forced-colors browser QA. Current/stale WorkOffer validation
+   remains an application/browser proof because the activity database cannot
+   read the external offer catalogue.
+8. Set `VELA_TARGET_BOUND_APPROACH_ENABLED=true`, redeploy, recheck direct-post
+   refusal under a temporary default-off deployment, and monitor conflict and
+   authorization outcomes.
 
-The safe application rollback is to deploy the previous code, which ignores
-the additive columns and continues to create unbound Approaches. Do not drop
-binding columns during an incident; that would destroy retained activity
-provenance. A later removal requires a separate retention decision and frozen
-export. Prefer a forward fix.
+Never roll back the DDL during an incident; dropping columns would destroy
+retained activity provenance. After the first bound write, disable new writes
+and forward-fix from the binding-aware reader. A later removal requires a
+separate retention decision and frozen export.
 
 ## UI behavior
 
-- A Target object offers **Start an Approach from this Target** and posts its
-  exact id and packet root.
+- With the server write gate enabled, a Target object offers **Start an
+  Approach from this Target** and posts its exact id and packet root. With the
+  gate disabled, it keeps the rooted Target readable but renders no form and
+  accurately marks creation unavailable.
 - Workspace Overview retains **New unbound Approach**.
-- A bound Approach is nested under its Target in the object tree and displays
+- A bound Approach remains under **Approaches and Attempts**, while its exact
+  `parentId` is presented once as a keyboard-focusable **Bound to Target** link
+  to the matching object under **Targets**. Cross-group relations never
+  relocate Work objects into the Targets list. The relation exists only when
+  both retained Target id and packet root match that offer. An id-only match
+  may offer an explicitly current successor, but never asserts that the
+  historical Approach belongs to the changed packet. The Approach displays
   Target id, packet root, anchor state, and `activity only` / `authority none`.
 - An unbound Approach remains in the Workspace work group and is labelled
   **Unbound activity direction**.
 - A stale bound Approach remains readable. It cannot start new attempts or
-  promotion work; the UI offers creation of a successor from current State.
-- Forks remain beneath the same Target and disclose that they inherited the
-  exact binding.
+  promotion work; when Current State still offers the same Target id, the UI
+  offers creation of a successor from the current packet without relabelling
+  the historical parent.
+- Forks remain in Work, retain the same exact Target relation link, and disclose
+  that they inherited the exact binding. Attempts remain nested beneath their
+  actual parent Approach within Work.
 - No copy says verified, accepted, approved, Standing, or authoritative merely
   because a binding exists.
 
@@ -260,6 +308,9 @@ export. Prefer a forward fix.
 
 ### Server Action tests
 
+- an absent, explicit-false, or malformed feature flag keeps writes disabled;
+- a direct form post is refused by the feature gate before State, identity, or
+  activity access;
 - the unbound action creates an unbound Approach without accepting Target
   fields;
 - the bound action requires every binding field and accepts a current exact
@@ -287,7 +338,11 @@ export. Prefer a forward fix.
 ### Browser tests
 
 - signed-out users receive no hosted Target binding or locator;
-- bound and unbound Approaches have accurate labels and object-tree parents;
+- a default-off deployment retains binding-aware reads but renders no bound
+  form and accurately labels creation unavailable;
+- mixed and all-bound workloads retain the Targets and Approaches/Attempts
+  headings, exact per-group counts, one object node per record, keyboard/ARIA
+  relation truth, and same-group Attempt nesting;
 - stale bound work remains readable but action-disabled;
 - keyboard, touch, 200% zoom, reduced motion, forced colors, and print preserve
   the authority and freshness labels.
@@ -325,8 +380,12 @@ provided the UI says it is unbound and promotion later proves an exact packet.
 
 ## Consequences and next gate
 
-This ADR closes Phase 0 design only. `WEB-01` implementation is not complete,
-and `WEB-02` must not claim bound behavior, until the typed contract, migration,
-current-offer Server Action guard, live database proof, and browser evidence
-all pass. The migration must be reviewed on frozen bytes before anyone runs
-`activity:db:migrate`.
+The candidate now contains the typed contract, additive migration,
+current-offer Server Action guard, default-off server gate, bound/unbound UI,
+parser refusal tests, expanded live-proof source, and disposable-local database
+proof. This is frozen implementation evidence, not a live deployment. `WEB-01`
+and `WEB-02` remain incomplete until independent review, the ordered migration
+and binding-aware default-off deployment, an actual `activity:db:check` /
+`activity:db:verify` / `activity:db:live-proof` run on the fixed database, and
+authenticated browser evidence all pass. The migration must be reviewed on
+frozen bytes before anyone runs `activity:db:migrate`.

@@ -112,6 +112,20 @@ export type ProblemActivityQuery = WorkspaceContext & {
   currentAnchorRoot: HashRoot;
 };
 
+export type ApproachTargetBinding =
+  | {
+      kind: "unbound";
+      targetId: null;
+      targetPacketRoot: null;
+      targetRecordRoot: null;
+    }
+  | {
+      kind: "target";
+      targetId: string;
+      targetPacketRoot: HashRoot;
+      targetRecordRoot: HashRoot | null;
+    };
+
 export type ActivityApproach = {
   id: string;
   workspaceId: string;
@@ -121,6 +135,8 @@ export type ActivityApproach = {
   title: string;
   summary: string;
   state: "open" | "paused" | "completed" | "abandoned";
+  target: ApproachTargetBinding;
+  authorityEffect: "none";
   version: number;
   createdAt: string;
   updatedAt: string;
@@ -233,7 +249,13 @@ export function followsCurrentAnchor(
 
 export type CreateWorkspaceInput = { slug: string; name: string };
 export type FollowProblemInput = { anchor: ScientificAnchor; following: boolean };
-export type CreateApproachInput = { anchor: ScientificAnchor; title: string; summary: string };
+export type CreateApproachInput = {
+  anchor: ScientificAnchor;
+  title: string;
+  summary: string;
+  /** Omission is the backward-compatible Workspace Overview path. */
+  target?: ApproachTargetBinding;
+};
 export type ForkApproachInput = {
   sourceApproachId: string;
   expectedVersion: number;

@@ -37,6 +37,7 @@ describe("scientific-authority profiles", () => {
       "apps/observatory/src/app/.well-known/vela-site.json/route.ts": "export async function GET() { return Response.json({ authority: 'read_only_projection' }); }\n",
       "apps/observatory/src/app/repositories/erdos/dossiers/one.json/route.ts": "export async function GET() { return Response.json({ authority: 'read_only_projection' }); }\n",
       "apps/observatory/src/app/actions/activity.ts": "'use server';\nimport { createAttempt } from '@vela/activity-data';\nexport async function save() { return createAttempt(); }\n",
+      "apps/observatory/src/lib/target-bound-approach.ts": "import 'server-only';\nexport const enabled = process.env.VELA_TARGET_BOUND_APPROACH_ENABLED === 'true';\n",
       "packages/activity-data/src/contracts.ts": "import { canonicalJson } from '@vela/observatory-data/canonical';\nexport const root = canonicalJson({});\n",
     });
     expect(inspectScientificAuthorityBoundary(root)).toEqual([]);

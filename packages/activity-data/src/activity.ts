@@ -6,6 +6,7 @@ import {
   scientificAnchorRoot,
   type ActivityAccount,
   type AddDiscussionEntryInput,
+  type ApproachTargetBinding,
   type AttachArtifactInput,
   type CommandOptions,
   type CreateApproachInput,
@@ -91,6 +92,39 @@ function dbAnchor(anchor: ScientificAnchor): JsonRecord {
     claim_id: anchor.claimId,
     claim_root: anchor.claimRoot,
     claim_standing: anchor.claimStanding,
+  };
+}
+
+function normalizedApproachTarget(target: ApproachTargetBinding | undefined): JsonRecord {
+  if (target === undefined) return {};
+  if (target.kind === "unbound") {
+    if (
+      target.targetId !== null
+      || target.targetPacketRoot !== null
+      || target.targetRecordRoot !== null
+    ) {
+      throw new Error("unbound Approach target fields must be null");
+    }
+    return {
+      target_id: null,
+      target_packet_root: null,
+      target_record_root: null,
+    };
+  }
+  if (target.kind !== "target") throw new Error("Approach target kind is invalid");
+  if (
+    !target.targetId.trim()
+    || target.targetId !== target.targetId.trim()
+    || target.targetId.length > 1_000
+    || !/^sha256:[0-9a-f]{64}$/u.test(target.targetPacketRoot)
+    || (target.targetRecordRoot !== null && !/^sha256:[0-9a-f]{64}$/u.test(target.targetRecordRoot))
+  ) {
+    throw new Error("bound Approach target is invalid");
+  }
+  return {
+    target_id: target.targetId,
+    target_packet_root: target.targetPacketRoot,
+    target_record_root: target.targetRecordRoot,
   };
 }
 
@@ -194,7 +228,10 @@ export function createApproach(
   options: CommandOptions,
 ) {
   return command(context, "approach.create", {
-    anchor: dbAnchor(input.anchor), title: input.title, summary: input.summary,
+    anchor: dbAnchor(input.anchor),
+    title: input.title,
+    summary: input.summary,
+    ...normalizedApproachTarget(input.target),
   }, options);
 }
 

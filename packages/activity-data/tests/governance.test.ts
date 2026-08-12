@@ -12,6 +12,7 @@ describe("Workspace implementation permission matrix", () => {
       "createWorkspaceAction",
       "followProblemAction",
       "createApproachAction",
+      "createTargetApproachAction",
       "forkApproachAction",
       "createAttemptAction",
       "updateAttemptAction",
@@ -123,18 +124,35 @@ describe("Workspace implementation permission matrix", () => {
     expect(boundary).toContain("hosted_signing_dependency");
   });
 
-  test("keeps Target binding denied until the design gate becomes an implementation", () => {
+  test("binds Target activity through the reviewed non-authoritative implementation", () => {
     const adr = read("docs/architecture/target-bound-approach-adr.md");
     const threatModel = read("docs/security/vela-web-threat-model.md");
-    const migrations = [
-      read("packages/activity-data/migrations/20260811_activity_v1.sql"),
-      read("packages/activity-data/migrations/20260812_current_anchor_read.sql"),
-    ].join("\n");
-    expect(adr).toContain("database migration not created or applied");
+    const migration = read("packages/activity-data/migrations/20260812_target_bound_approach.sql");
+    const actions = read("apps/observatory/src/app/actions/activity.ts");
+    const configuration = read("apps/observatory/src/lib/target-bound-approach.ts");
+    const workbench = read("apps/observatory/src/components/vela/workbench.tsx");
+    const liveProof = read("packages/activity-data/scripts/live-proof.mjs");
+    expect(adr).toContain("database migration created but not applied");
     expect(adr).toContain("target_packet_root");
     expect(adr).toContain('authority_effect = "none"');
     expect(threatModel).toContain("Exact implementation permission matrix");
-    expect(threatModel).toContain("remains denied until the ADR migration");
-    expect(migrations).not.toMatch(/target_packet_root|target_record_root|authority_effect/iu);
+    expect(threatModel).toContain("top-of-action default-off feature gate; current-offer guard");
+    expect(migration).toContain("activity_approaches_target_binding_check");
+    expect(migration).toContain("activity_approaches_authority_effect_check");
+    expect(migration).toContain("source_approach.target_packet_root");
+    expect(configuration).toContain("VELA_TARGET_BOUND_APPROACH_ENABLED");
+    expect(configuration).toContain('if (value === "true")');
+    expect(actions.indexOf("requireTargetBoundApproachWriteEnabled()"))
+      .toBeLessThan(actions.indexOf("const scope = await mutationContext(form)", actions.indexOf("createTargetApproachAction")));
+    expect(actions).toContain("requireCurrentTargetBinding(");
+    expect(actions).not.toMatch(/targetRecordRoot:\s*text\(/u);
+    expect(workbench).toContain("targetBoundApproachWritesEnabled: targetBoundApproachConfiguration().enabled");
+    expect(workbench).toContain("if (enabled) return <TargetApproachForm");
+    expect(liveProof).toContain("WHERE target_id IS NOT NULL");
+    expect(liveProof).toContain("preEnableBoundApproaches !== 0");
+    expect(liveProof).toContain('"cross-tenant Target-bound activity write"');
+    expect(liveProof).toContain('"cross-tenant Target-bound activity read"');
+    expect(liveProof).toContain("Target-bound create audit did not retain the exact request root once");
+    expect(liveProof).toContain("Target-bound fork changed immutable provenance");
   });
 });

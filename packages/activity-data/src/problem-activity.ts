@@ -7,6 +7,7 @@ import {
   type ActivityDiscussionEntry,
   type ActivitySubmissionDraft,
   type ActivityWorkRequest,
+  type ApproachTargetBinding,
   type HashRoot,
   type ProblemActivity,
   type StoredScientificAnchor,
@@ -83,8 +84,30 @@ function anchorFrom(value: unknown): StoredScientificAnchor {
   };
 }
 
+function approachTargetFrom(row: JsonRecord): ApproachTargetBinding {
+  const targetId = nullableText(row, "target_id", "approach target_id");
+  const targetPacketRoot = nullableHashRoot(row, "target_packet_root", "approach target_packet_root");
+  const targetRecordRoot = nullableHashRoot(row, "target_record_root", "approach target_record_root");
+  if (targetId === null && targetPacketRoot === null && targetRecordRoot === null) {
+    return { kind: "unbound", targetId: null, targetPacketRoot: null, targetRecordRoot: null };
+  }
+  if (
+    targetId === null
+    || !targetId.trim()
+    || targetId !== targetId.trim()
+    || targetId.length > 1_000
+    || targetPacketRoot === null
+  ) {
+    throw new Error("activity response has invalid approach Target binding");
+  }
+  return { kind: "target", targetId, targetPacketRoot, targetRecordRoot };
+}
+
 function approachFrom(value: unknown): ActivityApproach {
   const row = record(value, "approach");
+  if (row.authority_effect !== "none") {
+    throw new Error("activity response has invalid approach authority_effect");
+  }
   return {
     id: text(row.id, "approach id"), workspaceId: text(row.workspace_id, "approach workspace_id"),
     anchorRoot: hashRoot(row, "anchor_root", "approach anchor_root"),
@@ -92,6 +115,7 @@ function approachFrom(value: unknown): ActivityApproach {
     createdByAccountId: text(row.created_by_account_id, "approach created_by_account_id"),
     title: text(row.title, "approach title"), summary: text(row.summary, "approach summary"),
     state: member(row.state, ["open", "paused", "completed", "abandoned"] as const, "approach state"),
+    target: approachTargetFrom(row), authorityEffect: "none",
     version: integer(row.version, "approach version", 1), createdAt: text(row.created_at, "approach created_at"),
     updatedAt: text(row.updated_at, "approach updated_at"),
   };

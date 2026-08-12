@@ -43,7 +43,18 @@ bytes stay outside Postgres; only roots, bounded metadata, and locators belong
 in this package.
 
 The exact current permission matrix and Workspace-promotion threat model live
-in `../../docs/security/vela-web-threat-model.md`. The proposed Target-bound
-Approach migration and rollback design live in
-`../../docs/architecture/target-bound-approach-adr.md`. The ADR is design-only:
-no Target-binding migration has been created or applied yet.
+in `../../docs/security/vela-web-threat-model.md`. The Target-bound Approach
+migration and rollback design live in
+`../../docs/architecture/target-bound-approach-adr.md`. The additive migration
+candidate has been created and exercised only against a disposable local
+database. It has not been applied to Neon or any live database.
+
+Target-bound writes have a separate server-only rollout gate:
+`VELA_TARGET_BOUND_APPROACH_ENABLED`. Only exact `true` enables them; absent,
+`false`, and malformed values are disabled. Apply and verify the additive
+migration first, then deploy the binding-aware application with this gate off.
+The new reader cannot run before the migration because it requires the added
+columns. `db:live-proof` must begin with zero bound rows and is the first
+authorized bound write; after it runs, rollback only to the binding-aware
+default-off build, never to the pre-binding reader. The application role keeps
+no base-table access throughout this sequence.
