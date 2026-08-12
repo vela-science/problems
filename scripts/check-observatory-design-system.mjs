@@ -61,7 +61,10 @@ for (const workspace of workspaces) {
 }
 
 const productCss = readFileSync(join(ui, "src/styles/product.css"), "utf8");
-if (!productCss.includes('.vela-page[data-layout="canvas"] { max-width: var(--vela-page-max); }')) failures.push("canvas layout must retain the canonical PageShell origin and outer width");
+const themeCss = readFileSync(join(ui, "src/styles/theme.css"), "utf8");
+const pageShellCss = readFileSync(join(ui, "src/components/vela/page-shell.module.css"), "utf8");
+if (!pageShellCss.includes('.page[data-layout="canvas"]') || !pageShellCss.includes("max-width: var(--vela-page-max)")) failures.push("canvas layout must retain the canonical PageShell origin and outer width");
+if (productCss.split("\n").length + themeCss.split("\n").length > 180) failures.push("authored product and theme CSS exceed the 180-line aggregate cap");
 const editorialCss = readFileSync(join(ui, "src/styles/editorial.css"), "utf8");
 const typesetCss = readFileSync(join(ui, "src/styles/typeset.css"), "utf8");
 if (!productCss.includes('@source "../components"')) failures.push("@vela/ui product profile must own Tailwind workspace source detection");
@@ -89,8 +92,18 @@ for (const file of observatoryRoutes) {
   if (rawRouteFrame.test(source)) failures.push(`${label}: raw route frame bypasses @vela/ui PageShell`);
   if (competingOuterFrame.test(source)) failures.push(`${label}: competing max-width/padding frame bypasses @vela/ui PageShell`);
   if (/className=["']vela-page["']/u.test(source)) failures.push(`${label}: literal vela-page bypasses the PageShell component contract`);
-  if (/\/page\.tsx$/u.test(file) && (!source.includes('@vela/ui/vela/page-shell') || !source.includes("<PageShell"))) {
+  if (/className=["'][^"']*\bvela-page-(?:hero|section|section-head)\b/u.test(source)) failures.push(`${label}: literal PageShell hook bypasses the canonical component contract`);
+  const compatibilityRedirect = source.includes('permanentRedirect(') && /\/dossiers(?:\/\[id\])?\/page\.tsx$/u.test(file);
+  if (/\/page\.tsx$/u.test(file) && !compatibilityRedirect && (!source.includes('@vela/ui/vela/page-shell') || !source.includes("<PageShell"))) {
     failures.push(`${label}: every app page must compose the canonical PageShell`);
+  }
+}
+for (const app of [observatory, www]) {
+  for (const file of filesAt(join(app, "src"), /\.(?:ts|tsx|js|mjs)$/u)) {
+    const source = readFileSync(file, "utf8");
+    if (/packages\/ui\/(?:lab|registry)|@vela\/ui\/(?:lab|registry)|vela\.ui-component-lab/u.test(source)) {
+      failures.push(`${relative(root, file)}: private component catalog must not enter application source`);
+    }
   }
 }
 for (const file of [
@@ -99,7 +112,7 @@ for (const file of [
   join(observatory, "src/app/graph/loading.tsx"),
   join(observatory, "src/app/search/loading.tsx"),
   join(observatory, "src/app/repositories/[slug]/not-found.tsx"),
-  join(observatory, "src/app/repositories/[slug]/dossiers/[id]/loading.tsx"),
+  join(observatory, "src/app/repositories/[slug]/briefs/[id]/loading.tsx"),
 ]) {
   const source = readFileSync(file, "utf8");
   if (!source.includes("<PageShell")) failures.push(`${relative(root, file)}: fallback must compose the canonical PageShell`);
@@ -109,7 +122,7 @@ for (const file of [
   join(observatory, "src/app/problems/page.tsx"),
   join(observatory, "src/app/work/page.tsx"),
   join(observatory, "src/app/activity/page.tsx"),
-  join(observatory, "src/app/dossiers/page.tsx"),
+  join(observatory, "src/app/briefs/page.tsx"),
   join(observatory, "src/app/p/[repository]/[problem]/page.tsx"),
   join(observatory, "src/components/vela/problem-state.tsx"),
   join(observatory, "src/components/vela/grounded-result-dossier.tsx"),

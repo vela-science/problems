@@ -1,5 +1,6 @@
 import type { ComponentPropsWithoutRef, ElementType, ReactNode } from "react";
 import { cn } from "../../lib/utils";
+import styles from "./page-shell.module.css";
 
 export type VelaPageArchetype =
   "default" | "problem" | "work" | "reading" | "history" | "data";
@@ -25,7 +26,7 @@ export function PageShell<T extends ElementType = "div">({
   const Component = as ?? "div";
   return (
     <Component
-      className={cn("vela-page", className)}
+      className={cn("vela-page", styles.page, className)}
       data-archetype={archetype}
       data-layout={layout}
       {...props}
@@ -44,7 +45,12 @@ export function PageHero({
 }) {
   return (
     <header
-      className={cn("vela-page-hero", density === "compact" && "vela-page-hero-compact", className)}
+      className={cn(
+        "vela-page-hero",
+        styles.hero,
+        density === "compact" && ["vela-page-hero-compact", styles.heroCompact],
+        className,
+      )}
       data-density={density}
     >
       {children}
@@ -52,15 +58,17 @@ export function PageHero({
   );
 }
 
-export function PageSection({
+export function PageSection<T extends ElementType = "section">({
+  as,
   children,
   className,
   ...props
-}: ComponentPropsWithoutRef<"section">) {
+}: { as?: T; children: ReactNode; className?: string } & Omit<ComponentPropsWithoutRef<T>, "as" | "children" | "className">) {
+  const Component = as ?? "section";
   return (
-    <section className={cn("vela-page-section", className)} {...props}>
+    <Component className={cn("vela-page-section", styles.section, className)} {...props}>
       {children}
-    </section>
+    </Component>
   );
 }
 
@@ -72,6 +80,6 @@ export function PageSectionHeader({
   className?: string;
 }) {
   return (
-    <div className={cn("vela-page-section-head", className)}>{children}</div>
+    <div className={cn("vela-page-section-head", styles.sectionHead, className)}>{children}</div>
   );
 }

@@ -38,9 +38,11 @@ composition.
 the two Next.js applications and future private Vela applications. Applications
 share primitives and stable semantics; they do not share whole route layouts.
 
-`packages/ui/components.json` is the only shadcn source configuration. Vela
-maintains no second component catalogue and publishes no registry; `packages/ui`
-is consumed through package exports.
+`packages/ui/components.json` is the only shadcn source configuration.
+`packages/ui/registry.json` and `packages/ui/lab/catalog.json` govern canonical
+private source and agent-readable review scenarios; neither is served,
+published, exported, or copied into an application. Runtime consumers use only
+the package exports.
 
 ## Two registers
 

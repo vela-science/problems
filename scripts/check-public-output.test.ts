@@ -53,4 +53,16 @@ describe("public output secret and privacy scan", () => {
     });
     expect(() => scanPublicOutput(root)).toThrow("hosted account identifier");
   });
+
+  test("rejects private registry or component-lab metadata from every delivered profile", () => {
+    const server = fixture({
+      "apps/observatory/.next/server/app/index.html": "vela.ui-component-lab.v1",
+    });
+    expect(() => scanPublicOutput(server)).toThrow("private UI registry or component-lab metadata");
+
+    const www = fixture({
+      "apps/www/out/index.html": "private-source-only",
+    });
+    expect(() => scanPublicOutput(www)).toThrow("private UI registry or component-lab metadata");
+  });
 });

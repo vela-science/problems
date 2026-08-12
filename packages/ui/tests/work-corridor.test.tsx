@@ -10,6 +10,7 @@ describe("WorkCorridor", () => {
     expect(html).toContain("Research Block");
     expect(html).toContain("Unsigned handoff");
     expect(html).toContain("Local authority remains local");
+    expect(html).toContain('data-slot="work-corridor"');
     expect(html).not.toMatch(/complete|approved|success|%|eta/iu);
   });
 });

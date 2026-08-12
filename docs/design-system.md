@@ -67,19 +67,27 @@ create an app-local primitive directory. www uses the same controls, focus,
 motion, state, marks, and icon contracts while keeping only authored editorial
 composition, assets, and content-specific figure styling local.
 
-### Private source catalog
+### Private source catalog and lab
 
 `packages/ui/registry.json` is a private source catalog, not a served registry
 and not a source-copy directory. Its items reference canonical `@vela/ui`
 source directly, including reviewed licensed adaptations that are part of the
 private Vela end product. Every entry carries
-owner, origin, version, license, adaptation date, review state, and semantic
-usage limits. The check builds the catalog twice under `RUNNER_TEMP` (or the
+owner and maintainers, stability, primitive base, direct dependencies,
+upstream origin and version, license, local modifications, accepted data
+contract, accessibility status, theme and motion support, RTL status, tests,
+visual-review status, security review, review date, and migration state.
+`packages/ui/lab/catalog.json` groups those canonical item names into
+agent-readable scenarios across theme, viewport, motion, and direction. It
+does not duplicate component source or become a visual application. The check
+builds the catalog twice under `RUNNER_TEMP` (or the
 system temporary directory locally), requires byte-stable output, then removes
 it. It also refuses registry schema/provenance markers in application public
 assets, client bundles, or route source. Generated registry output is never
 committed, served, copied into an app, submitted to a public directory, or
-published as a separately reusable library.
+published as a separately reusable library. It also refuses application imports
+of either private catalog and requires every local source import to be present
+in the registry build closure.
 
 Licensed shadcn.io Pro and Tailwind Plus source may inform private Vela end
 products. Stable reusable adaptations may be catalogued for this private
@@ -196,6 +204,12 @@ Tailwind v4 consumes generated variables rather than duplicating token values.
 - light and dark product variables;
 - radius and type utility mappings;
 - cross-application product status variables.
+
+The product bridge and imported `theme.css` share one aggregate 180-line cap.
+Route framing and the Work corridor live in their canonical component CSS
+modules rather than accumulating in that global budget. High contrast is an
+orthogonal `data-contrast="high"` reader preference across both light and dark
+grounds; it never changes scientific meaning.
 
 `packages/ui/src/styles/foundation.css` owns focus, selection, forced-colour,
 and reduced-motion behavior. `packages/ui/src/styles/typeset.css` adapts the

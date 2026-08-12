@@ -13,6 +13,7 @@ const commonRules = [
   ["Neon endpoint", /\bep-[a-z0-9-]+\.[a-z0-9-]+\.aws\.neon\.tech\b/giu],
   ["server database environment name", /\bVELA_(?:ACTIVITY|PROJECTION)(?:_WRITER)?_DATABASE_URL\b/gu],
   ["repository authority key name", /\b(?:VELA_AUTHORITY_PRIVATE_KEY|VELA_SIGNING_PRIVATE_KEY|PRIVATE_KEY_HEX)\b/gu],
+  ["private UI registry or component-lab metadata", /(?:vela\.ui-component-lab\.v1|private-source-only|approved-private-adaptation|shadcn\.io Pro private end-product adaptation|https:\/\/ui\.shadcn\.com\/schema\/registry-item\.json)/gu],
 ];
 const activityPrivacyRules = [
   /* WorkOS user ids carry a `user_01…` ULID-like payload. Requiring that
@@ -56,7 +57,7 @@ export function scanPublicOutput(repository) {
   }
   if (findings.length) {
     const detail = findings.map(({ file, rule }) => `- ${file}: ${rule}`).join("\n");
-    throw new Error(`public output contains server secret or private-account material:\n${detail}`);
+    throw new Error(`public output contains server secret, private-account material, or private registry metadata:\n${detail}`);
   }
   return {
     ok: true,

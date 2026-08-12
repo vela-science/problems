@@ -5,6 +5,7 @@ import {
   WorkIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import styles from "./work-corridor.module.css";
 
 const steps = [
   { label: "Target", detail: "Bounded next step", icon: Target01Icon },
@@ -18,12 +19,12 @@ const steps = [
  * an exact data owner rather than from this orientation component. */
 export function WorkCorridor() {
   return (
-    <ol className="vela-work-corridor" aria-label="Work publication corridor">
+    <ol className={styles.corridor} data-slot="work-corridor" aria-label="Work publication corridor">
       {steps.map(({ label, detail, icon: Icon }, index) => (
-        <li key={label}>
-          <span className="vela-work-corridor-index">0{index + 1}</span>
+        <li key={label} className={styles.step}>
+          <span className={styles.index}>0{index + 1}</span>
           <HugeiconsIcon icon={Icon} aria-hidden className="size-4" />
-          <span><strong>{label}</strong><small>{detail}</small></span>
+          <span><strong className={styles.label}>{label}</strong><small className={styles.detail}>{detail}</small></span>
         </li>
       ))}
     </ol>

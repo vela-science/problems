@@ -4,10 +4,8 @@ import test from "node:test"
 
 type Color = [number, number, number]
 
-const productCss = readFileSync(
-  new URL("../src/styles/product.css", import.meta.url),
-  "utf8"
-)
+const productCss = readFileSync(new URL("../src/styles/product.css", import.meta.url), "utf8")
+const themeCss = readFileSync(new URL("../src/styles/theme.css", import.meta.url), "utf8")
 
 function oklchToSrgb([lightness, chroma, hue]: Color): Color {
   const radians = hue * Math.PI / 180
@@ -50,15 +48,15 @@ function composite(foreground: Color, background: Color, alpha: number): Color {
   ) as Color
 }
 
-test("product focus rings remain distinct from gold and clear 3:1 at 50% opacity", () => {
-  const matches = [...productCss.matchAll(
+test("all four product theme modes keep focus distinct and clear 3:1 at 50% opacity", () => {
+  const matches = [...themeCss.matchAll(
     /--focus-ring:\s*oklch\(([\d.]+)\s+([\d.]+)\s+([\d.]+)\)/gu
   )]
-  assert.equal(matches.length, 2)
-  assert.match(productCss, /--ring:\s*var\(--focus-ring\)/u)
-  assert.doesNotMatch(productCss, /--ring:\s*var\(--vela-color-stardust\)/u)
+  assert.equal(matches.length, 4)
+  assert.match(themeCss, /--ring:\s*var\(--focus-ring\)/u)
+  assert.doesNotMatch(themeCss, /--ring:\s*var\(--vela-color-stardust\)/u)
 
-  const [lightFocus, darkFocus] = matches.map((match) => (
+  const focusColors = matches.map((match) => (
     oklchToSrgb([
       Number(match[1]),
       Number(match[2]),
@@ -78,17 +76,29 @@ test("product focus rings remain distinct from gold and clear 3:1 at 50% opacity
     })
   )
   const blockFor = (selector: string) => {
-    const found = productCss.match(new RegExp(`${selector}\\s*\\{([^}]*)\\}`, "u"))
+    const found = themeCss.match(new RegExp(`${selector}\\s*\\{([^}]*)\\}`, "u"))
     assert.ok(found, `${selector} block must exist`)
     return found[1]!
   }
-  const lightSurfaces = surfaces(blockFor(":root"))
-  const darkSurfaces = surfaces(blockFor("\\.dark"))
+  const modes = [
+    { name: "light", selector: ":root", focus: focusColors[0]! },
+    { name: "dark", selector: "\\.dark", focus: focusColors[1]! },
+    { name: "high light", selector: ':root\\[data-contrast="high"\\]', focus: focusColors[2]! },
+    { name: "high dark", selector: ':root\\.dark\\[data-contrast="high"\\]', focus: focusColors[3]! },
+  ]
+  for (const mode of modes) {
+    for (const surface of surfaces(blockFor(mode.selector))) {
+      assert.ok(
+        contrast(composite(mode.focus, surface, 0.5), surface) >= 3,
+        `${mode.name} focus ring must clear 3:1`,
+      )
+    }
+  }
+})
 
-  for (const surface of lightSurfaces) {
-    assert.ok(contrast(composite(lightFocus!, surface, 0.5), surface) >= 3)
-  }
-  for (const surface of darkSurfaces) {
-    assert.ok(contrast(composite(darkFocus!, surface, 0.5), surface) >= 3)
-  }
+test("global product and theme styles remain bounded", () => {
+  assert.ok(productCss.split("\n").length <= 180)
+  assert.ok(themeCss.split("\n").length <= 180)
+  assert.match(productCss, /@import "\.\/theme\.css"/u)
+  assert.match(productCss, /@custom-variant high-contrast/u)
 })

@@ -1,10 +1,12 @@
 @import "./foundation.css";
+@import "./theme.css";
 
 /* Private Vela product profile. Keep workspace source detection with the
  * official shadcn source rather than maintaining app-specific safelists. */
 @source "../components";
 
 @custom-variant dark (&:is(.dark *));
+@custom-variant high-contrast (&:is([data-contrast="high"] *));
 
 @theme inline {
   --color-background: var(--background);
@@ -52,107 +54,6 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* Grounds and ink share one cool hue family (245-265), the way a chart is
- * printed: pale sky paper, ink rules, midnight at night. Hue separation is
- * what makes a 1.04:1 luminance step read. --direction has no foreground
- * pair, so gold can only ever be a stroke, a glyph or a rule, never a fill. */
-:root {
-  --vela-page-max: 88rem;
-  --vela-page-gutter: clamp(1rem, 2.5vw, 2rem);
-  --vela-page-block: clamp(1.75rem, 4vw, 3rem);
-  --vela-page-section: clamp(2.5rem, 6vw, 4.5rem);
-  --vela-layer-problem: color-mix(in oklab, var(--vela-color-link-light) 9%, var(--background));
-  --vela-layer-work: color-mix(in oklab, var(--vela-color-stardust) 11%, var(--background));
-  --vela-layer-reading: color-mix(in oklab, var(--vela-color-mist) 13%, var(--background));
-  --vela-layer-history: color-mix(in oklab, var(--vela-color-slate) 10%, var(--background));
-  --radius: 0.5rem;
-  --background: oklch(0.973 0.006 245);
-  --foreground: oklch(0.21 0.032 265);
-  --card: oklch(0.985 0.005 245);
-  --card-foreground: var(--foreground);
-  --popover: var(--card);
-  --popover-foreground: var(--foreground);
-  --primary: oklch(0.184 0.04 261);
-  --primary-foreground: oklch(0.973 0.006 245);
-  --secondary: oklch(0.945 0.01 245);
-  --secondary-foreground: var(--foreground);
-  --muted: oklch(0.945 0.01 245);
-  --muted-foreground: oklch(0.522 0.021 258);
-  --accent: oklch(0.945 0.01 245);
-  --accent-foreground: var(--foreground);
-  --destructive: oklch(0.496 0.124 16);
-  --destructive-foreground: oklch(0.973 0.006 245);
-  --border: oklch(0.891 0.006 264);
-  --input: oklch(0.64 0.014 260);
-  --focus-ring: oklch(0.235 0.082 258);
-  --ring: var(--focus-ring);
-  --sidebar: oklch(0.945 0.01 245);
-  --sidebar-foreground: var(--foreground);
-  --sidebar-primary: var(--primary);
-  --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: oklch(0.912 0.012 245);
-  --sidebar-accent-foreground: var(--foreground);
-  --sidebar-border: var(--border);
-  --sidebar-ring: var(--ring);
-  --status-evidence: var(--vela-color-light-evidence);
-  --status-progress: var(--vela-color-light-progress);
-  --status-caution: var(--vela-color-light-caution);
-  --status-conflict: var(--vela-color-light-conflict);
-  --direction: var(--vela-color-light-direction);
-  --command: oklch(0.184 0.04 261);
-  --command-foreground: oklch(0.973 0.006 245);
-}
-
-/* One optical frame for every product route. Page archetypes change the quiet
- * paper layer, not the gutters, reading edge, or section cadence. The colors
- * are atmospheric brand mixtures rather than status colors: no scientific
- * meaning can be inferred from them. */
-.vela-page {
-  --vela-page-layer: var(--background);
-  --vela-page-accent: color-mix(in oklab, var(--vela-color-stardust) 48%, var(--border));
-  margin-inline: auto;
-  width: 100%;
-  max-width: var(--vela-page-max);
-  padding: var(--vela-page-block) var(--vela-page-gutter);
-  --vela-surface-inset: var(--vela-page-gutter);
-}
-
-.vela-page[data-layout="reading"] > :not(.vela-page-hero) { width: 100%; max-width: 72rem; }
-.vela-page[data-layout="canvas"] { max-width: var(--vela-page-max); }
-.vela-page:has(> .vela-page-hero:first-child) {
-  padding-block-start: min(var(--vela-page-gutter), 1.5rem);
-}
-
-.vela-page[data-archetype="problem"] {
-  --vela-page-layer: var(--vela-layer-problem);
-  --vela-page-accent: color-mix(in oklab, var(--status-evidence) 58%, var(--border));
-}
-.vela-page[data-archetype="work"] {
-  --vela-page-layer: var(--vela-layer-work);
-  --vela-page-accent: color-mix(in oklab, var(--direction) 62%, var(--border));
-}
-.vela-page[data-archetype="reading"] {
-  --vela-page-layer: var(--vela-layer-reading);
-  --vela-page-accent: color-mix(in oklab, var(--vela-color-stardust) 48%, var(--border));
-}
-.vela-page[data-archetype="history"] {
-  --vela-page-layer: var(--vela-layer-history);
-  --vela-page-accent: color-mix(in oklab, var(--muted-foreground) 42%, var(--border));
-}
-
-.vela-page-hero {
-  position: relative;
-  border-radius: var(--radius-xl);
-  background: var(--vela-page-layer);
-  padding-block: clamp(2rem, 5vw, 4rem);
-  padding-inline: var(--vela-surface-inset);
-  min-width: 0;
-}
-
-.vela-page-hero-compact {
-  padding-block: clamp(1.25rem, 3vw, 2rem);
-}
-
 /* Featured route statement: fluid at every width, including browser zoom.
  * Ordinary route titles keep the compact product display token. */
 .vela-hero-display {
@@ -161,35 +62,6 @@
   letter-spacing: -0.035em;
   text-wrap: balance;
   overflow-wrap: anywhere;
-}
-
-/* Archetypes are differentiated by truthful flat semantic paper tones and
- * composition. No gradient, stripe, or status-colored decoration is needed. */
-.vela-page[data-archetype="problem"] .vela-page-hero {
-  background: var(--vela-page-layer);
-}
-
-.vela-page[data-archetype="work"] .vela-page-hero {
-  background: var(--vela-page-layer);
-}
-
-.vela-page[data-archetype="reading"] .vela-page-hero {
-  background: var(--vela-page-layer);
-}
-
-.vela-page[data-archetype="history"] .vela-page-hero {
-  background: var(--vela-page-layer);
-}
-
-.vela-page-section { margin-top: var(--vela-page-section); }
-
-.vela-page-section-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: end;
-  justify-content: space-between;
-  gap: 1rem;
-  padding-bottom: 0.75rem;
 }
 
 /* Semantic section layers create route-level hierarchy without dashboard
@@ -203,85 +75,6 @@
 }
 .vela-history-surface {
   background: color-mix(in oklab, var(--muted) 72%, var(--background));
-}
-
-.vela-work-corridor {
-  display: grid;
-  gap: 0.35rem;
-}
-.vela-work-corridor li {
-  position: relative;
-  display: grid;
-  grid-template-columns: auto auto minmax(0, 1fr);
-  align-items: center;
-  gap: 0.6rem;
-  min-height: 3rem;
-  padding: 0.6rem 0.75rem;
-  border-radius: var(--radius-md);
-  background: color-mix(in oklab, var(--direction) calc(4% + var(--corridor-step, 0%)), transparent);
-}
-.vela-work-corridor li:nth-child(2) { --corridor-step: 2%; }
-.vela-work-corridor li:nth-child(3) { --corridor-step: 4%; }
-.vela-work-corridor li:nth-child(4) { --corridor-step: 6%; }
-.vela-work-corridor li:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  z-index: 1;
-  bottom: -0.45rem;
-  left: 1.25rem;
-  width: 1px;
-  height: 0.55rem;
-  background: color-mix(in oklab, var(--direction) 40%, var(--border));
-}
-.vela-work-corridor-index {
-  font-family: var(--font-mono);
-  font-size: var(--text-micro);
-  line-height: var(--text-micro--line-height);
-  color: var(--muted-foreground);
-}
-.vela-work-corridor strong,
-.vela-work-corridor small { display: block; }
-.vela-work-corridor strong { font-size: var(--text-label); line-height: var(--text-label--line-height); font-weight: var(--text-label--font-weight); }
-.vela-work-corridor small { margin-top: 0.1rem; color: var(--muted-foreground); font-size: var(--text-micro); line-height: var(--text-micro--line-height); }
-
-@media print {
-  .vela-page { max-width: none; padding: 0; }
-  .vela-page-hero { background: transparent; margin-inline: 0; padding-inline: 0; }
-}
-
-/* Opaque borders: white-with-alpha desaturates a chromatic ground toward grey.
- * --command lifts rather than sinks — pure black measures 1.12:1 on midnight. */
-.dark {
-  --background: oklch(0.184 0.04 261);
-  --foreground: oklch(0.973 0.006 245);
-  --card: oklch(0.21 0.032 265);
-  --card-foreground: var(--foreground);
-  --popover: var(--card);
-  --popover-foreground: var(--foreground);
-  --primary: oklch(0.973 0.006 245);
-  --primary-foreground: oklch(0.184 0.04 261);
-  --secondary: oklch(0.256 0.034 262);
-  --secondary-foreground: var(--foreground);
-  --muted: oklch(0.256 0.034 262);
-  --muted-foreground: oklch(0.726 0.015 258);
-  --accent: oklch(0.256 0.034 262);
-  --accent-foreground: var(--foreground);
-  --destructive: oklch(0.682 0.122 13);
-  --destructive-foreground: oklch(0.184 0.04 261);
-  --border: oklch(0.316 0.041 261);
-  --input: oklch(0.55 0.038 260);
-  --focus-ring: oklch(0.88 0.045 259);
-  --sidebar: oklch(0.201 0.042 261);
-  --sidebar-foreground: var(--foreground);
-  --sidebar-accent: oklch(0.256 0.034 262);
-  --sidebar-accent-foreground: var(--foreground);
-  --status-evidence: var(--vela-color-evidence);
-  --status-progress: var(--vela-color-progress);
-  --status-caution: var(--vela-color-caution);
-  --status-conflict: var(--vela-color-dark-conflict);
-  --direction: var(--vela-color-stardust);
-  --command: oklch(0.3 0.036 260);
-  color-scheme: dark;
 }
 
 @media (forced-colors: active) {

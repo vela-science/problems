@@ -1,0 +1,87 @@
+/* Grounds and ink share one cool hue family. Direction gold never owns a
+ * foreground pair, so it cannot become an unreviewed fill or status badge. */
+:root {
+  --vela-page-max: 88rem;
+  --vela-page-gutter: clamp(1rem, 2.5vw, 2rem);
+  --vela-page-block: clamp(1.75rem, 4vw, 3rem);
+  --vela-page-section: clamp(2.5rem, 6vw, 4.5rem);
+  --vela-layer-problem: color-mix(in oklab, var(--vela-color-link-light) 9%, var(--background));
+  --vela-layer-work: color-mix(in oklab, var(--vela-color-stardust) 11%, var(--background));
+  --vela-layer-reading: color-mix(in oklab, var(--vela-color-mist) 13%, var(--background));
+  --vela-layer-history: color-mix(in oklab, var(--vela-color-slate) 10%, var(--background));
+  --radius: 0.5rem;
+  --background: oklch(0.973 0.006 245); --foreground: oklch(0.21 0.032 265);
+  --card: oklch(0.985 0.005 245); --card-foreground: var(--foreground);
+  --popover: var(--card); --popover-foreground: var(--foreground);
+  --primary: oklch(0.184 0.04 261); --primary-foreground: oklch(0.973 0.006 245);
+  --secondary: oklch(0.945 0.01 245); --secondary-foreground: var(--foreground);
+  --muted: oklch(0.945 0.01 245); --muted-foreground: oklch(0.522 0.021 258);
+  --accent: oklch(0.945 0.01 245); --accent-foreground: var(--foreground);
+  --destructive: oklch(0.496 0.124 16); --destructive-foreground: oklch(0.973 0.006 245);
+  --border: oklch(0.891 0.006 264);
+  --input: oklch(0.64 0.014 260);
+  --focus-ring: oklch(0.235 0.082 258); --ring: var(--focus-ring);
+  --sidebar: oklch(0.945 0.01 245); --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary); --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: oklch(0.912 0.012 245); --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: var(--border); --sidebar-ring: var(--ring);
+  --status-evidence: var(--vela-color-light-evidence); --status-progress: var(--vela-color-light-progress);
+  --status-caution: var(--vela-color-light-caution); --status-conflict: var(--vela-color-light-conflict);
+  --direction: var(--vela-color-light-direction);
+  --command: oklch(0.184 0.04 261); --command-foreground: oklch(0.973 0.006 245);
+}
+
+.dark {
+  --background: oklch(0.184 0.04 261); --foreground: oklch(0.973 0.006 245);
+  --card: oklch(0.21 0.032 265); --card-foreground: var(--foreground);
+  --popover: var(--card); --popover-foreground: var(--foreground);
+  --primary: oklch(0.973 0.006 245); --primary-foreground: oklch(0.184 0.04 261);
+  --secondary: oklch(0.256 0.034 262); --secondary-foreground: var(--foreground);
+  --muted: oklch(0.256 0.034 262); --muted-foreground: oklch(0.726 0.015 258);
+  --accent: oklch(0.256 0.034 262); --accent-foreground: var(--foreground);
+  --destructive: oklch(0.682 0.122 13); --destructive-foreground: oklch(0.184 0.04 261);
+  --border: oklch(0.316 0.041 261);
+  --input: oklch(0.55 0.038 260);
+  --focus-ring: oklch(0.88 0.045 259);
+  --sidebar: oklch(0.201 0.042 261); --sidebar-foreground: var(--foreground);
+  --sidebar-accent: oklch(0.256 0.034 262); --sidebar-accent-foreground: var(--foreground);
+  --status-evidence: var(--vela-color-evidence); --status-progress: var(--vela-color-progress);
+  --status-caution: var(--vela-color-caution); --status-conflict: var(--vela-color-dark-conflict);
+  --direction: var(--vela-color-stardust);
+  --command: oklch(0.3 0.036 260);
+  color-scheme: dark;
+}
+
+/* Contrast is orthogonal to light and dark. It raises ink, controls, rules,
+ * and focus separation without changing scientific semantics. */
+:root[data-contrast="high"] {
+  --background: oklch(0.995 0.002 245); --foreground: oklch(0.12 0.032 265);
+  --card: oklch(1 0 0); --card-foreground: var(--foreground);
+  --popover: var(--card); --popover-foreground: var(--foreground);
+  --primary: oklch(0.12 0.05 261); --primary-foreground: oklch(0.995 0.002 245);
+  --secondary: oklch(0.91 0.013 245); --secondary-foreground: var(--foreground);
+  --muted: oklch(0.91 0.013 245); --muted-foreground: oklch(0.34 0.025 258);
+  --accent: oklch(0.91 0.013 245); --accent-foreground: var(--foreground);
+  --border: oklch(0.53 0.02 264);
+  --input: oklch(0.34 0.02 260);
+  --focus-ring: oklch(0.16 0.12 258);
+  --sidebar: oklch(0.93 0.015 245); --sidebar-accent: oklch(0.86 0.02 245);
+  --command: oklch(0.12 0.05 261);
+  color-scheme: light;
+}
+
+:root.dark[data-contrast="high"] {
+  --background: oklch(0.105 0.028 261); --foreground: oklch(0.995 0.002 245);
+  --card: oklch(0.17 0.032 264); --card-foreground: var(--foreground);
+  --popover: var(--card); --popover-foreground: var(--foreground);
+  --primary: oklch(0.995 0.002 245); --primary-foreground: oklch(0.105 0.028 261);
+  --secondary: oklch(0.25 0.036 262); --secondary-foreground: var(--foreground);
+  --muted: oklch(0.25 0.036 262); --muted-foreground: oklch(0.84 0.016 258);
+  --accent: oklch(0.25 0.036 262); --accent-foreground: var(--foreground);
+  --border: oklch(0.63 0.027 261);
+  --input: oklch(0.78 0.026 260);
+  --focus-ring: oklch(0.96 0.07 259);
+  --sidebar: oklch(0.14 0.032 261); --sidebar-accent: oklch(0.27 0.04 262);
+  --command: oklch(0.3 0.04 260);
+  color-scheme: dark;
+}
