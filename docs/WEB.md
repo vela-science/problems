@@ -483,7 +483,9 @@ Deleting `vela_activity` leaves Repository Standing intact; rebuilding
 sail released in `v0.300.2`. Do not redraw or reinterpret it. All delivery
 variants are generated and content-addressed.
 
-- Editorial delivery: Zodiak, Gambetta, Switzer, and IBM Plex Mono.
+- Editorial delivery retains Zodiak, Gambetta, Switzer, and IBM Plex Mono.
+  WWW currently selects the governed system Iowan Old Style/Baskerville stack
+  for display and reading; no proprietary desktop font bytes are copied.
 - Observatory delivery: Geist for interface text and IBM Plex Mono for roots,
   identifiers, commands, and exact values.
 - Asset synchronization is a mirror and removes stale destination fonts.

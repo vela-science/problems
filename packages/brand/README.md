@@ -13,7 +13,7 @@ This keeps the package as the single source for self-hosted fonts and, where
 requested, the current favicon instead of checking duplicate copies into
 each application.
 
-The three editorial faces (Zodiak, Gambetta, Switzer) ship as their upstream
+The three licensed editorial web faces (Zodiak, Gambetta, Switzer) ship as their upstream
 variable masters rather than as derived static instances, so the served file is
 the upstream file and there is no instancing step, no source-font copy, and no
 second manifest to keep in sync. Each is 33-45 KiB, which is smaller than the
@@ -22,6 +22,11 @@ three files rather than five because one master covers every weight. IBM Plex
 Mono stays a pair of static Latin subsets. Exact hashes are recorded in
 `licenses/FONT-WEB-MANIFEST.sha256`; the licence status of each face, ITF Free
 Font License or SIL OFL 1.1, is recorded in `licenses/README.md`.
+
+The current WWW composition selects separate governed system editorial roles:
+Iowan Old Style when installed, then Baskerville and Times New Roman. Those
+roles transfer no font bytes. The licensed web faces remain retained delivery
+assets rather than the selected WWW reading stack.
 
 `reference/2026-07-v1.1/` preserves the current production brief, messaging rules, asset
 manifest, and acceptance checklist from the July 2026 designer handoff. Its

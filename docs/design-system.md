@@ -248,8 +248,7 @@ requirements. Remove a global selector when its last consumer is removed.
 
 ### Editorial
 
-- Zodiak for display
-- Gambetta for reading
+- system Iowan Old Style with Baskerville and Times New Roman fallbacks for display and reading
 - Switzer for navigation and metadata
 - IBM Plex Mono for exact values
 - paper and midnight surfaces

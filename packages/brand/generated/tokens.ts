@@ -32,6 +32,8 @@ export const velaTokens = {
   "color-dark-conflict": "#D97783",
   "font-display": "Zodiak, Georgia, serif",
   "font-body": "Gambetta, Georgia, serif",
+  "font-editorial-display": "\"Iowan Old Style\", Baskerville, \"Times New Roman\", serif",
+  "font-editorial-body": "\"Iowan Old Style\", Baskerville, \"Times New Roman\", serif",
   "font-sans": "Switzer, Arial, sans-serif",
   "font-mono": "IBM Plex Mono, SFMono-Regular, Consolas, monospace",
   "space-1": "4px",

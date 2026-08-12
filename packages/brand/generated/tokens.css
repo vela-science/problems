@@ -32,6 +32,8 @@
   --vela-color-dark-conflict: #D97783;
   --vela-font-display: Zodiak, Georgia, serif;
   --vela-font-body: Gambetta, Georgia, serif;
+  --vela-font-editorial-display: "Iowan Old Style", Baskerville, "Times New Roman", serif;
+  --vela-font-editorial-body: "Iowan Old Style", Baskerville, "Times New Roman", serif;
   --vela-font-sans: Switzer, Arial, sans-serif;
   --vela-font-mono: IBM Plex Mono, SFMono-Regular, Consolas, monospace;
   --vela-space-1: 4px;

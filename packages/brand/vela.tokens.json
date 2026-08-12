@@ -151,6 +151,14 @@
       "$value": "Gambetta, Georgia, serif",
       "$type": "fontFamily"
     },
+    "editorialDisplay": {
+      "$value": "\"Iowan Old Style\", Baskerville, \"Times New Roman\", serif",
+      "$type": "fontFamily"
+    },
+    "editorialBody": {
+      "$value": "\"Iowan Old Style\", Baskerville, \"Times New Roman\", serif",
+      "$type": "fontFamily"
+    },
     "sans": {
       "$value": "Switzer, Arial, sans-serif",
       "$type": "fontFamily"

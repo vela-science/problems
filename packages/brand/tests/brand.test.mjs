@@ -34,6 +34,9 @@ test("locked brand values survive DTCG generation", () => {
   assert.match(css, /--vela-color-light: #F7F6F2;/u);
   assert.equal(tokens.font.display.$value.split(",")[0], "Zodiak");
   assert.equal(tokens.font.body.$value.split(",")[0], "Gambetta");
+  assert.equal(tokens.font.editorialDisplay.$value, '"Iowan Old Style", Baskerville, "Times New Roman", serif');
+  assert.equal(tokens.font.editorialBody.$value, '"Iowan Old Style", Baskerville, "Times New Roman", serif');
+  assert.match(css, /--vela-font-editorial-display: "Iowan Old Style", Baskerville, "Times New Roman", serif;/u);
   assert.equal(tokens.font.sans.$value.split(",")[0], "Switzer");
   assert.equal(tokens.font.mono.$value.split(",")[0], "IBM Plex Mono");
 });

@@ -38,6 +38,8 @@ const primitives = {
   "color-dark-conflict": tokens.color.context.dark.conflict.$value,
   "font-display": tokens.font.display.$value,
   "font-body": tokens.font.body.$value,
+  "font-editorial-display": tokens.font.editorialDisplay.$value,
+  "font-editorial-body": tokens.font.editorialBody.$value,
   "font-sans": tokens.font.sans.$value,
   "font-mono": tokens.font.mono.$value,
   ...Object.fromEntries(Object.entries(tokens.space).map(([name, token]) => [`space-${name}`, token.$value])),

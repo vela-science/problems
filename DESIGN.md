@@ -48,8 +48,10 @@ the package exports.
 
 ### Editorial
 
-`www.vela.space` is the authored register: paper and midnight grounds, Zodiak
-display, Gambetta body, Switzer metadata, and IBM Plex Mono for exact values.
+`www.vela.space` is the authored register: paper and midnight grounds, a
+system Iowan Old Style/Baskerville book stack for display and reading, Switzer
+metadata, and IBM Plex Mono for exact values. Zodiak and Gambetta remain
+licensed delivery assets but are not selected by the current WWW composition.
 Its rhythm is spacious and asymmetric. Figures carry arguments.
 
 The landing page is a scientific atlas rather than a dashboard or a condensed
