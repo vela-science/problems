@@ -88,32 +88,32 @@ describe("canonical Repository checkout roster", () => {
     expect(depths).toEqual(expected.map(() => "0"));
   });
 
-  test("uses the private Math credential only for its dropped checkout credential", () => {
-    expect(action).toContain("math-read-token:\n    description: Credential used only to read the private canonical Math repository.\n    required: true");
+  test("uses no dedicated Math credential and drops the job token after checkout", () => {
+    expect(action).not.toContain("math-read-token");
     expect(values(action, "ref")).toEqual(["main"]);
-    expect(values(action, "token")).toEqual(["${{ inputs.math-read-token }}"]);
+    expect(values(action, "token")).toEqual([]);
     expect(values(action, "persist-credentials")).toEqual(["false"]);
-    expect(action.match(/\$\{\{ inputs\.math-read-token \}\}/gu)).toHaveLength(1);
+    expect(action).not.toContain("VELA_MATH_READ_TOKEN");
     expect(action).not.toMatch(/https?:\/\/[^\s]*\$\{\{/u);
   });
 
-  test("every current workflow invocation passes the secret only as the scoped action input", () => {
+  test("every current workflow invocation supplies no dedicated Math credential", () => {
     const documents = WORKFLOWS.map((path) => readFileSync(path, "utf8"));
     const invocations = documents.flatMap((workflow) => workflowSteps(workflow).filter(
       ({ uses }) => uses === "./.github/actions/checkout-repositories",
     ));
     expect(invocations).toHaveLength(4);
     for (const invocation of invocations) {
-      expect(invocation.with?.["math-read-token"]).toBe("${{ secrets.VELA_MATH_READ_TOKEN }}");
+      expect(invocation.with).toBeUndefined();
       expect(invocation.env).toBeUndefined();
     }
     const secretReferences = documents.flatMap((document) => (
       document.match(/\$\{\{ secrets\.VELA_MATH_READ_TOKEN \}\}/gu) ?? []
     ));
-    expect(secretReferences).toHaveLength(invocations.length);
+    expect(secretReferences).toHaveLength(0);
   });
 
-  test("reconstruction acquires private Math before retained-input verification", () => {
+  test("reconstruction acquires public Math before retained-input verification", () => {
     const path = resolve(WORKFLOW_DIRECTORY, "reconstruct-projection.yml");
     const workflow = readFileSync(path, "utf8");
     const parsed = YAML.parse(workflow) as {
@@ -133,9 +133,7 @@ describe("canonical Repository checkout roster", () => {
     );
     expect(checkoutIndex).toBeGreaterThan(-1);
     expect(downloadIndex).toBeGreaterThan(checkoutIndex);
-    expect(job.steps[checkoutIndex]?.with?.["math-read-token"]).toBe(
-      "${{ secrets.VELA_MATH_READ_TOKEN }}",
-    );
+    expect(job.steps[checkoutIndex]?.with).toBeUndefined();
     expect(JSON.stringify(job.env ?? {})).not.toContain("VELA_MATH_READ_TOKEN");
   });
 });

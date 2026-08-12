@@ -178,15 +178,14 @@ reskinned.
 `packages/observatory-data/src/registry.ts` is the typed registry for the canonical
 Git repositories. One today: `vela-science/math`, the single live mathematics
 authority. Four existed under the previous epoch and existed because there were
-four topics rather than four authorities. Math is private. Its registry entry
-has one canonical GitHub locator and explicit `private` access; the former
-public replica is neither a declared locator nor a scheduled mirror target.
-Every CI, refresh, gate, and reconstruction checkout passes
-`VELA_MATH_READ_TOKEN` only to the shared checkout action, pins `main`, fetches
-the full history needed by the projection, and sets
-`persist-credentials: false`. Public product pages render the safe projection;
-source acquisition uses `gh auth status` followed by `gh repo clone`, so no
-surface promises anonymous access or embeds a credential.
+four topics rather than four authorities. Math is public. Its registry entry
+has one canonical GitHub locator and explicit `public` access; the retired
+replica is neither a declared locator nor a scheduled mirror target. Every CI,
+refresh, gate, and reconstruction checkout uses the shared checkout action,
+pins `main`, fetches the full history needed by the projection, and sets
+`persist-credentials: false`. Public product pages and source acquisition both
+use the same anonymous canonical locator; no repository-scoped read credential
+is required or embedded.
 
 One GitHub workflow — on a daily
 schedule, on a relevant push to `main`, or by `workflow_dispatch` for a
@@ -547,7 +546,7 @@ The two active applications deliberately use different release paths:
 
 - `www.vela.space` uses Vercel's Git deployment for relevant `main` changes.
 - The unified application has direct Git deployment disabled. Relevant `main` changes
-  trigger `refresh-projection.yml`. Its credential-free preflight first owns the
+  trigger `refresh-projection.yml`. Its read-only preflight first owns the
   exact source checks, lint, tests, and patch hygiene required by the deployment.
   The workflow then applies and verifies rooted additive `vela_activity`
   migrations, builds and verifies the one current projection contract, activates
