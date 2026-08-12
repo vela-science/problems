@@ -7,10 +7,6 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { useIsMobile } from "#hooks/use-mobile"
 import { cn } from "#lib/utils"
-import {
-  SIDEBAR_COOKIE_MAX_AGE,
-  SIDEBAR_COOKIE_NAME,
-} from "#lib/sidebar-state"
 import { Button } from "#ui/button"
 import { Input } from "#ui/input"
 import { Separator } from "#ui/separator"
@@ -85,7 +81,6 @@ function SidebarProvider({
         _setOpen(openState)
       }
 
-      document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}; samesite=lax`
     },
     [setOpenProp, open]
   )
