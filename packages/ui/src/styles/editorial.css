@@ -50,7 +50,10 @@
   --destructive-foreground: var(--vela-text-inverse);
   --border: var(--vela-border-subtle);
   --input: var(--vela-border-strong);
-  --ring: var(--vela-focus);
+  /* Stardust is directional ink, not a light-ground focus colour. Its
+     contrast on paper is too low for a 2px indicator, so editorial light
+     uses midnight ink and the night register restores stardust. */
+  --ring: var(--vela-color-midnight);
   --sidebar: var(--vela-surface-canvas);
   --sidebar-foreground: var(--vela-text-primary);
   --sidebar-primary: var(--vela-text-primary);
@@ -58,7 +61,7 @@
   --sidebar-accent: var(--vela-surface-inset);
   --sidebar-accent-foreground: var(--vela-text-primary);
   --sidebar-border: var(--vela-border-subtle);
-  --sidebar-ring: var(--vela-focus);
+  --sidebar-ring: var(--vela-color-midnight);
   --status-evidence: var(--vela-status-evidence);
   --status-progress: var(--vela-status-progress);
   --status-caution: var(--vela-status-caution);
@@ -83,10 +86,11 @@
   --accent: var(--vela-surface-inset);
   --border: var(--vela-border-subtle);
   --input: var(--vela-border-strong);
-  --ring: var(--vela-focus);
+  --ring: var(--vela-color-stardust);
   --sidebar: var(--vela-surface-canvas);
   --sidebar-accent: var(--vela-surface-inset);
   --sidebar-border: var(--vela-border-subtle);
+  --sidebar-ring: var(--vela-color-stardust);
   --status-evidence: var(--vela-status-evidence);
   --status-progress: var(--vela-status-progress);
   --status-caution: var(--vela-status-caution);

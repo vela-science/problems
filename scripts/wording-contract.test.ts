@@ -50,7 +50,7 @@ const AUTHORED = [
   "apps/www/src/components/essay/the-test.tsx",
   "apps/www/src/components/editorial/masthead.tsx",
   "apps/www/src/data/publications.ts",
-  "apps/www/public/images/constellations/frontier-map-og.png",
+  "apps/www/public/images/constellations/endless-map-og.png",
 ];
 
 /* Occurrences that are not the Vela noun at all, and would be wrong in any

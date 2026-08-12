@@ -46,8 +46,10 @@ comparison the project already wrote; close on what is not established.
 `docs/TERMINOLOGY.md` is an enforced dictionary with a banned list, so landing
 copy is quoted rather than paraphrased and is checked against that list.
 
-The Vela sail, Zodiak/Gambetta/Switzer/IBM Plex Mono typography, Cajal-like scientific
-drawing, exact rooted facts, and authority boundary remain project-owned. New
+The Vela sail, system Iowan/Baskerville editorial roles, Switzer/IBM Plex Mono
+interface roles, Cajal-like scientific drawing, exact rooted facts, and
+authority boundary remain project-owned. Zodiak and Gambetta remain licensed
+delivery assets but are no longer selected on current WWW surfaces. New
 references must be added here with a clear adopted/adapted/rejected decision.
 
 The complete licensed archive stays at `~/personal/tailwind-plus` to avoid
