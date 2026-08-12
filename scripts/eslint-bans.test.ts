@@ -41,7 +41,6 @@ function eslintFor(app: string) {
 
 const observatory = eslintFor("observatory");
 const www = eslintFor("www");
-const problems = eslintFor("problems");
 
 /* One package per spelling, so a rule that only handles static imports cannot
    pass by reporting the same module four times. */
@@ -70,7 +69,6 @@ const LINT_BUDGET_MS = 60_000;
 describe("import bans", () => {
   test.each([
     ["observatory", observatory, "src/lib/probe.ts"],
-    ["problems", problems, "src/lib/probe.ts"],
     ["www", www, "src/lib/probe.ts"],
   ])(
     "%s reports a database reached by any of the four import spellings",
@@ -83,7 +81,6 @@ describe("import bans", () => {
 
   test.each([
     ["observatory", observatory, "src/lib/probe.ts"],
-    ["problems", problems, "src/lib/probe.ts"],
     ["www", www, "src/lib/probe.ts"],
   ])(
     "%s stays quiet on a file that imports nothing banned",
@@ -147,16 +144,16 @@ describe("import bans", () => {
   );
 
   test(
-    "Problems confines WorkOS to auth files and rejects hosted signing",
+    "the unified app confines WorkOS to auth files and rejects hosted signing",
     () => {
       const workos = 'import { WorkOS } from "@workos-inc/node";\nexport const client = new WorkOS();\n';
-      expect(problems(workos, "src/lib/auth.ts")).toEqual([]);
-      expect(problems(workos, "src/lib/workbench.ts")).toEqual([IDENTITY]);
-      expect(problems(
+      expect(observatory(workos, "src/lib/auth.ts")).toEqual([]);
+      expect(observatory(workos, "src/lib/workbench.ts")).toEqual([IDENTITY]);
+      expect(observatory(
         'import { signSubmissionDraftLocally } from "@vela/activity-data/local-signing";\nexport { signSubmissionDraftLocally };\n',
         "src/lib/workbench.ts",
       )).toEqual([SIGNING]);
-      expect(problems(
+      expect(observatory(
         'import { saveSubmissionDraft } from "@vela/activity-data";\nimport { problemDetail } from "@vela/observatory-data";\nexport const allowed = [saveSubmissionDraft, problemDetail];\n',
         "src/lib/workbench.ts",
       )).toEqual([]);
