@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import {
   assessAnchorFreshness,
+  followsCurrentAnchor,
   scientificAnchorRoot,
   type ScientificAnchor,
 } from "../src/contracts";
@@ -26,6 +27,13 @@ describe("scientific activity anchors", () => {
     expect(scientificAnchorRoot(anchor)).toMatch(/^sha256:[0-9a-f]{64}$/);
     expect(scientificAnchorRoot({ ...anchor, sourceTree: "9".repeat(40) }))
       .not.toBe(scientificAnchorRoot(anchor));
+  });
+
+  test("derives following only from the exact current anchor", () => {
+    const historical = root("a");
+    const current = root("b");
+    expect(followsCurrentAnchor([historical], current)).toBe(false);
+    expect(followsCurrentAnchor([historical, current], current)).toBe(true);
   });
 
   test("classify canonical advances without rewriting the stored anchor", () => {

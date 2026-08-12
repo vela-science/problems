@@ -9,8 +9,10 @@ import {
   createWorkspace,
   ensureCurrentAccount,
   exportSubmissionDraft,
+  followProblem,
   getProblemActivity,
   saveSubmissionDraft,
+  scientificAnchorRoot,
   updateAttempt,
 } from "../src/index.ts";
 import { canonicalJson, sha256 } from "@vela/observatory-data/canonical";
@@ -105,6 +107,7 @@ const anchor = {
   claimRoot: null,
   claimStanding: null,
 };
+const currentAnchorRoot = scientificAnchorRoot(anchor);
 
 await denied(
   getProblemActivity({
@@ -112,6 +115,7 @@ await denied(
     workspaceId: workspaceA.id,
     repositoryId: anchor.repositoryId,
     problemId: anchor.problemId,
+    currentAnchorRoot,
   }),
   "cross-tenant activity read",
 );
@@ -169,6 +173,7 @@ const memberView = await getProblemActivity({
   workspaceId: workspaceA.id,
   repositoryId: anchor.repositoryId,
   problemId: anchor.problemId,
+  currentAnchorRoot,
 });
 if (memberView.discussion.length !== 0) throw new Error("private note crossed its author boundary");
 await ownerTransaction((transaction) => [transaction.query(
@@ -180,6 +185,7 @@ await denied(getProblemActivity({
   workspaceId: workspaceA.id,
   repositoryId: anchor.repositoryId,
   problemId: anchor.problemId,
+  currentAnchorRoot,
 }), "removed member read");
 
 await attachArtifact(contextA, {
@@ -193,6 +199,56 @@ await attachArtifact(contextA, {
   byteSize: 42,
   locator: "file:artifacts/live-proof.json",
 }, command());
+
+const historicalAnchor = {
+  ...anchor,
+  projectionReleaseRoot: root("b"),
+  repositoryRoot: root("c"),
+};
+const historicalAnchorRoot = scientificAnchorRoot(historicalAnchor);
+await followProblem(contextA, { anchor: historicalAnchor, following: true }, command());
+const currentBeforeFollow = await getProblemActivity({
+  accountId: accountA.id,
+  workspaceId: workspaceA.id,
+  repositoryId: anchor.repositoryId,
+  problemId: anchor.problemId,
+  currentAnchorRoot,
+});
+if (currentBeforeFollow.following) throw new Error("historical follow was promoted to current-anchor following");
+const historicalFollowView = await getProblemActivity({
+  accountId: accountA.id,
+  workspaceId: workspaceA.id,
+  repositoryId: anchor.repositoryId,
+  problemId: anchor.problemId,
+  currentAnchorRoot: historicalAnchorRoot,
+});
+if (!historicalFollowView.following) throw new Error("historical anchor follow was not returned by its exact root");
+await followProblem(contextA, { anchor, following: true }, command());
+const currentFollowView = await getProblemActivity({
+  accountId: accountA.id,
+  workspaceId: workspaceA.id,
+  repositoryId: anchor.repositoryId,
+  problemId: anchor.problemId,
+  currentAnchorRoot,
+});
+if (!currentFollowView.following) throw new Error("current anchor follow was not returned");
+await followProblem(contextA, { anchor, following: false }, command());
+const currentAfterUnfollow = await getProblemActivity({
+  accountId: accountA.id,
+  workspaceId: workspaceA.id,
+  repositoryId: anchor.repositoryId,
+  problemId: anchor.problemId,
+  currentAnchorRoot,
+});
+if (currentAfterUnfollow.following) throw new Error("current unfollow retained historical following as current");
+const historicalAfterCurrentUnfollow = await getProblemActivity({
+  accountId: accountA.id,
+  workspaceId: workspaceA.id,
+  repositoryId: anchor.repositoryId,
+  problemId: anchor.problemId,
+  currentAnchorRoot: historicalAnchorRoot,
+});
+if (!historicalAfterCurrentUnfollow.following) throw new Error("current unfollow erased historical following");
 
 const payload = {
   schema: "vela.submission.v2",
@@ -245,6 +301,7 @@ const activity = await getProblemActivity({
   workspaceId: workspaceA.id,
   repositoryId: anchor.repositoryId,
   problemId: anchor.problemId,
+  currentAnchorRoot,
 });
 const approachAudits = activity.audit.filter((entry) => entry.operation === "approach.create");
 if (approachAudits.length !== 1) throw new Error("idempotent retry appended a duplicate audit entry");
@@ -275,6 +332,7 @@ console.log(JSON.stringify({
   privateNoteIsolated: true,
   idempotencyProved: true,
   optimisticVersioningProved: true,
+  exactAnchorFollowingProved: true,
   appBaseTablesDenied: true,
   observatoryWriteDenied: true,
   authoritySecretColumns: 0,

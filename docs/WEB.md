@@ -347,9 +347,10 @@ inserts a complete candidate into `main`, recomputes row roots and corpus
 counts, and only then atomically moves `current_release`. The read
 contract retains only that current release and its two immediate activated
 predecessors; unactivated candidates are disposable and are removed by the
-next prune. An unchanged
-refresh retains the current release root and skips deployment. Failed
-refreshes leave the prior head unchanged. Structural ranking is not persisted
+next prune. An unchanged refresh retains the current release root; the workflow
+still deploys the exact qualified site commit, because a rendering change can
+need publication without changing a source fact. Failed refreshes leave the
+prior head unchanged. Structural ranking is not persisted
 as a second projection layer; producer work comes from the exact Target Index,
 while graph position remains non-authoritative.
 
@@ -532,10 +533,19 @@ The two active applications deliberately use different release paths:
 
 - `www.vela.space` uses Vercel's Git deployment for relevant `main` changes.
 - The unified application has direct Git deployment disabled. Relevant `main` changes
-  trigger `refresh-projection.yml`, which synchronizes the additive schema,
-  builds and verifies the one current projection contract, activates its exact
-  release root, and only then invokes the application deploy hook. That single
-  deployment serves both product domains.
+  trigger `refresh-projection.yml`. Its credential-free preflight first owns the
+  exact source checks, lint, tests, and patch hygiene required by the deployment.
+  The workflow then applies and verifies rooted additive `vela_activity`
+  migrations, builds and verifies the one current projection contract, activates
+  its exact release root, and only then asks Vercel's deployment API to build the
+  exact `site_commit` through `gitSource.sha`. The request and Vercel response
+  must agree on that SHA before the workflow waits for production; the public
+  manifest must then agree on both that commit and the activated projection. The
+  activity migration job receives the migrator and application URLs only on its
+  exact steps. The deploy request receives only `VERCEL_TOKEN` and the exact
+  public commit on its own step; the build and public readiness checks receive
+  no database credential, and readiness receives no Vercel credential. That
+  single deployment serves both product domains.
 
 This ordering is mandatory. It prevents current application code from racing a
 predecessor read model and makes one workflow own both projection activation and
@@ -543,7 +553,9 @@ the corresponding deployment. `workflow_dispatch` remains available for an
 exact data-only refresh. Only `apps/www/vercel.json` carries an
 `ignoreCommand`, so `scripts/vercel-should-build.mjs` filters the editorial
 build alone; the Observatory's scope comes from the workflow's own path
-filters, and every hook invocation builds.
+filters, and every exact-SHA deployment request builds. A branch-head hook is
+not used: it could resolve a newer `main` commit than the tree the workflow
+qualified.
 
 Vela Web's `package.json` contains the only product version. Neither database
 has a parallel numbered release train. The projection's current-only manifest is

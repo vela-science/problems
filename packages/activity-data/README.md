@@ -20,8 +20,11 @@ project's main branch, an administrator must:
    `VELA_ACTIVITY_MIGRATOR_DATABASE_URL`.
 
 Do not pass `roles.sql` or the `CREATE DATABASE` statement to `schema.mjs`.
-That runner accepts rooted files from `migrations/` only, runs each unapplied
-migration once, and refuses unknown or rewritten ledger entries.
+The rooted runner is the only schema entrypoint: it accepts sorted files from
+`migrations/` only, runs each unapplied migration transactionally, records its
+exact root, and refuses unknown or rewritten ledger entries. There is no
+parallel `schema.sql`; that would bypass the migration ledger and could lose
+the transaction-local owner role between statements.
 
 The database-privilege phase also revokes PostgreSQL's default public access
 to `vela_observatory`, then restores `CONNECT` to the stable no-login
@@ -33,7 +36,7 @@ would be illusory because every activity role would inherit `CONNECT` from
 
 ## Runtime boundary
 
-The app role gets `CONNECT` on `vela_activity`, `USAGE` on `activity_api`, and
+The app role gets `CONNECT` (without `TEMP`) on `vela_activity`, `USAGE` on `activity_api`, and
 `EXECUTE` on its security-definer functions. It has no access to `activity`
 tables, the Observatory database, or repository authority keys. Large artifact
 bytes stay outside Postgres; only roots, bounded metadata, and locators belong

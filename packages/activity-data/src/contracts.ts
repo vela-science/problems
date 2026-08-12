@@ -109,19 +109,127 @@ export type DiscussionVisibility = "workspace" | "private";
 export type ProblemActivityQuery = WorkspaceContext & {
   repositoryId: string;
   problemId: string;
+  currentAnchorRoot: HashRoot;
+};
+
+export type ActivityApproach = {
+  id: string;
+  workspaceId: string;
+  anchorRoot: HashRoot;
+  parentApproachId: string | null;
+  createdByAccountId: string;
+  title: string;
+  summary: string;
+  state: "open" | "paused" | "completed" | "abandoned";
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type ActivityAttempt = {
+  id: string;
+  workspaceId: string;
+  anchorRoot: HashRoot;
+  approachId: string;
+  createdByAccountId: string;
+  provider: string;
+  externalSessionId: string | null;
+  locator: string | null;
+  title: string;
+  state: AttemptState;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type ActivityDiscussionEntry = {
+  id: string;
+  workspaceId: string;
+  anchorRoot: HashRoot;
+  approachId: string | null;
+  attemptId: string | null;
+  authorAccountId: string;
+  kind: DiscussionKind;
+  visibility: DiscussionVisibility;
+  body: string;
+  createdAt: string;
+};
+
+export type ActivityWorkRequest = {
+  id: string;
+  workspaceId: string;
+  anchorRoot: HashRoot;
+  approachId: string | null;
+  attemptId: string | null;
+  createdByAccountId: string;
+  assigneeAccountId: string | null;
+  kind: WorkRequestKind;
+  state: WorkRequestState;
+  title: string;
+  detail: string;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type ActivityArtifact = {
+  id: string;
+  workspaceId: string;
+  anchorRoot: HashRoot;
+  attemptId: string | null;
+  attachedByAccountId: string;
+  contentRoot: HashRoot;
+  metadataRoot: HashRoot | null;
+  kind: string;
+  path: string;
+  mediaType: string | null;
+  byteSize: number | null;
+  locator: string | null;
+  createdAt: string;
+};
+
+export type ActivitySubmissionDraft = {
+  id: string;
+  workspaceId: string;
+  anchorRoot: HashRoot;
+  createdByAccountId: string;
+  schemaName: "vela.submission.v2";
+  payloadRoot: HashRoot;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type ActivityAuditEntry = {
+  sequence: number;
+  workspaceId: string | null;
+  accountId: string;
+  anchorRoot: HashRoot | null;
+  operation: string;
+  subjectKind: string;
+  subjectId: string;
+  requestRoot: HashRoot;
+  recordedAt: string;
 };
 
 export type ProblemActivity = {
   anchors: StoredScientificAnchor[];
   following: boolean;
-  approaches: Array<Record<string, unknown>>;
-  attempts: Array<Record<string, unknown>>;
-  discussion: Array<Record<string, unknown>>;
-  workRequests: Array<Record<string, unknown>>;
-  artifacts: Array<Record<string, unknown>>;
-  drafts: Array<Record<string, unknown>>;
-  audit: Array<Record<string, unknown>>;
+  approaches: ActivityApproach[];
+  attempts: ActivityAttempt[];
+  discussion: ActivityDiscussionEntry[];
+  workRequests: ActivityWorkRequest[];
+  artifacts: ActivityArtifact[];
+  drafts: ActivitySubmissionDraft[];
+  audit: ActivityAuditEntry[];
 };
+
+export function followsCurrentAnchor(
+  followedAnchorRoots: readonly HashRoot[],
+  currentAnchorRoot: HashRoot,
+): boolean {
+  return followedAnchorRoots.includes(currentAnchorRoot);
+}
 
 export type CreateWorkspaceInput = { slug: string; name: string };
 export type FollowProblemInput = { anchor: ScientificAnchor; following: boolean };

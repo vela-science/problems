@@ -6,7 +6,7 @@ BEGIN
 END
 $database$;
 
-REVOKE CONNECT ON DATABASE vela_activity FROM PUBLIC;
+REVOKE CONNECT, TEMP ON DATABASE vela_activity FROM PUBLIC;
 GRANT CONNECT ON DATABASE vela_activity TO
   vela_activity_owner,
   vela_activity_migrator,

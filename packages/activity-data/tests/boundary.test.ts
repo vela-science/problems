@@ -40,6 +40,7 @@ describe("activity authority and tenant boundary", () => {
     expect(read("roles.sql")).not.toMatch(/^\s*CREATE DATABASE/m);
     expect(read("README.md")).toContain("standalone autocommit statement");
     expect(read("database-privileges.sql")).toContain("current_database() <> 'vela_activity'");
+    expect(read("database-privileges.sql")).toContain("REVOKE CONNECT, TEMP ON DATABASE vela_activity FROM PUBLIC");
     expect(read("database-privileges.sql")).toContain("observatory_projection_reader,");
     expect(read("database-privileges.sql")).not.toContain("observatory_projection_reader_20260812");
     const sql = read("migrations/20260811_activity_v1.sql");
@@ -52,5 +53,18 @@ describe("activity authority and tenant boundary", () => {
     const source = read("src/activity.ts");
     expect(source).toContain("external_session_id: patch.externalSessionId ?? null");
     expect(source).toContain("locator: patch.locator ?? null");
+  });
+
+  test("reads current following without hiding historical anchored work", () => {
+    const migration = read("migrations/20260812_current_anchor_read.sql");
+    const source = read("src/activity.ts");
+    expect(migration).toContain("'followedAnchorRoots'");
+    expect(migration).toContain("'following', EXISTS");
+    expect(migration).toContain("jsonb_agg(f.anchor_root ORDER BY f.anchor_root)");
+    expect(migration).toContain("FROM activity.approaches x JOIN anchors a");
+    expect(migration).not.toContain("DROP FUNCTION");
+    expect(source).toContain("query.currentAnchorRoot");
+    expect(source).toContain("parseProblemActivity(rows[0]?.result, query.currentAnchorRoot)");
+    expect(source).toContain("get_problem_activity($1::uuid, $2::uuid, $3, $4)");
   });
 });

@@ -2,6 +2,7 @@ import { activitySql } from "./client";
 import { canonicalJson, sha256 } from "@vela/observatory-data/canonical";
 import {
   commandRequestRoot,
+  type HashRoot,
   scientificAnchorRoot,
   type ActivityAccount,
   type AddDiscussionEntryInput,
@@ -17,7 +18,6 @@ import {
   type ProblemActivity,
   type ProblemActivityQuery,
   type ScientificAnchor,
-  type StoredScientificAnchor,
   type UpdateAttemptInput,
   type Workspace,
   type WorkspaceContext,
@@ -29,6 +29,7 @@ import {
   type SubmissionDraftExport,
 } from "./draft-submission";
 import { activityDatabaseError } from "./errors";
+import { parseProblemActivity as parseProblemActivityResponse } from "./problem-activity";
 
 type JsonRecord = Record<string, unknown>;
 
@@ -74,45 +75,6 @@ function workspaceFrom(value: unknown): Workspace {
     createdAt: text(row.created_at, "workspace created_at"),
     updatedAt: text(row.updated_at, "workspace updated_at"),
   };
-}
-
-function anchorFrom(value: unknown): StoredScientificAnchor {
-  const row = record(value, "scientific anchor");
-  return {
-    root: text(row.anchor_root, "anchor root") as StoredScientificAnchor["root"],
-    projectionReleaseRoot: text(
-      row.projection_release_root,
-      "anchor projection_release_root",
-    ) as StoredScientificAnchor["projectionReleaseRoot"],
-    repositoryId: text(row.repository_id, "anchor repository_id"),
-    repositoryRoot: text(
-      row.repository_root,
-      "anchor repository_root",
-    ) as StoredScientificAnchor["repositoryRoot"],
-    sourceCommit: text(row.source_commit, "anchor source_commit"),
-    sourceTree: text(row.source_tree, "anchor source_tree"),
-    problemId: text(row.problem_id, "anchor problem_id"),
-    problemRecordRoot: text(
-      row.problem_record_root,
-      "anchor problem_record_root",
-    ) as StoredScientificAnchor["problemRecordRoot"],
-    sourceObservationRoot: row.source_observation_root == null
-      ? null
-      : text(row.source_observation_root, "anchor source_observation_root") as StoredScientificAnchor["sourceObservationRoot"],
-    claimId: row.claim_id == null ? null : text(row.claim_id, "anchor claim_id"),
-    claimRoot: row.claim_root == null
-      ? null
-      : text(row.claim_root, "anchor claim_root") as StoredScientificAnchor["claimRoot"],
-    claimStanding: row.claim_standing == null
-      ? null
-      : text(row.claim_standing, "anchor claim_standing"),
-    capturedAt: text(row.captured_at, "anchor captured_at"),
-  };
-}
-
-function recordArray(value: unknown, field: string): JsonRecord[] {
-  if (!Array.isArray(value)) throw new Error(`problem activity ${field} must be an array`);
-  return value.map((item) => record(item, `problem activity ${field}`));
 }
 
 function dbAnchor(anchor: ScientificAnchor): JsonRecord {
@@ -202,26 +164,17 @@ export async function listWorkspaces(accountId: string): Promise<Workspace[]> {
   }
 }
 
+export function parseProblemActivity(value: unknown, currentAnchorRoot: HashRoot) {
+  return parseProblemActivityResponse(value, currentAnchorRoot);
+}
+
 export async function getProblemActivity(query: ProblemActivityQuery): Promise<ProblemActivity> {
   try {
     const rows = await activitySql().query(
       "SELECT activity_api.get_problem_activity($1::uuid, $2::uuid, $3, $4) AS result",
       [query.accountId, query.workspaceId, query.repositoryId, query.problemId],
     );
-    const result = record(rows[0]?.result, "problem activity");
-    if (!Array.isArray(result.anchors)) throw new Error("problem activity anchors must be an array");
-    if (typeof result.following !== "boolean") throw new Error("problem activity following must be boolean");
-    return {
-      anchors: result.anchors.map(anchorFrom),
-      following: result.following,
-      approaches: recordArray(result.approaches, "approaches"),
-      attempts: recordArray(result.attempts, "attempts"),
-      discussion: recordArray(result.discussion, "discussion"),
-      workRequests: recordArray(result.workRequests, "work requests"),
-      artifacts: recordArray(result.artifacts, "artifacts"),
-      drafts: recordArray(result.drafts, "drafts"),
-      audit: recordArray(result.audit, "audit"),
-    };
+    return parseProblemActivity(rows[0]?.result, query.currentAnchorRoot);
   } catch (error) {
     throw activityDatabaseError(error);
   }

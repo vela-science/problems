@@ -60,13 +60,14 @@ if (migrate) {
   const [access] = await sql.query(`SELECT
     has_schema_privilege(current_user, 'activity_api', 'USAGE') AS api_usage,
     has_schema_privilege(current_user, 'activity', 'USAGE') AS storage_usage,
+    has_database_privilege(current_user, 'vela_activity', 'TEMP') AS temporary_access,
     has_table_privilege(current_user, (
       SELECT relation.oid FROM pg_catalog.pg_class relation
       JOIN pg_catalog.pg_namespace namespace ON namespace.oid=relation.relnamespace
       WHERE namespace.nspname='activity' AND relation.relname='accounts'
     ), 'SELECT,INSERT,UPDATE,DELETE') AS base_access,
     has_function_privilege(current_user, 'activity_api.ensure_account(text,text,text)', 'EXECUTE') AS account_api`);
-  if (!access?.api_usage || access.storage_usage || access.base_access || !access.account_api) {
+  if (!access?.api_usage || access.storage_usage || access.temporary_access || access.base_access || !access.account_api) {
     throw new Error(`activity application role boundary failed: ${JSON.stringify(access)}`);
   }
 }
