@@ -176,7 +176,17 @@ reskinned.
 `packages/observatory-data/src/registry.ts` is the typed registry for the canonical
 Git repositories. One today: `vela-science/math`, the single live mathematics
 authority. Four existed under the previous epoch and existed because there were
-four topics rather than four authorities. One GitHub workflow — on a daily
+four topics rather than four authorities. Math is private. Its registry entry
+has one canonical GitHub locator and explicit `private` access; the former
+public replica is neither a declared locator nor a scheduled mirror target.
+Every CI, refresh, gate, and reconstruction checkout passes
+`VELA_MATH_READ_TOKEN` only to the shared checkout action, pins `main`, fetches
+the full history needed by the projection, and sets
+`persist-credentials: false`. Public product pages render the safe projection;
+source acquisition uses `gh auth status` followed by `gh repo clone`, so no
+surface promises anonymous access or embeds a credential.
+
+One GitHub workflow — on a daily
 schedule, on a relevant push to `main`, or by `workflow_dispatch` for a
 data-only refresh — checks out clean
 `origin/main` Repository tips, verifies them with the pinned Vela release,

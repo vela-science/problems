@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { readFileSync } from "node:fs";
+import { YAML } from "bun";
+import { readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { repositoryRegistry } from "../packages/observatory-data/src/registry";
 
@@ -29,6 +30,24 @@ import { repositoryRegistry } from "../packages/observatory-data/src/registry";
 */
 
 const ACTION = resolve(import.meta.dirname, "../.github/actions/checkout-repositories/action.yml");
+const WORKFLOW_DIRECTORY = resolve(import.meta.dirname, "../.github/workflows");
+const WORKFLOWS = readdirSync(WORKFLOW_DIRECTORY)
+  .filter((name) => name.endsWith(".yml") || name.endsWith(".yaml"))
+  .map((name) => resolve(WORKFLOW_DIRECTORY, name));
+
+type WorkflowStep = {
+  name?: string;
+  uses?: string;
+  with?: Record<string, string | boolean | number>;
+  env?: Record<string, string>;
+};
+
+function workflowSteps(document: string): WorkflowStep[] {
+  const parsed = YAML.parse(document) as {
+    jobs?: Record<string, { steps?: WorkflowStep[] }>;
+  };
+  return Object.values(parsed.jobs ?? {}).flatMap(({ steps }) => steps ?? []);
+}
 
 /** One `with:` value per step, in file order. Steps here carry no anchors or
  *  block scalars, so a line match is exact for them. */
@@ -67,5 +86,56 @@ describe("canonical Repository checkout roster", () => {
     // clone produces a projection that is wrong rather than one that fails.
     const depths = values(action, "fetch-depth");
     expect(depths).toEqual(expected.map(() => "0"));
+  });
+
+  test("uses the private Math credential only for its dropped checkout credential", () => {
+    expect(action).toContain("math-read-token:\n    description: Credential used only to read the private canonical Math repository.\n    required: true");
+    expect(values(action, "ref")).toEqual(["main"]);
+    expect(values(action, "token")).toEqual(["${{ inputs.math-read-token }}"]);
+    expect(values(action, "persist-credentials")).toEqual(["false"]);
+    expect(action.match(/\$\{\{ inputs\.math-read-token \}\}/gu)).toHaveLength(1);
+    expect(action).not.toMatch(/https?:\/\/[^\s]*\$\{\{/u);
+  });
+
+  test("every current workflow invocation passes the secret only as the scoped action input", () => {
+    const documents = WORKFLOWS.map((path) => readFileSync(path, "utf8"));
+    const invocations = documents.flatMap((workflow) => workflowSteps(workflow).filter(
+      ({ uses }) => uses === "./.github/actions/checkout-repositories",
+    ));
+    expect(invocations).toHaveLength(4);
+    for (const invocation of invocations) {
+      expect(invocation.with?.["math-read-token"]).toBe("${{ secrets.VELA_MATH_READ_TOKEN }}");
+      expect(invocation.env).toBeUndefined();
+    }
+    const secretReferences = documents.flatMap((document) => (
+      document.match(/\$\{\{ secrets\.VELA_MATH_READ_TOKEN \}\}/gu) ?? []
+    ));
+    expect(secretReferences).toHaveLength(invocations.length);
+  });
+
+  test("reconstruction acquires private Math before retained-input verification", () => {
+    const path = resolve(WORKFLOW_DIRECTORY, "reconstruct-projection.yml");
+    const workflow = readFileSync(path, "utf8");
+    const parsed = YAML.parse(workflow) as {
+      jobs: {
+        reconstruct: {
+          env?: Record<string, string>;
+          steps: WorkflowStep[];
+        };
+      };
+    };
+    const job = parsed.jobs.reconstruct;
+    const checkoutIndex = job.steps.findIndex(
+      ({ uses }) => uses === "./.github/actions/checkout-repositories",
+    );
+    const downloadIndex = job.steps.findIndex(
+      ({ name }) => name === "Read and download the reconstruction's retained inputs",
+    );
+    expect(checkoutIndex).toBeGreaterThan(-1);
+    expect(downloadIndex).toBeGreaterThan(checkoutIndex);
+    expect(job.steps[checkoutIndex]?.with?.["math-read-token"]).toBe(
+      "${{ secrets.VELA_MATH_READ_TOKEN }}",
+    );
+    expect(JSON.stringify(job.env ?? {})).not.toContain("VELA_MATH_READ_TOKEN");
   });
 });

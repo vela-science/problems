@@ -123,6 +123,8 @@ jobs:
 
       - name: Checkout canonical repositories
         uses: ./.github/actions/checkout-repositories
+        with:
+          math-read-token: ${{ secrets.VELA_MATH_READ_TOKEN }}
 
       # Same false positive as the `verify` job above, and less reachable: this
       # job does not run on a push at all.
