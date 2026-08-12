@@ -13,7 +13,6 @@ const currentSurfaces = [
   "apps/www/src/content/docs/manifest.json",
   "apps/www/src/data/protocol-facts.ts",
   "apps/www/src/data/home-story.ts",
-  "apps/www/src/app/developers/page.tsx",
   "apps/www/src/components/home/start-building.tsx",
   "apps/observatory/src/components/vela/clone-menu.tsx",
   "apps/observatory/src/components/vela/repository-context.tsx",

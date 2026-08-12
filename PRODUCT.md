@@ -166,11 +166,11 @@ The editorial gateway explains why Vela exists, how its trust boundary works,
 how a builder starts, and which authored work is ready to read. It is a
 statically exported Next.js application. The landing page is a paced editorial
 journey through the missing scientific-state layer, the exact public map, the
-protocol crossing, correction lineage, publications, and a local quick start.
-`/essays` is the authored-publication index, `/developers` is the implementation
-entry point, `/security` explains authority and custody, `/constellations`
-retains the published `Endless Repositories` essay, and `/docs` plus
-`/docs/[section]` serve the normative manual.
+protocol crossing, correction lineage, one published essay, and a local quick
+start. `/constellations` retains the published `Endless Frontiers` essay, and
+`/docs` plus `/docs/[section]` serve the normative manual. The older `/essays`,
+`/developers`, and `/security` shells redirect to the essay, Quickstart, and
+Threat model respectively instead of repeating those surfaces.
 
 The editorial site may explain the product in authored language. Live values
 and scientific marks still come from checked projection data, protocol examples
@@ -330,9 +330,9 @@ documentation, not above every page that lists them.
   grid, because a Dossier is a document a reader picks rather than a row they
   scan.
 - Preserve durable URLs and URL-backed product state. A retired path keeps a
-  permanent redirect, and the route contract pins where it points. Three
-  editorial redirects name essays that have not yet returned; the contract holds
-  the destination so those URLs resolve the moment they do.
+  permanent redirect, and the route contract pins where it points. Editorial
+  aliases resolve directly to a published essay or an exact pinned manual page;
+  they never terminate at a placeholder index.
 - Navigation and loading preserve the application shell rather than replacing
   the document.
 - Product guidance links normative details to the exact Vela release rather than

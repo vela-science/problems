@@ -63,13 +63,15 @@ The editorial application owns one current route vocabulary:
 
 ```text
 /                 the editorial scientific-state gateway
-/essays           the authored-publication index
-/constellations   Endless Repositories
-/developers       implementation entry point and local quick start
-/security         custody, authority, and hosted-boundary explanation
+/constellations   Endless Frontiers
 /docs             the vendored Vela documentation
 /docs/[section]   16 pages in five groups, synced from the Vela release pin
 ```
+
+The retired `/essays`, `/developers`, and `/security` pages remain permanent
+redirects to `/constellations`, `/docs/quickstart`, and `/docs/threat-model`.
+They preserve old links without maintaining three parallel explanations of
+material the essay and exact manual already own.
 
 `apps/www/scripts/check-public-routes.mjs` holds the set as an executable
 contract: a route that ships without being added there fails the build, and so
@@ -77,10 +79,10 @@ does a route in the set that stops shipping. Publication metadata may retain
 future entries, but the site labels them in preparation and does not link them
 until a substantive page joins this contract.
 
-The masthead carries the sail as the Home affordance and exposes Essays, Docs,
-Developers, Problems, and GitHub. Problems leaves the editorial site for the
-shared Vela application. Security remains available from the closing navigation
-without crowding the primary row.
+The masthead carries the sail as the Home affordance and exposes one Essay,
+Docs, Problems, and GitHub. Problems leaves the editorial site for the shared
+Vela application. Developer onboarding and the security boundary live in the
+pinned manual instead of separate editorial shells.
 
 ### Docs moved off the Observatory, 2026-07-28
 
