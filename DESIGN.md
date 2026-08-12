@@ -30,7 +30,7 @@ composition.
 | Brand | `packages/brand` | DTCG-shaped tokens, type roles, fonts, sail geometry, state colours, licences, deterministic exports |
 | React UI | `packages/ui` | Official shadcn `base-nova` primitives on Base UI and stable Vela presentation semantics |
 | Editorial composition | `apps/www` | Authored publications, figures, product narrative, and documentation layouts |
-| Vela application | `apps/observatory` | Problem State and Work, advanced records, hosted activity, URL state, local-signing handoff, and the Sigma graph |
+| Vela application | `apps/observatory` | Problem Current State and Workspace, advanced records, hosted activity, URL state, local-signing handoff, and the Sigma graph |
 | Exact data | `packages/observatory-data` | Rooted scientific projections consumed by both applications |
 | Activity data | `packages/activity-data` | Mutable hosted workspaces, attempts, discussion, rooted metadata, and unsigned drafts |
 
@@ -72,12 +72,18 @@ the scientific-state presentation.
 The words on screen are the product's first design decision. A reader who
 cannot name what they are looking at cannot check it.
 
-**Scientific state.** Repository, Claim, Problem, Target, Submission, Proposal,
-Verification Record, Decision, Dossier, Source.
+**Public concepts.** Problem, Current State, Research Brief, Target, Research
+Block, Workspace, Decision. These are the reader's orientation layer, not a new
+protocol ontology.
+
+**Exact provenance.** Repository, Claim, Submission, Proposal, Verification
+Record, Event, Result Dossier, Source, Artifact, root, and format. Exact types
+remain one disclosure away and keep their durable routes.
 
 **Hosted activity.** Account, Workspace, Follow, Approach, Attempt, Comment,
 Note, Assignment, Reproduction Request, Artifact, Agent Session, Submission
-Draft. Activity nouns appear in Problems Work mode and never label a scientific
+Draft. A rooted Artifact contribution may be presented as a Research Block.
+Activity nouns appear in a Problem's Workspace and never label a scientific
 state axis.
 
 **Retired reader terms.** Finding is the predecessor name for a Claim. It may
@@ -85,10 +91,11 @@ appear as an exact retained value, while the interface calls the record a
 Claim. Bundle is a protocol root and may appear only as a labelled exact value.
 The Observatory `/runs` path remains a redirect to `/decisions`.
 
-Two of the product's words have no protocol object behind them, and the product
-says so rather than implying authority a grouping cannot confer. A Dossier is an
-exact rooted case record and no Vela object; Sources is a release-scoped
-registry and a navigation grouping.
+Research Brief is the readable presentation of an exact rooted Result Dossier,
+which has no authority effect. Research Block is the readable presentation of a
+durable rooted contribution in the activity plane. The exact record type is
+always available in advanced provenance. Sources is a release-scoped registry
+and a navigation grouping.
 
 A destination is named after a retained record. Where the protocol's word and
 the reader's word differ, the reader's wins in interface text and the protocol's
@@ -184,10 +191,11 @@ not infer a change in Standing.
 
 ## Navigation
 
-The visible product model is **Home → Problem → State | Work**. Global navigation
-answers five user intents—Home, Problems, Work, Hubs, and Activity—then visually
-subordinates Repositories and Sources as provenance Library. State and Work are
-modes of the same Problem, never parallel products or domains. Inside a Problem
+The visible product model is **Home → Problem → Current State | Workspace**.
+Global navigation answers four user intents: Home, Problems, Work, and Activity.
+Repositories and Sources are visually subordinate provenance Library links.
+Hubs are a Problems discovery facet and secondary destination. Current State
+and Workspace are modes of the same Problem, never parallel products or domains. Inside a Problem
 the sidebar becomes local to that Problem. Protocol records appear as context
 and progressive detail; search and account remain utilities.
 
@@ -196,9 +204,9 @@ at a time. Its object collections do not define the primary Problems navigation.
 
 - The **sidebar** is contextual. Outside a Repository it lists release-wide
   destinations. Inside a Repository it becomes that Repository's own sections,
-  grouped under State, Direction, and Integrity, which are the protocol's axes
-  rather than invented headings, so a group heading can never be mistaken for a
-  page that is missing. No label ever means two scopes on one screen.
+  grouped under Exact State records, Exact direction records, and Repository
+  provenance. The headings explicitly mark this as the advanced inspector, so
+  no exact record collection competes with the public product concepts.
 - The **header** carries one trail, and beside it only tools that are not
   places: the navigation toggle, search-and-jump, notifications, theme, and
   account. The trail's last element is the current page as text marked

@@ -11,7 +11,7 @@ make evidence and direction legible; it is not a separately published product.
 | --- | --- | --- |
 | Brand | `packages/brand` | All Vela surfaces and exported assets |
 | React primitives and semantics | `packages/ui` | Observatory, Problems, eligible www interactions, future private React applications |
-| Editorial profile | `apps/www` | Home, the Constellations essay, and the vendored Vela documentation |
+| Editorial profile | `packages/ui/src/styles/editorial.css` | Home, the Constellations essay, and the vendored Vela documentation |
 | Product profile | `packages/ui/src/styles/product.css` | Observatory, Problems, and future private product surfaces |
 | Exact data | `packages/observatory-data` | www, Observatory, and Problems State mode |
 | Activity data | `packages/activity-data` | Problems Work mode; no visual primitives |
@@ -29,8 +29,10 @@ editorial and workbench composition systems.
 
 ## shadcn and Base UI
 
-`packages/ui/components.json` is the only upstream primitive-generation
-configuration. It fixes:
+`packages/ui/components.json` is the only upstream primitive-generation and
+installation configuration. The matching application maps are consumer
+configuration for local AI/CLI context, not additional source destinations.
+Together they fix:
 
 - shadcn `base-nova`;
 - Base UI;
@@ -43,24 +45,105 @@ Run the shadcn CLI from `packages/ui`, never from an application:
 
 ```bash
 cd packages/ui
-bunx shadcn@4.13.1 add <component>
-bunx shadcn@4.13.1 diff
+shadcn add <component>
+shadcn diff
 ```
+
+The workspace pins shadcn `4.16.1`; scripts always resolve that installed
+binary. `bunx shadcn@…` is deliberately excluded because it fetched a second
+version beside the reviewed one. `bun run check:design-system` runs `shadcn
+info --json` in `packages/ui`, `apps/observatory`, and `apps/www`, then requires
+the same Base UI base, `base-nova`, Hugeicons, Tailwind v4, and shared UI target.
 
 Review generated source before accepting it. A registry update may change
 markup, state attributes, dependencies, or focus behavior. Keep the source
 close to upstream; put Vela semantics in composition rather than forking a
 generic primitive.
 
-`apps/observatory/components.json` is a consumer map. It points UI and utility
-aliases at `@vela/ui`; it is not a second installation destination. Problems
-also consumes package exports and does not create an app-local primitive
-directory. `apps/www` adopts shared primitives when a generic interaction is
-migrated, while authored editorial elements remain local.
+`apps/observatory/components.json` and `apps/www/components.json` are consumer
+maps. They point UI and utility aliases at `@vela/ui`; neither is a second
+installation destination. Problems consumes package exports and does not
+create an app-local primitive directory. www uses the same controls, focus,
+motion, state, marks, and icon contracts while keeping only authored editorial
+composition, assets, and content-specific figure styling local.
+
+### Private source catalog
+
+`packages/ui/registry.json` is a private source catalog, not a served registry
+and not a source-copy directory. Its items reference canonical `@vela/ui`
+source directly, including reviewed licensed adaptations that are part of the
+private Vela end product. Every entry carries
+owner, origin, version, license, adaptation date, review state, and semantic
+usage limits. The check builds the catalog twice under `RUNNER_TEMP` (or the
+system temporary directory locally), requires byte-stable output, then removes
+it. It also refuses registry schema/provenance markers in application public
+assets, client bundles, or route source. Generated registry output is never
+committed, served, copied into an app, submitted to a public directory, or
+published as a separately reusable library.
+
+Licensed shadcn.io Pro and Tailwind Plus source may inform private Vela end
+products. Stable reusable adaptations may be catalogued for this private
+repository when their exact item, retrieval version, license, semantic limits,
+and changes are recorded. This does not grant redistribution rights. The
+adaptations replace Lucide/framer-motion with Hugeicons and the existing
+`motion/react` contract.
 
 Base UI supplies primitive mechanics. Vela still owns names, descriptions,
 contrast, focus visibility, touch targets, route behavior, and end-to-end
 accessibility.
+
+### shadcn.io Pro source review, 2026-08-11
+
+The following decisions were made from the full registry source, not preview
+metadata. “Adapt” means the useful composition was rewritten around real Vela
+data, Base UI, Hugeicons, product tokens, and the 150–220ms/reduced-motion
+contract. It does not mean the original block was installed.
+
+| Source items reviewed | Decision | Vela use or reason |
+| --- | --- | --- |
+| `stats-connected-kpi-bar-minimal` | Adapt and catalog | `NetworkFacts` keeps the connected facts strip and removes animation, trends, health colour, and KPI language. |
+| `dashboard-activity-feed`, `timeline-filterable`, `timeline-commit-log` | Adapt locally | `ScientificChangeFeed` uses the rail, type filters, and commit identity while separating scientific transitions from ordinary commits. |
+| `timeline-branching` | Adapt locally | `ApproachLineage` applies the fork rhythm only to activity-plane Approaches; it never draws Claim lineage or implies Standing. |
+| `features-radial-hub-satellite-graph` | Adapt locally | `HubMembershipMap` binds every edge to projected membership, removes orbit choreography and fake integrations, and supplies a linear mobile list. |
+| `search-global`, `command-menu-workspace` | Adapt existing search only | Keep the grouped keyboard vocabulary, `Kbd`, and empty-result state; reuse Vela’s FlexSearch/Command owner rather than add static results or a second command primitive. |
+| `empty-state-getting-started` | Adapt selectively | Use its focused heading/body/action hierarchy for authentic empty Work states; reject progress theatre where no rooted completion model exists. |
+| `hero-centered-crosshatch-bg`, `topography` | Crosshatch adapted; canvas rejected | A faint token-backed field may distinguish the product opening. The animated topography canvas adds decoration, CPU work, and false scientific texture without information. |
+| `ai-message-with-artifacts`, `ai-code-editor` | Pattern reference only | Their artifact/editor split and bounded panes inform Work mode. Chat chrome, reasoning logs, code theatre, synthetic diagnostics, and invented agent status are excluded. |
+| `gallery-data-visualization`, `changelog-dependency-graph` | Reject for current data | Placeholder charts, trend colours, dependency health, and generic metric cards would invent meaning. Vela keeps its exact repository graph and real tabular alternatives. |
+| `navbar-documentation`, `sidebar-documentation-tree`, `changelog-documentation-updates` | Consolidate rather than copy | Shared Search, Sheet, navigation, Typeset, and exact upstream provenance cover the useful behavior without a second docs shell. |
+| `profile-scientist-research`, `sidebar-data-science` | Reject | Generic scientist profiles and “ML Studio” navigation model people and tooling, not the Problem/State/Work/Hub structure Vela actually owns. |
+
+A second full-source comparison covered the wider Pro catalog before this
+tranche was frozen:
+
+- `command-menu-global-search` and `search-global` confirmed the existing
+  Observatory palette architecture: it groups real Problems, State/Work,
+  Hubs, Sources, repositories, exact projected records, and the canonical docs
+  destination. The existing projection search remains the sole owner; no
+  static result corpus or second command primitive was added.
+- `features-magazine-editorial-layout` confirmed www's numbered editorial
+  bands and argument-led figures; `hero-centered-crosshatch-bg` contributed
+  only the restrained token-backed product field. Vela retained its authored
+  paintings rather than copying template media.
+- `features-book-chapter-toc`, `navbar-documentation`, and
+  `sidebar-documentation-tree` confirmed the current exact contents tree,
+  shared Search/Sheet controls, and Typeset reader. Copying a parallel docs
+  shell was rejected.
+- `features-indexed-sidebar-detail-view` informed the Problems directory's
+  field/source/Standing/Work filter grammar and detail links. A static featured
+  index was removed in favor of projection-backed discovery.
+- `artifact`, `ai-message-with-artifacts`, and `ai-code-editor` contributed the
+  bounded `RootedArtifactFrame`: exact roots and custody metadata only. There
+  is no generated preview, diff theater, Apply action, or reasoning trace.
+- timeline approval, agent task queue, branch/source theater, trend charts,
+  Sankey, ink canvas, fake empty activity, and subscription patterns remain
+  explicit rejects because current retained data cannot make them truthful.
+
+The resulting page archetypes intentionally differ: Home is an orienting field
+and live network read; Problems is a search/filter directory; Problem State is
+an exact evidence document; Work is an activity workspace; Hubs are membership
+maps; Activity is a typed timeline; www remains an editorial publication and
+documentation reader. They share tokens and mechanics, not a dashboard mold.
 
 ## Shared source boundary
 
@@ -113,6 +196,14 @@ Tailwind v4 consumes generated variables rather than duplicating token values.
 - light and dark product variables;
 - radius and type utility mappings;
 - cross-application product status variables.
+
+`packages/ui/src/styles/foundation.css` owns focus, selection, forced-colour,
+and reduced-motion behavior. `packages/ui/src/styles/typeset.css` adapts the
+official shadcn Typeset contract into reading/docs and compact-product presets.
+Typeset owns size, leading, and forward-flow rhythm; route layout owns measure.
+Use `.not-typeset` for controls and `.typeset-scroll` around real wide tables.
+It does not apply backward `last-child` fixes, so streamed content remains
+stable.
 
 ### Application globals
 

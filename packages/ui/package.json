@@ -13,10 +13,14 @@
     "./vela/*": "./src/components/vela/*.tsx",
     "./hooks/*": "./src/hooks/*.ts",
     "./lib/*": "./src/lib/*.ts",
-    "./product.css": "./src/styles/product.css"
+    "./product.css": "./src/styles/product.css",
+    "./editorial.css": "./src/styles/editorial.css",
+    "./foundation.css": "./src/styles/foundation.css",
+    "./typeset.css": "./src/styles/typeset.css"
   },
   "scripts": {
-    "check": "bunx shadcn@4.13.1 diff && bun run typecheck",
+    "check": "shadcn diff && bun run check:registry && bun run typecheck",
+    "check:registry": "bun scripts/check-registry.mjs",
     "test": "bun test tests",
     "typecheck": "tsc --noEmit"
   },

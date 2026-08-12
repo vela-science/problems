@@ -41,28 +41,44 @@ them.
 ## The visible product model
 
 The product has one conceptual center: **Problems**. A reader chooses a Problem,
-then chooses **State** or **Work** on that same page. The global application has
-five user-intent destinations that make the network legible without exposing a
-protocol object taxonomy:
+then chooses **Current State** or **Workspace** on that same page. Seven public
+concepts cover the complete reader and contributor journey:
+
+- **Problem** is the scientific question.
+- **Current State** is the evidence-supported view, with source status and Local
+  Standing shown as separate axes.
+- **Research Brief** explains what matters, what changed, the evidence and
+  limits, and what should move next.
+- **Target** is a bounded next step.
+- **Research Block** is a durable contribution such as an experiment, proof
+  attempt, dataset, argument, or negative result with rooted artifacts.
+- **Workspace** is private or team-local coordination. Its approaches, attempts,
+  notes, requests, and drafts remain outside public scientific truth.
+- **Decision** is an explicit human or Repository-authority action. Evidence and
+  discussion never substitute for it.
+
+The global application has four user-intent destinations:
 
 - **Home** answers what changed, what matters, and what needs attention.
 - **Problems** is the cross-domain scientific-question directory.
-- **Work** shows where approaches, attempts, and requests are active.
-- **Hubs** organizes communities and collections without conferring authority.
-- **Activity** is a typed change feed across scientific state and hosted work.
+- **Work** leads from open Targets into Workspaces and Research Blocks.
+- **Activity** opens State history. Workspace activity appears only in a
+  separate lane when retained global activity data can support it.
 
-Repositories and Sources form a quieter provenance **Library**. Contributors,
+Repositories and Sources form a quieter provenance **Library**. Hubs are a
+Problems discovery facet and secondary destination, not a global peer. Contributors,
 Following, and Your work join that navigation only when their retained product
 records are populated enough to make the pages useful.
 
-- **State** answers what is currently known, what remains open, and which exact
+- **Current State** answers what is currently known, what remains open, and which exact
   records support that view.
-- **Work** answers what people and agents are trying now, and provides the
+- **Workspace** answers what people and agents are trying now, and provides the
   bounded actions needed to contribute.
 
-Repository is source context, not a prerequisite destination. Claims, Targets, Proposals, Verification
-Records, Decisions, Dossiers, Sources, roots, and graphs remain inspectable
-inside State or through an advanced records view. They do not compete with
+Repository is source context, not a prerequisite destination. Assertions,
+Targets, Proposed changes, Checks, Decisions, Research Briefs, Sources, roots,
+and graphs remain inspectable inside Current State or through an advanced
+records view. Exact protocol types remain visible in provenance. They do not compete with
 Problems in primary navigation.
 
 The domains and the two storage planes are architecture. They must not become
@@ -73,31 +89,35 @@ handoff.
 
 ## The protocol record model
 
-The protocol objects remain the exact vocabulary of scientific records. This
-table governs record labels and durable URLs, not the primary site map.
+The protocol objects remain the exact vocabulary of scientific records. Public
+labels orient a reader; advanced provenance names the exact type and durable
+URL. This is a presentation mapping, not a new protocol ontology.
 
 | Protocol object | Product word | Lives at |
 | --- | --- | --- |
 | Repository `vfr_` | **Repository** | global list, and the container for everything below |
-| Claim Record `vcl_` | **Claim** | inside a Repository |
+| Claim Record `vcl_` | **Assertion** | inside a Repository |
 | source-native problem | **Problem** | inside a Repository, where the source has them |
 | Target, and the Offer that ranks it | **Target** | inside a Repository; a release roll-up exists |
-| Submission `vsb_` | **Submission** | inside a Proposal, and in a Claim's lineage |
-| Proposal `vpr_` | **Proposal** | inside a Repository; a release roll-up exists |
-| Verification Record `vvr_` | **Verification Record** | inside a Proposal |
+| Submission `vsb_` | **Published contribution** | inside a Proposed change and in an Assertion's lineage |
+| Proposal `vpr_` | **Proposed change** | inside a Repository; a release roll-up exists |
+| Verification Record `vvr_` | **Check** | inside a Proposed change |
 | Decision, admitted as Event `vev_` | **Decision** | release-wide |
-| — (exact rooted case record) | **Dossier** | inside a Repository; a release roll-up exists |
+| — (exact rooted Result Dossier) | **Research Brief** | inside a Repository; a release roll-up exists |
 | — (release-scoped registry) | **Source** | release-wide |
 
 Two entries have no protocol object behind them, and the product says so. A
-Dossier is an exact rooted read projection with no authority. Sources is a
+Result Dossier is the exact rooted read projection behind a Research Brief and
+has no authority effect. Sources is a
 release-scoped registry, sanctioned as a navigation grouping and nothing more. A
 grouping never implies authority.
 
 ### Vocabulary
 
-Scientific-state vocabulary: Repository, Claim, Problem, Target, Submission,
-Proposal, Verification Record, Decision, Dossier, Source.
+Public scientific-state vocabulary: Problem, Current State, Research Brief,
+Target, Decision, Repository, Source. Public contribution vocabulary: Workspace
+and Research Block. Exact provenance vocabulary: Claim, Submission, Proposal,
+Verification Record, Event, Result Dossier, root, and format.
 
 The Observatory does not use Work, Activity, Run, or Attempt as scientific
 objects. Problems may use Work, Activity, and Attempt for hosted records in the
@@ -115,7 +135,9 @@ truth", "accepted by verifier", "AI approved", or an unqualified "verified",
 
 Problems uses product records that carry no Vela authority: Account, Workspace,
 Membership, Follow, Approach, Attempt, Comment, Note, Assignment, Reproduction
-Request, Artifact, and Submission Draft. An Attempt may carry a provider-neutral
+Request, Artifact, and Submission Draft. The product may present a rooted
+Artifact contribution as a Research Block while preserving Artifact as the
+exact activity record type. An Attempt may carry a provider-neutral
 external session reference. Each activity record
 binds the exact Repository, Problem, Claim where present, and projection roots
 the user saw. The interface marks the record stale after those canonical roots
@@ -196,9 +218,10 @@ activity database cannot remove or change that state.
 
 ### Navigation
 
-The global sidebar follows user intent: Home, Problems, Work, Hubs, and Activity,
-with Repositories and Sources visually subordinated as Library. A Problem page
-replaces that global list with contextual State and Work navigation plus links
+The global sidebar follows user intent: Home, Problems, Work, and Activity,
+with Repositories and Sources visually subordinated as Library. Hubs live in
+Problems discovery. A Problem page replaces that global list with contextual
+Current State and Workspace navigation plus links
 to its exact records. Account controls and search are tools, not destinations.
 Advanced record collections do not become global peers of Problems.
 
@@ -274,7 +297,7 @@ documentation, not above every page that lists them.
 - The Vela sail is the Home affordance on both surfaces. In the Observatory it
   is the mark alone, sized to the sidebar's icon column, with no wordmark.
 - Editorial navigation stays small. The application leads with Problems and
-  keeps advanced record navigation secondary. State and Work remain explicit
+  keeps advanced record navigation secondary. Current State and Workspace remain explicit
   modes of the same Problem.
 - A page picks one archetype: a collection gets to its rows, a record opens with
   the record, a Repository opens as a repository whose most prominent action is
