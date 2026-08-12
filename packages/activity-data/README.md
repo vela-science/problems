@@ -41,3 +41,9 @@ The app role gets `CONNECT` (without `TEMP`) on `vela_activity`, `USAGE` on `act
 tables, the Observatory database, or repository authority keys. Large artifact
 bytes stay outside Postgres; only roots, bounded metadata, and locators belong
 in this package.
+
+The exact current permission matrix and Workspace-promotion threat model live
+in `../../docs/security/vela-web-threat-model.md`. The proposed Target-bound
+Approach migration and rollback design live in
+`../../docs/architecture/target-bound-approach-adr.md`. The ADR is design-only:
+no Target-binding migration has been created or applied yet.
