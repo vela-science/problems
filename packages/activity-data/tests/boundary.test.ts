@@ -12,6 +12,12 @@ describe("activity authority and tenant boundary", () => {
     expect(source).not.toMatch(/OBSERVATORY_DATABASE_URL|AUTHORITY|PRIVATE_KEY|SIGNING_KEY/);
   });
 
+  test("proves both directions of the hosted database boundary", () => {
+    const verifier = read("scripts/verify-roles.mjs");
+    expect(verifier).toContain("observatory_reader_activity_connect");
+    expect(verifier).toContain("observatoryProjectionReaderIdentity.loginRole");
+  });
+
   test("stores rooted artifact metadata, not large bytes or canonical decisions", () => {
     const sql = read("migrations/20260811_activity_v1.sql");
     expect(sql).toContain("Content roots and bounded metadata only");
@@ -34,6 +40,8 @@ describe("activity authority and tenant boundary", () => {
     expect(read("roles.sql")).not.toMatch(/^\s*CREATE DATABASE/m);
     expect(read("README.md")).toContain("standalone autocommit statement");
     expect(read("database-privileges.sql")).toContain("current_database() <> 'vela_activity'");
+    expect(read("database-privileges.sql")).toContain("observatory_projection_reader,");
+    expect(read("database-privileges.sql")).not.toContain("observatory_projection_reader_20260812");
     const sql = read("migrations/20260811_activity_v1.sql");
     expect(sql).toContain("GRANT SELECT ON activity.schema_migrations TO vela_activity_migrator");
     expect(sql).toContain("GRANT USAGE ON SCHEMA activity_api TO vela_activity_app");

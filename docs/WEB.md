@@ -62,24 +62,25 @@ cannot issue a Vela Event or Decision, change Standing, or sign as a user.
 The editorial application owns one current route vocabulary:
 
 ```text
-/                 the chart
+/                 the editorial scientific-state gateway
+/essays           the authored-publication index
 /constellations   Endless Repositories
+/developers       implementation entry point and local quick start
+/security         custody, authority, and hosted-boundary explanation
 /docs             the vendored Vela documentation
 /docs/[section]   16 pages in five groups, synced from the Vela release pin
 ```
 
-The rebuild of 2026-07-28 reduced the surface to the chart and Constellations;
-documentation moved here the same day. The rest is still being rewritten.
 `apps/www/scripts/check-public-routes.mjs` holds the set as an executable
 contract: a route that ships without being added there fails the build, and so
-does a route in the set that stops shipping. Add each of
-`/essays`, `/discovery-engine`, `/gigafactories-for-science`, `/whitepaper`,
-`/stack` and `/facility` back to that set as its page returns.
+does a route in the set that stops shipping. Publication metadata may retain
+future entries, but the site labels them in preparation and does not link them
+until a substantive page joins this contract.
 
-The masthead carries the sail as the Home affordance and exposes Chart, Endless
-Repositories, Documentation, Observatory and GitHub. The current page stays a link,
-marked with `aria-current` and an underline, and it is the one label that drops
-below `sm`.
+The masthead carries the sail as the Home affordance and exposes Essays, Docs,
+Developers, Problems, and GitHub. Problems leaves the editorial site for the
+shared Vela application. Security remains available from the closing navigation
+without crowding the primary row.
 
 ### Docs moved off the Observatory, 2026-07-28
 
@@ -197,11 +198,14 @@ repository that legitimately empties is a decision somebody makes, so it takes
 an explicit `workflow_dispatch` override and a recorded reason. It acquires each source once, builds
 one candidate, inserts it in one transaction, verifies every stored table root,
 and only then moves `current_release`. A failure leaves the prior release
-current. The writer is available only to the refresh workflow. The
-Vercel application receives the native PostgreSQL role
-`observatory_projection_reader`; it does not inherit Neon's managed
-`neon_superuser` role and has schema `USAGE` plus table `SELECT` only. Production
-also uses a read-only compute endpoint.
+current. The writer is available only to the refresh workflow. The Vercel
+application connects as the native PostgreSQL login
+`observatory_projection_reader_20260812`. That versioned login inherits only
+the stable no-login `observatory_projection_reader` permission role; it does
+not inherit Neon's managed `neon_superuser` role. Schema `USAGE`, curated table
+`SELECT`, and database `CONNECT` attach to the stable role so credential
+rotation does not rewrite projection grants. Production also uses a read-only
+compute endpoint.
 
 Rebuilding unchanged source facts is a no-op. Observation time, activation
 time, and a newly computed candidate root do not create another retained
@@ -209,6 +213,20 @@ release when the read-model schema, Vela binary, source Repository identities,
 table roots, and source roots are identical. After activation, the workflow
 deploys the current application and verifies that production serves the exact
 new projection root.
+
+Problem discovery and cross-source reading use two checked files in
+`packages/observatory-data/config`: `problem-discovery.v1.json` owns explicit
+Area, Hub, Collection, Field, and Topic semantics, while
+`problem-resolution.v1.json` owns the small reviewed set of exact occurrence
+relations. The application does not derive those concepts from Repository
+slugs. Shared source numbers outside the reviewed set remain candidate links
+only. `/problems.json` is the current deployment's exact-root-labelled machine
+twin for one such source comparison. It requires the projection root, current
+resolver root, source ID, native ID, and native kind, and responds with
+`Cache-Control: no-store`. Historical immutable dispatch is intentionally
+unavailable until Vela retains and dispatches the matching resolver and read
+contract. The response returns exact occurrences, statements, and resolver
+nonclaims without creating Verification, Decision, or Standing.
 
 A no-op still records that it happened. `current_release.confirmed_at` is
 written on both branches, and it is the instant the Observatory footer shows.
@@ -310,9 +328,12 @@ provide exact data identity and rollback without mapping application releases
 onto database branches.
 
 Those two URLs are the complete secret inventory for Observatory projection
-access. Activity uses two separately scoped URLs described below. The fixed
-`observatory_projection_reader` role is managed directly in Neon and is not
-recreated during CI or projection refreshes.
+access. Activity uses two separately scoped URLs described below. The stable
+`observatory_projection_reader` permission role and versioned
+`observatory_projection_reader_20260812` login are managed directly in Neon and
+are not recreated during CI or projection refreshes. Clean-room reconstruction
+creates the same no-login group, versioned login, membership, and inherited
+read boundary inside its disposable local cluster.
 
 `packages/observatory-data/schema.sql` is the current desired-state schema.
 Forward changes live in `packages/observatory-data/migrations`; each applied file

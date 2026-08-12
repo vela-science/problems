@@ -87,6 +87,16 @@ explains Vela, Home orients the live network, Problems is the conceptual
 center, Records is the advanced inspector, and local Vela is the authority
 handoff.
 
+A Problem may have exact occurrences in several Sources: an upstream question,
+a formal statement, a proof manifest, or an attributed activity record. Vela
+groups only reviewed exact occurrences. A matching source number is a candidate
+navigation link, never a claim that two statements are identical, equivalent,
+proved, or accepted. Source-authored classifications and activity status never
+become Local Standing. The discovery profile and the reviewed resolver are
+versioned data contracts in `@vela/observatory-data`, so adding biology,
+physics, or another mathematical collection does not require app-local taxonomy
+or Repository-slug inference.
+
 ## The protocol record model
 
 The protocol objects remain the exact vocabulary of scientific records. Public
@@ -152,11 +162,20 @@ supply one.
 
 ### `www.vela.space`
 
-The editorial gateway explains why Vela exists and publishes the current
-authored work. It is a statically exported Next.js application with four
-content routes — the landing page, the `Endless Repositories` essay at
-`/constellations`, and the documentation at `/docs` and `/docs/[section]` — plus
-a not-found page and a sitemap.
+The editorial gateway explains why Vela exists, how its trust boundary works,
+how a builder starts, and which authored work is ready to read. It is a
+statically exported Next.js application. The landing page is a paced editorial
+journey through the missing scientific-state layer, the exact public map, the
+protocol crossing, correction lineage, publications, and a local quick start.
+`/essays` is the authored-publication index, `/developers` is the implementation
+entry point, `/security` explains authority and custody, `/constellations`
+retains the published `Endless Repositories` essay, and `/docs` plus
+`/docs/[section]` serve the normative manual.
+
+The editorial site may explain the product in authored language. Live values
+and scientific marks still come from checked projection data, protocol examples
+are labelled as examples, and atmosphere never masquerades as evidence. The
+gateway does not become the Workspace or the scientific authority surface.
 
 Documentation is not written here. It is the upstream Vela markdown vendored at
 an exact pinned release and rendered without paraphrase; only the duplicate
@@ -179,8 +198,9 @@ reading. The ambiguity was the two scopes being on screen together, which the
 contextual rail already prevents.
 
 Alongside the human surfaces it serves declared read endpoints: the deployment
-manifest, the source registry, the search and graph read contracts, and one JSON
-export per published Dossier. They are the read contract, not an API. Beside
+manifest, the source registry, the search and graph read contracts, one
+root-bound Problem-source JSON twin, and one JSON export per published
+Dossier. They are the read contract, not an API. Beside
 them sit three isolated product-identity handlers, for sign-in, the provider
 callback, and the same-origin account session, each named in the scientific-authority
 boundary gate. No other route handler may be added.
@@ -249,7 +269,9 @@ search, and graph compositions live together in `apps/observatory`.
 
 The Vela design system is private and product-bound. `packages/ui` is source
 shared by this workspace and future private Vela applications, consumed through
-package exports. There is no registry to publish and no separate release.
+package exports. Its private registry and component lab govern source and review
+states inside this repository; neither is served, published, or released as a
+separate product.
 
 ## Audience and tone
 

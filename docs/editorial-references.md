@@ -130,6 +130,25 @@ that template component registered MDX headings, and this app has no MDX
 pipeline, so `RegisterHeadings.tsx` feeds the section store from the rendered
 DOM instead and nothing ever mounted it.
 
+**Amended 2026-08-12, scientific-atlas gateway.** The personal site at
+`williamjblair/williamjamesblair` was reviewed at exact commit
+`6805155bd8e9df1cedc322c525ed4d96bcd17fde`. Vela adopts its cinematic pacing,
+not its code or identity: a midnight canopy gives way to a physical reading
+surface and returns to a quiet horizon, with one memorable instrument and
+almost no persistent chrome. The personal constellation, biography, palette,
+manual routing, giant client component, and global stylesheet were all
+rejected. Vela keeps its own paintings, exact projection, editorial type, and
+shared `@vela/ui` source.
+
+The new Home composition also adapts three private shadcn.io Pro grammars
+already reviewed for the Vela registry: an asymmetric headline frame, an
+indexed scientific sequence, and a pipeline step diagram. Their demo content,
+generic cards, arbitrary colour, Lucide icons, load choreography, and fabricated
+metrics were removed. The resulting components are app-local editorial
+compositions over Vela tokens, Hugeicons, the shared Button and CopyButton, and
+real projection values. The protocol-corridor animation describes workflow,
+not scientific progress, and becomes static under reduced motion.
+
 ## Image-generation review
 
 The `v0.410.0` pass considered generated background art for the home,

@@ -2,21 +2,24 @@
  *
  * Three files in this repository spell some of this out. Here it decides
  * whether a secret is accepted; `packages/observatory-data/src/deployment.ts`
- * publishes the database and the reader role in the deployment manifest every
- * reader can fetch; `packages/observatory-data/package.json` writes both, plus the
- * Neon project id, into two `neonctl` invocations. None of them imports
- * another, and the projection is one database, so a rename that reaches two of
- * the three leaves the third pointing at nothing.
+ * publishes the database and the reader login in the deployment manifest every
+ * reader can fetch; `packages/observatory-data/package.json` writes the database,
+ * plus the Neon project id, into two `neonctl` invocations. The permission role
+ * remains stable across login rotations and is intentionally not accepted as a
+ * runtime credential.
  *
  * Exported so scripts/check-projection-environment.test.ts can hold the other
  * two to these values rather than restating them a fourth time. The project id
  * is deliberately NOT here: it is not part of a connection string, so this
  * check has no use for it, and the manifest is where it is already declared.
  */
+import { observatoryProjectionReaderIdentity } from "../packages/observatory-data/src/projection-reader.ts";
+
 export const projectionDatabase = {
-  name: "vela_observatory",
+  name: observatoryProjectionReaderIdentity.database,
   writerRole: "neondb_owner",
-  readerRole: "observatory_projection_reader",
+  readerRole: observatoryProjectionReaderIdentity.loginRole,
+  readerPermissionRole: observatoryProjectionReaderIdentity.permissionRole,
 };
 
 const required = [

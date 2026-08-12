@@ -14,6 +14,7 @@ import {
   updateAttempt,
 } from "../src/index.ts";
 import { canonicalJson, sha256 } from "@vela/observatory-data/canonical";
+import { observatoryProjectionReaderIdentity } from "@vela/observatory-data/projection-reader";
 
 const appUrl = process.env.VELA_ACTIVITY_DATABASE_URL;
 const migratorUrl = process.env.VELA_ACTIVITY_MIGRATOR_DATABASE_URL;
@@ -25,6 +26,20 @@ if (!appUrl || !migratorUrl || !projectionUrl) {
 const appSql = neon(appUrl);
 const migratorSql = neon(migratorUrl);
 const projectionSql = neon(projectionUrl);
+const [projectionIdentity] = await projectionSql.query(
+  `SELECT current_database() AS database, current_user AS role,
+     pg_has_role(current_user, $1, 'MEMBER') AS permission_member,
+     (SELECT rolinherit FROM pg_roles WHERE rolname = current_user) AS inherits_privileges`,
+  [observatoryProjectionReaderIdentity.permissionRole],
+);
+if (
+  projectionIdentity?.database !== observatoryProjectionReaderIdentity.database
+  || projectionIdentity?.role !== observatoryProjectionReaderIdentity.loginRole
+  || !projectionIdentity.permission_member
+  || !projectionIdentity.inherits_privileges
+) {
+  throw new Error(`live proof received an unexpected Observatory reader identity: ${JSON.stringify(projectionIdentity)}`);
+}
 const suffix = Date.now().toString(36);
 const root = (value) => `sha256:${value.repeat(64)}`;
 const command = () => ({ idempotencyKey: randomUUID() });

@@ -256,6 +256,14 @@ requirements. Remove a global selector when its last consumer is removed.
 - spacious, asymmetric composition
 - figures as arguments
 
+The `www` landing composition follows a scientific-atlas story: a midnight
+opening, paper reading sections, one exact source instrument, and a quiet
+horizon close. It may use existing Vela paintings as atmosphere, but atmospheric
+marks never appear inside evidence-bearing figures. Homepage sections and
+publication compositions stay app-local CSS modules. Shared controls, focus,
+tokens, motion limits, and type sources still come from `@vela/ui` and
+`@vela/brand`.
+
 Tailwind Plus editorial and documentation compositions may remain local to
 `apps/www` with provenance. Generic controls should converge on `@vela/ui`
 when doing so reduces code and preserves the editorial register.

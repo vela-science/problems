@@ -52,10 +52,17 @@ the package exports.
 display, Gambetta body, Switzer metadata, and IBM Plex Mono for exact values.
 Its rhythm is spacious and asymmetric. Figures carry arguments.
 
-The landing page is numbered bands, one per screen, in the essay's register. Its
-tagline, lead, install line, and command tours are quoted from the protocol
-repository; its counts, version, and observation date come from the committed
-projection. Nothing on it is written about the product.
+The landing page is a scientific atlas rather than a dashboard or a condensed
+manual. It opens at midnight, crosses into paper, gives one exact data-derived
+source instrument, explains the protocol and authority boundary, and closes
+at the horizon. Authored prose may explain the product. Exact values, scientific
+marks, version, and observation date still come from checked sources. A diagram
+that is only a protocol example says so in its visible caption.
+
+Editorial motion is episodic. One horizon arrival, one evidence-path draw, and
+small interaction feedback are enough. Prose is immediately readable. The
+personal-site influence is pacing and atmosphere, not a copied component tree,
+palette, constellation, or second design system.
 
 ### Product
 
@@ -200,6 +207,14 @@ Hubs are a Problems discovery facet and secondary destination. Current State
 and Workspace are modes of the same Problem, never parallel products or domains. Inside a Problem
 the sidebar becomes local to that Problem. Protocol records appear as context
 and progressive detail; search and account remain utilities.
+
+Source coverage is a reading instrument inside Current State. Its compact
+matrix answers which exact Sources have a numbered candidate, a reviewed
+reference, or retained statement text. The full statement and occurrence ledger
+is progressive detail. It uses neutral source labels and exact roots; Formal
+Conjectures, proof manifests, and VibeMathed activity never receive Standing
+glyphs. A reviewed Problem entity is a navigation grouping, not a scientific
+identity claim.
 
 The advanced Records layer uses one contextual navigation system and one scope
 at a time. Its object collections do not define the primary Problems navigation.

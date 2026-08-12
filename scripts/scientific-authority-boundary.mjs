@@ -25,6 +25,7 @@ const observatoryReadRoutes = new Set([
   "apps/observatory/src/app/api/search/route.ts",
   "apps/observatory/src/app/api/graph/route.ts",
   "apps/observatory/src/app/sources.json/route.ts",
+  "apps/observatory/src/app/problems.json/route.ts",
   "apps/observatory/src/app/.well-known/vela-site.json/route.ts",
 ]);
 const resultDossierRoute = /^apps\/observatory\/src\/app\/repositories\/[^/]+\/dossiers\/[^/]+\.json\/route\.[cm]?[jt]sx?$/u;

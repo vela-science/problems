@@ -24,9 +24,12 @@ That runner accepts rooted files from `migrations/` only, runs each unapplied
 migration once, and refuses unknown or rewritten ledger entries.
 
 The database-privilege phase also revokes PostgreSQL's default public access
-to `vela_observatory`, then restores `CONNECT` only to its named projection and
-legacy reader roles. Without that public revocation, a per-role denial would be
-illusory because every activity role would inherit `CONNECT` from `PUBLIC`.
+to `vela_observatory`, then restores `CONNECT` to the stable no-login
+`observatory_projection_reader` permission role and the retained legacy reader
+roles. Versioned projection logins inherit the stable role and receive no
+direct cross-plane grant. Without the public revocation, a per-role denial
+would be illusory because every activity role would inherit `CONNECT` from
+`PUBLIC`.
 
 ## Runtime boundary
 

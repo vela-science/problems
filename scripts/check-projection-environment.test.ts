@@ -9,10 +9,19 @@ const validEnvironment = {
   VELA_PROJECTION_WRITER_DATABASE_URL:
     "postgresql://neondb_owner:writer@writer.example/vela_observatory?sslmode=require",
   VELA_PROJECTION_DATABASE_URL:
-    `postgresql://observatory_projection_reader:${readerPassword}@reader.example/vela_observatory?sslmode=require`,
+    `postgresql://observatory_projection_reader_20260812:${readerPassword}@reader.example/vela_observatory?sslmode=require`,
 };
 
 describe("projection credential binding", () => {
+  test("pins the database, versioned login, and stable permission role", () => {
+    expect(projectionDatabase).toEqual({
+      name: "vela_observatory",
+      writerRole: "neondb_owner",
+      readerRole: "observatory_projection_reader_20260812",
+      readerPermissionRole: "observatory_projection_reader",
+    });
+  });
+
   test("accepts one writer URL and one self-contained reader URL", () => {
     expect(checkProjectionEnvironment(validEnvironment)).toEqual({
       ok: true,
@@ -24,7 +33,7 @@ describe("projection credential binding", () => {
     expect(() => checkProjectionEnvironment({
       ...validEnvironment,
       VELA_PROJECTION_DATABASE_URL:
-        "postgresql://observatory_projection_reader:not-a-secret@reader.example/vela_observatory?sslmode=require",
+        "postgresql://observatory_projection_reader_20260812:not-a-secret@reader.example/vela_observatory?sslmode=require",
     })).toThrow("reader password must be a 32-byte lowercase hex secret");
   });
 
@@ -33,7 +42,7 @@ describe("projection credential binding", () => {
     expect(() => checkProjectionEnvironment({
       ...withoutReader,
       DATABASE_URL:
-        `postgresql://observatory_projection_reader:${readerPassword}@reader.example/vela_observatory?sslmode=require`,
+        `postgresql://observatory_projection_reader_20260812:${readerPassword}@reader.example/vela_observatory?sslmode=require`,
     })).toThrow("missing required projection secret VELA_PROJECTION_DATABASE_URL");
   });
 
@@ -48,6 +57,14 @@ describe("projection credential binding", () => {
     expect(() => checkProjectionEnvironment({
       ...validEnvironment,
       VELA_PROJECTION_DATABASE_URL: validEnvironment.VELA_PROJECTION_WRITER_DATABASE_URL,
+    })).toThrow("projection reader credential has the wrong role");
+  });
+
+  test("does not accept the stable permission role as a runtime login", () => {
+    expect(() => checkProjectionEnvironment({
+      ...validEnvironment,
+      VELA_PROJECTION_DATABASE_URL:
+        `postgresql://observatory_projection_reader:${readerPassword}@reader.example/vela_observatory?sslmode=require`,
     })).toThrow("projection reader credential has the wrong role");
   });
 });
