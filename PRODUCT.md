@@ -55,8 +55,8 @@ concepts cover the complete reader and contributor journey:
   attempt, dataset, argument, or negative result with rooted artifacts.
 - **Workspace** is private or team-local coordination. Its approaches, attempts,
   notes, requests, and drafts remain outside public scientific truth.
-- **Decision** is an explicit human or Repository-authority action. Evidence and
-  discussion never substitute for it.
+- **Decision** is an attributed human or agent action executed under explicit
+  Repository authority. Evidence and discussion never substitute for it.
 
 The public product nouns do not all live in the same layer:
 
