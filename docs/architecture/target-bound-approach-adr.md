@@ -1,6 +1,6 @@
 # ADR: Bind a Workspace Approach to one exact Target packet
 
-**Status:** implementation candidate; database migration created but not applied
+**Status:** deployed and enabled; live integration proof passed; remaining interaction matrix tracked below
 
 **Date:** 2026-08-12
 
@@ -159,12 +159,13 @@ unavailable. Unbound creation remains available from Workspace Overview.
 
 ## Database migration
 
-The implementation candidate adds the immutable, additive
+The implementation adds the immutable, additive
 `20260812_target_bound_approach.sql` after
 `20260812_current_anchor_read.sql`; neither applied predecessor was rewritten.
-The new migration has not been applied to Neon or any live database. It remains
-frozen for review and disposable-local database proof before an operator may
-run the rooted migration entrypoint.
+The live `activity.schema_migrations` ledger on the Neon `main` branch recorded
+the migration at `2026-08-12T22:27:04.266Z` with the frozen root
+`sha256:07ece86171ad085aaf61fc055030fc5642740a8deff450a39e5e091e96ef4ba9`.
+The migration bytes remain immutable after application.
 
 The additive DDL should be equivalent to:
 
@@ -253,6 +254,51 @@ Never roll back the DDL during an incident; dropping columns would destroy
 retained activity provenance. After the first bound write, disable new writes
 and forward-fix from the binding-aware reader. A later removal requires a
 separate retention decision and frozen export.
+
+### 2026-08-12 release record
+
+Vercel production deployment `dpl_5V3urZxnbCpD28RTukVqYGTCbPqD` took traffic
+at `2026-08-12T22:28:20Z` from exact commit
+`8231c1efd62912c4c95487569a63ffb1e189c805`. The deployment manifest at
+`app.vela.space` reported the same commit and deployment identity. The
+production environment omitted `VELA_TARGET_BOUND_APPROACH_ENABLED`, so the
+binding-aware reader served with Target-bound creation disabled.
+
+`activity:db:live-proof` passed against that reader and the migrated database.
+It created the first bound Approach, proved fork inheritance, exact retry and
+conflict behavior, cross-tenant denial, rooted audit linkage, and Standing
+independence. At the post-proof checkpoint, the database held two bound
+Approach rows for one Target: the create and its fork. Both rows retained
+`authority_effect = 'none'`, and both writes had one exact rooted audit entry.
+The one-shot proof now refuses a second production run because it requires zero
+bound rows before its first write.
+
+Those writes completed step 6 and advanced the production rollback floor.
+Operators may roll back to commit
+`8231c1efd62912c4c95487569a63ffb1e189c805` or a later binding-aware reader with
+the write gate absent or `false`. Operators must not deploy the pre-binding
+`9feb6975` reader because it would render retained bound provenance as unbound.
+
+Production later enabled the write gate with exact `true`. The current
+binding-aware deployment is `dpl_7KpFZumFChqPrNyDugwMeVQVsUiX` at Web commit
+`2f6b11b847cf85651bd975f81da3237453bdbdb9`. The live read-only projection is
+`sha256:3f73ed2ac1408d704ed12e2e74616001dc2c2039d07c3d7fbf9031e1e2da8b26`,
+and its current Erdős 887 work offer carries the full four-root execution
+binding. Signed-in production proves the prior packet-bound Approach is shown
+as stale while the current Target exposes the new packet and enabled bound-work
+action. Every retained hosted record remains `authority_effect = 'none'`.
+
+The additive execution-lineage migration
+`20260813_execution_binding_lineage` is also live at frozen root
+`sha256:36c2fb19749e1f2decd793228747973b21335b906d07488a73b020f8d4d075b0`.
+It extends exact packet/profile/capsule/result-contract lineage through Attempt,
+Research Block, and unsigned Submission Draft without relabeling legacy rows.
+
+Release evidence still owes the full authenticated narrow-screen, keyboard,
+zoom, and forced-colors matrix. Write enablement is therefore an observed
+production fact, not evidence that those remaining interaction gates passed.
+Continue to monitor conflict and authorization outcomes, and use only a
+binding-aware default-off build as the rollback floor.
 
 ## UI behavior
 
@@ -380,12 +426,12 @@ provided the UI says it is unbound and promotion later proves an exact packet.
 
 ## Consequences and next gate
 
-The candidate now contains the typed contract, additive migration,
+Commit `8231c1efd62912c4c95487569a63ffb1e189c805` contains the typed contract,
 current-offer Server Action guard, default-off server gate, bound/unbound UI,
-parser refusal tests, expanded live-proof source, and disposable-local database
-proof. This is frozen implementation evidence, not a live deployment. `WEB-01`
-and `WEB-02` remain incomplete until independent review, the ordered migration
-and binding-aware default-off deployment, an actual `activity:db:check` /
-`activity:db:verify` / `activity:db:live-proof` run on the fixed database, and
-authenticated browser evidence all pass. The migration must be reviewed on
-frozen bytes before anyone runs `activity:db:migrate`.
+and the parser refusal tests. The live ledger, default-off deployment, and
+one-shot integration proof above replace the pre-release migration status.
+
+Keep this binding-aware deployment as the baseline for `WEB-03` and `WEB-04`.
+Neither package relaxes the current-offer, exact execution-binding, role, audit,
+or authority controls. The remaining Browser matrix is release debt and must be
+closed independently of the already-enabled production fact.
