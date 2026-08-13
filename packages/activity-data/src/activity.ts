@@ -218,6 +218,24 @@ export async function listWorkspaces(accountId: string): Promise<Workspace[]> {
   }
 }
 
+export async function listProblemWorkspaces(
+  accountId: string,
+  repositoryId: string,
+  problemId: string,
+): Promise<Workspace[]> {
+  try {
+    const rows = await activitySql().query(
+      "SELECT activity_api.list_problem_workspaces($1::uuid, $2, $3) AS result",
+      [accountId, repositoryId, problemId],
+    );
+    const result = rows[0]?.result;
+    if (!Array.isArray(result)) throw new Error("problem workspace list response must be an array");
+    return result.map(workspaceFrom);
+  } catch (error) {
+    throw activityDatabaseError(error);
+  }
+}
+
 export function parseProblemActivity(value: unknown, currentAnchorRoot: HashRoot) {
   return parseProblemActivityResponse(value, currentAnchorRoot);
 }
