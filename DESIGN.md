@@ -68,7 +68,8 @@ palette, constellation, or second design system.
 
 ### Product
 
-`app.vela.space` and `problems.science` serve the same application and use the instrument register: a
+`problems.science` is the canonical application origin; `app.vela.space` is a
+compatibility redirect. The product uses the instrument register: a
 cool-tinted light ground and an equivalent midnight one, both drawn from a single hue family so a small
 luminance step still reads as a step; Geist for interface text, IBM Plex Mono
 for identifiers and exact values, compact controls, and dense but readable

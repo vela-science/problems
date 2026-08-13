@@ -6,9 +6,10 @@ This private Bun workspace contains two independently deployable Next.js
 applications and four shared packages:
 
 - `apps/www`: static editorial site for `www.vela.space`;
-- `apps/observatory`: the unified Vela product application for
-  `app.vela.space` and `problems.science`, combining exact scientific State,
-  non-authoritative Work, and advanced record inspection;
+- `apps/observatory`: the unified Vela product application at canonical
+  `problems.science`, with `app.vela.space` retained as a compatibility alias,
+  combining exact scientific State, non-authoritative Work, and advanced record
+  inspection;
 - `packages/brand`: framework-neutral tokens, fonts, marks, and licenses;
 - `packages/ui`: shared React UI source built from shadcn `base-nova` on Base
   UI, plus stable Vela presentation semantics;

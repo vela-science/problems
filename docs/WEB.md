@@ -7,11 +7,14 @@ Earlier design and migration plans live under `docs/history/`.
 
 - `www.vela.space` is the canonical editorial surface: Next.js 16, App
   Router, static export (`output: "export"`). Moved off Astro 2026-07-28.
-- `app.vela.space` and `problems.science` serve the same Vela application.
-  Problems is its conceptual center, while Home orients readers across current
+- `problems.science` is the canonical Vela application origin.
+  `app.vela.space` remains a compatibility alias during the canonical-domain
+  cutover. Problems is the application's conceptual center, while Home orients
+  readers across current
   change, open work, communities, and the exact scientific record. Advanced
   records remain available in the same runtime.
-- `vela.space` redirects to `www`; Observatory paths on `www` redirect to `app`.
+- `vela.space` redirects to `www`; Observatory paths on `www` redirect to
+  `problems.science`.
 - Hosted Vela is non-authoritative. The Observatory reads a bounded SELECT-only
   projection from Neon. Work mode writes hosted research activity through
   `@vela/activity-data`. Canonical custody remains in Repository Git
@@ -535,7 +538,7 @@ The `constellate-dc388081` Vercel team has two active Vela Web projects:
 | Project | Application | Production domains |
 | --- | --- | --- |
 | `vela-web-www` | `apps/www` | `www.vela.space`, redirect aliases |
-| `vela-web-observatory` | `apps/observatory` | `app.vela.space`, `problems.science`, `app.constellate.science` redirect |
+| `vela-web-observatory` | `apps/observatory` | `problems.science` canonical, `app.vela.space` compatibility alias, `app.constellate.science` redirect |
 
 There is no active legacy Vela Vercel project. `prospect` and `snowchild` are
 unrelated and outside this workspace.
@@ -583,7 +586,7 @@ releases.
 Public manifests:
 
 - `https://www.vela.space/.well-known/vela-web.json`
-- `https://app.vela.space/.well-known/vela-site.json`
+- `https://problems.science/.well-known/vela-site.json`
 
 The manifests use `vela.web-deployment.v3` and `vela.site-deployment.v4`; each
 records the exact Git commit, brand schema/root, deployment

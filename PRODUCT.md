@@ -25,9 +25,9 @@ an authorized human Decision remain the only route to new Standing.
 The ecosystem has three surfaces:
 
 1. `www.vela.space` publishes editorial and protocol documentation.
-2. The Vela product application, served at `app.vela.space` and
-   `problems.science`, reads exact scientific State and writes hosted research
-   activity.
+2. The Vela product application at canonical `problems.science` reads exact
+   scientific State and writes hosted research activity. `app.vela.space`
+   remains a compatibility alias.
 3. The local Vela and Repository surface signs, verifies, decides, publishes,
    and replays canonical scientific state outside the hosted service.
 
@@ -182,10 +182,11 @@ an exact pinned release and rendered without paraphrase; only the duplicate
 title heading is dropped, because the route already sets it. A reader compares
 the product's explanation against the protocol's own words.
 
-### `app.vela.space` and `problems.science`
+### `problems.science`
 
-These domains serve one Vela product application. Home is its front door and
-Problems is its conceptual center.
+This is the canonical origin for the Vela product application. Home is its
+front door and Problems is its conceptual center. `app.vela.space` redirects
+to the same path here for compatibility rather than serving a second origin.
 The same application preserves durable record routes, search, graph,
 reproduction, and release-wide ledgers as an advanced Records layer. Protocol
 collections do not compete with Problems in primary navigation.
