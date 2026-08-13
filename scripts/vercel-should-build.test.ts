@@ -57,6 +57,8 @@ describe("Vercel workspace build selection", () => {
     );
     expect(editorial.git?.deploymentEnabled).not.toBe(false);
     expect(observatory.git?.deploymentEnabled).toBe(false);
+    expect(observatory.bunVersion).toBe("1.x");
+    expect(observatory.regions).toEqual(["cle1"]);
     expect(editorial.ignoreCommand).toContain("vercel-should-build.mjs www");
     expect(observatory.ignoreCommand).toBeUndefined();
   });

@@ -1,4 +1,6 @@
 import { describe, expect, test } from "bun:test";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import {
   deployVercelObservatory,
   observatoryDeploymentTarget,
@@ -20,6 +22,13 @@ function response(overrides: Record<string, unknown> = {}) {
 }
 
 describe("exact Observatory Vercel deployment", () => {
+  test("exposes the exact Git deployment as the one root operator command", () => {
+    const workspace = JSON.parse(readFileSync(resolve(import.meta.dir, "../package.json"), "utf8"));
+    expect(workspace.scripts["deploy:observatory"]).toBe(
+      "VELA_SITE_COMMIT=$(git rev-parse HEAD) bun scripts/deploy-vercel-observatory.mjs",
+    );
+  });
+
   test("builds one production request for the exact GitHub commit", () => {
     const request = vercelObservatoryDeploymentRequest(commit);
     const url = new URL(request.url);

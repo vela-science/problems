@@ -11,7 +11,7 @@
 
 <p align="center">
   <a href="https://www.vela.space/">Editorial</a> ·
-  <a href="https://app.vela.space/repositories">Observatory</a> ·
+  <a href="https://problems.science/problems">Problems</a> ·
   <a href="https://github.com/vela-science/vela">Protocol and CLI</a> ·
   <a href="docs/WEB.md">Web operations</a>
 </p>
@@ -61,13 +61,14 @@ canonical repository Git repositories
           │       SELECT-only Neon projection
           ▼              │
  www.vela.space             ▼
- Next.js static     app.vela.space Observatory
+ Next.js static      problems.science application
 ```
 
 ## Product invariants
 
 - `www.vela.space` is the canonical editorial host.
-- `app.vela.space` is the canonical Repository Observatory.
+- `problems.science` is the canonical Problem-first application.
+  `app.vela.space` remains a compatibility alias.
 - Repository pages are exact-root projections. The active data head moves only
   through an atomic, verified projection release; every request remains bound
   to one readable release root.

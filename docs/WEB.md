@@ -543,6 +543,26 @@ The `constellate-dc388081` Vercel team has two active Vela Web projects:
 There is no active legacy Vela Vercel project. `prospect` and `snowchild` are
 unrelated and outside this workspace.
 
+The Observatory's Vercel Functions run in `cle1` (AWS `us-east-2`), alongside
+the qualified Neon projection. Static assets remain globally served by
+Vercel's CDN. Keep `bunVersion: "1.x"`: it is the only supported Vercel Bun
+runtime selector, while the workspace `packageManager` and lockfile continue to
+pin the development and build toolchain.
+
+Vercel's monorepo link belongs at the repository root, never inside either app.
+From a fresh checkout, one command discovers both configured projects and their
+Root Directories:
+
+```sh
+vercel link --repo --yes --scope constellate-dc388081
+```
+
+Do not run `vercel deploy` from `apps/observatory`: the remote Root Directory
+would be applied a second time. The governed production path is the exact Git
+deployment request exposed as `bun run deploy:observatory`; it requires
+`VERCEL_TOKEN`, derives `VELA_SITE_COMMIT` from the current checkout, and the
+existing response validator refuses commit or target drift.
+
 ### Pushing deploys
 
 The two active applications deliberately use different release paths:
