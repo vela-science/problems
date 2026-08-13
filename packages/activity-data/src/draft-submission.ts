@@ -68,6 +68,13 @@ function formatSchemaError(error: ErrorObject): string {
   return `${at}: ${error.message ?? error.keyword}`;
 }
 
+function isWholeSecondUtcTimestamp(value: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/u.test(value)) return false;
+  const parsed = new Date(value);
+  return Number.isFinite(parsed.valueOf())
+    && parsed.toISOString().replace(".000Z", "Z") === value;
+}
+
 export function validateSubmissionDraft(value: unknown): SubmissionDraftValidation {
   if (!validateSchema(value)) {
     return { valid: false, errors: (validateSchema.errors ?? []).map(formatSchemaError) };
@@ -81,6 +88,12 @@ export function validateSubmissionDraft(value: unknown): SubmissionDraftValidati
   }
   if (!/^(agent|ci):\S+$/u.test(value.identity.actor_id)) {
     semanticErrors.push("/identity/actor_id: must use the agent: or ci: producer namespace");
+  }
+  if (!isWholeSecondUtcTimestamp(value.identity.declared_at)) {
+    semanticErrors.push("/identity/declared_at: must be whole-second UTC RFC3339 spelled with Z");
+  }
+  if (!isWholeSecondUtcTimestamp(value.provenance.emitted_at)) {
+    semanticErrors.push("/provenance/emitted_at: must be whole-second UTC RFC3339 spelled with Z");
   }
   if (semanticErrors.length) return { valid: false, errors: semanticErrors };
   return { valid: true, payload: value };

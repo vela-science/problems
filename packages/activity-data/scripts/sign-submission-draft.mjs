@@ -17,7 +17,7 @@ if (!positional || !privateKeyPath || !outputPath) {
 const input = JSON.parse(readFileSync(resolve(positional), "utf8"));
 const privateKey = readFileSync(resolve(privateKeyPath), "utf8");
 const signed = signSubmissionDraftLocally(input, privateKey);
-writeFileSync(resolve(outputPath), `${signed.canonicalEnvelope}\n`, { flag: "wx", mode: 0o600 });
+writeFileSync(resolve(outputPath), signed.canonicalEnvelope, { flag: "wx", mode: 0o600 });
 console.log(JSON.stringify({
   ok: true,
   schema: "vela.activity-local-signing-result.v1",

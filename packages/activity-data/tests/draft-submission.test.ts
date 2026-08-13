@@ -1,7 +1,10 @@
 import { describe, expect, test } from "bun:test";
 import { createHash, createPublicKey, generateKeyPairSync } from "node:crypto";
-import { readFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { resolve } from "node:path";
+import { spawnSync } from "node:child_process";
+import { canonicalJson } from "@vela/observatory-data/canonical";
 import {
   createSubmissionDraftExport,
   validateSubmissionDraft,
@@ -65,6 +68,11 @@ describe("vela.submission.v2 drafts", () => {
 
     const expanded = { ...fixture(), decision: { state: "accepted" } };
     expect(validateSubmissionDraft(expanded)).toMatchObject({ valid: false });
+
+    const fractionalTimestamp = structuredClone(fixture());
+    fractionalTimestamp.identity.declared_at = "2026-08-11T12:00:00.123Z";
+    fractionalTimestamp.provenance.emitted_at = "2026-08-11T12:00:00.123Z";
+    expect(validateSubmissionDraft(fractionalTimestamp)).toMatchObject({ valid: false });
   });
 
   test("hands signing to an explicit local Ed25519 key and self-verifies", () => {
@@ -90,5 +98,34 @@ describe("vela.submission.v2 drafts", () => {
 
     expect(() => signSubmissionDraftLocally(fixture(declaredPublicKeyHex), actualPrivateKeyPem))
       .toThrow("local signing key does not match identity.public_key_hex");
+  });
+
+  test("writes exact canonical envelope bytes accepted by the Vela importer", () => {
+    const directory = mkdtempSync(resolve(tmpdir(), "vela-local-signing-"));
+    try {
+      const { privateKey, publicKey } = generateKeyPairSync("ed25519");
+      const publicKeyHex = Buffer.from(publicKey.export({ format: "der", type: "spki" }))
+        .subarray(-32).toString("hex");
+      const draftPath = resolve(directory, "draft.json");
+      const keyPath = resolve(directory, "key.pem");
+      const outputPath = resolve(directory, "submission.json");
+      writeFileSync(draftPath, JSON.stringify(fixture(publicKeyHex)));
+      writeFileSync(keyPath, privateKey.export({ format: "pem", type: "pkcs8" }));
+
+      const result = spawnSync(process.execPath, [
+        resolve(packageRoot, "scripts/sign-submission-draft.mjs"),
+        draftPath,
+        "--private-key", keyPath,
+        "--output", outputPath,
+      ], { cwd: packageRoot, encoding: "utf8" });
+      expect(result.status).toBe(0);
+      const bytes = readFileSync(outputPath);
+      expect(bytes.at(-1)).not.toBe(0x0a);
+      const parsed = JSON.parse(bytes.toString("utf8"));
+      expect(bytes.toString("utf8")).toBe(canonicalJson(parsed));
+      expect(statSync(outputPath).mode & 0o777).toBe(0o600);
+    } finally {
+      rmSync(directory, { recursive: true, force: true });
+    }
   });
 });
