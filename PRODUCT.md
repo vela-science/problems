@@ -57,15 +57,32 @@ concepts cover the complete reader and contributor journey:
 - **Decision** is an explicit human or Repository-authority action. Evidence and
   discussion never substitute for it.
 
+The public product nouns do not all live in the same layer:
+
+| Public noun | Product class | Exact basis | Authority effect |
+| --- | --- | --- | --- |
+| **Problem** | derived reader concept | one or more reviewed source-native Problem occurrences, each retaining its Repository and source identity | none |
+| **Workspace** | hosted product object | activity database Workspace plus exact scientific anchor roots | none |
+| **Contribution** | derived reader envelope, introduced only when its routes are backed by retained records | Research Block, Artifact, Attempt result, signed package, paper, dataset, proof, or negative result; the underlying type remains visible | none by itself |
+| **Profile** | conditional hosted presentation concept | explicit links among Account, human or agent profile, signer/producer identities, and sponsorship records | none |
+| **Organization** | conditional hosted coordination concept | memberships, permissions, Workspace ownership, and stewardship declarations | none over scientific State |
+
+`Problem` and `Contribution` are derived views, not new canonical objects.
+`Workspace` is hosted activity. `Profile` and `Organization` remain deferred
+until their privacy, revocation, sponsorship, and permission contracts exist.
+Only exact protocol records retain protocol meaning, and only an eligible human
+Decision inside a Repository can change local Standing.
+
 The global application has four user-intent destinations:
 
 - **Home** answers what changed, what matters, and what needs attention.
 - **Problems** is the cross-domain scientific-question directory.
-- **Work** leads from open Targets into Workspaces and Research Blocks.
-- **Activity** opens State history. Workspace activity appears only in a
+- **Open work** leads from open Targets into Workspaces and Research Blocks.
+- **State history** opens exact scientific changes and ordinary Repository
+  commits as separate lanes. Workspace activity appears only in a
   separate lane when retained global activity data can support it.
 
-Repositories and Sources form a quieter provenance **Library**. Hubs are a
+Repositories and Sources form a quieter **Provenance** group. Hubs are a
 Problems discovery facet and secondary destination, not a global peer. Contributors,
 Following, and Your work join that navigation only when their retained product
 records are populated enough to make the pages useful.
@@ -212,12 +229,12 @@ remain distinct in language and presentation.
 
 Each Problem page has two explicit modes:
 
-- **State** reads the same exact Repository and projection facts as the
+- **Current State** reads the same exact Repository and projection facts as the
   Observatory.
-- **Work** requires a hosted account and writes activity through
+- **Workspace** requires a hosted account and writes activity through
   `@vela/activity-data`.
 
-Work mode supports workspace membership, follows, approaches and forks,
+Workspace mode supports workspace membership, follows, approaches and forks,
 attempt lifecycle, comments and notes, assignments and reproduction requests,
 rooted external artifact metadata, provider-neutral external session references on Attempts, and
 portable Submission drafts. Idempotency keys make retries safe. Version fields
@@ -239,8 +256,8 @@ activity database cannot remove or change that state.
 
 ### Navigation
 
-The global sidebar follows user intent: Home, Problems, Work, and Activity,
-with Repositories and Sources visually subordinated as Library. Hubs live in
+The global sidebar follows user intent: Home, Problems, Open work, and State
+history, with Repositories and Sources visually subordinated as Provenance. Hubs live in
 Problems discovery. A Problem page replaces that global list with contextual
 Current State and Workspace navigation plus links
 to its exact records. Account controls and search are tools, not destinations.
