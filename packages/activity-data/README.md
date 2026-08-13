@@ -71,7 +71,8 @@ proof against this database because its zero-bound-row precondition has been
 consumed.
 
 Production later enabled `VELA_TARGET_BOUND_APPROACH_ENABLED` with exact `true`.
-Current deployment `dpl_7KpFZumFChqPrNyDugwMeVQVsUiX` serves Web commit
+The write-enablement checkpoint deployment
+`dpl_7KpFZumFChqPrNyDugwMeVQVsUiX` served Web commit
 `2f6b11b847cf85651bd975f81da3237453bdbdb9` over projection release
 `sha256:3f73ed2ac1408d704ed12e2e74616001dc2c2039d07c3d7fbf9031e1e2da8b26`.
 Signed-in production shows the earlier packet-bound Approach as stale and the
@@ -84,6 +85,14 @@ root `sha256:36c2fb19749e1f2decd793228747973b21335b906d07488a73b020f8d4d075b0`.
 Attempts, Research Blocks, and unsigned drafts can therefore retain the exact
 packet/profile/capsule/result-contract lineage. Legacy rows remain null and are
 not retroactively relabeled.
+
+At the 2026-08-13 release-truth audit, the production deployment manifest at
+`problems.science` reported deployment `dpl_GPkozXemijMU6CvpisrQhyJLR4CH`, Web
+commit `03fee3e74b8e85855ced16622c7271079d291641`, and projection release
+`sha256:2ac8fb5a79313fc0fdae6f23d4862d26f11f2682222eb1f58ae31513888e190c`.
+That checkpoint proves the deployed application and read-only projection
+identity. It does not close the authenticated narrow-screen, keyboard, zoom,
+reduced-motion, forced-colors, or touch browser matrix.
 
 Target-bound writes have a separate server-only rollout gate:
 `VELA_TARGET_BOUND_APPROACH_ENABLED`. Only exact `true` enables them; absent,

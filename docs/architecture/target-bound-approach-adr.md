@@ -279,8 +279,9 @@ Operators may roll back to commit
 the write gate absent or `false`. Operators must not deploy the pre-binding
 `9feb6975` reader because it would render retained bound provenance as unbound.
 
-Production later enabled the write gate with exact `true`. The current
-binding-aware deployment is `dpl_7KpFZumFChqPrNyDugwMeVQVsUiX` at Web commit
+Production later enabled the write gate with exact `true`. The
+write-enablement checkpoint deployment is
+`dpl_7KpFZumFChqPrNyDugwMeVQVsUiX` at Web commit
 `2f6b11b847cf85651bd975f81da3237453bdbdb9`. The live read-only projection is
 `sha256:3f73ed2ac1408d704ed12e2e74616001dc2c2039d07c3d7fbf9031e1e2da8b26`,
 and its current Erdős 887 work offer carries the full four-root execution
@@ -293,6 +294,13 @@ The additive execution-lineage migration
 `sha256:36c2fb19749e1f2decd793228747973b21335b906d07488a73b020f8d4d075b0`.
 It extends exact packet/profile/capsule/result-contract lineage through Attempt,
 Research Block, and unsigned Submission Draft without relabeling legacy rows.
+
+At the 2026-08-13 release-truth audit, the production deployment manifest at
+`problems.science` reported deployment `dpl_GPkozXemijMU6CvpisrQhyJLR4CH`, Web
+commit `03fee3e74b8e85855ced16622c7271079d291641`, and projection release
+`sha256:2ac8fb5a79313fc0fdae6f23d4862d26f11f2682222eb1f58ae31513888e190c`.
+This is deployment and read-only projection identity evidence, not completion
+of the authenticated interaction matrix.
 
 Release evidence still owes the full authenticated narrow-screen, keyboard,
 zoom, and forced-colors matrix. Write enablement is therefore an observed

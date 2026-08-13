@@ -1,10 +1,10 @@
 # Vela Web Workspace-promotion threat model
 
-**Status:** reviewed Phase 0 control document
+**Status:** reviewed current control document
 
-**Scope date:** 2026-08-12
+**Scope date:** 2026-08-13
 
-**Repository baseline:** `9feb69750834a076a13e066905107da61a976407` plus this uncommitted implementation candidate
+**Repository baseline:** applied Target and execution-lineage implementation through `03fee3e74b8e85855ced16622c7271079d291641`
 
 **Owner:** Vela Web maintainers
 
@@ -21,10 +21,11 @@ foundations: WorkOS supplies hosted identity, every activity read and command
 is tenant-checked in `SECURITY DEFINER` database functions, scientific anchors
 are exact and rooted, the app role cannot read base tables or connect to the
 scientific projection database, drafts are closed-schema and unsigned, and a
-static boundary gate refuses hosted signing or scientific-authority code. The
-Target-to-Approach change must preserve these controls and add an exact,
-immutable Target packet binding; it must not turn hosted activity into a Vela
-relation or Decision.
+static boundary gate refuses hosted signing or scientific-authority code.
+Target-bound Approaches now retain an exact, immutable packet binding, while
+Attempts, Research Blocks, and drafts retain the selected four-root execution
+lineage. These activity-plane relationships do not become Vela relations or
+Decisions.
 
 ## Scope and assumptions
 
@@ -39,7 +40,7 @@ In scope:
 - `packages/activity-data/src`, its migrations, roles, database privilege
   bootstrap, migration runner, role verifier, and live proof;
 - `scripts/scientific-authority-boundary.mjs` and public-output checks; and
-- the Target-bound Approach candidate and reviewed design in
+- the deployed Target-bound Approach design and execution-lineage extension in
   `docs/architecture/target-bound-approach-adr.md`.
 
 Out of scope:
@@ -250,9 +251,9 @@ flowchart LR
 | Threat ID | Threat source | Prerequisites | Threat action | Impact | Impacted assets | Existing controls | Gaps | Recommended mitigations | Detection ideas | Likelihood | Impact severity | Priority |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | TM-001 | Authenticated outsider or stolen app credential | Workspace/account identifiers or app DB access | Read or mutate another Workspace by substituting ids | Unpublished research exposure and activity corruption | Membership, notes, locators, records | WorkOS session in `currentAccount`; SQL `require_membership`; composite Workspace/anchor FKs; cross-tenant live proof | SQL functions trust the account id supplied by the server credential | Keep DB credential server-only; retain read, write, export, and removed-member probes in `live-proof.mjs`; alert on repeated `VA403` | Count authorization refusals without logging sensitive payloads | medium | high | high |
-| TM-002 | Malicious or stale member client | Valid membership and old/substituted Target fields | Bind an Approach to an unseen successor or wrong packet | False provenance and incorrect downstream promotion | Anchor, Target packet, draft | Default-off server write gate; `mutationContext` reloads State; `requireExpectedAnchorRoot`; candidate current-offer guard; exact roots; Target parent/count joins require both id and packet root; direct-form and disposable-database tests | Live database cannot determine current Target; candidate migration remains unapplied | Migrate before the binding-aware reader, complete the default-off live proof, then enable; retain immutable Target id/packet root and reject mismatch/staleness in the application | Audit conflict counts and packet-root mismatches | high | high | high |
+| TM-002 | Malicious or stale member client | Valid membership and old/substituted Target fields | Bind an Approach to an unseen successor or wrong packet | False provenance and incorrect downstream promotion | Anchor, Target packet, draft | Exact server write gate; `mutationContext` reloads State; `requireExpectedAnchorRoot`; current-offer guard; applied immutable Target binding; parent packet match; downstream all-or-none execution binding copied from the exact current offer; direct-form and disposable-database tests | The activity database cannot determine whether an external Target offer is current; a compromised application credential could bypass that application-owned check | Keep the current-offer re-read and exact packet-root refusal at the action boundary; retain immutable binding and audit mismatch/conflict outcomes | Audit conflict counts and packet-root mismatches | medium | high | high |
 | TM-003 | Supply-chain/deployment change | Ability to change or deploy hosted code/config | Add signer, Verification/Decision writer, authority key, or scientific table | Unauthorized scientific action or credential theft | Local key, Repository authority, Standing | Static authority scanner; app/local signer dependency split; role/database separation; no secret columns | Static patterns are not a complete semantic proof | Keep forbidden symbols/schemas/secrets executable; review any activity boundary-file change; scan deployment config and output | CI gate failures; secret-scanner alerts; unexpected environment keys | low | high | high |
-| TM-004 | Workspace member or compromised app | Draft creation/export rights | Substitute artifact, payload, or root before local signing | Signed proposal does not reflect selected evidence | Artifact roots, draft bytes | Ajv closed schema; canonical JSON/root; membership export; key match in local signer | Draft form is not yet bound to selected stored evidence; DB does not recompute canonical payload root | WEB-04 must select same-anchor Artifact records and Target packet; return and compare stored root on export; retain canonical-byte tests | Root mismatch telemetry without payload content | medium | high | high |
+| TM-004 | Workspace member or compromised app | Draft creation/export rights | Substitute artifact, payload, or root before local signing | Signed proposal does not reflect selected evidence | Artifact roots, draft bytes | The action derives the payload Artifact from the selected stored Research Block; Ajv closed schema and canonical JSON/root checks; SQL requires the same-Workspace/same-anchor Artifact id, exact four-root execution-binding equality, and refuses draft rebinds; membership-gated export; key match in local signer | SQL does not independently compare the payload Artifact digest/path with the selected Artifact or recompute the canonical payload root; a compromised application credential remains able to supply inconsistent payload bytes | Keep application derivation mandatory; retain exact Artifact/binding SQL checks, no-rebind policy, export canonicalization, and focused substitution/root tests; add a database-owned payload-to-Artifact comparison before any broader promotion surface | Root mismatch telemetry without payload content | low | high | high |
 | TM-005 | Outsider, member, build leak | Route/bundle access or Workspace membership | Expose private note, PII, or locator beyond its intended audience | Confidentiality breach | Notes, account data, locators | Private-note author filter; signed-out Workbench exits before activity load; public-output scan; no public activity JSON route | Locators are Workspace-wide by current policy; no recipient-scoped locator type | Do not broaden visibility; add public-output fixture markers; consider locator privacy only after a concrete requirement | Public-output scan; access audit; incident marker search | medium | high | high |
 | TM-006 | Malicious member or external source | Ability to enter text/locator | Store dangerous scheme, mutable reference, or prompt injection for a human/agent | Misleading custody, unsafe navigation, downstream agent compromise | Locators, operators, external sessions | Length limits; React escaping; hosted artifact locator rendered as inert text; no fetch/runtime | No locator scheme or immutability policy; future consumers may activate it | Keep inert by default; before link/fetch, introduce allowlisted schemes, explicit access class, immutable-root verification, and agent instruction isolation | Log rejected schemes and fetch attempts | medium | medium | medium |
 | TM-007 | Concurrent/retrying member | Valid mutation rights | Reuse key with changed input or overwrite a changed version | Duplicate, lost, or inconsistent activity | Activity records, audit | Canonical request root; advisory lock; idempotency table; Attempt/draft versions; live proof | Immutable record types have no update path; currentness is app-enforced | Preserve request-root and version checks in Target migration; add migration compatibility and concurrent-write tests | Conflict and idempotency-reuse counts | medium | medium | medium |
@@ -280,12 +281,12 @@ membership. Any cell not explicitly allowed is denied.
 | Read Attempt or Artifact locator | deny | deny | allow | allow | no extra right | no extra right | returned only by membership-gated activity read; no public activity route |
 | Follow exact current anchor | deny | deny | allow | allow | no extra right | no extra right | `followProblemAction`; expected-anchor guard; `follow.set` |
 | Create unbound Approach | deny | deny | allow | allow | no extra right | no extra right | `createApproachAction`; expected-anchor guard; `approach.create` |
-| Create Target-bound Approach | deny | deny | allow only after schema migration and exact server flag `true` | allow only after schema migration and exact server flag `true` | no extra right | no extra right | distinct bound action; top-of-action default-off feature gate; current-offer guard; candidate migration remains unapplied |
+| Create Target-bound Approach | deny | deny | allow only with exact server flag `true` | allow only with exact server flag `true` | no extra right | no extra right | applied additive migration; distinct bound action; top-of-action default-off feature gate; current-offer guard; exact packet-root match |
 | Fork Approach | deny | deny | allow | allow | no extra right | no extra right | current anchor + expected version in action; membership + version in `approach.fork` |
-| Create/update Attempt | deny | deny | allow | allow | no extra right | no extra right | current Approach/Attempt guard; membership; lifecycle and optimistic version policy |
+| Create/update Attempt | deny | deny | allow | allow | no extra right | no extra right | current Approach/Attempt guard; membership; lifecycle and optimistic version policy; a bound parent requires the full current-offer execution binding and an unbound parent requires null |
 | Add comment/private note | deny | deny | allow | allow | no extra write right | no extra right | same-anchor target checks; private read remains author-only |
-| Create work request / attach Artifact reference | deny | deny | allow | allow | no extra right | no extra right | same-anchor target checks; assignee membership; roots/metadata only |
-| Create unsigned draft | deny | deny | allow | allow | no extra right | no extra right | current-anchor action; Ajv schema; agent/CI identity match; `submission_draft.save` |
+| Create work request / attach Artifact reference | deny | deny | allow | allow | no extra right | no extra right | same-anchor target checks; assignee membership; roots/metadata only; Artifact must copy the selected Attempt's exact binding |
+| Create unsigned draft | deny | deny | allow | allow | no extra right | no extra right | current-anchor action; selected same-anchor Artifact; exact Artifact binding equality and no rebind; Ajv schema; agent/CI identity match; `submission_draft.save` |
 | Export canonical unsigned draft | deny | deny | allow | allow | no extra right | no extra right | authenticated GET; `export_submission_draft`; `private, no-store` |
 | Sign Submission | deny | deny | deny as hosted role | deny as hosted role | no extra right | allow only at local boundary with matching declared key | hosted import/signing/key access forbidden; local CLI only |
 | Produce Verification / issue Decision / change Standing | deny | deny | deny | deny | deny | governed by external Repository policy, never hosted role | no handler, table, function, credential, or allowed schema |
@@ -301,7 +302,7 @@ membership. Any cell not explicitly allowed is denied.
 | Ten Workspace-scoped activity mutations | ten named exports in `app/actions/activity.ts` after the separately listed Workspace creation action; bound and unbound creation share one closed database command | nine-kind allowlist in `execute_command`; `require_membership`; append-only audit | app API only | governance test; authority-boundary test; live proof |
 | Direct stale form refusal | `mutationContext`; `requireExpectedAnchorRoot` | database preserves exact supplied anchor but does not decide currentness | server owns current scientific read | `workspace-mutation-guard.test.ts` |
 | Version/idempotency conflict | `requireCurrentApproach`; `requireCurrentAttempt`; command request root | advisory lock; `VAI01`; `VACAS`; lifecycle transitions | app API only | guard tests; migration-plan tests; live proof |
-| Draft validation/export | `saveSubmissionDraftAction`; `GET /drafts/[id]/export` | `submission_draft.save`; `export_submission_draft`; membership | app API only | `draft-submission.test.ts`; governance test; live export denial |
+| Draft validation/export | `saveSubmissionDraftAction`; `GET /drafts/[id]/export` | `submission_draft.save`; selected Artifact id and exact execution-binding equality; no rebind; `export_submission_draft`; membership | app API only | `draft-submission.test.ts`; governance and disposable-database lineage tests; live export denial |
 | Local signature | `activity:submission:sign-local` | none | local filesystem and user key; no server right | `draft-submission.test.ts` success and mismatched-key refusal |
 | Role/cross-plane isolation | operator scripts only | grants/revocations; fixed DB identity | owner, migrator, app, projection reader separated | `boundary.test.ts`; `db:verify`; `db:live-proof` |
 | Scientific authority denial | no hosted capability | no activity scientific relation/function | no Repository credential | `scientific-authority-boundary.test.ts`; `check:boundary` |
@@ -341,6 +342,7 @@ membership. Any cell not explicitly allowed is denied.
 | `packages/activity-data/migrations/20260811_activity_v1.sql` | Tenant policy, `SECURITY DEFINER` functions, audit, versions, and grants | TM-001, TM-004, TM-007, TM-008 |
 | `packages/activity-data/migrations/20260812_current_anchor_read.sql` | Current/historical follow semantics and membership-gated activity response | TM-001, TM-002 |
 | `packages/activity-data/migrations/20260812_target_bound_approach.sql` | Additive immutable Target provenance, literal no-authority constraint, and fork inheritance | TM-002, TM-007, TM-010 |
+| `packages/activity-data/migrations/20260813_execution_binding_lineage.sql` | Extends all-or-none packet/profile/capsule/result-contract lineage through Attempt, Research Block, and draft; enforces exact parent equality and refuses draft rebinds | TM-002, TM-004, TM-007, TM-010 |
 | `packages/activity-data/roles.sql` | Defines the non-login owner and least-privilege login roles | TM-008 |
 | `packages/activity-data/database-privileges.sql` | Enforces database-level cross-plane isolation | TM-008 |
 | `packages/activity-data/scripts/live-proof.mjs` | Starts from zero bound rows, then proves exact bound create/read/fork/retry/audit plus tenant, privacy, export, role, and plane independence | TM-001, TM-002, TM-004, TM-005, TM-007, TM-008 |
@@ -349,32 +351,28 @@ membership. Any cell not explicitly allowed is denied.
 
 ## Mitigation and operational gate summary
 
-The Target migration exists as an unapplied candidate. It may not be applied
-until all of the following exist on the same frozen revision:
+The Target and execution-lineage migrations are applied at their frozen roots.
+The binding-aware reader/action/UI is deployed, the Target-bound write gate is
+enabled with exact `true`, and the rollback floor remains the binding-aware
+default-off build identified in the ADR. The implemented gates are:
 
-1. the ADR's exact typed input/read contract, default-off server gate, and
-   current-offer guard;
-2. additive migration tests for bound, unbound, fork inheritance, malformed
-   root, mismatched packet, cross-tenant, old-code compatibility, and rollback;
-3. `bun run check:activity`, `bun run check:boundary`, Observatory tests,
-   typecheck, and `git diff --check` passing;
-4. an owner/migrator check that live bound-row count is zero, followed by the
-   additive migration and `activity:db:check` / `activity:db:verify` without any
-   application-role grant change;
-5. deployment of the binding-aware reader/action/UI with
-   `VELA_TARGET_BOUND_APPROACH_ENABLED` absent or false. The reader cannot be
-   deployed before the schema because its fail-closed parser requires the new
-   columns;
-6. completion of the old-client rollback-window proof and
-   `activity:db:live-proof`. The live proof itself rechecks zero bound rows and
-   then creates the first bound row to prove exact create/read/fork/retry,
-   changed-root refusal, tenant denial, and audit linkage;
-7. an actual browser pass proving signed-out redaction, accurate disabled,
-   bound and unbound labels, and current/stale WorkOffer behavior; and
-8. a retained migration root and explicit rollback floor: before the first
-   bound write the old app can still be used in the zero-row window; after that
-   write, rollback only to the binding-aware default-off build and forward-fix,
-   never to pre-binding `9feb6975`.
+1. exact typed read/write contracts, fail-closed all-or-none roots, a
+   top-of-action feature gate, and an application-owned current-offer re-read;
+2. immutable Target binding on Approach plus exact execution-binding equality
+   from Approach to Attempt to Research Block to draft;
+3. membership, same-anchor, optimistic-version, idempotency, audit, and
+   `authority_effect = 'none'` enforcement in the activity database;
+4. role/database separation, boundary/public-output checks, and a local-only
+   signer; and
+5. retained migration roots, production deployment/projection identities, and
+   an explicit forward-fix rollback rule.
+
+The full authenticated browser matrix remains open: narrow-screen, keyboard,
+zoom, reduced-motion, forced-colors, and touch behavior still require retained
+production evidence. The database also cannot determine whether an external
+offer is current, compare a draft payload's Artifact digest/path with the
+selected Artifact, or recompute the canonical draft root. Those controls remain
+application-owned residuals and must not be described as database proof.
 
 High-risk controls remain owned as follows: Vela Web maintainers own Server
 Action and UI guards; activity-data maintainers own SQL policy and role tests;
