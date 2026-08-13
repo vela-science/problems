@@ -126,6 +126,13 @@ export type ApproachTargetBinding =
       targetRecordRoot: HashRoot | null;
     };
 
+export type ExecutionBinding = {
+  packetRoot: HashRoot;
+  profileRoot: HashRoot;
+  verifierCapsuleRoot: HashRoot;
+  resultContractRoot: HashRoot;
+};
+
 export type ActivityApproach = {
   id: string;
   workspaceId: string;
@@ -153,6 +160,7 @@ export type ActivityAttempt = {
   locator: string | null;
   title: string;
   state: AttemptState;
+  executionBinding: ExecutionBinding | null;
   version: number;
   createdAt: string;
   updatedAt: string;
@@ -201,6 +209,7 @@ export type ActivityArtifact = {
   mediaType: string | null;
   byteSize: number | null;
   locator: string | null;
+  executionBinding: ExecutionBinding | null;
   createdAt: string;
 };
 
@@ -208,9 +217,11 @@ export type ActivitySubmissionDraft = {
   id: string;
   workspaceId: string;
   anchorRoot: HashRoot;
+  artifactId: string | null;
   createdByAccountId: string;
   schemaName: "vela.submission.v2";
   payloadRoot: HashRoot;
+  executionBinding: ExecutionBinding | null;
   version: number;
   createdAt: string;
   updatedAt: string;
@@ -268,6 +279,7 @@ export type CreateAttemptInput = {
   externalSessionId?: string | null;
   locator?: string | null;
   title: string;
+  executionBinding: ExecutionBinding | null;
 };
 export type UpdateAttemptInput = {
   state?: AttemptState;
@@ -294,7 +306,8 @@ export type CreateWorkRequestInput = {
 };
 export type AttachArtifactInput = {
   anchor: ScientificAnchor;
-  attemptId?: string | null;
+  attemptId: string;
+  executionBinding: ExecutionBinding | null;
   contentRoot: HashRoot;
   kind: string;
   path: string;

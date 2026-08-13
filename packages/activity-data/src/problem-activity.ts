@@ -8,6 +8,7 @@ import {
   type ActivitySubmissionDraft,
   type ActivityWorkRequest,
   type ApproachTargetBinding,
+  type ExecutionBinding,
   type HashRoot,
   type ProblemActivity,
   type StoredScientificAnchor,
@@ -103,6 +104,31 @@ function approachTargetFrom(row: JsonRecord): ApproachTargetBinding {
   return { kind: "target", targetId, targetPacketRoot, targetRecordRoot };
 }
 
+function executionBindingFrom(row: JsonRecord, subject: string): ExecutionBinding | null {
+  if (row.authority_effect !== "none") {
+    throw new Error(`activity response has invalid ${subject} authority_effect`);
+  }
+  const packetRoot = nullableHashRoot(row, "execution_packet_root", `${subject} execution_packet_root`);
+  const profileRoot = nullableHashRoot(row, "execution_profile_root", `${subject} execution_profile_root`);
+  const verifierCapsuleRoot = nullableHashRoot(
+    row,
+    "execution_verifier_capsule_root",
+    `${subject} execution_verifier_capsule_root`,
+  );
+  const resultContractRoot = nullableHashRoot(
+    row,
+    "execution_result_contract_root",
+    `${subject} execution_result_contract_root`,
+  );
+  if (packetRoot === null && profileRoot === null && verifierCapsuleRoot === null && resultContractRoot === null) {
+    return null;
+  }
+  if (packetRoot === null || profileRoot === null || verifierCapsuleRoot === null || resultContractRoot === null) {
+    throw new Error(`activity response has partial ${subject} execution binding`);
+  }
+  return { packetRoot, profileRoot, verifierCapsuleRoot, resultContractRoot };
+}
+
 function approachFrom(value: unknown): ActivityApproach {
   const row = record(value, "approach");
   if (row.authority_effect !== "none") {
@@ -132,6 +158,7 @@ function attemptFrom(value: unknown): ActivityAttempt {
     externalSessionId: nullableText(row, "external_session_id", "attempt external_session_id"),
     locator: nullableText(row, "locator", "attempt locator"), title: text(row.title, "attempt title"),
     state: member(row.state, ["planned", "running", "paused", "completed", "failed", "abandoned"] as const, "attempt state"),
+    executionBinding: executionBindingFrom(row, "attempt"),
     version: integer(row.version, "attempt version", 1), createdAt: text(row.created_at, "attempt created_at"),
     updatedAt: text(row.updated_at, "attempt updated_at"),
   };
@@ -180,7 +207,8 @@ function artifactFrom(value: unknown): ActivityArtifact {
     kind: text(row.kind, "artifact kind"), path: text(row.path, "artifact path"),
     mediaType: nullableText(row, "media_type", "artifact media_type"),
     byteSize: row.byte_size == null ? null : integer(row.byte_size, "artifact byte_size"),
-    locator: nullableText(row, "locator", "artifact locator"), createdAt: text(row.created_at, "artifact created_at"),
+    locator: nullableText(row, "locator", "artifact locator"),
+    executionBinding: executionBindingFrom(row, "artifact"), createdAt: text(row.created_at, "artifact created_at"),
   };
 }
 
@@ -189,9 +217,11 @@ function draftFrom(value: unknown): ActivitySubmissionDraft {
   return {
     id: text(row.id, "submission draft id"), workspaceId: text(row.workspace_id, "submission draft workspace_id"),
     anchorRoot: hashRoot(row, "anchor_root", "submission draft anchor_root"),
+    artifactId: nullableText(row, "artifact_id", "submission draft artifact_id"),
     createdByAccountId: text(row.created_by_account_id, "submission draft created_by_account_id"),
     schemaName: member(row.schema_name, ["vela.submission.v2"] as const, "submission draft schema_name"),
     payloadRoot: hashRoot(row, "payload_root", "submission draft payload_root"),
+    executionBinding: executionBindingFrom(row, "submission draft"),
     version: integer(row.version, "submission draft version", 1), createdAt: text(row.created_at, "submission draft created_at"),
     updatedAt: text(row.updated_at, "submission draft updated_at"),
   };

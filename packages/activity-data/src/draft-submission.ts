@@ -94,6 +94,7 @@ export function assertSubmissionDraft(value: unknown): VelaSubmissionV2 {
 
 export type SaveSubmissionDraftInput = {
   anchor: import("./contracts").ScientificAnchor;
+  artifactId: string;
   payload: VelaSubmissionV2;
   draftId?: string;
 };

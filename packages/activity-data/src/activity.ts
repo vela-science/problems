@@ -12,6 +12,7 @@ import {
   type CreateApproachInput,
   type CreateAttemptInput,
   type CreateWorkRequestInput,
+  type ExecutionBinding,
   type CreateWorkspaceInput,
   type FollowProblemInput,
   type ForkApproachInput,
@@ -125,6 +126,25 @@ function normalizedApproachTarget(target: ApproachTargetBinding | undefined): Js
     target_id: target.targetId,
     target_packet_root: target.targetPacketRoot,
     target_record_root: target.targetRecordRoot,
+  };
+}
+
+function normalizedExecutionBinding(binding: ExecutionBinding | null): JsonRecord | null {
+  if (binding === null) return null;
+  const fields = ["packetRoot", "profileRoot", "resultContractRoot", "verifierCapsuleRoot"];
+  if (Object.keys(binding).sort().join("\0") !== fields.join("\0")) {
+    throw new Error("execution binding must contain exactly four roots");
+  }
+  for (const [field, value] of Object.entries(binding)) {
+    if (!/^sha256:[0-9a-f]{64}$/u.test(value)) {
+      throw new Error(`execution binding has invalid ${field}`);
+    }
+  }
+  return {
+    packet_root: binding.packetRoot,
+    profile_root: binding.profileRoot,
+    verifier_capsule_root: binding.verifierCapsuleRoot,
+    result_contract_root: binding.resultContractRoot,
   };
 }
 
@@ -258,6 +278,7 @@ export function createAttempt(
     external_session_id: input.externalSessionId ?? null,
     locator: input.locator ?? null,
     title: input.title,
+    execution_binding: normalizedExecutionBinding(input.executionBinding),
   }, options);
 }
 
@@ -317,7 +338,8 @@ export function attachArtifact(
 ) {
   return command(context, "artifact.attach", {
     anchor: dbAnchor(input.anchor),
-    attempt_id: input.attemptId ?? null,
+    attempt_id: input.attemptId,
+    execution_binding: normalizedExecutionBinding(input.executionBinding),
     content_root: input.contentRoot,
     kind: input.kind,
     path: input.path,
@@ -338,6 +360,7 @@ export function saveSubmissionDraft(
   return command(context, "submission_draft.save", {
     anchor: dbAnchor(input.anchor),
     draft_id: input.draftId ?? null,
+    artifact_id: input.artifactId,
     payload,
     payload_root: sha256(canonicalJson(payload)),
   }, options, expectedVersion);

@@ -38,6 +38,9 @@ function fixture() {
       id: "attempt-1", workspace_id: workspaceId, anchor_root: anchorRoot,
       approach_id: "approach-1", created_by_account_id: accountId, provider: "human",
       external_session_id: null, locator: null, title: "Check n < 100", state: "planned",
+      execution_packet_root: null, execution_profile_root: null,
+      execution_verifier_capsule_root: null, execution_result_contract_root: null,
+      authority_effect: "none",
       version: 1, created_at: createdAt, updated_at: createdAt,
     }],
     discussion: [{
@@ -57,12 +60,17 @@ function fixture() {
       attempt_id: "attempt-1", attached_by_account_id: accountId,
       content_root: root("8"), metadata_root: null, kind: "negative result",
       path: "artifacts/result.json", media_type: "application/json", byte_size: 42,
-      locator: null, created_at: createdAt,
+      locator: null, execution_packet_root: null, execution_profile_root: null,
+      execution_verifier_capsule_root: null, execution_result_contract_root: null,
+      authority_effect: "none", created_at: createdAt,
     }],
     drafts: [{
       id: "draft-1", workspace_id: workspaceId, anchor_root: anchorRoot,
+      artifact_id: null,
       created_by_account_id: accountId, schema_name: "vela.submission.v2",
-      payload_root: root("9"), version: 1, created_at: createdAt, updated_at: createdAt,
+      payload_root: root("9"), execution_packet_root: null, execution_profile_root: null,
+      execution_verifier_capsule_root: null, execution_result_contract_root: null,
+      authority_effect: "none", version: 1, created_at: createdAt, updated_at: createdAt,
     }],
     audit: [{
       sequence: 17, workspace_id: workspaceId, account_id: accountId,
@@ -83,11 +91,11 @@ describe("problem activity response contract", () => {
       target: { kind: "unbound", targetId: null, targetPacketRoot: null, targetRecordRoot: null },
       authorityEffect: "none",
     });
-    expect(activity.attempts[0]).toMatchObject({ id: "attempt-1", approachId: "approach-1" });
+    expect(activity.attempts[0]).toMatchObject({ id: "attempt-1", approachId: "approach-1", executionBinding: null });
     expect(activity.discussion[0]).toMatchObject({ id: "discussion-1", approachId: "approach-1" });
     expect(activity.workRequests[0]).toMatchObject({ id: "request-1", kind: "reproduction" });
-    expect(activity.artifacts[0]).toMatchObject({ id: "artifact-1", contentRoot: root("8"), byteSize: 42 });
-    expect(activity.drafts[0]).toMatchObject({ id: "draft-1", payloadRoot: root("9") });
+    expect(activity.artifacts[0]).toMatchObject({ id: "artifact-1", contentRoot: root("8"), byteSize: 42, executionBinding: null });
+    expect(activity.drafts[0]).toMatchObject({ id: "draft-1", artifactId: null, payloadRoot: root("9"), executionBinding: null });
     expect(activity.audit[0]).toEqual({
       sequence: 17,
       workspaceId,
@@ -174,5 +182,33 @@ describe("problem activity response contract", () => {
     const decimalString = fixture();
     (decimalString.audit[0] as { sequence: unknown }).sequence = "17";
     expect(parseProblemActivity(decimalString, anchorRoot).audit[0]?.sequence).toBe(17);
+  });
+
+  test("parses complete execution lineage and refuses partial or authoritative rows", () => {
+    const bound = fixture();
+    for (const row of [bound.attempts[0]!, bound.artifacts[0]!, bound.drafts[0]!]) {
+      row.execution_packet_root = root("b");
+      row.execution_profile_root = root("c");
+      row.execution_verifier_capsule_root = root("d");
+      row.execution_result_contract_root = root("e");
+    }
+    const expected = {
+      packetRoot: root("b"),
+      profileRoot: root("c"),
+      verifierCapsuleRoot: root("d"),
+      resultContractRoot: root("e"),
+    };
+    const parsed = parseProblemActivity(bound, anchorRoot);
+    expect(parsed.attempts[0]?.executionBinding).toEqual(expected);
+    expect(parsed.artifacts[0]?.executionBinding).toEqual(expected);
+    expect(parsed.drafts[0]?.executionBinding).toEqual(expected);
+
+    const partial = fixture();
+    partial.attempts[0]!.execution_packet_root = root("b");
+    expect(() => parseProblemActivity(partial, anchorRoot)).toThrow("partial attempt execution binding");
+
+    const authorityCreep = fixture();
+    authorityCreep.artifacts[0]!.authority_effect = "standing";
+    expect(() => parseProblemActivity(authorityCreep, anchorRoot)).toThrow("artifact authority_effect");
   });
 });

@@ -288,6 +288,7 @@ const attempt = await createAttempt(contextA, {
   approachId: String(approach.id),
   provider: "provider-neutral-live-proof",
   title: "Live proof attempt",
+  executionBinding: null,
 }, command());
 await updateAttempt(
   contextA,
@@ -334,9 +335,10 @@ await denied(getProblemActivity({
   currentAnchorRoot,
 }), "removed member read");
 
-await attachArtifact(contextA, {
+const artifact = await attachArtifact(contextA, {
   anchor,
   attemptId: String(attempt.id),
+  executionBinding: null,
   contentRoot: root("6"),
   metadataRoot: root("7"),
   kind: "proof",
@@ -420,7 +422,11 @@ const payload = {
   },
 };
 const expectedExport = createSubmissionDraftExport(payload);
-const draft = await saveSubmissionDraft(contextA, { anchor, payload }, command());
+const draft = await saveSubmissionDraft(contextA, {
+  anchor,
+  artifactId: String(artifact.id),
+  payload,
+}, command());
 const exported = await exportSubmissionDraft(contextA, String(draft.id));
 if (exported.payloadRoot !== expectedExport.payloadRoot) throw new Error("draft export changed canonical payload bytes");
 await denied(
