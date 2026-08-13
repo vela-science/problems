@@ -84,6 +84,10 @@ for (const app of [observatory, www]) {
 }
 
 const observatoryRoutes = filesAt(join(observatory, "src/app"));
+const sharedProblemPage = readFileSync(join(observatory, "src/components/vela/problem-page.tsx"), "utf8");
+if (!sharedProblemPage.includes('@vela/ui/vela/page-shell') || !sharedProblemPage.includes("<PageShell")) {
+  failures.push("shared Problem page must compose the canonical PageShell");
+}
 const rawRouteFrame = /className=["'][^"']*\bmx-auto\b[^"']*\bmax-w-(?:\[[^\]]+\]|\S+)[^"']*\bpx-(?:\d|\[)/u;
 const competingOuterFrame = /className=["'][^"']*\bw-full\b[^"']*\bmax-w-(?:\[[^\]]+\]|\S+)[^"']*\b(?:p|px)-\d[^"']*["']/u;
 for (const file of observatoryRoutes) {
@@ -94,7 +98,8 @@ for (const file of observatoryRoutes) {
   if (/className=["']vela-page["']/u.test(source)) failures.push(`${label}: literal vela-page bypasses the PageShell component contract`);
   if (/className=["'][^"']*\bvela-page-(?:hero|section|section-head)\b/u.test(source)) failures.push(`${label}: literal PageShell hook bypasses the canonical component contract`);
   const compatibilityRedirect = source.includes('permanentRedirect(') && /\/dossiers(?:\/\[id\])?\/page\.tsx$/u.test(file);
-  if (/\/page\.tsx$/u.test(file) && !compatibilityRedirect && (!source.includes('@vela/ui/vela/page-shell') || !source.includes("<PageShell"))) {
+  const canonicalProblemPageDelegate = source.includes('@/components/vela/problem-page') && source.includes("<ProblemPageView");
+  if (/\/page\.tsx$/u.test(file) && !compatibilityRedirect && !canonicalProblemPageDelegate && (!source.includes('@vela/ui/vela/page-shell') || !source.includes("<PageShell"))) {
     failures.push(`${label}: every app page must compose the canonical PageShell`);
   }
 }
