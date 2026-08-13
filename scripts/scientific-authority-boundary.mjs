@@ -242,7 +242,10 @@ function inspectActivitySchema(repository, violations) {
     if (/\b(?:authority_(?:private_)?key|private_key|signing_key|seed)\b/iu.test(content)) {
       add("authority_key_storage", "activity schema may store public roots and signer metadata, but no authority or private keys");
     }
-    if (/\b(?:bytea|artifact_bytes|content_bytes|transcript_bytes)\b/iu.test(content)) {
+    const allowedBoundedCrdtBytes = file === "packages/activity-data/migrations/20260813_workspace_crdt.sql"
+      && content.includes("update_bytes bytea NOT NULL CHECK (octet_length(update_bytes) BETWEEN 1 AND 262144)")
+      && !/\b(?:artifact_bytes|content_bytes|transcript_bytes)\b/iu.test(content);
+    if (/\b(?:bytea|artifact_bytes|content_bytes|transcript_bytes)\b/iu.test(content) && !allowedBoundedCrdtBytes) {
       add("artifact_byte_storage", "activity schema stores artifact roots, metadata, and locators only");
     }
   }

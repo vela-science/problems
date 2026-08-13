@@ -40,7 +40,10 @@ The app role gets `CONNECT` (without `TEMP`) on `vela_activity`, `USAGE` on `act
 `EXECUTE` on its security-definer functions. It has no access to `activity`
 tables, the Observatory database, or repository authority keys. Large artifact
 bytes stay outside Postgres; only roots, bounded metadata, and locators belong
-in this package.
+in this package. The one bounded-byte exception is a Workspace's Loro canvas
+update stream: each append-only activity update is limited to 256 KiB,
+content-root checked in SQL, exact-Problem anchored, and carries
+`authority_effect = 'none'`.
 
 The exact current permission matrix and Workspace-promotion threat model live
 in `../../docs/security/vela-web-threat-model.md`. The Target-bound Approach
@@ -85,6 +88,14 @@ root `sha256:36c2fb19749e1f2decd793228747973b21335b906d07488a73b020f8d4d075b0`.
 Attempts, Research Blocks, and unsigned drafts can therefore retain the exact
 packet/profile/capsule/result-contract lineage. Legacy rows remain null and are
 not retroactively relabeled.
+
+The additive migration `20260813_workspace_crdt` was applied to Neon `main` at
+`2026-08-13T23:44:07.159Z` with root
+`sha256:68ec2742414cc506d6a69406d8e99f7fe20ad71f44d61c02cfb7f3cc9c234a48`.
+The first release state contained zero CRDT updates. The application role has
+execute access to the two membership-gated API functions and no base-table
+access. These mutable bytes coordinate the shared canvas note only; they are
+not Artifact bytes, protocol records, Git history, or scientific State.
 
 At the 2026-08-13 release-truth audit, the production deployment manifest at
 `problems.science` reported deployment `dpl_GPkozXemijMU6CvpisrQhyJLR4CH`, Web

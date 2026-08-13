@@ -17,6 +17,7 @@ describe("Workspace implementation permission matrix", () => {
       "createAttemptAction",
       "updateAttemptAction",
       "addDiscussionAction",
+      "appendWorkspaceCrdtUpdateAction",
       "createWorkRequestAction",
       "attachArtifactAction",
       "saveSubmissionDraftAction",
@@ -27,6 +28,21 @@ describe("Workspace implementation permission matrix", () => {
     expect(actions).toContain("const hosted = await currentAccount()");
     expect(actions).toContain("requireExpectedAnchorRoot(anchorRoot, expectedAnchorRoot)");
     expect(actions).toContain("return ensureCurrentAccount({");
+  });
+
+  test("keeps collaborative CRDT updates rooted, bounded, and non-authoritative", () => {
+    const migration = read("packages/activity-data/migrations/20260813_workspace_crdt.sql");
+    const action = read("apps/observatory/src/app/actions/activity.ts");
+    expect(migration).toContain("update_bytes bytea NOT NULL CHECK (octet_length(update_bytes) BETWEEN 1 AND 262144)");
+    expect(migration).toContain("p_update_root <> 'sha256:' || encode(public.digest(v_update_bytes, 'sha256'), 'hex')");
+    expect(migration).toContain("PERFORM activity.require_membership(p_account_id, p_workspace_id)");
+    expect(migration).toContain("v_anchor_root := activity.ensure_anchor(p_workspace_id, p_anchor)");
+    expect(migration).toContain("authority_effect text NOT NULL DEFAULT 'none' CHECK (authority_effect = 'none')");
+    expect(migration).toContain("'crdt_update.append', 'crdt_update'");
+    expect(migration).not.toMatch(/Decision|Verification|Standing write|scientific State write/iu);
+    expect(action).toContain("appendWorkspaceCrdtUpdateAction");
+    expect(action).toContain('documentName: "canvas"');
+    expect(action).toContain('updateRoot: text(form, "updateRoot", 71)');
   });
 
   test("keeps the database command vocabulary closed and membership-gated", () => {

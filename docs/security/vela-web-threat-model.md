@@ -24,8 +24,9 @@ scientific projection database, drafts are closed-schema and unsigned, and a
 static boundary gate refuses hosted signing or scientific-authority code.
 Target-bound Approaches now retain an exact, immutable packet binding, while
 Attempts, Research Blocks, and drafts retain the selected four-root execution
-lineage. These activity-plane relationships do not become Vela relations or
-Decisions.
+lineage. A bounded Loro update stream coordinates the shared canvas note as
+append-only, rooted activity. These activity-plane relationships and CRDT bytes
+do not become Vela relations or Decisions.
 
 ## Scope and assumptions
 
@@ -34,7 +35,9 @@ In scope:
 - `apps/observatory/src/app/actions/activity.ts` and the authenticated draft
   export handler;
 - `apps/observatory/src/components/vela/workbench.tsx` as the only hosted
-  activity presentation surface;
+  activity presentation surface, with `workspace-shell.tsx`,
+  `workspace-canvas.tsx`, and `workspace-crdt-note.tsx` as its bounded child
+  surfaces;
 - `apps/observatory/src/lib/auth.ts` and `apps/observatory/src/proxy.ts` for the
   hosted-account boundary;
 - `packages/activity-data/src`, its migrations, roles, database privilege
@@ -98,6 +101,11 @@ Open questions that can change future risk, but do not block this design:
   idempotency, lifecycle, visibility, and version policy lives in
   `SECURITY DEFINER` functions with a fixed search path
   (`packages/activity-data/migrations/20260811_activity_v1.sql`).
+- **Workspace CRDT stream.** Members append content-rooted Loro update bytes to
+  one `canvas` document per exact Problem anchor. SQL recomputes SHA-256, caps
+  each update at 256 KiB, audits the write, and returns bytes only through a
+  membership-gated read function. The app role has no table access
+  (`packages/activity-data/migrations/20260813_workspace_crdt.sql`).
 - **Local signer.** A separate CLI reads an explicit local PKCS#8 file, checks
   the public key declared by the draft, signs a DSSE envelope, and creates a
   new mode-0600 output file (`packages/activity-data/scripts/sign-submission-draft.mjs`).
@@ -126,6 +134,10 @@ Open questions that can change future risk, but do not block this design:
   expected version. SQL requires membership, serializes idempotency keys, and
   applies composite Workspace/anchor relationships. The app role cannot access
   base tables or the Observatory database.
+- **Canvas editor -> Loro -> activity API.** The browser imports retained Loro
+  updates, exports only its new delta, computes the update root, and posts it to
+  the declared Workspace Server Action. SQL independently validates the bytes
+  and root before retaining the append-only activity row.
 - **Activity package -> external locator.** Only a locator string, content
   root, bounded metadata, and optional byte count are retained. No bytes are
   fetched or stored. Locator text is untrusted and currently displayed as text
@@ -161,6 +173,7 @@ flowchart LR
 | Private notes and hosted locators | May contain unpublished research or custody locations | C, I |
 | Scientific anchor and future Target binding | Determines which exact State and work packet activity references | I |
 | Activity records and append-only audit | Preserve coordination history, authorship, idempotency, and conflict evidence | I, A |
+| Workspace CRDT update stream | Preserves mergeable shared-note context without implying scientific authority | I, A |
 | Unsigned Submission payload and payload root | Defines the exact bytes a user may choose to sign | I |
 | WorkOS secrets and activity database credential | Compromise permits hosted identity or data-plane abuse | C, I, A |
 | Local signing key | Controls producer attribution outside the hosted service | C, I |
@@ -240,7 +253,7 @@ flowchart LR
    TEMP, cross-database, or function-creation rights, bypassing audited policy
    functions and threatening both tenants and scientific-plane separation.
 9. **Resource exhaustion.** An authenticated account creates many Workspaces or
-   bounded-but-numerous activity records; without quotas it can consume
+   bounded-but-numerous activity records or CRDT updates; without quotas it can consume
    database, build, or review capacity.
 10. **Authority-by-presentation.** A dashboard, audit entry, passing producer
     check, or Target relationship is styled as accepted scientific State even
@@ -261,6 +274,7 @@ flowchart LR
 | TM-009 | Authenticated resource attacker | Account access | Generate high volumes of bounded activity or expensive reads | Availability and cost degradation | Database and app availability | Field lengths; fixed command vocabulary; 100-entry audit read bound | No repository-evidenced per-account/workspace quotas | Measure first; add quotas/rate limits before public write expansion; bound future artifact list sizes | Per-account command rate, row growth, latency | medium | medium | medium |
 | TM-010 | UI/consumer author | Ability to change presentation | Treat activity, producer checks, or a Target link as Verification/acceptance | Scientific authority confusion | User trust, Standing semantics | Product copy; separate State/activity planes; scanner forbids authority writes; explicit unsigned handoff | Copy checks cannot prove all visual implications | Retain `authority_effect: none`; render source/check/semantic/Standing axes separately; review copy and browser states | Wording-contract and screenshot review | medium | medium | medium |
 | TM-011 | Malicious payload or old client | Draft/API access | Use unsupported schema or extra authority fields | Parser differential or authority smuggling | Draft integrity | Ajv 2020 closed schema; pinned schema root; SQL schema/agent boundary; parser fails closed | SQL alone performs fewer checks than TypeScript | Keep TypeScript validation mandatory; fail closed on versions; test unknown properties and schema roots | Invalid-schema outcome counts | low | high | medium |
+| TM-012 | Malicious Workspace member | Valid membership and canvas write access | Submit malformed, oversized, repeatedly duplicated, or parser-hostile CRDT bytes | Client denial of service or activity growth | Workspace CRDT stream, browser availability | 256 KiB SQL limit; canonical base64; SHA-256 recomputation; exact anchor; idempotency; unique rooted update; Loro import; no scientific authority effect | No per-Workspace byte quota or compaction checkpoint yet | Measure update growth; add quotas and a rooted compaction profile before adding geometry, presence, or more CRDT documents | Refused-size/root counts, bytes per Workspace, client import errors | medium | medium | medium |
 | TM-012 | Build/deployment mistake | Public artifact generation | Ship private account/locator/secret material in browser or editorial output | Broad confidentiality loss | Secrets, PII, private research | Static www; output scanner; activity dependency allowlist; signed-out activity gate | Marker scan is pattern-based | Add representative locator/account markers to public-output tests; inspect actual build output on release | CI scan and post-build artifact inspection | low | high | medium |
 
 ## Exact implementation permission matrix
@@ -299,7 +313,8 @@ membership. Any cell not explicitly allowed is denied.
 | Workspace create/list | `createWorkspaceAction`; `listWorkspaces` | `create_workspace`; membership join in `list_workspaces` | app API only | `packages/activity-data/tests/governance.test.ts`; live proof |
 | Activity read/privacy | `loadWorkbench` | `get_problem_activity`; `require_membership`; author-only private-note predicate | app API only; no base read | governance test; live cross-tenant/private-note proof |
 | Target-bound write enablement | `VELA_TARGET_BOUND_APPROACH_ENABLED`; exact `true` only; gate precedes `mutationContext` | no privilege or database override | deployment-owned server configuration | config parser, direct-POST, disabled UI, and boundary tests |
-| Ten Workspace-scoped activity mutations | ten named exports in `app/actions/activity.ts` after the separately listed Workspace creation action; bound and unbound creation share one closed database command | nine-kind allowlist in `execute_command`; `require_membership`; append-only audit | app API only | governance test; authority-boundary test; live proof |
+| Workspace-scoped activity mutations | eleven named exports in `app/actions/activity.ts` after the separately listed Workspace creation action; bound and unbound creation share one closed database command; CRDT append uses its own byte-validating function | nine-kind allowlist in `execute_command`; dedicated CRDT append; `require_membership`; append-only audit | app API only | governance test; authority-boundary test; disposable Postgres proofs |
+| Shared canvas note | `appendWorkspaceCrdtUpdateAction`; Loro client delta export | `append_workspace_crdt_update`; `list_workspace_crdt_updates`; exact root/size/anchor checks | app API only; no base read/write | `workspace-crdt.test.ts`; CRDT merge-order tests |
 | Direct stale form refusal | `mutationContext`; `requireExpectedAnchorRoot` | database preserves exact supplied anchor but does not decide currentness | server owns current scientific read | `workspace-mutation-guard.test.ts` |
 | Version/idempotency conflict | `requireCurrentApproach`; `requireCurrentAttempt`; command request root | advisory lock; `VAI01`; `VACAS`; lifecycle transitions | app API only | guard tests; migration-plan tests; live proof |
 | Draft validation/export | `saveSubmissionDraftAction`; `GET /drafts/[id]/export` | `submission_draft.save`; selected Artifact id and exact execution-binding equality; no rebind; `export_submission_draft`; membership | app API only | `draft-submission.test.ts`; governance and disposable-database lineage tests; live export denial |
@@ -343,6 +358,7 @@ membership. Any cell not explicitly allowed is denied.
 | `packages/activity-data/migrations/20260812_current_anchor_read.sql` | Current/historical follow semantics and membership-gated activity response | TM-001, TM-002 |
 | `packages/activity-data/migrations/20260812_target_bound_approach.sql` | Additive immutable Target provenance, literal no-authority constraint, and fork inheritance | TM-002, TM-007, TM-010 |
 | `packages/activity-data/migrations/20260813_execution_binding_lineage.sql` | Extends all-or-none packet/profile/capsule/result-contract lineage through Attempt, Research Block, and draft; enforces exact parent equality and refuses draft rebinds | TM-002, TM-004, TM-007, TM-010 |
+| `packages/activity-data/migrations/20260813_workspace_crdt.sql` | Adds one bounded, rooted, exact-anchor Loro update stream with membership-gated append/read and no authority effect | TM-001, TM-007, TM-008, TM-010, TM-012 |
 | `packages/activity-data/roles.sql` | Defines the non-login owner and least-privilege login roles | TM-008 |
 | `packages/activity-data/database-privileges.sql` | Enforces database-level cross-plane isolation | TM-008 |
 | `packages/activity-data/scripts/live-proof.mjs` | Starts from zero bound rows, then proves exact bound create/read/fork/retry/audit plus tenant, privacy, export, role, and plane independence | TM-001, TM-002, TM-004, TM-005, TM-007, TM-008 |
@@ -351,7 +367,8 @@ membership. Any cell not explicitly allowed is denied.
 
 ## Mitigation and operational gate summary
 
-The Target and execution-lineage migrations are applied at their frozen roots.
+The Target, execution-lineage, Problem-scoped Workspace, and Workspace-CRDT
+migrations are applied at their frozen roots.
 The binding-aware reader/action/UI is deployed, the Target-bound write gate is
 enabled with exact `true`, and the rollback floor remains the binding-aware
 default-off build identified in the ADR. The implemented gates are:

@@ -66,5 +66,6 @@ describe("activity authority and tenant boundary", () => {
     expect(source).toContain("query.currentAnchorRoot");
     expect(source).toContain("parseProblemActivity(rows[0]?.result, query.currentAnchorRoot)");
     expect(source).toContain("get_problem_activity($1::uuid, $2::uuid, $3, $4)");
+    expect(source).toContain("list_workspace_crdt_updates($1::uuid, $2::uuid, $3, $4)");
   });
 });

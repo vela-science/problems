@@ -72,6 +72,11 @@ function fixture() {
       execution_verifier_capsule_root: null, execution_result_contract_root: null,
       authority_effect: "none", version: 1, created_at: createdAt, updated_at: createdAt,
     }],
+    crdtUpdates: [{
+      id: "crdt-update-1", workspace_id: workspaceId, anchor_root: anchorRoot,
+      author_account_id: accountId, document_name: "canvas", update_root: root("b"),
+      update_base64: "AQID", byte_size: 3, authority_effect: "none", created_at: createdAt,
+    }],
     audit: [{
       sequence: 17, workspace_id: workspaceId, account_id: accountId,
       anchor_root: anchorRoot, operation: "attempt.create", subject_kind: "attempt",
@@ -96,6 +101,18 @@ describe("problem activity response contract", () => {
     expect(activity.workRequests[0]).toMatchObject({ id: "request-1", kind: "reproduction" });
     expect(activity.artifacts[0]).toMatchObject({ id: "artifact-1", contentRoot: root("8"), byteSize: 42, executionBinding: null });
     expect(activity.drafts[0]).toMatchObject({ id: "draft-1", artifactId: null, payloadRoot: root("9"), executionBinding: null });
+    expect(activity.crdtUpdates[0]).toEqual({
+      id: "crdt-update-1",
+      workspaceId,
+      anchorRoot,
+      authorAccountId: accountId,
+      documentName: "canvas",
+      updateRoot: root("b"),
+      updateBase64: "AQID",
+      byteSize: 3,
+      authorityEffect: "none",
+      createdAt,
+    });
     expect(activity.audit[0]).toEqual({
       sequence: 17,
       workspaceId,
@@ -210,5 +227,23 @@ describe("problem activity response contract", () => {
     const authorityCreep = fixture();
     authorityCreep.artifacts[0]!.authority_effect = "standing";
     expect(() => parseProblemActivity(authorityCreep, anchorRoot)).toThrow("artifact authority_effect");
+  });
+
+  test("fails closed on malformed or authoritative CRDT updates", () => {
+    const malformedBase64 = fixture();
+    malformedBase64.crdtUpdates[0]!.update_base64 = "not canonical base64!";
+    expect(() => parseProblemActivity(malformedBase64, anchorRoot)).toThrow("CRDT update_base64");
+
+    const wrongDocument = fixture();
+    wrongDocument.crdtUpdates[0]!.document_name = "standing";
+    expect(() => parseProblemActivity(wrongDocument, anchorRoot)).toThrow("CRDT document_name");
+
+    const wrongSize = fixture();
+    wrongSize.crdtUpdates[0]!.byte_size = 4;
+    expect(() => parseProblemActivity(wrongSize, anchorRoot)).toThrow("CRDT byte_size");
+
+    const authorityCreep = fixture();
+    authorityCreep.crdtUpdates[0]!.authority_effect = "standing";
+    expect(() => parseProblemActivity(authorityCreep, anchorRoot)).toThrow("CRDT authority_effect");
   });
 });

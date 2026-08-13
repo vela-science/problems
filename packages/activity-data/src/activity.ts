@@ -2,6 +2,7 @@ import { activitySql } from "./client";
 import { canonicalJson, sha256 } from "@vela/observatory-data/canonical";
 import {
   commandRequestRoot,
+  type AppendCrdtUpdateInput,
   type HashRoot,
   scientificAnchorRoot,
   type ActivityAccount,
@@ -31,7 +32,7 @@ import {
   type SubmissionDraftExport,
 } from "./draft-submission";
 import { activityDatabaseError } from "./errors";
-import { parseProblemActivity as parseProblemActivityResponse } from "./problem-activity";
+import { parseCrdtUpdates, parseProblemActivity as parseProblemActivityResponse } from "./problem-activity";
 
 type JsonRecord = Record<string, unknown>;
 
@@ -243,10 +244,51 @@ export function parseProblemActivity(value: unknown, currentAnchorRoot: HashRoot
 export async function getProblemActivity(query: ProblemActivityQuery): Promise<ProblemActivity> {
   try {
     const rows = await activitySql().query(
-      "SELECT activity_api.get_problem_activity($1::uuid, $2::uuid, $3, $4) AS result",
+      `SELECT
+        activity_api.get_problem_activity($1::uuid, $2::uuid, $3, $4) AS result,
+        activity_api.list_workspace_crdt_updates($1::uuid, $2::uuid, $3, $4) AS crdt_updates`,
       [query.accountId, query.workspaceId, query.repositoryId, query.problemId],
     );
-    return parseProblemActivity(rows[0]?.result, query.currentAnchorRoot);
+    return {
+      ...parseProblemActivity(rows[0]?.result, query.currentAnchorRoot),
+      crdtUpdates: parseCrdtUpdates(rows[0]?.crdt_updates),
+    };
+  } catch (error) {
+    throw activityDatabaseError(error);
+  }
+}
+
+export async function appendWorkspaceCrdtUpdate(
+  context: WorkspaceContext,
+  input: AppendCrdtUpdateInput,
+  options: CommandOptions,
+) {
+  if (!/^[A-Za-z0-9+/]+={0,2}$/u.test(input.updateBase64) || input.updateBase64.length % 4 !== 0) {
+    throw new Error("CRDT update must be canonical base64");
+  }
+  const payload = {
+    anchor: dbAnchor(input.anchor),
+    document_name: input.documentName,
+    update_root: input.updateRoot,
+    update_base64: input.updateBase64,
+  };
+  try {
+    const rows = await activitySql().query(
+      `SELECT activity_api.append_workspace_crdt_update(
+        $1::uuid, $2::uuid, $3, $4, $5::jsonb, $6, $7, $8
+      ) AS result`,
+      [
+        context.accountId,
+        context.workspaceId,
+        options.idempotencyKey,
+        commandRequestRoot("crdt_update.append", payload),
+        JSON.stringify(payload.anchor),
+        payload.document_name,
+        payload.update_root,
+        payload.update_base64,
+      ],
+    );
+    return record(rows[0]?.result, "CRDT update command");
   } catch (error) {
     throw activityDatabaseError(error);
   }

@@ -53,8 +53,9 @@ concepts cover the complete reader and contributor journey:
 - **Target** is a bounded next step.
 - **Research Block** is a durable contribution such as an experiment, proof
   attempt, dataset, argument, or negative result with rooted artifacts.
-- **Workspace** is private or team-local coordination. Its approaches, attempts,
-  notes, requests, and drafts remain outside public scientific truth.
+- **Workspace** is private or team-local coordination. Its shared canvas, approaches,
+  sessions, notes, code and artifact references, requests, reviews, and drafts remain
+  outside public scientific truth.
 - **Decision** is an attributed human or agent action executed under explicit
   Repository authority. Evidence and discussion never substitute for it.
 
@@ -239,8 +240,29 @@ Each Problem page has two explicit modes:
 Workspace mode supports workspace membership, follows, approaches and forks,
 attempt lifecycle, comments and notes, assignments and reproduction requests,
 rooted external artifact metadata, provider-neutral external session references on Attempts, and
-portable Submission drafts. Idempotency keys make retries safe. Version fields
-make concurrent edits fail with an explicit conflict.
+portable Submission drafts. Its shared canvas projects exact parentage among
+Targets, Approaches, Sessions, Codebases, Research Blocks, and drafts. A bounded
+Loro document stores the shared canvas note as append-only, content-rooted
+activity updates. Idempotency keys make retries safe. Version fields make
+non-CRDT concurrent edits fail with an explicit conflict.
+
+The hosted platform and the eventual local Workbench are complementary surfaces
+over the same activity objects:
+
+- **Problems.science owns shared context:** Problem canvases and object maps,
+  approaches, sessions, notes, assignments, codebase and artifact references,
+  attributed reviews, checkpoints, and portable handoffs. The first Loro-backed
+  collaboration surface is the shared canvas note. Later Loro fields may cover
+  canvas geometry, drafting, task order, annotations, presence, and temporary
+  approaches only when each one has a bounded activity contract.
+- **The local Workbench owns machine context:** checked-out repositories, local
+  files, runtimes, containers, private agent sessions, secrets, large artifact
+  bytes, signing keys, and Repository mutation.
+- **The boundary is explicit:** a shared reference can point to an exact local or
+  external object, but hosted code does not silently execute it. CRDT state is
+  mergeable mutable activity and never a signed protocol object, Git history,
+  Decision, or Standing. The local Workbench can return rooted artifacts and unsigned or signed
+  handoffs without becoming a second scientific-state model.
 
 Problems stores no artifact bytes, Vela Event, Verification Record, Decision,
 or Standing. It has no repository authority credential. Draft export validates
@@ -260,9 +282,9 @@ activity database cannot remove or change that state.
 
 The global sidebar follows user intent: Home, Problems, Open work, and State
 history, with Repositories and Sources visually subordinated as Provenance. Hubs live in
-Problems discovery. A Problem page replaces that global list with contextual
-Current State and Workspace navigation plus links
-to its exact records. Account controls and search are tools, not destinations.
+Problems discovery. That global map remains visible on a Problem page; Current
+State and Workspace are the Problem's local mode switch in its header. Account
+controls and search are tools, not destinations.
 Advanced record collections do not become global peers of Problems.
 
 Records keeps one contextual record-navigation system for expert use.

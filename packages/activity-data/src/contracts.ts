@@ -239,6 +239,19 @@ export type ActivityAuditEntry = {
   recordedAt: string;
 };
 
+export type ActivityCrdtUpdate = {
+  id: string;
+  workspaceId: string;
+  anchorRoot: HashRoot;
+  authorAccountId: string;
+  documentName: "canvas";
+  updateRoot: HashRoot;
+  updateBase64: string;
+  byteSize: number;
+  authorityEffect: "none";
+  createdAt: string;
+};
+
 export type ProblemActivity = {
   anchors: StoredScientificAnchor[];
   following: boolean;
@@ -248,6 +261,7 @@ export type ProblemActivity = {
   workRequests: ActivityWorkRequest[];
   artifacts: ActivityArtifact[];
   drafts: ActivitySubmissionDraft[];
+  crdtUpdates: ActivityCrdtUpdate[];
   audit: ActivityAuditEntry[];
 };
 
@@ -315,6 +329,12 @@ export type AttachArtifactInput = {
   byteSize?: number | null;
   locator?: string | null;
   metadataRoot?: HashRoot | null;
+};
+export type AppendCrdtUpdateInput = {
+  anchor: ScientificAnchor;
+  documentName: "canvas";
+  updateRoot: HashRoot;
+  updateBase64: string;
 };
 
 export function commandRequestRoot(kind: string, input: unknown, expectedVersion?: number): HashRoot {

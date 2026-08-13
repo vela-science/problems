@@ -4,6 +4,7 @@ import {
   type ActivityArtifact,
   type ActivityAttempt,
   type ActivityAuditEntry,
+  type ActivityCrdtUpdate,
   type ActivityDiscussionEntry,
   type ActivitySubmissionDraft,
   type ActivityWorkRequest,
@@ -238,6 +239,36 @@ function auditFrom(value: unknown): ActivityAuditEntry {
   };
 }
 
+function crdtUpdateFrom(value: unknown): ActivityCrdtUpdate {
+  const row = record(value, "CRDT update");
+  if (row.authority_effect !== "none") throw new Error("activity response has invalid CRDT authority_effect");
+  const updateBase64 = text(row.update_base64, "CRDT update_base64");
+  if (!/^[A-Za-z0-9+/]+={0,2}$/u.test(updateBase64) || updateBase64.length % 4 !== 0) {
+    throw new Error("activity response has invalid CRDT update_base64");
+  }
+  const byteSize = integer(row.byte_size, "CRDT byte_size", 1);
+  const padding = updateBase64.endsWith("==") ? 2 : updateBase64.endsWith("=") ? 1 : 0;
+  if ((updateBase64.length * 3) / 4 - padding !== byteSize) {
+    throw new Error("activity response has invalid CRDT byte_size");
+  }
+  return {
+    id: text(row.id, "CRDT update id"),
+    workspaceId: text(row.workspace_id, "CRDT workspace_id"),
+    anchorRoot: hashRoot(row, "anchor_root", "CRDT anchor_root"),
+    authorAccountId: text(row.author_account_id, "CRDT author_account_id"),
+    documentName: member(row.document_name, ["canvas"] as const, "CRDT document_name"),
+    updateRoot: hashRoot(row, "update_root", "CRDT update_root"),
+    updateBase64,
+    byteSize,
+    authorityEffect: "none",
+    createdAt: text(row.created_at, "CRDT created_at"),
+  };
+}
+
+export function parseCrdtUpdates(value: unknown): ActivityCrdtUpdate[] {
+  return recordArray(value, "CRDT updates").map(crdtUpdateFrom);
+}
+
 export function parseProblemActivity(value: unknown, currentAnchorRoot: HashRoot): ProblemActivity {
   const result = record(value, "problem activity");
   if (!Array.isArray(result.anchors)) throw new Error("problem activity anchors must be an array");
@@ -259,6 +290,7 @@ export function parseProblemActivity(value: unknown, currentAnchorRoot: HashRoot
     workRequests: recordArray(result.workRequests, "work requests").map(workRequestFrom),
     artifacts: recordArray(result.artifacts, "artifacts").map(artifactFrom),
     drafts: recordArray(result.drafts, "drafts").map(draftFrom),
+    crdtUpdates: result.crdtUpdates === undefined ? [] : parseCrdtUpdates(result.crdtUpdates),
     audit: recordArray(result.audit, "audit").map(auditFrom),
   };
 }

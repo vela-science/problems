@@ -136,4 +136,15 @@ describe("scientific-authority profiles", () => {
       "artifact_byte_storage",
     ]));
   });
+
+  test("allows only the exact bounded Workspace CRDT byte store", () => {
+    const root = fixture({
+      "packages/activity-data/migrations/20260813_workspace_crdt.sql": [
+        "CREATE TABLE activity.workspace_crdt_updates (",
+        "  update_bytes bytea NOT NULL CHECK (octet_length(update_bytes) BETWEEN 1 AND 262144)",
+        ");",
+      ].join("\n"),
+    });
+    expect(inspectScientificAuthorityBoundary(root)).toEqual([]);
+  });
 });

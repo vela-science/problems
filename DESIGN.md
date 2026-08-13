@@ -32,7 +32,7 @@ composition.
 | Editorial composition | `apps/www` | Authored publications, figures, product narrative, and documentation layouts |
 | Vela application | `apps/observatory` | Problem Current State and Workspace, advanced records, hosted activity, URL state, local-signing handoff, and the Sigma graph |
 | Exact data | `packages/observatory-data` | Rooted scientific projections consumed by both applications |
-| Activity data | `packages/activity-data` | Mutable hosted workspaces, attempts, discussion, rooted metadata, and unsigned drafts |
+| Activity data | `packages/activity-data` | Mutable hosted workspaces, attempts, discussion, rooted metadata, append-only Loro canvas updates, and unsigned drafts |
 
 `@vela/brand` is framework-neutral. `@vela/ui` is the shared React source for
 the two Next.js applications and future private Vela applications. Applications
@@ -92,9 +92,10 @@ protocol ontology.
 Record, Event, Result Dossier, Source, Artifact, root, and format. Exact types
 remain one disclosure away and keep their durable routes.
 
-**Hosted activity.** Account, Workspace, Follow, Approach, Attempt, Comment,
+**Hosted activity.** Account, Workspace, Follow, Approach, Attempt (presented as
+a Session where performer provenance is the useful reader concept), Comment,
 Note, Assignment, Reproduction Request, Artifact, Agent Session, Submission
-Draft. A rooted Artifact contribution may be presented as a Research Block.
+Draft, and bounded CRDT update. A rooted Artifact contribution may be presented as a Research Block.
 Activity nouns appear in a Problem's Workspace and never label a scientific
 state axis.
 
@@ -207,8 +208,9 @@ The visible product model is **Home → Problem → Current State | Workspace**.
 Global navigation answers four user intents: Home, Problems, Work, and Activity.
 Repositories and Sources are visually subordinate provenance Library links.
 Hubs are a Problems discovery facet and secondary destination. Current State
-and Workspace are modes of the same Problem, never parallel products or domains. Inside a Problem
-the sidebar becomes local to that Problem. Protocol records appear as context
+and Workspace are modes of the same Problem, never parallel products or domains.
+The global product map remains stable inside a Problem; the Problem header owns
+the local Current State and Workspace switch. Protocol records appear as context
 and progressive detail; search and account remain utilities.
 
 Source coverage is a reading instrument inside Current State. Its compact
@@ -269,8 +271,18 @@ teach a reader nothing about what is on them.
   not a page about one, so its name is the largest text on the screen for the
   same reason a Claim's assertion is on a Claim page.
 - **Workbench.** Opens with the exact Problem identity, a State or Work mode,
-  and one current activity context. Mutation controls live in Work mode. Each
-  saved record carries its anchor freshness and version conflict state.
+  and one current activity context. The hosted surface uses an Entire-like
+  three-part grammar: shared object map, selected working object, and contextual
+  inspector. Its default canvas is a real projection of exact Workspace objects
+  and parent relationships, with a keyboard-equivalent object map. It exposes
+  sessions, code and artifact references, Research Blocks, reviews, and handoffs.
+  The shared canvas note uses Loro updates rooted and retained as activity.
+  Local files, runtimes, secrets, signing,
+  and Repository mutation stay in the local Workbench. Mutation controls live
+  in Work mode. Each saved record carries its anchor freshness and version
+  conflict state. Later Loro/CRDT fields may coordinate canvas geometry, drafts,
+  annotations, task order, presence, and temporary approaches only behind an
+  explicit activity contract; they never carry Decision or Standing semantics.
 - **Instrument.** A compact toolbar, the canvas, and a ledger equivalent for
   everything the canvas shows.
 
