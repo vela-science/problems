@@ -214,7 +214,7 @@ one candidate, inserts it in one transaction, verifies every stored table root,
 and only then moves `current_release`. A failure leaves the prior release
 current. The writer is available only to the refresh workflow. The Vercel
 application connects as the native PostgreSQL login
-`observatory_projection_reader_20260812`. That versioned login inherits only
+`observatory_projection_reader_20260813`. That versioned login inherits only
 the stable no-login `observatory_projection_reader` permission role; it does
 not inherit Neon's managed `neon_superuser` role. Schema `USAGE`, curated table
 `SELECT`, and database `CONNECT` attach to the stable role so credential
@@ -344,7 +344,7 @@ onto database branches.
 Those two URLs are the complete secret inventory for Observatory projection
 access. Activity uses two separately scoped URLs described below. The stable
 `observatory_projection_reader` permission role and versioned
-`observatory_projection_reader_20260812` login are managed directly in Neon and
+`observatory_projection_reader_20260813` login are managed directly in Neon and
 are not recreated during CI or projection refreshes. Clean-room reconstruction
 creates the same no-login group, versioned login, membership, and inherited
 read boundary inside its disposable local cluster.

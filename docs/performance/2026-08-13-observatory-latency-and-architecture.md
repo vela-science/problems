@@ -17,8 +17,8 @@ All timings include network transit to the configured Neon project.
 | Read | Before | After |
 | --- | ---: | ---: |
 | Local `/problems` TTFB | 11.75 s | about 2.0 s in development |
-| Production `/problems` TTFB | 13.60 s; later requests exceeded 20 s | deploy required for final production number |
-| Production `/` TTFB | 25.36 s observed; other samples exceeded 20 s | deploy required for final production number |
+| Production `/problems` TTFB | 13.60 s; later requests exceeded 20 s | 0.30 s median; 0.45 s p95 |
+| Production `/` TTFB | 25.36 s observed; other samples exceeded 20 s | 0.33 s median; 0.46 s p95 |
 | Five old 250-row catalogue pages, sequential | 13.15 s | removed |
 | New 1,217-row catalogue read, uncached | 0.62–0.86 s | 0.62–0.86 s |
 | Problem 321 row lookup | about 4.5 s without facets in an unscoped ledger scan | 0.12–0.18 s with numeric-prefix SQL narrowing, exact in-memory identity filtering, and no facets |
@@ -28,6 +28,17 @@ All timings include network transit to the configured Neon project.
 | Production-build Problem 321 TTFB | n/a | 0.54 s cold; 0.10–0.11 s warm |
 
 An exact comparison of all 1,217 old and new records across identity, Claim binding, statement, declared state, formalization, links, tags, OEIS identifiers, contributing Sources, Target count, and local Standing found zero differences.
+
+The production sample is 20 sequential requests per route against Web commit
+`e1f1ce0da239c92008ce2572a05ba34286830c0e` and projection release
+`sha256:2ac8fb5a79313fc0fdae6f23d4862d26f11f2682222eb1f58ae31513888e190c`.
+Vercel deployment `dpl_BfFooaCtgKgNtC4NyVz6j3c3ZpGD` served every dynamic
+function from `cle1`, colocated with the Neon project's AWS `us-east-2`
+region. `/work` measured 0.20 s median and 0.54 s p95; `/hubs` 0.27 s median
+and 0.32 s p95; canonical Problem 321 0.18 s median and 0.43 s p95. The
+legacy `/p/math/321` request, including its permanent redirect, measured
+0.35 s median and 0.44 s p95. Browser navigation across the same production
+routes produced no application console errors.
 
 The replacement discovery miss executes 27 SQL HTTP queries for the same release: one head-manifest read plus 26 exact-root reads in the assembler. The catalogue contract itself accounts for six of those: one readable-release check, one manifest read, and four parallel bounded data reads. A release-cache hit executes only the head-manifest read before Next returns the root-keyed result. This retains release validation while removing 29 queries and, more importantly, five repeated whole-corpus facet aggregations. The query-count contract is deterministic for the present one-Repository release; each additional Problem Repository adds its own bounded Repository and catalogue reads.
 
@@ -66,6 +77,49 @@ Fast production routes passed through the same deployment while catalogue routes
 
 The fixed redirects in `vercel.json` are Vercel edge configuration, not Next server execution. They are cheap compatibility rules. The `/p/:repository/:problem` implementation is also required: reviewed Problems redirect to their canonical namespace path, while unreviewed source-native Problems still use that durable public route. The legacy Dossier HTML routes remain small compatibility redirects; the literal JSON routes retain published machine URLs. None was on the timed hot path, so removing them would trade URL durability for no measurable speedup.
 
+## Vercel and Neon integration
+
+The production application is already connected to Neon through Vercel's
+supported manual environment-variable path. It deliberately does not install
+the Vercel-managed Neon storage product: that path is intended to provision or
+bill a Neon resource through Vercel, while this system already owns and
+qualifies its Neon project directly.
+
+The Neon-managed Vercel integration is the appropriate managed option for an
+existing Neon project, but its connection selects one database and one role and
+injects a generic `DATABASE_URL`. The Observatory needs two simultaneous,
+non-interchangeable credentials from one Neon project:
+
+- `VELA_PROJECTION_DATABASE_URL` selects `vela_observatory` through the
+  versioned SELECT-only projection reader;
+- `VELA_ACTIVITY_DATABASE_URL` selects `vela_activity` through
+  `vela_activity_app`, which can execute only the reviewed hosted activity API.
+
+A single managed connection must not replace those names or roles. It would
+erase the database boundary in configuration even if PostgreSQL privileges
+continued to reject cross-plane access. Keep the two explicit variables until
+Neon's integration can bind multiple database/role pairs to one deployment, or
+until Vela implements a small preview-branch provisioner that obtains both
+least-privilege URLs for the same isolated Neon branch and writes them as
+branch-scoped Vercel Preview variables. Production migrations continue to use
+separate migrator/writer credentials outside the Vercel runtime.
+
+Preview deployments must never receive a production activity credential. A
+preview is either bound to an isolated Neon branch with both exact runtime
+roles, or it omits `VELA_ACTIVITY_DATABASE_URL` and remains read-only. The
+projection reader may point to the qualified production projection because it
+is SELECT-only and immutable-release bound. This preserves useful public
+previews without turning a preview deployment into another production writer.
+
+The current Vercel Preview environment is bound to the persistent Neon branch
+`vercel-preview` (`br-jolly-wildflower-ae27h75o`) with the SELECT-only
+`observatory_projection_reader_20260813` login and `vela_activity_app` login.
+Production uses the same versioned projection permission boundary on Neon's
+`main` branch. Vercel Git deployments remain disabled, so this branch is the
+one explicit shared preview environment rather than a misleading claim of
+per-PR branching. If Git previews are enabled later, replace it with automatic
+branch-per-preview provisioning for both runtime credentials together.
+
 ## Package and dependency disposition
 
 - Keep `@vela/observatory-data` as the only scientific projection reader and `@vela/activity-data` as the only hosted write surface.
@@ -95,6 +149,9 @@ The release operator should record Vercel measurements after deployment. Local d
 - [Next.js `unstable_cache`](https://nextjs.org/docs/app/api-reference/functions/unstable_cache): the current cache API persists expensive query results across requests and deployments. Next 16 replaces it with `use cache` after the app opts into Cache Components.
 - [Next.js Cache Components migration](https://nextjs.org/docs/app/guides/migrating-to-cache-components): enabling Cache Components changes route-segment caching and requires explicit handling of runtime data.
 - [Neon serverless driver](https://neon.com/docs/serverless/serverless-driver): HTTP is the faster path for one-shot, non-interactive transactions in serverless runtimes; WebSockets serve interactive transactions.
+- [Neon Vercel integration decision guide](https://neon.com/docs/guides/vercel-overview): existing Neon projects should use the Neon-managed connection when the integration fits their database and role model; manual connection remains supported for custom control.
+- [Neon-managed Vercel integration](https://neon.com/docs/guides/neon-managed-vercel-integration): the integration selects a project, database, and role, injects deployment variables, and creates isolated preview branches.
+- [Vercel environment variables](https://vercel.com/docs/environment-variables): production, preview, development, and branch-specific values are separately scoped and only affect new deployments.
 
 ## Repeatable timing command
 

@@ -9,7 +9,7 @@ const validEnvironment = {
   VELA_PROJECTION_WRITER_DATABASE_URL:
     "postgresql://neondb_owner:writer@writer.example/vela_observatory?sslmode=require",
   VELA_PROJECTION_DATABASE_URL:
-    `postgresql://observatory_projection_reader_20260812:${readerPassword}@reader.example/vela_observatory?sslmode=require`,
+    `postgresql://observatory_projection_reader_20260813:${readerPassword}@reader.example/vela_observatory?sslmode=require`,
 };
 
 describe("projection credential binding", () => {
@@ -17,7 +17,7 @@ describe("projection credential binding", () => {
     expect(projectionDatabase).toEqual({
       name: "vela_observatory",
       writerRole: "neondb_owner",
-      readerRole: "observatory_projection_reader_20260812",
+      readerRole: "observatory_projection_reader_20260813",
       readerPermissionRole: "observatory_projection_reader",
     });
   });
@@ -33,7 +33,7 @@ describe("projection credential binding", () => {
     expect(() => checkProjectionEnvironment({
       ...validEnvironment,
       VELA_PROJECTION_DATABASE_URL:
-        "postgresql://observatory_projection_reader_20260812:not-a-secret@reader.example/vela_observatory?sslmode=require",
+        "postgresql://observatory_projection_reader_20260813:not-a-secret@reader.example/vela_observatory?sslmode=require",
     })).toThrow("reader password must be a 32-byte lowercase hex secret");
   });
 
@@ -42,7 +42,7 @@ describe("projection credential binding", () => {
     expect(() => checkProjectionEnvironment({
       ...withoutReader,
       DATABASE_URL:
-        `postgresql://observatory_projection_reader_20260812:${readerPassword}@reader.example/vela_observatory?sslmode=require`,
+        `postgresql://observatory_projection_reader_20260813:${readerPassword}@reader.example/vela_observatory?sslmode=require`,
     })).toThrow("missing required projection secret VELA_PROJECTION_DATABASE_URL");
   });
 
