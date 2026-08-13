@@ -134,7 +134,7 @@ Open questions that can change future risk, but do not block this design:
   unsigned JSON with `private, no-store` and exact payload headers. The local
   CLI, not hosted code, reads a private key and writes the signed envelope.
 - **Signed Submission -> Vela Repository.** This occurs outside Vela Web.
-  Repository policy, scoped Verification, an authorized human Decision, and
+  Repository policy, scoped Verification, an authorized attributed Decision, and
   replay govern any scientific effect.
 
 #### Diagram

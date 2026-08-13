@@ -57,7 +57,7 @@ map -> target -> work -> submit -> verify -> decide -> remap
 
 Native research tools and external harnesses remain replaceable. The Repository
 Git repository is canonical. Vela binds exact Submissions and scoped
-Verification evidence, but neither changes Standing. Only an authorized human
+Verification evidence, but neither changes Standing. Only an authorized, attributed
 Decision in that named Repository changes Standing; replay derives the successor
 state and next Target. Problems may coordinate candidate work, but hosted state
 cannot issue a Vela Event or Decision, change Standing, or sign as a user.

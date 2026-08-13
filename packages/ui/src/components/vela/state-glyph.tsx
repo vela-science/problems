@@ -3,8 +3,8 @@ import { cn } from "../../lib/utils";
 /* Two orthogonal channels on one mark, after the Lean blueprint DAG's
  * border-is-statement / fill-is-proof encoding.
  *
- *   ring  = Claim standing        — what an authorized human Decision did
- *   core  = Verification outcome  — what a machine check reported
+ *   ring  = Claim standing        — what an authorized, attributed Decision did
+ *   core  = Verification outcome  — what a scoped reviewer or check reported
  *   cone  = the transitive state  — this Claim AND its whole upstream cone
  *
  * Root DESIGN.md, "Scientific visual language", already fixes the vocabulary

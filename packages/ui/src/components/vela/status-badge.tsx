@@ -46,8 +46,8 @@ const icons = {
  * axis a state belongs to stays visible in the source, and so no two axes can
  * quietly share a glyph:
  *
- *   standing     what an authorized human Decision established
- *   verification what a scoped machine check reported
+ *   standing     what an authorized, attributed Decision established
+ *   verification what a scoped reviewer or check reported
  *   proposal     where a Proposal sits in the review lifecycle
  *   integrity    whether the repository replays and passes strict checks
  *

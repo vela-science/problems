@@ -42,8 +42,9 @@ map -> target -> work -> submit -> verify -> decide -> remap
 
 Any native human or machine workbench may do the work. The canonical Repository
 Git repository preserves exact Submissions and scoped Verification evidence.
-Neither production nor Verification changes Standing. Only an authorized
-human Decision in that named Repository changes Standing; deterministic replay
+Neither production nor Verification changes Standing. Only an authorized,
+attributed Decision in that named Repository changes Standing;
+the performer may be human or agent, and deterministic replay
 derives the successor state and exact next Target. Vela Web provides the
 read-only map and review surfaces.
 

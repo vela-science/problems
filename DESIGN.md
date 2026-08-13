@@ -164,8 +164,8 @@ protocol's named failure mode:
 
 | Axis | What it records | Values |
 | --- | --- | --- |
-| Claim standing | what an authorised human Decision established | unassessed, accepted, accepted with conditions, retracted, superseded, corrected |
-| Verification outcome | what a scoped machine check reported | pass, fail, inconclusive, error, not attempted |
+| Claim standing | what an authorised, attributed Decision established | unassessed, accepted, accepted with conditions, retracted, superseded, corrected |
+| Verification outcome | what a scoped reviewer or check reported | pass, fail, inconclusive, error, not attempted |
 | Proposal status | where a candidate transition sits in review | pending review, accepted, rejected, and withdrawn as a separate appended record |
 | Repository integrity | whether the repository replays | replay verified or not initialised; strict pass or blocked, with blocker counts |
 

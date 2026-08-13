@@ -20,7 +20,8 @@ A reader maps exact state, dependencies, disagreement, and gaps. Problems users
 then coordinate approaches, attempts, reproduction, and candidate results in a
 separate activity plane. A user can export a valid unsigned Submission payload
 and sign it with a local key. The receiving Repository, Vela verification, and
-an authorized human Decision remain the only route to new Standing.
+an authorized, attributed Decision remains the only route to new Standing.
+Human and agent performers are peer actor classes with explicit provenance.
 
 The ecosystem has three surfaces:
 
@@ -70,7 +71,8 @@ The public product nouns do not all live in the same layer:
 `Problem` and `Contribution` are derived views, not new canonical objects.
 `Workspace` is hosted activity. `Profile` and `Organization` remain deferred
 until their privacy, revocation, sponsorship, and permission contracts exist.
-Only exact protocol records retain protocol meaning, and only an eligible human
+Only exact protocol records retain protocol meaning, and only an eligible,
+attributed human or agent
 Decision inside a Repository can change local Standing.
 
 The global application has four user-intent destinations:
@@ -250,7 +252,7 @@ that signing helper.
 
 The authority crossing occurs on a user's machine or another explicit
 institutional signing boundary. A signed Submission may enter a Repository as a
-Proposal. Verification records scoped evidence. An authorized human Decision
+Proposal. Verification records scoped evidence. An authorized, attributed Decision
 changes Standing, and replay derives the successor state. Deleting the hosted
 activity database cannot remove or change that state.
 
