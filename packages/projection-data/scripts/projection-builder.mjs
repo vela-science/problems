@@ -686,17 +686,18 @@ export function projectCurrentObjects(current) {
     const producer = proposalEntry.record.producer_package;
     if (!producer || producer.kind !== "submission") continue;
     assert(!proposalBySubmission.has(producer.id), `${producer.id}: linked by multiple Proposals`);
-    proposalBySubmission.set(producer.id, proposalEntry.record);
+    proposalBySubmission.set(producer.id, proposalEntry);
   }
   const submissions = current.submissions.map(({ object_id, record, record_root, source_path }) => {
-    const proposal = proposalBySubmission.get(object_id);
-    assert(proposal, `${object_id}: canonical Submission has no current Proposal`);
+    const proposalEntry = proposalBySubmission.get(object_id);
+    assert(proposalEntry, `${object_id}: canonical Submission has no current Proposal`);
+    const proposal = proposalEntry.record;
     assert(proposal.producer_package.root === record_root, `${object_id}: Proposal Submission root drift`);
     assert(proposal.producer_package.path === source_path, `${object_id}: Proposal Submission path drift`);
     return {
       submission_id: object_id,
       submission_root: record_root,
-      proposal_id: proposal.proposal_id,
+      proposal_id: proposalEntry.projection.proposal_id,
       claim_id: proposal.subject.id,
       producer_actor: record.authentication?.identity_binding?.actor_id ?? record.provenance?.producer ?? null,
       submitted_at: record.provenance?.emitted_at ?? proposal.created_at ?? null,

@@ -632,7 +632,6 @@ describe("current repository object projection", () => {
         withdrawal: null,
         decision_inbox_entry: null,
         record: {
-          proposal_id: proposalId,
           action: "claim.add",
           created_at: "2026-07-27T12:01:00Z",
           subject: { id: claimId, root: root("1") },
