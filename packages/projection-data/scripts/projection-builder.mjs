@@ -745,6 +745,17 @@ export function projectCurrentObjects(current) {
   return { submissions, verifications };
 }
 
+export function currentClaimStandingCounts(claims, repositoryId) {
+  const repositoryClaims = claims.filter((claim) => claim.repository_id === repositoryId);
+  const accepted_claim_count = repositoryClaims.filter((claim) => claim.standing === "accepted").length;
+  const pending_claim_count = repositoryClaims.filter((claim) => claim.standing === "unassessed").length;
+  return {
+    claim_count: accepted_claim_count + pending_claim_count,
+    accepted_claim_count,
+    pending_claim_count,
+  };
+}
+
 function initialPosition(id) {
   const digest = createHash("sha256").update(id).digest();
   const angle = digest.readUInt32BE(0) / 0xffffffff * Math.PI * 2;
@@ -1248,9 +1259,7 @@ export function buildProjection({
     repository_root: repository.repository_root,
     authority_keyset_root: repository.authority_keyset_root,
     authority_policy_root: repository.authority_policy_root,
-    claim_count: tables.claims.filter((row) => row.repository_id === repository.repository_id).length,
-    accepted_claim_count: tables.claims.filter((row) => row.repository_id === repository.repository_id && row.standing === "accepted").length,
-    pending_claim_count: tables.claims.filter((row) => row.repository_id === repository.repository_id && row.standing === "unassessed").length,
+    ...currentClaimStandingCounts(tables.claims, repository.repository_id),
     review_count: tables.reviews.filter((row) => row.repository_id === repository.repository_id).length,
     submission_count: tables.submissions.filter((row) => row.repository_id === repository.repository_id).length,
     verification_count: tables.verifications.filter((row) => row.repository_id === repository.repository_id).length,

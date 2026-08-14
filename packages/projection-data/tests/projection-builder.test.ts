@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
   currentRepositoryFromProjection,
+  currentClaimStandingCounts,
   projectCurrentObjects,
   projectGraph,
   projectProposedStatePreviews,
@@ -422,6 +423,21 @@ describe("proposed-state projection", () => {
 });
 
 describe("current repository object projection", () => {
+  test("counts current Standing without dropping retained supersession lineage", () => {
+    const repositoryId = "123e4567-e89b-42d3-a456-426614174000";
+    const claims = [
+      { repository_id: repositoryId, standing: "accepted" },
+      { repository_id: repositoryId, standing: "unassessed" },
+      { repository_id: repositoryId, standing: "superseded" },
+      { repository_id: "223e4567-e89b-42d3-a456-426614174000", standing: "accepted" },
+    ];
+    expect(currentClaimStandingCounts(claims, repositoryId)).toEqual({
+      claim_count: 2,
+      accepted_claim_count: 1,
+      pending_claim_count: 1,
+    });
+  });
+
   test("retains the exact Core Decision Inbox packet on pending review rows", () => {
     const claim = {
       claim_id: "vcl_pending",
