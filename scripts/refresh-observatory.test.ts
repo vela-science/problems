@@ -39,8 +39,9 @@ describe("direct Observatory release", () => {
     expect(source).toContain("projection:snapshot");
     expect(source).toContain("refs/heads/ops/observatory-release-lock");
     expect(source).toContain("--force-with-lease=");
-    expect(source).toContain("!gh auth git-credential");
-    expect(source).toContain("gh\", [\"auth\", \"token\"");
+    expect(source).toContain("VELA_GITHUB_CLI");
+    expect(source).toContain("auth git-credential");
+    expect(source).toContain("githubCli, [\"auth\", \"token\"");
     expect(source).toContain("origin/main advanced after qualification");
     expect(source).toContain("rollback-checkpoint.json");
     const snapshotStage = source.slice(
@@ -169,7 +170,7 @@ describe("direct Observatory release", () => {
 
   test("private-origin Git uses only the scoped GitHub credential helper", () => {
     const directory = mkdtempSync(join(tmpdir(), "vela-release-git-auth-"));
-    const fakeGh = join(directory, "gh");
+    const fakeGh = join(directory, "native gh");
     writeFileSync(fakeGh, `#!/bin/sh
 if [ "$1 $2" != "auth git-credential" ]; then exit 64; fi
 operation="$3"
@@ -182,6 +183,7 @@ fi
       const environment = githubGitEnvironment({
         PATH: `${directory}:${process.env.PATH}`,
         VELA_RELEASE_HOME: directory,
+        VELA_GITHUB_CLI: fakeGh,
         GH_CONFIG_DIR: join(directory, "gh"),
         GH_TOKEN: "scoped-test-token",
       });

@@ -62,7 +62,12 @@ export function releaseCommitEnvironment(environment) {
   return { ...environmentFor(environment), ...RELEASE_GIT_IDENTITY };
 }
 
+function shellQuote(value) {
+  return `'${value.replaceAll("'", `'"'"'`)}'`;
+}
+
 export function githubGitEnvironment(environment, { commit = false } = {}) {
+  const githubCli = required(environment, "VELA_GITHUB_CLI");
   return {
     ...githubEnvironment(environment),
     ...(commit ? RELEASE_GIT_IDENTITY : {}),
@@ -71,8 +76,29 @@ export function githubGitEnvironment(environment, { commit = false } = {}) {
     GIT_CONFIG_KEY_0: "credential.helper",
     GIT_CONFIG_VALUE_0: "",
     GIT_CONFIG_KEY_1: "credential.helper",
-    GIT_CONFIG_VALUE_1: "!gh auth git-credential",
+    GIT_CONFIG_VALUE_1: `!${shellQuote(githubCli)} auth git-credential`,
   };
+}
+
+function nativeGitHubCli(environment) {
+  if (environment.VELA_GITHUB_CLI && !environment.VELA_GITHUB_CLI.startsWith("/")) {
+    throw new Error("VELA_GITHUB_CLI must be an absolute executable path");
+  }
+  const candidates = [
+    environment.VELA_GITHUB_CLI,
+    "/opt/homebrew/bin/gh",
+    "/usr/local/bin/gh",
+    "/usr/bin/gh",
+  ].filter(Boolean);
+  for (const candidate of candidates) {
+    const result = spawnSync(candidate, ["--version"], {
+      env: environment,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    if (result.status === 0) return realpathSync(candidate);
+  }
+  throw new Error("direct release requires the native GitHub CLI executable");
 }
 
 function neonEnvironment(environment) {
@@ -267,7 +293,7 @@ export function releaseLookupState({ status, stdout = "", stderr = "" }) {
 
 function releaseLookup(environment, tag) {
   const safe = githubEnvironment(environment);
-  const result = spawnSync("gh", [
+  const result = spawnSync(required(environment, "VELA_GITHUB_CLI"), [
     "api", `repos/vela-science/vela-web/releases/tags/${tag}`, "--include",
   ], { env: safe, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
   const state = releaseLookupState(result);
@@ -278,7 +304,7 @@ function releaseLookup(environment, tag) {
 function retainExactFile(environment, { tag, path, target, title, notes }) {
   const safe = githubEnvironment(environment);
   if (releaseLookup(environment, tag) === "missing") {
-    run("gh", [
+    run(required(environment, "VELA_GITHUB_CLI"), [
       "release", "create", tag, path,
       "--repo", "vela-science/vela-web",
       "--target", target,
@@ -289,7 +315,7 @@ function retainExactFile(environment, { tag, path, target, title, notes }) {
     return;
   }
   const existing = join(dirname(path), `retained-${basename(path)}`);
-  run("gh", [
+  run(required(environment, "VELA_GITHUB_CLI"), [
     "release", "download", tag,
     "--repo", "vela-science/vela-web",
     "--pattern", basename(path),
@@ -823,8 +849,9 @@ export async function refreshObservatory(environment = process.env) {
   let scoped;
   try {
     const operatorHome = required(environment, "HOME");
+    const githubCli = nativeGitHubCli(environment);
     const githubToken = environment.GH_TOKEN ?? run(
-      "gh", ["auth", "token", "--hostname", "github.com"],
+      githubCli, ["auth", "token", "--hostname", "github.com"],
       { environment, quiet: true },
     );
     const releaseHome = join(work.path, "home");
@@ -847,6 +874,7 @@ export async function refreshObservatory(environment = process.env) {
       VELA_RELEASE_HOME: releaseHome,
       GH_TOKEN: githubToken,
       GH_CONFIG_DIR: join(releaseHome, ".config", "gh"),
+      VELA_GITHUB_CLI: githubCli,
       VELA_NEON_CONFIG_DIR: environment.VELA_NEON_CONFIG_DIR
         ?? join(operatorHome, ".config", "neonctl"),
       ...(vercelConfig ? { VERCEL_GLOBAL_CONFIG: vercelConfig } : {}),
