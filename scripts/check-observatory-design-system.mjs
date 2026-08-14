@@ -174,6 +174,8 @@ for (const file of ["status-badge.tsx", "exact-value.tsx", "copy-button.tsx", "s
   if (existsSync(join(observatory, "src/components/vela", file))) failures.push(`Observatory duplicates shared Vela UI: ${file}`);
 }
 
+const EXTERNAL_NAVIGATION = 'if (/^https?:/u.test(href)) window.location.assign(href);';
+
 for (const app of [observatory, www]) {
   for (const file of filesAt(join(app, "src"))) {
     const source = readFileSync(file, "utf8");
@@ -181,7 +183,14 @@ for (const app of [observatory, www]) {
     if (/<select\b/u.test(source)) failures.push(`${label}: raw select bypasses @vela/ui`);
     if (/\b(?:bg|text|border|ring|fill|stroke)-(?:slate|gray|zinc|neutral|stone|red|green|blue|amber|yellow|emerald|white|black)(?:-|\/|\b)/u.test(source)) failures.push(`${label}: raw palette bypasses semantic tokens`);
     if (/from ["'](?:lucide-react|framer-motion|@radix-ui\/)/u.test(source)) failures.push(`${label}: parallel primitive/icon/motion layer`);
-    if (/window\.location\.(?:href\s*=|replace\()/u.test(source)) failures.push(`${label}: internal navigation bypasses Next router semantics`);
+    /* `assign(` was missing, so the one internal call site that used it passed
+       a rule written to forbid exactly what it did. All three discard the
+       application shell, which the product contract requires navigation to
+       preserve. Leaving an absolute source URL is the one legitimate use, and
+       it is pinned by its exact guard rather than by filename, so a second
+       assignment in the same file still fails. */
+    const internalNavigation = source.replaceAll(EXTERNAL_NAVIGATION, "");
+    if (/window\.location\.(?:href\s*=|replace\(|assign\()/u.test(internalNavigation)) failures.push(`${label}: internal navigation bypasses Next router semantics`);
   }
 }
 
