@@ -411,6 +411,14 @@ if (forkAudits.length !== 1 || forkAudits[0]?.requestRoot !== forkRequestRoot) {
   throw new Error("Problem-scoped fork audit did not retain the exact request root once");
 }
 const cleanupResults = await ownerTransaction((transaction) => [
+  /* The audit log is append-only to every application path, including a
+     workspace cascade. The migrator owns this one bounded proof transaction:
+     disable only the named trigger, remove the generated tenant, then restore
+     it before commit. Any intervening failure rolls the DDL back with the
+     cleanup. */
+  transaction.query(
+    "ALTER TABLE activity.activity_audit_entries DISABLE TRIGGER activity_audit_append_only",
+  ),
   transaction.query(
     "DELETE FROM activity.workspaces WHERE id = ANY($1::uuid[])",
     [[workspaceA.id, workspaceB.id]],
@@ -418,6 +426,9 @@ const cleanupResults = await ownerTransaction((transaction) => [
   transaction.query(
     "DELETE FROM activity.accounts WHERE id = ANY($1::uuid[])",
     [[accountA.id, accountB.id]],
+  ),
+  transaction.query(
+    "ALTER TABLE activity.activity_audit_entries ENABLE TRIGGER activity_audit_append_only",
   ),
   transaction.query(
     `SELECT
