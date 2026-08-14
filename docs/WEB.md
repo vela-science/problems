@@ -322,10 +322,6 @@ Three things now prevent that recurring:
 
 The v5 snapshot contains current Repository counts, roots, and the exact
 `status.actions.work` direct-Submission action. It contains no work inventory.
-Neon retains predecessor `repositories.work` and `work_offers` rows only so an
-already-published release can be verified and selected during the bounded
-rollback window; current readers and writers do not expose them.
-
 Regenerate by hand with `bun run projection:snapshot` (needs
 `VELA_PROJECTION_DATABASE_URL` once).
 
@@ -392,9 +388,8 @@ bun run projection:reconstruct \
 ```
 
 Current releases project canonical Claim, Verification, Decision, Event, and
-Standing records directly. Historical Result Dossiers and their released
-carriers remain immutable evidence, but are not current projection inputs and
-cannot override a later correction or supersession.
+Standing records directly. Retired derived projections are absent from the
+runtime and cannot override a later correction or supersession.
 
 For a deliberately noncanonical preactivation candidate, add
 `--production-parity skip`. This still performs and compares both empty-database

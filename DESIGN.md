@@ -84,12 +84,12 @@ the scientific-state presentation.
 The words on screen are the product's first design decision. A reader who
 cannot name what they are looking at cannot check it.
 
-**Public concepts.** Problem, Current State, Research Brief, Research Block,
+**Public concepts.** Problem, Current State, Research Block,
 Workspace, Decision. These are the reader's orientation layer, not a new
 protocol ontology.
 
 **Exact provenance.** Repository, Claim, Submission, Proposal, Verification
-Record, Event, Result Dossier, Source, Artifact, root, and format. Exact types
+Record, Event, Source, Artifact, root, and format. Exact types
 remain one disclosure away and keep their durable routes.
 
 **Hosted activity.** Account, Workspace, Follow, Approach, Attempt (presented as
@@ -104,8 +104,7 @@ appear as an exact retained value, while the interface calls the record a
 Claim. Bundle is a protocol root and may appear only as a labelled exact value.
 The Observatory `/runs` path remains a redirect to `/decisions`.
 
-Research Brief is the readable presentation of an exact rooted Result Dossier,
-which has no authority effect. Research Block is the readable presentation of a
+Research Block is the readable presentation of a
 durable rooted contribution in the activity plane. The exact record type is
 always available in advanced provenance. Sources is a release-scoped registry
 and a navigation grouping.

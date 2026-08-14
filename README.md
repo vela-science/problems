@@ -88,8 +88,6 @@ canonical repository Git repositories
 - The original Vela sail is the locked product mark; exported assets are
   derived from its canonical SVG sources.
 
-Frozen Result Dossier product evidence is retained in
-[`docs/result-dossier-qualification.md`](docs/result-dossier-qualification.md).
 Current releases project canonical Repository objects directly; the source
 Repositories own every scientific object the projection displays.
 

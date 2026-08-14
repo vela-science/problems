@@ -35,7 +35,6 @@ describe("scientific-authority profiles", () => {
       "apps/www/src/app/page.tsx": "export default function Page() { return null; }\n",
       "apps/observatory/src/app/api/search/route.ts": "export async function GET() { return Response.json([]); }\n",
       "apps/observatory/src/app/.well-known/vela-site.json/route.ts": "export async function GET() { return Response.json({ authority: 'read_only_projection' }); }\n",
-      "apps/observatory/src/app/repositories/erdos/dossiers/one.json/route.ts": "export async function GET() { return Response.json({ authority: 'read_only_projection' }); }\n",
       "apps/observatory/src/app/actions/activity.ts": "'use server';\nimport { createAttempt } from '@vela/activity-data';\nexport async function save() { return createAttempt(); }\n",
       "packages/activity-data/src/contracts.ts": "import { canonicalJson } from '@vela/observatory-data/canonical';\nexport const root = canonicalJson({});\n",
     });

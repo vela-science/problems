@@ -42,14 +42,12 @@ them.
 ## The visible product model
 
 The product has one conceptual center: **Problems**. A reader chooses a Problem,
-then chooses **Current State** or **Workspace** on that same page. Seven public
+then chooses **Current State** or **Workspace** on that same page. The public
 concepts cover the complete reader and contributor journey:
 
 - **Problem** is the scientific question.
 - **Current State** is the evidence-supported view, with source status and Local
   Standing shown as separate axes.
-- **Research Brief** explains what matters, what changed, the evidence and
-  limits, and what should move next.
 - **Research Block** is a durable contribution such as an experiment, proof
   attempt, dataset, argument, or negative result with rooted artifacts.
 - **Workspace** is private or team-local coordination. Its shared canvas, approaches,
@@ -96,7 +94,7 @@ records are populated enough to make the pages useful.
   bounded actions needed to contribute.
 
 Repository is source context, not a prerequisite destination. Assertions,
-Proposed changes, Checks, Decisions, Research Briefs, Sources, roots,
+Proposed changes, Checks, Decisions, Sources, roots,
 and graphs remain inspectable inside Current State or through an advanced
 records view. Exact protocol types remain visible in provenance. They do not compete with
 Problems in primary navigation.
@@ -132,21 +130,18 @@ URL. This is a presentation mapping, not a new protocol ontology.
 | Proposal `vpr_` | **Proposed change** | inside a Repository; a release roll-up exists |
 | Verification Record `vvr_` | **Check** | inside a Proposed change |
 | Decision, admitted as Event `vev_` | **Decision** | release-wide |
-| — (exact rooted Result Dossier) | **Research Brief** | inside a Repository; a release roll-up exists |
 | — (release-scoped registry) | **Source** | release-wide |
 
-Two entries have no protocol object behind them, and the product says so. A
-Result Dossier is the exact rooted read projection behind a Research Brief and
-has no authority effect. Sources is a
+One entry has no protocol object behind it, and the product says so. Sources is a
 release-scoped registry, sanctioned as a navigation grouping and nothing more. A
 grouping never implies authority.
 
 ### Vocabulary
 
-Public scientific-state vocabulary: Problem, Current State, Research Brief,
+Public scientific-state vocabulary: Problem, Current State,
 Decision, Repository, Source. Public contribution vocabulary: Workspace
 and Research Block. Exact provenance vocabulary: Claim, Submission, Proposal,
-Verification Record, Event, Result Dossier, root, and format.
+Verification Record, Event, root, and format.
 
 The Observatory does not use Work, Activity, Run, or Attempt as scientific
 objects. Problems may use Work, Activity, and Attempt for hosted records in the

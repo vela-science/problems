@@ -98,9 +98,8 @@ for (const file of observatoryRoutes) {
   if (competingOuterFrame.test(source)) failures.push(`${label}: competing max-width/padding frame bypasses @vela/ui PageShell`);
   if (/className=["']vela-page["']/u.test(source)) failures.push(`${label}: literal vela-page bypasses the PageShell component contract`);
   if (/className=["'][^"']*\bvela-page-(?:hero|section|section-head)\b/u.test(source)) failures.push(`${label}: literal PageShell hook bypasses the canonical component contract`);
-  const compatibilityRedirect = source.includes('permanentRedirect(') && /\/dossiers(?:\/\[id\])?\/page\.tsx$/u.test(file);
   const canonicalProblemPageDelegate = source.includes('@/components/vela/problem-page') && source.includes("<ProblemPageView");
-  if (/\/page\.tsx$/u.test(file) && !compatibilityRedirect && !canonicalProblemPageDelegate && (!source.includes('@vela/ui/vela/page-shell') || !source.includes("<PageShell"))) {
+  if (/\/page\.tsx$/u.test(file) && !canonicalProblemPageDelegate && (!source.includes('@vela/ui/vela/page-shell') || !source.includes("<PageShell"))) {
     failures.push(`${label}: every app page must compose the canonical PageShell`);
   }
 }
@@ -118,7 +117,6 @@ for (const file of [
   join(observatory, "src/app/graph/loading.tsx"),
   join(observatory, "src/app/search/loading.tsx"),
   join(observatory, "src/app/repositories/[slug]/not-found.tsx"),
-  join(observatory, "src/app/repositories/[slug]/briefs/[id]/loading.tsx"),
 ]) {
   const source = readFileSync(file, "utf8");
   if (!source.includes("<PageShell")) failures.push(`${relative(root, file)}: fallback must compose the canonical PageShell`);
@@ -128,10 +126,8 @@ for (const file of [
   join(observatory, "src/app/problems/page.tsx"),
   join(observatory, "src/app/work/page.tsx"),
   join(observatory, "src/app/activity/page.tsx"),
-  join(observatory, "src/app/briefs/page.tsx"),
   join(observatory, "src/app/p/[repository]/[problem]/page.tsx"),
   join(observatory, "src/components/vela/problem-state.tsx"),
-  join(observatory, "src/components/vela/grounded-result-dossier.tsx"),
 ]) {
   const source = readFileSync(file, "utf8");
   if (/\b(?:border-y|border-t)\b[^"'\n]{0,80}\bdivide-y\b|\bdivide-y\b[^"'\n]{0,80}\b(?:border-y|border-t)\b/u.test(source)) failures.push(`${relative(root, file)}: stacked outer border/divide-y bypasses the separator budget`);
@@ -149,8 +145,6 @@ for (const file of [
 }
 const workbenchSource = readFileSync(join(observatory, "src/components/vela/workbench.tsx"), "utf8");
 if (/\b(?:border-y|divide-y|border-t|border-b|border-l|border-dashed)\b/u.test(workbenchSource)) failures.push("Work mode restores a wireframe separator or perimeter ladder");
-const groundedBriefSource = readFileSync(join(observatory, "src/components/vela/grounded-result-dossier.tsx"), "utf8");
-if (/\b(?:last:border-b|divide-y\s+border-b|border-t\s+py-|md:divide-x|lg:divide-x)\b/u.test(groundedBriefSource)) failures.push("grounded Research Brief restores a dense outer separator ladder");
 
 const wwwGlobals = readFileSync(join(www, "src/app/globals.css"), "utf8");
 const wwwTokens = readFileSync(join(www, "src/styles/tokens.css"), "utf8");

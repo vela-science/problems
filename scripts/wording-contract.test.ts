@@ -107,10 +107,6 @@ const WHY_THE_WORD_STAYS: Array<[string, string]> = [
     "holds both migrations to their frozen text",
   ],
   [
-    "packages/observatory-data/tests/math-atlas-clean-room-evidence.test.ts",
-    "asserts against recorded evidence, which carries the vocabulary of its run",
-  ],
-  [
     "packages/observatory-data/tests/semantic-correction.test.ts",
     "epoch-1 fixture describing a correction in a repository identified vfr_0a25edabc16db143",
   ],

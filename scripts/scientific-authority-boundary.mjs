@@ -28,7 +28,6 @@ const observatoryReadRoutes = new Set([
   "apps/observatory/src/app/problems.json/route.ts",
   "apps/observatory/src/app/.well-known/vela-site.json/route.ts",
 ]);
-const resultDossierRoute = /^apps\/observatory\/src\/app\/repositories\/[^/]+\/dossiers\/[^/]+\.json\/route\.[cm]?[jt]sx?$/u;
 
 const observatoryAccountRoute = "apps/observatory/src/app/api/account/route.ts";
 const observatoryAuthCallbackRoute = "apps/observatory/src/app/auth/callback/route.ts";
@@ -131,8 +130,7 @@ function inspectStatic(file, content, add) {
 function inspectObservatory(file, content, add) {
   const allowedRoute = observatoryReadRoutes.has(file)
     || OBSERVATORY_IDENTITY_ROUTES.has(file)
-    || file === observatoryActivityDraftRoute
-    || resultDossierRoute.test(file);
+    || file === observatoryActivityDraftRoute;
   if (routeHandler.test(file) && !allowedRoute) {
     add("app_route_handler", "Vela Route Handlers are confined to declared exact reads, identity, and draft export");
   }
