@@ -85,6 +85,7 @@ describe("direct Observatory release", () => {
       "production_deploy",
       "production_readiness",
       "projection_prune",
+      "projection_schema_consolidation",
       "qualification_retain",
     ]);
   });
@@ -223,7 +224,7 @@ fi
       schema: "vela.projection-prune-result.v1",
       ok: true,
       authority_effect: "none",
-      retention: "current_and_two_predecessors",
+      retention: "current_and_two_schema_compatible_predecessors",
       removed_releases: [`sha256:${"1".repeat(64)}`],
       removed_observations: [],
       removed_declarations: [],

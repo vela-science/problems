@@ -372,9 +372,6 @@ function projectionQualification(environment, context) {
     "VELA_PROJECTION_DATABASE_URL",
   ]);
   run("bun", ["scripts/check-projection-environment.mjs"], { environment: both });
-  run("bun", ["run", "db:migrate"], {
-    environment: environmentFor(environment, ["VELA_PROJECTION_WRITER_DATABASE_URL"]),
-  });
   const writer = environmentFor(environment, ["VELA_PROJECTION_WRITER_DATABASE_URL"]);
   Object.assign(writer, {
     VELA_BIN: context.velaBin,
@@ -385,13 +382,34 @@ function projectionQualification(environment, context) {
     "packages/observatory-data/scripts/refresh-neon-projection.mjs",
   ], { environment: writer });
   context.refresh = JSON.parse(raw.split("\n").at(-1));
-  // Activation has already committed at this boundary. Persist the exact
-  // target before any later qualification can fail.
+  // This is a deliberate no-legacy-rollback cutover. The compatibility
+  // deployment already runs the current reader, so after activation the safe
+  // recovery pair is that deployment plus the new projection. The predecessor
+  // projection is never advertised after this point.
+  context.rollbackFloor = {
+    site_commit: context.siteCommit,
+    projection_release_root: context.refresh.release_root,
+    deployment_id: context.compatibilityDeployment.deployment_id,
+  };
   writeRollbackCheckpoint(context, "projection_activated");
+  const reader = environmentFor(environment, ["VELA_PROJECTION_DATABASE_URL"]);
+  run("bun", ["run", "projection:verify"], { environment: reader });
+  run("bun", ["run", "projection:snapshot"], { environment: reader });
+}
+
+function consolidateProjectionSchema(environment, context) {
+  run("bun", ["run", "db:migrate"], {
+    environment: environmentFor(environment, ["VELA_PROJECTION_WRITER_DATABASE_URL"]),
+  });
   const reader = environmentFor(environment, ["VELA_PROJECTION_DATABASE_URL"]);
   run("bun", ["run", "db:check"], { environment: reader });
   run("bun", ["run", "projection:verify"], { environment: reader });
-  run("bun", ["run", "projection:snapshot"], { environment: reader });
+  context.rollbackFloor = {
+    site_commit: context.siteCommit,
+    projection_release_root: context.refresh.release_root,
+    deployment_id: context.deployment.deployment_id,
+  };
+  writeRollbackCheckpoint(context, "schema_consolidated");
 }
 
 async function captureRollbackFloor(context) {
@@ -421,13 +439,21 @@ function writeRollbackCheckpoint(context, phase) {
   const targetRoot = context.refresh?.release_root ?? null;
   const targetDeployment = context.deployment?.deployment_id ?? null;
   const rollback = targetRoot ? [
-    `bun packages/observatory-data/scripts/select-projection-release.mjs --expected-current ${targetRoot} --target ${context.rollbackFloor.projection_release_root}`,
-    `vercel rollback ${context.rollbackFloor.deployment_id} --yes --scope constellate-dc388081`,
+    ...(targetRoot !== context.rollbackFloor.projection_release_root ? [
+      `bun packages/observatory-data/scripts/select-projection-release.mjs --expected-current ${targetRoot} --target ${context.rollbackFloor.projection_release_root}`,
+    ] : []),
+    ...(targetDeployment && targetDeployment !== context.rollbackFloor.deployment_id ? [
+      `vercel rollback ${context.rollbackFloor.deployment_id} --yes --scope constellate-dc388081`,
+    ] : []),
     `bun apps/observatory/scripts/check-deployed-manifest.mjs https://problems.science ${context.rollbackFloor.site_commit}`,
   ] : [];
   const forward = targetRoot && targetDeployment ? [
-    `bun packages/observatory-data/scripts/select-projection-release.mjs --expected-current ${context.rollbackFloor.projection_release_root} --target ${targetRoot}`,
-    `vercel rollback ${targetDeployment} --yes --scope constellate-dc388081`,
+    ...(targetRoot !== context.rollbackFloor.projection_release_root ? [
+      `bun packages/observatory-data/scripts/select-projection-release.mjs --expected-current ${context.rollbackFloor.projection_release_root} --target ${targetRoot}`,
+    ] : []),
+    ...(targetDeployment !== context.rollbackFloor.deployment_id ? [
+      `vercel rollback ${targetDeployment} --yes --scope constellate-dc388081`,
+    ] : []),
     `bun apps/observatory/scripts/check-deployed-manifest.mjs https://problems.science ${context.siteCommit}`,
   ] : [];
   const body = {
@@ -567,7 +593,7 @@ export function parsePruneResult(raw) {
     || result?.schema !== "vela.projection-prune-result.v1"
     || result?.ok !== true
     || result?.authority_effect !== "none"
-    || result?.retention !== "current_and_two_predecessors"
+    || result?.retention !== "current_and_two_schema_compatible_predecessors"
     || roots.some((values) => !Array.isArray(values))
     || roots.flat().some((rootValue) => !/^sha256:[0-9a-f]{64}$/u.test(rootValue))
     || roots.some((values) => new Set(values).size !== values.length)
@@ -760,7 +786,7 @@ function retainQualification(environment, context) {
       rollback: context.rollbackCheckpoint.rollback,
       forward_recovery: context.rollbackCheckpoint.forward_recovery,
       ordering: context.rollbackCheckpoint.ordering,
-      retention: "current_and_two_predecessors_pruned_only_after_public_readiness",
+      retention: "current_and_two_schema_compatible_predecessors_pruned_before_retired_schema_removal",
     },
     replaced_production: context.initialProduction,
     gates: [
@@ -772,7 +798,8 @@ function retainQualification(environment, context) {
       "provider_loss_reconstruction",
       "production_manifest_routes_aliases_and_404",
       "erdos_321_correction_and_unmapped_887",
-      "current_and_two_predecessor_pruning",
+      "schema_compatible_predecessor_pruning",
+      "retired_projection_schema_removal",
     ],
     nonclaims: [
       "This release does not create scientific authority or change Standing.",
@@ -826,6 +853,7 @@ const stageDefinitions = Object.freeze([
   }],
   ["production_readiness", (environment, context) => readiness(environment, context)],
   ["projection_prune", (environment, context) => pruneProjection(environment, context)],
+  ["projection_schema_consolidation", (environment, context) => consolidateProjectionSchema(environment, context)],
   ["qualification_retain", (environment, context) => retainQualification(environment, context)],
 ]);
 
