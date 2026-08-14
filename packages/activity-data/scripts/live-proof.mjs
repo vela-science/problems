@@ -410,6 +410,26 @@ const forkAudits = activity.audit.filter(
 if (forkAudits.length !== 1 || forkAudits[0]?.requestRoot !== forkRequestRoot) {
   throw new Error("Problem-scoped fork audit did not retain the exact request root once");
 }
+const cleanupResults = await ownerTransaction((transaction) => [
+  transaction.query(
+    "DELETE FROM activity.workspaces WHERE id = ANY($1::uuid[])",
+    [[workspaceA.id, workspaceB.id]],
+  ),
+  transaction.query(
+    "DELETE FROM activity.accounts WHERE id = ANY($1::uuid[])",
+    [[accountA.id, accountB.id]],
+  ),
+  transaction.query(
+    `SELECT
+       (SELECT count(*) FROM activity.workspaces WHERE id = ANY($1::uuid[]))::integer AS workspaces,
+       (SELECT count(*) FROM activity.accounts WHERE id = ANY($2::uuid[]))::integer AS accounts`,
+    [[workspaceA.id, workspaceB.id], [accountA.id, accountB.id]],
+  ),
+]);
+const cleanup = cleanupResults.at(-1)?.[0];
+if (Number(cleanup?.workspaces) !== 0 || Number(cleanup?.accounts) !== 0) {
+  throw new Error(`activity live-proof cleanup failed: ${JSON.stringify(cleanup)}`);
+}
 const standingAfter = await standingSnapshot();
 if (canonicalJson(standingAfter) !== canonicalJson(standingBefore)) {
   throw new Error("activity proof changed Problems Standing");
@@ -418,10 +438,6 @@ if (canonicalJson(standingAfter) !== canonicalJson(standingBefore)) {
 console.log(JSON.stringify({
   ok: true,
   schema: "vela.activity-live-proof.v1",
-  workspaceA: workspaceA.id,
-  workspaceB: workspaceB.id,
-  accountA: accountA.id,
-  accountB: accountB.id,
   activityCounts: {
     approaches: activity.approaches.length,
     attempts: activity.attempts.length,
@@ -439,6 +455,7 @@ console.log(JSON.stringify({
   privateNoteIsolated: true,
   idempotencyProved: true,
   cleanSchemaProved: true,
+  cleanupProved: true,
   problemScopedForkAndAuditProved: true,
   optimisticVersioningProved: true,
   exactAnchorFollowingProved: true,

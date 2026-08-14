@@ -91,6 +91,8 @@ describe("Workspace implementation permission matrix", () => {
     expect(liveProof).toContain('"cross-tenant activity write"');
     expect(liveProof).toContain('"unsigned draft export without membership"');
     expect(liveProof).toContain('"private note crossed its author boundary"');
+    expect(liveProof).toContain("DELETE FROM activity.workspaces");
+    expect(liveProof).toContain("cleanupProved: true");
   });
 
   test("does not load hosted locators or activity for a signed-out reader", () => {
