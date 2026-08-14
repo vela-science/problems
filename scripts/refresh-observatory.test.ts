@@ -1,9 +1,11 @@
 import { describe, expect, test } from "bun:test";
 import { spawnSync } from "node:child_process";
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { chmodSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
 import {
   assertPublicQualification,
+  githubGitEnvironment,
   releaseChildEnvironment,
   releaseCommitEnvironment,
   releaseOrder,
@@ -106,5 +108,38 @@ describe("direct Observatory release", () => {
     expect(result.stdout).toContain("Vela Observatory release <release@vela.space>");
     expect(environment.NODE_OPTIONS).toBeUndefined();
     expect(environment.HOME).toBe("/release/home");
+  });
+
+  test("private-origin Git uses only the scoped GitHub credential helper", () => {
+    const directory = mkdtempSync(join(tmpdir(), "vela-release-git-auth-"));
+    const fakeGh = join(directory, "gh");
+    writeFileSync(fakeGh, `#!/bin/sh
+if [ "$1 $2" != "auth git-credential" ]; then exit 64; fi
+operation="$3"
+if [ "$operation" = "get" ]; then
+  printf 'protocol=https\\nhost=github.com\\nusername=x-access-token\\npassword=%s\\n' "$GH_TOKEN"
+fi
+`);
+    chmodSync(fakeGh, 0o700);
+    try {
+      const environment = githubGitEnvironment({
+        PATH: `${directory}:${process.env.PATH}`,
+        VELA_RELEASE_HOME: directory,
+        GH_CONFIG_DIR: join(directory, "gh"),
+        GH_TOKEN: "scoped-test-token",
+      });
+      const result = spawnSync("git", ["credential", "fill"], {
+        encoding: "utf8",
+        env: environment,
+        input: "protocol=https\nhost=github.com\n\n",
+      });
+      expect(result.status).toBe(0);
+      expect(result.stdout).toContain("username=x-access-token");
+      expect(result.stdout).toContain("password=scoped-test-token");
+      expect(environment.HOME).toBe(directory);
+      expect(environment.GH_TOKEN).toBe("scoped-test-token");
+    } finally {
+      rmSync(directory, { recursive: true, force: true });
+    }
   });
 });

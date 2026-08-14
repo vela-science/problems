@@ -61,7 +61,7 @@ export function releaseCommitEnvironment(environment) {
   return { ...environmentFor(environment), ...RELEASE_GIT_IDENTITY };
 }
 
-function githubGitEnvironment(environment, { commit = false } = {}) {
+export function githubGitEnvironment(environment, { commit = false } = {}) {
   return {
     ...githubEnvironment(environment),
     ...(commit ? RELEASE_GIT_IDENTITY : {}),
@@ -102,7 +102,7 @@ function git(args, cwd = root, environment = process.env) {
 }
 
 function exactWebCheckout(environment) {
-  const safe = environmentFor(environment);
+  const safe = githubGitEnvironment(environment);
   const expectedRemote = "https://github.com/vela-science/vela-web.git";
   const head = git(["rev-parse", "HEAD"], root, safe);
   if (git(["branch", "--show-current"], root, safe) !== "main") {
