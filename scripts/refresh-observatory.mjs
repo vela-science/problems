@@ -6,6 +6,7 @@ import {
   lstatSync,
   mkdtempSync,
   mkdirSync,
+  realpathSync,
   readFileSync,
   readdirSync,
   rmSync,
@@ -165,11 +166,11 @@ function releaseReleaseLock(environment, context) {
   context.releaseLock = null;
 }
 
-function releaseWorkDirectory(environment) {
+export function releaseWorkDirectory(environment) {
   if (!environment.VELA_RELEASE_WORKDIR) {
     const path = mkdtempSync(join(tmpdir(), "vela-observatory-release-"));
     chmodSync(path, 0o700);
-    return { path, ephemeral: true };
+    return { path: realpathSync(path), ephemeral: true };
   }
   const path = resolve(environment.VELA_RELEASE_WORKDIR);
   const stat = lstatSync(path);
@@ -178,7 +179,7 @@ function releaseWorkDirectory(environment) {
   }
   if (readdirSync(path).length !== 0) throw new Error("VELA_RELEASE_WORKDIR must be empty");
   if ((stat.mode & 0o077) !== 0) throw new Error("VELA_RELEASE_WORKDIR must be private (0700)");
-  return { path, ephemeral: false };
+  return { path: realpathSync(path), ephemeral: false };
 }
 
 function verifyNeonProductionBranch(environment) {

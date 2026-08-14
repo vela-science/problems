@@ -1,6 +1,13 @@
 import { describe, expect, test } from "bun:test";
 import { spawnSync } from "node:child_process";
-import { chmodSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+  chmodSync,
+  mkdtempSync,
+  readFileSync,
+  realpathSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import {
@@ -9,6 +16,7 @@ import {
   releaseChildEnvironment,
   releaseCommitEnvironment,
   releaseOrder,
+  releaseWorkDirectory,
 } from "./refresh-observatory.mjs";
 
 describe("direct Observatory release", () => {
@@ -140,6 +148,22 @@ fi
       expect(environment.GH_TOKEN).toBe("scoped-test-token");
     } finally {
       rmSync(directory, { recursive: true, force: true });
+    }
+  });
+
+  test("canonicalizes release custody before creating carrier output", () => {
+    const automatic = releaseWorkDirectory({});
+    expect(automatic.ephemeral).toBe(true);
+    expect(automatic.path).toBe(realpathSync(automatic.path));
+    rmSync(automatic.path, { recursive: true, force: true });
+
+    const supplied = mkdtempSync(join(tmpdir(), "vela-release-custody-"));
+    chmodSync(supplied, 0o700);
+    try {
+      const selected = releaseWorkDirectory({ VELA_RELEASE_WORKDIR: supplied });
+      expect(selected).toEqual({ path: realpathSync(supplied), ephemeral: false });
+    } finally {
+      rmSync(supplied, { recursive: true, force: true });
     }
   });
 });
