@@ -388,9 +388,13 @@ bun run projection:reconstruct \
   --repositories-root /path/to/repository-checkouts \
   --vela /path/to/the-recorded-vela-binary \
   --source-adapter-artifact /path/to/the-recorded-adapter-artifact \
-  --grounded-math-dossier /path/to/the-verified-grounded-dossier.json \
   --output /tmp/vela-atlas-clean-room.json
 ```
+
+Current releases project canonical Claim, Verification, Decision, Event, and
+Standing records directly. Historical Result Dossiers and their released
+carriers remain immutable evidence, but are not current projection inputs and
+cannot override a later correction or supersession.
 
 For a deliberately noncanonical preactivation candidate, add
 `--production-parity skip`. This still performs and compares both empty-database

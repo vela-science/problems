@@ -53,7 +53,6 @@ describe("direct Observatory release", () => {
       "vela_generator_identity",
       "repository_acquisition",
       "preactivation_product",
-      "carrier_verify",
       "adapter_prepare",
       "adapter_retain",
       "rollback_floor",
@@ -153,7 +152,7 @@ fi
     }
   });
 
-  test("canonicalizes release custody before creating carrier output", () => {
+  test("canonicalizes release custody before creating retained evidence", () => {
     const automatic = releaseWorkDirectory({});
     expect(automatic.ephemeral).toBe(true);
     expect(automatic.path).toBe(realpathSync(automatic.path));

@@ -259,49 +259,6 @@ function runStaticQualification(environment) {
   ]) run(command, args, { environment: safe });
 }
 
-function prepareCarrier(environment, work, repositoriesRoot) {
-  const safe = environmentFor(environment);
-  const github = githubEnvironment(environment);
-  const identityPath = join(work, "carrier-identity.json");
-  const metadataPath = join(work, "carrier-release.json");
-  const directory = join(work, "carrier");
-  const dossier = join(work, "standingbench-math-dossier.json");
-  const identityRaw = run("bun", [
-    "packages/observatory-data/scripts/standingbench-math-carrier.ts",
-    "identity",
-  ], { environment: safe });
-  writeFileSync(identityPath, `${identityRaw}\n`, { encoding: "utf8", mode: 0o600 });
-  const identity = JSON.parse(identityRaw);
-  const metadata = run("gh", [
-    "release", "view", identity.release_tag,
-    "--repo", "vela-science/vela-web",
-    "--json", "tagName,targetCommitish,isDraft,isPrerelease,assets",
-  ], { environment: github });
-  writeFileSync(metadataPath, `${metadata}\n`, { encoding: "utf8", mode: 0o600 });
-  run("bun", [
-    "packages/observatory-data/scripts/standingbench-math-carrier.ts",
-    "release-metadata", "--metadata", metadataPath,
-  ], { environment: safe });
-  run("mkdir", ["-p", directory], { environment: safe });
-  for (const asset of [identity.bundle_asset_name, identity.descriptor_asset_name]) {
-    run("gh", [
-      "release", "download", identity.release_tag,
-      "--repo", "vela-science/vela-web",
-      "--pattern", asset,
-      "--dir", directory,
-    ], { environment: github });
-  }
-  run("bun", [
-    "packages/observatory-data/scripts/standingbench-math-carrier.ts",
-    "verify",
-    "--base-repository", join(repositoriesRoot, "math"),
-    "--bundle", join(directory, identity.bundle_asset_name),
-    "--descriptor", join(directory, identity.descriptor_asset_name),
-    "--dossier-output", dossier,
-  ], { environment: safe });
-  return { dossier, identity };
-}
-
 function releaseLookup(environment, tag) {
   const safe = githubEnvironment(environment);
   const result = spawnSync("gh", [
@@ -394,7 +351,6 @@ function projectionQualification(environment, context) {
   });
   const raw = run("bun", [
     "packages/observatory-data/scripts/refresh-neon-projection.mjs",
-    "--grounded-math-dossier", context.carrier.dossier,
   ], { environment: writer });
   context.refresh = JSON.parse(raw.split("\n").at(-1));
   // Activation has already committed at this boundary. Persist the exact
@@ -546,7 +502,6 @@ function reconstruct(environment, context) {
     "--repositories-root", context.repositoriesRoot,
     "--vela", context.velaBin,
     "--source-adapter-artifact", context.adapter.artifact_path,
-    "--grounded-math-dossier", context.carrier.dossier,
     "--output", output,
   ], { environment: { ...reader, RUNNER_TEMP: runnerTemp } });
   context.reconstruction = JSON.parse(readFileSync(output, "utf8"));
@@ -711,7 +666,6 @@ function retainQualification(environment, context) {
     repositories: context.refresh.repositories,
     adapter_set_root: context.adapter.set_root,
     adapter_retention_tag: context.adapter.retention_tag,
-    carrier: context.carrier.identity,
     reconstruction: context.reconstruction,
     deployment: context.deployment,
     public_manifest: context.manifest,
@@ -763,7 +717,6 @@ const stageDefinitions = Object.freeze([
   ["vela_generator_identity", (environment, context) => { context.vela = verifyVelaBinary(environment, context.velaBin); }],
   ["repository_acquisition", (environment, context) => { context.repositoriesRoot = acquireRepositories(environment, context.work); }],
   ["preactivation_product", (environment, context) => productQualification(environment, context, { projectionTests: false })],
-  ["carrier_verify", (environment, context) => { context.carrier = prepareCarrier(environment, context.work, context.repositoriesRoot); }],
   ["adapter_prepare", (environment, context) => { context.adapter = prepareAdapters(environment, context.work, context.repositoriesRoot, context.siteCommit); }],
   ["adapter_retain", (environment, context) => retainAdapters(environment, context)],
   ["rollback_floor", async (_environment, context) => {
