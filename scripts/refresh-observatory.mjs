@@ -18,8 +18,14 @@ import { repositoryRegistry } from "../packages/observatory-data/src/registry.ts
 const root = resolve(import.meta.dirname, "..");
 const CHILD_ENVIRONMENT = Object.freeze([
   "PATH", "LANG", "LC_ALL", "LC_CTYPE", "TERM", "TMPDIR", "SHELL", "USER", "LOGNAME",
-  "BUN_INSTALL", "NODE_OPTIONS", "NO_COLOR", "FORCE_COLOR",
+  "BUN_INSTALL", "NO_COLOR", "FORCE_COLOR",
 ]);
+const RELEASE_GIT_IDENTITY = Object.freeze({
+  GIT_AUTHOR_NAME: "Vela Observatory release",
+  GIT_AUTHOR_EMAIL: "release@vela.space",
+  GIT_COMMITTER_NAME: "Vela Observatory release",
+  GIT_COMMITTER_EMAIL: "release@vela.space",
+});
 
 function required(environment, name) {
   const value = environment[name];
@@ -49,6 +55,23 @@ function environmentFor(environment, allowed = []) {
 
 function githubEnvironment(environment) {
   return releaseChildEnvironment(environment, ["GH_TOKEN", "GH_CONFIG_DIR"]);
+}
+
+export function releaseCommitEnvironment(environment) {
+  return { ...environmentFor(environment), ...RELEASE_GIT_IDENTITY };
+}
+
+function githubGitEnvironment(environment, { commit = false } = {}) {
+  return {
+    ...githubEnvironment(environment),
+    ...(commit ? RELEASE_GIT_IDENTITY : {}),
+    GIT_TERMINAL_PROMPT: "0",
+    GIT_CONFIG_COUNT: "2",
+    GIT_CONFIG_KEY_0: "credential.helper",
+    GIT_CONFIG_VALUE_0: "",
+    GIT_CONFIG_KEY_1: "credential.helper",
+    GIT_CONFIG_VALUE_1: "!gh auth git-credential",
+  };
 }
 
 function neonEnvironment(environment) {
@@ -101,7 +124,7 @@ function exactWebCheckout(environment) {
 const releaseLockRef = "refs/heads/ops/observatory-release-lock";
 
 function remoteReleaseLock(environment) {
-  const safe = githubEnvironment(environment);
+  const safe = githubGitEnvironment(environment);
   return run("git", ["ls-remote", "--refs", "origin", releaseLockRef], {
     environment: safe,
     quiet: true,
@@ -109,7 +132,7 @@ function remoteReleaseLock(environment) {
 }
 
 function acquireReleaseLock(environment, context) {
-  const safe = githubEnvironment(environment);
+  const safe = githubGitEnvironment(environment, { commit: true });
   if (remoteReleaseLock(environment)) throw new Error("another Observatory release holds the remote lock");
   const tree = git(["rev-parse", "HEAD^{tree}"], root, safe);
   const lock = run("git", [
@@ -137,7 +160,7 @@ function releaseReleaseLock(environment, context) {
     `--force-with-lease=${releaseLockRef}:${context.releaseLock}`,
     "origin",
     `:${releaseLockRef}`,
-  ], { environment: githubEnvironment(environment), quiet: true });
+  ], { environment: githubGitEnvironment(environment), quiet: true });
   if (remoteReleaseLock(environment)) throw new Error("Observatory release lock was not removed");
   context.releaseLock = null;
 }
@@ -236,7 +259,8 @@ function runStaticQualification(environment) {
 }
 
 function prepareCarrier(environment, work, repositoriesRoot) {
-  const safe = githubEnvironment(environment);
+  const safe = environmentFor(environment);
+  const github = githubEnvironment(environment);
   const identityPath = join(work, "carrier-identity.json");
   const metadataPath = join(work, "carrier-release.json");
   const directory = join(work, "carrier");
@@ -251,7 +275,7 @@ function prepareCarrier(environment, work, repositoriesRoot) {
     "release", "view", identity.release_tag,
     "--repo", "vela-science/vela-web",
     "--json", "tagName,targetCommitish,isDraft,isPrerelease,assets",
-  ], { environment: safe });
+  ], { environment: github });
   writeFileSync(metadataPath, `${metadata}\n`, { encoding: "utf8", mode: 0o600 });
   run("bun", [
     "packages/observatory-data/scripts/standingbench-math-carrier.ts",
@@ -264,7 +288,7 @@ function prepareCarrier(environment, work, repositoriesRoot) {
       "--repo", "vela-science/vela-web",
       "--pattern", asset,
       "--dir", directory,
-    ], { environment: safe });
+    ], { environment: github });
   }
   run("bun", [
     "packages/observatory-data/scripts/standingbench-math-carrier.ts",
@@ -398,8 +422,43 @@ async function captureRollbackFloor(context) {
   };
 }
 
+function writeRollbackCheckpoint(context, phase) {
+  const targetRoot = context.refresh?.release_root ?? null;
+  const targetDeployment = context.deployment?.deployment_id ?? null;
+  const rollback = targetRoot ? [
+    `bun packages/observatory-data/scripts/select-projection-release.mjs --expected-current ${targetRoot} --target ${context.rollbackFloor.projection_release_root}`,
+    `vercel rollback ${context.rollbackFloor.deployment_id} --yes --scope constellate-dc388081`,
+    `bun apps/observatory/scripts/check-deployed-manifest.mjs https://problems.science ${context.rollbackFloor.site_commit}`,
+  ] : [];
+  const forward = targetRoot && targetDeployment ? [
+    `bun packages/observatory-data/scripts/select-projection-release.mjs --expected-current ${context.rollbackFloor.projection_release_root} --target ${targetRoot}`,
+    `vercel rollback ${targetDeployment} --yes --scope constellate-dc388081`,
+    `bun apps/observatory/scripts/check-deployed-manifest.mjs https://problems.science ${context.siteCommit}`,
+  ] : [];
+  const body = {
+    schema: "vela.observatory-direct-release-recovery.v1",
+    authority_effect: "none",
+    phase,
+    prior: context.rollbackFloor,
+    target: {
+      site_commit: context.siteCommit,
+      projection_release_root: targetRoot,
+      deployment_id: targetDeployment,
+    },
+    rollback,
+    forward_recovery: forward,
+    ordering: "select_projection_then_switch_provider_then_verify_combined_manifest",
+  };
+  const record = { ...body, record_root: qualificationRoot(body) };
+  assertPublicQualification(record);
+  const path = join(context.work, "rollback-checkpoint.json");
+  writeFileSync(path, `${JSON.stringify(record, null, 2)}\n`, { encoding: "utf8", mode: 0o600 });
+  context.rollbackCheckpoint = record;
+}
+
 function stageSnapshot(environment, context) {
   const safe = environmentFor(environment);
+  const commit = releaseCommitEnvironment(environment);
   const snapshot = "packages/observatory-data/config/editorial-summary.v4.json";
   const changed = git(["status", "--porcelain"], root, safe).split("\n").filter(Boolean);
   if (changed.some((line) => line.slice(3) !== snapshot)) {
@@ -413,7 +472,7 @@ function stageSnapshot(environment, context) {
   if (changed.length === 1) {
     run("git", ["add", "--", snapshot], { environment: safe });
     run("git", ["commit", "-m", "Refresh editorial snapshot after direct projection release"], {
-      environment: safe,
+      environment: commit,
     });
   }
   context.siteCommit = git(["rev-parse", "HEAD"], root, safe);
@@ -421,7 +480,7 @@ function stageSnapshot(environment, context) {
 }
 
 function publishSiteCommit(environment, context) {
-  const safe = githubEnvironment(environment);
+  const safe = githubGitEnvironment(environment);
   run("git", ["fetch", "--quiet", "origin", "main"], { environment: safe });
   if (git(["rev-parse", "origin/main"], root, safe) !== context.publishedSiteCommit) {
     throw new Error("origin/main advanced before publication; refusing unqualified overwrite");
@@ -622,17 +681,9 @@ function retainQualification(environment, context) {
     pruning: context.prune,
     rollback_floor: {
       ...context.rollbackFloor,
-      rollback: [
-        `bun packages/observatory-data/scripts/select-projection-release.mjs --expected-current ${context.refresh.release_root} --target ${context.rollbackFloor.projection_release_root}`,
-        `vercel rollback ${context.rollbackFloor.deployment_id} --yes --scope constellate-dc388081`,
-        `bun apps/observatory/scripts/check-deployed-manifest.mjs https://problems.science ${context.rollbackFloor.site_commit}`,
-      ],
-      forward_recovery: [
-        `bun packages/observatory-data/scripts/select-projection-release.mjs --expected-current ${context.rollbackFloor.projection_release_root} --target ${context.refresh.release_root}`,
-        `vercel rollback ${context.deployment.deployment_id} --yes --scope constellate-dc388081`,
-        `bun apps/observatory/scripts/check-deployed-manifest.mjs https://problems.science ${context.siteCommit}`,
-      ],
-      ordering: "select_projection_then_switch_provider_then_verify_combined_manifest",
+      rollback: context.rollbackCheckpoint.rollback,
+      forward_recovery: context.rollbackCheckpoint.forward_recovery,
+      ordering: context.rollbackCheckpoint.ordering,
       retention: "current_and_two_predecessors_pruned_only_after_public_readiness",
     },
     gates: [
@@ -678,14 +729,26 @@ const stageDefinitions = Object.freeze([
   ["carrier_verify", (environment, context) => { context.carrier = prepareCarrier(environment, context.work, context.repositoriesRoot); }],
   ["adapter_prepare", (environment, context) => { context.adapter = prepareAdapters(environment, context.work, context.repositoriesRoot, context.siteCommit); }],
   ["adapter_retain", (environment, context) => retainAdapters(environment, context)],
-  ["rollback_floor", (_environment, context) => captureRollbackFloor(context)],
-  ["projection_activate", (environment, context) => projectionQualification(environment, context)],
+  ["rollback_floor", async (_environment, context) => {
+    await captureRollbackFloor(context);
+    writeRollbackCheckpoint(context, "qualified_prior_release");
+  }],
+  ["projection_activate", (environment, context) => {
+    projectionQualification(environment, context);
+    writeRollbackCheckpoint(context, "projection_activated");
+  }],
   ["snapshot_stage", (environment, context) => stageSnapshot(environment, context)],
   ["snapshot_static_requalification", (environment) => runStaticQualification(environment)],
   ["postactivation_product", (environment, context) => productQualification(environment, context, { projectionTests: true })],
   ["provider_loss_reconstruction", (environment, context) => reconstruct(environment, context)],
-  ["site_publish", (environment, context) => publishSiteCommit(environment, context)],
-  ["production_deploy", (environment, context) => deploy(environment, context)],
+  ["site_publish", (environment, context) => {
+    publishSiteCommit(environment, context);
+    writeRollbackCheckpoint(context, "site_commit_published");
+  }],
+  ["production_deploy", (environment, context) => {
+    deploy(environment, context);
+    writeRollbackCheckpoint(context, "production_deployed");
+  }],
   ["production_readiness", (environment, context) => readiness(environment, context)],
   ["projection_prune", (environment, context) => pruneProjection(environment, context)],
   ["qualification_retain", (environment, context) => retainQualification(environment, context)],

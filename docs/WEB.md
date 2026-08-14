@@ -204,7 +204,10 @@ one candidate, inserts it in one transaction, verifies every stored table root,
 and only then moves `current_release`. Failure before or during that atomic
 activation leaves the prior release current. A later failure retains the private
 operator directory and the exact two-sided projection/provider rollback inputs;
-it does not pretend a cross-provider operation was atomic. Writer credentials
+`rollback-checkpoint.json` is written before activation and refreshed after
+activation, site publication, and deployment, so recovery does not depend on
+process memory or a final success record. The release does not pretend a
+cross-provider operation was atomic. Writer credentials
 enter only migration, activation, and final pruning. The Vercel
 application connects as the native PostgreSQL login
 `observatory_projection_reader_20260813`. That versioned login inherits only
