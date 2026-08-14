@@ -394,6 +394,9 @@ function projectionQualification(environment, context) {
     "--grounded-math-dossier", context.carrier.dossier,
   ], { environment: writer });
   context.refresh = JSON.parse(raw.split("\n").at(-1));
+  // Activation has already committed at this boundary. Persist the exact
+  // target before any later qualification can fail.
+  writeRollbackCheckpoint(context, "projection_activated");
   const reader = environmentFor(environment, ["VELA_PROJECTION_DATABASE_URL"]);
   run("bun", ["run", "db:check"], { environment: reader });
   run("bun", ["run", "projection:verify"], { environment: reader });
@@ -733,10 +736,7 @@ const stageDefinitions = Object.freeze([
     await captureRollbackFloor(context);
     writeRollbackCheckpoint(context, "qualified_prior_release");
   }],
-  ["projection_activate", (environment, context) => {
-    projectionQualification(environment, context);
-    writeRollbackCheckpoint(context, "projection_activated");
-  }],
+  ["projection_activate", (environment, context) => projectionQualification(environment, context)],
   ["snapshot_stage", (environment, context) => stageSnapshot(environment, context)],
   ["snapshot_static_requalification", (environment) => runStaticQualification(environment)],
   ["postactivation_product", (environment, context) => productQualification(environment, context, { projectionTests: true })],
@@ -774,10 +774,15 @@ export async function refreshObservatory(environment = process.env) {
   let scoped;
   try {
     const operatorHome = required(environment, "HOME");
+    const githubToken = environment.GH_TOKEN ?? run(
+      "gh", ["auth", "token", "--hostname", "github.com"],
+      { environment, quiet: true },
+    );
     const releaseHome = join(work.path, "home");
     for (const directory of [
       releaseHome,
       join(releaseHome, ".config"),
+      join(releaseHome, ".config", "gh"),
       join(releaseHome, ".cache"),
     ]) mkdirSync(directory, { recursive: true, mode: 0o700 });
     const vercelConfig = environment.VERCEL_GLOBAL_CONFIG
@@ -791,7 +796,8 @@ export async function refreshObservatory(environment = process.env) {
     scoped = {
       ...environment,
       VELA_RELEASE_HOME: releaseHome,
-      GH_CONFIG_DIR: environment.GH_CONFIG_DIR ?? join(operatorHome, ".config", "gh"),
+      GH_TOKEN: githubToken,
+      GH_CONFIG_DIR: join(releaseHome, ".config", "gh"),
       VELA_NEON_CONFIG_DIR: environment.VELA_NEON_CONFIG_DIR
         ?? join(operatorHome, ".config", "neonctl"),
       ...(vercelConfig ? { VERCEL_GLOBAL_CONFIG: vercelConfig } : {}),

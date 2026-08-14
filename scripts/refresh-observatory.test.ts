@@ -20,8 +20,18 @@ describe("direct Observatory release", () => {
     expect(source).toContain("refs/heads/ops/observatory-release-lock");
     expect(source).toContain("--force-with-lease=");
     expect(source).toContain("!gh auth git-credential");
+    expect(source).toContain("gh\", [\"auth\", \"token\"");
     expect(source).toContain("origin/main advanced after qualification");
     expect(source).toContain("rollback-checkpoint.json");
+    const activation = source.indexOf("context.refresh = JSON.parse");
+    const checkpoint = source.indexOf(
+      "writeRollbackCheckpoint(context, \"projection_activated\")",
+      activation,
+    );
+    const postActivationCheck = source.indexOf('run("bun", ["run", "db:check"]', activation);
+    expect(activation).toBeGreaterThan(-1);
+    expect(checkpoint).toBeGreaterThan(activation);
+    expect(postActivationCheck).toBeGreaterThan(checkpoint);
   });
 
   test("executes the complete release transaction in one order", () => {
