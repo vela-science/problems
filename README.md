@@ -24,10 +24,10 @@ surfaces and three shared packages.
 | Path | Runtime | Purpose |
 | --- | --- | --- |
 | `apps/www` | Next.js static export | Product home, the Constellations essay, and the vendored Vela documentation |
-| `apps/observatory` | Next.js | Root-bound Repository, Claim, Target, Proposal, Decision, Dossier, Source, graph, and reproduce views |
+| `apps/observatory` | Next.js | Root-bound Problem, Repository, Claim, Proposal, Decision, Dossier, Source, graph, and reproduce views |
 | `packages/brand` | TypeScript and CSS | Framework-neutral sail, tokens, fonts, licenses, and deterministic exports |
 | `packages/ui` | React, shadcn, and Base UI | Private shared primitives and stable Vela presentation semantics |
-| `packages/observatory-data` | TypeScript | Sole validator and projector for repository, search, work, and graph data |
+| `packages/observatory-data` | TypeScript | Sole validator and projector for Repository, Problem, search, and graph data |
 
 The applications share brand assets, exact facts, and eligible React
 primitives. Authored editorial and workbench route compositions stay with
@@ -37,7 +37,7 @@ scientific state.
 Vela follows one product story:
 
 ```text
-map -> target -> work -> submit -> verify -> decide -> remap
+Problem -> native work -> submit -> verify -> decide -> replay
 ```
 
 Any native human or machine workbench may do the work. The canonical Repository
@@ -45,8 +45,8 @@ Git repository preserves exact Submissions and scoped Verification evidence.
 Neither production nor Verification changes Standing. Only an authorized,
 attributed Decision in that named Repository changes Standing;
 the performer may be human or agent, and deterministic replay
-derives the successor state and exact next Target. Vela Web provides the
-read-only map and review surfaces.
+derives the successor state and current actions. Vela Web provides the
+read-only map, contribution handoff, and review surfaces.
 
 ```text
 canonical repository Git repositories
@@ -82,8 +82,9 @@ canonical repository Git repositories
 - Normalized projection rows are rebuilt from exact canonical Git commits and
   validated before activation. No whole-Repository document is embedded as a
   universal browser payload.
-- Producer availability, active leases, and advice-only graph opportunities are
-  separate projections; graph rank never becomes work rank or authority.
+- Contribution starts from an exact Problem or Repository and produces a direct
+  Submission. Graph structure remains an advice-only reading aid and never
+  becomes scientific authority.
 - The original Vela sail is the locked product mark; exported assets are
   derived from its canonical SVG sources.
 

@@ -83,6 +83,7 @@ describe("Workspace CRDT activity migration", () => {
         "20260813_execution_binding_lineage.sql",
         "20260813_problem_scoped_workspaces.sql",
         "20260813_workspace_crdt.sql",
+        "20260814_problem_scoped_activity.sql",
       ]) applyFile(`migrations/${migration}`);
 
       const accountA = psql(database, "SELECT activity_api.ensure_account('user_A1','Alice','alice@example.test')->>'id'");

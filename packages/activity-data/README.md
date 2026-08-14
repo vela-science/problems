@@ -46,48 +46,13 @@ content-root checked in SQL, exact-Problem anchored, and carries
 `authority_effect = 'none'`.
 
 The exact current permission matrix and Workspace-promotion threat model live
-in `../../docs/security/vela-web-threat-model.md`. The Target-bound Approach
-migration and rollback design live in
-`../../docs/architecture/target-bound-approach-adr.md`.
+in `../../docs/security/vela-web-threat-model.md`.
 
-## Target-bound Approach release state
-
-On 2026-08-12, the `activity.schema_migrations` ledger on the Neon `main`
-branch recorded `20260812_target_bound_approach` at
-`2026-08-12T22:27:04.266Z` with the frozen root
-`sha256:07ece86171ad085aaf61fc055030fc5642740a8deff450a39e5e091e96ef4ba9`.
-Vercel production deployment `dpl_5V3urZxnbCpD28RTukVqYGTCbPqD` then served
-the binding-aware reader from exact commit
-`8231c1efd62912c4c95487569a63ffb1e189c805`. The production environment omitted
-`VELA_TARGET_BOUND_APPROACH_ENABLED`, so the exact-literal gate kept
-Target-bound creation disabled.
-
-`activity:db:live-proof` passed after that default-off reader took production
-traffic. The proof created the first bound Approach and one fork that inherited
-its exact Target binding. At the release checkpoint, the database contained two
-bound Approach rows for one Target, both with `authority_effect = 'none'`, and
-one rooted audit entry for each write. The first write advanced the rollback
-floor: production may use commit `8231c1efd62912c4c95487569a63ffb1e189c805`
-or a later binding-aware reader with the flag absent or `false`; production must
-not serve the pre-binding `9feb6975` reader again. Do not rerun the one-shot live
-proof against this database because its zero-bound-row precondition has been
-consumed.
-
-Production later enabled `VELA_TARGET_BOUND_APPROACH_ENABLED` with exact `true`.
-The write-enablement checkpoint deployment
-`dpl_7KpFZumFChqPrNyDugwMeVQVsUiX` served Web commit
-`2f6b11b847cf85651bd975f81da3237453bdbdb9` over projection release
-`sha256:3f73ed2ac1408d704ed12e2e74616001dc2c2039d07c3d7fbf9031e1e2da8b26`.
-Signed-in production shows the earlier packet-bound Approach as stale and the
-current Target as eligible for new bound work. The full authenticated
-narrow-screen, keyboard, zoom, and forced-colors matrix remains release debt;
-write enablement does not imply that evidence already exists.
-
-The later additive migration `20260813_execution_binding_lineage` is live at
-root `sha256:36c2fb19749e1f2decd793228747973b21335b906d07488a73b020f8d4d075b0`.
-Attempts, Research Blocks, and unsigned drafts can therefore retain the exact
-packet/profile/capsule/result-contract lineage. Legacy rows remain null and are
-not retroactively relabeled.
+Earlier migrations added Target and execution-binding columns. Those columns
+remain only so already-retained activity rows can be decoded without rewriting
+history. Current writers create Problem-scoped Approaches, Sessions, Research
+Blocks, and drafts. The `20260814_problem_scoped_activity` migration freezes
+legacy bound rows and refuses any new Target or execution-binding lineage.
 
 The additive migration `20260813_workspace_crdt` was applied to Neon `main` at
 `2026-08-13T23:44:07.159Z` with root
@@ -104,9 +69,3 @@ commit `03fee3e74b8e85855ced16622c7271079d291641`, and projection release
 That checkpoint proves the deployed application and read-only projection
 identity. It does not close the authenticated narrow-screen, keyboard, zoom,
 reduced-motion, forced-colors, or touch browser matrix.
-
-Target-bound writes have a separate server-only rollout gate:
-`VELA_TARGET_BOUND_APPROACH_ENABLED`. Only exact `true` enables them; absent,
-`false`, and malformed values are disabled. The application role keeps no
-base-table access while the binding-aware reader retains and displays exact
-Target provenance.

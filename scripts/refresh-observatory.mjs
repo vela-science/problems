@@ -366,10 +366,12 @@ function activityQualification(environment) {
   const both = environmentFor(environment, [
     "VELA_ACTIVITY_MIGRATOR_DATABASE_URL",
     "VELA_ACTIVITY_DATABASE_URL",
+    "VELA_PROJECTION_DATABASE_URL",
   ]);
   run("bun", ["run", "activity:db:migrate"], { environment: migrate });
   run("bun", ["run", "activity:db:check"], { environment: read });
   run("bun", ["run", "activity:db:verify"], { environment: both });
+  run("bun", ["run", "activity:db:live-proof"], { environment: both });
 }
 
 function projectionQualification(environment, context) {
@@ -424,6 +426,7 @@ async function captureRollbackFloor(context) {
     projection_release_root: manifest.projection.release_root,
     deployment_id: manifest.deployment.id,
   };
+  context.initialProduction = { ...context.rollbackFloor };
 }
 
 function writeRollbackCheckpoint(context, phase) {
@@ -463,7 +466,7 @@ function writeRollbackCheckpoint(context, phase) {
 function stageSnapshot(environment, context) {
   const safe = environmentFor(environment);
   const commit = releaseCommitEnvironment(environment);
-  const snapshot = "packages/observatory-data/config/editorial-summary.v4.json";
+  const snapshot = "packages/observatory-data/config/editorial-summary.v5.json";
   const changed = git(["status", "--porcelain"], root, safe).split("\n").filter(Boolean);
   if (changed.some((line) => line.slice(3) !== snapshot)) {
     throw new Error("refresh modified files outside the editorial snapshot");
@@ -549,7 +552,7 @@ function reconstruct(environment, context) {
   context.reconstruction = JSON.parse(readFileSync(output, "utf8"));
 }
 
-function deploy(environment, context) {
+function deploy(environment, context, field = "deployment") {
   const safe = vercelEnvironment(environment);
   const raw = run("bun", ["scripts/deploy-vercel-observatory.mjs"], {
     environment: {
@@ -559,7 +562,37 @@ function deploy(environment, context) {
       GITHUB_REF: "refs/heads/main",
     },
   });
-  context.deployment = JSON.parse(raw.split("\n").at(-1));
+  context[field] = JSON.parse(raw.split("\n").at(-1));
+}
+
+async function compatibilityReadiness(context) {
+  const deadline = Date.now() + 12 * 60_000;
+  let manifest;
+  while (Date.now() < deadline) {
+    const response = await fetch("https://problems.science/.well-known/vela-site.json", {
+      cache: "no-store",
+    }).catch(() => undefined);
+    if (response?.ok) {
+      manifest = await response.json();
+      if (
+        manifest.site?.commit === context.siteCommit
+        && manifest.projection?.release_root === context.initialProduction.projection_release_root
+        && manifest.deployment?.id === context.compatibilityDeployment.deployment_id
+      ) break;
+    }
+    await Bun.sleep(5_000);
+  }
+  if (
+    manifest?.site?.commit !== context.siteCommit
+    || manifest?.projection?.release_root !== context.initialProduction.projection_release_root
+    || manifest?.deployment?.id !== context.compatibilityDeployment.deployment_id
+  ) throw new Error("current-model compatibility deployment did not converge before Activity migration");
+  context.rollbackFloor = {
+    site_commit: context.siteCommit,
+    projection_release_root: context.initialProduction.projection_release_root,
+    deployment_id: context.compatibilityDeployment.deployment_id,
+  };
+  writeRollbackCheckpoint(context, "current_model_deployed");
 }
 
 async function readiness(environment, context) {
@@ -690,6 +723,7 @@ function retainQualification(environment, context) {
       ordering: context.rollbackCheckpoint.ordering,
       retention: "current_and_two_predecessors_pruned_only_after_public_readiness",
     },
+    replaced_production: context.initialProduction,
     gates: [
       "static_check_lint_test_format",
       "activity_migrate_check_verify",
@@ -729,7 +763,6 @@ const stageDefinitions = Object.freeze([
   ["vela_generator_identity", (environment, context) => { context.vela = verifyVelaBinary(environment, context.velaBin); }],
   ["repository_acquisition", (environment, context) => { context.repositoriesRoot = acquireRepositories(environment, context.work); }],
   ["preactivation_product", (environment, context) => productQualification(environment, context, { projectionTests: false })],
-  ["activity_qualification", (environment) => activityQualification(environment)],
   ["carrier_verify", (environment, context) => { context.carrier = prepareCarrier(environment, context.work, context.repositoriesRoot); }],
   ["adapter_prepare", (environment, context) => { context.adapter = prepareAdapters(environment, context.work, context.repositoriesRoot, context.siteCommit); }],
   ["adapter_retain", (environment, context) => retainAdapters(environment, context)],
@@ -737,6 +770,9 @@ const stageDefinitions = Object.freeze([
     await captureRollbackFloor(context);
     writeRollbackCheckpoint(context, "qualified_prior_release");
   }],
+  ["current_model_deploy", (environment, context) => deploy(environment, context, "compatibilityDeployment")],
+  ["current_model_readiness", async (_environment, context) => compatibilityReadiness(context)],
+  ["activity_qualification", (environment) => activityQualification(environment)],
   ["projection_activate", (environment, context) => projectionQualification(environment, context)],
   ["snapshot_stage", (environment, context) => stageSnapshot(environment, context)],
   ["snapshot_static_requalification", (environment) => runStaticQualification(environment)],

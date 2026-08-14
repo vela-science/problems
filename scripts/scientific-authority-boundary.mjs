@@ -38,7 +38,6 @@ const observatoryActivityAction = "apps/observatory/src/app/actions/activity.ts"
 const observatoryActivityDraftRoute = "apps/observatory/src/app/drafts/[id]/export/route.ts";
 const observatoryActivityWorkbench = "apps/observatory/src/components/vela/workbench.tsx";
 const observatoryAuthLibrary = "apps/observatory/src/lib/auth.ts";
-const observatoryTargetBoundApproachConfiguration = "apps/observatory/src/lib/target-bound-approach.ts";
 const observatoryIdentityProxy = "apps/observatory/src/proxy.ts";
 
 export const OBSERVATORY_IDENTITY_FILES = [
@@ -150,7 +149,6 @@ function inspectObservatory(file, content, add) {
   if (
     runtimeEnvironment.test(content)
     && file !== observatoryAuthLibrary
-    && file !== observatoryTargetBoundApproachConfiguration
   ) {
     add("app_runtime_environment", "Vela runtime secrets are confined to its identity adapter");
   }

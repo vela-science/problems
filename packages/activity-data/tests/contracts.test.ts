@@ -52,29 +52,19 @@ describe("scientific activity anchors", () => {
   });
 });
 
-describe("Approach Target command identity", () => {
-  test("roots every optional binding field independently", () => {
-    const unbound = {
+describe("Problem-scoped Approach command identity", () => {
+  test("roots the exact Problem anchor and contribution fields", () => {
+    const input = {
       anchor: { root: root("a") },
       title: "Finite reduction",
       summary: "Test a bounded obstruction.",
-      target_id: null,
-      target_packet_root: null,
-      target_record_root: null,
     };
-    const target = {
-      ...unbound,
-      target_id: "erdos:321:bounded-search",
-      target_packet_root: root("b"),
-    };
-    const unboundRoot = commandRequestRoot("approach.create", unbound);
-    const targetRoot = commandRequestRoot("approach.create", target);
-    expect(targetRoot).not.toBe(unboundRoot);
-    expect(commandRequestRoot("approach.create", { ...target, target_id: "erdos:321:other" }))
-      .not.toBe(targetRoot);
-    expect(commandRequestRoot("approach.create", { ...target, target_packet_root: root("c") }))
-      .not.toBe(targetRoot);
-    expect(commandRequestRoot("approach.create", { ...target, target_record_root: root("d") }))
-      .not.toBe(targetRoot);
+    const inputRoot = commandRequestRoot("approach.create", input);
+    expect(commandRequestRoot("approach.create", { ...input, anchor: { root: root("b") } }))
+      .not.toBe(inputRoot);
+    expect(commandRequestRoot("approach.create", { ...input, title: "Different reduction" }))
+      .not.toBe(inputRoot);
+    expect(commandRequestRoot("approach.create", { ...input, summary: "Different scope." }))
+      .not.toBe(inputRoot);
   });
 });

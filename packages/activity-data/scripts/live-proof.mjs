@@ -1,4 +1,5 @@
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { neon } from "@neondatabase/serverless";
 import {
   addDiscussionEntry,
@@ -47,11 +48,25 @@ if (
 const suffix = Date.now().toString(36);
 const root = (value) => `sha256:${value.repeat(64)}`;
 const command = () => ({ idempotencyKey: randomUUID() });
+const currentMigrationId = "20260814_problem_scoped_activity";
+const currentMigrationSource = readFileSync(
+  new URL(`../migrations/${currentMigrationId}.sql`, import.meta.url),
+);
+const currentMigrationRoot = `sha256:${createHash("sha256").update(currentMigrationSource).digest("hex")}`;
 
-async function denied(promise, label) {
+async function denied(promise, label, expected = null) {
   try {
     await promise;
-  } catch {
+  } catch (error) {
+    if (expected) {
+      const code = error && typeof error === "object"
+        ? String(error.code ?? error.cause?.code ?? "")
+        : "";
+      const message = error instanceof Error ? error.message : String(error);
+      if (code !== expected.code || !message.includes(expected.message)) {
+        throw new Error(`${label} failed for an unexpected reason (SQLSTATE ${code || "unknown"})`);
+      }
+    }
     return true;
   }
   throw new Error(`${label} did not fail closed`);
@@ -62,14 +77,6 @@ async function ownerTransaction(statements) {
     transaction.query("SET LOCAL ROLE vela_activity_owner"),
     ...statements(transaction),
   ]);
-}
-
-const preEnableCountResults = await ownerTransaction((transaction) => [transaction.query(
-  "SELECT count(*)::integer AS bound_approaches FROM activity.approaches WHERE target_id IS NOT NULL",
-)]);
-const preEnableBoundApproaches = Number(preEnableCountResults.at(-1)?.[0]?.bound_approaches);
-if (preEnableBoundApproaches !== 0) {
-  throw new Error(`Target-bound write enablement requires zero existing bound rows, found ${preEnableBoundApproaches}`);
 }
 
 async function standingSnapshot() {
@@ -85,6 +92,17 @@ async function standingSnapshot() {
 }
 
 const standingBefore = await standingSnapshot();
+const [currentMigration] = await migratorSql.query(
+  `SELECT migration_id, migration_root
+   FROM activity.schema_migrations WHERE migration_id=$1`,
+  [currentMigrationId],
+);
+if (
+  currentMigration?.migration_id !== currentMigrationId
+  || currentMigration?.migration_root !== currentMigrationRoot
+) {
+  throw new Error(`current Problem-scoped Activity migration is not installed exactly: ${JSON.stringify(currentMigration)}`);
+}
 const accountA = await ensureCurrentAccount({
   workosUserId: `user_liveproofa${suffix}`,
   displayName: "Live proof A",
@@ -153,15 +171,21 @@ await denied(
 );
 
 const approachCommand = command();
-const approach = await createApproach(contextA, {
-  anchor,
+const approachPayload = {
+  anchor: commandAnchor,
   title: "Live proof approach",
   summary: "A bounded integration proof for tenant and activity semantics.",
+};
+const approachRequestRoot = commandRequestRoot("approach.create", approachPayload);
+const approach = await createApproach(contextA, {
+  anchor,
+  title: approachPayload.title,
+  summary: approachPayload.summary,
 }, approachCommand);
 const retriedApproach = await createApproach(contextA, {
   anchor,
-  title: "Live proof approach",
-  summary: "A bounded integration proof for tenant and activity semantics.",
+  title: approachPayload.title,
+  summary: approachPayload.summary,
 }, approachCommand);
 if (approach.id !== retriedApproach.id) throw new Error("idempotent retry returned a different resource");
 await denied(createApproach(contextA, {
@@ -170,125 +194,100 @@ await denied(createApproach(contextA, {
   summary: "The same idempotency key must reject changed bytes.",
 }, approachCommand), "idempotency key reuse");
 
-const boundTarget = {
-  kind: "target",
-  targetId: `erdos:321:live-proof:${suffix}`,
-  targetPacketRoot: root("8"),
-  targetRecordRoot: null,
-};
-const boundTitle = "Live proof Target-bound approach";
-const boundSummary = "Exact Target packet provenance with no authority effect.";
-const boundPayload = {
+const retiredApproachPayload = {
   anchor: commandAnchor,
-  title: boundTitle,
-  summary: boundSummary,
-  target_id: boundTarget.targetId,
-  target_packet_root: boundTarget.targetPacketRoot,
-  target_record_root: null,
+  title: "Retired Target-bound write must fail",
+  summary: "Current hosted writers cannot create legacy Target lineage.",
+  target_id: "erdos:321:retired-live-proof",
+  target_packet_root: root("c"),
+  target_record_root: root("d"),
 };
-const boundRequestRoot = commandRequestRoot("approach.create", boundPayload);
-const boundCommand = command();
-const boundApproach = await createApproach(contextA, {
-  anchor,
-  title: boundTitle,
-  summary: boundSummary,
-  target: boundTarget,
-}, boundCommand);
-if (
-  boundApproach.target_id !== boundTarget.targetId
-  || boundApproach.target_packet_root !== boundTarget.targetPacketRoot
-  || boundApproach.target_record_root !== null
-  || boundApproach.authority_effect !== "none"
-) {
-  throw new Error(`Target-bound create returned inexact provenance: ${JSON.stringify(boundApproach)}`);
-}
-const retriedBoundApproach = await createApproach(contextA, {
-  anchor,
-  title: boundTitle,
-  summary: boundSummary,
-  target: boundTarget,
-}, boundCommand);
-if (retriedBoundApproach.id !== boundApproach.id) {
-  throw new Error("exact Target-bound retry returned a different resource");
-}
-const changedBoundTarget = { ...boundTarget, targetPacketRoot: root("9") };
-const changedBoundRequestRoot = commandRequestRoot("approach.create", {
-  ...boundPayload,
-  target_packet_root: changedBoundTarget.targetPacketRoot,
+await denied(appSql.query(
+  "SELECT activity_api.execute_command($1::uuid,$2::uuid,$3,$4,$5,$6::jsonb,$7::bigint) AS result",
+  [
+    accountA.id,
+    workspaceA.id,
+    "approach.create",
+    randomUUID(),
+    commandRequestRoot("approach.create", retiredApproachPayload),
+    JSON.stringify(retiredApproachPayload),
+    null,
+  ],
+), "retired Target-bound Approach write", {
+  code: "22023",
+  message: "new Approaches are scoped to the exact Problem anchor, not a retired Target binding",
 });
-if (changedBoundRequestRoot === boundRequestRoot) {
-  throw new Error("changed Target packet did not change the command request root");
-}
-await denied(createApproach(contextA, {
-  anchor,
-  title: boundTitle,
-  summary: boundSummary,
-  target: changedBoundTarget,
-}, boundCommand), "Target-bound packet and request-root change");
 
-await denied(createApproach({ accountId: accountB.id, workspaceId: workspaceA.id }, {
-  anchor,
-  title: "Cross-tenant Target-bound write must fail",
-  summary: "A non-member cannot retain Target provenance in another Workspace.",
-  target: boundTarget,
-}, command()), "cross-tenant Target-bound activity write");
-await denied(getProblemActivity({
-  accountId: accountB.id,
-  workspaceId: workspaceA.id,
-  repositoryId: anchor.repositoryId,
-  problemId: anchor.problemId,
-  currentAnchorRoot,
-}), "cross-tenant Target-bound activity read");
+/* Use the owner role to reach the 20260814 table trigger directly. The public
+   command also refuses this payload, but its retained 20260813 guard runs
+   before INSERT and therefore cannot prove the forward migration itself. */
+await denied(ownerTransaction((transaction) => [transaction.query(
+  `INSERT INTO activity.attempts (
+     workspace_id, anchor_root, approach_id, created_by_account_id,
+     provider, title, execution_packet_root, execution_profile_root,
+     execution_verifier_capsule_root, execution_result_contract_root
+   ) VALUES ($1::uuid,$2,$3::uuid,$4::uuid,$5,$6,$7,$8,$9,$10)`,
+  [
+    workspaceA.id,
+    currentAnchorRoot,
+    approach.id,
+    accountA.id,
+    "retired-execution-live-proof",
+    "Retired execution lineage must fail",
+    root("c"),
+    root("d"),
+    root("e"),
+    root("f"),
+  ],
+)]), "retired execution-binding write", {
+  code: "22023",
+  message: "retired execution binding is read-only; current activity is Problem-scoped",
+});
 
-const forkTitle = "Live proof Target-bound fork";
-const forkSummary = "The immutable exact Target binding must be inherited.";
-const forkExpectedVersion = Number(boundApproach.version);
+const forkTitle = "Live proof Problem-scoped fork";
+const forkSummary = "A second approach to the same exact Problem anchor.";
+const forkExpectedVersion = Number(approach.version);
 const forkRequestRoot = commandRequestRoot("approach.fork", {
-  source_approach_id: boundApproach.id,
+  source_approach_id: approach.id,
   title: forkTitle,
   summary: forkSummary,
 }, forkExpectedVersion);
-const boundFork = await forkApproach(contextA, {
-  sourceApproachId: String(boundApproach.id),
+const fork = await forkApproach(contextA, {
+  sourceApproachId: String(approach.id),
   expectedVersion: forkExpectedVersion,
   title: forkTitle,
   summary: forkSummary,
 }, command());
 if (
-  boundFork.parent_approach_id !== boundApproach.id
-  || boundFork.target_id !== boundTarget.targetId
-  || boundFork.target_packet_root !== boundTarget.targetPacketRoot
-  || boundFork.target_record_root !== null
-  || boundFork.authority_effect !== "none"
+  fork.parent_approach_id !== approach.id
+  || fork.anchor_root !== currentAnchorRoot
+  || fork.created_by_account_id !== accountA.id
+  || fork.authority_effect !== "none"
 ) {
-  throw new Error(`Target-bound fork changed immutable provenance: ${JSON.stringify(boundFork)}`);
+  throw new Error(`Problem-scoped fork changed exact provenance: ${JSON.stringify(fork)}`);
 }
 
-const boundReadView = await getProblemActivity({
+const forkReadView = await getProblemActivity({
   accountId: accountA.id,
   workspaceId: workspaceA.id,
   repositoryId: anchor.repositoryId,
   problemId: anchor.problemId,
   currentAnchorRoot,
 });
-for (const id of [boundApproach.id, boundFork.id]) {
-  const retained = boundReadView.approaches.find((entry) => entry.id === id);
-  if (
-    retained?.target.kind !== "target"
-    || retained.target.targetId !== boundTarget.targetId
-    || retained.target.targetPacketRoot !== boundTarget.targetPacketRoot
-    || retained.target.targetRecordRoot !== null
-    || retained.authorityEffect !== "none"
-  ) {
-    throw new Error(`Target-bound read lost exact provenance for ${id}`);
-  }
+const retainedFork = forkReadView.approaches.find((entry) => entry.id === fork.id);
+if (
+  retainedFork?.parentApproachId !== approach.id
+  || retainedFork.anchorRoot !== currentAnchorRoot
+  || retainedFork.createdByAccountId !== accountA.id
+  || retainedFork.authorityEffect !== "none"
+) {
+  throw new Error("Problem-scoped fork read lost exact provenance");
 }
 
 const attempt = await createAttempt(contextA, {
   approachId: String(approach.id),
   provider: "provider-neutral-live-proof",
   title: "Live proof attempt",
-  executionBinding: null,
 }, command());
 await updateAttempt(
   contextA,
@@ -338,7 +337,6 @@ await denied(getProblemActivity({
 const artifact = await attachArtifact(contextA, {
   anchor,
   attemptId: String(attempt.id),
-  executionBinding: null,
   contentRoot: root("6"),
   metadataRoot: root("7"),
   kind: "proof",
@@ -463,17 +461,14 @@ const approachAudits = activity.audit.filter(
   (entry) => entry.operation === "approach.create" && entry.subjectId === approach.id,
 );
 if (approachAudits.length !== 1) throw new Error("idempotent retry appended a duplicate audit entry");
-const boundAudits = activity.audit.filter(
-  (entry) => entry.operation === "approach.create" && entry.subjectId === boundApproach.id,
-);
-if (boundAudits.length !== 1 || boundAudits[0]?.requestRoot !== boundRequestRoot) {
-  throw new Error("Target-bound create audit did not retain the exact request root once");
+if (approachAudits[0]?.requestRoot !== approachRequestRoot) {
+  throw new Error("Problem-scoped create audit did not retain the exact request root");
 }
 const forkAudits = activity.audit.filter(
-  (entry) => entry.operation === "approach.fork" && entry.subjectId === boundFork.id,
+  (entry) => entry.operation === "approach.fork" && entry.subjectId === fork.id,
 );
 if (forkAudits.length !== 1 || forkAudits[0]?.requestRoot !== forkRequestRoot) {
-  throw new Error("Target-bound fork audit did not retain the exact request root once");
+  throw new Error("Problem-scoped fork audit did not retain the exact request root once");
 }
 const standingAfter = await standingSnapshot();
 if (canonicalJson(standingAfter) !== canonicalJson(standingBefore)) {
@@ -489,7 +484,6 @@ console.log(JSON.stringify({
   accountB: accountB.id,
   activityCounts: {
     approaches: activity.approaches.length,
-    targetBoundApproaches: activity.approaches.filter((entry) => entry.target.kind === "target").length,
     attempts: activity.attempts.length,
     privateDiscussionForAuthor: activity.discussion.length,
     artifacts: activity.artifacts.length,
@@ -500,15 +494,14 @@ console.log(JSON.stringify({
   standing: standingAfter,
   crossTenantDenied: true,
   crossTenantWriteDenied: true,
-  crossTenantTargetBoundReadDenied: true,
-  crossTenantTargetBoundWriteDenied: true,
   unsignedExportDenied: true,
   removedMemberDenied: true,
   privateNoteIsolated: true,
   idempotencyProved: true,
-  targetBoundIdempotencyAndAuditProved: true,
-  targetBoundForkInheritanceProved: true,
-  preEnableBoundApproaches,
+  problemScopedMigration: { id: currentMigrationId, root: currentMigrationRoot },
+  retiredTargetWriteDenied: true,
+  retiredExecutionWriteDenied: true,
+  problemScopedForkAndAuditProved: true,
   optimisticVersioningProved: true,
   exactAnchorFollowingProved: true,
   appBaseTablesDenied: true,

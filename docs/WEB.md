@@ -11,7 +11,7 @@ Earlier design and migration plans live under `docs/history/`.
   `app.vela.space` remains a compatibility alias during the canonical-domain
   cutover. Problems is the application's conceptual center, while Home orients
   readers across current
-  change, open work, communities, and the exact scientific record. Advanced
+  change, direct contribution, communities, and the exact scientific record. Advanced
   records remain available in the same runtime.
 - `vela.space` redirects to `www`; Observatory paths on `www` redirect to
   `problems.science`.
@@ -52,14 +52,14 @@ product-bound and is never published as a separate UI library; see
 The whole ecosystem follows one path:
 
 ```text
-map -> target -> work -> submit -> verify -> decide -> remap
+Problem -> native work -> submit -> verify -> decide -> remap
 ```
 
 Native research tools and external harnesses remain replaceable. The Repository
 Git repository is canonical. Vela binds exact Submissions and scoped
 Verification evidence, but neither changes Standing. Only an authorized, attributed
 Decision in that named Repository changes Standing; replay derives the successor
-state and next Target. Problems may coordinate candidate work, but hosted state
+state and current actions. Problems may coordinate candidate work, but hosted state
 cannot issue a Vela Event or Decision, change Standing, or sign as a user.
 
 The editorial application owns one current route vocabulary:
@@ -207,7 +207,11 @@ operator directory and the exact two-sided projection/provider rollback inputs;
 `rollback-checkpoint.json` is written before activation and refreshed after
 activation, site publication, and deployment, so recovery does not depend on
 process memory or a final success record. The release does not pretend a
-cross-provider operation was atomic. Writer credentials
+cross-provider operation was atomic. When an Activity migration retires a
+writer shape, the transaction first deploys and verifies the current reader and
+writer against the still-current projection. That compatible deployment becomes
+the rollback floor before the migration runs, so an older application is never
+restored onto a database whose write contract it cannot satisfy. Writer credentials
 enter only migration, activation, and final pruning. The Vercel
 application connects as the native PostgreSQL login
 `observatory_projection_reader_20260813`. That versioned login inherits only
@@ -291,7 +295,7 @@ operator decisions.
 
 The Observatory reads Neon at build. `apps/www` does not: it is a static export
 and reads one committed file,
-`packages/observatory-data/config/editorial-summary.v4.json`, so the editorial site
+`packages/observatory-data/config/editorial-summary.v5.json`, so the editorial site
 builds with no database credential at all.
 
 That file is the only projection data the public editorial site serves, which
@@ -305,10 +309,9 @@ on Sidon sets against a real 0.
 
 Three things now prevent that recurring:
 
-- The generator reads through `statusStateRoot()` and the `work` projection —
-  the same helpers the Observatory renders from — rather than reaching into
-  `status` by hand, so a field that moves breaks the build instead of
-  evaluating to `undefined`.
+- The generator reads current Repository counts, roots, and direct-Submission
+  actions through the same typed status reader the Observatory uses, rather
+  than reaching into `status` by hand.
 - `packages/observatory-data/tests/editorial-summary.test.ts` runs the generator
   against a status shaped like the one the emitter publishes today and asserts
   the output satisfies the schema. It needs no database, so it runs in CI.
@@ -317,10 +320,11 @@ Three things now prevent that recurring:
   and redeployed the Observatory only, which is precisely how www's numbers
   froze while the Observatory's stayed current.
 
-v2 also keeps `open_work` nullable. Null means the repository's target index is
-blocked and its inventory could not be read, which is not the same claim as
-zero open work; the landing page prints an em dash and says so rather than
-rendering unknown as none.
+The v5 snapshot contains current Repository counts, roots, and the exact
+`status.actions.work` direct-Submission action. It contains no work inventory.
+Neon retains predecessor `repositories.work` and `work_offers` rows only so an
+already-published release can be verified and selected during the bounded
+rollback window; current readers and writers do not expose them.
 
 Regenerate by hand with `bun run projection:snapshot` (needs
 `VELA_PROJECTION_DATABASE_URL` once).
@@ -371,8 +375,10 @@ still deploys the exact qualified site commit, because a rendering change can
 need publication without changing a source fact. Git `main` is not pushed until
 the staged snapshot passes the full static, projection-backed product, and
 reconstruction gates. Structural ranking is not persisted
-as a second projection layer; producer work comes from the exact Target Index,
-while graph position remains non-authoritative.
+as a second projection layer. Producer work starts in the native source and
+enters through the exact direct-Submission action in replayed Repository status;
+graph position remains non-authoritative. Historical Target records stay in
+their source evidence and are not projected as a live queue.
 
 Clean-room reconstruction is disposable, creates no Neon branch, and is a
 required stage of the direct release. The same command runs independently:
@@ -575,8 +581,9 @@ The two active applications deliberately use different release paths:
 - `www.vela.space` uses Vercel's Git deployment for relevant `main` changes.
 - The unified application has automatic Git deployment disabled. An operator
   runs `bun run refresh:observatory` from clean exact `main`. The command owns
-  static qualification, fresh source acquisition, rooted activity migration,
-  projection activation, local snapshot staging, post-activation qualification,
+  static qualification, fresh source acquisition, a compatibility deployment,
+  rooted activity migration, projection activation, local snapshot staging,
+  post-activation qualification,
   provider-loss reconstruction, exact commit publication, Vercel deployment,
   public readiness and durable qualification. Each child receives only its
   required credential class. One deployment serves both product domains.

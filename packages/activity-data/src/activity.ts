@@ -7,13 +7,11 @@ import {
   scientificAnchorRoot,
   type ActivityAccount,
   type AddDiscussionEntryInput,
-  type ApproachTargetBinding,
   type AttachArtifactInput,
   type CommandOptions,
   type CreateApproachInput,
   type CreateAttemptInput,
   type CreateWorkRequestInput,
-  type ExecutionBinding,
   type CreateWorkspaceInput,
   type FollowProblemInput,
   type ForkApproachInput,
@@ -94,58 +92,6 @@ function dbAnchor(anchor: ScientificAnchor): JsonRecord {
     claim_id: anchor.claimId,
     claim_root: anchor.claimRoot,
     claim_standing: anchor.claimStanding,
-  };
-}
-
-function normalizedApproachTarget(target: ApproachTargetBinding | undefined): JsonRecord {
-  if (target === undefined) return {};
-  if (target.kind === "unbound") {
-    if (
-      target.targetId !== null
-      || target.targetPacketRoot !== null
-      || target.targetRecordRoot !== null
-    ) {
-      throw new Error("unbound Approach target fields must be null");
-    }
-    return {
-      target_id: null,
-      target_packet_root: null,
-      target_record_root: null,
-    };
-  }
-  if (target.kind !== "target") throw new Error("Approach target kind is invalid");
-  if (
-    !target.targetId.trim()
-    || target.targetId !== target.targetId.trim()
-    || target.targetId.length > 1_000
-    || !/^sha256:[0-9a-f]{64}$/u.test(target.targetPacketRoot)
-    || (target.targetRecordRoot !== null && !/^sha256:[0-9a-f]{64}$/u.test(target.targetRecordRoot))
-  ) {
-    throw new Error("bound Approach target is invalid");
-  }
-  return {
-    target_id: target.targetId,
-    target_packet_root: target.targetPacketRoot,
-    target_record_root: target.targetRecordRoot,
-  };
-}
-
-function normalizedExecutionBinding(binding: ExecutionBinding | null): JsonRecord | null {
-  if (binding === null) return null;
-  const fields = ["packetRoot", "profileRoot", "resultContractRoot", "verifierCapsuleRoot"];
-  if (Object.keys(binding).sort().join("\0") !== fields.join("\0")) {
-    throw new Error("execution binding must contain exactly four roots");
-  }
-  for (const [field, value] of Object.entries(binding)) {
-    if (!/^sha256:[0-9a-f]{64}$/u.test(value)) {
-      throw new Error(`execution binding has invalid ${field}`);
-    }
-  }
-  return {
-    packet_root: binding.packetRoot,
-    profile_root: binding.profileRoot,
-    verifier_capsule_root: binding.verifierCapsuleRoot,
-    result_contract_root: binding.resultContractRoot,
   };
 }
 
@@ -311,7 +257,6 @@ export function createApproach(
     anchor: dbAnchor(input.anchor),
     title: input.title,
     summary: input.summary,
-    ...normalizedApproachTarget(input.target),
   }, options);
 }
 
@@ -338,7 +283,7 @@ export function createAttempt(
     external_session_id: input.externalSessionId ?? null,
     locator: input.locator ?? null,
     title: input.title,
-    execution_binding: normalizedExecutionBinding(input.executionBinding),
+    execution_binding: null,
   }, options);
 }
 
@@ -399,7 +344,7 @@ export function attachArtifact(
   return command(context, "artifact.attach", {
     anchor: dbAnchor(input.anchor),
     attempt_id: input.attemptId,
-    execution_binding: normalizedExecutionBinding(input.executionBinding),
+    execution_binding: null,
     content_root: input.contentRoot,
     kind: input.kind,
     path: input.path,

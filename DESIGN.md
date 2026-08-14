@@ -84,8 +84,8 @@ the scientific-state presentation.
 The words on screen are the product's first design decision. A reader who
 cannot name what they are looking at cannot check it.
 
-**Public concepts.** Problem, Current State, Research Brief, Target, Research
-Block, Workspace, Decision. These are the reader's orientation layer, not a new
+**Public concepts.** Problem, Current State, Research Brief, Research Block,
+Workspace, Decision. These are the reader's orientation layer, not a new
 protocol ontology.
 
 **Exact provenance.** Repository, Claim, Submission, Proposal, Verification
@@ -309,7 +309,7 @@ Use one small vocabulary across diagrams:
   standing, never its presence;
 - filled core — a scoped Verification that passed; a half core, acceptance with
   conditions;
-- dashed ring with no core — open work, or a Claim not yet judged;
+- amber ring — a Claim awaiting an authorized Decision;
 - faded ring with a forward chevron — standing moved on to a successor;
 - gold stroke — the route carrying standing or direction forward;
 - plain stroke — a recorded relationship;

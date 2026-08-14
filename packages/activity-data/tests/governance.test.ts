@@ -12,7 +12,6 @@ describe("Workspace implementation permission matrix", () => {
       "createWorkspaceAction",
       "followProblemAction",
       "createApproachAction",
-      "createTargetApproachAction",
       "forkApproachAction",
       "createAttemptAction",
       "updateAttemptAction",
@@ -140,59 +139,4 @@ describe("Workspace implementation permission matrix", () => {
     expect(boundary).toContain("hosted_signing_dependency");
   });
 
-  test("binds Target activity through the reviewed non-authoritative implementation", () => {
-    const adr = read("docs/architecture/target-bound-approach-adr.md");
-    const activityReadme = read("packages/activity-data/README.md");
-    const threatModel = read("docs/security/vela-web-threat-model.md");
-    const migration = read("packages/activity-data/migrations/20260812_target_bound_approach.sql");
-    const actions = read("apps/observatory/src/app/actions/activity.ts");
-    const configuration = read("apps/observatory/src/lib/target-bound-approach.ts");
-    const workbench = read("apps/observatory/src/components/vela/workbench.tsx");
-    const liveProof = read("packages/activity-data/scripts/live-proof.mjs");
-    expect(adr).toContain("deployed and enabled; live integration proof passed; remaining interaction matrix tracked below");
-    expect(adr).toContain("target_packet_root");
-    expect(adr).toContain('authority_effect = "none"');
-    for (const releaseRecord of [adr, activityReadme]) {
-      const normalizedRecord = releaseRecord.replace(/\s+/gu, " ");
-      expect(normalizedRecord).toContain("2026-08-12T22:27:04.266Z");
-      expect(normalizedRecord).toContain("sha256:07ece86171ad085aaf61fc055030fc5642740a8deff450a39e5e091e96ef4ba9");
-      expect(normalizedRecord).toContain("dpl_5V3urZxnbCpD28RTukVqYGTCbPqD");
-      expect(normalizedRecord).toContain("8231c1efd62912c4c95487569a63ffb1e189c805");
-      expect(normalizedRecord).toContain("two bound Approach rows for one Target");
-      expect(normalizedRecord).toContain("pre-binding `9feb6975` reader");
-      expect(normalizedRecord).toContain("authenticated");
-      expect(normalizedRecord).toContain("forced-colors");
-      expect(normalizedRecord).toContain("dpl_7KpFZumFChqPrNyDugwMeVQVsUiX");
-      expect(normalizedRecord).toContain("2f6b11b847cf85651bd975f81da3237453bdbdb9");
-      expect(normalizedRecord).toContain("sha256:3f73ed2ac1408d704ed12e2e74616001dc2c2039d07c3d7fbf9031e1e2da8b26");
-      expect(normalizedRecord).toContain("dpl_GPkozXemijMU6CvpisrQhyJLR4CH");
-      expect(normalizedRecord).toContain("03fee3e74b8e85855ced16622c7271079d291641");
-      expect(normalizedRecord).toContain("sha256:2ac8fb5a79313fc0fdae6f23d4862d26f11f2682222eb1f58ae31513888e190c");
-      expect(normalizedRecord).toContain("sha256:36c2fb19749e1f2decd793228747973b21335b906d07488a73b020f8d4d075b0");
-    }
-    expect(threatModel).toContain("Exact implementation permission matrix");
-    expect(threatModel).toContain("top-of-action default-off feature gate; current-offer guard");
-    expect(threatModel).toContain("20260813_execution_binding_lineage.sql");
-    expect(threatModel).toContain("full authenticated browser matrix remains open");
-    expect(threatModel).not.toContain("candidate migration remains unapplied");
-    expect(threatModel).not.toContain("Target migration exists as an unapplied candidate");
-    expect(threatModel).not.toContain("Draft form is not yet bound to selected stored evidence");
-    expect(migration).toContain("activity_approaches_target_binding_check");
-    expect(migration).toContain("activity_approaches_authority_effect_check");
-    expect(migration).toContain("source_approach.target_packet_root");
-    expect(configuration).toContain("VELA_TARGET_BOUND_APPROACH_ENABLED");
-    expect(configuration).toContain('if (value === "true")');
-    expect(actions.indexOf("requireTargetBoundApproachWriteEnabled()"))
-      .toBeLessThan(actions.indexOf("const scope = await mutationContext(form)", actions.indexOf("createTargetApproachAction")));
-    expect(actions).toContain("requireCurrentTargetBinding(");
-    expect(actions).not.toMatch(/targetRecordRoot:\s*text\(/u);
-    expect(workbench).toContain("targetBoundApproachWritesEnabled: targetBoundApproachConfiguration().enabled");
-    expect(workbench).toContain("if (enabled) return <TargetApproachForm");
-    expect(liveProof).toContain("WHERE target_id IS NOT NULL");
-    expect(liveProof).toContain("preEnableBoundApproaches !== 0");
-    expect(liveProof).toContain('"cross-tenant Target-bound activity write"');
-    expect(liveProof).toContain('"cross-tenant Target-bound activity read"');
-    expect(liveProof).toContain("Target-bound create audit did not retain the exact request root once");
-    expect(liveProof).toContain("Target-bound fork changed immutable provenance");
-  });
 });

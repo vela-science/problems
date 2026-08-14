@@ -9,8 +9,8 @@ Hosted Vela is non-authoritative.
 
 ## Product story
 
-The protocol's own loop is `map → target → work → submit → verify → decide →
-remap`. Vela's shorter compression of it is:
+The product follows the Repository loop `Problem → native work → submit →
+verify → decide → replay`. Vela's shorter compression of it is:
 
 ```text
 MAP → ADVANCE → REMAP
@@ -50,7 +50,6 @@ concepts cover the complete reader and contributor journey:
   Standing shown as separate axes.
 - **Research Brief** explains what matters, what changed, the evidence and
   limits, and what should move next.
-- **Target** is a bounded next step.
 - **Research Block** is a durable contribution such as an experiment, proof
   attempt, dataset, argument, or negative result with rooted artifacts.
 - **Workspace** is private or team-local coordination. Its shared canvas, approaches,
@@ -80,7 +79,8 @@ The global application has four user-intent destinations:
 
 - **Home** answers what changed, what matters, and what needs attention.
 - **Problems** is the cross-domain scientific-question directory.
-- **Open work** leads from open Targets into Workspaces and Research Blocks.
+- **Contribute** opens the exact Repository handoff and optional Problem-scoped
+  Workspace without creating a central work inventory.
 - **State history** opens exact scientific changes and ordinary Repository
   commits as separate lanes. Workspace activity appears only in a
   separate lane when retained global activity data can support it.
@@ -96,7 +96,7 @@ records are populated enough to make the pages useful.
   bounded actions needed to contribute.
 
 Repository is source context, not a prerequisite destination. Assertions,
-Targets, Proposed changes, Checks, Decisions, Research Briefs, Sources, roots,
+Proposed changes, Checks, Decisions, Research Briefs, Sources, roots,
 and graphs remain inspectable inside Current State or through an advanced
 records view. Exact protocol types remain visible in provenance. They do not compete with
 Problems in primary navigation.
@@ -128,7 +128,6 @@ URL. This is a presentation mapping, not a new protocol ontology.
 | Repository `vfr_` | **Repository** | global list, and the container for everything below |
 | Claim Record `vcl_` | **Assertion** | inside a Repository |
 | source-native problem | **Problem** | inside a Repository, where the source has them |
-| Target, and the Offer that ranks it | **Target** | inside a Repository; a release roll-up exists |
 | Submission `vsb_` | **Published contribution** | inside a Proposed change and in an Assertion's lineage |
 | Proposal `vpr_` | **Proposed change** | inside a Repository; a release roll-up exists |
 | Verification Record `vvr_` | **Check** | inside a Proposed change |
@@ -145,7 +144,7 @@ grouping never implies authority.
 ### Vocabulary
 
 Public scientific-state vocabulary: Problem, Current State, Research Brief,
-Target, Decision, Repository, Source. Public contribution vocabulary: Workspace
+Decision, Repository, Source. Public contribution vocabulary: Workspace
 and Research Block. Exact provenance vocabulary: Claim, Submission, Proposal,
 Verification Record, Event, Result Dossier, root, and format.
 
@@ -241,7 +240,7 @@ Workspace mode supports workspace membership, follows, approaches and forks,
 attempt lifecycle, comments and notes, assignments and reproduction requests,
 rooted external artifact metadata, provider-neutral external session references on Attempts, and
 portable Submission drafts. Its shared canvas projects exact parentage among
-Targets, Approaches, Sessions, Codebases, Research Blocks, and drafts. A bounded
+Approaches, Sessions, Codebases, Research Blocks, and drafts. A bounded
 Loro document stores the shared canvas note as append-only, content-rooted
 activity updates. Idempotency keys make retries safe. Version fields make
 non-CRDT concurrent edits fail with an explicit conflict.
@@ -280,7 +279,7 @@ activity database cannot remove or change that state.
 
 ### Navigation
 
-The global sidebar follows user intent: Home, Problems, Open work, and State
+The global sidebar follows user intent: Home, Problems, Contribute, and State
 history, with Repositories and Sources visually subordinated as Provenance. Hubs live in
 Problems discovery. That global map remains visible on a Problem page; Current
 State and Workspace are the Problem's local mode switch in its header. Account

@@ -8,8 +8,6 @@ import {
   type ActivityDiscussionEntry,
   type ActivitySubmissionDraft,
   type ActivityWorkRequest,
-  type ApproachTargetBinding,
-  type ExecutionBinding,
   type HashRoot,
   type ProblemActivity,
   type StoredScientificAnchor,
@@ -86,12 +84,12 @@ function anchorFrom(value: unknown): StoredScientificAnchor {
   };
 }
 
-function approachTargetFrom(row: JsonRecord): ApproachTargetBinding {
+function validateRetainedApproachFields(row: JsonRecord): boolean {
   const targetId = nullableText(row, "target_id", "approach target_id");
   const targetPacketRoot = nullableHashRoot(row, "target_packet_root", "approach target_packet_root");
   const targetRecordRoot = nullableHashRoot(row, "target_record_root", "approach target_record_root");
   if (targetId === null && targetPacketRoot === null && targetRecordRoot === null) {
-    return { kind: "unbound", targetId: null, targetPacketRoot: null, targetRecordRoot: null };
+    return false;
   }
   if (
     targetId === null
@@ -100,12 +98,12 @@ function approachTargetFrom(row: JsonRecord): ApproachTargetBinding {
     || targetId.length > 1_000
     || targetPacketRoot === null
   ) {
-    throw new Error("activity response has invalid approach Target binding");
+    throw new Error("activity response has invalid retained approach binding");
   }
-  return { kind: "target", targetId, targetPacketRoot, targetRecordRoot };
+  return true;
 }
 
-function executionBindingFrom(row: JsonRecord, subject: string): ExecutionBinding | null {
+function validateRetainedExecutionFields(row: JsonRecord, subject: string): boolean {
   if (row.authority_effect !== "none") {
     throw new Error(`activity response has invalid ${subject} authority_effect`);
   }
@@ -122,12 +120,12 @@ function executionBindingFrom(row: JsonRecord, subject: string): ExecutionBindin
     `${subject} execution_result_contract_root`,
   );
   if (packetRoot === null && profileRoot === null && verifierCapsuleRoot === null && resultContractRoot === null) {
-    return null;
+    return false;
   }
   if (packetRoot === null || profileRoot === null || verifierCapsuleRoot === null || resultContractRoot === null) {
     throw new Error(`activity response has partial ${subject} execution binding`);
   }
-  return { packetRoot, profileRoot, verifierCapsuleRoot, resultContractRoot };
+  return true;
 }
 
 function approachFrom(value: unknown): ActivityApproach {
@@ -135,6 +133,7 @@ function approachFrom(value: unknown): ActivityApproach {
   if (row.authority_effect !== "none") {
     throw new Error("activity response has invalid approach authority_effect");
   }
+  const frozenLegacy = validateRetainedApproachFields(row);
   return {
     id: text(row.id, "approach id"), workspaceId: text(row.workspace_id, "approach workspace_id"),
     anchorRoot: hashRoot(row, "anchor_root", "approach anchor_root"),
@@ -142,7 +141,7 @@ function approachFrom(value: unknown): ActivityApproach {
     createdByAccountId: text(row.created_by_account_id, "approach created_by_account_id"),
     title: text(row.title, "approach title"), summary: text(row.summary, "approach summary"),
     state: member(row.state, ["open", "paused", "completed", "abandoned"] as const, "approach state"),
-    target: approachTargetFrom(row), authorityEffect: "none",
+    authorityEffect: "none", frozenLegacy,
     version: integer(row.version, "approach version", 1), createdAt: text(row.created_at, "approach created_at"),
     updatedAt: text(row.updated_at, "approach updated_at"),
   };
@@ -150,6 +149,7 @@ function approachFrom(value: unknown): ActivityApproach {
 
 function attemptFrom(value: unknown): ActivityAttempt {
   const row = record(value, "attempt");
+  const frozenLegacy = validateRetainedExecutionFields(row, "attempt");
   return {
     id: text(row.id, "attempt id"), workspaceId: text(row.workspace_id, "attempt workspace_id"),
     anchorRoot: hashRoot(row, "anchor_root", "attempt anchor_root"),
@@ -158,8 +158,7 @@ function attemptFrom(value: unknown): ActivityAttempt {
     provider: text(row.provider, "attempt provider"),
     externalSessionId: nullableText(row, "external_session_id", "attempt external_session_id"),
     locator: nullableText(row, "locator", "attempt locator"), title: text(row.title, "attempt title"),
-    state: member(row.state, ["planned", "running", "paused", "completed", "failed", "abandoned"] as const, "attempt state"),
-    executionBinding: executionBindingFrom(row, "attempt"),
+    state: member(row.state, ["planned", "running", "paused", "completed", "failed", "abandoned"] as const, "attempt state"), frozenLegacy,
     version: integer(row.version, "attempt version", 1), createdAt: text(row.created_at, "attempt created_at"),
     updatedAt: text(row.updated_at, "attempt updated_at"),
   };
@@ -198,6 +197,7 @@ function workRequestFrom(value: unknown): ActivityWorkRequest {
 
 function artifactFrom(value: unknown): ActivityArtifact {
   const row = record(value, "artifact");
+  const frozenLegacy = validateRetainedExecutionFields(row, "artifact");
   return {
     id: text(row.id, "artifact id"), workspaceId: text(row.workspace_id, "artifact workspace_id"),
     anchorRoot: hashRoot(row, "anchor_root", "artifact anchor_root"),
@@ -208,21 +208,21 @@ function artifactFrom(value: unknown): ActivityArtifact {
     kind: text(row.kind, "artifact kind"), path: text(row.path, "artifact path"),
     mediaType: nullableText(row, "media_type", "artifact media_type"),
     byteSize: row.byte_size == null ? null : integer(row.byte_size, "artifact byte_size"),
-    locator: nullableText(row, "locator", "artifact locator"),
-    executionBinding: executionBindingFrom(row, "artifact"), createdAt: text(row.created_at, "artifact created_at"),
+    locator: nullableText(row, "locator", "artifact locator"), frozenLegacy,
+    createdAt: text(row.created_at, "artifact created_at"),
   };
 }
 
 function draftFrom(value: unknown): ActivitySubmissionDraft {
   const row = record(value, "submission draft");
+  const frozenLegacy = validateRetainedExecutionFields(row, "submission draft");
   return {
     id: text(row.id, "submission draft id"), workspaceId: text(row.workspace_id, "submission draft workspace_id"),
     anchorRoot: hashRoot(row, "anchor_root", "submission draft anchor_root"),
     artifactId: nullableText(row, "artifact_id", "submission draft artifact_id"),
     createdByAccountId: text(row.created_by_account_id, "submission draft created_by_account_id"),
     schemaName: member(row.schema_name, ["vela.submission.v2"] as const, "submission draft schema_name"),
-    payloadRoot: hashRoot(row, "payload_root", "submission draft payload_root"),
-    executionBinding: executionBindingFrom(row, "submission draft"),
+    payloadRoot: hashRoot(row, "payload_root", "submission draft payload_root"), frozenLegacy,
     version: integer(row.version, "submission draft version", 1), createdAt: text(row.created_at, "submission draft created_at"),
     updatedAt: text(row.updated_at, "submission draft updated_at"),
   };

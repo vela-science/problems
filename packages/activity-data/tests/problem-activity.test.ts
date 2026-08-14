@@ -93,14 +93,18 @@ describe("problem activity response contract", () => {
       id: "approach-1",
       anchorRoot,
       version: 2,
-      target: { kind: "unbound", targetId: null, targetPacketRoot: null, targetRecordRoot: null },
       authorityEffect: "none",
+      frozenLegacy: false,
     });
-    expect(activity.attempts[0]).toMatchObject({ id: "attempt-1", approachId: "approach-1", executionBinding: null });
+    expect(activity.approaches[0]).not.toHaveProperty("target");
+    expect(activity.attempts[0]).toMatchObject({ id: "attempt-1", approachId: "approach-1", frozenLegacy: false });
+    expect(activity.attempts[0]).not.toHaveProperty("executionBinding");
     expect(activity.discussion[0]).toMatchObject({ id: "discussion-1", approachId: "approach-1" });
     expect(activity.workRequests[0]).toMatchObject({ id: "request-1", kind: "reproduction" });
-    expect(activity.artifacts[0]).toMatchObject({ id: "artifact-1", contentRoot: root("8"), byteSize: 42, executionBinding: null });
-    expect(activity.drafts[0]).toMatchObject({ id: "draft-1", artifactId: null, payloadRoot: root("9"), executionBinding: null });
+    expect(activity.artifacts[0]).toMatchObject({ id: "artifact-1", contentRoot: root("8"), byteSize: 42, frozenLegacy: false });
+    expect(activity.artifacts[0]).not.toHaveProperty("executionBinding");
+    expect(activity.drafts[0]).toMatchObject({ id: "draft-1", artifactId: null, payloadRoot: root("9"), frozenLegacy: false });
+    expect(activity.drafts[0]).not.toHaveProperty("executionBinding");
     expect(activity.crdtUpdates[0]).toEqual({
       id: "crdt-update-1",
       workspaceId,
@@ -148,21 +152,16 @@ describe("problem activity response contract", () => {
     expect(() => parseProblemActivity(nullableSubject, anchorRoot)).toThrow("audit subject_kind");
   });
 
-  test("parses exact Target bindings and refuses partial or authoritative rows", () => {
+  test("validates retained Approach fields without exposing the retired binding", () => {
     const bound = fixture();
     bound.approaches[0]!.target_id = "erdos:321:bounded-search";
     bound.approaches[0]!.target_packet_root = root("b");
     bound.approaches[0]!.target_record_root = root("c");
-    expect(parseProblemActivity(bound, anchorRoot).approaches[0]?.target).toEqual({
-      kind: "target",
-      targetId: "erdos:321:bounded-search",
-      targetPacketRoot: root("b"),
-      targetRecordRoot: root("c"),
-    });
+    expect(parseProblemActivity(bound, anchorRoot).approaches[0]).toMatchObject({ frozenLegacy: true });
 
     const partial = fixture();
     partial.approaches[0]!.target_id = "erdos:321:bounded-search";
-    expect(() => parseProblemActivity(partial, anchorRoot)).toThrow("Target binding");
+    expect(() => parseProblemActivity(partial, anchorRoot)).toThrow("retained approach binding");
 
     const malformed = fixture();
     malformed.approaches[0]!.target_id = "erdos:321:bounded-search";
@@ -172,12 +171,12 @@ describe("problem activity response contract", () => {
     const emptyTarget = fixture();
     emptyTarget.approaches[0]!.target_id = "   ";
     emptyTarget.approaches[0]!.target_packet_root = root("b");
-    expect(() => parseProblemActivity(emptyTarget, anchorRoot)).toThrow("Target binding");
+    expect(() => parseProblemActivity(emptyTarget, anchorRoot)).toThrow("retained approach binding");
 
     const paddedTarget = fixture();
     paddedTarget.approaches[0]!.target_id = " erdos:321:bounded-search ";
     paddedTarget.approaches[0]!.target_packet_root = root("b");
-    expect(() => parseProblemActivity(paddedTarget, anchorRoot)).toThrow("Target binding");
+    expect(() => parseProblemActivity(paddedTarget, anchorRoot)).toThrow("retained approach binding");
 
     const authorityCreep = fixture();
     authorityCreep.approaches[0]!.authority_effect = "standing";
@@ -201,7 +200,7 @@ describe("problem activity response contract", () => {
     expect(parseProblemActivity(decimalString, anchorRoot).audit[0]?.sequence).toBe(17);
   });
 
-  test("parses complete execution lineage and refuses partial or authoritative rows", () => {
+  test("validates retained execution fields without exposing them in the current read model", () => {
     const bound = fixture();
     for (const row of [bound.attempts[0]!, bound.artifacts[0]!, bound.drafts[0]!]) {
       row.execution_packet_root = root("b");
@@ -209,16 +208,13 @@ describe("problem activity response contract", () => {
       row.execution_verifier_capsule_root = root("d");
       row.execution_result_contract_root = root("e");
     }
-    const expected = {
-      packetRoot: root("b"),
-      profileRoot: root("c"),
-      verifierCapsuleRoot: root("d"),
-      resultContractRoot: root("e"),
-    };
     const parsed = parseProblemActivity(bound, anchorRoot);
-    expect(parsed.attempts[0]?.executionBinding).toEqual(expected);
-    expect(parsed.artifacts[0]?.executionBinding).toEqual(expected);
-    expect(parsed.drafts[0]?.executionBinding).toEqual(expected);
+    expect(parsed.attempts[0]?.frozenLegacy).toBe(true);
+    expect(parsed.artifacts[0]?.frozenLegacy).toBe(true);
+    expect(parsed.drafts[0]?.frozenLegacy).toBe(true);
+    expect(parsed.attempts[0]).not.toHaveProperty("executionBinding");
+    expect(parsed.artifacts[0]).not.toHaveProperty("executionBinding");
+    expect(parsed.drafts[0]).not.toHaveProperty("executionBinding");
 
     const partial = fixture();
     partial.attempts[0]!.execution_packet_root = root("b");

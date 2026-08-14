@@ -7,7 +7,7 @@
   miss. It moved here to be a gate rather than a render-time exception.
 
   Now that the summary is a committed snapshot rather than a query, this needs no
-  database: it compares two files in the repo, config/editorial-summary.v4.json
+  database: it compares two files in the repo, config/editorial-summary.v5.json
   against config/vela-release.v1.json. So it can run in `bun run check`, which
   CI executes on pull requests without secrets.
 

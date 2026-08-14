@@ -248,6 +248,34 @@ describe("execution-binding lineage migration", () => {
         WHERE id='${boundArtifact.id}'::uuid`)).toThrow(/activity_artifact_refs_execution_binding_check/iu);
       expect(psql(database, `SELECT count(*) FROM activity.activity_audit_entries
         WHERE subject_id IN ('${boundAttempt.id}','${boundArtifact.id}','${boundDraft.id}')`)).toBe("3");
+
+      applyFile("migrations/20260814_problem_scoped_activity.sql");
+
+      expect(() => execute(workspace, "approach.create", "retired-target-rejected", {
+        anchor, title: "Retired target", summary: "Must refuse.", target_id: "math:321:offer",
+        target_packet_root: binding.packet_root,
+      })).toThrow(/new Approaches are scoped to the exact Problem anchor/iu);
+
+      const fork = JSON.parse(execute(workspace, "approach.fork", "legacy-bound-fork", {
+        source_approach_id: boundApproach.id, title: "Problem-scoped fork", summary: "No inherited binding.",
+      }, Number(boundApproach.version)));
+      expect(fork).toMatchObject({
+        parent_approach_id: boundApproach.id,
+        target_id: null,
+        target_packet_root: null,
+        target_record_root: null,
+        authority_effect: "none",
+      });
+
+      expect(() => execute(workspace, "attempt.create", "retired-execution-rejected", attemptPayload))
+        .toThrow(/retired execution binding is read-only/iu);
+      expect(() => psql(database, `UPDATE activity.attempts SET title='Changed old row'
+        WHERE id='${boundAttempt.id}'::uuid`)).toThrow(/retired execution binding is read-only/iu);
+      expect(psql(database, `SELECT concat_ws('|', target_id, target_packet_root)
+        FROM activity.approaches WHERE id='${boundApproach.id}'::uuid`))
+        .toBe(`math:321:offer|${binding.packet_root}`);
+      expect(psql(database, `SELECT execution_packet_root FROM activity.attempts
+        WHERE id='${boundAttempt.id}'::uuid`)).toBe(binding.packet_root);
     } finally {
       command(join(pgBin, "pg_ctl"), ["--pgdata", data, "--wait", "stop"]);
     }

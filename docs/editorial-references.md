@@ -88,8 +88,7 @@ their provenance in a comment at the point of use:
 - The claims toolbar's range-of-total sentence (`Showing 51–100 of 2,782`) is
   Tailwind Plus phrasing, adapted.
 
-Nothing new was licensed for the Targets surface: `RecordFacts` is the only
-adapted pattern it uses and its entry already stands. The Dossier collection
+The retired Targets surface added no independent licensed pattern. The Dossier collection
 took no overlay, so the stretched-link row above does not extend to it — with
 three links per cell and two paragraphs of triage prose meant to be read, an
 overlay makes that prose unselectable and adds no tab stop the title does not
