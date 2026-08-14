@@ -509,12 +509,40 @@ function productQualification(environment, context, { projectionTests }) {
 function pruneProjection(environment, context) {
   const writer = environmentFor(environment, ["VELA_PROJECTION_WRITER_DATABASE_URL"]);
   const raw = run("bun", [
-    "run", "--filter", "@vela/observatory-data", "releases:prune",
+    "packages/observatory-data/scripts/prune-releases.mjs",
   ], { environment: writer });
-  context.prune = JSON.parse(raw.split("\n").at(-1));
+  context.prune = parsePruneResult(raw);
   run("bun", ["run", "projection:verify"], {
     environment: environmentFor(environment, ["VELA_PROJECTION_DATABASE_URL"]),
   });
+}
+
+export function parsePruneResult(raw) {
+  const result = JSON.parse(raw);
+  const fields = [
+    "authority_effect",
+    "ok",
+    "removed_declarations",
+    "removed_observations",
+    "removed_releases",
+    "retention",
+    "schema",
+  ];
+  const roots = fields.slice(2, 5).map((field) => result?.[field]);
+  if (
+    !result || typeof result !== "object" || Array.isArray(result)
+    || JSON.stringify(Object.keys(result).sort()) !== JSON.stringify(fields)
+    || result?.schema !== "vela.projection-prune-result.v1"
+    || result?.ok !== true
+    || result?.authority_effect !== "none"
+    || result?.retention !== "current_and_two_predecessors"
+    || roots.some((values) => !Array.isArray(values))
+    || roots.flat().some((rootValue) => !/^sha256:[0-9a-f]{64}$/u.test(rootValue))
+    || roots.some((values) => new Set(values).size !== values.length)
+  ) {
+    throw new Error("projection prune returned an invalid result");
+  }
+  return Object.fromEntries(fields.map((field) => [field, result[field]]));
 }
 
 function reconstruct(environment, context) {

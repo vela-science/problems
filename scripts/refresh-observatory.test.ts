@@ -13,6 +13,7 @@ import { join, resolve } from "node:path";
 import {
   assertPublicQualification,
   githubGitEnvironment,
+  parsePruneResult,
   releaseChildEnvironment,
   releaseChangedPaths,
   releaseCommitEnvironment,
@@ -205,5 +206,35 @@ fi
     } finally {
       rmSync(supplied, { recursive: true, force: true });
     }
+  });
+
+  test("parses one exact prune result without package-runner output", () => {
+    const result = {
+      schema: "vela.projection-prune-result.v1",
+      ok: true,
+      authority_effect: "none",
+      retention: "current_and_two_predecessors",
+      removed_releases: [`sha256:${"1".repeat(64)}`],
+      removed_observations: [],
+      removed_declarations: [],
+    };
+    expect(parsePruneResult(JSON.stringify(result))).toEqual(result);
+    expect(() => parsePruneResult(`@vela/observatory-data: ${JSON.stringify(result)}`))
+      .toThrow();
+    expect(() => parsePruneResult(`${JSON.stringify(result)}\ntrailing output`)).toThrow();
+    expect(() => parsePruneResult(JSON.stringify({ ...result, retention: "all" })))
+      .toThrow("projection prune returned an invalid result");
+    expect(() => parsePruneResult(JSON.stringify({ ...result, authority: "accept" })))
+      .toThrow("projection prune returned an invalid result");
+    expect(() => parsePruneResult(JSON.stringify({ ...result, schema: "wrong" })))
+      .toThrow("projection prune returned an invalid result");
+    expect(() => parsePruneResult(JSON.stringify({
+      ...result,
+      removed_releases: [result.removed_releases[0], result.removed_releases[0]],
+    }))).toThrow("projection prune returned an invalid result");
+    expect(() => parsePruneResult(JSON.stringify({
+      ...result,
+      removed_observations: [7],
+    }))).toThrow("projection prune returned an invalid result");
   });
 });
