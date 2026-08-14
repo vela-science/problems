@@ -6,7 +6,6 @@ const currentSurfaces = [
   "packages/observatory-data/src/registry.ts",
   "packages/observatory-data/src/index.ts",
   "packages/observatory-data/scripts/projection-builder.mjs",
-  "packages/observatory-data/config/result-dossiers.v1.json",
   "packages/observatory-data/config/source-local-research-blocks.v1.json",
   ".github/workflows/mirror-replicas.yml",
   "docs/WEB.md",
