@@ -7,6 +7,12 @@ END
 $database$;
 
 REVOKE CONNECT, TEMP ON DATABASE vela_activity FROM PUBLIC;
+-- Neon-created login roles can carry a direct database CONNECT grant even
+-- after PUBLIC is closed. Revoke both the stable permission role and the
+-- current rotated login so the projection reader cannot cross planes.
+REVOKE CONNECT, TEMP ON DATABASE vela_activity FROM
+  vela_projection_reader,
+  vela_projection_reader_20260813;
 GRANT CONNECT ON DATABASE vela_activity TO
   vela_activity_owner,
   vela_activity_migrator,
