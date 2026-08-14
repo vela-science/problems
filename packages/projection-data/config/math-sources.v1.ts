@@ -473,12 +473,12 @@ const registry = {
         "No license is asserted here; only exact source identity and the content root already retained by the Erdős Repository may be projected.",
       ),
       snapshot_policy: contentRootOnly(
-        "The current Erdős source lock binds the observed proof manifest without authorizing a second archive.",
+        "The Problems projection acquisition config binds the observed proof manifest without authorizing a second archive.",
       ),
       adapter: gitAdapter("problems-data/plby-lean-proofs"),
       coverage: {
         repository_slugs: ["math"],
-        included: ["Proof-manifest entries observed by the current Erdős source lock"],
+        included: ["Proof-manifest entries observed by the Problems projection acquisition config"],
         omissions: [
           {
             code: "proof_bytes_not_archived",
@@ -515,12 +515,12 @@ const registry = {
         "No license is asserted here; only exact source identity and the content root already retained by the Erdős Repository may be projected.",
       ),
       snapshot_policy: contentRootOnly(
-        "The current Erdős source lock binds the observed proof manifest without authorizing a second archive.",
+        "The Problems projection acquisition config binds the observed proof manifest without authorizing a second archive.",
       ),
       adapter: gitAdapter("problems-data/jayyhk-erdos-lean"),
       coverage: {
         repository_slugs: ["math"],
-        included: ["Problem and hosted-proof references observed by the current Erdős source lock"],
+        included: ["Problem and hosted-proof references observed by the Problems projection acquisition config"],
         omissions: [
           {
             code: "proof_bytes_not_archived",
@@ -571,13 +571,13 @@ const registry = {
         mode: "reference_only",
         retention: "none",
         reason:
-          "The Erdős source lock pins the commit and tree; the audited Lean sources have no single content locator and are not archived here.",
+          "The source declaration pins the commit and tree; the audited Lean sources have no single content locator and are not archived here.",
       },
       adapter: gitAdapter("problems-data/alphaproof-nexus-results-reference"),
       coverage: {
         repository_slugs: ["math"],
         included: [
-          "The repository identity and commit the current Erdős source lock pins",
+          "The repository identity and commit the source declaration pins",
         ],
         omissions: [
           {
@@ -621,12 +621,12 @@ const registry = {
         "The declaration does not infer a license from repository access; the Atlas projects only exact retained source identities and roots.",
       ),
       snapshot_policy: contentRootOnly(
-        "The current Erdős source lock binds the observed proof manifest without creating a second source archive.",
+        "The Problems projection acquisition config binds the observed proof manifest without creating a second source archive.",
       ),
       adapter: gitAdapter("problems-data/williamjblair-lean-proofs"),
       coverage: {
         repository_slugs: ["math"],
-        included: ["Proof-manifest entries observed by the current Erdős source lock"],
+        included: ["Proof-manifest entries observed by the Problems projection acquisition config"],
         omissions: [
           {
             code: "working_tree_excluded",
@@ -663,7 +663,7 @@ const registry = {
         "The historical Repository retains a frozen attributed observation; this declaration does not infer redistribution rights for wiki text.",
       ),
       snapshot_policy: contentRootOnly(
-        "The Atlas binds the frozen commit and content root already named by the Erdős source lock and does not reacquire or duplicate the wiki snapshot.",
+        "The Problems projection binds the frozen commit and content root in its acquisition config and does not reacquire or duplicate the wiki snapshot.",
       ),
       adapter: retainedSnapshotAdapter("problems-data/erdos-ai-contributions-wiki"),
       coverage: {
@@ -700,7 +700,7 @@ const registry = {
         "The historical Repository retains an attributed frozen observation; this declaration does not infer redistribution rights for repository bytes.",
       ),
       snapshot_policy: contentRootOnly(
-        "The Atlas binds only the commit and content root already named by the Erdős source lock.",
+        "The Problems projection binds only the commit and content root named by its acquisition config.",
       ),
       adapter: retainedSnapshotAdapter("problems-data/gpt-erdos"),
       coverage: {

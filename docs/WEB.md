@@ -182,13 +182,16 @@ authority. Four existed under the previous epoch and existed because there were
 four topics rather than four authorities. Math is public. Its registry entry
 has one canonical GitHub locator and explicit `public` access; the retired
 replica is neither a declared locator nor a scheduled mirror target. Every
-release derives its roster from this registry, clones each declared `main` at
-full depth, and verifies exact remote-head parity. Public product pages and source acquisition both
-use the same anonymous canonical locator; no repository-scoped read credential
-is required or embedded.
+release derives its roster from this registry, clones each declared branch at
+full depth, and verifies exact remote-head parity. Public Repository reads use
+that anonymous canonical locator. Discovery-source acquisition is separately
+owned by the read product: `source-acquisition.v1.json` pins every exact remote
+input and the two retained, content-rooted snapshots. Math owns scientific
+Standing and carries no duplicate source lock. No repository-scoped read
+credential is required or embedded.
 
-The direct release command checks out clean
-`origin/main` Repository tips, verifies them with the pinned Vela release,
+The direct release command checks out each clean declared Repository branch,
+verifies it with the pinned Vela release,
 and writes a content-addressed normalized read model to the `vela_projection`
 database in the `vela-problems-projection` Neon project:
 
@@ -199,7 +202,8 @@ bun run release:problems
 Refresh refuses dirty or unpushed sources, wrong branches or remotes, Vela
 version or released-binary-byte drift, packet drift, missing decision evidence,
 incomplete reviews, root disagreement, and every ambient corpus-drop override.
-It acquires each source once from its declared public remote, builds
+It acquires each discovery source once from the checked projection acquisition
+config, verifies the configured roots, builds
 one candidate, inserts it in one transaction, verifies every stored table root,
 and only then moves `current_release`. Failure before or during that atomic
 activation leaves the prior release current. A later failure retains the private

@@ -31,14 +31,11 @@ import type { SourceAdapterOutput } from "./bundle";
  * new envelope over an unchanged catalogue produces the same revision, the same
  * records, and the same bundle root, because nothing was observed to change.
  *
- * A corollary worth knowing before you reach for it: the `vibemathed` sha256 in
- * the Repository's `sources.lock.json` is not a root this adapter can be checked
- * against, and nothing here reads it. Three lock regenerations that same day
- * produced three digests over an unchanged catalogue, so holding an acquisition
- * to the recorded one would fail on a response that is correct. The lock records
- * what was served at a moment; the catalogue root below is what holds still.
- * `erdos-problems` verifies against its lock precisely because its bytes come
- * from a commit, and the contrast is the point rather than an inconsistency.
+ * A retrieval-envelope digest is not a root this adapter can be checked
+ * against. Three observations that same day produced three digests over an
+ * unchanged catalogue, so holding acquisition to one envelope would reject a
+ * correct response. The catalogue root below is what holds still;
+ * `erdos-problems` can instead verify exact bytes from a Git commit.
  *
  * The same reasoning excludes votes, comment counts and submitter pseudonyms.
  * They are mutable community state rather than the curatorial attribution this

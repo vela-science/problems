@@ -17,7 +17,7 @@ import type { SourceAdapterOutput } from "./bundle";
 
 /**
  * The Erdős problem registry, read from an exact Git checkout of the commit the
- * repository's source lock pins.
+ * Problems projection acquisition config pins.
  *
  * This source is declared `content_root_only` with `retention: "none"` and
  * `redistribution: "reference_only"`, so the adapter binds the observed bytes
@@ -124,7 +124,7 @@ export interface ErdosProblemsAcquisitionOptions {
 
 /**
  * Reads `data/problems.yaml` from an exact detached checkout, verifies its byte
- * root against the pin the source lock records, and emits one problem record per
+ * root against the projection acquisition pin, and emits one problem record per
  * upstream entry.
  */
 export async function acquireErdosProblems(
@@ -148,7 +148,7 @@ export async function acquireErdosProblems(
     );
     if (committedBlob.content_root !== expectedDataRoot) {
       throw new Error(
-        `Erdős problem registry root ${committedBlob.content_root} does not match source lock ${expectedDataRoot}`,
+        `Erdős problem registry root ${committedBlob.content_root} does not match acquisition root ${expectedDataRoot}`,
       );
     }
     const acquired = await acquireBytes(
@@ -256,7 +256,7 @@ export async function acquireErdosProblems(
       records,
       coverage: {
         status: omitted === 0 ? "complete" : "partial",
-        scope: "Every single-numbered entry in the exact Erdős problem registry the source lock pins.",
+        scope: "Every single-numbered entry in the exact Erdős problem registry the projection acquisition config pins.",
         native_record_count: entries.length,
         emitted_record_count: records.length,
         omitted_record_count: omitted,

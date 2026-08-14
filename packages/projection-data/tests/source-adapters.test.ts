@@ -1,6 +1,5 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { execFileSync } from "node:child_process";
-import { existsSync } from "node:fs";
 import {
   mkdir,
   mkdtemp,
@@ -29,11 +28,9 @@ import {
 import { materializeVerifiedSourceAdapterBundle } from "../src/source-adapters/projection";
 import {
   acquireProjectionSourceAdapters,
-  assertKnownRepositorySourceLockEntries,
-  repositorySourceLockDispositions,
   loadProjectionSourceAdapterSet,
+  projectionSourceAcquisition,
   projectionSourceAdapterIds,
-  requireLockedSnapshotRevision,
   requiresProjectionSourceAdapter,
 } from "../src/source-adapters/refresh";
 import { acquirePinnedProofManifest } from "../src/source-adapters/proof-manifests";
@@ -57,17 +54,7 @@ let proofFixtureIndex = 0;
 let openAiFixtureIndex = 0;
 let physlibFixtureIndex = 0;
 let erdosFixtureIndex = 0;
-const exactRepositoryRoot = process.env.VELA_REPOSITORIES_ROOT;
-/* The live authority, not the epoch-1 repository this used to name.
-   `erdos-frontier` is archived and is not in the checkout roster any more, so
-   the guard below could never find its lock and the test was permanently
-   skipped — present, passing by absence, checking nothing. `vela-science/math`
-   declares the same `plby` source and is what the roster clones. */
-const exactRepository = exactRepositoryRoot ? join(exactRepositoryRoot, "math") : "";
-const exactPlbyTest = exactRepository
-  && existsSync(join(exactRepository, "sources.lock.json"))
-  ? test
-  : test.skip;
+const exactPlbyTest = process.env.VELA_REPOSITORIES_ROOT ? test : test.skip;
 
 async function json(path: string, value: unknown): Promise<string> {
   await mkdir(join(path, ".."), { recursive: true });
@@ -1122,8 +1109,8 @@ Requirements:
   /* The eight pinned roots used to fall back to `{}` for any revision that was
      not the pinned release, and `exactFile` skips its comparison when a root is
      undefined — so pointing the adapter at another commit acquired eight files
-     with no verification at all and said nothing. That is how the source lock
-     and this constant drifted four commits apart without a single failure. */
+     with no verification at all and said nothing. That is how two copies of
+     the acquisition pin drifted four commits apart without a failure. */
   test("refuses an unpinned revision that declares no expected roots", async () => {
     const fixture = await physlibFixture();
     await expect(acquirePhyslib({
@@ -1249,43 +1236,32 @@ describe("pinned external source adapters", () => {
     }
   });
 
-  test("fails closed when a proof-manifest source lock root is wrong", async () => {
+  test("fails closed when a proof-manifest acquisition root is wrong", async () => {
     const fixture = await proofManifestFixture("plby");
     await expect(acquirePinnedProofManifest({
       kind: "plby",
       revision: fixture.commit,
       ...fixture,
       expectedManifestRoot: `sha256:${"0".repeat(64)}`,
-    })).rejects.toThrow("does not match source lock");
+    })).rejects.toThrow("does not match acquisition root");
   });
 
   exactPlbyTest("reproduces the exact locked PLBY manifest deterministically", async () => {
-    const lock = JSON.parse(
-      await readFile(join(exactRepository, "sources.lock.json"), "utf8"),
-    );
-    const plby = lock.sources.plby;
-    /* The lock is the expectation, not a second copy of it. This block used to
-       restate the entry as a literal, so every deliberate acquisition run broke
-       a test that was not about acquisition — the Erdős lock is generated from a
-       moving upstream, and re-pinning it moved `commit` and `sha256` while the
-       shared resolver additionally began recording `tree`. What must hold is
-       that the entry names a pinnable revision this adapter can act on. */
+    const plby = projectionSourceAcquisition.sources.plby;
     expect(plby).toMatchObject({
-      kind: "proof_manifest",
-      repo: "plby/lean-proofs",
-      ref: "main",
+      repository: "plby/lean-proofs",
       path: "data/sources.yaml",
     });
-    expect(plby.commit).toMatch(/^[0-9a-f]{40}$/u);
-    expect(plby.sha256).toMatch(/^sha256:[0-9a-f]{64}$/u);
-    expect(plby.url).toContain(plby.path);
+    expect(plby.revision).toMatch(/^[0-9a-f]{40}$/u);
+    expect(plby.root).toMatch(/^sha256:[0-9a-f]{64}$/u);
+    expect(plby.locator).toContain(plby.path);
     const options = {
       kind: "plby" as const,
-      repository: `https://github.com/${plby.repo}.git`,
-      revision: plby.commit,
+      repository: `https://github.com/${plby.repository}.git`,
+      revision: plby.revision,
       manifestPath: plby.path,
-      expectedManifestRoot: plby.sha256,
-      logicalManifestLocator: plby.url,
+      expectedManifestRoot: plby.root,
+      logicalManifestLocator: plby.locator,
     };
     const first = await acquirePinnedProofManifest(options);
     const second = await acquirePinnedProofManifest(options);
@@ -1526,28 +1502,22 @@ describe("offline bundle verification", () => {
 });
 
 describe("projection refresh source-adapter set", () => {
-  test("fails closed when a retained snapshot revision drifts from its source lock", () => {
-    for (const [sourceKey, revisionKey] of [
-      ["wiki", "wiki_commit"],
-      ["gpt_erdos", "commit"],
-    ] as const) {
-      expect(() => requireLockedSnapshotRevision(
-        {
-          sources: {
-            [sourceKey]: {
-              commit: "locked-revision",
-            },
+  test("fails closed when a retained acquisition snapshot drifts", async () => {
+    await expect(acquireProjectionSourceAdapters({
+      outputDirectory: join(fixtureRoot, "drifted-acquisition-snapshot"),
+      sourceAcquisition: {
+        ...projectionSourceAcquisition,
+        sources: {
+          ...projectionSourceAcquisition.sources,
+          wiki: {
+            ...projectionSourceAcquisition.sources.wiki,
+            snapshot_root: `sha256:${"0".repeat(64)}`,
           },
         },
-        sourceKey,
-        {
-          [revisionKey]: "stale-snapshot-revision",
-        },
-        revisionKey,
-      )).toThrow(
-        `${sourceKey}: retained snapshot revision stale-snapshot-revision does not match source lock locked-revision`,
-      );
-    }
+      },
+    })).rejects.toThrow(
+      "wiki: retained snapshot bytes do not match acquisition root",
+    );
   });
 
   test("derives required adapter coverage from the checked registry", () => {
@@ -1575,30 +1545,6 @@ describe("projection refresh source-adapter set", () => {
     );
   });
 
-  test("fails closed when the source lock gains an undispositioned source", () => {
-    expect(() => assertKnownRepositorySourceLockEntries({
-      sources: {
-        erdos: { kind: "problem_registry" },
-        physlib: { kind: "formal_library" },
-      },
-    })).not.toThrow();
-    /* Every disposition now names a declaration. `fidelity` used to sit here as
-       `repository_derived` with a null source, describing a cache in the retired
-       Erdős repository that no declaration ever backed — a way for an entry to
-       be known without being declared. */
-    expect(Object.values(repositorySourceLockDispositions).every(
-      ({ kind, source_id }) => kind === "registry_source" && source_id !== null,
-    )).toBe(true);
-    expect(() => assertKnownRepositorySourceLockEntries({
-      sources: {
-        erdos: { kind: "problem_registry" },
-        astra: { kind: "research_release" },
-      },
-    })).toThrow(
-      "source lock entry astra has no Math Source Registry declaration",
-    );
-  });
-
   test("acquires and re-verifies the complete exact set before projection", async () => {
     const openAi = await openAiTenProofsFixture();
     const physlib = await physlibFixture();
@@ -1608,49 +1554,12 @@ describe("projection refresh source-adapter set", () => {
     const william = await proofManifestFixture("williamjblair");
     const oeis = await oeisFixture();
     const vibemathed = await vibemathedFixture();
-    const repositoriesRoot = join(fixtureRoot, "projection-set-input");
     const erdosRegistry = await erdosProblemsFixture();
-    const repository = join(repositoriesRoot, "math");
-    await json(join(repository, "sources.lock.json"), {
-      sources: {
-        erdos: {
-          repo: erdosRegistry.repository,
-          commit: erdosRegistry.commit,
-          path: erdosRegistry.dataPath,
-          sha256: erdosRegistry.dataRoot,
-          url: erdosRegistry.logicalLocator,
-        },
-        codetables: { kind: "reference_only" },
-        oeis_a309370: { url: "https://oeis.org/A309370?fmt=json" },
-        vibemathed: { url: "https://vibemathed.com/api/dataset" },
-        physlib: { commit: physlib.commit, tree: physlib.tree },
-        plby: {
-          repo: plby.repository,
-          commit: plby.commit,
-          path: plby.manifestPath,
-          sha256: plby.manifestRoot,
-          url: plby.logicalManifestLocator,
-        },
-        wiki: { commit: "wiki-revision" },
-        gpt_erdos: { commit: "gpt-revision" },
-        jayyhk: {
-          repo: jayyhk.repository,
-          commit: jayyhk.commit,
-          path: jayyhk.manifestPath,
-          sha256: jayyhk.manifestRoot,
-          url: jayyhk.logicalManifestLocator,
-        },
-        williamjblair_lean_proofs: {
-          repo: william.repository,
-          commit: william.commit,
-          path: william.manifestPath,
-          sha256: william.manifestRoot,
-          url: william.logicalManifestLocator,
-        },
-      },
-    });
-    await json(join(repository, "sources/wiki/registry.json"), {
-      wiki_commit: "wiki-revision",
+    const snapshotDirectory = join(fixtureRoot, "projection-set-snapshots");
+    const wikiRevision = "1".repeat(40);
+    const gptRevision = "2".repeat(40);
+    const wikiPath = await json(join(snapshotDirectory, "wiki.json"), {
+      wiki_commit: wikiRevision,
       summary: { problems: 1, entries: 1 },
       problems: {
         "1": [{
@@ -1660,8 +1569,8 @@ describe("projection refresh source-adapter set", () => {
         }],
       },
     });
-    await json(join(repository, "sources/gpt_erdos/registry.json"), {
-      commit: "gpt-revision",
+    const gptPath = await json(join(snapshotDirectory, "gpt.json"), {
+      commit: gptRevision,
       summary: { problems: 1 },
       problems: {
         "1": {
@@ -1670,16 +1579,60 @@ describe("projection refresh source-adapter set", () => {
         },
       },
     });
-    execFileSync("git", ["init", "-q", repository]);
-    git(repository, ["config", "user.name", "Vela Test"]);
-    git(repository, ["config", "user.email", "test@vela.invalid"]);
-    git(repository, ["add", "."]);
-    git(repository, ["commit", "-q", "-m", "fixture source inputs"]);
+    const sourceAcquisition = {
+      schema: "vela.projection-source-acquisition.v1" as const,
+      authority_effect: "none" as const,
+      sources: {
+        erdos: {
+          repository: erdosRegistry.repository,
+          revision: erdosRegistry.commit,
+          path: erdosRegistry.dataPath,
+          root: erdosRegistry.dataRoot,
+          locator: erdosRegistry.logicalLocator,
+        },
+        openai_ten_proofs: {
+          revision: openAi.commit,
+          tree: openAi.tree,
+        },
+        plby: {
+          repository: plby.repository,
+          revision: plby.commit,
+          path: plby.manifestPath,
+          root: plby.manifestRoot,
+          locator: plby.logicalManifestLocator,
+        },
+        jayyhk: {
+          repository: jayyhk.repository,
+          revision: jayyhk.commit,
+          path: jayyhk.manifestPath,
+          root: jayyhk.manifestRoot,
+          locator: jayyhk.logicalManifestLocator,
+        },
+        williamjblair_lean_proofs: {
+          repository: william.repository,
+          revision: william.commit,
+          path: william.manifestPath,
+          root: william.manifestRoot,
+          locator: william.logicalManifestLocator,
+        },
+        wiki: {
+          revision: wikiRevision,
+          snapshot_path: "wiki.json",
+          snapshot_root: sha256(await readFile(wikiPath)),
+        },
+        gpt_erdos: {
+          revision: gptRevision,
+          snapshot_path: "gpt.json",
+          snapshot_root: sha256(await readFile(gptPath)),
+        },
+      },
+    };
 
     const output = join(fixtureRoot, "projection-source-set");
     const prepared = await acquireProjectionSourceAdapters({
-      repositoriesRoot,
       outputDirectory: output,
+      sourceAcquisition,
+      sourceSnapshotDirectory: snapshotDirectory,
       formalRepository: formal.repository,
       formalRevision: formal.commit,
       formalPublishedDataset: formal.published,

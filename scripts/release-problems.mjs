@@ -324,12 +324,11 @@ function retainExactFile(environment, { tag, path, target, title, notes }) {
   run("cmp", [path, existing], { environment: safe });
 }
 
-function prepareAdapters(environment, work, repositoriesRoot, siteCommit) {
+function prepareAdapters(environment, work, siteCommit) {
   const safe = environmentFor(environment);
   const raw = run("bun", [
     "packages/projection-data/scripts/source-adapters.mjs",
     "refresh",
-    "--repositories-root", repositoriesRoot,
     "--output", join(work, "source-adapters"),
     "--artifact-directory", work,
   ], { environment: safe });
@@ -785,7 +784,7 @@ const stageDefinitions = Object.freeze([
   ["neon_production_identity", (environment, context) => { context.neon = verifyNeonProductionBranch(environment); }],
   ["vela_generator_identity", (environment, context) => { context.vela = verifyVelaBinary(environment, context.velaBin); }],
   ["repository_acquisition", (environment, context) => { context.repositoriesRoot = acquireRepositories(environment, context.work); }],
-  ["adapter_prepare", (environment, context) => { context.adapter = prepareAdapters(environment, context.work, context.repositoriesRoot, context.siteCommit); }],
+  ["adapter_prepare", (environment, context) => { context.adapter = prepareAdapters(environment, context.work, context.siteCommit); }],
   ["adapter_retain", (environment, context) => retainAdapters(environment, context)],
   ["rollback_floor", async (_environment, context) => {
     await captureRollbackFloor(context);

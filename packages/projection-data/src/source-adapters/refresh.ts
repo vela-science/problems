@@ -1,4 +1,3 @@
-import { execFileSync } from "node:child_process";
 import {
   mkdir,
   readFile,
@@ -7,9 +6,9 @@ import {
 } from "node:fs/promises";
 import { dirname, join, resolve, sep } from "node:path";
 import { z } from "zod";
-import { repositoryRegistry } from "../registry";
 import { canonicalJson, sha256 } from "../canonical";
 import { mathSourceRegistry } from "../math-sources";
+import sourceAcquisitionInput from "../../config/source-acquisition.v1.json";
 import {
   verifySourceAdapterBundle,
   writeSourceAdapterBundle,
@@ -56,6 +55,43 @@ export type ProjectionSourceAdapterMap =
   ReadonlyMap<string, VerifiedSourceAdapterBundle>;
 
 const hashRootSchema = z.string().regex(/^sha256:[0-9a-f]{64}$/u);
+const revisionSchema = z.string().regex(/^[0-9a-f]{40}$/u);
+const acquisitionGitSourceSchema = z.object({
+  repository: z.string().min(1),
+  revision: revisionSchema,
+  path: z.string().min(1),
+  root: hashRootSchema,
+  locator: z.string().url(),
+}).strict();
+const acquisitionSnapshotSchema = z.object({
+  revision: revisionSchema,
+  snapshot_path: z.string().regex(/^[a-z0-9][a-z0-9./-]*\.json$/u),
+  snapshot_root: hashRootSchema,
+}).strict();
+const projectionSourceAcquisitionSchema = z.object({
+  schema: z.literal("vela.projection-source-acquisition.v1"),
+  authority_effect: z.literal("none"),
+  sources: z.object({
+    erdos: acquisitionGitSourceSchema,
+    openai_ten_proofs: z.object({
+      revision: revisionSchema,
+      tree: revisionSchema,
+    }).strict(),
+    plby: acquisitionGitSourceSchema,
+    jayyhk: acquisitionGitSourceSchema,
+    williamjblair_lean_proofs: acquisitionGitSourceSchema,
+    wiki: acquisitionSnapshotSchema,
+    gpt_erdos: acquisitionSnapshotSchema,
+  }).strict(),
+}).strict();
+
+export type ProjectionSourceAcquisition = z.infer<
+  typeof projectionSourceAcquisitionSchema
+>;
+
+export const projectionSourceAcquisition = Object.freeze(
+  projectionSourceAcquisitionSchema.parse(sourceAcquisitionInput),
+);
 const projectionSourceAdapterIdSchema = z.string()
   .regex(/^source:[a-z0-9]+(?:-[a-z0-9]+)*$/u)
   .refine(
@@ -95,83 +131,6 @@ export type ProjectionSourceAdapterSet = z.infer<
 export interface PreparedProjectionSourceAdapters {
   manifest: ProjectionSourceAdapterSet;
   bundles: ProjectionSourceAdapterMap;
-}
-
-export const repositorySourceLockDispositions = Object.freeze({
-  alphaproof: {
-    kind: "registry_source",
-    source_id: "source:alphaproof-nexus-results",
-  },
-  codetables: {
-    kind: "registry_source",
-    source_id: "source:codetables-stabilizer",
-  },
-  erdos: { kind: "registry_source", source_id: "source:erdos-problems" },
-  formal_conjectures: {
-    kind: "registry_source",
-    source_id: "source:formal-conjectures",
-  },
-  formal_conjectures_pr_audit: {
-    kind: "registry_source",
-    source_id: "source:formal-conjectures-pr-audit",
-  },
-  gpt_erdos: { kind: "registry_source", source_id: "source:gpt-erdos" },
-  jayyhk: { kind: "registry_source", source_id: "source:jayyhk-erdos-lean" },
-  oeis_a309370: {
-    kind: "registry_source",
-    source_id: "source:oeis-a309370",
-  },
-  openai_ten_proofs: {
-    kind: "registry_source",
-    source_id: "source:openai-ten-proofs",
-  },
-  physlib: { kind: "registry_source", source_id: "source:physlib" },
-  plby: { kind: "registry_source", source_id: "source:plby-lean-proofs" },
-  vibemathed: { kind: "registry_source", source_id: "source:vibemathed" },
-  wiki: {
-    kind: "registry_source",
-    source_id: "source:erdos-ai-contributions-wiki",
-  },
-  williamjblair_lean_proofs: {
-    kind: "registry_source",
-    source_id: "source:williamjblair-lean-proofs",
-  },
-} as const);
-
-/**
- * The source lock is a repository-owned acquisition inventory. Unknown entries
- * must not become invisible simply because the projection refresh does not yet
- * consume them: every entry must name a checked Math Source Registry
- * declaration.
- *
- * The `fidelity` disposition that used to sit here described a derived cache in
- * the retired Erdős repository, and no declaration ever backed it.
- */
-export function assertKnownRepositorySourceLockEntries(lock: unknown): void {
-  const parsed = z.object({
-    sources: z.record(z.string(), z.unknown()),
-  }).passthrough().parse(lock);
-  const declarations = new Set(
-    mathSourceRegistry.sources.map(({ source_id }) => source_id),
-  );
-  for (const sourceKey of Object.keys(parsed.sources).sort()) {
-    const disposition = repositorySourceLockDispositions[
-      sourceKey as keyof typeof repositorySourceLockDispositions
-    ];
-    if (!disposition) {
-      throw new Error(
-        `source lock entry ${sourceKey} has no Math Source Registry declaration`,
-      );
-    }
-    if (
-      disposition.kind === "registry_source"
-      && !declarations.has(disposition.source_id)
-    ) {
-      throw new Error(
-        `source lock entry ${sourceKey} maps to undeclared source ${disposition.source_id}`,
-      );
-    }
-  }
 }
 
 function assertCompleteAdapterSet(
@@ -247,54 +206,12 @@ export async function loadProjectionSourceAdapterSet(
   return { manifest, bundles };
 }
 
-function trackedPath(repository: string, relativePath: string): string {
-  execFileSync("git", ["ls-files", "--error-unmatch", relativePath], {
-    cwd: repository,
-    encoding: "utf8",
-    stdio: ["ignore", "pipe", "pipe"],
-  });
-  return join(repository, relativePath);
-}
-
 async function json(path: string): Promise<Record<string, unknown>> {
   const value = JSON.parse(await readFile(path, "utf8")) as unknown;
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
     throw new Error(`${path}: expected a JSON object`);
   }
   return value as Record<string, unknown>;
-}
-
-function nestedString(
-  value: Record<string, unknown>,
-  path: string[],
-): string {
-  let current: unknown = value;
-  for (const part of path) {
-    if (current === null || typeof current !== "object" || Array.isArray(current)) {
-      throw new Error(`source lock lacks ${path.join(".")}`);
-    }
-    current = (current as Record<string, unknown>)[part];
-  }
-  if (typeof current !== "string" || current.trim() === "") {
-    throw new Error(`source lock lacks ${path.join(".")}`);
-  }
-  return current;
-}
-
-export function requireLockedSnapshotRevision(
-  lock: Record<string, unknown>,
-  sourceKey: string,
-  snapshot: Record<string, unknown>,
-  snapshotRevisionKey: string,
-): string {
-  const expected = nestedString(lock, ["sources", sourceKey, "commit"]);
-  const observed = nestedString(snapshot, [snapshotRevisionKey]);
-  if (observed !== expected) {
-    throw new Error(
-      `${sourceKey}: retained snapshot revision ${observed} does not match source lock ${expected}`,
-    );
-  }
-  return expected;
 }
 
 interface LocalAdapterInput {
@@ -304,8 +221,9 @@ interface LocalAdapterInput {
 }
 
 export interface AcquireProjectionSourceAdaptersOptions {
-  repositoriesRoot: string;
   outputDirectory: string;
+  sourceAcquisition?: ProjectionSourceAcquisition;
+  sourceSnapshotDirectory?: string;
   formalRepository?: string;
   formalRevision?: string;
   formalPublishedDataset?: string;
@@ -326,6 +244,28 @@ export interface AcquireProjectionSourceAdaptersOptions {
   chunkRecordLimit?: number;
 }
 
+async function configuredSnapshot(
+  sourceKey: "wiki" | "gpt_erdos",
+  snapshotRevisionKey: string,
+  acquisition: ProjectionSourceAcquisition,
+  snapshotDirectory: string,
+): Promise<{ input: string; revision: string }> {
+  const source = acquisition.sources[sourceKey];
+  const input = withinDirectory(snapshotDirectory, source.snapshot_path);
+  const bytes = await readFile(input);
+  if (sha256(bytes) !== source.snapshot_root) {
+    throw new Error(`${sourceKey}: retained snapshot bytes do not match acquisition root`);
+  }
+  const snapshot = await json(input);
+  const observed = snapshot[snapshotRevisionKey];
+  if (observed !== source.revision) {
+    throw new Error(
+      `${sourceKey}: retained snapshot revision ${String(observed)} does not match acquisition revision ${source.revision}`,
+    );
+  }
+  return { input, revision: source.revision };
+}
+
 function githubRepository(value: string): string {
   if (
     value.startsWith("/")
@@ -337,7 +277,7 @@ function githubRepository(value: string): string {
     return value;
   }
   if (!/^[^/\s]+\/[^/\s]+$/u.test(value)) {
-    throw new Error(`source lock has invalid GitHub repository ${value}`);
+    throw new Error(`source acquisition config has invalid GitHub repository ${value}`);
   }
   return `https://github.com/${value}.git`;
 }
@@ -368,104 +308,73 @@ export async function acquireProjectionSourceAdapters(
     }
   }
 
-  const entry = repositoryRegistry.repositories.find(({ slug }) => slug === "math");
-  if (!entry) throw new Error("typed repository registry lacks the mathematics repository");
-  const repository = resolve(options.repositoriesRoot, entry.directory);
-  const lockPath = trackedPath(repository, "sources.lock.json");
-  const lock = await json(lockPath);
-  assertKnownRepositorySourceLockEntries(lock);
-  const wikiSnapshot = trackedPath(repository, "sources/wiki/registry.json");
-  const gptSnapshot = trackedPath(repository, "sources/gpt_erdos/registry.json");
-  const wiki = await json(wikiSnapshot);
-  const gpt = await json(gptSnapshot);
-  /* The Erdős problem registry is no longer among these. It is acquired from an
-     exact checkout of the commit the lock pins, because its declaration retains
-     nothing; the retained JSON it used to read was inherited rather than
-     acquired and answered to no pin. */
+  const acquisition = projectionSourceAcquisitionSchema.parse(
+    options.sourceAcquisition ?? projectionSourceAcquisition,
+  );
+  const snapshotDirectory = resolve(
+    options.sourceSnapshotDirectory ?? resolve(import.meta.dir, "../../config"),
+  );
+  const wikiSnapshot = await configuredSnapshot(
+    "wiki",
+    "wiki_commit",
+    acquisition,
+    snapshotDirectory,
+  );
+  const gptSnapshot = await configuredSnapshot(
+    "gpt_erdos",
+    "commit",
+    acquisition,
+    snapshotDirectory,
+  );
   const localInputs: LocalAdapterInput[] = [
     {
       adapter: "erdos-ai-wiki",
-      input: wikiSnapshot,
-      revision: requireLockedSnapshotRevision(
-        lock,
-        "wiki",
-        wiki,
-        "wiki_commit",
-      ),
+      ...wikiSnapshot,
     },
     {
       adapter: "gpt-erdos",
-      input: gptSnapshot,
-      revision: requireLockedSnapshotRevision(
-        lock,
-        "gpt_erdos",
-        gpt,
-        "commit",
-      ),
+      ...gptSnapshot,
     },
   ];
+  const { erdos, plby, jayyhk, williamjblair_lean_proofs: william } = acquisition.sources;
   const plbyLock = {
-    repository: githubRepository(nestedString(lock, ["sources", "plby", "repo"])),
-    revision: nestedString(lock, ["sources", "plby", "commit"]),
-    manifestPath: nestedString(lock, ["sources", "plby", "path"]),
-    expectedManifestRoot: nestedString(lock, ["sources", "plby", "sha256"]),
-    logicalManifestLocator: nestedString(lock, ["sources", "plby", "url"]),
+    repository: githubRepository(plby.repository),
+    revision: plby.revision,
+    manifestPath: plby.path,
+    expectedManifestRoot: plby.root,
+    logicalManifestLocator: plby.locator,
   };
   const jayyhkLock = {
-    repository: githubRepository(nestedString(lock, ["sources", "jayyhk", "repo"])),
-    revision: nestedString(lock, ["sources", "jayyhk", "commit"]),
-    manifestPath: nestedString(lock, ["sources", "jayyhk", "path"]),
-    expectedManifestRoot: nestedString(lock, ["sources", "jayyhk", "sha256"]),
-    logicalManifestLocator: nestedString(lock, ["sources", "jayyhk", "url"]),
+    repository: githubRepository(jayyhk.repository),
+    revision: jayyhk.revision,
+    manifestPath: jayyhk.path,
+    expectedManifestRoot: jayyhk.root,
+    logicalManifestLocator: jayyhk.locator,
   };
   const williamLock = {
-    repository: githubRepository(
-      nestedString(lock, ["sources", "williamjblair_lean_proofs", "repo"]),
-    ),
-    revision: nestedString(
-      lock,
-      ["sources", "williamjblair_lean_proofs", "commit"],
-    ),
-    manifestPath: nestedString(
-      lock,
-      ["sources", "williamjblair_lean_proofs", "path"],
-    ),
-    expectedManifestRoot: nestedString(
-      lock,
-      ["sources", "williamjblair_lean_proofs", "sha256"],
-    ),
-    logicalManifestLocator: nestedString(
-      lock,
-      ["sources", "williamjblair_lean_proofs", "url"],
-    ),
+    repository: githubRepository(william.repository),
+    revision: william.revision,
+    manifestPath: william.path,
+    expectedManifestRoot: william.root,
+    logicalManifestLocator: william.locator,
   };
-  const erdosLock = (field: string) => nestedString(lock, ["sources", "erdos", field]);
   const outputs = await Promise.all([
     acquireErdosProblems({
-      repository: githubRepository(erdosLock("repo")),
-      revision: erdosLock("commit"),
-      dataPath: erdosLock("path"),
-      expectedDataRoot: erdosLock("sha256"),
-      logicalLocator: erdosLock("url"),
+      repository: githubRepository(erdos.repository),
+      revision: erdos.revision,
+      dataPath: erdos.path,
+      expectedDataRoot: erdos.root,
+      logicalLocator: erdos.locator,
     }),
     acquireOpenAiTenProofs({
       repository: options.openAiTenProofsRepository
         ?? openAiTenProofsRelease.repository,
       publicRepository: options.openAiTenProofsPublicRepository
         ?? openAiTenProofsRelease.public_repository,
-      /* The lock, not the constant — and unlike Physlib next door the two
-         agree, at 94bc0feb / 174289e4. That agreement is what makes this read
-         safe rather than lucky: `openai-ten-proofs.ts` applies its five exact
-         roots only when the revision IS the pinned release, so a lock that
-         moved without the constant would acquire five unverified files. It no
-         longer would — the adapter throws instead of falling back — but the
-         reason to keep reading the lock is that the lock is what the Repository
-         declares, and a disagreement should be reconciled by re-pinning rather
-         than by quietly preferring one side. */
       revision: options.openAiTenProofsRevision
-        ?? nestedString(lock, ["sources", "openai_ten_proofs", "commit"]),
+        ?? acquisition.sources.openai_ten_proofs.revision,
       expectedTree: options.openAiTenProofsTree
-        ?? nestedString(lock, ["sources", "openai_ten_proofs", "tree"]),
+        ?? acquisition.sources.openai_ten_proofs.tree,
       expectedRoots: options.openAiTenProofsExpectedRoots,
     }),
     acquirePhyslib({

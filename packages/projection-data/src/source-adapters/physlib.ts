@@ -21,12 +21,8 @@ const hashRootSchema = z.string().regex(/^sha256:[0-9a-f]{64}$/u);
 export const physlibRelease = Object.freeze({
   repository: "https://github.com/leanprover-community/physlib.git",
   public_repository: "https://github.com/leanprover-community/physlib",
-  /* The commit `math/sources.lock.json` declares. It used to name an earlier
-     one, four commits back, and nothing compared the two: the lock said one
-     revision, this said another, and the acquisition quietly used this. The
-     roster test holds them equal, and it runs only in CI. All eight roots below
-     are unchanged across those four commits — none of these files was touched —
-     so this re-pin moves the commit and tree alone. */
+  /* The Web-owned projection adapter pins the exact commit, tree, and eight
+     roots. Math owns scientific Standing, not this discovery acquisition. */
   commit: "e882411d1b6bcbdfdd336d4c509c6cc72e96842d",
   tree: "23c105e133d8c28cb5df81a8b6be52f0f25c0247",
   exact_roots: {

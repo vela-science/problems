@@ -43,7 +43,6 @@ try {
   let artifactPath = process.env.VELA_SOURCE_ADAPTER_ARTIFACT;
   if (!artifactPath) {
     const acquired = await acquireProjectionSourceAdapters({
-        repositoriesRoot,
         outputDirectory: join(adapterStaging, "set"),
         formalRepository: process.env.VELA_FORMAL_CONJECTURES_REPOSITORY,
         formalRevision: process.env.VELA_FORMAL_CONJECTURES_REVISION,

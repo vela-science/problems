@@ -283,7 +283,8 @@ export interface PinnedProofManifestAcquisitionOptions {
 
 /**
  * Reads a proof manifest from an exact detached Git checkout and verifies the
- * byte root retained by the Erdős source lock before emitting normalized rows.
+ * byte root retained by the Problems projection acquisition config before
+ * emitting normalized rows.
  */
 export async function acquirePinnedProofManifest(
   options: PinnedProofManifestAcquisitionOptions,
@@ -306,7 +307,7 @@ export async function acquirePinnedProofManifest(
     );
     if (committedBlob.content_root !== expectedManifestRoot) {
       throw new Error(
-        `${options.kind} proof manifest root ${committedBlob.content_root} does not match source lock ${expectedManifestRoot}`,
+        `${options.kind} proof manifest root ${committedBlob.content_root} does not match acquisition root ${expectedManifestRoot}`,
       );
     }
     const manifestFile = join(checkout.directory, options.manifestPath);
@@ -351,7 +352,7 @@ export async function acquirePinnedProofManifest(
       records,
       coverage: {
         status: "complete",
-        scope: `Every entry in the exact ${options.kind} proof manifest retained by the Erdős source lock.`,
+        scope: `Every entry in the exact ${options.kind} proof manifest retained by the Problems projection acquisition config.`,
         native_record_count: records.length,
         emitted_record_count: records.length,
         omitted_record_count: 0,

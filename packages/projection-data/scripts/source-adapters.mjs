@@ -14,8 +14,7 @@ import {
 function usage() {
   console.error(`Usage:
   bun scripts/source-adapters.mjs refresh \\
-    --repositories-root <directory> --output <new-directory> \\
-    --artifact-directory <directory> \\
+    --output <new-directory> --artifact-directory <directory> \\
     [--formal-repository <url-or-path>] [--formal-revision <git-ref>] \\
     [--formal-published-data <url-or-path>] \\
     [--formal-extracted-data <path> | --run-extractor] \\
@@ -64,7 +63,6 @@ function chunkRecordLimit(options) {
 async function refresh(options) {
   const output = resolve(required(options, "--output"));
   const prepared = await acquireProjectionSourceAdapters({
-    repositoriesRoot: resolve(required(options, "--repositories-root")),
     outputDirectory: output,
     /* The same five knobs `refresh-neon-projection.mjs` reads from the
        environment, because a refresh reaches acquisition through exactly one of
