@@ -10,6 +10,8 @@ node_modules/
 dist/
 apps/*/.astro/
 apps/*/.next/
+# Development state harness output. Rendered on demand, served by nothing.
+apps/*/.state-harness/
 apps/*/dist/
 apps/*/out/
 apps/*/storybook-static/
