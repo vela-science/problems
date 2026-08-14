@@ -442,12 +442,21 @@ await denied(neon(observatoryUrl.toString()).query(
 
 const catalogResults = await ownerTransaction((transaction) => [transaction.query(`SELECT
   count(*) FILTER (WHERE column_name ~* '(private|signing|authority).*key|seed')::integer AS authority_secret_columns,
-  count(*) FILTER (WHERE data_type='bytea')::integer AS byte_columns
+  count(*) FILTER (WHERE data_type='bytea'
+    AND NOT (table_name='workspace_crdt_updates' AND column_name='update_bytes'))::integer
+    AS unexpected_byte_columns,
+  count(*) FILTER (WHERE data_type='bytea'
+    AND table_name='workspace_crdt_updates' AND column_name='update_bytes')::integer
+    AS bounded_crdt_byte_columns
   FROM information_schema.columns WHERE table_schema='activity'`)]);
 const catalogRows = catalogResults.at(-1);
 const catalog = catalogRows?.[0];
 if (!catalog) throw new Error("activity catalog probe returned no row");
-if (Number(catalog.authority_secret_columns) !== 0 || Number(catalog.byte_columns) !== 0) {
+if (
+  Number(catalog.authority_secret_columns) !== 0
+  || Number(catalog.unexpected_byte_columns) !== 0
+  || Number(catalog.bounded_crdt_byte_columns) !== 1
+) {
   throw new Error(`activity catalog authority/byte boundary failed: ${JSON.stringify(catalog)}`);
 }
 const activity = await getProblemActivity({
@@ -507,5 +516,6 @@ console.log(JSON.stringify({
   appBaseTablesDenied: true,
   observatoryWriteDenied: true,
   authoritySecretColumns: 0,
-  artifactByteColumns: 0,
+  unexpectedByteColumns: 0,
+  boundedCrdtByteColumns: 1,
 }));
