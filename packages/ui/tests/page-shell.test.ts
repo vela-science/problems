@@ -14,7 +14,8 @@ describe("PageShell", () => {
     expect(source).toContain('const Component = as ?? "section"');
     expect(source).toContain('<Component className={cn("vela-page-section"');
     expect(source).toContain('<div className={cn("vela-page-section-head"');
-    expect(styles).toContain('max-width: var(--vela-page-max)');
+    expect(styles).toContain('padding: var(--vela-page-block) var(--vela-page-gutter)');
+    expect(styles).toContain('max-width: none');
     expect(styles).toContain('.page[data-layout="reading"]');
     expect(styles).toContain('@media print');
   });

@@ -63,7 +63,8 @@ for (const workspace of workspaces) {
 const productCss = readFileSync(join(ui, "src/styles/product.css"), "utf8");
 const themeCss = readFileSync(join(ui, "src/styles/theme.css"), "utf8");
 const pageShellCss = readFileSync(join(ui, "src/components/vela/page-shell.module.css"), "utf8");
-if (!pageShellCss.includes('.page[data-layout="canvas"]') || !pageShellCss.includes("max-width: var(--vela-page-max)")) failures.push("canvas layout must retain the canonical PageShell origin and outer width");
+if (!pageShellCss.includes('.page[data-layout="canvas"]') || !pageShellCss.includes("max-width: none")) failures.push("PageShell layouts must use the full shared content rail");
+if (!pageShellCss.includes("padding: var(--vela-page-block) var(--vela-page-gutter)")) failures.push("PageShell must retain the shared responsive page gutter");
 if (productCss.split("\n").length + themeCss.split("\n").length > 180) failures.push("authored product and theme CSS exceed the 180-line aggregate cap");
 const editorialCss = readFileSync(join(ui, "src/styles/editorial.css"), "utf8");
 const typesetCss = readFileSync(join(ui, "src/styles/typeset.css"), "utf8");

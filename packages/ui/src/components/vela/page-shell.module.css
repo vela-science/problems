@@ -4,17 +4,17 @@
   --vela-surface-inset: var(--vela-page-gutter);
   margin-inline: auto;
   width: 100%;
-  max-width: var(--vela-page-max);
+  max-width: none;
   padding: var(--vela-page-block) var(--vela-page-gutter);
 }
 
 .page[data-layout="reading"] > :not(.hero) {
   width: 100%;
-  max-width: 72rem;
+  max-width: none;
 }
 
 .page[data-layout="canvas"] {
-  max-width: var(--vela-page-max);
+  max-width: none;
 }
 
 .page:has(> .hero:first-child) {

@@ -1,7 +1,6 @@
 /* Grounds and ink share one cool hue family. Direction gold never owns a
  * foreground pair, so it cannot become an unreviewed fill or status badge. */
 :root {
-  --vela-page-max: 88rem;
   --vela-page-gutter: clamp(1rem, 2.5vw, 2rem);
   --vela-page-block: clamp(1.75rem, 4vw, 3rem);
   --vela-page-section: clamp(2.5rem, 6vw, 4.5rem);
