@@ -14,6 +14,7 @@ import {
   assertPublicQualification,
   githubGitEnvironment,
   releaseChildEnvironment,
+  releaseChangedPaths,
   releaseCommitEnvironment,
   releaseOrder,
   releaseWorkDirectory,
@@ -117,6 +118,38 @@ describe("direct Observatory release", () => {
     expect(result.stdout).toContain("Vela Observatory release <release@vela.space>");
     expect(environment.NODE_OPTIONS).toBeUndefined();
     expect(environment.HOME).toBe("/release/home");
+  });
+
+  test("identifies the exact changed paths without parsing trimmed porcelain status", () => {
+    const directory = mkdtempSync(join(tmpdir(), "vela-release-changed-paths-"));
+    const environment = {
+      ...process.env,
+      GIT_AUTHOR_NAME: "Release test",
+      GIT_AUTHOR_EMAIL: "release-test@example.test",
+      GIT_COMMITTER_NAME: "Release test",
+      GIT_COMMITTER_EMAIL: "release-test@example.test",
+    };
+    const git = (...args: string[]) => spawnSync("git", args, {
+      cwd: directory,
+      env: environment,
+      encoding: "utf8",
+    });
+    try {
+      expect(git("init", "--quiet").status).toBe(0);
+      writeFileSync(join(directory, "snapshot.json"), "old\n");
+      expect(git("add", "snapshot.json").status).toBe(0);
+      expect(git("commit", "--quiet", "-m", "base").status).toBe(0);
+      writeFileSync(join(directory, "snapshot.json"), "new\n");
+      expect(releaseChangedPaths(directory, environment)).toEqual(["snapshot.json"]);
+      writeFileSync(join(directory, " snapshot.json"), "lookalike\n");
+      expect(git("add", " snapshot.json").status).toBe(0);
+      expect(releaseChangedPaths(directory, environment)).toEqual([
+        " snapshot.json",
+        "snapshot.json",
+      ]);
+    } finally {
+      rmSync(directory, { recursive: true, force: true });
+    }
   });
 
   test("private-origin Git uses only the scoped GitHub credential helper", () => {

@@ -419,13 +419,37 @@ function writeRollbackCheckpoint(context, phase) {
   context.rollbackCheckpoint = record;
 }
 
+export function releaseChangedPaths(repository = root, environment = process.env) {
+  const paths = new Set();
+  for (const args of [
+    ["diff", "--no-renames", "--name-only", "-z"],
+    ["diff", "--cached", "--no-renames", "--name-only", "-z"],
+    ["ls-files", "--others", "--exclude-standard", "-z"],
+  ]) {
+    const result = spawnSync("git", args, {
+      cwd: repository,
+      env: environment,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "pipe"],
+      maxBuffer: 64 * 1024 * 1024,
+    });
+    if (result.status !== 0) {
+      throw new Error(`git ${args.join(" ")} failed: ${result.stderr.trim()}`);
+    }
+    for (const path of result.stdout.split("\0").filter(Boolean)) {
+      paths.add(path);
+    }
+  }
+  return [...paths].sort();
+}
+
 function stageSnapshot(environment, context) {
   const safe = environmentFor(environment);
   const commit = releaseCommitEnvironment(environment);
   const snapshot = "packages/observatory-data/config/editorial-summary.v5.json";
-  const changed = git(["status", "--porcelain"], root, safe).split("\n").filter(Boolean);
-  if (changed.some((line) => line.slice(3) !== snapshot)) {
-    throw new Error("refresh modified files outside the editorial snapshot");
+  const changed = releaseChangedPaths(root, safe);
+  if (changed.some((path) => path !== snapshot)) {
+    throw new Error(`refresh modified files outside the editorial snapshot: ${changed.join(", ")}`);
   }
   run("git", ["fetch", "--quiet", "origin", "main"], { environment: safe });
   if (git(["rev-parse", "origin/main"], root, safe) !== context.siteCommit) {
