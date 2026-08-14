@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <strong>The editorial home and read-only Observatory for Vela.</strong><br>
+  <strong>The editorial home and read-only Problems for Vela.</strong><br>
   Exact scientific state, published without moving the authority boundary into the web.
 </p>
 
@@ -24,10 +24,10 @@ surfaces and three shared packages.
 | Path | Runtime | Purpose |
 | --- | --- | --- |
 | `apps/www` | Next.js static export | Product home, the Constellations essay, and the vendored Vela documentation |
-| `apps/observatory` | Next.js | Root-bound Problem, Repository, Claim, Proposal, Decision, Dossier, Source, graph, and reproduce views |
+| `apps/problems` | Next.js | Root-bound Problem, Repository, Claim, Proposal, Decision, Source, graph, and replay views |
 | `packages/brand` | TypeScript and CSS | Framework-neutral sail, tokens, fonts, licenses, and deterministic exports |
 | `packages/ui` | React, shadcn, and Base UI | Private shared primitives and stable Vela presentation semantics |
-| `packages/observatory-data` | TypeScript | Sole validator and projector for Repository, Problem, search, and graph data |
+| `packages/projection-data` | TypeScript | Sole validator and projector for Repository, Problem, search, and graph data |
 
 The applications share brand assets, exact facts, and eligible React
 primitives. Authored editorial and workbench route compositions stay with
@@ -54,7 +54,7 @@ canonical repository Git repositories
        released Vela binary
                  │
                  ▼
-        @vela/observatory-data
+        @vela/projection-data
           │              │
  compact rooted      normalized release rows
     summary                 │
@@ -99,7 +99,7 @@ npm, pnpm, Yarn, Turborepo, or per-application lockfiles.
 ```bash
 bun install --frozen-lockfile
 bun run dev:www          # http://127.0.0.1:4321
-bun run dev:observatory  # http://127.0.0.1:4322
+bun run dev:problems  # http://127.0.0.1:4322
 ```
 
 ## Verify a release candidate
@@ -133,9 +133,9 @@ and accessibility floors. [`docs/design-system.md`](docs/design-system.md)
 records the package, shadcn/Base UI, Tailwind, private-registry, and licensed
 source workflow. The July 2026 v1.1 designer handoff is recorded under
 `packages/brand/reference/2026-07-v1.1/`; reference artwork is excluded from
-production. The archived Observatory at `vela-site@34e3f20` supplied product
+production. The archived Problems at `vela-site@34e3f20` supplied product
 anatomy, not a second active implementation. Porting provenance is recorded in
-[`docs/observatory-provenance.md`](docs/observatory-provenance.md).
+[`docs/problems-provenance.md`](docs/problems-provenance.md).
 
 The internal Vela registry coordinates private product source. It is not a
 public registry or separately distributed component library. Licensed Tailwind

@@ -8,7 +8,7 @@ Decisions. The application must preserve that separation.
 
 ## Current implementation
 
-`apps/observatory/src/lib/auth.ts` uses AuthKit and maps a signed-in WorkOS user
+`apps/problems/src/lib/auth.ts` uses AuthKit and maps a signed-in WorkOS user
 to one hosted Account. The activity database owns Workspace membership,
 tenant checks, immutable scientific anchors, request roots, idempotency, and
 its append-only audit. Hosted code has no Vela authority key, Verification

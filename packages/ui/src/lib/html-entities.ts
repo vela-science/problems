@@ -6,7 +6,7 @@
    the other side: rehype escapes a fenced block before Shiki re-highlights it.
 
    Each app had written its own decoder and neither was a superset of the other
-   — the Observatory handled decimal references and five named entities, the
+   — the Problems handled decimal references and five named entities, the
    documentation pipeline handled five hex references and the same named ones —
    so the same source text decoded differently depending on which surface drew
    it. One table, one pass.

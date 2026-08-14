@@ -6,7 +6,7 @@ references:
 - Next.js, React, Tailwind CSS, shadcn, Base UI, and other JavaScript
   dependencies under the licenses recorded in their packages and lockfile.
 - Hugeicons React 1.1.9 and Hugeicons Core Free Icons 4.2.3 under the MIT
-  License. They are the Observatory's single interface icon system.
+  License. They are the Problems's single interface icon system.
 - IBM Plex Mono under the SIL Open Font License 1.1. The served files are
   Latin subsets; the font name and license terms remain those of its authors.
 - Zodiak, Gambetta, and Switzer, all Indian Type Foundry, under the ITF Free

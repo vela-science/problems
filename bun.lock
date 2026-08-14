@@ -5,8 +5,8 @@
     "": {
       "name": "vela-web",
     },
-    "apps/observatory": {
-      "name": "@vela/observatory",
+    "apps/problems": {
+      "name": "@vela/problems",
       "dependencies": {
         "@base-ui/react": "^1.6.0",
         "@hugeicons/core-free-icons": "4.2.3",
@@ -14,7 +14,7 @@
         "@react-sigma/core": "^5.0.5",
         "@vela/activity-data": "workspace:*",
         "@vela/brand": "workspace:*",
-        "@vela/observatory-data": "workspace:*",
+        "@vela/projection-data": "workspace:*",
         "@vela/ui": "workspace:*",
         "@workos-inc/authkit-nextjs": "4.3.1",
         "@workos-inc/node": "10.9.0",
@@ -59,7 +59,7 @@
         "@hugeicons/core-free-icons": "4.2.3",
         "@hugeicons/react": "1.1.9",
         "@vela/brand": "workspace:*",
-        "@vela/observatory-data": "workspace:*",
+        "@vela/projection-data": "workspace:*",
         "@vela/ui": "workspace:*",
         "clsx": "^2.1.1",
         "flexsearch": "^0.8.212",
@@ -100,7 +100,7 @@
       "name": "@vela/activity-data",
       "dependencies": {
         "@neondatabase/serverless": "^1.1.0",
-        "@vela/observatory-data": "workspace:*",
+        "@vela/projection-data": "workspace:*",
         "ajv": "8.20.0",
         "ajv-formats": "3.0.1",
         "server-only": "0.0.1",
@@ -116,8 +116,8 @@
         "sharp": "0.35.0",
       },
     },
-    "packages/observatory-data": {
-      "name": "@vela/observatory-data",
+    "packages/projection-data": {
+      "name": "@vela/projection-data",
       "dependencies": {
         "@neondatabase/serverless": "^1.1.0",
         "graphology": "^0.26.0",
@@ -708,9 +708,9 @@
 
     "@vela/brand": ["@vela/brand@workspace:packages/brand"],
 
-    "@vela/observatory": ["@vela/observatory@workspace:apps/observatory"],
+    "@vela/problems": ["@vela/problems@workspace:apps/problems"],
 
-    "@vela/observatory-data": ["@vela/observatory-data@workspace:packages/observatory-data"],
+    "@vela/projection-data": ["@vela/projection-data@workspace:packages/projection-data"],
 
     "@vela/ui": ["@vela/ui@workspace:packages/ui"],
 

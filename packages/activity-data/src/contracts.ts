@@ -1,6 +1,6 @@
-import { canonicalJson, sha256, type HashRoot } from "@vela/observatory-data/canonical";
+import { canonicalJson, sha256, type HashRoot } from "@vela/projection-data/canonical";
 
-export type { HashRoot } from "@vela/observatory-data/canonical";
+export type { HashRoot } from "@vela/projection-data/canonical";
 
 export type HostedAccountInput = {
   workosUserId: string;
@@ -101,8 +101,6 @@ export function assessAnchorFreshness(
 }
 
 export type AttemptState = "planned" | "running" | "paused" | "completed" | "failed" | "abandoned";
-export type WorkRequestKind = "assignment" | "reproduction";
-export type WorkRequestState = "open" | "claimed" | "completed" | "cancelled";
 export type DiscussionKind = "comment" | "note";
 export type DiscussionVisibility = "workspace" | "private";
 
@@ -122,7 +120,6 @@ export type ActivityApproach = {
   summary: string;
   state: "open" | "paused" | "completed" | "abandoned";
   authorityEffect: "none";
-  frozenLegacy: boolean;
   version: number;
   createdAt: string;
   updatedAt: string;
@@ -134,12 +131,8 @@ export type ActivityAttempt = {
   anchorRoot: HashRoot;
   approachId: string;
   createdByAccountId: string;
-  provider: string;
-  externalSessionId: string | null;
-  locator: string | null;
   title: string;
   state: AttemptState;
-  frozenLegacy: boolean;
   version: number;
   createdAt: string;
   updatedAt: string;
@@ -158,23 +151,6 @@ export type ActivityDiscussionEntry = {
   createdAt: string;
 };
 
-export type ActivityWorkRequest = {
-  id: string;
-  workspaceId: string;
-  anchorRoot: HashRoot;
-  approachId: string | null;
-  attemptId: string | null;
-  createdByAccountId: string;
-  assigneeAccountId: string | null;
-  kind: WorkRequestKind;
-  state: WorkRequestState;
-  title: string;
-  detail: string;
-  version: number;
-  createdAt: string;
-  updatedAt: string;
-};
-
 export type ActivityArtifact = {
   id: string;
   workspaceId: string;
@@ -188,7 +164,6 @@ export type ActivityArtifact = {
   mediaType: string | null;
   byteSize: number | null;
   locator: string | null;
-  frozenLegacy: boolean;
   createdAt: string;
 };
 
@@ -196,11 +171,9 @@ export type ActivitySubmissionDraft = {
   id: string;
   workspaceId: string;
   anchorRoot: HashRoot;
-  artifactId: string | null;
   createdByAccountId: string;
   schemaName: "vela.submission.v2";
   payloadRoot: HashRoot;
-  frozenLegacy: boolean;
   version: number;
   createdAt: string;
   updatedAt: string;
@@ -237,7 +210,6 @@ export type ProblemActivity = {
   approaches: ActivityApproach[];
   attempts: ActivityAttempt[];
   discussion: ActivityDiscussionEntry[];
-  workRequests: ActivityWorkRequest[];
   artifacts: ActivityArtifact[];
   drafts: ActivitySubmissionDraft[];
   crdtUpdates: ActivityCrdtUpdate[];
@@ -266,16 +238,11 @@ export type ForkApproachInput = {
 };
 export type CreateAttemptInput = {
   approachId: string;
-  provider: string;
-  externalSessionId?: string | null;
-  locator?: string | null;
   title: string;
 };
 export type UpdateAttemptInput = {
   state?: AttemptState;
   title?: string;
-  externalSessionId?: string | null;
-  locator?: string | null;
 };
 export type AddDiscussionEntryInput = {
   anchor: ScientificAnchor;
@@ -284,15 +251,6 @@ export type AddDiscussionEntryInput = {
   kind: DiscussionKind;
   visibility: DiscussionVisibility;
   body: string;
-};
-export type CreateWorkRequestInput = {
-  anchor: ScientificAnchor;
-  approachId?: string | null;
-  attemptId?: string | null;
-  kind: WorkRequestKind;
-  title: string;
-  detail: string;
-  assigneeAccountId?: string | null;
 };
 export type AttachArtifactInput = {
   anchor: ScientificAnchor;

@@ -24,7 +24,7 @@ Adopted at the same time, from the repository's own `packages/ui` rather than
 from a template: the official shadcn/Base UI primitives now render this
 application's buttons, badges, sheet, command palette and copy control. `www`
 had carried vendored Tailwind Plus equivalents for all five while
-`apps/observatory` already used the shared library. Protocol remains the
+`apps/problems` already used the shared library. Protocol remains the
 documentation shell; its search, mobile navigation, tag and button are gone.
 
 **Amended 2026-07-31, landing rebuild.** Salient, Primer and Radiant were read
@@ -58,7 +58,7 @@ private Vela end product with provenance. They are not published separately as
 a template, component library, or public registry, and source access remains
 within the licensed person or team.
 
-**Amended 2026-08-04, Observatory application patterns.** Work and Attention
+**Amended 2026-08-04, Problems application patterns.** Work and Attention
 adapt Tailwind Plus Application UI v4's conventional multi-column shell and
 stacked-list composition; Activity adapts its simple feed structure. The
 implementation uses the existing shadcn/Base UI `Item`, `Sheet`, `Button`,
@@ -88,11 +88,7 @@ their provenance in a comment at the point of use:
 - The claims toolbar's range-of-total sentence (`Showing 51–100 of 2,782`) is
   Tailwind Plus phrasing, adapted.
 
-The retired Targets surface added no independent licensed pattern. The Dossier collection
-took no overlay, so the stretched-link row above does not extend to it — with
-three links per cell and two paragraphs of triage prose meant to be read, an
-overlay makes that prose unselectable and adds no tab stop the title does not
-already give.
+The retired Targets surface added no independent licensed pattern.
 
 **Amended 2026-08-05, home page rebuilt in the essay register.** The 0.436
 landing — chart, loop ring, command tour, required distinctions, boundary

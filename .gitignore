@@ -34,10 +34,10 @@ prototypes/
 .vercel
 apps/www/public/.well-known/vela-web.json
 apps/www/public/.well-known/vela-site.json
-apps/observatory/public/.well-known/vela-site.json
+apps/problems/public/.well-known/vela-site.json
 apps/*/public/assets/fonts/
-apps/observatory/public/favicon.svg
-apps/observatory/public/data/
+apps/problems/public/favicon.svg
+apps/problems/public/data/
 
 # Local development may check canonical repositories out here. The release
 # command uses a private disposable directory instead; committing either would

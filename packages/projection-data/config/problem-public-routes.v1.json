@@ -1,0 +1,70 @@
+{
+  "schema": "vela.problem-public-routes.v1",
+  "resolver_root": "sha256:a9d6787719c5c8069a9e14ade0f5a62975410272e6cd1583865b282d1d8669dd",
+  "semantics": {
+    "authority_effect": "none",
+    "identity_effect": "reviewed_navigation_only"
+  },
+  "routes": [
+    {
+      "entity_id": "problem:erdos:203",
+      "canonical_namespace": "erdos-problems",
+      "canonical_problem": 203,
+      "canonical_path": "/problems/erdos-problems/203",
+      "current_repository": "math",
+      "current_problem": "203",
+      "current_path": "/p/math/203",
+      "legacy_paths": [
+        "/p/math/203"
+      ]
+    },
+    {
+      "entity_id": "problem:erdos:264",
+      "canonical_namespace": "erdos-problems",
+      "canonical_problem": 264,
+      "canonical_path": "/problems/erdos-problems/264",
+      "current_repository": "math",
+      "current_problem": "264",
+      "current_path": "/p/math/264",
+      "legacy_paths": [
+        "/p/math/264"
+      ]
+    },
+    {
+      "entity_id": "problem:erdos:321",
+      "canonical_namespace": "erdos-problems",
+      "canonical_problem": 321,
+      "canonical_path": "/problems/erdos-problems/321",
+      "current_repository": "math",
+      "current_problem": "321",
+      "current_path": "/p/math/321",
+      "legacy_paths": [
+        "/p/math/321"
+      ]
+    },
+    {
+      "entity_id": "problem:erdos:521",
+      "canonical_namespace": "erdos-problems",
+      "canonical_problem": 521,
+      "canonical_path": "/problems/erdos-problems/521",
+      "current_repository": "math",
+      "current_problem": "521",
+      "current_path": "/p/math/521",
+      "legacy_paths": [
+        "/p/math/521"
+      ]
+    },
+    {
+      "entity_id": "problem:erdos:730",
+      "canonical_namespace": "erdos-problems",
+      "canonical_problem": 730,
+      "canonical_path": "/problems/erdos-problems/730",
+      "current_repository": "math",
+      "current_problem": "730",
+      "current_path": "/p/math/730",
+      "legacy_paths": [
+        "/p/math/730"
+      ]
+    }
+  ]
+}

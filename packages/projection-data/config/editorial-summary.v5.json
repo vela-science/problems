@@ -1,0 +1,24 @@
+{
+  "schema": "site.repository-editorial-summary.v5",
+  "generated_at": "2026-08-14T06:17:06-04:00",
+  "vela_version": "vela 0.975.1",
+  "repositories": [
+    {
+      "slug": "math",
+      "name": "Vela Mathematics",
+      "source": {
+        "remote": "https://github.com/vela-science/math.git",
+        "commit": "4f422289e6a8991735fced4905d53d9d54c9900f"
+      },
+      "canonical_root": "sha256:0e24fa1b13d7eda7b4e809564ec414eb1fda09f5dcf9aa8a6bcd6ae69ac96197",
+      "canonical_root_label": "Repository root",
+      "origin_root": "sha256:229ce0a08217da5e8bad2059c35070989652ca546ab45b8e699922ba182e8a69",
+      "replay": "verified",
+      "strict_blockers": 0,
+      "counts": {
+        "claims": 3,
+        "pending_review": 0
+      }
+    }
+  ]
+}

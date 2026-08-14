@@ -1,0 +1,384 @@
+{
+  "schema": "vela.problem-resolution.v1",
+  "semantics": {
+    "authority_effect": "none",
+    "entity_effect": "navigation_group_only",
+    "candidate_effect": "shared_namespace_and_source_number_only",
+    "statement_identity": "not_established",
+    "equivalence": "not_established"
+  },
+  "candidate_sources": [
+    {
+      "source_id": "source:erdos-problems",
+      "resolution_namespace": "erdos-problems",
+      "label": "Erdős Problems",
+      "source_role": "problem_catalog",
+      "native_kinds": [
+        "problem"
+      ],
+      "number_extraction": {
+        "kind": "metadata_integer",
+        "key": "problem_number"
+      },
+      "statement_retention": "locator_only"
+    },
+    {
+      "source_id": "source:formal-conjectures",
+      "resolution_namespace": "erdos-problems",
+      "label": "Formal Conjectures",
+      "source_role": "formal_statement_library",
+      "native_kinds": [
+        "formal_conjecture"
+      ],
+      "number_extraction": {
+        "kind": "erdos_formal_native_id"
+      },
+      "statement_retention": "summary"
+    },
+    {
+      "source_id": "source:vibemathed",
+      "resolution_namespace": "erdos-problems",
+      "label": "VibeMathed",
+      "source_role": "attributed_activity_catalog",
+      "native_kinds": [
+        "attributed_activity"
+      ],
+      "number_extraction": {
+        "kind": "metadata_integer",
+        "key": "problem_number"
+      },
+      "statement_retention": "summary"
+    },
+    {
+      "source_id": "source:plby-lean-proofs",
+      "resolution_namespace": "erdos-problems",
+      "label": "PLBY Lean proofs",
+      "source_role": "proof_manifest",
+      "native_kinds": [
+        "proof_manifest_entry"
+      ],
+      "number_extraction": {
+        "kind": "metadata_integer",
+        "key": "problem_number"
+      },
+      "statement_retention": "none"
+    },
+    {
+      "source_id": "source:jayyhk-erdos-lean",
+      "resolution_namespace": "erdos-problems",
+      "label": "Jayyhk Erdős Lean",
+      "source_role": "proof_manifest",
+      "native_kinds": [
+        "proof_manifest_entry"
+      ],
+      "number_extraction": {
+        "kind": "metadata_integer",
+        "key": "problem_number"
+      },
+      "statement_retention": "none"
+    },
+    {
+      "source_id": "source:williamjblair-lean-proofs",
+      "resolution_namespace": "erdos-problems",
+      "label": "William Blair Lean proofs",
+      "source_role": "proof_manifest",
+      "native_kinds": [
+        "proof_manifest_entry"
+      ],
+      "number_extraction": {
+        "kind": "metadata_integer",
+        "key": "problem_number"
+      },
+      "statement_retention": "none"
+    },
+    {
+      "source_id": "source:erdos-ai-contributions-wiki",
+      "resolution_namespace": "erdos-problems",
+      "label": "Erdős AI contributions wiki",
+      "source_role": "attributed_activity_catalog",
+      "native_kinds": [
+        "attributed_activity"
+      ],
+      "number_extraction": {
+        "kind": "metadata_integer",
+        "key": "problem_number"
+      },
+      "statement_retention": "none"
+    },
+    {
+      "source_id": "source:gpt-erdos",
+      "resolution_namespace": "erdos-problems",
+      "label": "GPT-Erdős",
+      "source_role": "attributed_classification_catalog",
+      "native_kinds": [
+        "attributed_classification"
+      ],
+      "number_extraction": {
+        "kind": "metadata_integer",
+        "key": "problem_number"
+      },
+      "statement_retention": "none"
+    }
+  ],
+  "entities": [
+    {
+      "entity_id": "problem:erdos:203",
+      "resolution_namespace": "erdos-problems",
+      "label": "Erdős 203",
+      "problem_number": 203,
+      "canonical_occurrence": {
+        "source_id": "source:erdos-problems",
+        "native_id": "erdos:203",
+        "native_kind": "problem",
+        "content_root": "sha256:2cf222b77622053259d5c15069182dea3cb46324ed8f3e965ee2aba6a9485a90"
+      },
+      "reviewed_occurrences": [
+        {
+          "source_id": "source:formal-conjectures",
+          "native_id": "Erdos203.erdos_203",
+          "native_kind": "formal_conjecture",
+          "relation_kind": "formal_statement_reference",
+          "content_root": "sha256:991e027005b1b8f6227b03fc431e35007094503049cd4b72a621bef6c4ae9535"
+        }
+      ]
+    },
+    {
+      "entity_id": "problem:erdos:264",
+      "resolution_namespace": "erdos-problems",
+      "label": "Erdős 264",
+      "problem_number": 264,
+      "canonical_occurrence": {
+        "source_id": "source:erdos-problems",
+        "native_id": "erdos:264",
+        "native_kind": "problem",
+        "content_root": "sha256:2ae8bb6d643fd38fa24eda5d3d13d316c92e9e4e7308cca06231d6ce7f1f1d3d"
+      },
+      "reviewed_occurrences": [
+        {
+          "source_id": "source:formal-conjectures",
+          "native_id": "Erdos264.erdos_264.parts.i",
+          "native_kind": "formal_conjecture",
+          "relation_kind": "formal_statement_reference",
+          "content_root": "sha256:8e98f3952077ba0d3d65ca0b60a05e4b1a8da826b191042c8911721b4012cad8"
+        },
+        {
+          "source_id": "source:formal-conjectures",
+          "native_id": "Erdos264.erdos_264.parts.ii",
+          "native_kind": "formal_conjecture",
+          "relation_kind": "formal_statement_reference",
+          "content_root": "sha256:c3f00b6b560caf5c83f1a3121fb49c938aa733f425a65d5c11c095773c6725f5"
+        },
+        {
+          "source_id": "source:formal-conjectures",
+          "native_id": "Erdos264.erdos_264.variants.example",
+          "native_kind": "formal_conjecture",
+          "relation_kind": "formal_statement_reference",
+          "content_root": "sha256:c00ae249a4f0aa6f198c8b337ca44a6ace40bec05fd3f916d7d67991694d1694"
+        },
+        {
+          "source_id": "source:formal-conjectures",
+          "native_id": "Erdos264.erdos_264.variants.ko_tao_neg",
+          "native_kind": "formal_conjecture",
+          "relation_kind": "formal_statement_reference",
+          "content_root": "sha256:db7a1f99abc9d415934410f6550b40c614471aaedb92a04cc1a412d25ef1e069"
+        },
+        {
+          "source_id": "source:formal-conjectures",
+          "native_id": "Erdos264.erdos_264.variants.ko_tao_pos",
+          "native_kind": "formal_conjecture",
+          "relation_kind": "formal_statement_reference",
+          "content_root": "sha256:b2911c61376ec981512c1dcb7b4490ce9645566863d35934ebae2f14dcd5b579"
+        },
+        {
+          "source_id": "source:plby-lean-proofs",
+          "native_id": "ErdosProblems.Erdos264",
+          "native_kind": "proof_manifest_entry",
+          "relation_kind": "proof_manifest_reference",
+          "content_root": "sha256:6ce10d1b62048529e6077d5fd8d46e530b9e66a40b1c4eba7b0b99c1019a5739"
+        },
+        {
+          "source_id": "source:plby-lean-proofs",
+          "native_id": "ErdosProblems.Erdos264b",
+          "native_kind": "proof_manifest_entry",
+          "relation_kind": "proof_manifest_reference",
+          "content_root": "sha256:d999ee19aa52bf668eb2c221fa5c85ebc05b5e8b4e4d1fe1cc984686a3728e19"
+        },
+        {
+          "source_id": "source:erdos-ai-contributions-wiki",
+          "native_id": "erdos-ai-wiki:264:e0438c241a430157",
+          "native_kind": "attributed_activity",
+          "relation_kind": "attributed_activity_reference",
+          "content_root": "sha256:e0438c241a430157332bc103784e5b34f8330cbcbcf68ec87f671f6275cbbbec"
+        }
+      ]
+    },
+    {
+      "entity_id": "problem:erdos:321",
+      "resolution_namespace": "erdos-problems",
+      "label": "Erdős 321",
+      "problem_number": 321,
+      "canonical_occurrence": {
+        "source_id": "source:erdos-problems",
+        "native_id": "erdos:321",
+        "native_kind": "problem",
+        "content_root": "sha256:0be01696ca905c6e48036b6cc3f152ccb500ae8b7f32299ada4a58900234eb91"
+      },
+      "reviewed_occurrences": [
+        {
+          "source_id": "source:formal-conjectures",
+          "native_id": "Erdos321.erdos_321",
+          "native_kind": "formal_conjecture",
+          "relation_kind": "formal_statement_reference",
+          "content_root": "sha256:1e284abe734d064e27cc0c68fac2cc656ba259aab340521ebf29438006326939"
+        },
+        {
+          "source_id": "source:formal-conjectures",
+          "native_id": "Erdos321.erdos_321.variants.isBigO",
+          "native_kind": "formal_conjecture",
+          "relation_kind": "formal_statement_reference",
+          "content_root": "sha256:517c7d35b113498901aac8768388723f670d7e4d60be80d116cf094f7798d3ad"
+        },
+        {
+          "source_id": "source:formal-conjectures",
+          "native_id": "Erdos321.erdos_321.variants.isLittleO",
+          "native_kind": "formal_conjecture",
+          "relation_kind": "formal_statement_reference",
+          "content_root": "sha256:0075f0191b836eeb3c49346863d9a3590b41069af8f15905862b0fbeadab0238"
+        },
+        {
+          "source_id": "source:formal-conjectures",
+          "native_id": "Erdos321.erdos_321.variants.isTheta",
+          "native_kind": "formal_conjecture",
+          "relation_kind": "formal_statement_reference",
+          "content_root": "sha256:5226f4a3b8646b6f528961676a4eae8f317edb0d85715a570066960fa27d5a49"
+        },
+        {
+          "source_id": "source:formal-conjectures",
+          "native_id": "Erdos321.erdos_321.variants.lower",
+          "native_kind": "formal_conjecture",
+          "relation_kind": "formal_statement_reference",
+          "content_root": "sha256:4db565f3dabda9e7e14f4b20a3bc4c4d9c82f1c615310ced4e921be1c5213c75"
+        },
+        {
+          "source_id": "source:formal-conjectures",
+          "native_id": "Erdos321.erdos_321.variants.upper",
+          "native_kind": "formal_conjecture",
+          "relation_kind": "formal_statement_reference",
+          "content_root": "sha256:60e1e54dd91c7fdbdf89d9086dac08a207032441891626424211efb499318a4f"
+        },
+        {
+          "source_id": "source:vibemathed",
+          "native_id": "vibemathed:erdos-321",
+          "native_kind": "attributed_activity",
+          "relation_kind": "attributed_activity_reference",
+          "content_root": "sha256:667ba44cceda67f6ebbd603a25e6a14e8a2ce34cff73dc3df3241d039eec2a87"
+        }
+      ]
+    },
+    {
+      "entity_id": "problem:erdos:521",
+      "resolution_namespace": "erdos-problems",
+      "label": "Erdős 521",
+      "problem_number": 521,
+      "canonical_occurrence": {
+        "source_id": "source:erdos-problems",
+        "native_id": "erdos:521",
+        "native_kind": "problem",
+        "content_root": "sha256:a4a2669da491ef0254e73e55f2ad943d4c0036f037bc93437c675abaafb49b49"
+      },
+      "reviewed_occurrences": [
+        {
+          "source_id": "source:formal-conjectures",
+          "native_id": "Erdos521.erdos_521",
+          "native_kind": "formal_conjecture",
+          "relation_kind": "formal_statement_reference",
+          "content_root": "sha256:68d16fa69b2c9827ba79d7cf17e799d2cc53b1c1a15d3b84afe8bc8396d09d54"
+        },
+        {
+          "source_id": "source:formal-conjectures",
+          "native_id": "Erdos521.fairCoin_apply",
+          "native_kind": "formal_conjecture",
+          "relation_kind": "formal_statement_reference",
+          "content_root": "sha256:e16ef25289ceaf78d7efa6445e293693e699406da8fc34c13a4e9a404f416f8b"
+        },
+        {
+          "source_id": "source:formal-conjectures",
+          "native_id": "Erdos521.fairCoin_isProbabilityMeasure",
+          "native_kind": "formal_conjecture",
+          "relation_kind": "formal_statement_reference",
+          "content_root": "sha256:943474b4c4939b87151d8d4d04992b094b9ba1160cba7bce0419d6613ed70be1"
+        },
+        {
+          "source_id": "source:williamjblair-lean-proofs",
+          "native_id": "williamjblair:Erdos521.erdos_521_negative",
+          "native_kind": "proof_manifest_entry",
+          "relation_kind": "proof_manifest_reference",
+          "content_root": "sha256:8b80b70479037e65c85ec0309b3b1212fe29d8dcf4961d84d6d3e3386858ba61"
+        },
+        {
+          "source_id": "source:erdos-ai-contributions-wiki",
+          "native_id": "erdos-ai-wiki:521:2df0258e34e2ef12",
+          "native_kind": "attributed_activity",
+          "relation_kind": "attributed_activity_reference",
+          "content_root": "sha256:2df0258e34e2ef12b425d52b22e8148dbe0238e3ce244aa09279217616fa196a"
+        },
+        {
+          "source_id": "source:erdos-ai-contributions-wiki",
+          "native_id": "erdos-ai-wiki:521:8f17159d16c039f2",
+          "native_kind": "attributed_activity",
+          "relation_kind": "attributed_activity_reference",
+          "content_root": "sha256:8f17159d16c039f287a395775753692ee2815c64ca112ec5149d12b7b4a5ac98"
+        }
+      ]
+    },
+    {
+      "entity_id": "problem:erdos:730",
+      "resolution_namespace": "erdos-problems",
+      "label": "Erdős 730",
+      "problem_number": 730,
+      "canonical_occurrence": {
+        "source_id": "source:erdos-problems",
+        "native_id": "erdos:730",
+        "native_kind": "problem",
+        "content_root": "sha256:141143d4a990c091fd4c02cc5e6fad00768589dc70fe38f568d3cdaf52cf3f5b"
+      },
+      "reviewed_occurrences": [
+        {
+          "source_id": "source:formal-conjectures",
+          "native_id": "Erdos730.erdos_730",
+          "native_kind": "formal_conjecture",
+          "relation_kind": "formal_statement_reference",
+          "content_root": "sha256:ba00d227388838cd4ec931a59db76a129585d3930b1267912f3892b134c400ec"
+        },
+        {
+          "source_id": "source:formal-conjectures",
+          "native_id": "Erdos730.erdos_730.variants.delta_ne_one",
+          "native_kind": "formal_conjecture",
+          "relation_kind": "formal_statement_reference",
+          "content_root": "sha256:5f87fd1caf6c983539f3cafbf2db117e9fc010ce8d7260f9075880856dcc73ca"
+        },
+        {
+          "source_id": "source:formal-conjectures",
+          "native_id": "Erdos730.erdos_730.variants.explicit_pairs",
+          "native_kind": "formal_conjecture",
+          "relation_kind": "formal_statement_reference",
+          "content_root": "sha256:7e4f760a20af7e299523d7d630ee4c0217c4c65f431618b032f79f951a548788"
+        },
+        {
+          "source_id": "source:williamjblair-lean-proofs",
+          "native_id": "williamjblair:Erdos730.FullDensityTheorem.pairSet_infinite",
+          "native_kind": "proof_manifest_entry",
+          "relation_kind": "proof_manifest_reference",
+          "content_root": "sha256:646ee93dee64738ca55f39e416dd40deba4e0885899cb348d89814e292019bb8"
+        },
+        {
+          "source_id": "source:erdos-ai-contributions-wiki",
+          "native_id": "erdos-ai-wiki:730:6a81a51012a3bb56",
+          "native_kind": "attributed_activity",
+          "relation_kind": "attributed_activity_reference",
+          "content_root": "sha256:6a81a51012a3bb5609e84889d6ddd3eb205be1f7fa97582b4720cb45ee8f5dbf"
+        }
+      ]
+    }
+  ]
+}

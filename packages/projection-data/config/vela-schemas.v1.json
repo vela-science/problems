@@ -1,0 +1,14 @@
+{
+  "schema": "site.vela-schemas.v1",
+  "vela_version": "0.975.1",
+  "vela_tag": "v0.975.1",
+  "vela_commit": "9d1a99dbe0a1c8ffc008cc0f5ee4e06831ea6e14",
+  "files": [
+    {
+      "file": "vela-status-v4.schema.json",
+      "upstream": "schemas/status.schema.json",
+      "id": "https://vela.science/schemas/status.schema.json",
+      "sha256": "sha256:27a6b29e2e8fbe6118093a2befad50b6ffa990528037e2154b8dae16b5bacb28"
+    }
+  ]
+}

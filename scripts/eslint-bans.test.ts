@@ -4,7 +4,7 @@ import { resolve } from "node:path";
 
 /*
   The import bans moved out of scripts/read-only-boundary.mjs and
-  scripts/check-observatory-design-system.mjs and into ESLint, because the
+  scripts/check-problems-design-system.mjs and into ESLint, because the
   regexes they were written as could only see one spelling of an import. This
   holds the replacement to all four spellings, through the app's real config —
   the same `eslint` binary and the same eslint.config.mjs that `bun run lint`
@@ -39,7 +39,7 @@ function eslintFor(app: string) {
   };
 }
 
-const observatory = eslintFor("observatory");
+const problems = eslintFor("problems");
 const www = eslintFor("www");
 
 /* One package per spelling, so a rule that only handles static imports cannot
@@ -68,7 +68,7 @@ const LINT_BUDGET_MS = 60_000;
 
 describe("import bans", () => {
   test.each([
-    ["observatory", observatory, "src/lib/probe.ts"],
+    ["problems", problems, "src/lib/probe.ts"],
     ["www", www, "src/lib/probe.ts"],
   ])(
     "%s reports a database reached by any of the four import spellings",
@@ -80,7 +80,7 @@ describe("import bans", () => {
   );
 
   test.each([
-    ["observatory", observatory, "src/lib/probe.ts"],
+    ["problems", problems, "src/lib/probe.ts"],
     ["www", www, "src/lib/probe.ts"],
   ])(
     "%s stays quiet on a file that imports nothing banned",
@@ -94,7 +94,7 @@ describe("import bans", () => {
   test(
     "request-scoped server state is banned statically and dynamically",
     () => {
-      const messages = observatory(
+      const messages = problems(
         'import "next/headers";\nexport const later = () => import("next/headers");\n',
         "src/lib/probe.ts",
       );
@@ -107,9 +107,9 @@ describe("import bans", () => {
   );
 
   test(
-    "the Observatory's retired icon family and presentation components are banned",
+    "the Problems's retired icon family and presentation components are banned",
     () => {
-      const messages = observatory(
+      const messages = problems(
         [
           "import {",
           "  Home01Icon,",
@@ -134,11 +134,11 @@ describe("import bans", () => {
     () => {
       const source =
         'import { WorkOS } from "@workos-inc/node";\nexport const client = new WorkOS();\n';
-      expect(observatory(source, "src/lib/auth.ts")).toEqual([]);
-      expect(observatory(source, "src/lib/other-provider.ts")).toEqual([IDENTITY]);
+      expect(problems(source, "src/lib/auth.ts")).toEqual([]);
+      expect(problems(source, "src/lib/other-provider.ts")).toEqual([IDENTITY]);
       /* The exemption is for one package, not for the block: the account
          boundary is still inside the read-only boundary. */
-      expect(observatory('import "pg";\n', "src/lib/auth.ts")).toEqual([DATABASE]);
+      expect(problems('import "pg";\n', "src/lib/auth.ts")).toEqual([DATABASE]);
     },
     LINT_BUDGET_MS,
   );
@@ -147,14 +147,14 @@ describe("import bans", () => {
     "the unified app confines WorkOS to auth files and rejects hosted signing",
     () => {
       const workos = 'import { WorkOS } from "@workos-inc/node";\nexport const client = new WorkOS();\n';
-      expect(observatory(workos, "src/lib/auth.ts")).toEqual([]);
-      expect(observatory(workos, "src/lib/workbench.ts")).toEqual([IDENTITY]);
-      expect(observatory(
+      expect(problems(workos, "src/lib/auth.ts")).toEqual([]);
+      expect(problems(workos, "src/lib/workbench.ts")).toEqual([IDENTITY]);
+      expect(problems(
         'import { signSubmissionDraftLocally } from "@vela/activity-data/local-signing";\nexport { signSubmissionDraftLocally };\n',
         "src/lib/workbench.ts",
       )).toEqual([SIGNING]);
-      expect(observatory(
-        'import { saveSubmissionDraft } from "@vela/activity-data";\nimport { problemDetail } from "@vela/observatory-data";\nexport const allowed = [saveSubmissionDraft, problemDetail];\n',
+      expect(problems(
+        'import { saveSubmissionDraft } from "@vela/activity-data";\nimport { problemDetail } from "@vela/projection-data";\nexport const allowed = [saveSubmissionDraft, problemDetail];\n',
         "src/lib/workbench.ts",
       )).toEqual([]);
     },

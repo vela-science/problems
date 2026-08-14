@@ -12,10 +12,10 @@
   CI executes on pull requests without secrets.
 
   Imported by relative path, not by package specifier: root scripts/ has no
-  dependency on @vela/observatory-data, so the bare import does not resolve here.
+  dependency on @vela/projection-data, so the bare import does not resolve here.
 */
-import { editorialSummary } from "../packages/observatory-data/src/editorial.ts";
-import { velaRelease } from "../packages/observatory-data/src/release.ts";
+import { editorialSummary } from "../packages/projection-data/src/editorial.ts";
+import { velaRelease } from "../packages/projection-data/src/release.ts";
 import { assertProjectionCompatibility } from "./projection-compatibility.mjs";
 
 console.log(JSON.stringify(

@@ -31,13 +31,13 @@ or Decisions.
 
 In scope:
 
-- `apps/observatory/src/app/actions/activity.ts` and the authenticated draft
+- `apps/problems/src/app/actions/activity.ts` and the authenticated draft
   export handler;
-- `apps/observatory/src/components/vela/workbench.tsx` as the only hosted
+- `apps/problems/src/components/vela/workbench.tsx` as the only hosted
   activity presentation surface, with `workspace-shell.tsx`,
   `workspace-canvas.tsx`, and `workspace-crdt-note.tsx` as its bounded child
   surfaces;
-- `apps/observatory/src/lib/auth.ts` and `apps/observatory/src/proxy.ts` for the
+- `apps/problems/src/lib/auth.ts` and `apps/problems/src/proxy.ts` for the
   hosted-account boundary;
 - `packages/activity-data/src`, its migrations, roles, database privilege
   bootstrap, migration runner, role verifier, and live proof;
@@ -80,16 +80,16 @@ Open questions that can change future risk, but do not block this design:
 
 ### Primary components
 
-- **Public scientific reader.** `@vela/observatory-data` reads an exact,
+- **Public scientific reader.** `@vela/projection-data` reads an exact,
   SELECT-only projection. It does not depend on mutable activity data.
 - **Hosted account adapter.** `currentAccount()` validates configuration and
   obtains the WorkOS session identity. The WorkOS identity is explicitly not a
-  Vela actor (`apps/observatory/src/lib/auth.ts`,
+  Vela actor (`apps/problems/src/lib/auth.ts`,
   `packages/activity-data/migrations/20260811_activity_v1.sql`).
 - **Workspace Server Actions.** The single declared mutation surface parses
   bounded form fields, reloads exact scientific State, recomputes the anchor,
   requires the browser-rendered expected anchor, and maps the WorkOS identity
-  to an activity account (`apps/observatory/src/app/actions/activity.ts`).
+  to an activity account (`apps/problems/src/app/actions/activity.ts`).
 - **Activity data package.** Server-only TypeScript validates contracts,
   canonicalizes request roots and drafts, and calls a fixed SQL function
   vocabulary (`packages/activity-data/src/activity.ts`).
@@ -113,7 +113,7 @@ Open questions that can change future risk, but do not block this design:
 
 ### Data flows and trust boundaries
 
-- **Anonymous browser -> Observatory reader.** Public HTTP reads carry no
+- **Anonymous browser -> Problems reader.** Public HTTP reads carry no
   activity credential. Exact State and source-owned public Research Blocks are
   available; `Workbench` returns the sign-in surface before loading any
   activity data. Validation is the read-model's exact-root contract.
@@ -130,7 +130,7 @@ Open questions that can change future risk, but do not block this design:
   activity account id, Workspace id, command kind, request root, payload, and
   expected version. SQL requires membership, serializes idempotency keys, and
   applies composite Workspace/anchor relationships. The app role cannot access
-  base tables or the Observatory database.
+  base tables or the Problems database.
 - **Canvas editor -> Loro -> activity API.** The browser imports retained Loro
   updates, exports only its new delta, computes the update root, and posts it to
   the declared Workspace Server Action. SQL independently validates the bytes
@@ -199,7 +199,7 @@ flowchart LR
 - Mere membership, object authorship, a passing producer check, local signing,
   or verifier status does not grant Repository Decision authority.
 - The normal application role cannot read activity base tables, connect to the
-  Observatory database, create roles/databases, or access a Repository key.
+  Problems database, create roles/databases, or access a Repository key.
 - The current product neither fetches artifact locators nor runs external
   sessions or contributor code.
 - Vela Web does not make scientific truth, fidelity, acceptance, or
@@ -209,10 +209,10 @@ flowchart LR
 
 | Surface | How reached | Trust boundary | Notes | Evidence |
 |---|---|---|---|---|
-| Public State routes | Anonymous HTTP GET | Internet -> exact reader | SELECT-only scientific projection | `apps/observatory/src/app/p/[repository]/[problem]/page.tsx`; `AGENTS.md` |
-| AuthKit proxy and `currentAccount` | Browser session | Internet -> WorkOS -> app | Hosted identity only; validates redirect and cookie configuration | `apps/observatory/src/proxy.ts`; `apps/observatory/src/lib/auth.ts` |
-| Workspace Server Actions | Authenticated form submit | Browser -> server | One declared action file; recomputes exact anchor | `apps/observatory/src/app/actions/activity.ts` |
-| Draft export | Authenticated GET | Browser -> server -> activity API | Membership-required canonical bytes; private/no-store | `apps/observatory/src/app/drafts/[id]/export/route.ts`; `activity_api.export_submission_draft` |
+| Public State routes | Anonymous HTTP GET | Internet -> exact reader | SELECT-only scientific projection | `apps/problems/src/app/p/[repository]/[problem]/page.tsx`; `AGENTS.md` |
+| AuthKit proxy and `currentAccount` | Browser session | Internet -> WorkOS -> app | Hosted identity only; validates redirect and cookie configuration | `apps/problems/src/proxy.ts`; `apps/problems/src/lib/auth.ts` |
+| Workspace Server Actions | Authenticated form submit | Browser -> server | One declared action file; recomputes exact anchor | `apps/problems/src/app/actions/activity.ts` |
+| Draft export | Authenticated GET | Browser -> server -> activity API | Membership-required canonical bytes; private/no-store | `apps/problems/src/app/drafts/[id]/export/route.ts`; `activity_api.export_submission_draft` |
 | Activity SQL API | Parameterized SQL | server -> separate database | `SECURITY DEFINER`, fixed search path, membership and command allowlist | `packages/activity-data/src/activity.ts`; `packages/activity-data/migrations/20260811_activity_v1.sql` |
 | Artifact/session locator fields | Authenticated forms | untrusted text -> Workspace | Stored as metadata; not fetched; Workspace-visible | `attachArtifactAction`; `createAttemptAction`; `RootedArtifactFrame` |
 | Local signing CLI | Local filesystem/CLI | unsigned hosted bytes -> user key | Explicit file paths, key match, exclusive mode-0600 output | `packages/activity-data/scripts/sign-submission-draft.mjs`; `src/local-signing.ts` |
@@ -283,7 +283,7 @@ membership. Any cell not explicitly allowed is denied.
 
 | Object / action | Anonymous | Hosted account, no membership | Workspace owner | Workspace member | Object author | External role | Hosted service enforcement |
 |---|---|---|---|---|---|---|---|
-| Read public Current State and source Research Blocks | allow | allow | allow | allow | no extra right | allow | exact `@vela/observatory-data` read; no activity credential |
+| Read public Current State and source Research Blocks | allow | allow | allow | allow | no extra right | allow | exact `@vela/projection-data` read; no activity credential |
 | Sync own hosted Account | deny | allow | allow | allow | no extra right | no extra right | `currentAccount` -> `ensureCurrentAccount` -> `activity_api.ensure_account` |
 | Create Workspace / list own Workspaces | deny | allow | allow | allow | no extra right | no extra right | `createWorkspaceAction`; `activity_api.create_workspace`; `list_workspaces` joins membership |
 | Read Workspace activity | deny | deny | allow | allow | no extra right | no extra right | `Workbench` -> `getProblemActivity`; SQL `require_membership` |
@@ -304,7 +304,7 @@ membership. Any cell not explicitly allowed is denied.
 
 | Capability | Current handler or command | Database policy/function | Role boundary | Executable evidence |
 |---|---|---|---|---|
-| Hosted identity | `currentAccount`; `actor` | `activity_api.ensure_account` validates WorkOS-shaped id | app role may execute only | `apps/observatory/src/lib/auth.test.ts`; `apps/observatory/src/app/actions/auth.test.ts` |
+| Hosted identity | `currentAccount`; `actor` | `activity_api.ensure_account` validates WorkOS-shaped id | app role may execute only | `apps/problems/src/lib/auth.test.ts`; `apps/problems/src/app/actions/auth.test.ts` |
 | Workspace create/list | `createWorkspaceAction`; `listWorkspaces` | `create_workspace`; membership join in `list_workspaces` | app API only | `packages/activity-data/tests/governance.test.ts`; live proof |
 | Activity read/privacy | `loadWorkbench` | `get_problem_activity`; `require_membership`; author-only private-note predicate | app API only; no base read | governance test; live cross-tenant/private-note proof |
 | Workspace-scoped activity mutations | eleven named exports in `app/actions/activity.ts` after the separately listed Workspace creation action; Problem-scoped creation uses one closed database command; CRDT append uses its own byte-validating function | nine-kind allowlist in `execute_command`; Problem-scoped forward migration; dedicated CRDT append; `require_membership`; append-only audit | app API only | governance test; authority-boundary test; disposable Postgres proofs |
@@ -339,11 +339,11 @@ membership. Any cell not explicitly allowed is denied.
 
 | Path | Why it matters | Related threats |
 |---|---|---|
-| `apps/observatory/src/app/actions/activity.ts` | Authentication, exact-current State recheck, input bounds, and all hosted mutations converge here | TM-001, TM-002, TM-004, TM-007 |
-| `apps/observatory/src/app/actions/workspace-mutation-guard.ts` | Encodes direct-form stale-root and optimistic-version refusal | TM-002, TM-007 |
-| `apps/observatory/src/app/drafts/[id]/export/route.ts` | Last hosted boundary before local signing | TM-001, TM-004, TM-005 |
-| `apps/observatory/src/components/vela/workbench.tsx`; `workspace-object-tree.tsx` | Separates signed-out public State from membership-gated Problem-scoped activity; renders exact lineage, locators, and authority copy | TM-002, TM-005, TM-006, TM-010 |
-| `apps/observatory/src/lib/auth.ts` | Maps WorkOS session identity to the hosted account boundary | TM-001, TM-005 |
+| `apps/problems/src/app/actions/activity.ts` | Authentication, exact-current State recheck, input bounds, and all hosted mutations converge here | TM-001, TM-002, TM-004, TM-007 |
+| `apps/problems/src/app/actions/workspace-mutation-guard.ts` | Encodes direct-form stale-root and optimistic-version refusal | TM-002, TM-007 |
+| `apps/problems/src/app/drafts/[id]/export/route.ts` | Last hosted boundary before local signing | TM-001, TM-004, TM-005 |
+| `apps/problems/src/components/vela/workbench.tsx`; `workspace-object-tree.tsx` | Separates signed-out public State from membership-gated Problem-scoped activity; renders exact lineage, locators, and authority copy | TM-002, TM-005, TM-006, TM-010 |
+| `apps/problems/src/lib/auth.ts` | Maps WorkOS session identity to the hosted account boundary | TM-001, TM-005 |
 | `packages/activity-data/src/activity.ts` | Fixed SQL vocabulary, canonical request roots, and draft export client | TM-001, TM-004, TM-007 |
 | `packages/activity-data/src/draft-submission.ts` | Closed schema and canonical unsigned bytes | TM-004, TM-011 |
 | `packages/activity-data/src/local-signing.ts` | Sole allowed signing implementation and key-match check | TM-003, TM-004 |

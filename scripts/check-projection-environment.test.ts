@@ -7,18 +7,18 @@ import { checkProjectionEnvironment, projectionDatabase } from "./check-projecti
 const readerPassword = "a".repeat(64);
 const validEnvironment = {
   VELA_PROJECTION_WRITER_DATABASE_URL:
-    "postgresql://neondb_owner:writer@writer.example/vela_observatory?sslmode=require",
+    "postgresql://neondb_owner:writer@writer.example/vela_projection?sslmode=require",
   VELA_PROJECTION_DATABASE_URL:
-    `postgresql://observatory_projection_reader_20260813:${readerPassword}@reader.example/vela_observatory?sslmode=require`,
+    `postgresql://vela_projection_reader_20260813:${readerPassword}@reader.example/vela_projection?sslmode=require`,
 };
 
 describe("projection credential binding", () => {
   test("pins the database, versioned login, and stable permission role", () => {
     expect(projectionDatabase).toEqual({
-      name: "vela_observatory",
+      name: "vela_projection",
       writerRole: "neondb_owner",
-      readerRole: "observatory_projection_reader_20260813",
-      readerPermissionRole: "observatory_projection_reader",
+      readerRole: "vela_projection_reader_20260813",
+      readerPermissionRole: "vela_projection_reader",
     });
   });
 
@@ -33,7 +33,7 @@ describe("projection credential binding", () => {
     expect(() => checkProjectionEnvironment({
       ...validEnvironment,
       VELA_PROJECTION_DATABASE_URL:
-        "postgresql://observatory_projection_reader_20260813:not-a-secret@reader.example/vela_observatory?sslmode=require",
+        "postgresql://vela_projection_reader_20260813:not-a-secret@reader.example/vela_projection?sslmode=require",
     })).toThrow("reader password must be a 32-byte lowercase hex secret");
   });
 
@@ -42,7 +42,7 @@ describe("projection credential binding", () => {
     expect(() => checkProjectionEnvironment({
       ...withoutReader,
       DATABASE_URL:
-        `postgresql://observatory_projection_reader_20260813:${readerPassword}@reader.example/vela_observatory?sslmode=require`,
+        `postgresql://vela_projection_reader_20260813:${readerPassword}@reader.example/vela_projection?sslmode=require`,
     })).toThrow("missing required projection secret VELA_PROJECTION_DATABASE_URL");
   });
 
@@ -64,7 +64,7 @@ describe("projection credential binding", () => {
     expect(() => checkProjectionEnvironment({
       ...validEnvironment,
       VELA_PROJECTION_DATABASE_URL:
-        `postgresql://observatory_projection_reader:${readerPassword}@reader.example/vela_observatory?sslmode=require`,
+        `postgresql://vela_projection_reader:${readerPassword}@reader.example/vela_projection?sslmode=require`,
     })).toThrow("projection reader credential has the wrong role");
   });
 });
@@ -75,26 +75,26 @@ describe("projection credential binding", () => {
   The check above decides whether a secret is accepted. `deployment.ts` puts the
   project id, the database and the reader role into the manifest at
   /.well-known/vela-site.json, which is the public declaration of where these
-  pages are read from. `packages/observatory-data/package.json` writes the project
+  pages are read from. `packages/projection-data/package.json` writes the project
   id, the database and the WRITER role into two `neonctl` invocations — twice,
   because `db:migrate:local` and `db:sql` each build their own connection
   string.
 
   Consolidating those two into the manifest's declaration is the right end
-  state and belongs in packages/observatory-data. Until then this is what the
+  state and belongs in packages/projection-data. Until then this is what the
   duplication actually costs, removed: renaming the database or moving the
   project reddens here rather than in whichever operator script is run next.
 */
 const repository = resolve(import.meta.dirname, "..");
 const deploymentSource = readFileSync(
-  resolve(repository, "packages/observatory-data/src/deployment.ts"),
+  resolve(repository, "packages/projection-data/src/deployment.ts"),
   "utf8",
 );
 const repositoryDataScripts: Record<string, string> = JSON.parse(
-  readFileSync(resolve(repository, "packages/observatory-data/package.json"), "utf8"),
+  readFileSync(resolve(repository, "packages/projection-data/package.json"), "utf8"),
 ).scripts;
 
-/** The `data_source` object literal the Observatory manifest publishes. */
+/** The `data_source` object literal the Problems manifest publishes. */
 function publishedDataSource() {
   const block = /data_source:\s*\{([\s\S]*?)\n\s*\},/u.exec(deploymentSource);
   expect(block, "deployment.ts no longer publishes a data_source literal").not.toBeNull();

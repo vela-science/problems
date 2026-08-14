@@ -7,7 +7,6 @@ import {
   type ActivityCrdtUpdate,
   type ActivityDiscussionEntry,
   type ActivitySubmissionDraft,
-  type ActivityWorkRequest,
   type HashRoot,
   type ProblemActivity,
   type StoredScientificAnchor,
@@ -84,56 +83,11 @@ function anchorFrom(value: unknown): StoredScientificAnchor {
   };
 }
 
-function validateRetainedApproachFields(row: JsonRecord): boolean {
-  const targetId = nullableText(row, "target_id", "approach target_id");
-  const targetPacketRoot = nullableHashRoot(row, "target_packet_root", "approach target_packet_root");
-  const targetRecordRoot = nullableHashRoot(row, "target_record_root", "approach target_record_root");
-  if (targetId === null && targetPacketRoot === null && targetRecordRoot === null) {
-    return false;
-  }
-  if (
-    targetId === null
-    || !targetId.trim()
-    || targetId !== targetId.trim()
-    || targetId.length > 1_000
-    || targetPacketRoot === null
-  ) {
-    throw new Error("activity response has invalid retained approach binding");
-  }
-  return true;
-}
-
-function validateRetainedExecutionFields(row: JsonRecord, subject: string): boolean {
-  if (row.authority_effect !== "none") {
-    throw new Error(`activity response has invalid ${subject} authority_effect`);
-  }
-  const packetRoot = nullableHashRoot(row, "execution_packet_root", `${subject} execution_packet_root`);
-  const profileRoot = nullableHashRoot(row, "execution_profile_root", `${subject} execution_profile_root`);
-  const verifierCapsuleRoot = nullableHashRoot(
-    row,
-    "execution_verifier_capsule_root",
-    `${subject} execution_verifier_capsule_root`,
-  );
-  const resultContractRoot = nullableHashRoot(
-    row,
-    "execution_result_contract_root",
-    `${subject} execution_result_contract_root`,
-  );
-  if (packetRoot === null && profileRoot === null && verifierCapsuleRoot === null && resultContractRoot === null) {
-    return false;
-  }
-  if (packetRoot === null || profileRoot === null || verifierCapsuleRoot === null || resultContractRoot === null) {
-    throw new Error(`activity response has partial ${subject} execution binding`);
-  }
-  return true;
-}
-
 function approachFrom(value: unknown): ActivityApproach {
   const row = record(value, "approach");
   if (row.authority_effect !== "none") {
     throw new Error("activity response has invalid approach authority_effect");
   }
-  const frozenLegacy = validateRetainedApproachFields(row);
   return {
     id: text(row.id, "approach id"), workspaceId: text(row.workspace_id, "approach workspace_id"),
     anchorRoot: hashRoot(row, "anchor_root", "approach anchor_root"),
@@ -141,7 +95,7 @@ function approachFrom(value: unknown): ActivityApproach {
     createdByAccountId: text(row.created_by_account_id, "approach created_by_account_id"),
     title: text(row.title, "approach title"), summary: text(row.summary, "approach summary"),
     state: member(row.state, ["open", "paused", "completed", "abandoned"] as const, "approach state"),
-    authorityEffect: "none", frozenLegacy,
+    authorityEffect: "none",
     version: integer(row.version, "approach version", 1), createdAt: text(row.created_at, "approach created_at"),
     updatedAt: text(row.updated_at, "approach updated_at"),
   };
@@ -149,16 +103,16 @@ function approachFrom(value: unknown): ActivityApproach {
 
 function attemptFrom(value: unknown): ActivityAttempt {
   const row = record(value, "attempt");
-  const frozenLegacy = validateRetainedExecutionFields(row, "attempt");
+  if (row.authority_effect !== "none") {
+    throw new Error("activity response has invalid attempt authority_effect");
+  }
   return {
     id: text(row.id, "attempt id"), workspaceId: text(row.workspace_id, "attempt workspace_id"),
     anchorRoot: hashRoot(row, "anchor_root", "attempt anchor_root"),
     approachId: text(row.approach_id, "attempt approach_id"),
     createdByAccountId: text(row.created_by_account_id, "attempt created_by_account_id"),
-    provider: text(row.provider, "attempt provider"),
-    externalSessionId: nullableText(row, "external_session_id", "attempt external_session_id"),
-    locator: nullableText(row, "locator", "attempt locator"), title: text(row.title, "attempt title"),
-    state: member(row.state, ["planned", "running", "paused", "completed", "failed", "abandoned"] as const, "attempt state"), frozenLegacy,
+    title: text(row.title, "attempt title"),
+    state: member(row.state, ["planned", "running", "paused", "completed", "failed", "abandoned"] as const, "attempt state"),
     version: integer(row.version, "attempt version", 1), createdAt: text(row.created_at, "attempt created_at"),
     updatedAt: text(row.updated_at, "attempt updated_at"),
   };
@@ -178,26 +132,11 @@ function discussionFrom(value: unknown): ActivityDiscussionEntry {
   };
 }
 
-function workRequestFrom(value: unknown): ActivityWorkRequest {
-  const row = record(value, "work request");
-  return {
-    id: text(row.id, "work request id"), workspaceId: text(row.workspace_id, "work request workspace_id"),
-    anchorRoot: hashRoot(row, "anchor_root", "work request anchor_root"),
-    approachId: nullableText(row, "approach_id", "work request approach_id"),
-    attemptId: nullableText(row, "attempt_id", "work request attempt_id"),
-    createdByAccountId: text(row.created_by_account_id, "work request created_by_account_id"),
-    assigneeAccountId: nullableText(row, "assignee_account_id", "work request assignee_account_id"),
-    kind: member(row.kind, ["assignment", "reproduction"] as const, "work request kind"),
-    state: member(row.state, ["open", "claimed", "completed", "cancelled"] as const, "work request state"),
-    title: text(row.title, "work request title"), detail: text(row.detail, "work request detail"),
-    version: integer(row.version, "work request version", 1), createdAt: text(row.created_at, "work request created_at"),
-    updatedAt: text(row.updated_at, "work request updated_at"),
-  };
-}
-
 function artifactFrom(value: unknown): ActivityArtifact {
   const row = record(value, "artifact");
-  const frozenLegacy = validateRetainedExecutionFields(row, "artifact");
+  if (row.authority_effect !== "none") {
+    throw new Error("activity response has invalid artifact authority_effect");
+  }
   return {
     id: text(row.id, "artifact id"), workspaceId: text(row.workspace_id, "artifact workspace_id"),
     anchorRoot: hashRoot(row, "anchor_root", "artifact anchor_root"),
@@ -208,21 +147,22 @@ function artifactFrom(value: unknown): ActivityArtifact {
     kind: text(row.kind, "artifact kind"), path: text(row.path, "artifact path"),
     mediaType: nullableText(row, "media_type", "artifact media_type"),
     byteSize: row.byte_size == null ? null : integer(row.byte_size, "artifact byte_size"),
-    locator: nullableText(row, "locator", "artifact locator"), frozenLegacy,
+    locator: nullableText(row, "locator", "artifact locator"),
     createdAt: text(row.created_at, "artifact created_at"),
   };
 }
 
 function draftFrom(value: unknown): ActivitySubmissionDraft {
   const row = record(value, "submission draft");
-  const frozenLegacy = validateRetainedExecutionFields(row, "submission draft");
+  if (row.authority_effect !== "none") {
+    throw new Error("activity response has invalid submission draft authority_effect");
+  }
   return {
     id: text(row.id, "submission draft id"), workspaceId: text(row.workspace_id, "submission draft workspace_id"),
     anchorRoot: hashRoot(row, "anchor_root", "submission draft anchor_root"),
-    artifactId: nullableText(row, "artifact_id", "submission draft artifact_id"),
     createdByAccountId: text(row.created_by_account_id, "submission draft created_by_account_id"),
     schemaName: member(row.schema_name, ["vela.submission.v2"] as const, "submission draft schema_name"),
-    payloadRoot: hashRoot(row, "payload_root", "submission draft payload_root"), frozenLegacy,
+    payloadRoot: hashRoot(row, "payload_root", "submission draft payload_root"),
     version: integer(row.version, "submission draft version", 1), createdAt: text(row.created_at, "submission draft created_at"),
     updatedAt: text(row.updated_at, "submission draft updated_at"),
   };
@@ -287,7 +227,6 @@ export function parseProblemActivity(value: unknown, currentAnchorRoot: HashRoot
     approaches: recordArray(result.approaches, "approaches").map(approachFrom),
     attempts: recordArray(result.attempts, "attempts").map(attemptFrom),
     discussion: recordArray(result.discussion, "discussion").map(discussionFrom),
-    workRequests: recordArray(result.workRequests, "work requests").map(workRequestFrom),
     artifacts: recordArray(result.artifacts, "artifacts").map(artifactFrom),
     drafts: recordArray(result.drafts, "drafts").map(draftFrom),
     crdtUpdates: result.crdtUpdates === undefined ? [] : parseCrdtUpdates(result.crdtUpdates),

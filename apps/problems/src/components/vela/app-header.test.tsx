@@ -1,0 +1,160 @@
+import { readFileSync } from "node:fs";
+import { cleanup, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { SidebarProvider, useSidebar } from "@vela/ui/components/sidebar";
+
+const navigation = vi.hoisted(() => ({ pathname: "/repositories" }));
+
+vi.mock("next/navigation", () => ({
+  usePathname: () => navigation.pathname,
+}));
+vi.mock("@/components/vela/command-palette", () => ({
+  COMMAND_PALETTE_TRIGGER_ID: "vela-command-palette-trigger",
+  useCommandPalette: () => ({ setOpen: vi.fn() }),
+}));
+vi.mock("@/components/vela/theme-toggle", () => ({
+  ThemeToggle: () => <button type="button" aria-label="Choose appearance" />,
+}));
+vi.mock("@/components/vela/account-menu", () => ({
+  AccountMenu: ({ enabled }: { enabled: boolean }) => enabled ? <a href="/sign-in">Sign in</a> : null,
+}));
+
+import { AppHeader } from "@/components/vela/app-header";
+
+const repositories = [{
+  slug: "quantum-codes",
+  name: "Quantum Codes",
+  pending: 0,
+  hasGraph: false,
+  hasProblems: false,
+}];
+
+/* The header owns a real SidebarTrigger, so it needs the real provider around
+   it. Mocking the trigger away is what let the mobile open-control regress
+   unnoticed. */
+function Shell({ authEnabled = false }: { authEnabled?: boolean }) {
+  return (
+    <SidebarProvider>
+      <AppHeader repositories={repositories} authEnabled={authEnabled} />
+    </SidebarProvider>
+  );
+}
+
+afterEach(() => {
+  cleanup();
+  navigation.pathname = "/repositories";
+});
+
+describe("AppHeader trail", () => {
+  /* The trail replaced a crumb list. Inside a Repository it reads
+     `<switcher> / <Section>`: the container is a control rather than a link,
+     because switching Repository used to mean going back to the list and picking
+     again, and the section is text rather than a link because it is the page
+     you are already on. */
+  it("names the current section as text, not a link", () => {
+    navigation.pathname = "/repositories/quantum-codes/claims";
+    render(<Shell />);
+
+    const section = screen.getByText("Assertions");
+    expect(section).toHaveAttribute("aria-current", "page");
+    expect(section.closest("a")).toBeNull();
+  });
+
+  it("offers the Repository as a switcher", () => {
+    navigation.pathname = "/repositories/quantum-codes/claims";
+    render(<Shell />);
+
+    expect(screen.getByRole("button", { name: /Switch Repository — currently Quantum Codes/ })).toBeInTheDocument();
+  });
+
+  it("shows a global destination without a Repository switcher", () => {
+    navigation.pathname = "/decisions";
+    render(<Shell />);
+
+    expect(screen.getByText("Decisions")).toHaveAttribute("aria-current", "page");
+    expect(screen.queryByRole("button", { name: /Switch Repository/ })).not.toBeInTheDocument();
+  });
+
+  it("names the retained routes by their truthful product surfaces", () => {
+    navigation.pathname = "/work";
+    const { rerender } = render(<Shell />);
+    expect(screen.getByText("Contribute")).toHaveAttribute("aria-current", "page");
+
+    navigation.pathname = "/activity";
+    rerender(<Shell />);
+    expect(screen.getByText("State history")).toHaveAttribute("aria-current", "page");
+  });
+
+  it("names a Repository overview without a section", () => {
+    navigation.pathname = "/repositories/quantum-codes";
+    render(<Shell />);
+
+    expect(screen.getByText("Overview")).toHaveAttribute("aria-current", "page");
+  });
+
+  it("keeps a canonical reviewed Problem in the Problem context", () => {
+    navigation.pathname = "/problems/erdos-problems/321";
+    render(<Shell />);
+
+    expect(screen.getByText("Problem 321")).toHaveAttribute("aria-current", "page");
+    expect(screen.getByText("Problems")).toBeInTheDocument();
+  });
+
+  it("keeps global search, notifications, appearance, and account access in the header", () => {
+    render(<Shell authEnabled />);
+
+    expect(screen.getByRole("button", { name: "Search or navigate Vela" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Notifications" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Choose appearance" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Sign in" })).toHaveAttribute("href", "/sign-in");
+  });
+
+  it("does not duplicate release provenance beneath the breadcrumb", () => {
+    render(<Shell />);
+
+    expect(screen.queryByText("Published State")).not.toBeInTheDocument();
+    expect(screen.queryByText("Canonical source: Git Repository.")).not.toBeInTheDocument();
+  });
+});
+
+/* Under `md` the rail is a Sheet that starts closed and the sidebar's own
+   trigger rides inside it, so without a header control nothing on screen can
+   open navigation: a phone reached Home, Open work, State history, Repositories
+   and Sources only through the command palette. These tests pin both halves —
+   that the control opens the rail, and that it stays off desktop so the
+   sidebar-owned trigger remains the only one there. */
+describe("AppHeader navigation access", () => {
+  function ReportOpenMobile() {
+    const { openMobile } = useSidebar();
+    return <output>{openMobile ? "rail open" : "rail closed"}</output>;
+  }
+
+  it("opens the rail from the header when the rail is off-screen", async () => {
+    const width = window.innerWidth;
+    /* `useIsMobile` reads innerWidth, and jsdom defaults to 1024. Without this
+       the trigger toggles the desktop rail and the regression passes. */
+    window.innerWidth = 390;
+    try {
+      const user = userEvent.setup();
+      render(
+        <SidebarProvider>
+          <AppHeader repositories={repositories} authEnabled={false} />
+          <ReportOpenMobile />
+        </SidebarProvider>,
+      );
+
+      expect(screen.getByText("rail closed")).toBeInTheDocument();
+      await user.click(screen.getByRole("button", { name: "Open navigation" }));
+      expect(screen.getByText("rail open")).toBeInTheDocument();
+    } finally {
+      window.innerWidth = width;
+    }
+  });
+
+  it("leaves the desktop header to the rail's own trigger", () => {
+    const header = readFileSync("src/components/vela/app-header.tsx", "utf8");
+
+    expect(header).toContain('<SidebarTrigger className="size-11 md:hidden"');
+  });
+});

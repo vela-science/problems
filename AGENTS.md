@@ -6,14 +6,14 @@ This private Bun workspace contains two independently deployable Next.js
 applications and four shared packages:
 
 - `apps/www`: static editorial site for `www.vela.space`;
-- `apps/observatory`: the unified Vela product application at canonical
+- `apps/problems`: the unified Vela product application at canonical
   `problems.science`, with `app.vela.space` retained as a compatibility alias,
   combining exact scientific State, non-authoritative Work, and advanced record
   inspection;
 - `packages/brand`: framework-neutral tokens, fonts, marks, and licenses;
 - `packages/ui`: shared React UI source built from shadcn `base-nova` on Base
   UI, plus stable Vela presentation semantics;
-- `packages/observatory-data`: the only repository parser, source registry,
+- `packages/projection-data`: the only repository parser, source registry,
   search, graph, scientific projection, and deployment-manifest implementation;
 - `packages/activity-data`: the only mutable product-data implementation.
 
@@ -32,11 +32,11 @@ accounts remain separate from Vela actor identities.
 - Editorial routes: `apps/www/src/app`
 - Editorial compositions and content: `apps/www/src/components`,
   `apps/www/src/content`, `apps/www/src/styles`
-- Vela product routes and compositions: `apps/observatory/src/app`,
-  `apps/observatory/src/components`
+- Vela product routes and compositions: `apps/problems/src/app`,
+  `apps/problems/src/components`
 - Brand contract: `packages/brand/vela.tokens.json` and its generated outputs
 - Shared React primitives and semantics: `packages/ui`
-- Repository and math-source projections: `packages/observatory-data`
+- Repository and math-source projections: `packages/projection-data`
 - Mutable hosted activity: `packages/activity-data`
 - Product and design contracts: `PRODUCT.md`, `DESIGN.md`,
   `docs/design-system.md`, and `docs/WEB.md`
@@ -72,8 +72,8 @@ when their authors wrote them. Do not rewrite them to match the current system.
 - Preserve the canonical Vela sail unless an approved brand pass replaces it.
 - Work mutations must cross `@vela/activity-data`. Do not connect an
   application to Postgres, add another activity store, or let
-  `@vela/observatory-data` depend on mutable activity.
-- Reuse `@vela/observatory-data` exact reads and canonical contracts. Do not add
+  `@vela/projection-data` depend on mutable activity.
+- Reuse `@vela/projection-data` exact reads and canonical contracts. Do not add
   a second repository parser, index, source registry, graph builder, or manifest
   generator.
 - Store large artifact bytes outside Postgres. Activity records may retain

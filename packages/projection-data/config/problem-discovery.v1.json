@@ -1,0 +1,36 @@
+{
+  "schema": "vela.problem-discovery.v1",
+  "semantics": {
+    "authority_effect": "none",
+    "classification_basis": "explicit_source_profile",
+    "unprofiled_sources": "unclassified",
+    "topic_order": "unordered"
+  },
+  "profiles": [
+    {
+      "source_id": "source:erdos-problems",
+      "native_kind": "problem",
+      "area": {
+        "key": "mathematics",
+        "name": "Mathematics"
+      },
+      "collection": {
+        "key": "erdos-problems",
+        "name": "Erdős Problems"
+      },
+      "hubs": [
+        {
+          "key": "erdos-problems",
+          "name": "Erdős Problems"
+        }
+      ],
+      "field": {
+        "kind": "none"
+      },
+      "topics": {
+        "kind": "metadata_string_array",
+        "key": "tags"
+      }
+    }
+  ]
+}

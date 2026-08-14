@@ -4,7 +4,7 @@ import { mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { spawnSync } from "node:child_process";
-import { canonicalJson } from "@vela/observatory-data/canonical";
+import { canonicalJson } from "@vela/projection-data/canonical";
 import {
   createSubmissionDraftExport,
   validateSubmissionDraft,

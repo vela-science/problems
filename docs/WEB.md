@@ -13,9 +13,9 @@ Earlier design and migration plans live under `docs/history/`.
   readers across current
   change, direct contribution, communities, and the exact scientific record. Advanced
   records remain available in the same runtime.
-- `vela.space` redirects to `www`; Observatory paths on `www` redirect to
+- `vela.space` redirects to `www`; Problems paths on `www` redirect to
   `problems.science`.
-- Hosted Vela is non-authoritative. The Observatory reads a bounded SELECT-only
+- Hosted Vela is non-authoritative. The Problems reads a bounded SELECT-only
   projection from Neon. Work mode writes hosted research activity through
   `@vela/activity-data`. Canonical custody remains in Repository Git
   repositories.
@@ -29,17 +29,17 @@ identity, and draft export, and requires Work mutations to call
 `@vela/activity-data`. ESLint blocks
 direct database clients, hosted signing machinery, and WorkOS imports outside
 the named identity files. The package-direction check keeps
-`@vela/observatory-data` independent of mutable activity and limits
+`@vela/projection-data` independent of mutable activity and limits
 `@vela/activity-data` reuse to exact canonical and read contracts.
 
 The repository is a Bun workspace with six maintained boundaries:
 
 ```text
 apps/www                editorial Next.js application (static export)
-apps/observatory        unified Vela application: Problem State, Work, and Records
+apps/problems        unified Vela application: Problem State, Work, and Records
 packages/brand          governed identity, tokens, fonts, and delivery assets
 packages/ui             shared shadcn/Base UI source and Vela presentation semantics
-packages/observatory-data  Git-to-Neon projection, validation, search, and manifests
+packages/projection-data  Git-to-Neon projection, validation, search, and manifests
 packages/activity-data  hosted activity schema, authorization, and mutation API
 ```
 
@@ -87,14 +87,14 @@ Docs, Problems, and GitHub. Problems leaves the editorial site for the shared
 Vela application. Developer onboarding and the security boundary live in the
 pinned manual instead of separate editorial shells.
 
-### Docs moved off the Observatory, 2026-07-28
+### Docs moved off the Problems, 2026-07-28
 
 `/docs` used to redirect from www to `app.vela.space/docs`, where five
-hand-written guidance sections lived. It now lives here, and the Observatory
+hand-written guidance sections lived. It now lives here, and the Problems
 redirects its old paths to www permanently, so existing links keep working in
 the direction they were written.
 
-Two changes, not one. The route moved because the Observatory is a read-only
+Two changes, not one. The route moved because the Problems is a read-only
 view of projected state and should not also be the manual. The *content*
 changed because a paraphrase of a protocol is a second source of truth: the
 five guidance sections have been deleted, and the site now serves the Vela
@@ -125,12 +125,12 @@ a release the site no longer advertises.
 the zod schema that parses it off the wire. Nothing held the two together, so
 upstream could rename a field and the first thing to notice would be a
 projection refresh failing after the release.
-`packages/observatory-data/scripts/sync-vela-schemas.mjs` vendors upstream's
+`packages/projection-data/scripts/sync-vela-schemas.mjs` vendors upstream's
 declaration at the pin, and `tests/status-schema.test.ts` holds the reader to
 it: a document missing any field upstream requires must be refused.
 
 ```bash
-bun packages/observatory-data/scripts/sync-vela-schemas.mjs
+bun packages/projection-data/scripts/sync-vela-schemas.mjs
 ```
 
 `config/vela-schemas.v1.json` records the commit and a digest per file, and the
@@ -165,7 +165,7 @@ application onto the webpack builder the last time it had a markdown pipeline.
 The bodies travel inside the manifest module rather than as sibling files,
 because `import.meta.dirname` is undefined in the static-export bundle and a
 path resolved at render time lands on a transient prerender chunk — the same
-trap already recorded in `packages/observatory-data/src/editorial.ts`.
+trap already recorded in `packages/projection-data/src/editorial.ts`.
 
 **Chrome.** Structure from Tailwind Plus Protocol — grouped section rail,
 content column, on-page contents, previous and next — and nothing else.
@@ -176,7 +176,7 @@ reskinned.
 
 ## Exact repository state
 
-`packages/observatory-data/src/registry.ts` is the typed registry for the canonical
+`packages/projection-data/src/registry.ts` is the typed registry for the canonical
 Git repositories. One today: `vela-science/math`, the single live mathematics
 authority. Four existed under the previous epoch and existed because there were
 four topics rather than four authorities. Math is public. Its registry entry
@@ -189,11 +189,11 @@ is required or embedded.
 
 The direct release command checks out clean
 `origin/main` Repository tips, verifies them with the pinned Vela release,
-and writes a content-addressed normalized read model to the `vela_observatory`
-database in the `vela-observatory-projection` Neon project:
+and writes a content-addressed normalized read model to the `vela_projection`
+database in the `vela-problems-projection` Neon project:
 
 ```bash
-bun run refresh:observatory
+bun run release:problems
 ```
 
 Refresh refuses dirty or unpushed sources, wrong branches or remotes, Vela
@@ -214,8 +214,8 @@ the rollback floor before the migration runs, so an older application is never
 restored onto a database whose write contract it cannot satisfy. Writer credentials
 enter only migration, activation, and final pruning. The Vercel
 application connects as the native PostgreSQL login
-`observatory_projection_reader_20260813`. That versioned login inherits only
-the stable no-login `observatory_projection_reader` permission role; it does
+`vela_projection_reader_20260813`. That versioned login inherits only
+the stable no-login `vela_projection_reader` permission role; it does
 not inherit Neon's managed `neon_superuser` role. Schema `USAGE`, curated table
 `SELECT`, and database `CONNECT` attach to the stable role so credential
 rotation does not rewrite projection grants. Production also uses a read-only
@@ -238,7 +238,7 @@ source commit, and a release is stale whenever it differs from canonical
 `origin/main`.
 
 Problem discovery and cross-source reading use two checked files in
-`packages/observatory-data/config`: `problem-discovery.v1.json` owns explicit
+`packages/projection-data/config`: `problem-discovery.v1.json` owns explicit
 Area, Hub, Collection, Field, and Topic semantics, while
 `problem-resolution.v1.json` owns the small reviewed set of exact occurrence
 relations. The application does not derive those concepts from Repository
@@ -252,7 +252,7 @@ contract. The response returns exact occurrences, statements, and resolver
 nonclaims without creating Verification, Decision, or Standing.
 
 A no-op still records that it happened. `current_release.confirmed_at` is
-written on both branches, and it is the instant the Observatory footer shows.
+written on both branches, and it is the instant the Problems footer shows.
 The reason is that a reader takes the one date on the page for "how old is
 this", and `activated_at` cannot answer that: it stops moving the moment the
 source repositories go quiet, so a month with nothing to publish and a month
@@ -271,7 +271,7 @@ pruning:
 
 ```bash
 VELA_PROJECTION_WRITER_DATABASE_URL=... \
-  bun run --filter @vela/observatory-data releases:select -- \
+  bun run --filter @vela/projection-data releases:select -- \
   --expected-current sha256:<current> \
   --target sha256:<previously-activated-release>
 ```
@@ -293,9 +293,9 @@ operator decisions.
 
 ### The editorial snapshot
 
-The Observatory reads Neon at build. `apps/www` does not: it is a static export
+The Problems reads Neon at build. `apps/www` does not: it is a static export
 and reads one committed file,
-`packages/observatory-data/config/editorial-summary.v5.json`, so the editorial site
+`packages/projection-data/config/editorial-summary.v5.json`, so the editorial site
 builds with no database credential at all.
 
 That file is the only projection data the public editorial site serves, which
@@ -310,23 +310,23 @@ on Sidon sets against a real 0.
 Three things now prevent that recurring:
 
 - The generator reads current Repository counts, roots, and direct-Submission
-  actions through the same typed status reader the Observatory uses, rather
+  actions through the same typed status reader the Problems uses, rather
   than reaching into `status` by hand.
-- `packages/observatory-data/tests/editorial-summary.test.ts` runs the generator
+- `packages/projection-data/tests/editorial-summary.test.ts` runs the generator
   against a status shaped like the one the emitter publishes today and asserts
   the output satisfies the schema. It needs no database, so it runs in CI.
 - The direct release regenerates and commits the snapshot before requalification.
   Before this the release path refreshed Neon
-  and redeployed the Observatory only, which is precisely how www's numbers
-  froze while the Observatory's stayed current.
+  and redeployed the Problems only, which is precisely how www's numbers
+  froze while the Problems's stayed current.
 
 The v5 snapshot contains current Repository counts, roots, and the exact
 `status.actions.work` direct-Submission action. It contains no work inventory.
 Regenerate by hand with `bun run projection:snapshot` (needs
 `VELA_PROJECTION_DATABASE_URL` once).
 
-There is no checked-in repository snapshot for the Observatory, no copied search
-index, and no Build Week JSON. The Observatory reads release-scoped rows from
+There is no checked-in repository snapshot for the Problems, no copied search
+index, and no Build Week JSON. The Problems reads release-scoped rows from
 Neon during rendering.
 Each build compiles one exact release root, while `/api/search` and `/api/graph`
 accept only retained exact roots. This prevents an old deployment from silently
@@ -335,8 +335,8 @@ trees, event roots, graph roots, and row roots identify the projection, and it
 can be rebuilt from canonical repositories.
 
 Neon is neither canonical nor writable by the public application. It is a
-disposable read model. The `@vela/observatory-data` projector is its only writer, and the
-Observatory receives a SELECT-only role scoped to the normalized projection.
+disposable read model. The `@vela/projection-data` projector is its only writer, and the
+Problems receives a SELECT-only role scoped to the normalized projection.
 
 The credential contract is intentionally closed: application reads and checks
 use only `VELA_PROJECTION_DATABASE_URL`; explicit schema migration, projection
@@ -346,16 +346,16 @@ project has one branch, `main`. Release-scoped rows and `current_release`
 provide exact data identity and rollback without mapping application releases
 onto database branches.
 
-Those two URLs are the complete secret inventory for Observatory projection
+Those two URLs are the complete secret inventory for Problems projection
 access. Activity uses two separately scoped URLs described below. The stable
-`observatory_projection_reader` permission role and versioned
-`observatory_projection_reader_20260813` login are managed directly in Neon and
+`vela_projection_reader` permission role and versioned
+`vela_projection_reader_20260813` login are managed directly in Neon and
 are not recreated during CI or projection refreshes. Clean-room reconstruction
 creates the same no-login group, versioned login, membership, and inherited
 read boundary inside its disposable local cluster.
 
-`packages/observatory-data/schema.sql` is the current desired-state schema.
-Forward changes live in `packages/observatory-data/migrations`; each applied file
+`packages/projection-data/schema.sql` is the current desired-state schema.
+Forward changes live in `packages/projection-data/migrations`; each applied file
 is recorded with its exact byte root. `bun run db:migrate` applies any missing
 rooted migrations before a refresh and rejects changed or unknown history.
 `bun run db:check` verifies the required tables, indexes, and SELECT-only
@@ -413,7 +413,7 @@ replay commands remain in the Vela
 `VELA_MINIMUM_READ_NETWORK_PHASE_1_PUBLICATION_FACTS_2026-07-24.md` report.
 It was never a protocol, database table, public API, or production projector.
 
-The retired builder targeted the predecessor `observatory.v3` read model and
+The retired builder targeted the predecessor `projection.v3` read model and
 is intentionally absent from current `main`. Replaying the historical
 experiment means checking out its recorded tag and exact Repository commits, not
 adding a compatibility adapter to the current normalized read model.
@@ -425,8 +425,8 @@ independently maintained consumers.
 `@vela/activity-data` is the sole mutable data owner for Problems. It uses a
 separate `vela_activity` database on the existing Neon project's `main` branch.
 No preview or child database branches are part of the workflow. The two hosted
-planes remain distinct: Observatory projection roles cannot connect to
-`vela_activity`, and activity roles cannot connect to `vela_observatory`.
+planes remain distinct: Problems projection roles cannot connect to
+`vela_activity`, and activity roles cannot connect to `vela_projection`.
 
 The credential contract has two activity-only URLs:
 
@@ -485,9 +485,9 @@ bun run activity:submission:sign-local -- \
 The helper is not exported from the package root, and applications are barred
 from importing its subpath. Hosted accounts do not become Vela actors. The
 activity schema and API cannot emit a Vela Event, Decision, Verification, or
-Standing, cannot access an authority key, and cannot write the Observatory.
+Standing, cannot access an authority key, and cannot write the Problems.
 Deleting `vela_activity` leaves Repository Standing intact; rebuilding
-`vela_observatory` leaves hosted activity intact.
+`vela_projection` leaves hosted activity intact.
 
 ## Brand and assets
 
@@ -498,7 +498,7 @@ variants are generated and content-addressed.
 - Editorial delivery retains Zodiak, Gambetta, Switzer, and IBM Plex Mono.
   WWW currently selects the governed system Iowan Old Style/Baskerville stack
   for display and reading; no proprietary desktop font bytes are copied.
-- Observatory delivery: Geist for interface text and IBM Plex Mono for roots,
+- Problems delivery: Geist for interface text and IBM Plex Mono for roots,
   identifiers, commands, and exact values.
 - Asset synchronization is a mirror and removes stale destination fonts.
 - `vela.brand-root.v2` binds canonical marks, DTCG tokens, delivered font bytes,
@@ -526,7 +526,7 @@ git diff --check
 ```
 
 Local builds need the read-only projection URL because the home derives its
-release facts from the same checked projection used by the Observatory. Export
+release facts from the same checked projection used by the Problems. Export
 only `VELA_PROJECTION_DATABASE_URL`; do not source an entire Vercel environment
 file, because production-only identity variables intentionally activate stricter
 manifest checks. Local development should keep `VERCEL_ENV=development`.
@@ -547,12 +547,12 @@ The `constellate-dc388081` Vercel team has two active Vela Web projects:
 | Project | Application | Production domains |
 | --- | --- | --- |
 | `vela-web-www` | `apps/www` | `www.vela.space`, redirect aliases |
-| `vela-web-observatory` | `apps/observatory` | `problems.science` canonical, `app.vela.space` compatibility alias, `app.constellate.science` redirect |
+| `vela-web-problems` | `apps/problems` | `problems.science` canonical, `app.vela.space` compatibility alias, `app.constellate.science` redirect |
 
 There is no active legacy Vela Vercel project. `prospect` and `snowchild` are
 unrelated and outside this workspace.
 
-The Observatory's Vercel Functions run in `cle1` (AWS `us-east-2`), alongside
+The Problems's Vercel Functions run in `cle1` (AWS `us-east-2`), alongside
 the qualified Neon projection. Static assets remain globally served by
 Vercel's CDN. Keep `bunVersion: "1.x"`: it is the only supported Vercel Bun
 runtime selector, while the workspace `packageManager` and lockfile continue to
@@ -566,9 +566,9 @@ Root Directories:
 vercel link --repo --yes --scope constellate-dc388081
 ```
 
-Do not run `vercel deploy` from `apps/observatory`: the remote Root Directory
+Do not run `vercel deploy` from `apps/problems`: the remote Root Directory
 would be applied a second time. The governed production path is the exact Git
-deployment request exposed as `bun run deploy:observatory`; it requires
+deployment request exposed as `bun run deploy:problems`; it requires
 either a narrowly scoped automation token or an authenticated local Vercel CLI,
 derives `VELA_SITE_COMMIT` from the current checkout, and refuses commit or
 target drift.
@@ -579,7 +579,7 @@ The two active applications deliberately use different release paths:
 
 - `www.vela.space` uses Vercel's Git deployment for relevant `main` changes.
 - The unified application has automatic Git deployment disabled. An operator
-  runs `bun run refresh:observatory` from clean exact `main`. The command owns
+  runs `bun run release:problems` from clean exact `main`. The command owns
   static qualification, fresh source acquisition, a compatibility deployment,
   rooted activity migration, projection activation, local snapshot staging,
   post-activation qualification,
@@ -597,8 +597,8 @@ qualified.
 
 Vela Web's `package.json` contains the only product version. Neither database
 has a parallel numbered release train. The projection's current-only manifest is
-`vela.observatory-release-manifest`, and forward SQL migrations are recorded by
-identifier and exact content root in `observatory.schema_migrations`. Activity
+`vela.projection-release-manifest`, and forward SQL migrations are recorded by
+identifier and exact content root in `projection.schema_migrations`. Activity
 migrations are independently rooted in `activity.schema_migrations`.
 Application code does not carry readers for predecessor shapes.
 
@@ -613,14 +613,14 @@ Public manifests:
 The manifests use `vela.web-deployment.v3` and `vela.site-deployment.v4`; each
 records the exact Git commit, brand schema/root, deployment
 identity, and delivery mode. The editorial manifest is immutable deployment
-output. The Observatory manifest is a non-cached read-only route: it combines
+output. The Problems manifest is a non-cached read-only route: it combines
 that deployment's immutable identity with the current Neon projection on every
 request, so a data-only projection activation cannot leave a copied public JSON
-file behind. Ordinary Observatory pages remain bound to the exact retained root
-selected at build time. The Observatory manifest additionally embeds the
-current-only `vela.observatory-release-manifest`, including
-normalized Claim, Submission, Proposal, Verification, non-authoritative Result
-Dossier, review, work, search, graph, authority, and source-root identities. Repository authority is
+file behind. Ordinary Problems pages remain bound to the exact retained root
+selected at build time. The Problems manifest additionally embeds the
+current-only `vela.projection-release-manifest`, including
+normalized Claim, Submission, Proposal, Verification, review, search, graph,
+authority, and source-root identities. Repository authority is
 read-only product evidence: the projection may expose public keys, signed
 record roots, and restricted-policy identity, but never custody material,
 authentication context, a decision control, or an authority operation. A
@@ -633,7 +633,7 @@ which `deploymentIdentity()` reads directly and which production manifest
 generation refuses to go without. Git tags remain useful release pointers, but deployment
 truth is the exact commit rather than a tag inferred from a version string.
 `apps/www/scripts/check-deployed-manifest.mjs` and
-`apps/observatory/scripts/check-deployed-manifest.mjs` confirm that the deployed
+`apps/problems/scripts/check-deployed-manifest.mjs` confirm that the deployed
 bytes identify the exact repository commit and projection root.
 
 Several legacy domains currently show Vercel's `DNS Change Recommended`
@@ -660,7 +660,7 @@ shipping one; the preconditions are the gates.
    isolation. A release-candidate build is available on a `v*-rc.*` tag when a
    change is worth exercising in CI before it lands.
 2. Merge to clean `main`. `vercel-should-build.mjs` scopes the editorial Git
-   integration; `bun run refresh:observatory` explicitly refreshes and deploys
+   integration; `bun run release:problems` explicitly refreshes and deploys
    the Vela application. A shared brand or data-contract change may deploy both;
    editorial-only work does not redeploy the Vela application.
 3. Verify the production manifests and canonical domains against the exact

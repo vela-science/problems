@@ -8,7 +8,7 @@ const read = (path: string) => readFileSync(resolve(repositoryRoot, path), "utf8
 
 describe("problem-scoped Workspace discovery", () => {
   test("lists only member Workspaces anchored to the exact Repository and Problem", () => {
-    const migration = read("packages/activity-data/migrations/20260813_problem_scoped_workspaces.sql");
+    const migration = read("packages/activity-data/schema/problem-workspaces.sql");
     expect(sqlStatements(migration)).toHaveLength(4);
     expect(migration).toContain("CREATE OR REPLACE FUNCTION activity_api.list_problem_workspaces");
     expect(migration).toContain("m.account_id = p_account_id");
@@ -22,7 +22,7 @@ describe("problem-scoped Workspace discovery", () => {
 
   test("binds the application query and Workbench selection to the current Problem", () => {
     const activity = read("packages/activity-data/src/activity.ts");
-    const workbench = read("apps/observatory/src/components/vela/workbench.tsx");
+    const workbench = read("apps/problems/src/components/vela/workbench.tsx");
     expect(activity).toContain("activity_api.list_problem_workspaces($1::uuid, $2, $3)");
     expect(activity).toContain("[accountId, repositoryId, problemId]");
     expect(workbench).toContain("listProblemWorkspaces(");

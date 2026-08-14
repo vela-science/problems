@@ -17,16 +17,16 @@ function repository() {
   execFileSync("git", ["init", "-q", "-b", "main"], { cwd: path });
   execFileSync("git", ["config", "user.name", "Vela test"], { cwd: path });
   execFileSync("git", ["config", "user.email", "test@vela.invalid"], { cwd: path });
-  mkdirSync(resolve(path, "apps/observatory"), { recursive: true });
+  mkdirSync(resolve(path, "apps/problems"), { recursive: true });
   mkdirSync(resolve(path, "apps/www"), { recursive: true });
   mkdirSync(resolve(path, "packages/brand"), { recursive: true });
-  mkdirSync(resolve(path, "packages/observatory-data/src"), { recursive: true });
-  mkdirSync(resolve(path, "packages/observatory-data/tests"), { recursive: true });
+  mkdirSync(resolve(path, "packages/projection-data/src"), { recursive: true });
+  mkdirSync(resolve(path, "packages/projection-data/tests"), { recursive: true });
   mkdirSync(resolve(path, ".github/workflows"), { recursive: true });
-  writeFileSync(resolve(path, "apps/observatory/app.ts"), "one\n");
+  writeFileSync(resolve(path, "apps/problems/app.ts"), "one\n");
   writeFileSync(resolve(path, "apps/www/app.ts"), "one\n");
-  writeFileSync(resolve(path, "packages/observatory-data/src/index.ts"), "one\n");
-  writeFileSync(resolve(path, "packages/observatory-data/tests/projection.test.ts"), "one\n");
+  writeFileSync(resolve(path, "packages/projection-data/src/index.ts"), "one\n");
+  writeFileSync(resolve(path, "packages/projection-data/tests/projection.test.ts"), "one\n");
   writeFileSync(resolve(path, ".github/workflows/ci.yml"), "one\n");
   writeFileSync(resolve(path, "README.md"), "one\n");
   execFileSync("git", ["add", "."], { cwd: path });
@@ -48,19 +48,19 @@ function status(path: string, target: "www", environment: Record<string, string>
 }
 
 describe("Vercel workspace build selection", () => {
-  test("keeps editorial Git deploys direct and Observatory deploys orchestrated", () => {
+  test("keeps editorial Git deploys direct and Problems deploys orchestrated", () => {
     const editorial = JSON.parse(
       readFileSync(resolve(import.meta.dir, "../apps/www/vercel.json"), "utf8"),
     );
-    const observatory = JSON.parse(
-      readFileSync(resolve(import.meta.dir, "../apps/observatory/vercel.json"), "utf8"),
+    const problems = JSON.parse(
+      readFileSync(resolve(import.meta.dir, "../apps/problems/vercel.json"), "utf8"),
     );
     expect(editorial.git?.deploymentEnabled).not.toBe(false);
-    expect(observatory.git?.deploymentEnabled).toBe(false);
-    expect(observatory.bunVersion).toBe("1.x");
-    expect(observatory.regions).toEqual(["cle1"]);
+    expect(problems.git?.deploymentEnabled).toBe(false);
+    expect(problems.bunVersion).toBe("1.x");
+    expect(problems.regions).toEqual(["cle1"]);
     expect(editorial.ignoreCommand).toContain("vercel-should-build.mjs www");
-    expect(observatory.ignoreCommand).toBeUndefined();
+    expect(problems.ignoreCommand).toBeUndefined();
   });
 
   test("builds the editorial site for editorial and shared changes", () => {
@@ -71,9 +71,9 @@ describe("Vercel workspace build selection", () => {
     expect(status(path, "www")).toBe(1);
   });
 
-  test("skips Observatory-only and unrelated changes", () => {
+  test("skips Problems-only and unrelated changes", () => {
     const path = repository();
-    commit(path, "apps/observatory/app.ts", "two\n");
+    commit(path, "apps/problems/app.ts", "two\n");
     expect(status(path, "www")).toBe(0);
     commit(path, "README.md", "two\n");
     expect(status(path, "www")).toBe(0);
@@ -83,7 +83,7 @@ describe("Vercel workspace build selection", () => {
     const path = repository();
     commit(path, ".github/workflows/ci.yml", "two\n");
     expect(status(path, "www")).toBe(0);
-    commit(path, "packages/observatory-data/tests/projection.test.ts", "two\n");
+    commit(path, "packages/projection-data/tests/projection.test.ts", "two\n");
     expect(status(path, "www")).toBe(0);
     commit(path, "README.md", "two\n");
     expect(status(path, "www")).toBe(0);
@@ -91,7 +91,7 @@ describe("Vercel workspace build selection", () => {
 
   test("rebuilds the editorial site for shared projection runtime changes", () => {
     const path = repository();
-    commit(path, "packages/observatory-data/src/index.ts", "two\n");
+    commit(path, "packages/projection-data/src/index.ts", "two\n");
     expect(status(path, "www")).toBe(1);
   });
 

@@ -1,5 +1,4 @@
-import { createHash, randomUUID } from "node:crypto";
-import { readFileSync } from "node:fs";
+import { randomUUID } from "node:crypto";
 import { neon } from "@neondatabase/serverless";
 import {
   addDiscussionEntry,
@@ -18,14 +17,14 @@ import {
   scientificAnchorRoot,
   updateAttempt,
 } from "../src/index.ts";
-import { canonicalJson, sha256 } from "@vela/observatory-data/canonical";
-import { observatoryProjectionReaderIdentity } from "@vela/observatory-data/projection-reader";
+import { canonicalJson, sha256 } from "@vela/projection-data/canonical";
+import { projectionReaderIdentity } from "@vela/projection-data/projection-reader";
 
 const appUrl = process.env.VELA_ACTIVITY_DATABASE_URL;
 const migratorUrl = process.env.VELA_ACTIVITY_MIGRATOR_DATABASE_URL;
 const projectionUrl = process.env.VELA_PROJECTION_DATABASE_URL;
 if (!appUrl || !migratorUrl || !projectionUrl) {
-  throw new Error("live proof requires activity app, activity migrator, and Observatory reader URLs");
+  throw new Error("live proof requires activity app, activity migrator, and Problems reader URLs");
 }
 
 const appSql = neon(appUrl);
@@ -35,38 +34,24 @@ const [projectionIdentity] = await projectionSql.query(
   `SELECT current_database() AS database, current_user AS role,
      pg_has_role(current_user, $1, 'MEMBER') AS permission_member,
      (SELECT rolinherit FROM pg_roles WHERE rolname = current_user) AS inherits_privileges`,
-  [observatoryProjectionReaderIdentity.permissionRole],
+  [projectionReaderIdentity.permissionRole],
 );
 if (
-  projectionIdentity?.database !== observatoryProjectionReaderIdentity.database
-  || projectionIdentity?.role !== observatoryProjectionReaderIdentity.loginRole
+  projectionIdentity?.database !== projectionReaderIdentity.database
+  || projectionIdentity?.role !== projectionReaderIdentity.loginRole
   || !projectionIdentity.permission_member
   || !projectionIdentity.inherits_privileges
 ) {
-  throw new Error(`live proof received an unexpected Observatory reader identity: ${JSON.stringify(projectionIdentity)}`);
+  throw new Error(`live proof received an unexpected Problems reader identity: ${JSON.stringify(projectionIdentity)}`);
 }
 const suffix = Date.now().toString(36);
 const root = (value) => `sha256:${value.repeat(64)}`;
 const command = () => ({ idempotencyKey: randomUUID() });
-const currentMigrationId = "20260814_problem_scoped_activity";
-const currentMigrationSource = readFileSync(
-  new URL(`../migrations/${currentMigrationId}.sql`, import.meta.url),
-);
-const currentMigrationRoot = `sha256:${createHash("sha256").update(currentMigrationSource).digest("hex")}`;
 
-async function denied(promise, label, expected = null) {
+async function denied(promise, label) {
   try {
     await promise;
   } catch (error) {
-    if (expected) {
-      const code = error && typeof error === "object"
-        ? String(error.code ?? error.cause?.code ?? "")
-        : "";
-      const message = error instanceof Error ? error.message : String(error);
-      if (code !== expected.code || !message.includes(expected.message)) {
-        throw new Error(`${label} failed for an unexpected reason (SQLSTATE ${code || "unknown"})`);
-      }
-    }
     return true;
   }
   throw new Error(`${label} did not fail closed`);
@@ -81,28 +66,17 @@ async function ownerTransaction(statements) {
 
 async function standingSnapshot() {
   const [current] = await projectionSql.query(
-    "SELECT release_root FROM observatory.current_release",
+    "SELECT release_root FROM projection.current_release",
   );
   const rows = await projectionSql.query(
     `SELECT repository_id, claim_id, claim_root, standing
-     FROM observatory.claims WHERE release_root=$1 ORDER BY repository_id, claim_id`,
+     FROM projection.claims WHERE release_root=$1 ORDER BY repository_id, claim_id`,
     [current.release_root],
   );
   return { releaseRoot: current.release_root, count: rows.length, root: sha256(canonicalJson(rows)) };
 }
 
 const standingBefore = await standingSnapshot();
-const [currentMigration] = await migratorSql.query(
-  `SELECT migration_id, migration_root
-   FROM activity.schema_migrations WHERE migration_id=$1`,
-  [currentMigrationId],
-);
-if (
-  currentMigration?.migration_id !== currentMigrationId
-  || currentMigration?.migration_root !== currentMigrationRoot
-) {
-  throw new Error(`current Problem-scoped Activity migration is not installed exactly: ${JSON.stringify(currentMigration)}`);
-}
 const accountA = await ensureCurrentAccount({
   workosUserId: `user_liveproofa${suffix}`,
   displayName: "Live proof A",
@@ -124,7 +98,7 @@ const workspaceB = await createWorkspace(accountB.id, {
 const contextA = { accountId: accountA.id, workspaceId: workspaceA.id };
 const anchor = {
   projectionReleaseRoot: standingBefore.releaseRoot,
-  repositoryId: "8115c538-7688-40b7-ab75-3c4765bf3c19",
+  repositoryId: "8138c6da-46c4-47ee-b493-5bbfbec09b1e",
   repositoryRoot: root("1"),
   sourceCommit: "2".repeat(40),
   sourceTree: "3".repeat(40),
@@ -194,56 +168,6 @@ await denied(createApproach(contextA, {
   summary: "The same idempotency key must reject changed bytes.",
 }, approachCommand), "idempotency key reuse");
 
-const retiredApproachPayload = {
-  anchor: commandAnchor,
-  title: "Retired Target-bound write must fail",
-  summary: "Current hosted writers cannot create legacy Target lineage.",
-  target_id: "erdos:321:retired-live-proof",
-  target_packet_root: root("c"),
-  target_record_root: root("d"),
-};
-await denied(appSql.query(
-  "SELECT activity_api.execute_command($1::uuid,$2::uuid,$3,$4,$5,$6::jsonb,$7::bigint) AS result",
-  [
-    accountA.id,
-    workspaceA.id,
-    "approach.create",
-    randomUUID(),
-    commandRequestRoot("approach.create", retiredApproachPayload),
-    JSON.stringify(retiredApproachPayload),
-    null,
-  ],
-), "retired Target-bound Approach write", {
-  code: "22023",
-  message: "new Approaches are scoped to the exact Problem anchor, not a retired Target binding",
-});
-
-/* Use the owner role to reach the 20260814 table trigger directly. The public
-   command also refuses this payload, but its retained 20260813 guard runs
-   before INSERT and therefore cannot prove the forward migration itself. */
-await denied(ownerTransaction((transaction) => [transaction.query(
-  `INSERT INTO activity.attempts (
-     workspace_id, anchor_root, approach_id, created_by_account_id,
-     provider, title, execution_packet_root, execution_profile_root,
-     execution_verifier_capsule_root, execution_result_contract_root
-   ) VALUES ($1::uuid,$2,$3::uuid,$4::uuid,$5,$6,$7,$8,$9,$10)`,
-  [
-    workspaceA.id,
-    currentAnchorRoot,
-    approach.id,
-    accountA.id,
-    "retired-execution-live-proof",
-    "Retired execution lineage must fail",
-    root("c"),
-    root("d"),
-    root("e"),
-    root("f"),
-  ],
-)]), "retired execution-binding write", {
-  code: "22023",
-  message: "retired execution binding is read-only; current activity is Problem-scoped",
-});
-
 const forkTitle = "Live proof Problem-scoped fork";
 const forkSummary = "A second approach to the same exact Problem anchor.";
 const forkExpectedVersion = Number(approach.version);
@@ -286,7 +210,6 @@ if (
 
 const attempt = await createAttempt(contextA, {
   approachId: String(approach.id),
-  provider: "provider-neutral-live-proof",
   title: "Live proof attempt",
 }, command());
 await updateAttempt(
@@ -334,7 +257,7 @@ await denied(getProblemActivity({
   currentAnchorRoot,
 }), "removed member read");
 
-const artifact = await attachArtifact(contextA, {
+await attachArtifact(contextA, {
   anchor,
   attemptId: String(attempt.id),
   contentRoot: root("6"),
@@ -422,7 +345,6 @@ const payload = {
 const expectedExport = createSubmissionDraftExport(payload);
 const draft = await saveSubmissionDraft(contextA, {
   anchor,
-  artifactId: String(artifact.id),
   payload,
 }, command());
 const exported = await exportSubmissionDraft(contextA, String(draft.id));
@@ -434,14 +356,21 @@ await denied(
 
 await denied(appSql.query("SELECT count(*) FROM activity.accounts"), "app base-table read");
 await denied(appSql.query("UPDATE activity.activity_audit_entries SET operation=operation"), "audit mutation");
-const observatoryUrl = new URL(appUrl);
-observatoryUrl.pathname = "/vela_observatory";
-await denied(neon(observatoryUrl.toString()).query(
-  "UPDATE observatory.current_release SET confirmed_at=confirmed_at",
-), "activity role Observatory write");
+const problemsUrl = new URL(appUrl);
+problemsUrl.pathname = "/vela_projection";
+await denied(neon(problemsUrl.toString()).query(
+  "UPDATE projection.current_release SET confirmed_at=confirmed_at",
+), "activity role Problems write");
 
 const catalogResults = await ownerTransaction((transaction) => [transaction.query(`SELECT
+  (SELECT count(*)::integer FROM pg_tables WHERE schemaname='activity') AS table_count,
   count(*) FILTER (WHERE column_name ~* '(private|signing|authority).*key|seed')::integer AS authority_secret_columns,
+  count(*) FILTER (WHERE table_name || '.' || column_name IN (
+    'approaches.target_id', 'approaches.target_packet_root', 'approaches.target_record_root',
+    'attempts.provider', 'attempts.external_session_id', 'attempts.locator',
+    'attempts.execution_packet_root', 'artifact_refs.execution_packet_root',
+    'submission_drafts.artifact_id', 'submission_drafts.execution_packet_root'
+  ))::integer AS retired_columns,
   count(*) FILTER (WHERE data_type='bytea'
     AND NOT (table_name='workspace_crdt_updates' AND column_name='update_bytes'))::integer
     AS unexpected_byte_columns,
@@ -453,7 +382,9 @@ const catalogRows = catalogResults.at(-1);
 const catalog = catalogRows?.[0];
 if (!catalog) throw new Error("activity catalog probe returned no row");
 if (
-  Number(catalog.authority_secret_columns) !== 0
+  Number(catalog.table_count) !== 13
+  || Number(catalog.authority_secret_columns) !== 0
+  || Number(catalog.retired_columns) !== 0
   || Number(catalog.unexpected_byte_columns) !== 0
   || Number(catalog.bounded_crdt_byte_columns) !== 1
 ) {
@@ -481,7 +412,7 @@ if (forkAudits.length !== 1 || forkAudits[0]?.requestRoot !== forkRequestRoot) {
 }
 const standingAfter = await standingSnapshot();
 if (canonicalJson(standingAfter) !== canonicalJson(standingBefore)) {
-  throw new Error("activity proof changed Observatory Standing");
+  throw new Error("activity proof changed Problems Standing");
 }
 
 console.log(JSON.stringify({
@@ -507,14 +438,12 @@ console.log(JSON.stringify({
   removedMemberDenied: true,
   privateNoteIsolated: true,
   idempotencyProved: true,
-  problemScopedMigration: { id: currentMigrationId, root: currentMigrationRoot },
-  retiredTargetWriteDenied: true,
-  retiredExecutionWriteDenied: true,
+  cleanSchemaProved: true,
   problemScopedForkAndAuditProved: true,
   optimisticVersioningProved: true,
   exactAnchorFollowingProved: true,
   appBaseTablesDenied: true,
-  observatoryWriteDenied: true,
+  problemsWriteDenied: true,
   authoritySecretColumns: 0,
   unexpectedByteColumns: 0,
   boundedCrdtByteColumns: 1,

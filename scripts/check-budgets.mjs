@@ -5,16 +5,16 @@ import { parseEnv } from "node:util";
 import { filesBelow } from "./fs.mjs";
 import {
   allRepositories,
-  observatoryProjectionManifest,
+  projectionManifest,
   graphRead,
   searchRead,
-} from "../packages/observatory-data/src/index.ts";
+} from "../packages/projection-data/src/index.ts";
 import { fontFileStem, rejectedFontFamilies, webFontProfiles } from "../packages/brand/src/fonts.ts";
 
 const repository = resolve(import.meta.dirname, "..");
-const observatory = resolve(repository, "apps/observatory");
+const problems = resolve(repository, "apps/problems");
 const editorial = resolve(repository, "apps/www");
-const localEnvironment = resolve(observatory, ".env.local");
+const localEnvironment = resolve(problems, ".env.local");
 if (!process.env.VELA_PROJECTION_DATABASE_URL && existsSync(localEnvironment)) {
   const localProjection = parseEnv(
     readFileSync(localEnvironment, "utf8"),
@@ -22,13 +22,13 @@ if (!process.env.VELA_PROJECTION_DATABASE_URL && existsSync(localEnvironment)) {
   if (localProjection) process.env.VELA_PROJECTION_DATABASE_URL = localProjection;
 }
 const scope = process.env.VELA_BUDGET_SCOPE ?? "all";
-if (scope !== "all" && scope !== "observatory") throw new Error(`unknown budget scope ${scope}`);
+if (scope !== "all" && scope !== "problems") throw new Error(`unknown budget scope ${scope}`);
 
 function bytesBelow(directory) {
   return filesBelow(directory).reduce((sum, path) => sum + statSync(path).size, 0);
 }
 
-const prebuilt = filesBelow(resolve(observatory, ".next/server/app")).filter((path) => path.endsWith(".html"));
+const prebuilt = filesBelow(resolve(problems, ".next/server/app")).filter((path) => path.endsWith(".html"));
 /* A ceiling here IS meaningful — prerendering per-record pages would put
    thousands of files in the build — but it bounds a category error rather than
    a byte count, so it sits well above ordinary growth. */
@@ -41,8 +41,8 @@ if (prebuilt.length >= 500) throw new Error(`Vela app prebuild has ${prebuilt.le
    would break: three.js must not enter an initial chunk, no browser file may
    embed the full projection, /search must stay prerendered, and the font
    profile must contain exactly its two identifier faces. */
-const searchHtml = readFileSync(resolve(observatory, ".next/server/app/search.html"));
-const projectionManifest = await observatoryProjectionManifest();
+const searchHtml = readFileSync(resolve(problems, ".next/server/app/search.html"));
+const projectionManifest = await projectionManifest();
 const root = projectionManifest.release_root;
 /* The heaviest canvas the release can actually serve, found by asking the
    release which Repositories it has.
@@ -67,15 +67,15 @@ const searchGzip = gzipSync(searchPayload).byteLength;
 const graphPayload = heaviestGraph.payload;
 const graphGzip = gzipSync(graphPayload).byteLength;
 
-const productFonts = readdirSync(resolve(observatory, "public/assets/fonts")).sort();
+const productFonts = readdirSync(resolve(problems, "public/assets/fonts")).sort();
 const editorialFonts = readdirSync(resolve(editorial, "public/assets/fonts")).sort();
-// Geist ships through Next's package integration. The Observatory's mirrored
+// Geist ships through Next's package integration. The Problems's mirrored
 // public font profile therefore contains only the identifier face it serves
 // directly; the three editorial faces stay on the editorial profile. The
 // profile itself is @vela/brand's to declare — this asserts delivery matches
 // it, rather than restating the two filenames a third time.
 if (JSON.stringify(productFonts) !== JSON.stringify([...webFontProfiles.product].sort())) {
-  throw new Error("Observatory font delivery profile drift");
+  throw new Error("Problems font delivery profile drift");
 }
 /* Rejected faces, read from the one list that names them. This check looks at
    delivered FILES while check-brand.mjs looks at generated CSS families, so
@@ -138,13 +138,13 @@ if (scope === "all") {
 }
 
 const browserFiles = [
-  ...filesBelow(resolve(observatory, ".next/static")),
-  ...filesBelow(resolve(observatory, "public")),
-  ...filesBelow(resolve(observatory, ".next/server/app")).filter((path) => path.endsWith(".html")),
+  ...filesBelow(resolve(problems, ".next/static")),
+  ...filesBelow(resolve(problems, "public")),
+  ...filesBelow(resolve(problems, ".next/server/app")).filter((path) => path.endsWith(".html")),
 ].filter((path) => /\.(?:html|js|json)$/u.test(path));
 for (const path of browserFiles) {
   const content = readFileSync(path, "utf8");
-  if (content.includes('"schema":"vela.observatory-release.v1"')) {
+  if (content.includes('"schema":"vela.projection-release.v1"')) {
     throw new Error(`${path}: embeds the full repository projection`);
   }
 }
@@ -153,7 +153,7 @@ console.log(JSON.stringify({
   ok: true,
   schema: "vela.web-budgets.v1",
   scope,
-  observatory_prebuilt: prebuilt.length,
+  problems_prebuilt: prebuilt.length,
   search_html_bytes: searchHtml.byteLength,
   search_response_bytes: searchPayload.byteLength,
   search_response_gzip_bytes: searchGzip,

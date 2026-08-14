@@ -11,7 +11,7 @@ import { cn } from "../../lib/utils";
  * (ring, filled core, dashed ring, seam); this is that vocabulary drawn.
  * Geometry carries the meaning and colour only reinforces it, so the mark
  * survives forced-colors, print and greyscale — which is also what keeps
- * apps/observatory/DESIGN.md's "State and evidence" rule ("Verification and
+ * apps/problems/DESIGN.md's "State and evidence" rule ("Verification and
  * acceptance are never visually or verbally conflated") enforceable rather than
  * aspirational. It cannot be satisfied by a badge that has one slot for both
  * facts.

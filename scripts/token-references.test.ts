@@ -61,7 +61,7 @@ describe("custom property references", () => {
 
   test("treats a JSX style-object property as defined", () => {
     const root = fixture({
-      "apps/observatory/src/components/ui/sidebar.tsx":
+      "apps/problems/src/components/ui/sidebar.tsx":
         'export const S = () => <div style={{ "--sidebar-width": W } as React.CSSProperties} className="w-(--sidebar-width)">{null}</div>;\n' +
         "const x = `calc(var(--sidebar-width) * -1)`;\n",
     });

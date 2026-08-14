@@ -111,7 +111,7 @@ groups only reviewed exact occurrences. A matching source number is a candidate
 navigation link, never a claim that two statements are identical, equivalent,
 proved, or accepted. Source-authored classifications and activity status never
 become Local Standing. The discovery profile and the reviewed resolver are
-versioned data contracts in `@vela/observatory-data`, so adding biology,
+versioned data contracts in `@vela/projection-data`, so adding biology,
 physics, or another mathematical collection does not require app-local taxonomy
 or Repository-slug inference.
 
@@ -143,13 +143,13 @@ Decision, Repository, Source. Public contribution vocabulary: Workspace
 and Research Block. Exact provenance vocabulary: Claim, Submission, Proposal,
 Verification Record, Event, root, and format.
 
-The Observatory does not use Work, Activity, Run, or Attempt as scientific
+The Problems does not use Work, Activity, Run, or Attempt as scientific
 objects. Problems may use Work, Activity, and Attempt for hosted records in the
 non-authoritative plane. Finding remains a retained protocol value and a
 view-only upstream term; the interface calls the record a Claim. Bundle is a
 protocol root and appears only as a labelled exact value. The release-level
 `/runs` path remains a permanent redirect to `/decisions` for the retired
-Observatory route.
+Problems route.
 
 The protocol's own banned wording holds here: never "landed finding", "verified
 truth", "accepted by verifier", "AI approved", or an unqualified "verified",
@@ -213,21 +213,20 @@ reading. The ambiguity was the two scopes being on screen together, which the
 contextual rail already prevents.
 
 Alongside the human surfaces it serves declared read endpoints: the deployment
-manifest, the source registry, the search and graph read contracts, one
-root-bound Problem-source JSON twin, and one JSON export per published
-Dossier. They are the read contract, not an API. Beside
+manifest, the source registry, the search and graph read contracts, and one
+root-bound Problem-source JSON twin. They are the read contract, not an API. Beside
 them sit three isolated product-identity handlers, for sign-in, the provider
 callback, and the same-origin account session, each named in the scientific-authority
 boundary gate. No other route handler may be added.
 
-The Observatory exposes scientific state; it does not control it. Accepted,
+The Problems exposes scientific state; it does not control it. Accepted,
 pending, rejected, withdrawn, replayed, verified, recorded, and strict-blocked
 remain distinct in language and presentation.
 
 Each Problem page has two explicit modes:
 
 - **Current State** reads the same exact Repository and projection facts as the
-  Observatory.
+  Problems.
 - **Workspace** requires a hosted account and writes activity through
   `@vela/activity-data`.
 
@@ -295,13 +294,13 @@ The two applications are independently deployable surfaces of one product:
   and marks;
 - `@vela/ui` supplies shared React primitives and stable Vela presentation
   semantics;
-- `@vela/observatory-data` supplies exact generated facts and projections;
+- `@vela/projection-data` supplies exact generated facts and projections;
 - `@vela/activity-data` owns hosted mutable product records, activity
   migrations, tenant authorization, and unsigned Submission drafts.
 
 Applications share foundations, not whole page implementations. Editorial
 compositions remain in `apps/www`; Problem State, Work, record inspection,
-search, and graph compositions live together in `apps/observatory`.
+search, and graph compositions live together in `apps/problems`.
 
 The Vela design system is private and product-bound. `packages/ui` is source
 shared by this workspace and future private Vela applications, consumed through
@@ -325,10 +324,10 @@ documentation, not above every page that lists them.
 ## Non-negotiable boundaries
 
 - Canonical repository Git repositories remain the scientific source of truth.
-- `vela_observatory` is a disposable, rebuildable, SELECT-only Neon projection.
-  The Observatory reader role cannot write it.
+- `vela_projection` is a disposable, rebuildable, SELECT-only Neon projection.
+  The Problems reader role cannot write it.
 - `vela_activity` is a separate mutable database. `@vela/activity-data` owns
-  its schema and application writes. Its roles cannot write the Observatory or
+  its schema and application writes. Its roles cannot write the Problems or
   read authority credentials.
 - Hosted code has no repository authority key or server signer. The local-only
   signer reads a user-named key file and never enters an application bundle.
@@ -342,17 +341,17 @@ documentation, not above every page that lists them.
 - Search order, graph position, model output, and verifier success never imply
   authority.
 - No second repository parser, projection builder, search index, source registry,
-  or deployment-manifest implementation may appear outside `@vela/observatory-data`.
+  or deployment-manifest implementation may appear outside `@vela/projection-data`.
 - No second mutable store or product mutation implementation may appear outside
   `@vela/activity-data`.
-- Removing activity leaves Standing intact. Rebuilding the Observatory leaves
+- Removing activity leaves Standing intact. Rebuilding the Problems leaves
   activity intact.
 - Release identity and visible counts derive from checked artefacts rather than
   copied strings.
 
 ## Product rules
 
-- The Vela sail is the Home affordance on both surfaces. In the Observatory it
+- The Vela sail is the Home affordance on both surfaces. In the Problems it
   is the mark alone, sized to the sidebar's icon column, with no wordmark.
 - Editorial navigation stays small. The application leads with Problems and
   keeps advanced record navigation secondary. Current State and Workspace remain explicit
@@ -361,10 +360,9 @@ documentation, not above every page that lists them.
   the record, a Repository opens as a repository whose most prominent action is
   getting the record, an instrument opens with its toolbar and canvas.
 - Use progressive disclosure for exact metadata; do not remove it.
-- Use open sections, tables, and item groups before card grids. The Observatory
-  imports no Card primitive; the Dossier collections are the one hand-authored
-  grid, because a Dossier is a document a reader picks rather than a row they
-  scan.
+- Use open sections, tables, and item groups before card grids. The Problems
+  app imports no Card primitive; Problem and record collections remain
+  scannable rows.
 - Preserve durable URLs and URL-backed product state. A retired path keeps a
   permanent redirect, and the route contract pins where it points. Editorial
   aliases resolve directly to a published essay or an exact pinned manual page;
@@ -383,7 +381,7 @@ inferred from a version string. Pushing to `main` ships; a tag is worth cutting
 when a release means something, and is not a precondition for one.
 
 Sizes are measured and reported, never enforced as a ceiling, with one
-exception: authored Observatory global and theme CSS is capped at 180 lines,
+exception: authored Problems global and theme CSS is capped at 180 lines,
 because unbounded route CSS in a global stylesheet is the regression that gate
 exists to catch. What else fails a build is a category error: a heavy runtime
 entering an initial chunk, a browser file embedding the projection, per-record
@@ -392,7 +390,7 @@ face.
 
 ## Anti-patterns
 
-- Marketing chrome inside the Observatory
+- Marketing chrome inside the Problems
 - Dashboard framing for reading or record inspection
 - Over-explained UI and repeated authority disclaimers
 - Duplicated navigation, route framing, metadata, or release facts

@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
-    "@vela/observatory-data": "workspace:*",
+    "@vela/projection-data": "workspace:*",
     "ajv": "8.20.0",
     "ajv-formats": "3.0.1",
     "server-only": "0.0.1"

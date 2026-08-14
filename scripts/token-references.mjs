@@ -5,7 +5,7 @@ import { relative, resolve, sep } from "node:path";
    its whole declaration invalid at computed-value time, so the declaration is
    dropped and the previous cascade winner paints instead. That failure is
    silent: no build error, no console warning, no visual placeholder. It is how
-   the night masthead's Observatory link rendered at about 1.3:1 and how every
+   the night masthead's Problems link rendered at about 1.3:1 and how every
    publication-shelf heading fell back to the sans face.
 
    Three ways a reference resolves:
@@ -32,7 +32,7 @@ const scanned = [
   "packages/brand/generated",
   "packages/ui/src",
   "apps/www/src",
-  "apps/observatory/src",
+  "apps/problems/src",
 ];
 
 /* Properties injected by a dependency rather than defined in our source.

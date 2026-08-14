@@ -10,10 +10,10 @@ make evidence and direction legible; it is not a separately published product.
 | Layer | Canonical source | Consumers |
 | --- | --- | --- |
 | Brand | `packages/brand` | All Vela surfaces and exported assets |
-| React primitives and semantics | `packages/ui` | Observatory, Problems, eligible www interactions, future private React applications |
+| React primitives and semantics | `packages/ui` | Problems, Problems, eligible www interactions, future private React applications |
 | Editorial profile | `packages/ui/src/styles/editorial.css` | Home, the Constellations essay, and the vendored Vela documentation |
-| Product profile | `packages/ui/src/styles/product.css` | Observatory, Problems, and future private product surfaces |
-| Exact data | `packages/observatory-data` | www, Observatory, and Problems State mode |
+| Product profile | `packages/ui/src/styles/product.css` | Problems, Problems, and future private product surfaces |
+| Exact data | `packages/projection-data` | www, Problems, and Problems State mode |
 | Activity data | `packages/activity-data` | Problems Work mode; no visual primitives |
 
 `@vela/brand` is framework-neutral. It owns the DTCG-shaped token source,
@@ -52,7 +52,7 @@ shadcn diff
 The workspace pins shadcn `4.16.1`; scripts always resolve that installed
 binary. `bunx shadcn@…` is deliberately excluded because it fetched a second
 version beside the reviewed one. `bun run check:design-system` runs `shadcn
-info --json` in `packages/ui`, `apps/observatory`, and `apps/www`, then requires
+info --json` in `packages/ui`, `apps/problems`, and `apps/www`, then requires
 the same Base UI base, `base-nova`, Hugeicons, Tailwind v4, and shared UI target.
 
 Review generated source before accepting it. A registry update may change
@@ -60,7 +60,7 @@ markup, state attributes, dependencies, or focus behavior. Keep the source
 close to upstream; put Vela semantics in composition rather than forking a
 generic primitive.
 
-`apps/observatory/components.json` and `apps/www/components.json` are consumer
+`apps/problems/components.json` and `apps/www/components.json` are consumer
 maps. They point UI and utility aliases at `@vela/ui`; neither is a second
 installation destination. Problems consumes package exports and does not
 create an app-local primitive directory. www uses the same controls, focus,
@@ -125,7 +125,7 @@ A second full-source comparison covered the wider Pro catalog before this
 tranche was frozen:
 
 - `command-menu-global-search` and `search-global` confirmed the existing
-  Observatory palette architecture: it groups real Problems, State/Work,
+  Problems palette architecture: it groups real Problems, State/Work,
   Hubs, Sources, repositories, exact projected records, and the canonical docs
   destination. The existing projection search remains the sole owner; no
   static result corpus or second command primitive was added.
@@ -267,7 +267,7 @@ Tailwind Plus editorial and documentation compositions may remain local to
 `apps/www` with provenance. Generic controls should converge on `@vela/ui`
 when doing so reduces code and preserves the editorial register.
 
-### Observatory
+### Problems
 
 - Geist for interface text
 - IBM Plex Mono for identifiers and exact values
@@ -281,9 +281,9 @@ data contracts are domain-specific. It must include an equivalent record view.
 
 ### Problems
 
-- the same Geist and IBM Plex Mono product typography as the Observatory
+- the same Geist and IBM Plex Mono product typography as the Problems
 - one explicit State or Work mode on each Problem page
-- exact scientific state rendered with the Observatory's labels and roots
+- exact scientific state rendered with the Problems's labels and roots
 - editable activity presented as a separate workbench layer
 - stale-anchor, idempotent-retry, and version-conflict states in plain language
 - tables, Item groups, fields, and disclosures before dashboard cards

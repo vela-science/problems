@@ -1,5 +1,5 @@
 import { createPrivateKey, createPublicKey, sign, verify } from "node:crypto";
-import { canonicalJson, sha256, type HashRoot } from "@vela/observatory-data/canonical";
+import { canonicalJson, sha256, type HashRoot } from "@vela/projection-data/canonical";
 import {
   assertSubmissionDraft,
   VELA_SUBMISSION_PAYLOAD_TYPE,

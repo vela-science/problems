@@ -34,9 +34,9 @@ afterEach(() => {
   for (const path of temporaryRoots.splice(0)) rmSync(path, { recursive: true, force: true });
 });
 
-describe("Workspace CRDT activity migration", () => {
+describe("Workspace CRDT activity schema", () => {
   test("keeps collaborative bytes append-only, rooted, bounded, and outside scientific authority", () => {
-    const migration = read("migrations/20260813_workspace_crdt.sql");
+    const migration = read("schema/workspace-crdt.sql");
     expect(migration).toContain("CREATE TABLE IF NOT EXISTS activity.workspace_crdt_updates");
     expect(migration).toContain("UNIQUE (workspace_id, anchor_root, document_name, update_root)");
     expect(migration).toContain("authority_effect text NOT NULL DEFAULT 'none' CHECK (authority_effect = 'none')");
@@ -47,7 +47,7 @@ describe("Workspace CRDT activity migration", () => {
     expect(migration).not.toMatch(/\b(?:Decision|Verification|Standing)\b/u);
   });
 
-  test("applies after current activity migrations and enforces roots, tenancy, idempotency, and audit", async () => {
+  test("applies from the clean schema and enforces roots, tenancy, idempotency, and audit", async () => {
     const pgBin = process.env.PG_BIN_DIR ?? command("pg_config", ["--bindir"]).trim();
     const port = await availablePort();
     const tempRoot = mkdtempSync(join(tmpdir(), "vela-workspace-crdt-"));
@@ -76,15 +76,12 @@ describe("Workspace CRDT activity migration", () => {
       command(join(pgBin, "psql"), [admin, "--set", "ON_ERROR_STOP=1", "--file", resolve(packageRoot, "roles.sql")]);
       psql(admin, "CREATE DATABASE vela_activity");
       psql(database, "GRANT CREATE ON DATABASE vela_activity TO vela_activity_owner");
-      for (const migration of [
-        "20260811_activity_v1.sql",
-        "20260812_current_anchor_read.sql",
-        "20260812_target_bound_approach.sql",
-        "20260813_execution_binding_lineage.sql",
-        "20260813_problem_scoped_workspaces.sql",
-        "20260813_workspace_crdt.sql",
-        "20260814_problem_scoped_activity.sql",
-      ]) applyFile(`migrations/${migration}`);
+      for (const fragment of [
+        "base.sql",
+        "current-anchor-read.sql",
+        "problem-workspaces.sql",
+        "workspace-crdt.sql",
+      ]) applyFile(`schema/${fragment}`);
 
       const accountA = psql(database, "SELECT activity_api.ensure_account('user_A1','Alice','alice@example.test')->>'id'");
       const accountB = psql(database, "SELECT activity_api.ensure_account('user_B2','Bob','bob@example.test')->>'id'");

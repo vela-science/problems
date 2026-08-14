@@ -11,9 +11,9 @@ function fixture(files: Record<string, string>) {
   roots.push(root);
   for (const directory of [
     "apps/www/src",
-    "apps/observatory/src",
+    "apps/problems/src",
     "packages/activity-data/src",
-    "packages/observatory-data/src",
+    "packages/projection-data/src",
   ]) {
     mkdirSync(resolve(root, directory), { recursive: true });
   }
@@ -33,10 +33,10 @@ describe("scientific-authority profiles", () => {
   test("allows static www, exact State reads, and the declared activity action", () => {
     const root = fixture({
       "apps/www/src/app/page.tsx": "export default function Page() { return null; }\n",
-      "apps/observatory/src/app/api/search/route.ts": "export async function GET() { return Response.json([]); }\n",
-      "apps/observatory/src/app/.well-known/vela-site.json/route.ts": "export async function GET() { return Response.json({ authority: 'read_only_projection' }); }\n",
-      "apps/observatory/src/app/actions/activity.ts": "'use server';\nimport { createAttempt } from '@vela/activity-data';\nexport async function save() { return createAttempt(); }\n",
-      "packages/activity-data/src/contracts.ts": "import { canonicalJson } from '@vela/observatory-data/canonical';\nexport const root = canonicalJson({});\n",
+      "apps/problems/src/app/api/search/route.ts": "export async function GET() { return Response.json([]); }\n",
+      "apps/problems/src/app/.well-known/vela-site.json/route.ts": "export async function GET() { return Response.json({ authority: 'read_only_projection' }); }\n",
+      "apps/problems/src/app/actions/activity.ts": "'use server';\nimport { createAttempt } from '@vela/activity-data';\nexport async function save() { return createAttempt(); }\n",
+      "packages/activity-data/src/contracts.ts": "import { canonicalJson } from '@vela/projection-data/canonical';\nexport const root = canonicalJson({});\n",
     });
     expect(inspectScientificAuthorityBoundary(root)).toEqual([]);
   });
@@ -60,16 +60,16 @@ describe("scientific-authority profiles", () => {
 
   test("keeps Vela scientific routes exact and confines mutation", () => {
     const root = fixture({
-      "apps/observatory/src/app/api/state/route.ts": "export const POST = async () => new Response();\n",
-      "apps/observatory/src/app/action.ts": "'use server';\nexport async function mutate() {}\n",
-      "apps/observatory/src/lib/request.ts": "export const value = cookies();\n",
-      "apps/observatory/src/lib/env.ts": "export const secret = process.env.SECRET;\n",
-      "apps/observatory/src/lib/remote.ts": "export const state = fetch('/api/unrooted');\n",
+      "apps/problems/src/app/api/state/route.ts": "export const POST = async () => new Response();\n",
+      "apps/problems/src/app/action.ts": "'use server';\nexport async function mutate() {}\n",
+      "apps/problems/src/lib/request.ts": "export const value = cookies();\n",
+      "apps/problems/src/lib/env.ts": "export const secret = process.env.SECRET;\n",
+      "apps/problems/src/lib/remote.ts": "export const state = fetch('/api/unrooted');\n",
     });
     expect(new Set(inspectScientificAuthorityBoundary(root).map(({ rule }) => rule))).toEqual(new Set([
       "app_route_handler",
       "app_mutation",
-      "observatory_server_action",
+      "problems_server_action",
       "app_request_state",
       "app_runtime_environment",
       "app_request_fetch",
@@ -78,12 +78,12 @@ describe("scientific-authority profiles", () => {
 
   test("confines Work mutations and remote fetches to the declared boundary", () => {
     const root = fixture({
-      "apps/observatory/src/app/actions/other.ts": "'use server';\nexport async function save() {}\n",
-      "apps/observatory/src/app/api/attempts/route.ts": "export async function POST() { return new Response(); }\n",
-      "apps/observatory/src/lib/remote.ts": "export const result = fetch('https://worker.invalid/run');\n",
+      "apps/problems/src/app/actions/other.ts": "'use server';\nexport async function save() {}\n",
+      "apps/problems/src/app/api/attempts/route.ts": "export async function POST() { return new Response(); }\n",
+      "apps/problems/src/lib/remote.ts": "export const result = fetch('https://worker.invalid/run');\n",
     });
     expect(new Set(inspectScientificAuthorityBoundary(root).map(({ rule }) => rule))).toEqual(new Set([
-      "observatory_server_action",
+      "problems_server_action",
       "app_route_handler",
       "app_mutation",
       "app_request_fetch",
@@ -105,10 +105,10 @@ describe("scientific-authority profiles", () => {
   test("keeps the mutable and scientific data packages acyclic", () => {
     const root = fixture({
       "apps/www/src/lib/activity.ts": "import '@vela/activity-data';\n",
-      "apps/observatory/src/lib/activity.ts": "export * from '@vela/activity-data/contracts';\n",
-      "apps/observatory/src/lib/sign.ts": "import('@vela/activity-data/local-signing');\n",
-      "packages/activity-data/src/projection.ts": "import { canonicalJson } from '@vela/observatory-data/canonical';\nimport { load } from '@vela/observatory-data';\nexport { canonicalJson, load };\n",
-      "packages/observatory-data/src/activity.ts": "import('@vela/activity-data');\n",
+      "apps/problems/src/lib/activity.ts": "export * from '@vela/activity-data/contracts';\n",
+      "apps/problems/src/lib/sign.ts": "import('@vela/activity-data/local-signing');\n",
+      "packages/activity-data/src/projection.ts": "import { canonicalJson } from '@vela/projection-data/canonical';\nimport { load } from '@vela/projection-data';\nexport { canonicalJson, load };\n",
+      "packages/projection-data/src/activity.ts": "import('@vela/activity-data');\n",
     });
     expect(new Set(inspectScientificAuthorityBoundary(root).map(({ rule }) => rule))).toEqual(new Set([
       "activity_plane_dependency",
@@ -137,7 +137,7 @@ describe("scientific-authority profiles", () => {
 
   test("allows only the exact bounded Workspace CRDT byte store", () => {
     const root = fixture({
-      "packages/activity-data/migrations/20260813_workspace_crdt.sql": [
+      "packages/activity-data/schema/workspace-crdt.sql": [
         "CREATE TABLE activity.workspace_crdt_updates (",
         "  update_bytes bytea NOT NULL CHECK (octet_length(update_bytes) BETWEEN 1 AND 262144)",
         ");",

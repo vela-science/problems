@@ -1,9 +1,9 @@
 /* The database, and the two roles that reach it.
  *
  * Three files in this repository spell some of this out. Here it decides
- * whether a secret is accepted; `packages/observatory-data/src/deployment.ts`
+ * whether a secret is accepted; `packages/projection-data/src/deployment.ts`
  * publishes the database and the reader login in the deployment manifest every
- * reader can fetch; `packages/observatory-data/package.json` writes the database,
+ * reader can fetch; `packages/projection-data/package.json` writes the database,
  * plus the Neon project id, into two `neonctl` invocations. The permission role
  * remains stable across login rotations and is intentionally not accepted as a
  * runtime credential.
@@ -13,13 +13,13 @@
  * is deliberately NOT here: it is not part of a connection string, so this
  * check has no use for it, and the manifest is where it is already declared.
  */
-import { observatoryProjectionReaderIdentity } from "../packages/observatory-data/src/projection-reader.ts";
+import { projectionReaderIdentity } from "../packages/projection-data/src/projection-reader.ts";
 
 export const projectionDatabase = {
-  name: observatoryProjectionReaderIdentity.database,
+  name: projectionReaderIdentity.database,
   writerRole: "neondb_owner",
-  readerRole: observatoryProjectionReaderIdentity.loginRole,
-  readerPermissionRole: observatoryProjectionReaderIdentity.permissionRole,
+  readerRole: projectionReaderIdentity.loginRole,
+  readerPermissionRole: projectionReaderIdentity.permissionRole,
 };
 
 const required = [

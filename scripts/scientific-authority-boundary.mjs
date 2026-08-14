@@ -18,59 +18,59 @@ const forbiddenSigningImport = /(?:from\s*|import\s*\(\s*)["'](?:@noble\/ed25519
 const forbiddenSecretEnvironment = /\bprocess\.env\.(?:[A-Z0-9_]*(?:AUTHORITY|PRIVATE|SIGNING)[A-Z0-9_]*KEY[A-Z0-9_]*|[A-Z0-9_]*SEED[A-Z0-9_]*)\b/u;
 const localSigningModule = "packages/activity-data/src/local-signing.ts";
 
-const searchFetcher = "apps/observatory/src/lib/search-index.ts";
-const graphFetcher = "apps/observatory/src/lib/graph-client.ts";
-const accountMenu = "apps/observatory/src/components/vela/account-menu.tsx";
-const observatoryReadRoutes = new Set([
-  "apps/observatory/src/app/api/search/route.ts",
-  "apps/observatory/src/app/api/graph/route.ts",
-  "apps/observatory/src/app/sources.json/route.ts",
-  "apps/observatory/src/app/problems.json/route.ts",
-  "apps/observatory/src/app/.well-known/vela-site.json/route.ts",
+const searchFetcher = "apps/problems/src/lib/search-index.ts";
+const graphFetcher = "apps/problems/src/lib/graph-client.ts";
+const accountMenu = "apps/problems/src/components/vela/account-menu.tsx";
+const problemsReadRoutes = new Set([
+  "apps/problems/src/app/api/search/route.ts",
+  "apps/problems/src/app/api/graph/route.ts",
+  "apps/problems/src/app/sources.json/route.ts",
+  "apps/problems/src/app/problems.json/route.ts",
+  "apps/problems/src/app/.well-known/vela-site.json/route.ts",
 ]);
 
-const observatoryAccountRoute = "apps/observatory/src/app/api/account/route.ts";
-const observatoryAuthCallbackRoute = "apps/observatory/src/app/auth/callback/route.ts";
-const observatorySignInRoute = "apps/observatory/src/app/sign-in/route.ts";
-const observatorySignOutAction = "apps/observatory/src/app/actions/auth.ts";
-const observatoryActivityAction = "apps/observatory/src/app/actions/activity.ts";
-const observatoryActivityDraftRoute = "apps/observatory/src/app/drafts/[id]/export/route.ts";
-const observatoryActivityWorkbench = "apps/observatory/src/components/vela/workbench.tsx";
-const observatoryAuthLibrary = "apps/observatory/src/lib/auth.ts";
-const observatoryIdentityProxy = "apps/observatory/src/proxy.ts";
+const problemsAccountRoute = "apps/problems/src/app/api/account/route.ts";
+const problemsAuthCallbackRoute = "apps/problems/src/app/auth/callback/route.ts";
+const problemsSignInRoute = "apps/problems/src/app/sign-in/route.ts";
+const problemsSignOutAction = "apps/problems/src/app/actions/auth.ts";
+const problemsActivityAction = "apps/problems/src/app/actions/activity.ts";
+const problemsActivityDraftRoute = "apps/problems/src/app/drafts/[id]/export/route.ts";
+const problemsActivityWorkbench = "apps/problems/src/components/vela/workbench.tsx";
+const problemsAuthLibrary = "apps/problems/src/lib/auth.ts";
+const problemsIdentityProxy = "apps/problems/src/proxy.ts";
 
-export const OBSERVATORY_IDENTITY_FILES = [
-  observatoryAccountRoute,
-  observatoryAuthCallbackRoute,
-  observatorySignInRoute,
-  observatorySignOutAction,
-  observatoryAuthLibrary,
-  observatoryIdentityProxy,
+export const PROBLEMS_IDENTITY_FILES = [
+  problemsAccountRoute,
+  problemsAuthCallbackRoute,
+  problemsSignInRoute,
+  problemsSignOutAction,
+  problemsAuthLibrary,
+  problemsIdentityProxy,
 ];
 
-/* Kept as an export while the Observatory ESLint config migrates with this
-   boundary. It is the Observatory list, not a workspace-wide identity list. */
-export const PRODUCT_IDENTITY_FILES = OBSERVATORY_IDENTITY_FILES;
+/* Kept as an export while the Problems ESLint config migrates with this
+   boundary. It is the Problems list, not a workspace-wide identity list. */
+export const PRODUCT_IDENTITY_FILES = PROBLEMS_IDENTITY_FILES;
 
-const OBSERVATORY_IDENTITY_ROUTES = new Set([
-  observatoryAccountRoute,
-  observatoryAuthCallbackRoute,
-  observatorySignInRoute,
+const PROBLEMS_IDENTITY_ROUTES = new Set([
+  problemsAccountRoute,
+  problemsAuthCallbackRoute,
+  problemsSignInRoute,
 ]);
 
-const OBSERVATORY_ACTIVITY_FILES = new Set([
-  observatoryActivityAction,
-  observatoryActivityDraftRoute,
-  observatoryActivityWorkbench,
+const PROBLEMS_ACTIVITY_FILES = new Set([
+  problemsActivityAction,
+  problemsActivityDraftRoute,
+  problemsActivityWorkbench,
 ]);
 
 const ALLOWED_IDENTITY_ACTIONS = new Map([
-  [observatorySignOutAction, [{ name: "signOutAccount", pin: "await signOut({ returnTo })" }]],
+  [problemsSignOutAction, [{ name: "signOutAccount", pin: "await signOut({ returnTo })" }]],
 ]);
 
 export const BOUNDARY_PROFILES = Object.freeze([
   { name: "www_static", root: "apps/www/src" },
-  { name: "vela_app", root: "apps/observatory/src" },
+  { name: "vela_app", root: "apps/problems/src" },
   { name: "activity_data_owner", root: "packages/activity-data/src" },
 ]);
 
@@ -103,7 +103,7 @@ function profileFor(file) {
   return BOUNDARY_PROFILES.find(({ root }) => file === root || file.startsWith(`${root}/`));
 }
 
-function exactObservatoryFetch(file, content, fetches) {
+function exactProblemsFetch(file, content, fetches) {
   if (fetches !== 1) return false;
   if (file === searchFetcher) {
     return content.includes("new URLSearchParams({ root: projectionRoot")
@@ -127,10 +127,10 @@ function inspectStatic(file, content, add) {
   if ([...content.matchAll(fetchCall)].length) add("static_request_fetch", "www source may not perform request-time fetches");
 }
 
-function inspectObservatory(file, content, add) {
-  const allowedRoute = observatoryReadRoutes.has(file)
-    || OBSERVATORY_IDENTITY_ROUTES.has(file)
-    || file === observatoryActivityDraftRoute;
+function inspectProblems(file, content, add) {
+  const allowedRoute = problemsReadRoutes.has(file)
+    || PROBLEMS_IDENTITY_ROUTES.has(file)
+    || file === problemsActivityDraftRoute;
   if (routeHandler.test(file) && !allowedRoute) {
     add("app_route_handler", "Vela Route Handlers are confined to declared exact reads, identity, and draft export");
   }
@@ -139,19 +139,19 @@ function inspectObservatory(file, content, add) {
   if (
     serverDirective.test(content)
     && !boundedIdentityActions(file, content)
-    && !(file === observatoryActivityAction && activityImport.test(content))
+    && !(file === problemsActivityAction && activityImport.test(content))
   ) {
-    add("observatory_server_action", "Vela app Server Actions are confined to identity and the declared activity owner");
+    add("problems_server_action", "Vela app Server Actions are confined to identity and the declared activity owner");
   }
   if (requestStateCall.test(content)) add("app_request_state", "Vela scientific reads may not depend on request state");
   if (
     runtimeEnvironment.test(content)
-    && file !== observatoryAuthLibrary
+    && file !== problemsAuthLibrary
   ) {
     add("app_runtime_environment", "Vela runtime secrets are confined to its identity adapter");
   }
   const fetches = [...content.matchAll(fetchCall)].length;
-  if (fetches && !exactObservatoryFetch(file, content, fetches)) {
+  if (fetches && !exactProblemsFetch(file, content, fetches)) {
     add("app_request_fetch", "Vela fetches are confined to exact-root reads and its account session");
   }
 }
@@ -177,9 +177,9 @@ function inspectActivityAuthority(file, content, add) {
 function inspectDependencyDirection(file, content, add) {
   const imports = importedSpecifiers(content);
   if (
-    (file.startsWith("apps/www/") || file.startsWith("apps/observatory/"))
+    (file.startsWith("apps/www/") || file.startsWith("apps/problems/"))
     && importsPackage(imports, "@vela/activity-data")
-    && !OBSERVATORY_ACTIVITY_FILES.has(file)
+    && !PROBLEMS_ACTIVITY_FILES.has(file)
   ) {
     add("activity_plane_dependency", "only the Vela app's declared Work boundary may depend on mutable activity data");
   }
@@ -192,18 +192,18 @@ function inspectDependencyDirection(file, content, add) {
   if (
     file.startsWith("packages/activity-data/")
     && imports.some((specifier) => (
-      importsPackage([specifier], "@vela/observatory-data")
-      && specifier !== "@vela/observatory-data/canonical"
-      && specifier !== "@vela/observatory-data/read-contracts"
+      importsPackage([specifier], "@vela/projection-data")
+      && specifier !== "@vela/projection-data/canonical"
+      && specifier !== "@vela/projection-data/read-contracts"
     ))
   ) {
-    add("data_plane_dependency", "activity-data may reuse only observatory-data canonical and read contracts");
+    add("data_plane_dependency", "activity-data may reuse only problems-data canonical and read contracts");
   }
   if (
-    file.startsWith("packages/observatory-data/")
+    file.startsWith("packages/projection-data/")
     && importsPackage(imports, "@vela/activity-data")
   ) {
-    add("data_plane_cycle", "observatory-data may not depend on mutable activity-data");
+    add("data_plane_cycle", "problems-data may not depend on mutable activity-data");
   }
 }
 
@@ -238,7 +238,7 @@ function inspectActivitySchema(repository, violations) {
     if (/\b(?:authority_(?:private_)?key|private_key|signing_key|seed)\b/iu.test(content)) {
       add("authority_key_storage", "activity schema may store public roots and signer metadata, but no authority or private keys");
     }
-    const allowedBoundedCrdtBytes = file === "packages/activity-data/migrations/20260813_workspace_crdt.sql"
+    const allowedBoundedCrdtBytes = file === "packages/activity-data/schema/workspace-crdt.sql"
       && content.includes("update_bytes bytea NOT NULL CHECK (octet_length(update_bytes) BETWEEN 1 AND 262144)")
       && !/\b(?:artifact_bytes|content_bytes|transcript_bytes)\b/iu.test(content);
     if (/\b(?:bytea|artifact_bytes|content_bytes|transcript_bytes)\b/iu.test(content) && !allowedBoundedCrdtBytes) {
@@ -261,8 +261,8 @@ export function inspectScientificAuthorityBoundary(repository) {
 
   /* Include the projection package only for the dependency-direction check.
      Its reader/projector authority checks remain in its own exact-root suite. */
-  const observatoryData = resolve(repository, "packages/observatory-data/src");
-  if (existsSync(observatoryData)) candidates.push(...filesBelow(observatoryData));
+  const problemsData = resolve(repository, "packages/projection-data/src");
+  if (existsSync(problemsData)) candidates.push(...filesBelow(problemsData));
 
   for (const path of candidates.filter((candidate) => sourceExtensions.test(candidate))) {
     const file = repositoryPath(repository, path);
@@ -273,8 +273,8 @@ export function inspectScientificAuthorityBoundary(repository) {
     inspectDependencyDirection(file, content, add);
     if (profile === "www_static") inspectStatic(file, content, add);
     if (profile === "vela_app") {
-      inspectObservatory(file, content, add);
-      if (OBSERVATORY_ACTIVITY_FILES.has(file)) {
+      inspectProblems(file, content, add);
+      if (PROBLEMS_ACTIVITY_FILES.has(file)) {
       inspectActivityAuthority(file, content, add);
       }
     }

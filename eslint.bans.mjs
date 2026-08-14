@@ -88,14 +88,14 @@ const rawTypeSizeSelectors = [
 /**
  * Return both static and dynamic import rules for one application profile.
  *
- * @param {{ productIdentity?: boolean, designSystem?: boolean, profile?: "static" | "observatory" | "problems" }} options
+ * @param {{ productIdentity?: boolean, designSystem?: boolean, profile?: "static" | "problems" | "problems" }} options
  */
 export function boundaryImportRules({
   productIdentity = false,
   designSystem = false,
-  profile = "observatory",
+  profile = "problems",
 } = {}) {
-  if (!["static", "observatory", "problems"].includes(profile)) {
+  if (!["static", "problems", "problems"].includes(profile)) {
     throw new Error(`unknown scientific-authority ESLint profile: ${profile}`);
   }
   const bans = [

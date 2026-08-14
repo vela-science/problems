@@ -1,0 +1,69 @@
+{
+  "name": "@vela/problems",
+  "private": true,
+  "scripts": {
+    "dev": "bun ../../packages/brand/scripts/sync-web-assets.mjs public --profile product --favicon && next dev --port 4322",
+    "build": "bun scripts/build.mjs",
+    "check:runtime": "bun scripts/check-runtime-routes.mjs",
+    "typecheck": "next typegen && tsc --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "test": "vitest run",
+    "test:manifest": "vitest run src/lib/deployment-manifest.test.ts",
+    "check:routes": "bun scripts/check-public-routes.mjs",
+    "check:deployment": "bun scripts/check-deployed-manifest.mjs",
+    "harness:states": "bun scripts/render-state-harness.mjs"
+  },
+  "dependencies": {
+    "@base-ui/react": "^1.6.0",
+    "@hugeicons/core-free-icons": "4.2.3",
+    "@hugeicons/react": "1.1.9",
+    "@react-sigma/core": "^5.0.5",
+    "@vela/activity-data": "workspace:*",
+    "@vela/brand": "workspace:*",
+    "@vela/projection-data": "workspace:*",
+    "@vela/ui": "workspace:*",
+    "@workos-inc/authkit-nextjs": "4.3.1",
+    "@workos-inc/node": "10.9.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
+    "geist": "1.7.2",
+    "graphology": "^0.26.0",
+    "katex": "0.18.1",
+    "loro-crdt": "1.14.1",
+    "motion": "^12.34.0",
+    "next": "16.2.12",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "server-only": "0.0.1",
+    "sigma": "^3.0.2",
+    "tailwind-merge": "^3.6.0",
+    "tw-animate-css": "^1.4.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.3.3",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.12",
+    "jsdom": "^29.1.1",
+    "postcss": "8.5.25",
+    "shadcn": "4.16.1",
+    "tailwindcss": "4.3.3",
+    "typescript": "^5",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.1.10"
+  },
+  "ignoreScripts": [
+    "sharp",
+    "unrs-resolver"
+  ],
+  "trustedDependencies": [
+    "sharp",
+    "unrs-resolver"
+  ]
+}

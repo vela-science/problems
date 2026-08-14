@@ -64,7 +64,7 @@ test("accepted standing is progress green and a passing check is evidence teal",
 })
 
 test("the exported axis table is derived from the states map, not written twice", () => {
-  /* Observatory's `product-language` must name the axis in words, because the
+  /* Problems's `product-language` must name the axis in words, because the
      search and graph ledgers write four axes into one projection column and a
      `data-axis` attribute cannot be read aloud. It held its own copy of this
      map; it reads `stateAxesByWord` now, so this pins that the export stays a
@@ -87,7 +87,7 @@ test("the exported glyph table is derived from the states map, not written twice
 })
 
 test("the tone fill table covers every tone exactly once", () => {
-  /* Two Observatory components painted tones as areas from their own tables and
+  /* Two Problems components painted tones as areas from their own tables and
      one had no neutral row. This is keyed by tone rather than by state, so it
      cannot be derived from `states`; what it can be held to is completeness. */
   const block = source.match(/export const toneFills[^=]*=\s*\{([\s\S]*?)\n\};/u)

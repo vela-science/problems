@@ -1,5 +1,5 @@
 import { activitySql } from "./client";
-import { canonicalJson, sha256 } from "@vela/observatory-data/canonical";
+import { canonicalJson, sha256 } from "@vela/projection-data/canonical";
 import {
   commandRequestRoot,
   type AppendCrdtUpdateInput,
@@ -11,7 +11,6 @@ import {
   type CommandOptions,
   type CreateApproachInput,
   type CreateAttemptInput,
-  type CreateWorkRequestInput,
   type CreateWorkspaceInput,
   type FollowProblemInput,
   type ForkApproachInput,
@@ -279,11 +278,7 @@ export function createAttempt(
 ) {
   return command(context, "attempt.create", {
     approach_id: input.approachId,
-    provider: input.provider,
-    external_session_id: input.externalSessionId ?? null,
-    locator: input.locator ?? null,
     title: input.title,
-    execution_binding: null,
   }, options);
 }
 
@@ -298,10 +293,6 @@ export function updateAttempt(
     attempt_id: attemptId,
     state: patch.state ?? null,
     title: patch.title ?? null,
-    external_session_id: patch.externalSessionId ?? null,
-    locator: patch.locator ?? null,
-    set_external_session_id: Object.hasOwn(patch, "externalSessionId"),
-    set_locator: Object.hasOwn(patch, "locator"),
   }, options, expectedVersion);
 }
 
@@ -320,22 +311,6 @@ export function addDiscussionEntry(
   }, options);
 }
 
-export function createWorkRequest(
-  context: WorkspaceContext,
-  input: CreateWorkRequestInput,
-  options: CommandOptions,
-) {
-  return command(context, "work_request.create", {
-    anchor: dbAnchor(input.anchor),
-    approach_id: input.approachId ?? null,
-    attempt_id: input.attemptId ?? null,
-    kind: input.kind,
-    title: input.title,
-    detail: input.detail,
-    assignee_account_id: input.assigneeAccountId ?? null,
-  }, options);
-}
-
 export function attachArtifact(
   context: WorkspaceContext,
   input: AttachArtifactInput,
@@ -344,7 +319,6 @@ export function attachArtifact(
   return command(context, "artifact.attach", {
     anchor: dbAnchor(input.anchor),
     attempt_id: input.attemptId,
-    execution_binding: null,
     content_root: input.contentRoot,
     kind: input.kind,
     path: input.path,
@@ -365,7 +339,6 @@ export function saveSubmissionDraft(
   return command(context, "submission_draft.save", {
     anchor: dbAnchor(input.anchor),
     draft_id: input.draftId ?? null,
-    artifact_id: input.artifactId,
     payload,
     payload_root: sha256(canonicalJson(payload)),
   }, options, expectedVersion);

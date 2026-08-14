@@ -147,7 +147,7 @@ export const stateIcons: Record<string, typeof Shield01Icon> = Object.fromEntrie
 
 /* The tone → solid fill, for a surface that paints a tone as an area rather
    than as a badge: a composition segment, a signal dot. Keyed by tone rather
-   than by state, so it cannot be derived from the map above. Two Observatory
+   than by state, so it cannot be derived from the map above. Two Problems
    components held their own copies and one was missing the neutral row, which
    is why the vocabulary is declared once here and imported. Neutral has no
    status hue by definition, so it takes the muted rule colour. */

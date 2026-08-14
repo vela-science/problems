@@ -1,0 +1,51 @@
+{
+  "schema": "vela.source-corpus-profiles.v1",
+  "semantics": {
+    "authority_effect": "none",
+    "identity_effect": "none",
+    "equivalence": "not_established",
+    "standing_effect": "none",
+    "classification_basis": "explicit_source_profile",
+    "record_count_effect": "inventory_only",
+    "source_values": "source_authored",
+    "unprofiled_sources": "inventory_only"
+  },
+  "profiles": [
+    {
+      "source_id": "source:erdos-problems",
+      "source_label": "Erdős Problems",
+      "native_kind": "problem",
+      "corpus_role": "problem_catalog",
+      "role_label": "Problem catalogue",
+      "facet": {
+        "kind": "metadata_string_array",
+        "key": "tags",
+        "label": "Source topics"
+      }
+    },
+    {
+      "source_id": "source:formal-conjectures",
+      "source_label": "Formal Conjectures",
+      "native_kind": "formal_conjecture",
+      "corpus_role": "formal_statement_library",
+      "role_label": "Formal statement library",
+      "facet": {
+        "kind": "metadata_scalar",
+        "key": "collection",
+        "label": "Source collections"
+      }
+    },
+    {
+      "source_id": "source:vibemathed",
+      "source_label": "VibeMathed",
+      "native_kind": "attributed_activity",
+      "corpus_role": "attributed_activity_catalog",
+      "role_label": "Attributed activity catalogue",
+      "facet": {
+        "kind": "metadata_scalar",
+        "key": "field_group",
+        "label": "Source field groups"
+      }
+    }
+  ]
+}

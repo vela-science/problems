@@ -1,0 +1,26 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@vela/brand/fonts-product.css";
+@import "@vela/brand/tokens.css";
+@import "@vela/brand/type-product.css";
+@import "@vela/ui/product.css";
+@import "@vela/ui/typeset.css";
+
+@layer base {
+  html { @apply bg-background font-sans; min-width: 320px; color-scheme: light; text-rendering: optimizeLegibility; }
+  body { @apply min-h-svh bg-background text-sm text-foreground; }
+
+  code, pre, kbd, samp { @apply font-mono; }
+}
+
+@media (pointer: coarse) {
+  [data-slot="button"] { min-width: 2.75rem; min-height: 2.75rem; }
+  [data-slot="input"], [data-slot="select-trigger"] { min-height: 2.75rem; }
+}
+
+@media print {
+  [data-slot="sidebar"], [data-slot="sidebar-trigger"] { display: none !important; }
+  body, [data-slot="sidebar-inset"], pre { background: Canvas !important; color: CanvasText !important; }
+  details::details-content { display: block !important; content-visibility: visible !important; }
+}

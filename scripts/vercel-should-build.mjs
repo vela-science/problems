@@ -5,9 +5,9 @@ const targets = {
   www: [
     "apps/www",
     "packages/brand",
-    "packages/observatory-data/src",
-    "packages/observatory-data/config",
-    "packages/observatory-data/package.json",
+    "packages/projection-data/src",
+    "packages/projection-data/config",
+    "packages/projection-data/package.json",
     ".vercelignore",
     "package.json",
     "bun.lock",
@@ -37,10 +37,10 @@ function changedPaths(previous, current) {
 
 /* There was a second mode here, `--equivalent <previous> <current>`, which
    compared two named commits instead of Vercel's pair. It existed for the
-   Observatory: a data refresh may follow editorial-only commits, so the
+   Problems: a data refresh may follow editorial-only commits, so the
    redeploy needed to ask whether the application surface had really changed
-   between the deployed commit and the one it was about to ship. The Observatory
-   has no Git deploy any more — apps/observatory/vercel.json sets
+   between the deployed commit and the one it was about to ship. The Problems
+   has no Git deploy any more — apps/problems/vercel.json sets
    `git.deploymentEnabled: false` and carries no ignoreCommand, and its redeploy
    is an exact direct provider request after projection activation. Its last
    caller was its own test. */

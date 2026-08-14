@@ -1,6 +1,6 @@
 import Ajv2020, { type ErrorObject } from "ajv/dist/2020.js";
 import addFormats from "ajv-formats";
-import { canonicalJson, sha256, type HashRoot } from "@vela/observatory-data/canonical";
+import { canonicalJson, sha256, type HashRoot } from "@vela/projection-data/canonical";
 import submissionSchema from "../config/submission.schema.json" with { type: "json" };
 
 export const VELA_SUBMISSION_SCHEMA = "vela.submission.v2" as const;
@@ -40,13 +40,6 @@ export type VelaSubmissionV2 = {
     source_system: string;
     source_run?: string;
     emitted_at: string;
-  };
-  execution_binding?: {
-    schema: "vela.execution-binding.v1";
-    packet_root: HashRoot;
-    profile_root: HashRoot;
-    verifier_capsule_root: HashRoot;
-    result_contract_root: HashRoot;
   };
 };
 
@@ -107,7 +100,6 @@ export function assertSubmissionDraft(value: unknown): VelaSubmissionV2 {
 
 export type SaveSubmissionDraftInput = {
   anchor: import("./contracts").ScientificAnchor;
-  artifactId: string;
   payload: VelaSubmissionV2;
   draftId?: string;
 };

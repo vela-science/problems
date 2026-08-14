@@ -14,7 +14,7 @@ The governing idea is **direction through evidence**.
   may carry a drawn sky whose job is the register of the page. It stays behind
   the type at hairline weights, carries no labels, claims no quantities, and
   does not print. A reader must never have to ask whether it is data. When in
-  doubt, it is not atmosphere, it is a figure, and it decodes. The Observatory
+  doubt, it is not atmosphere, it is a figure, and it decodes. The Problems
   has no atmosphere at all.
 - Space is expressed through scale, quiet, contrast, and orientation, not neon,
   particles, glow, or generic science-fiction styling.
@@ -30,8 +30,8 @@ composition.
 | Brand | `packages/brand` | DTCG-shaped tokens, type roles, fonts, sail geometry, state colours, licences, deterministic exports |
 | React UI | `packages/ui` | Official shadcn `base-nova` primitives on Base UI and stable Vela presentation semantics |
 | Editorial composition | `apps/www` | Authored publications, figures, product narrative, and documentation layouts |
-| Vela application | `apps/observatory` | Problem Current State and Workspace, advanced records, hosted activity, URL state, local-signing handoff, and the Sigma graph |
-| Exact data | `packages/observatory-data` | Rooted scientific projections consumed by both applications |
+| Vela application | `apps/problems` | Problem Current State and Workspace, advanced records, hosted activity, URL state, local-signing handoff, and the Sigma graph |
+| Exact data | `packages/projection-data` | Rooted scientific projections consumed by both applications |
 | Activity data | `packages/activity-data` | Mutable hosted workspaces, attempts, discussion, rooted metadata, append-only Loro canvas updates, and unsigned drafts |
 
 `@vela/brand` is framework-neutral. `@vela/ui` is the shared React source for
@@ -102,7 +102,7 @@ state axis.
 **Retired reader terms.** Finding is the predecessor name for a Claim. It may
 appear as an exact retained value, while the interface calls the record a
 Claim. Bundle is a protocol root and may appear only as a labelled exact value.
-The Observatory `/runs` path remains a redirect to `/decisions`.
+The Problems `/runs` path remains a redirect to `/decisions`.
 
 Research Block is the readable presentation of a
 durable rooted contribution in the activity plane. The exact record type is
@@ -335,7 +335,7 @@ bounded mathematical text. Shells, domain columns, source filters, graph
 controllers, reading rails, and authored figures stay with the application that
 owns them.
 
-The Observatory ships no Card. A record row is an article or an Item on
+The Problems ships no Card. A record row is an article or an Item on
 hairlines; a boxed surface is reserved for genuinely detachable overlays, and is
 never nested.
 

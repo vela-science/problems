@@ -1,0 +1,41 @@
+{
+  "name": "@vela/projection-data",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./deployment": "./src/deployment.ts",
+    "./editorial": "./src/editorial.ts",
+    "./release": "./src/release.ts",
+    "./read-contracts": "./src/read-contracts.ts",
+    "./refusal": "./src/refusal.ts",
+    "./projection-reader": "./src/projection-reader.ts",
+    "./registry": "./src/registry.ts",
+    "./canonical": "./src/canonical.ts",
+    "./problem-public-route-context": "./src/problem-public-route-context.ts"
+  },
+  "scripts": {
+    "db:migrate": "bun scripts/schema.mjs --migrate",
+    "db:check": "bun scripts/schema.mjs --check",
+    "db:migrate:local": "VELA_PROJECTION_WRITER_DATABASE_URL=\"$(neonctl connection-string --project-id lingering-meadow-20929365 --database-name vela_projection --role-name neondb_owner)\" bun scripts/schema.mjs --migrate",
+    "db:sql": "psql \"$(neonctl connection-string --project-id lingering-meadow-20929365 --database-name vela_projection --role-name neondb_owner)\"",
+    "projection:snapshot": "bun scripts/write-editorial-snapshot.mjs",
+    "schemas:sync": "bun scripts/sync-vela-schemas.mjs",
+    "sources:refresh": "bun scripts/source-adapters.mjs refresh",
+    "sources:verify": "bun scripts/source-adapters.mjs verify",
+    "refresh": "bun scripts/refresh-neon-projection.mjs",
+    "reconstruct": "bun scripts/reconstruct-projection.mjs",
+    "releases:prune": "bun scripts/prune-releases.mjs",
+    "releases:select": "bun scripts/select-projection-release.mjs",
+    "verify": "bun scripts/verify-projection.mjs && bun scripts/verify-reader-boundary.mjs",
+    "check": "bun test src tests",
+    "test": "bun test src tests integration",
+    "check:db": "bun test integration"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.1.0",
+    "graphology": "^0.26.0",
+    "graphology-layout-forceatlas2": "^0.10.1",
+    "zod": "^4.3.6"
+  }
+}

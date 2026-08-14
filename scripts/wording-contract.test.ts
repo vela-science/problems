@@ -8,7 +8,7 @@ import { resolve } from "node:path";
   care.
 
   ADR 0039 made Repository the authority boundary and left Frontier a derived,
-  identifier-free query that owns nothing. The Observatory then spent three
+  identifier-free query that owns nothing. The Problems then spent three
   releases naming the boundary after the query: the table with one row per
   authority was `frontiers`, the route a reader landed on was `/frontiers`, and
   `product-language.ts` mapped the kind `frontier` onto the axis "Repository
@@ -36,8 +36,8 @@ const repositoryRoot = resolve(import.meta.dirname, "..");
 const RECORDS = [
   "docs/history/",
   "docs/releases/",
-  "packages/observatory-data/evidence/",
-  "packages/observatory-data/config/formal-conjectures/",
+  "packages/projection-data/evidence/",
+  "packages/projection-data/config/formal-conjectures/",
   "apps/www/src/content/docs/",
 ];
 
@@ -69,7 +69,7 @@ const NOT_THE_VELA_NOUN: Array<[RegExp, string]> = [
   [/frontier[- ]risk/gu, "the governance term the source pages use"],
   [/[Ff]rontier[- ]lab/gu, "what those organizations are called"],
   [/[Ee]ndless [Ff]rontier/gu, "Vannevar Bush's 1945 report"],
-  [/frontier-to-commons/gu, "the named disposition in the dossier schema"],
+  [/frontier-to-commons/gu, "the named disposition in the source schema"],
   [/disease-frontier/gu, "the named pilot in the essay"],
   [/volume_frontier|multibrotSet_frontier/gu, "Mathlib: the topological frontier of a set"],
 ];
@@ -79,7 +79,7 @@ const NOT_THE_VELA_NOUN: Array<[RegExp, string]> = [
    not say it. */
 const WHY_THE_WORD_STAYS: Array<[string, string]> = [
   [
-    "apps/observatory/vercel.json",
+    "apps/problems/vercel.json",
     "the permanent redirects that keep every published /frontiers URL reachable",
   ],
   [
@@ -91,27 +91,11 @@ const WHY_THE_WORD_STAYS: Array<[string, string]> = [
     "the retired-component ban list, which has to name what it bans",
   ],
   [
-    "packages/observatory-data/scripts/schema.mjs",
-    "names the retired migration it retires, and the table that migration altered",
-  ],
-  [
-    "packages/observatory-data/migrations/20260809_repository_vocabulary.sql",
-    "the migration performing the rename, which has to name both sides",
-  ],
-  [
-    "packages/observatory-data/migrations/README.md",
-    "narrates the column names three retired migrations indexed",
-  ],
-  [
-    "packages/observatory-data/tests/schema-migrations.test.ts",
-    "holds both migrations to their frozen text",
-  ],
-  [
-    "packages/observatory-data/tests/semantic-correction.test.ts",
+    "packages/projection-data/tests/semantic-correction.test.ts",
     "epoch-1 fixture describing a correction in a repository identified vfr_0a25edabc16db143",
   ],
   [
-    "packages/observatory-data/tests/support/semantic-correction.ts",
+    "packages/projection-data/tests/support/semantic-correction.ts",
     "the shape of that same fixture",
   ],
   [

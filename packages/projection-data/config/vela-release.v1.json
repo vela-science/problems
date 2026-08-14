@@ -1,0 +1,12 @@
+{
+  "schema": "vela.release-record.v1",
+  "version": "0.975.1",
+  "tag": "v0.975.1",
+  "commit": "9d1a99dbe0a1c8ffc008cc0f5ee4e06831ea6e14",
+  "release_url": "https://github.com/vela-science/vela/releases/tag/v0.975.1",
+  "docs_url": "https://github.com/vela-science/vela/blob/9d1a99dbe0a1c8ffc008cc0f5ee4e06831ea6e14/docs",
+  "generator_binary_sha256": "sha256:adb0e2d5493d0abbdc49fc2d8dea552ac01575d4c51d74977e8acd2b9f6fdcc1",
+  "macos_generator_binary_sha256": "sha256:72c3ae14a185fe3330f62fb6c8d9a38be67faae1554563b34726e06f9d036a6a",
+  "linux_archive_sha256": "sha256:7ec607d7d2d556afd9bcbc615b1bfebafb0b3cbc66eac411dbf0bf0ac267d121",
+  "macos_archive_sha256": "sha256:dd0501e73933e798484270e0a6a7c17c3d65a1f4191c2e2992e353b3bbcbe3ee"
+}
