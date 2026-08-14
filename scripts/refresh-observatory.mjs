@@ -445,13 +445,14 @@ export function releaseChangedPaths(repository = root, environment = process.env
 
 function stageSnapshot(environment, context) {
   const safe = environmentFor(environment);
+  const remote = githubGitEnvironment(environment);
   const commit = releaseCommitEnvironment(environment);
   const snapshot = "packages/observatory-data/config/editorial-summary.v5.json";
   const changed = releaseChangedPaths(root, safe);
   if (changed.some((path) => path !== snapshot)) {
     throw new Error(`refresh modified files outside the editorial snapshot: ${changed.join(", ")}`);
   }
-  run("git", ["fetch", "--quiet", "origin", "main"], { environment: safe });
+  run("git", ["fetch", "--quiet", "origin", "main"], { environment: remote });
   if (git(["rev-parse", "origin/main"], root, safe) !== context.siteCommit) {
     throw new Error("origin/main advanced after qualification; refusing to adopt unqualified bytes");
   }

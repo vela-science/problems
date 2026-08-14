@@ -34,6 +34,12 @@ describe("direct Observatory release", () => {
     expect(source).toContain("gh\", [\"auth\", \"token\"");
     expect(source).toContain("origin/main advanced after qualification");
     expect(source).toContain("rollback-checkpoint.json");
+    const snapshotStage = source.slice(
+      source.indexOf("function stageSnapshot"),
+      source.indexOf("function publishSiteCommit"),
+    );
+    expect(snapshotStage).toContain("const remote = githubGitEnvironment(environment)");
+    expect(snapshotStage).toContain('{ environment: remote }');
     const activation = source.indexOf("context.refresh = JSON.parse");
     const checkpoint = source.indexOf(
       "writeRollbackCheckpoint(context, \"projection_activated\")",
