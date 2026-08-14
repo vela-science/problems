@@ -1,4 +1,12 @@
-import { appendFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import {
+  appendFileSync,
+  mkdtempSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
 export const observatoryDeploymentTarget = Object.freeze({
   teamId: "team_ZtvAC9FZByF1L9R25ibMLh3I",
@@ -154,8 +162,58 @@ export async function deployVercelObservatory({
   return deployment;
 }
 
+export function deployVercelObservatoryViaCli({
+  environment = process.env,
+  execute = execFileSync,
+} = {}) {
+  if (!environment.VELA_SITE_COMMIT) {
+    throw new Error("missing required deployment identity VELA_SITE_COMMIT");
+  }
+  const globalConfig = requiredString(
+    environment.VERCEL_GLOBAL_CONFIG,
+    "authenticated CLI config directory",
+  );
+  if (environment.GITHUB_REPOSITORY && environment.GITHUB_REPOSITORY !== "vela-science/vela-web") {
+    throw new Error("exact Observatory deployment is restricted to vela-science/vela-web");
+  }
+  if (environment.GITHUB_REF && environment.GITHUB_REF !== "refs/heads/main") {
+    throw new Error("exact Observatory deployment is restricted to refs/heads/main");
+  }
+
+  const request = vercelObservatoryDeploymentRequest(environment.VELA_SITE_COMMIT);
+  const url = new URL(request.url);
+  const directory = mkdtempSync(join(tmpdir(), "vela-vercel-request-"));
+  const input = join(directory, "deployment.json");
+  try {
+    writeFileSync(input, `${JSON.stringify(request.body)}\n`, { encoding: "utf8", mode: 0o600 });
+    const stdout = execute("vercel", [
+      "api",
+      `${url.pathname}${url.search}`,
+      "--method",
+      "POST",
+      "--input",
+      input,
+      "--raw",
+      "--scope",
+      "constellate-dc388081",
+      "--global-config",
+      globalConfig,
+    ], {
+      encoding: "utf8",
+      env: environment,
+      maxBuffer: 8 * 1024 * 1024,
+      stdio: ["ignore", "pipe", "inherit"],
+    });
+    return verifyVercelObservatoryDeployment(JSON.parse(stdout), environment.VELA_SITE_COMMIT);
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+}
+
 if (import.meta.main) {
-  const deployment = await deployVercelObservatory();
+  const deployment = process.env.VERCEL_TOKEN
+    ? await deployVercelObservatory()
+    : deployVercelObservatoryViaCli();
   console.log(JSON.stringify({
     schema: "vela.vercel-observatory-deployment.v1",
     deployment_id: deployment.deploymentId,

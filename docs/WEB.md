@@ -107,10 +107,8 @@ contains the commit recorded in `vela-release.v1.json`, and writes them into
 was built the local checkout was 1889 insertions across 19 files ahead of the
 pin, which is precisely the drift the script exists to prevent. The output is
 committed, so no build reads a Vela clone to render the manual, and the content
-is reviewable in a diff. (The projection job does check one out, at the pinned
-commit and for one file: `.github/actions/install-vela` runs Vela's own
-`install.sh` rather than reimplementing it. That checkout is the installer's,
-not the docs'.)
+is reviewable in a diff. Projection releases use a separately installed binary
+whose version and bytes are checked against the same release record.
 
 Re-run it whenever the release pin moves:
 
@@ -183,36 +181,31 @@ Git repositories. One today: `vela-science/math`, the single live mathematics
 authority. Four existed under the previous epoch and existed because there were
 four topics rather than four authorities. Math is public. Its registry entry
 has one canonical GitHub locator and explicit `public` access; the retired
-replica is neither a declared locator nor a scheduled mirror target. Every CI,
-refresh, gate, and reconstruction checkout uses the shared checkout action,
-pins `main`, fetches the full history needed by the projection, and sets
-`persist-credentials: false`. Public product pages and source acquisition both
+replica is neither a declared locator nor a scheduled mirror target. Every
+release derives its roster from this registry, clones each declared `main` at
+full depth, and verifies exact remote-head parity. Public product pages and source acquisition both
 use the same anonymous canonical locator; no repository-scoped read credential
 is required or embedded.
 
-One GitHub workflow — on a daily
-schedule, on a relevant push to `main`, or by `workflow_dispatch` for a
-data-only refresh — checks out clean
+The direct release command checks out clean
 `origin/main` Repository tips, verifies them with the pinned Vela release,
 and writes a content-addressed normalized read model to the `vela_observatory`
 database in the `vela-observatory-projection` Neon project:
 
 ```bash
-bun run db:migrate
-bun packages/observatory-data/scripts/refresh-neon-projection.mjs
-bun run db:check
-bun run projection:verify
+bun run refresh:observatory
 ```
 
 Refresh refuses dirty or unpushed sources, wrong branches or remotes, Vela
 version or released-binary-byte drift, packet drift, missing decision evidence,
-incomplete reviews, and root disagreement. It also refuses a release that drops
-below half the activated corpus on Claims, Problems or source records — a
-repository that legitimately empties is a decision somebody makes, so it takes
-an explicit `workflow_dispatch` override and a recorded reason. It acquires each source once, builds
+incomplete reviews, root disagreement, and every ambient corpus-drop override.
+It acquires each source once from its declared public remote, builds
 one candidate, inserts it in one transaction, verifies every stored table root,
-and only then moves `current_release`. A failure leaves the prior release
-current. The writer is available only to the refresh workflow. The Vercel
+and only then moves `current_release`. Failure before or during that atomic
+activation leaves the prior release current. A later failure retains the private
+operator directory and the exact two-sided projection/provider rollback inputs;
+it does not pretend a cross-provider operation was atomic. Writer credentials
+enter only migration, activation, and final pruning. The Vercel
 application connects as the native PostgreSQL login
 `observatory_projection_reader_20260813`. That versioned login inherits only
 the stable no-login `observatory_projection_reader` permission role; it does
@@ -224,9 +217,18 @@ compute endpoint.
 Rebuilding unchanged source facts is a no-op. Observation time, activation
 time, and a newly computed candidate root do not create another retained
 release when the read-model schema, Vela binary, source Repository identities,
-table roots, and source roots are identical. After activation, the workflow
-deploys the current application and verifies that production serves the exact
-new projection root.
+table roots, and source roots are identical. After activation, the same operator
+transaction stages any editorial snapshot, requalifies and reconstructs the
+clean local commit, publishes that exact commit, deploys it through Vercel's
+exact Git-SHA API, verifies production, and retains a qualification record.
+The content-addressed source-adapter artifact is retained before activation.
+An exact remote lock prevents two operators from interleaving those stages.
+
+Run this transaction immediately after an accepted canonical Math change and
+before representing that change as current on problems.science. There is no
+clock-based scientific freshness claim: the public manifest names the exact
+source commit, and a release is stale whenever it differs from canonical
+`origin/main`.
 
 Problem discovery and cross-source reading use two checked files in
 `packages/observatory-data/config`: `problem-discovery.v1.json` owns explicit
@@ -307,8 +309,8 @@ Three things now prevent that recurring:
 - `packages/observatory-data/tests/editorial-summary.test.ts` runs the generator
   against a status shaped like the one the emitter publishes today and asserts
   the output satisfies the schema. It needs no database, so it runs in CI.
-- The manual refresh regenerates and commits the snapshot
-  (`.github/workflows/refresh-projection.yml`). Before this it refreshed Neon
+- The direct release regenerates and commits the snapshot before requalification.
+  Before this the release path refreshed Neon
   and redeployed the Observatory only, which is precisely how www's numbers
   froze while the Observatory's stayed current.
 
@@ -354,32 +356,30 @@ Forward changes live in `packages/observatory-data/migrations`; each applied fil
 is recorded with its exact byte root. `bun run db:migrate` applies any missing
 rooted migrations before a refresh and rejects changed or unknown history.
 `bun run db:check` verifies the required tables, indexes, and SELECT-only
-application role without writing. CI never creates or mutates a Neon branch:
-pull requests run no-secret static contracts, while trusted main and
-release-candidate runs verify the fixed read-only projection. A refresh run
+application role without writing. The direct release verifies the exact default
+Neon branch and never creates or mutates a branch. Optional CI has no production
+credential. A refresh
 inserts a complete candidate into `main`, recomputes row roots and corpus
 counts, and only then atomically moves `current_release`. The read
 contract retains only that current release and its two immediate activated
 predecessors; unactivated candidates are disposable and are removed by the
-next prune. An unchanged refresh retains the current release root; the workflow
+same direct transaction, after public readiness. An unchanged refresh retains the current release root; the operator
 still deploys the exact qualified site commit, because a rendering change can
-need publication without changing a source fact. Failed refreshes leave the
-prior head unchanged. Structural ranking is not persisted
+need publication without changing a source fact. Git `main` is not pushed until
+the staged snapshot passes the full static, projection-backed product, and
+reconstruction gates. Structural ranking is not persisted
 as a second projection layer; producer work comes from the exact Target Index,
 while graph position remains non-authoritative.
 
-Clean-room reconstruction is disposable and creates no Neon branch. It runs in
-CI after every refresh — `reconstruct-projection.yml`, following the refresh by
-`workflow_run` rather than sharing its run, because it rebuilds twice and would
-otherwise hold the projection concurrency group for an hour after the deploy was
-done. It is advisory: nothing waits on it, and a failure is a question for a
-person rather than a reason to hold a release. The same command runs locally:
+Clean-room reconstruction is disposable, creates no Neon branch, and is a
+required stage of the direct release. The same command runs independently:
 
 ```bash
 bun run projection:reconstruct \
   --repositories-root /path/to/repository-checkouts \
   --vela /path/to/the-recorded-vela-binary \
   --source-adapter-artifact /path/to/the-recorded-adapter-artifact \
+  --grounded-math-dossier /path/to/the-verified-grounded-dossier.json \
   --output /tmp/vela-atlas-clean-room.json
 ```
 
@@ -526,8 +526,9 @@ Problems runtime mutations additionally require `VELA_ACTIVITY_DATABASE_URL`.
 Only schema work receives `VELA_ACTIVITY_MIGRATOR_DATABASE_URL`; it is not an
 application or build credential.
 
-CI additionally runs rooted runtime-route, projection, corpus, boundary, and
-semantic accessibility checks. Release candidates and design-affecting changes
+The direct release runs rooted runtime-route, projection, corpus, boundary, and
+semantic accessibility checks. Optional CI repeats no-secret static checks.
+Release candidates and design-affecting changes
 run the documented Codex in-app Browser matrix at the supported mobile, tablet,
 and desktop widths. Stale screenshot binaries are not treated as product truth.
 
@@ -560,36 +561,28 @@ vercel link --repo --yes --scope constellate-dc388081
 Do not run `vercel deploy` from `apps/observatory`: the remote Root Directory
 would be applied a second time. The governed production path is the exact Git
 deployment request exposed as `bun run deploy:observatory`; it requires
-`VERCEL_TOKEN`, derives `VELA_SITE_COMMIT` from the current checkout, and the
-existing response validator refuses commit or target drift.
+either a narrowly scoped automation token or an authenticated local Vercel CLI,
+derives `VELA_SITE_COMMIT` from the current checkout, and refuses commit or
+target drift.
 
 ### Pushing deploys
 
 The two active applications deliberately use different release paths:
 
 - `www.vela.space` uses Vercel's Git deployment for relevant `main` changes.
-- The unified application has direct Git deployment disabled. Relevant `main` changes
-  trigger `refresh-projection.yml`. Its read-only preflight first owns the
-  exact source checks, lint, tests, and patch hygiene required by the deployment.
-  The workflow then applies and verifies rooted additive `vela_activity`
-  migrations, builds and verifies the one current projection contract, activates
-  its exact release root, and only then asks Vercel's deployment API to build the
-  exact `site_commit` through `gitSource.sha`. The request and Vercel response
-  must agree on that SHA before the workflow waits for production; the public
-  manifest must then agree on both that commit and the activated projection. The
-  activity migration job receives the migrator and application URLs only on its
-  exact steps. The deploy request receives only `VERCEL_TOKEN` and the exact
-  public commit on its own step; the build and public readiness checks receive
-  no database credential, and readiness receives no Vercel credential. That
-  single deployment serves both product domains.
+- The unified application has automatic Git deployment disabled. An operator
+  runs `bun run refresh:observatory` from clean exact `main`. The command owns
+  static qualification, fresh source acquisition, rooted activity migration,
+  projection activation, local snapshot staging, post-activation qualification,
+  provider-loss reconstruction, exact commit publication, Vercel deployment,
+  public readiness and durable qualification. Each child receives only its
+  required credential class. One deployment serves both product domains.
 
 This ordering is mandatory. It prevents current application code from racing a
-predecessor read model and makes one workflow own both projection activation and
-the corresponding deployment. `workflow_dispatch` remains available for an
-exact data-only refresh. Only `apps/www/vercel.json` carries an
+predecessor read model. GitHub Actions is optional static automation and does
+not participate in production. Only `apps/www/vercel.json` carries an
 `ignoreCommand`, so `scripts/vercel-should-build.mjs` filters the editorial
-build alone; the Observatory's scope comes from the workflow's own path
-filters, and every exact-SHA deployment request builds. A branch-head hook is
+build alone; every explicit exact-SHA deployment request builds. A branch-head hook is
 not used: it could resolve a newer `main` commit than the tree the workflow
 qualified.
 
@@ -657,10 +650,9 @@ shipping one; the preconditions are the gates.
    redirects, semantics, roots, accessibility, responsive states, and cache
    isolation. A release-candidate build is available on a `v*-rc.*` tag when a
    change is worth exercising in CI before it lands.
-2. Merge to clean `main`. The two active release paths ship the changed application on
-   their own, and the scope is decided for you — `vercel-should-build.mjs` for
-   the editorial site, `refresh-projection.yml`'s path filters for the
-   Vela application. A shared brand or data-contract change may deploy both;
+2. Merge to clean `main`. `vercel-should-build.mjs` scopes the editorial Git
+   integration; `bun run refresh:observatory` explicitly refreshes and deploys
+   the Vela application. A shared brand or data-contract change may deploy both;
    editorial-only work does not redeploy the Vela application.
 3. Verify the production manifests and canonical domains against the exact
    merged commit and the activated projection root. The untouched application

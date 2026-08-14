@@ -42,8 +42,8 @@ function changedPaths(previous, current) {
    between the deployed commit and the one it was about to ship. The Observatory
    has no Git deploy any more — apps/observatory/vercel.json sets
    `git.deploymentEnabled: false` and carries no ignoreCommand, and its redeploy
-   is a hook fired from refresh-projection.yml, which refresh-integrity.test.ts
-   asserts does not invoke this script. Its last caller was its own test. */
+   is an exact direct provider request after projection activation. Its last
+   caller was its own test. */
 try {
   git(["rev-parse", "--is-inside-work-tree"]);
 

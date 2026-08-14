@@ -39,7 +39,7 @@ apps/*/public/assets/fonts/
 apps/observatory/public/favicon.svg
 apps/observatory/public/data/
 
-# CI and local reconstructions check the canonical repositories out here.
-# `.github/actions/checkout-repositories` writes sources/<slug>; committing one
-# would embed another repository in this one.
+# Local development may check canonical repositories out here. The release
+# command uses a private disposable directory instead; committing either would
+# embed another repository in this one.
 /sources/

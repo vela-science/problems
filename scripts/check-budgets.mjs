@@ -50,8 +50,7 @@ const root = projectionManifest.release_root;
    This named `erdos` outright. `graphRead` rejects a slug the release does not
    carry, so when the four topic repositories collapsed into one derived
    Repository this stopped measuring anything and started throwing "unknown
-   repository" — failing `test:budgets` in the refresh gate and in CI's
-   projection job, on a projection that was correct. A budget check may not
+   repository" — failing `test:budgets` on a projection that was correct. A budget check may not
    hold an opinion about which records exist. */
 const repositories = await allRepositories();
 if (!repositories.length) throw new Error("the projection publishes no Repository to measure");

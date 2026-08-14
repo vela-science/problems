@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import {
   deployVercelObservatory,
+  deployVercelObservatoryViaCli,
   observatoryDeploymentTarget,
   vercelObservatoryDeploymentRequest,
   verifyVercelObservatoryDeployment,
@@ -151,5 +152,31 @@ describe("exact Observatory Vercel deployment", () => {
       }), { status: 403 }),
       timeoutSignal: undefined,
     })).rejects.toThrow("HTTP 403 (forbidden)");
+  });
+
+  test("uses the authenticated Vercel CLI without reading or persisting a token", () => {
+    let invocation: any;
+    const deployed = deployVercelObservatoryViaCli({
+      environment: {
+        VELA_SITE_COMMIT: commit,
+        GITHUB_REPOSITORY: "vela-science/vela-web",
+        GITHUB_REF: "refs/heads/main",
+        PATH: process.env.PATH,
+        VERCEL_GLOBAL_CONFIG: "/operator/vercel-config",
+      },
+      execute: (command, args, options) => {
+        invocation = { command, args, options };
+        return JSON.stringify(response());
+      },
+    });
+    expect(deployed.commit).toBe(commit);
+    expect(invocation.command).toBe("vercel");
+    expect(invocation.args).toContain(
+      "/v13/deployments?teamId=team_ZtvAC9FZByF1L9R25ibMLh3I&forceNew=1",
+    );
+    expect(invocation.args).toContain("--raw");
+    expect(invocation.args).toContain("constellate-dc388081");
+    expect(invocation.args).toContain("/operator/vercel-config");
+    expect(invocation.options.env).not.toHaveProperty("VERCEL_TOKEN");
   });
 });
