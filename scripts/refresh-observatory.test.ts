@@ -17,11 +17,19 @@ import {
   releaseChildEnvironment,
   releaseChangedPaths,
   releaseCommitEnvironment,
+  releaseLookupState,
   releaseOrder,
   releaseWorkDirectory,
 } from "./refresh-observatory.mjs";
 
 describe("direct Observatory release", () => {
+  test("classifies only a present release or an exact GitHub 404", () => {
+    expect(releaseLookupState({ status: 0 })).toBe("present");
+    expect(releaseLookupState({ status: 1, stdout: "HTTP/2.0 404 Not Found\n" })).toBe("missing");
+    expect(releaseLookupState({ status: 1, stderr: "HTTP/2.0 404 Not Found\n" })).toBe("missing");
+    expect(releaseLookupState({ status: 1, stderr: "HTTP/2.0 503 Service Unavailable\n" })).toBeNull();
+  });
+
   test("is independent of GitHub Actions", () => {
     const source = readFileSync(resolve(import.meta.dir, "refresh-observatory.mjs"), "utf8");
     expect(source).not.toContain("GITHUB_ACTIONS");

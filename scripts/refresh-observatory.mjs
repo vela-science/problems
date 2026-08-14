@@ -259,13 +259,19 @@ function runStaticQualification(environment) {
   ]) run(command, args, { environment: safe });
 }
 
+export function releaseLookupState({ status, stdout = "", stderr = "" }) {
+  if (status === 0) return "present";
+  if (/^HTTP\/\S+ 404\b/mu.test(`${stdout}\n${stderr}`)) return "missing";
+  return null;
+}
+
 function releaseLookup(environment, tag) {
   const safe = githubEnvironment(environment);
   const result = spawnSync("gh", [
     "api", `repos/vela-science/vela-web/releases/tags/${tag}`, "--include",
   ], { env: safe, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
-  if (result.status === 0) return "present";
-  if (/^HTTP\/\S+ 404\b/mu.test(result.stdout)) return "missing";
+  const state = releaseLookupState(result);
+  if (state) return state;
   throw new Error(`could not determine retained release state for ${tag}`);
 }
 
