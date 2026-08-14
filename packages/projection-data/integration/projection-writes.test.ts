@@ -46,7 +46,7 @@ const names = (list: string) => list
    `AS x(<columns with types>)`. A statement this does not recognise is
    reported rather than skipped. */
 function parse(text: string): Planned | null {
-  const head = /INSERT INTO problems\.(\w+)\s*\(([^)]*)\)/u.exec(text);
+  const head = /INSERT INTO projection\.(\w+)\s*\(([^)]*)\)/u.exec(text);
   if (!head) return null;
   const recordset = /AS x\(([\s\S]*?)\)\s*(?:ON CONFLICT|$)/u.exec(text);
   return {
@@ -92,20 +92,20 @@ describeProjection("the projection writer and its schema name the same columns",
     const { fake, planned } = collect();
     await insertCandidate(fake, emptyCandidate);
 
-    /* The twelve tables written with a fixed statement, plus `releases`. The
+    /* The eleven tables written with a fixed statement, plus `releases`. The
        five registry tables are chunked, so a rowless candidate plans none of
        them — and four of those five write through
        `jsonb_populate_recordset(NULL::projection.<table>, …)`, which matches by
        column name and cannot transpose at all. `native_records` is the fifth and
        already names its columns.
 
-       Thirteen: retired derived work tables remain removed, while the
+       Twelve: retired derived work tables remain removed, while the
        exact Repository revision table has its own fixed statement.
 
        An equality because the number is the point: a statement that silently
        stops being checked is the failure this test exists to catch, one step
        removed. */
-    expect(planned.length).toBe(13);
+    expect(planned.length).toBe(12);
 
     const statements = planned.map((text) => ({ text, parsed: parse(text) }));
     expect(statements.filter((entry) => entry.parsed === null).map((entry) => entry.text)).toEqual([]);
@@ -113,7 +113,7 @@ describeProjection("the projection writer and its schema name the same columns",
     const rows = await neon(url as string).query(
       `SELECT table_name, column_name, ordinal_position, is_generated
        FROM information_schema.columns
-       WHERE table_schema = 'problems' AND table_name = ANY($1::text[])
+       WHERE table_schema = 'projection' AND table_name = ANY($1::text[])
        ORDER BY table_name, ordinal_position`,
       [statements.map((entry) => (entry.parsed as Planned).table)],
     ) as { table_name: string; column_name: string; ordinal_position: number; is_generated: string }[];
