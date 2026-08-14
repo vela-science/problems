@@ -202,12 +202,14 @@ export function currentRepositoryFromProjection(projection) {
       projection: proposal,
     })),
     submissions: projection.submissions.map((submission) => ({
+      object_id: submission.object_id,
       record: submission.payload,
       record_root: submission.object_root,
       source_path: submission.source_path,
       projection: submission,
     })),
     verifications: projection.verifications.map((verification) => ({
+      object_id: verification.object_id,
       record: verification.payload,
       record_root: verification.object_root,
       source_path: verification.source_path,
@@ -686,13 +688,13 @@ export function projectCurrentObjects(current) {
     assert(!proposalBySubmission.has(producer.id), `${producer.id}: linked by multiple Proposals`);
     proposalBySubmission.set(producer.id, proposalEntry.record);
   }
-  const submissions = current.submissions.map(({ record, record_root, source_path }) => {
-    const proposal = proposalBySubmission.get(record.submission_id);
-    assert(proposal, `${record.submission_id}: canonical Submission has no current Proposal`);
-    assert(proposal.producer_package.root === record_root, `${record.submission_id}: Proposal Submission root drift`);
-    assert(proposal.producer_package.path === source_path, `${record.submission_id}: Proposal Submission path drift`);
+  const submissions = current.submissions.map(({ object_id, record, record_root, source_path }) => {
+    const proposal = proposalBySubmission.get(object_id);
+    assert(proposal, `${object_id}: canonical Submission has no current Proposal`);
+    assert(proposal.producer_package.root === record_root, `${object_id}: Proposal Submission root drift`);
+    assert(proposal.producer_package.path === source_path, `${object_id}: Proposal Submission path drift`);
     return {
-      submission_id: record.submission_id,
+      submission_id: object_id,
       submission_root: record_root,
       proposal_id: proposal.proposal_id,
       claim_id: proposal.subject.id,
@@ -704,17 +706,17 @@ export function projectCurrentObjects(current) {
   });
   const submissionById = new Map(submissions.map((row) => [row.submission_id, row]));
 
-  const verifications = current.verifications.map(({ record, record_root, source_path, projection }) => {
+  const verifications = current.verifications.map(({ object_id, record, record_root, source_path, projection }) => {
     const submission = submissionById.get(record.subject?.submission_id);
-    assert(submission, `${record.verification_record_id}: Verification references an unknown Submission`);
-    assert(record.subject.submission_root === submission.submission_root, `${record.verification_record_id}: Submission root drift`);
-    assert(record.subject.proposal_id === submission.proposal_id, `${record.verification_record_id}: Proposal binding drift`);
-    assert(record.subject.claim_id === submission.claim_id, `${record.verification_record_id}: Claim binding drift`);
+    assert(submission, `${object_id}: Verification references an unknown Submission`);
+    assert(record.subject.submission_root === submission.submission_root, `${object_id}: Submission root drift`);
+    assert(record.subject.proposal_id === submission.proposal_id, `${object_id}: Proposal binding drift`);
+    assert(record.subject.claim_id === submission.claim_id, `${object_id}: Claim binding drift`);
     const reviewMethod = projection.review_method?.state === "verified"
       ? projection.review_method.method
       : null;
     return {
-      verification_record_id: record.verification_record_id,
+      verification_record_id: object_id,
       verification_root: record_root,
       submission_id: record.subject.submission_id,
       submission_root: record.subject.submission_root,

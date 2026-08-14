@@ -643,22 +643,20 @@ describe("current repository object projection", () => {
         },
       }],
       submissions: [{
-        submission_id: submissionId,
+        object_id: submissionId,
         object_root: submissionRoot,
         source_path: "records/submissions/current.json",
         payload: {
-          submission_id: submissionId,
           provenance: { producer: "agent:producer", emitted_at: "2026-07-27T12:00:00Z" },
           authentication: { identity_binding: { actor_id: "agent:producer" } },
         },
         envelope: { payloadType: "application/vnd.vela.submission.v2+json" },
       }],
       verifications: [{
-        verification_record_id: "vvr_current",
+        object_id: "vvr_current",
         object_root: root("6"),
         source_path: "records/verifications/current.json",
         payload: {
-          verification_record_id: "vvr_current",
           subject: {
             submission_id: submissionId, submission_root: submissionRoot,
             proposal_id: proposalId, claim_id: claimId,
