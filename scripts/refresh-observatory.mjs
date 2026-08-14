@@ -397,6 +397,22 @@ function projectionQualification(environment, context) {
   run("bun", ["run", "projection:snapshot"], { environment: reader });
 }
 
+function prepareProjectionSchemaCutover(environment) {
+  const raw = run("bun", [
+    "packages/observatory-data/scripts/prepare-projection-cutover.mjs",
+  ], {
+    environment: environmentFor(environment, ["VELA_PROJECTION_WRITER_DATABASE_URL"]),
+  });
+  const result = JSON.parse(raw);
+  if (
+    result.schema !== "vela.projection-cutover-compatibility.v1"
+    || result.ok !== true
+    || result.authority_effect !== "none"
+    || typeof result.legacy_work_column !== "boolean"
+    || result.default_installed !== result.legacy_work_column
+  ) throw new Error("projection cutover compatibility returned an invalid result");
+}
+
 function consolidateProjectionSchema(environment, context) {
   run("bun", ["run", "db:migrate"], {
     environment: environmentFor(environment, ["VELA_PROJECTION_WRITER_DATABASE_URL"]),
@@ -837,6 +853,7 @@ const stageDefinitions = Object.freeze([
   }],
   ["current_model_deploy", (environment, context) => deploy(environment, context, "compatibilityDeployment")],
   ["current_model_readiness", async (_environment, context) => compatibilityReadiness(context)],
+  ["projection_cutover_compatibility", (environment) => prepareProjectionSchemaCutover(environment)],
   ["activity_qualification", (environment) => activityQualification(environment)],
   ["projection_activate", (environment, context) => projectionQualification(environment, context)],
   ["snapshot_stage", (environment, context) => stageSnapshot(environment, context)],

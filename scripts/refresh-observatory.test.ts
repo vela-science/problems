@@ -75,6 +75,7 @@ describe("direct Observatory release", () => {
       "rollback_floor",
       "current_model_deploy",
       "current_model_readiness",
+      "projection_cutover_compatibility",
       "activity_qualification",
       "projection_activate",
       "snapshot_stage",
