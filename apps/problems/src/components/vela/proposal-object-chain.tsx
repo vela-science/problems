@@ -28,7 +28,13 @@ function packageLabel(review: ProposalObjectRecord): string {
   return "Producer package";
 }
 
-export function ProposalObjectChain({ review }: { review: ProposalObjectRecord }) {
+export function ProposalObjectChain({
+  review,
+  proposalRoot,
+}: {
+  review: ProposalObjectRecord;
+  proposalRoot?: string | null;
+}) {
   const packageRoot = review.producer_package_root ?? review.receipt_root;
   return (
     <ItemGroup className="divide-y rounded-lg border">
@@ -55,7 +61,10 @@ export function ProposalObjectChain({ review }: { review: ProposalObjectRecord }
             Requested scientific-state change. Proposed change status is {review.status.replaceAll("_", " ")}.
           </ItemDescription>
           <ExactValue value={review.proposal_id} label="Exact Proposal ID" />
-          {review.content_root ? <ExactValue value={review.content_root} label="Exact Proposal root" /> : null}
+          {proposalRoot ? <ExactValue value={proposalRoot} label="Exact Proposal root" /> : null}
+          {review.content_root ? (
+            <ExactValue value={review.content_root} label="Claim root bound by Proposal" />
+          ) : null}
         </ItemContent>
       </Item>
       <Item className="items-start">

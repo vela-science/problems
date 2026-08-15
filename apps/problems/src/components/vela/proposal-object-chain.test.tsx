@@ -9,6 +9,7 @@ describe("ProposalObjectChain", () => {
   test("renders lifecycle anchors without duplicating the Evidence section's Checks", () => {
     const { container } = render(
       <ProposalObjectChain
+        proposalRoot={`sha256:${"3".repeat(64)}`}
         review={{
           proposal_id: "vpr_test",
           status: "pending_review",
@@ -29,6 +30,12 @@ describe("ProposalObjectChain", () => {
     expect(text.indexOf("Proposed change")).toBeLessThan(text.indexOf("Decision"));
     expect(container.querySelector('[aria-label="Copy Exact Submission ID"]')).not.toBeNull();
     expect(container.querySelector('[aria-label="Copy Exact Proposal ID"]')).not.toBeNull();
+    expect(container.querySelector('[aria-label="Copy Exact Proposal root"]')).not.toBeNull();
+    expect(container.querySelector('[aria-label="Copy Claim root bound by Proposal"]')).not.toBeNull();
+    expect(container.querySelector('[aria-label="Copy Exact Proposal root"]')?.parentElement?.textContent)
+      .toBe(`sha256:${"3".repeat(64)}`);
+    expect(container.querySelector('[aria-label="Copy Claim root bound by Proposal"]')?.parentElement?.textContent)
+      .toBe(`sha256:${"1".repeat(64)}`);
     expect(container.querySelector('[aria-label="Copy Exact Verification Record ID"]')).toBeNull();
     expect(text).not.toContain("Check");
     expect(text).not.toContain("Registration Record");

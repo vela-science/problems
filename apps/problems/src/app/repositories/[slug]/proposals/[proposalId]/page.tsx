@@ -212,7 +212,10 @@ export default async function ProposalPage({ params }: PageProps<"/repositories/
 
       <section className="mt-10" aria-labelledby="objects-heading">
         <h2 id="objects-heading" className="mb-3 text-subtitle">Exact records</h2>
-        <ProposalObjectChain review={review} />
+        <ProposalObjectChain
+          review={review}
+          proposalRoot={review.proposed_state_preview?.inputs?.proposal_root ?? null}
+        />
       </section>
     </PageShell>
   );
