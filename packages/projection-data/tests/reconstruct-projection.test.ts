@@ -31,6 +31,12 @@ function manifest(overrides: Record<string, unknown> = {}) {
 
 describe("clean-room production parity", () => {
   test("refuses retired, unknown, duplicate, and incomplete arguments", () => {
+    expect(() => parseArgs(["--production-manifest", "https://example.test/manifest.json"])).toThrow(
+      "unsupported argument --production-manifest",
+    );
+    expect(() => parseArgs(["--production-parity", "skip"])).toThrow(
+      "unsupported argument --production-parity",
+    );
     expect(() => parseArgs(["--unknown-input", "stale.json"])).toThrow(
       "unsupported argument --unknown-input",
     );

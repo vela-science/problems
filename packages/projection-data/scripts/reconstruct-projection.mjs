@@ -28,7 +28,6 @@ const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const repositoryRoot = resolve(packageRoot, "../..");
 const schemaPath = join(packageRoot, "schema.sql");
 const migrationsPath = join(packageRoot, "migrations");
-const defaultProductionManifest = "https://problems.science/.well-known/vela-site.json";
 export const reconstructionDiagnosticPhases = Object.freeze([
   "inputs_loaded", "candidate_1_built", "candidate_2_built", "source_comparison_complete",
   "cluster_initializing", "cluster_initialized", "cluster_started", "schema_migrations_complete",
@@ -146,8 +145,6 @@ export function parseArgs(argv) {
     "vela",
     "source-adapter-artifact",
     "output",
-    "production-manifest",
-    "production-parity",
   ]);
   const values = new Map();
   for (let index = 0; index < argv.length; index += 2) {
@@ -160,8 +157,6 @@ export function parseArgs(argv) {
     values.set(name, value);
   }
   const vela = values.get("vela") ?? process.env.VELA_BIN ?? "vela";
-  const productionParity = values.get("production-parity") ?? "required";
-  invariant(["required", "skip"].includes(productionParity), "--production-parity must be required or skip");
   return {
     repositoriesRoot: resolve(values.get("repositories-root") ?? join(repositoryRoot, "..")),
     vela: vela.includes("/") ? resolve(vela) : vela,
@@ -171,8 +166,6 @@ export function parseArgs(argv) {
         ?? "",
     ),
     output: values.has("output") ? resolve(values.get("output")) : null,
-    productionManifestUrl: values.get("production-manifest") ?? defaultProductionManifest,
-    productionParity,
   };
 }
 
@@ -437,12 +430,6 @@ async function reconstructOnce({ candidate, schemaSql, migrations, tableNames, p
   }
 }
 
-function productionProjection(document) {
-  invariant(document?.schema === "vela.site-deployment.v4", "unsupported production deployment manifest");
-  invariant(document?.projection?.schema === "vela.projection-release-manifest", "unsupported production projection manifest");
-  return document.projection;
-}
-
 export function compareProductionProjection(candidate, production) {
   const samePlatformBinary = candidate.vela_binary_sha256 === production.vela_binary_sha256;
   return {
@@ -525,22 +512,25 @@ export async function reconstructProjection(options) {
   invariant(canonicalJson(runs[0]) === canonicalJson({ ...runs[1], attempt: 1 }), "two database reconstructions disagree");
   reportPhase("database_comparison_complete");
 
-  let production = null;
-  let parity = null;
-  if (options.productionParity !== "skip") {
-    const response = await fetch(options.productionManifestUrl, { redirect: "error" });
-    invariant(response.ok, `production manifest returned HTTP ${response.status}`);
-    production = productionProjection(await response.json());
-    parity = compareProductionProjection(candidates[0].manifest, production);
-    invariant(parity.manifest_schema_equal, "production manifest schema drift");
-    invariant(parity.vela_version_equal, "production Vela version drift");
-    invariant(parity.table_roots_equal, "production table-root drift");
-    invariant(parity.source_repositories_equal, "production Repository input drift");
-    invariant(parity.source_registry_equal, "production source-registry drift");
+  const activeDatabaseUrl = process.env.VELA_PROJECTION_DATABASE_URL;
+  invariant(activeDatabaseUrl, "VELA_PROJECTION_DATABASE_URL is required for active projection parity");
+  const active = new SQL(activeDatabaseUrl, { max: 1, prepare: false });
+  let production;
+  try {
+    production = await currentStoredRelease(active);
+  } finally {
+    await active.close();
   }
+  invariant(production, "active projection database has no current release");
+  const parity = compareProductionProjection(candidates[0].manifest, production);
+  invariant(parity.manifest_schema_equal, "active projection manifest schema drift");
+  invariant(parity.vela_version_equal, "active projection Vela version drift");
+  invariant(parity.table_roots_equal, "active projection table-root drift");
+  invariant(parity.source_repositories_equal, "active projection Repository input drift");
+  invariant(parity.source_registry_equal, "active projection source-registry drift");
 
   const body = {
-    schema: "vela.math-atlas-clean-room-qualification.v2",
+    schema: "vela.projection-clean-room-qualification.v1",
     measured_at: new Date().toISOString(),
     status: "pass",
     scope: "two_local_empty_postgres_reconstructions",
@@ -563,14 +553,11 @@ export async function reconstructProjection(options) {
       byte_identical: true,
       reader_select_only: true,
     },
-    production_parity: production && parity ? {
+    production_parity: {
       status: "pass",
-      url: options.productionManifestUrl,
+      source: "active_projection_database",
       release_root: production.release_root,
       ...parity,
-    } : {
-      status: "skipped_preactivation",
-      reason: "The candidate has not passed its product gate and is not eligible for production activation.",
     },
     limitations: [
       "The macOS reconstruction has a distinct release root when production was generated by the recorded Linux binary; exact table roots, Repository inputs, and source-registry roots must still match.",
