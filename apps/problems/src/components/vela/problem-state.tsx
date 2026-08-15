@@ -44,24 +44,22 @@ export function ProblemState({ state, basePath }: { state: State; basePath?: str
      useless as an opening, and it displaced the honest sentence this
      component already knew how to write.
 
-     Selection now follows the Source's declared role rather than a source id,
-     because the roles are the reviewed data contract and a hardcoded id list
-     is the Erdős-shaped thing this codebase is removing. A catalogue of
-     problems and an attributed activity record carry prose; a formal
-     statement library and a proof manifest carry formal text, and both keep
-     their own presentation below under the retained statements.
+     Selection follows the form the resolver derives from each Source's
+     declared role, which the statement row now carries. Joining a statement
+     to its role through `sources.coverage` worked but failed silently: an
+     empty or partial coverage array made every Problem claim it had no
+     question. The resolver already had the role in scope where it builds the
+     statement, so this is a pass-through rather than a second data
+     dependency. A hardcoded source-id list, which is what this replaced, is
+     the Erdős-shaped thing this codebase is removing.
 
      Where no prose is retained the page says so and links upstream. It does
      not reach for the source's own words: `source:erdos-problems`, which is
      the prose catalogue, declares `statement_retention: "locator_only"`, so
      the natural-language statement is deliberately not retained here and the
      locator is the whole of what this release may show. */
-  const proseRoles = new Set(["problem_catalog", "attributed_activity_catalog"]);
-  const roleForSource = new Map(state.sources.coverage.map((source) => [source.source_id, source.source_role]));
-  const question = state.sources.statements.find((statement) => (
-    proseRoles.has(roleForSource.get(statement.source_id) ?? "")
-  )) ?? null;
-  const formalStatements = state.sources.statements.length;
+  const question = state.sources.statements.find((statement) => statement.statement_form === "prose") ?? null;
+  const formalStatements = state.sources.statements.filter((statement) => statement.statement_form === "formal").length;
   return <div className="mt-8 max-w-5xl space-y-12">
     <section aria-labelledby="question-heading">
       <div className="flex flex-wrap items-end justify-between gap-3"><h2 id="question-heading" className="text-title">Question</h2>{question ? <span className="text-meta text-muted-foreground">Source-authored statement</span> : null}</div>

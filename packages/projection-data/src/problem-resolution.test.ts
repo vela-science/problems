@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { canonicalJson, sha256 } from "./canonical";
 import { createNativeSourceRecord, type NativeSourceRecord } from "./math-sources";
 import {
+  STATEMENT_FORM_BY_SOURCE_ROLE,
   candidateProblemIdentity,
   parseProblemResolutionConfig,
   problemResolutionConfig,
@@ -50,6 +51,45 @@ const formal321 = () => record({ source_id: "source:formal-conjectures", native_
 const vibe321 = () => record({ source_id: "source:vibemathed", native_id: "vibemathed:erdos-321", native_kind: "attributed_activity", summary: "Attributed source statement", metadata: { problem_number: 321, resolution: "resolved", verification: "site-confirmed" }, content_root: configuredOccurrence("source:vibemathed", "vibemathed:erdos-321").content_root });
 
 describe("reviewed Problem source resolver", () => {
+  /* Which Source may retain text, and how that text reads.
+   *
+   * A Problem opens with the first statement whose form is prose. Role alone
+   * cannot separate two Sources that share a role but not a register:
+   * `source:erdos-ai-contributions-wiki` is an attributed activity catalogue
+   * like `source:vibemathed`, but its summaries are outcome labels
+   * ("Formalization", "Candidate full solution") rather than questions, and
+   * its id sorts first. It retains nothing today, so it cannot reach a page —
+   * flipping it to "summary" would quietly make a category label the opening
+   * sentence of every Problem it touches.
+   *
+   * Pinning the triples makes that flip a reviewed change. It is not a claim
+   * that the current values are right, only that changing one is deliberate. */
+  test("pins which Sources retain statement text and how that text reads", () => {
+    const triples = problemResolutionConfig.candidate_sources
+      .map(({ source_id, source_role, statement_retention }) => ({
+        source_id,
+        statement_retention,
+        statement_form: STATEMENT_FORM_BY_SOURCE_ROLE[source_role],
+      }))
+      .sort((left, right) => left.source_id.localeCompare(right.source_id));
+
+    expect(triples).toEqual([
+      { source_id: "source:erdos-ai-contributions-wiki", statement_retention: "none", statement_form: "prose" },
+      { source_id: "source:erdos-problems", statement_retention: "locator_only", statement_form: "prose" },
+      { source_id: "source:formal-conjectures", statement_retention: "summary", statement_form: "formal" },
+      { source_id: "source:gpt-erdos", statement_retention: "none", statement_form: "label" },
+      { source_id: "source:jayyhk-erdos-lean", statement_retention: "none", statement_form: "formal" },
+      { source_id: "source:plby-lean-proofs", statement_retention: "none", statement_form: "formal" },
+      { source_id: "source:vibemathed", statement_retention: "summary", statement_form: "prose" },
+      { source_id: "source:williamjblair-lean-proofs", statement_retention: "none", statement_form: "formal" },
+    ]);
+
+    /* The prose catalogue is locator_only for rights reasons, so no release
+       may open a Problem with erdosproblems.com's own words. */
+    const catalogue = triples.find(({ source_id }) => source_id === "source:erdos-problems");
+    expect(catalogue?.statement_retention).toBe("locator_only");
+  });
+
   test("roots the config and distinguishes occurrences, statements, relations and candidates", () => {
     expect(problemResolutionConfigRoot).toMatch(/^sha256:[0-9a-f]{64}$/u);
     expect(problemResolutionConfig.entities).toHaveLength(6);

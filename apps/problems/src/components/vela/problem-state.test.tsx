@@ -75,12 +75,12 @@ const state = {
     problem_number: 321,
     entity: null,
     occurrences: [],
-    statements: [{ statement_id: "statement:vibemathed:321", source_id: "source:vibemathed", occurrence_key: "source:vibemathed\u0000problem:erdos:321", text: "How quickly does the extremal quantity grow?", locator_url: "https://example.test/vibemathed/321", row_root: root("d") }],
+    statements: [{ statement_id: "statement:vibemathed:321", source_id: "source:vibemathed", source_role: "attributed_activity_catalog", statement_form: "prose", occurrence_key: "source:vibemathed\u0000problem:erdos:321", text: "How quickly does the extremal quantity grow?", locator_url: "https://example.test/vibemathed/321", row_root: root("d") }],
     relations: [],
     identity_events: [],
-    /* The real read always carries the resolver's candidate Sources and their
-       declared roles; the statement selection keys on the role, so an empty
-       coverage here would have meant no Problem ever showed a question. */
+    /* The coverage table renders from this. Statement selection no longer
+       joins through it — the statement row carries its own form — but a
+       realistic fixture keeps the coverage surface exercised. */
     coverage: [
       { source_id: "source:vibemathed", resolution_namespace: "erdos-problems", label: "VibeMathed", source_role: "attributed_activity_catalog", source_occurrences: 1, reviewed_occurrences: 1, statement_occurrences: 1 },
       { source_id: "source:formal-conjectures", resolution_namespace: "erdos-problems", label: "Formal Conjectures", source_role: "formal_statement_library", source_occurrences: 1, reviewed_occurrences: 1, statement_occurrences: 0 },
@@ -156,6 +156,8 @@ describe("Problem State", () => {
         statements: [{
           statement_id: "statement:formal-conjectures:94",
           source_id: "source:formal-conjectures",
+          source_role: "formal_statement_library" as const,
+          statement_form: "formal" as const,
           occurrence_key: "source:formal-conjectures\u0000Erdos94.erdos_94",
           text: "\u2203 C > 0, \u2200 (P : Finset (EuclideanSpace \u211d (Fin 2))), EuclideanGeometry.ConvexIndep \u2191P",
           locator_url: "https://example.test/formal/94",

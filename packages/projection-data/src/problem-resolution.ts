@@ -274,10 +274,33 @@ export type ProblemSourceOccurrence = {
   authority_effect: "none";
 };
 
+export type StatementForm = "prose" | "formal" | "label";
+
+/* What a Source's text reads as, derived from the role it declares.
+ *
+ * Exhaustive by construction rather than a Set of "prose-ish" roles: adding a
+ * role to the candidate-source enum becomes a compile error here instead of
+ * silently defaulting a new Source's text into a Problem's opening sentence.
+ *
+ * This is a presentation classification of already-permitted text. It widens
+ * no retention gate: a Source that retains nothing still emits no statement. */
+export const STATEMENT_FORM_BY_SOURCE_ROLE: Record<
+  ProblemResolutionCandidateSource["source_role"],
+  StatementForm
+> = {
+  problem_catalog: "prose",
+  attributed_activity_catalog: "prose",
+  formal_statement_library: "formal",
+  proof_manifest: "formal",
+  attributed_classification_catalog: "label",
+};
+
 export type ProblemSourceStatement = {
   statement_id: string;
   occurrence_key: string;
   source_id: string;
+  source_role: ProblemResolutionCandidateSource["source_role"];
+  statement_form: StatementForm;
   text: string;
   locator_url: string | null;
   row_root: NativeSourceRecord["row_root"];
@@ -419,9 +442,13 @@ export function resolveProblemSources(
       authority_effect: "none" as const,
     };
     return [{
+      /* `body` is the hash preimage and does not carry the fields below, so
+         classifying a statement cannot drift `statement_id`. */
       statement_id: sha256(canonicalJson(body)),
       occurrence_key: occurrence.occurrence_key,
       source_id: occurrence.source_id,
+      source_role: source.source_role,
+      statement_form: STATEMENT_FORM_BY_SOURCE_ROLE[source.source_role],
       text: occurrence.summary,
       locator_url: occurrence.locators.find(({ url }) => url)?.url ?? null,
       row_root: occurrence.row_root,
