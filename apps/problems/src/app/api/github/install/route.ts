@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
   const state = createGitHubInstallState(account.activity.id, identity.idpId);
   const response = NextResponse.redirect(githubInstallUrl(state));
   response.cookies.set("problems_github_install", state, {
-    httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", path: "/api/github/setup", maxAge: 600,
+    httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", path: "/api/github/installation-callback", maxAge: 600,
   });
   return response;
 }
