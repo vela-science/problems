@@ -75,7 +75,7 @@ export function ProposalEvidence({ review }: { review: ReviewSummary }) {
         </p>
       )}
 
-      <div className="mt-6"><AttributionLimits limits={limits} heading="Not established" /></div>
+      {limits.length ? <div className="mt-6"><AttributionLimits limits={limits} heading="Not established" /></div> : null}
     </section>
   );
 }

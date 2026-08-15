@@ -101,7 +101,7 @@ describe("Problem State", () => {
 
   it("leads with Current State, attributed provenance, and source-owned next work while keeping exact records disclosed", async () => {
     const user = userEvent.setup();
-    render(<ProblemState state={state} />);
+    render(<ProblemState state={state} basePath="/problems/erdos-problems/321" />);
 
     const question = screen.getByRole("heading", { name: "Question" });
     const currentState = screen.getByRole("heading", { name: "Current State" });
@@ -135,8 +135,8 @@ describe("Problem State", () => {
     expect(screen.getByRole("heading", { name: "Next contribution" })).toBeInTheDocument();
     expect(screen.getByText("Submit bounded evidence directly.")).toBeInTheDocument();
     expect(screen.getByText(/Open Workspace to assemble the packet in the browser/u)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /Next: open the Workspace/u })).toHaveAttribute("href", "/p/math/321?mode=work");
-    expect(screen.getByRole("button", { name: "Open Workspace" })).toHaveAttribute("href", "/p/math/321?mode=work");
+    expect(screen.getByRole("link", { name: /Next: open the Workspace/u })).toHaveAttribute("href", "/problems/erdos-problems/321?mode=work");
+    expect(screen.getByRole("button", { name: "Open Workspace" })).toHaveAttribute("href", "/problems/erdos-problems/321?mode=work");
 
     const exact = screen.getByRole("button", { name: /Exact provenance/u });
     expect(screen.queryByText("Problem row")).not.toBeInTheDocument();
@@ -153,7 +153,7 @@ describe("Problem State", () => {
      is retained for it and the page must say that rather than promote a Lean
      declaration into the opening. The formal text keeps its own place below. */
   it("does not present a formal declaration as the Problem's question", () => {
-    render(<ProblemState state={{
+    render(<ProblemState basePath="/problems/erdos-problems/321" state={{
       ...state,
       sources: {
         ...state.sources,
@@ -183,7 +183,7 @@ describe("Problem State", () => {
      Problem currently holds", which would present its producer, verifiers,
      limits and Decision reason as this Claim's provenance. */
   it("does not attribute an unrelated accepted Proposal to the current Claim", () => {
-    render(<ProblemState state={{
+    render(<ProblemState basePath="/problems/erdos-problems/321" state={{
       ...state,
       reviews: [{ ...state.reviews[0]!, claim: "A different accepted Claim entirely." }],
     }} />);
@@ -196,7 +196,7 @@ describe("Problem State", () => {
   });
 
   it("keeps absent State projections readable without stacking empty cards", () => {
-    render(<ProblemState state={{
+    render(<ProblemState basePath="/problems/erdos-problems/321" state={{
       ...state,
       problem: { ...state.problem },
       claims: [],
@@ -220,7 +220,7 @@ describe("Problem State", () => {
   });
 
   it("renders source audit axes without promoting approval, merge, or build to Standing", () => {
-    render(<ProblemState state={{
+    render(<ProblemState basePath="/problems/erdos-problems/321" state={{
       ...state,
       sourceAudits: [{
         fixture_id: "fidelity-erdos-887-1237",

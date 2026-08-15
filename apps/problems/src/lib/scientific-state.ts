@@ -23,7 +23,6 @@ import {
   type SourceCorpusMapRead,
 } from "@vela/projection-data";
 
-const humanize = (value: string) => value.replaceAll(/[-_]/gu, " ").replace(/\b\w/gu, (letter) => letter.toUpperCase());
 
 export type ProblemDiscovery = {
   releaseRoot: string;
@@ -378,17 +377,6 @@ export async function featuredProblemStates() {
   })));
 }
 
-export function localStandingLabel(state: NonNullable<ScientificProblemState>) {
-  if (!state.claims.length) return "Not assessed locally";
-  const values = [...new Set(state.claims.map((claim) => claim.standing.replaceAll("_", " ")))];
-  return values.length === 1 ? `${humanize(values[0]!)} locally` : "Mixed local Standing";
-}
-
-export function discoveryStandingLabel(problem: ProblemDiscovery) {
-  return problem.record.local_standing
-    ? `${humanize(problem.record.local_standing)} locally`
-    : "Not assessed locally";
-}
 
 export async function recentScientificChanges(limit = 8) {
   const repositories = await allRepositories();

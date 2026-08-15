@@ -33,7 +33,7 @@ function correctionRelations(claim: State["claims"][number]) {
     : [];
 }
 
-export function ProblemState({ state, basePath }: { state: State; basePath?: string }) {
+export function ProblemState({ state, basePath }: { state: State; basePath: string }) {
   const corrections = state.claims.flatMap((claim) => correctionRelations(claim).map((relation) => ({ claim, relation })));
   /* A Problem opens with what it asks, and a Lean declaration does not say
      that to most readers.
@@ -101,7 +101,7 @@ export function ProblemState({ state, basePath }: { state: State; basePath?: str
         <p className="mt-1 text-meta text-muted-foreground">This Repository has admitted Claims; a record reaches a Problem only through the subject it declares.</p>
         <p className="mt-2 text-meta"><Link href={`/repositories/${state.repositorySlug}/claims`} className="underline underline-offset-4">Open the Claim ledger</Link></p>
       </div>}
-      <p className="mt-5 text-meta"><Link href={`${basePath ?? `/p/${state.repositorySlug}/${state.problem.problem}`}?mode=work`} className="font-medium underline underline-offset-4">Next: open the Workspace to prepare a bounded Submission</Link></p>
+      <p className="mt-5 text-meta"><Link href={`${basePath}?mode=work`} className="font-medium underline underline-offset-4">Next: open the Workspace to prepare a bounded Submission</Link></p>
     </section>
 
     {/* These were behind a closed Collapsible, and Base UI keeps closed content
@@ -136,7 +136,7 @@ export function ProblemState({ state, basePath }: { state: State; basePath?: str
     </section>
 
     <section aria-labelledby="next-contribution-heading">
-      <div className="flex flex-wrap items-end justify-between gap-3"><h2 id="next-contribution-heading" className="text-title">Next contribution</h2><Button nativeButton={false} render={<Link href={`${basePath ?? `/p/${state.repositorySlug}/${state.problem.problem}`}?mode=work`} />}>Open Workspace</Button></div>
+      <div className="flex flex-wrap items-end justify-between gap-3"><h2 id="next-contribution-heading" className="text-title">Next contribution</h2><Button nativeButton={false} render={<Link href={`${basePath}?mode=work`} />}>Open Workspace</Button></div>
       <p className="mt-4 max-w-[70ch] text-body text-muted-foreground">{state.repository.status.actions.work.note}</p>
       <p className="mt-3 max-w-[70ch] text-meta text-muted-foreground">The Repository publishes no central ranked queue. Work stays source-owned until an exact bounded Submission is prepared.</p>
       <p className="mt-3 max-w-[70ch] text-meta text-muted-foreground">Open Workspace to assemble the packet in the browser. The CLI command runs in the source Repository checkout.</p>

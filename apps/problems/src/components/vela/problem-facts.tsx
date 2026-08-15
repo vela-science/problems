@@ -40,6 +40,9 @@ const relationNoun: Record<string, [string, string]> = {
 
 export function standingScopeSentence(state: State): string | null {
   const bindings = state.claims.flatMap((claim) => claim.source_bindings ?? []);
+  /* No bindings means no claim: `problemClaimsFromBindingRows` creates a claim
+     only while processing a binding row, so an empty list is unreachable
+     rather than an absence to word. */
   if (!state.claims.length || !bindings.length) return null;
   const canonical = bindings.filter(({ relation_kind }) => !relation_kind).length;
   const counts = new Map<string, number>();
