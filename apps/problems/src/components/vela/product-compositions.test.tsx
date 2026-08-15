@@ -36,7 +36,7 @@ describe("product compositions", () => {
     expect(screen.getByText("Source status")).toBeVisible();
     expect(screen.getByText("solved")).toBeVisible();
     expect(screen.getByText("Local Standing")).toBeVisible();
-    expect(screen.getByText("Accepted locally").closest("[data-axis]")).toHaveAttribute("data-axis", "standing");
+    expect(screen.getByText("Claim accepted locally").closest("[data-axis]")).toHaveAttribute("data-axis", "standing");
     expect(screen.getByText("Contribution path")).toBeVisible();
     expect(screen.getByText("Direct Submission")).toBeVisible();
   });
@@ -50,6 +50,39 @@ describe("product compositions", () => {
     expect(container).toHaveTextContent("State change");
     expect(screen.getByText("Repository commit")).toBeVisible();
     expect(screen.getByText("machine-authored")).toBeVisible();
+  });
+
+  /* Erdős 321 shipped "Accepted locally" over a Claim that denies proving the
+     Problem, and Erdős 94's accepted Claim is narrower still — a bounded
+     counting identity whose own Decision reason says it "accepts only the
+     bounded sum_multiplicity identity, not the cubic Erdős 94 theorem". The
+     badge has to carry its subject and the scope has to be on screen, or
+     binding a Claim to a Problem publishes a solved conjecture. */
+  it("scopes an accepted Claim to the occurrences it covers", () => {
+    const scoped = {
+      problem: { declared_status: "solved" },
+      claims: [{
+        standing: "accepted",
+        source_bindings: [
+          { binding_id: "a", relation_kind: "formal_statement_reference" },
+          { binding_id: "b", relation_kind: "formal_statement_reference" },
+        ],
+      }],
+    } as unknown as Parameters<typeof ProblemFacts>[0]["state"];
+    render(<ProblemFacts state={scoped} />);
+    expect(screen.getByText("Claim accepted locally")).toBeVisible();
+    expect(screen.getByText("Scoped to 2 formal statement references, not to this Problem's own statement.")).toBeVisible();
+    expect(screen.queryByText("Accepted locally")).toBeNull();
+  });
+
+  it("states no scope when no Claim names the Problem", () => {
+    const unbound = {
+      problem: { declared_status: "open" },
+      claims: [],
+    } as unknown as Parameters<typeof ProblemFacts>[0]["state"];
+    const { container } = render(<ProblemFacts state={unbound} />);
+    expect(screen.getByText("Not assessed locally")).toBeVisible();
+    expect(container).not.toHaveTextContent("Scoped to");
   });
 
   it("keeps mixed local Standing neutral rather than implying acceptance", () => {
