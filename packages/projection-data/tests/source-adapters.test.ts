@@ -1283,7 +1283,7 @@ describe("pinned external source adapters", () => {
        `expectedManifestRoot` above makes acquisition throw when the fetched
        manifest disagrees with the lock. */
     expect(firstBundle).toMatchObject({
-      revision: { kind: "git", value: plby.commit },
+      revision: { kind: "git", value: plby.revision },
     });
     expect(firstBundle.revision.git_tree).toMatch(/^[0-9a-f]{40}$/u);
     expect(firstBundle.output.record_count).toBeGreaterThan(0);
