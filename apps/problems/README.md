@@ -69,7 +69,7 @@ file. An unconfigured build deliberately omits account controls and leaves the
 public Problems fully available.
 
 GitHub sign-in is enabled in the same WorkOS AuthKit application. Repository
-access is deliberately separate: the Problems GitHub App requests only
+access is deliberately separate: the **Vela Science** GitHub App requests only
 Metadata read and Contents read for explicitly selected repositories. Its
 one-hour installation token stays in server memory while the exact commit is
 inspected and is never written to Neon, HTML, logs, or a Vela object. A manual
