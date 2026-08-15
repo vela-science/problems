@@ -202,6 +202,24 @@ The state glyph encodes two axes in one mark so a ledger row can carry both
 without two badges: the ring is standing, the core is verification, and an inner
 ring marks a transitive cone. A half core is acceptance with conditions.
 
+A Standing badge names the object it is about. `Accepted locally` over a
+Problem reads as a verdict on the Problem, and the sentence qualifying it two
+blocks below loses; `Claim accepted locally` says whose Standing it is. Where
+the Claim covers a variant occurrence rather than the Problem's own statement,
+the surface says which, because a Claim binds reviewed source occurrences and
+never the Problem's canonical one — no Claim on these surfaces has ruled on the
+statement a Problem's own Source publishes.
+
+Independence is a set of declared facets, not a rank. A verifier declares what
+it was independent of and what it shared with the work it checked, and those
+run on different axes — actor kind, provider, context, toolchain, evidence —
+that no single ordering summarises. Render the declared facets and the
+shared-dependency disclosure verbatim and counted. Do not rank them, and do not
+let actor kind read as a quality grade: a human review is not automatically
+independent of the producer, and an agent review is not automatically less so.
+The disclosure is the more informative half, and a surface that drops it reads
+as though independence were simply unaddressed.
+
 Activity status and anchor freshness use separate labels. An active Attempt is
 not a pending Proposal. A completed Attempt is not a passing Verification or an
 accepted Claim. A stale activity anchor names a newer canonical root; it does
@@ -210,7 +228,11 @@ not infer a change in Standing.
 ## Navigation
 
 The visible product model is **Home → Problem → Current State | Workspace**.
-Global navigation answers four user intents: Home, Problems, Work, and Activity.
+Global navigation answers four user intents: Home, Problems, Contribute, and
+State history. Two of those destinations still live at `/work` and
+`/activity`: the labels were corrected and the paths were not, so a reader
+bookmarks a URL that does not say what the page is. That divergence is
+recorded rather than defended.
 Repositories and Sources are visually subordinate provenance Library links.
 Hubs are a Problems discovery facet and secondary destination. Current State
 and Workspace are modes of the same Problem, never parallel products or domains.
@@ -269,6 +291,16 @@ teach a reader nothing about what is on them.
 - **Record.** Opens with the record. Its kind is a small eyebrow above, its own
   content is the largest text on the screen, and provenance is one line of small
   facts beneath. The largest text is never the word for the record's type.
+- **Problem.** Four blocks, in the order a reader needs them: what the Problem
+  asks, what is currently known, who or what produced and checked the latest
+  contribution, and what remains with the next action. Producer, check and
+  Decision render as a sequence, because watching three different actors act is
+  what makes "a passing verifier is not an acceptance" legible without a
+  disclaimer sentence. The latest contribution is the one supporting current
+  Standing, never the newest by timestamp; a withdrawn or pending Proposal
+  keeps its own status word instead of taking the headline. Source coverage and
+  retained statement text stay in the flow. Exact roots are the layer
+  progressive disclosure is for.
 - **Repository.** A Repository's own page: name, integrity, and the clone
   affordance in the primary-action position, because the product's claim is that
   nothing sits between a reader and the record. Content left, exact facts right.

@@ -352,7 +352,14 @@ documentation, not above every page that lists them.
   app imports no Card primitive; Problem and record collections remain
   scannable rows.
 - Preserve durable URLs and URL-backed product state. A retired path keeps a
-  permanent redirect, and the route contract pins where it points. Editorial
+  permanent redirect, and the route contract pins where it points. A Problem's
+  address is `/problems/{namespace}/{number}`, computed from the Repository's
+  declared namespace rather than looked up, so every Problem has one and not
+  only the reviewed few. `/p/{repository}/{number}` is retired: it renders
+  nothing, forwards permanently, and carries URL-backed state across. Where a
+  Problem is reviewed into a resolver entity the page is additionally held to
+  the exact occurrence that entity declares; where it is not, the page asserts
+  identity without asserting review, and no entity is minted to buy a URL. Editorial
   aliases resolve directly to a published essay or an exact pinned manual page;
   they never terminate at a placeholder index.
 - Navigation and loading preserve the application shell rather than replacing
