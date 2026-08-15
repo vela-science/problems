@@ -139,7 +139,7 @@ export async function inspectGitHubCodebase(input: {
     const result = await runCore(checkout);
     const inspection = {
       schema: "vela.connected-codebase-inspection.v1",
-      core_version: "0.976.0",
+      core_version: "0.976.1",
       status: result.status,
       detail: result.detail,
       source_commit: sourceCommit,

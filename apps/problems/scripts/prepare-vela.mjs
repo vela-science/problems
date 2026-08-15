@@ -9,17 +9,17 @@ import * as tar from "tar";
 const app = resolve(import.meta.dirname, "..");
 const output = resolve(app, ".generated", "vela");
 const expected = process.platform === "linux"
-  ? "bac7718e200519a12182336e888e2782bff789b7cd132e110660ed621228550f"
-  : "3c7ada5afafe47ca28c18809d3818b0ffe93fe726f3aea97d65aafd558a5cee1";
+  ? "ccf58c5fa63a7f41920824fa8d086ec6f36d4e6b443f86f233926263ee5c6611"
+  : "669e76620b814b3a8a4acc5fb73e1cd775c979543043b7389bb454cad076960a";
 const root = async (path) => createHash("sha256").update(await readFile(path)).digest("hex");
 
 await mkdir(resolve(app, ".generated"), { recursive: true });
 if (process.platform === "linux") {
-  const response = await fetch("https://github.com/vela-science/vela/releases/download/v0.976.0/vela-linux-x86_64.tar.gz");
-  if (!response.ok || !response.body) throw new Error(`failed to acquire Vela 0.976.0: ${response.status}`);
+  const response = await fetch("https://github.com/vela-science/vela/releases/download/v0.976.1/vela-linux-x86_64.tar.gz");
+  if (!response.ok || !response.body) throw new Error(`failed to acquire Vela 0.976.1: ${response.status}`);
   const bytes = new Uint8Array(await response.arrayBuffer());
   const archiveRoot = createHash("sha256").update(bytes).digest("hex");
-  if (archiveRoot !== "1c77fc823746d3090a5bf3006a0682ae48ac059ae04862f2d520d81ece1d93f5") throw new Error("Vela release archive root drift");
+  if (archiveRoot !== "3acfd3b0cd59727fdb89e4cb2163172112fcdbcb195040520498df42f685eb2b") throw new Error("Vela release archive root drift");
   const temporary = await mkdtemp(resolve(tmpdir(), "problems-vela-"));
   try {
     await writeFile(resolve(temporary, "vela.tar.gz"), bytes);
@@ -31,5 +31,5 @@ if (process.platform === "linux") {
 } else {
   await copyFile(process.env.VELA_BIN ?? resolve(homedir(), ".local/bin/vela"), output);
 }
-if (await root(output) !== expected) throw new Error(`Vela 0.976.0 binary root drift on ${process.platform}`);
+if (await root(output) !== expected) throw new Error(`Vela 0.976.1 binary root drift on ${process.platform}`);
 await chmod(output, 0o755);

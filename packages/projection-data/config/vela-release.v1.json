@@ -1,12 +1,19 @@
 {
   "schema": "vela.release-record.v1",
-  "version": "0.976.0",
-  "tag": "v0.976.0",
-  "commit": "ec9ccf9cc9420ddec65536c4d2137b89001f73ee",
-  "release_url": "https://github.com/vela-science/vela/releases/tag/v0.976.0",
-  "docs_url": "https://github.com/vela-science/vela/blob/ec9ccf9cc9420ddec65536c4d2137b89001f73ee/docs",
-  "generator_binary_sha256": "sha256:bac7718e200519a12182336e888e2782bff789b7cd132e110660ed621228550f",
-  "macos_generator_binary_sha256": "sha256:3c7ada5afafe47ca28c18809d3818b0ffe93fe726f3aea97d65aafd558a5cee1",
-  "linux_archive_sha256": "sha256:1c77fc823746d3090a5bf3006a0682ae48ac059ae04862f2d520d81ece1d93f5",
-  "macos_archive_sha256": "sha256:bd1822dad6815ba57403a85ba408218cb2234afb3d90ece9c80db6b617854eac"
+  "version": "0.976.1",
+  "tag": "v0.976.1",
+  "commit": "329487f29ad4c6313a2be7c091d46085b61ff03b",
+  "release_url": "https://github.com/vela-science/vela/releases/tag/v0.976.1",
+  "docs_url": "https://github.com/vela-science/vela/blob/329487f29ad4c6313a2be7c091d46085b61ff03b/docs",
+  "generator_binary_sha256": "sha256:ccf58c5fa63a7f41920824fa8d086ec6f36d4e6b443f86f233926263ee5c6611",
+  "macos_generator_binary_sha256": "sha256:669e76620b814b3a8a4acc5fb73e1cd775c979543043b7389bb454cad076960a",
+  "linux_archive_sha256": "sha256:3acfd3b0cd59727fdb89e4cb2163172112fcdbcb195040520498df42f685eb2b",
+  "macos_archive_sha256": "sha256:75d04a38b52d8fd3bdb3932a82f14489d3f7c8212be3e9f995ff78eb0f6c7b1b",
+  "readable_predecessors": [
+    {
+      "version": "0.976.0",
+      "generator_binary_sha256": "sha256:bac7718e200519a12182336e888e2782bff789b7cd132e110660ed621228550f",
+      "macos_generator_binary_sha256": "sha256:3c7ada5afafe47ca28c18809d3818b0ffe93fe726f3aea97d65aafd558a5cee1"
+    }
+  ]
 }
