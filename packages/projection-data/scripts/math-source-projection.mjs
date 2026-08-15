@@ -52,6 +52,10 @@ function hashRoot(value) {
   return sha256(canonicalJson(value));
 }
 
+function sourceNativeKey(value) {
+  return `${value?.source_id ?? ""}\0${value?.native_id ?? ""}`;
+}
+
 function retainedRepositoryFile(directory, path) {
   assert(typeof path === "string" && path.length > 0 && !isAbsolute(path), "Claim evidence path must be repository-relative");
   const lexical = resolve(directory, path);
@@ -70,47 +74,42 @@ function retainedRepositoryFile(directory, path) {
 }
 
 /**
- * Interprets the bounded, source-owned Math occurrence packet attached to an
+ * Interprets the current, source-owned Math correction packet attached to an
  * accepted correction. It does not infer subjects from assertion text or
  * Problem numbers. The packet must resolve through the exact reviewed Web
- * resolver and retain authority/equivalence nonclaims.
+ * resolver and retain the unresolved-equivalence boundary.
  */
 export function reviewedClaimSubjectOccurrences(claim, packet) {
-  assert(packet?.packet_format === "vela.math.claim-occurrence-resolution.v1", `${claim.claim_id}: unsupported Claim occurrence packet`);
+  assert(packet?.schema === "vela.math.current-erdos-321-correction-chain.v1", `${claim.claim_id}: unsupported current Claim subject packet`);
   assert(packet.authority_effect === "none", `${claim.claim_id}: Claim occurrence packet has authority effect`);
-  assert(typeof packet.content_root === "string" && /^sha256:[0-9a-f]{64}$/u.test(packet.content_root), `${claim.claim_id}: invalid Claim occurrence packet root`);
-  const { content_root: _contentRoot, ...rootBody } = packet;
-  assert(hashRoot(rootBody) === packet.content_root, `${claim.claim_id}: Claim occurrence packet root drift`);
-  assert(packet.resolver?.canonical_json_root === problemResolutionConfigRoot, `${claim.claim_id}: Claim occurrence packet resolver root drift`);
   assert(claim.standing === "accepted", `${claim.claim_id}: only an accepted corrected Claim may bind a canonical Problem`);
   const correctionRelations = (claim.record?.relations ?? []).filter(({ kind }) => kind === "corrects" || kind === "supersedes");
   assert(correctionRelations.length === 1 && correctionRelations[0].kind === "corrects", `${claim.claim_id}: Claim occurrence packet requires one exact corrects relation`);
+  assert(packet.successor?.relation === "corrects" && packet.successor?.assertion === claim.assertion, `${claim.claim_id}: current correction packet successor drift`);
 
-  const entity = problemResolutionConfig.entities.find(({ entity_id }) => entity_id === packet.subject?.entity_id);
+  const resolution = packet.occurrence_resolution;
+  const entity = problemResolutionConfig.entities.find(({ entity_id }) => entity_id === resolution?.entity_id);
   assert(entity, `${claim.claim_id}: Claim occurrence packet names no reviewed resolver entity`);
-  assert(entity.resolution_namespace === packet.subject?.resolution_namespace && entity.problem_number === packet.subject?.problem_number, `${claim.claim_id}: Claim occurrence packet subject drift`);
-  const packetOccurrences = Object.values(packet.occurrences ?? {});
-  const configured = new Map(
-    [entity.canonical_occurrence, ...entity.reviewed_occurrences].map((occurrence) => [occurrenceKey(occurrence), occurrence]),
+  assert(packet.problem === `erdos:${entity.problem_number}`, `${claim.claim_id}: Claim occurrence packet Problem drift`);
+  assert(resolution.resolver_root === problemResolutionConfigRoot, `${claim.claim_id}: Claim occurrence packet resolver root drift`);
+  assert(
+    sourceNativeKey(resolution.canonical) === sourceNativeKey(entity.canonical_occurrence)
+      && resolution.canonical?.content_root === entity.canonical_occurrence.content_root,
+    `${claim.claim_id}: Claim occurrence packet canonical occurrence drift`,
   );
-  for (const occurrence of packetOccurrences) {
-    const expected = configured.get(occurrenceKey(occurrence));
-    assert(expected && expected.native_kind === occurrence.native_kind && expected.content_root === occurrence.content_root, `${claim.claim_id}: Claim occurrence packet identity is not a rooted reviewed occurrence`);
-  }
-
-  const byReference = new Map(packetOccurrences.map((occurrence) => [`${occurrence.source_id}#${occurrence.native_id}`, occurrence]));
+  const configured = new Map(
+    entity.reviewed_occurrences.map((occurrence) => [sourceNativeKey(occurrence), occurrence]),
+  );
   const selected = [];
-  for (const mapping of packet.mappings ?? []) {
-    assert(mapping?.target === entity.entity_id && mapping?.relation === "related", `${claim.claim_id}: Claim occurrence mapping relation drift`);
-    const occurrence = byReference.get(mapping.source);
-    assert(occurrence, `${claim.claim_id}: Claim occurrence mapping source is absent`);
-    assert(occurrenceKey(occurrence) !== occurrenceKey(entity.canonical_occurrence), `${claim.claim_id}: canonical occurrence cannot masquerade as a cross-occurrence mapping`);
-    selected.push(occurrence);
+  for (const occurrence of resolution.related_occurrences ?? []) {
+    const expected = configured.get(sourceNativeKey(occurrence));
+    assert(expected && expected.content_root === occurrence.content_root && occurrence.relation === "related", `${claim.claim_id}: Claim occurrence packet identity is not a rooted reviewed occurrence`);
+    selected.push(expected);
   }
   assert(selected.length > 0, `${claim.claim_id}: Claim occurrence packet selects no reviewed source occurrence`);
   assert(new Set(selected.map(occurrenceKey)).size === selected.length, `${claim.claim_id}: Claim occurrence packet repeats a mapping`);
-  assert((packet.translations ?? []).some(({ disposition, source }) => disposition === "unresolved" && /statement identity|semantic equivalence/iu.test(source)), `${claim.claim_id}: Claim occurrence packet collapses unresolved semantics`);
-  assert((packet.nonclaims ?? []).some((value) => /not.*Standing/iu.test(value)), `${claim.claim_id}: Claim occurrence packet omits its Standing nonclaim`);
+  assert(resolution.semantic_equivalence === "unresolved" && resolution.scope === "navigation grouping only", `${claim.claim_id}: Claim occurrence packet collapses unresolved semantics`);
+  assert((packet.limitations ?? []).some((value) => /does not establish statement identity or semantic equivalence/iu.test(value)), `${claim.claim_id}: Claim occurrence packet omits its equivalence nonclaim`);
   return selected;
 }
 
@@ -127,7 +126,11 @@ export function claimOccurrencePacket(material, claim) {
     } catch {
       continue;
     }
-    if (candidate?.packet_format === "vela.math.claim-occurrence-resolution.v1") packets.push(candidate);
+    if (candidate?.schema !== "vela.math.current-erdos-321-correction-chain.v1") continue;
+    const corrects = (claim.record?.relations ?? []).some(({ kind }) => kind === "corrects");
+    if (!corrects) continue;
+    assert(candidate.successor?.assertion === claim.assertion, `${claim.claim_id}: current correction packet successor drift`);
+    packets.push(candidate);
   }
   assert(packets.length <= 1, `${claim.claim_id}: multiple Claim occurrence packets are ambiguous`);
   return packets[0] ?? null;

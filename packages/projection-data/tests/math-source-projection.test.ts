@@ -331,7 +331,7 @@ function fixtures() {
 }
 
 describe("Math source projection", () => {
-  test("resolves an accepted correction only through its rooted occurrence packet", () => {
+  test("resolves an accepted correction only through its current rooted correction packet", () => {
     const corrected = claim({
       digit: "4",
       title: "Authenticated Submission",
@@ -344,38 +344,44 @@ describe("Math source projection", () => {
     const entity = problemResolutionConfig.entities.find(({ problem_number }) => problem_number === 321)!;
     const formal = entity.reviewed_occurrences.find(({ native_id }) => native_id === "Erdos321.erdos_321")!;
     const theta = entity.reviewed_occurrences.find(({ native_id }) => native_id.endsWith(".variants.isTheta"))!;
-    const body = {
-      packet_format: "vela.math.claim-occurrence-resolution.v1",
+    const packet = {
+      schema: "vela.math.current-erdos-321-correction-chain.v1",
       authority_effect: "none",
-      subject: {
+      problem: "erdos:321",
+      occurrence_resolution: {
         entity_id: entity.entity_id,
-        resolution_namespace: entity.resolution_namespace,
-        problem_number: entity.problem_number,
+        resolver_root: problemResolutionConfigRoot,
+        canonical: entity.canonical_occurrence,
+        related_occurrences: [formal, theta].map(({ source_id, native_id, content_root }) => ({
+          source_id,
+          native_id,
+          content_root,
+          relation: "related",
+        })),
+        semantic_equivalence: "unresolved",
+        scope: "navigation grouping only",
       },
-      resolver: { canonical_json_root: problemResolutionConfigRoot },
-      occurrences: { canonical: entity.canonical_occurrence, formal_statement: formal, is_theta: theta },
-      mappings: [formal, theta].map((occurrence) => ({
-        source: `${occurrence.source_id}#${occurrence.native_id}`,
-        target: entity.entity_id,
-        relation: "related",
-      })),
-      translations: [{ source: "statement identity and semantic equivalence", target: "navigation grouping", disposition: "unresolved" }],
-      nonclaims: ["This mapping is not scientific acceptance or Standing."],
+      successor: { assertion: corrected.assertion, relation: "corrects" },
+      limitations: ["Occurrence grouping does not establish statement identity or semantic equivalence."],
     };
-    const packet = { ...body, content_root: sha256(canonicalJson(body)) };
     expect(reviewedClaimSubjectOccurrences(corrected, packet)).toEqual([formal, theta]);
 
-    const root = (value: Record<string, unknown>) => ({ ...value, content_root: sha256(canonicalJson(value)) });
-    expect(() => reviewedClaimSubjectOccurrences(corrected, root({ ...body, authority_effect: "standing" })))
+    expect(() => reviewedClaimSubjectOccurrences(corrected, { ...packet, authority_effect: "standing" }))
       .toThrow(/authority effect/u);
-    expect(() => reviewedClaimSubjectOccurrences(corrected, root({
-      ...body,
-      mappings: [{ ...body.mappings[0], source: "source:formal-conjectures#Erdos321.unreviewed" }],
-    }))).toThrow(/mapping source is absent/u);
-    expect(() => reviewedClaimSubjectOccurrences(corrected, root({
-      ...body,
-      translations: [{ source: "statement identity", target: "navigation grouping", disposition: "preserved" }],
-    }))).toThrow(/collapses unresolved semantics/u);
+    expect(() => reviewedClaimSubjectOccurrences(corrected, {
+      ...packet,
+      occurrence_resolution: {
+        ...packet.occurrence_resolution,
+        related_occurrences: [{
+          ...packet.occurrence_resolution.related_occurrences[0],
+          native_id: "Erdos321.unreviewed",
+        }],
+      },
+    })).toThrow(/not a rooted reviewed occurrence/u);
+    expect(() => reviewedClaimSubjectOccurrences(corrected, {
+      ...packet,
+      occurrence_resolution: { ...packet.occurrence_resolution, semantic_equivalence: "preserved" },
+    })).toThrow(/collapses unresolved semantics/u);
     expect(() => reviewedClaimSubjectOccurrences({ ...corrected, standing: "unassessed" }, packet))
       .toThrow(/only an accepted corrected Claim/u);
   });
@@ -384,10 +390,14 @@ describe("Math source projection", () => {
     const directory = join(fixtureRoot, "occurrence-packet-custody");
     const packetPath = "evidence/erdos-321/occurrence-resolution.v1.json";
     mkdirSync(join(directory, "evidence/erdos-321"), { recursive: true });
-    const packet = { packet_format: "vela.math.claim-occurrence-resolution.v1" };
+    const packet = {
+      schema: "vela.math.current-erdos-321-correction-chain.v1",
+      successor: { assertion: "exact", relation: "corrects" },
+    };
     const bytes = Buffer.from(`${JSON.stringify(packet)}\n`);
     writeFileSync(join(directory, packetPath), bytes);
     const corrected = claim({ digit: "4", title: "correction", assertion: "exact" });
+    corrected.record.relations = [{ kind: "corrects", target_claim_id: `vcl_${"3".repeat(64)}` }];
     corrected.record.evidence = [{
       artifact_path: packetPath,
       artifact_root: sha256(bytes),
