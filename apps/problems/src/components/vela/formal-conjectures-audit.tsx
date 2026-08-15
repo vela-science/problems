@@ -24,6 +24,9 @@ function outcomeVariant(outcome: FormalConjecturesAuditRecord["checks"][number][
 
 function AuditRecord({ record }: { record: FormalConjecturesAuditRecord }) {
   const state = record.observed_pull_request_state;
+  const problemPath = record.problem_ref
+    ? publicProblemPathFromContext("math", String(record.problem_ref.problem_number))
+    : null;
   return <article className="min-w-0 border-t border-border/65 py-7 first:border-t-0 first:pt-0 last:pb-0" aria-labelledby={`audit-${record.fixture_id}`}>
     <div className="flex flex-wrap items-start justify-between gap-4">
       <div className="min-w-0 max-w-3xl">
@@ -55,7 +58,9 @@ function AuditRecord({ record }: { record: FormalConjecturesAuditRecord }) {
 
     <div className="mt-5 flex flex-wrap items-center gap-3">
       <Button className="min-h-11" nativeButton={false} variant="outline" render={<a href={record.pull_request.url} />}>Open upstream PR</Button>
-      {record.problem_ref ? <Button className="min-h-11" nativeButton={false} variant="ghost" render={<Link href={publicProblemPathFromContext("math", String(record.problem_ref.problem_number))} />}>Open Problem {record.problem_ref.problem_number}</Button> : null}
+      {/* An unaddressable Problem gets no link rather than a link that
+          resolves to nothing. */}
+      {problemPath ? <Button className="min-h-11" nativeButton={false} variant="ghost" render={<Link href={problemPath} />}>Open Problem {record.problem_ref!.problem_number}</Button> : null}
       <span className="font-mono text-micro text-muted-foreground">head {record.head.commit_oid.slice(0, 10)}</span>
     </div>
 

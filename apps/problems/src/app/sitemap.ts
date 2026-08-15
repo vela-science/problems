@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { allClaimRouteIds, allRepositories, allProblemRouteIds, mathSourceRegistryRead, projectionManifest, problemPublicRoutes } from "@vela/projection-data";
+import { allClaimRouteIds, allRepositories, allProblemRouteIds, canonicalProblemPath, mathSourceRegistryRead, projectionManifest } from "@vela/projection-data";
 
 const base = "https://problems.science";
 export const dynamic = "force-static";
@@ -30,8 +30,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ];
     }),
     ...claims.map(({ repository, id }) => `/repositories/${repository}/claims/${id}`),
-    ...problems.map(({ repository, problem }) => `/repositories/${repository}/problems/${problem}`),
-    ...problemPublicRoutes.routes.map(({ canonical_path }) => canonical_path),
+    /* One address per Problem. The Repository-scoped record view is a
+       different page about the same Problem, so listing both asked a crawler
+       to index two URLs for one record; that view now declares the canonical
+       address instead of competing with it. */
+    ...problems.map(({ repository, problem }) => canonicalProblemPath(repository, problem)).filter((path): path is string => path !== null),
     ...sources.sources.map(({ declaration }) => `/sources/${encodeURIComponent(declaration.source_id)}`),
   ];
 

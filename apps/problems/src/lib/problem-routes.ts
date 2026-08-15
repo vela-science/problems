@@ -1,14 +1,24 @@
 import "server-only";
 
-import { problemPublicRouteForLegacyPath } from "@vela/projection-data";
+import { canonicalProblemPath } from "@vela/projection-data";
 
-export function publicProblemPath(repository: string, problem: string): string {
-  const legacyPath = `/p/${repository}/${problem}`;
-  return problemPublicRouteForLegacyPath(legacyPath)?.canonical_path ?? legacyPath;
+/* Where a Problem lives.
+ *
+ * This used to fall back to `/p/{repository}/{problem}` whenever the public
+ * route table had no entry, which was 1,211 of 1,217 Problems — so the
+ * "fallback" was the normal case and the legacy path could never retire.
+ * Every Problem now has a computed canonical address, and an unaddressable
+ * one returns null so the caller refuses rather than emitting a link that
+ * resolves to nothing.
+ */
+export function publicProblemPath(repository: string, problem: string): string | null {
+  return canonicalProblemPath(repository, problem);
 }
 
-export function publicProblemWorkspacePath(repository: string, problem: string, workspaceId?: string): string {
+export function publicProblemWorkspacePath(repository: string, problem: string, workspaceId?: string): string | null {
+  const path = publicProblemPath(repository, problem);
+  if (!path) return null;
   const query = new URLSearchParams({ mode: "work" });
   if (workspaceId) query.set("workspace", workspaceId);
-  return `${publicProblemPath(repository, problem)}?${query.toString()}`;
+  return `${path}?${query.toString()}`;
 }

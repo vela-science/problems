@@ -35,6 +35,15 @@ const registrySchema = z.object({
     repository_id: repositoryIdSchema,
     directory: z.string(),
     branch: z.string().regex(/^[A-Za-z0-9._/-]+$/u),
+    /* The namespace this Repository's Problems are addressed under.
+     *
+     * A Problem's public address is `/problems/{namespace}/{number}`, and the
+     * namespace names the source family the numbers belong to rather than the
+     * Repository that reads them — `erdos-problems`, not `math`. Declaring it
+     * here is what lets an address be computed instead of looked up: the route
+     * table only ever held the six Problems that had been reviewed, so the
+     * other 1,211 had no canonical address at all. */
+    canonical_problem_namespace: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/u),
     /* Whether an unauthenticated reader can acquire the canonical Git bytes.
      * This is operational access metadata, not a Vela authority property. */
     access: z.enum(["public", "private"]),
@@ -72,6 +81,7 @@ export const repositoryRegistry = registrySchema.parse({
       repository_id: "8138c6da-46c4-47ee-b493-5bbfbec09b1e",
       directory: "math",
       branch: "coh-00",
+      canonical_problem_namespace: "erdos-problems",
       access: "public",
       remotes: ["https://github.com/vela-science/math.git"],
     },
@@ -101,6 +111,24 @@ const repositoryIdBySlug = new Map<string, string>(
 const slugByRepositoryId = new Map<string, string>(
   repositoryRegistry.repositories.map((entry) => [entry.repository_id, entry.slug]),
 );
+
+/* A Problem's canonical address, computed rather than looked up.
+ *
+ * Returns null for anything this release cannot address: an unknown
+ * Repository, or a problem identifier that is not a positive integer. A null
+ * is the caller's signal to refuse, which is what keeps a made-up address from
+ * being emitted as a link. */
+export function canonicalProblemPath(repository: string, problem: string): string | null {
+  const entry = repositoryRegistry.repositories.find(({ slug }) => slug === repository);
+  if (!entry || !/^[1-9][0-9]*$/u.test(problem)) return null;
+  return `/problems/${entry.canonical_problem_namespace}/${problem}`;
+}
+
+export function repositoryForCanonicalProblemNamespace(namespace: string): string | undefined {
+  return repositoryRegistry.repositories.find(
+    ({ canonical_problem_namespace }) => canonical_problem_namespace === namespace,
+  )?.slug;
+}
 
 export function repositoryIdForSlug(slug: string): string | undefined {
   return repositoryIdBySlug.get(slug);

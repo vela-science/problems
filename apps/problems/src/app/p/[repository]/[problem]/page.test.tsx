@@ -1,28 +1,42 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
 
-const mocks = vi.hoisted(() => ({ alias: vi.fn(), redirect: vi.fn(), view: vi.fn(), notFound: vi.fn() }));
-vi.mock("@vela/projection-data", () => ({ problemPublicRouteForLegacyPath: mocks.alias }));
-vi.mock("@/components/vela/problem-page", () => ({ ProblemPageView: (props: Record<string, unknown>) => { mocks.view(props); return <div>Legacy exact Problem</div>; } }));
+const mocks = vi.hoisted(() => ({ canonical: vi.fn(), redirect: vi.fn(), notFound: vi.fn() }));
+vi.mock("@vela/projection-data", () => ({ canonicalProblemPath: mocks.canonical }));
 vi.mock("next/navigation", () => ({
   permanentRedirect: (href: string) => { mocks.redirect(href); throw new Error(`REDIRECT ${href}`); },
   notFound: () => { mocks.notFound(); throw new Error("NOT_FOUND"); },
 }));
 
-import LegacyProblemPage from "./page";
+import RetiredProblemPath from "./page";
 
-describe("legacy Repository Problem routes", () => {
-  beforeEach(() => { vi.clearAllMocks(); });
-
-  it("permanently redirects a reviewed old route and preserves URL-backed mode", async () => {
-    mocks.alias.mockReturnValue({ canonical_path: "/problems/erdos-problems/321" });
-    await expect(LegacyProblemPage({ params: Promise.resolve({ repository: "math", problem: "321" }), searchParams: Promise.resolve({ mode: "work", tracking: "drop-me" } as never) })).rejects.toThrow("REDIRECT /problems/erdos-problems/321?mode=work");
+const call = (repository: string, problem: string, searchParams: Record<string, string> = {}) =>
+  RetiredProblemPath({
+    params: Promise.resolve({ repository, problem }),
+    searchParams: Promise.resolve(searchParams as never),
   });
 
-  it("keeps an unreviewed exact route renderable", async () => {
-    mocks.alias.mockReturnValue(null);
-    render(await LegacyProblemPage({ params: Promise.resolve({ repository: "math", problem: "999" }), searchParams: Promise.resolve({}) }));
-    expect(screen.getByText("Legacy exact Problem")).toBeInTheDocument();
-    expect(mocks.view).toHaveBeenCalledWith(expect.objectContaining({ repository: "math", problem: "999", route: "/p/math/999" }));
+describe("the retired Problem path", () => {
+  beforeEach(() => { vi.clearAllMocks(); });
+
+  /* It renders nothing. A retired path that still painted a Problem was a
+     second Problem surface, which is the thing being retired. */
+  it("permanently redirects every addressable Problem", async () => {
+    mocks.canonical.mockReturnValue("/problems/erdos-problems/999");
+    await expect(call("math", "999")).rejects.toThrow("REDIRECT /problems/erdos-problems/999");
+  });
+
+  /* Mode, workspace, object and inspector are URL-backed product state, so
+     dropping them lands a reader on a different view of the page they asked
+     for. Anything else is not carried. */
+  it("carries URL-backed product state and nothing else", async () => {
+    mocks.canonical.mockReturnValue("/problems/erdos-problems/321");
+    await expect(call("math", "321", { mode: "work", workspace: "w1", tracking: "drop-me" }))
+      .rejects.toThrow("REDIRECT /problems/erdos-problems/321?mode=work&workspace=w1");
+  });
+
+  it("refuses an address this release cannot compute", async () => {
+    mocks.canonical.mockReturnValue(null);
+    await expect(call("not-a-repository", "1")).rejects.toThrow("NOT_FOUND");
+    expect(mocks.redirect).not.toHaveBeenCalled();
   });
 });

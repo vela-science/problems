@@ -90,7 +90,12 @@ for (const file of problemsRoutes) {
   if (/className=["']vela-page["']/u.test(source)) failures.push(`${label}: literal vela-page bypasses the PageShell component contract`);
   if (/className=["'][^"']*\bvela-page-(?:hero|section|section-head)\b/u.test(source)) failures.push(`${label}: literal PageShell hook bypasses the canonical component contract`);
   const canonicalProblemPageDelegate = source.includes('@/components/vela/problem-page') && source.includes("<ProblemPageView");
-  if (/\/page\.tsx$/u.test(file) && !canonicalProblemPageDelegate && (!source.includes('@vela/ui/vela/page-shell') || !source.includes("<PageShell"))) {
+  /* A page that only forwards renders nothing, so it has no frame to compose.
+     The retired `/p/{repository}/{problem}` path is the one of these: it
+     redirects permanently to the canonical address and returns no markup at
+     all. Requiring a PageShell there would mean giving a redirect a body. */
+  const redirectOnlyPage = source.includes("permanentRedirect(") && !source.includes("return <");
+  if (/\/page\.tsx$/u.test(file) && !canonicalProblemPageDelegate && !redirectOnlyPage && (!source.includes('@vela/ui/vela/page-shell') || !source.includes("<PageShell"))) {
     failures.push(`${label}: every app page must compose the canonical PageShell`);
   }
 }

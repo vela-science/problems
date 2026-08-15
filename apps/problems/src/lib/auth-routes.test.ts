@@ -27,7 +27,10 @@ afterEach(() => {
 
 describe("account routes", () => {
   it("runs the account proxy on Problem pages that read an optional session", () => {
-    expect(proxySource).toContain('"/p/:repository/:problem"');
+    /* The retired Problem path is gone from the matcher: it redirects and
+       never reads a session, so running the account proxy over it was work
+       done for a response that carries no account state. */
+    expect(proxySource).not.toContain('"/p/:repository/:problem"');
     expect(proxySource).toContain('"/problems/:namespace/:problem"');
     for (const broad of ['"/p/:path*"', '"/auth/:path*"', '"/drafts/:path*"']) {
       expect(proxySource).not.toContain(broad);

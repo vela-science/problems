@@ -94,7 +94,7 @@ export default async function ProblemPage({
             variant="outline"
             render={
               <Link
-                href={publicProblemPath(slug, problem)}
+                href={publicProblemPath(slug, problem) ?? `/repositories/${slug}/problems`}
               />
             }
           >

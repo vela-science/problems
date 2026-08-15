@@ -98,12 +98,17 @@ async function mutationContext(form: FormData) {
   };
 }
 
-function returnTo(repository: string, problem: string, workspaceId: string): string {
+/* A Problem this release cannot address has nowhere to send a reader back to,
+   and there is no honest substitute — `/problems` is a different page, not the
+   one they were working in. The mutation still succeeded; the caller stays
+   where it is. */
+function returnTo(repository: string, problem: string, workspaceId: string): string | null {
   return publicProblemWorkspacePath(repository, problem, workspaceId);
 }
 
 function refresh(repository: string, problem: string) {
-  revalidatePath(publicProblemPath(repository, problem));
+  const path = publicProblemPath(repository, problem);
+  if (path) revalidatePath(path);
 }
 
 type MutationScope = Awaited<ReturnType<typeof mutationContext>>;
@@ -156,7 +161,8 @@ export async function createWorkspaceAction(form: FormData) {
     { idempotencyKey: `${workspace.id}:${anchorRoot}` },
   );
   refresh(repository, problem);
-  redirect(returnTo(repository, problem, workspace.id));
+  const destination = returnTo(repository, problem, workspace.id);
+  if (destination) redirect(destination);
 }
 
 export async function followProblemAction(form: FormData) {
