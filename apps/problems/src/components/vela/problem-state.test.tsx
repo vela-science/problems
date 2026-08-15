@@ -78,7 +78,13 @@ const state = {
     statements: [{ statement_id: "statement:vibemathed:321", source_id: "source:vibemathed", occurrence_key: "source:vibemathed\u0000problem:erdos:321", text: "How quickly does the extremal quantity grow?", locator_url: "https://example.test/vibemathed/321", row_root: root("d") }],
     relations: [],
     identity_events: [],
-    coverage: [],
+    /* The real read always carries the resolver's candidate Sources and their
+       declared roles; the statement selection keys on the role, so an empty
+       coverage here would have meant no Problem ever showed a question. */
+    coverage: [
+      { source_id: "source:vibemathed", resolution_namespace: "erdos-problems", label: "VibeMathed", source_role: "attributed_activity_catalog", source_occurrences: 1, reviewed_occurrences: 1, statement_occurrences: 1 },
+      { source_id: "source:formal-conjectures", resolution_namespace: "erdos-problems", label: "Formal Conjectures", source_role: "formal_statement_library", source_occurrences: 1, reviewed_occurrences: 1, statement_occurrences: 0 },
+    ],
     candidate_limit: 250,
   },
   anchor: { repositoryRoot: root("6"), projectionReleaseRoot: root("7"), sourceCommit: "8".repeat(40) },
@@ -134,6 +140,36 @@ describe("Problem State", () => {
     expect(screen.getByText("Problem row")).toBeInTheDocument();
     expect(screen.getByText("Exact Claim-to-Problem Bindings")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Source JSON" })).toHaveAttribute("href", `/problems.json?root=${encodeURIComponent(root("7"))}&resolver=${encodeURIComponent(root("a"))}&source=source%3Aerdos-problems&native_id=erdos%3A321&kind=problem`);
+  });
+
+  /* Erdős 94 opened with
+     `∃ C > 0, ∀ (P : Finset (EuclideanSpace ℝ (Fin 2))), …` under "Question",
+     labelled "Source-authored statement". The prose catalogue declares
+     `statement_retention: "locator_only"`, so no natural-language statement
+     is retained for it and the page must say that rather than promote a Lean
+     declaration into the opening. The formal text keeps its own place below. */
+  it("does not present a formal declaration as the Problem's question", () => {
+    render(<ProblemState state={{
+      ...state,
+      sources: {
+        ...state.sources,
+        statements: [{
+          statement_id: "statement:formal-conjectures:94",
+          source_id: "source:formal-conjectures",
+          occurrence_key: "source:formal-conjectures\u0000Erdos94.erdos_94",
+          text: "\u2203 C > 0, \u2200 (P : Finset (EuclideanSpace \u211d (Fin 2))), EuclideanGeometry.ConvexIndep \u2191P",
+          locator_url: "https://example.test/formal/94",
+          row_root: root("d"),
+          statement_identity: "not_established" as const,
+          authority_effect: "none" as const,
+        }],
+      },
+    }} />);
+
+    expect(screen.getByText("No natural-language question is retained in this release.")).toBeVisible();
+    expect(screen.getByText(/One formal statement is retained below/u)).toBeVisible();
+    expect(screen.queryByText("Source-authored statement")).toBeNull();
+    expect(screen.getByRole("link", { name: "Open the upstream source" })).toBeVisible();
   });
 
   it("keeps absent State projections readable without stacking empty cards", () => {

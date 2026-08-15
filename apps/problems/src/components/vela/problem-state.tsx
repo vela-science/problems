@@ -34,11 +34,42 @@ function correctionRelations(claim: State["claims"][number]) {
 
 export function ProblemState({ state, basePath }: { state: State; basePath?: string }) {
   const corrections = state.claims.flatMap((claim) => correctionRelations(claim).map((relation) => ({ claim, relation })));
-  const question = state.sources.statements.find((statement) => statement.source_id === "source:vibemathed") ?? state.sources.statements[0];
+  /* A Problem opens with what it asks, and a Lean declaration does not say
+     that to most readers.
+
+     The fallback here was `statements[0]`, which is whatever the resolver
+     happened to order first. On Erdős 94 that is
+     `∃ C > 0, ∀ (P : Finset (EuclideanSpace ℝ (Fin 2))), …` presented under
+     "Question" and labelled "Source-authored statement" — true of the bytes,
+     useless as an opening, and it displaced the honest sentence this
+     component already knew how to write.
+
+     Selection now follows the Source's declared role rather than a source id,
+     because the roles are the reviewed data contract and a hardcoded id list
+     is the Erdős-shaped thing this codebase is removing. A catalogue of
+     problems and an attributed activity record carry prose; a formal
+     statement library and a proof manifest carry formal text, and both keep
+     their own presentation below under the retained statements.
+
+     Where no prose is retained the page says so and links upstream. It does
+     not reach for the source's own words: `source:erdos-problems`, which is
+     the prose catalogue, declares `statement_retention: "locator_only"`, so
+     the natural-language statement is deliberately not retained here and the
+     locator is the whole of what this release may show. */
+  const proseRoles = new Set(["problem_catalog", "attributed_activity_catalog"]);
+  const roleForSource = new Map(state.sources.coverage.map((source) => [source.source_id, source.source_role]));
+  const question = state.sources.statements.find((statement) => (
+    proseRoles.has(roleForSource.get(statement.source_id) ?? "")
+  )) ?? null;
+  const formalStatements = state.sources.statements.length;
   return <div className="mt-8 max-w-5xl space-y-12">
     <section aria-labelledby="question-heading">
       <div className="flex flex-wrap items-end justify-between gap-3"><h2 id="question-heading" className="text-title">Question</h2>{question ? <span className="text-meta text-muted-foreground">Source-authored statement</span> : null}</div>
-      {question ? <><p className="mt-5 max-w-[90ch] text-body leading-7"><ScientificText text={question.text} /></p><p className="mt-3 text-micro text-muted-foreground">Retained from <span className="font-medium text-foreground">{question.source_id}</span>. This is readable source text, not a Vela Claim or a statement-equivalence judgment.</p></> : <div className="mt-5 max-w-2xl py-2"><p className="font-medium">No natural-language question is retained in this release.</p>{state.locator ? <p className="mt-2 text-meta"><a href={state.locator} className="underline underline-offset-4">Open the upstream source</a></p> : null}</div>}
+      {question ? <><p className="mt-5 max-w-[90ch] text-body leading-7"><ScientificText text={question.text} /></p><p className="mt-3 text-micro text-muted-foreground">Retained from <span className="font-medium text-foreground">{question.source_id}</span>. This is readable source text, not a Vela Claim or a statement-equivalence judgment.</p></> : <div className="mt-5 max-w-[76ch] py-2">
+        <p className="font-medium">No natural-language question is retained in this release.</p>
+        {formalStatements ? <p className="mt-1 text-meta text-muted-foreground">{formalStatements === 1 ? "One formal statement is" : `${formalStatements} formal statements are`} retained below, in the source&apos;s own notation.</p> : null}
+        {state.locator ? <p className="mt-2 text-meta"><a href={state.locator} className="underline underline-offset-4">Open the upstream source</a></p> : null}
+      </div>}
     </section>
 
     <section aria-labelledby="current-state-heading">
