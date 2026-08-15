@@ -16,6 +16,7 @@ import { PageHero } from "@vela/ui/vela/page-shell";
 export function RecordHeader({
   kind,
   title,
+  titleForm = "name",
   state,
   provenance,
   description,
@@ -24,6 +25,15 @@ export function RecordHeader({
   /** The object type, small and above the title: Claim, Proposal, Problem. */
   kind: string;
   title: ReactNode;
+  /* Whether the title is a name or a sentence.
+   *
+   * A Problem is "Erdős problem 94" and wants display weight. A Claim and a
+   * Proposal are a full assertion — the pilot Proposal's runs to fifty words
+   * and carries two forty-character commits — and display weight sets that as
+   * a bold wall with no measure. `statement` keeps it the largest text on the
+   * screen, which is what a record page owes its record, while letting it
+   * read as the sentence it is. */
+  titleForm?: "name" | "statement";
   /** Status marks. Kept beside the kind so they never outweigh the record. */
   state?: ReactNode;
   /** One line of small facts: repository, when recorded, where it came from. */
@@ -40,7 +50,11 @@ export function RecordHeader({
             <p className="text-eyebrow uppercase text-muted-foreground">{kind}</p>
             {state}
           </div>
-          <h1 className="mt-1.5 max-w-4xl text-display [overflow-wrap:anywhere]">{title}</h1>
+          <h1
+            className={titleForm === "statement"
+              ? "mt-2 max-w-[62ch] text-statement [overflow-wrap:anywhere]"
+              : "mt-1.5 max-w-4xl text-display [overflow-wrap:anywhere]"}
+          >{title}</h1>
           {provenance ? (
             <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-meta text-muted-foreground">
               {provenance}

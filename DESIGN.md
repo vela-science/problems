@@ -115,12 +115,18 @@ appears beside it as the exact value.
 
 ## Type
 
-The product register has nine roles, generated from `packages/brand/vela.tokens.json`
+The product register has ten roles, generated from `packages/brand/vela.tokens.json`
 into `@vela/brand/type-product.css` and imported by the product applications'
 `globals.css` files:
 
-`display`, `title`, `subtitle`, `body`, `compact`, `label`, `meta`, `micro`,
-`eyebrow`.
+`display`, `statement`, `title`, `subtitle`, `body`, `compact`, `label`,
+`meta`, `micro`, `eyebrow`.
+
+`statement` is the role a record's own content takes: larger than any section
+heading so the record stays the largest text on its page, and at normal weight
+so that largest text is not bold chrome. It is what lets "the largest text is
+never the word for the record's type" hold on a Claim or a Proposal, whose
+content is a sentence rather than a name.
 
 Each role fixes size, leading, weight, and tracking together, because that is
 what makes a hierarchy legible at a glance. Reach for a role, not for a size

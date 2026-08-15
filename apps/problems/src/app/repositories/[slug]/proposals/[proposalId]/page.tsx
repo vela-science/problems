@@ -4,8 +4,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { repositoryBySlug, reviewVerification, type ReviewSummary } from "@vela/projection-data";
-import { ScientificText } from "@vela/ui/vela/scientific-text";
 import { StatusBadge } from "@vela/ui/vela/status-badge";
+import { AssertionText } from "@/components/vela/assertion-text";
 import { ProposalEvidence } from "@/components/vela/proposal-evidence";
 import { ProposalObjectChain } from "@/components/vela/proposal-object-chain";
 import { RecordFacts, type RecordFact } from "@/components/vela/record-facts";
@@ -98,7 +98,8 @@ export default async function ProposalPage({ params }: PageProps<"/repositories/
     <PageShell archetype="reading" layout="reading">
       <RecordHeader
         kind="Proposal"
-        title={<ScientificText text={review.claim || review.target} />}
+        titleForm="statement"
+        title={<AssertionText text={review.claim || review.target} />}
         /* Two axes, two badges, each carrying the word for its own axis. */
         state={<>
           <StatusBadge axis="proposal" state={review.status}>Proposal {review.status.replaceAll("_", " ")}</StatusBadge>

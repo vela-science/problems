@@ -4,6 +4,10 @@
   --text-display--line-height: 1.75rem;
   --text-display--font-weight: 600;
   --text-display--letter-spacing: -0.02em;
+  --text-statement: 1.375rem;
+  --text-statement--line-height: 2rem;
+  --text-statement--font-weight: 400;
+  --text-statement--letter-spacing: -0.01em;
   --text-title: 1.125rem;
   --text-title--line-height: 1.5rem;
   --text-title--font-weight: 600;

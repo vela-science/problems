@@ -2,7 +2,7 @@ import type { ReviewSummary } from "@vela/projection-data";
 import { Item, ItemContent, ItemDescription, ItemGroup, ItemTitle } from "@vela/ui/components/item";
 import { StatusBadge } from "@vela/ui/vela/status-badge";
 import { RecordId } from "@/components/vela/record-id";
-import { ReviewProvenance } from "@/components/vela/review-provenance";
+import { Attribution, AttributionLimits } from "@/components/vela/attribution";
 import { formatDate } from "@/lib/format";
 
 /* What was asked, what was checked, and what the check refuses to establish.
@@ -41,8 +41,6 @@ export function ProposalEvidence({ review }: { review: ReviewSummary }) {
       {records.length ? (
         <ItemGroup className="divide-y">
           {records.map((record) => {
-            const independent = record.independent_of ?? [];
-            const shared = record.shared_dependencies ?? [];
             return (
               <Item
                 key={record.verification_record_id}
@@ -60,36 +58,12 @@ export function ProposalEvidence({ review }: { review: ReviewSummary }) {
                     </ItemDescription>
                   ) : null}
                   <div className="mt-2">
-                    <ReviewProvenance record={record} />
+                    <Attribution record={record} producer={producer} />
                   </div>
                   <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-micro text-muted-foreground">
                     <span>{formatDate(record.completed_at)}</span>
                     <RecordId value={record.verification_record_id} />
                   </div>
-                  <p className="mt-1 text-micro text-muted-foreground">
-                    {independent.length
-                      ? `Declared independent of ${independent.join(", ")}.`
-                      : shared.length
-                        ? "Declared independent of nothing."
-                        : "No independence declared."}
-                    {producer ? ` Produced by ${producer}.` : ""}
-                  </p>
-                  {/* The declaration's other half. A record naming what it
-                      shares with the producer is making the more informative
-                      statement of the two, and dropping it let the surface
-                      read as though independence were simply unaddressed.
-                      Verbatim, and counted, because a reader weighing a Check
-                      needs the specific dependency rather than a summary. */}
-                  {shared.length ? (
-                    <div className="mt-1">
-                      <p className="text-micro text-muted-foreground">
-                        {shared.length === 1 ? "Discloses one shared dependency" : `Discloses ${shared.length} shared dependencies`} with the work it checks:
-                      </p>
-                      <ul className="mt-1 list-disc space-y-0.5 pl-4 text-micro text-muted-foreground">
-                        {shared.map((dependency) => <li key={dependency}>{dependency}</li>)}
-                      </ul>
-                    </div>
-                  ) : null}
                 </ItemContent>
               </Item>
             );
@@ -101,16 +75,7 @@ export function ProposalEvidence({ review }: { review: ReviewSummary }) {
         </p>
       )}
 
-      {limits.length ? (
-        <div className="mt-6">
-          <h3 className="text-eyebrow uppercase text-muted-foreground">Not established</h3>
-          {/* A verifier wrote these, so they read as prose. A badge or a colour
-              here would turn a scope statement into a status. */}
-          <ul className="mt-1.5 max-w-[85ch] list-disc space-y-1.5 pl-5 text-compact text-muted-foreground">
-            {limits.map((limit) => <li key={limit}>{limit}</li>)}
-          </ul>
-        </div>
-      ) : null}
+      <div className="mt-6"><AttributionLimits limits={limits} heading="Not established" /></div>
     </section>
   );
 }

@@ -187,6 +187,24 @@
         "$type": "dimension"
       }
     },
+    "statement": {
+      "size": {
+        "$value": "1.375rem",
+        "$type": "dimension"
+      },
+      "leading": {
+        "$value": "2rem",
+        "$type": "dimension"
+      },
+      "weight": {
+        "$value": "400",
+        "$type": "fontWeight"
+      },
+      "tracking": {
+        "$value": "-0.01em",
+        "$type": "dimension"
+      }
+    },
     "title": {
       "size": {
         "$value": "1.125rem",

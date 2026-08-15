@@ -6,9 +6,12 @@ import { ReviewProvenance, type ReviewProvenanceRecord } from "@/components/vela
  * Both halves were already retained and both rendered on the Proposal page
  * alone, which is not the page a reader reaches. Extracting them lets the
  * Problem page say the same things in the same words rather than paraphrasing
- * a record; `proposal-evidence.test.tsx` and `review-provenance.test.tsx`
- * passing unchanged is the proof that it is the same markup and not a second
- * vocabulary for the same facts.
+ * a record.
+ *
+ * When this was introduced the Proposal page kept its own verbatim copy of
+ * both blocks, so the tests passing proved only that the copy still worked —
+ * not that the markup was shared. `proposal-evidence.tsx` now imports these,
+ * so the two surfaces cannot drift apart without a test moving.
  *
  * Independence is a set of declared facets, not a rank. A verifier declares
  * what it was independent of and what it shared, and those are different axes
