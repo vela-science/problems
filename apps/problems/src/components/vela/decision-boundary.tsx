@@ -51,12 +51,18 @@ function PreviewRoot({ label, value }: { label: string; value: string }) {
 export function ProposedStatePreviewSection({ preview }: { preview: ProposedStatePreview }) {
   const copy = previewStateCopy[preview.state];
   return (
-    <details className="group/preview mt-10 rounded-xl bg-muted/25 px-5 py-5 sm:px-6" aria-labelledby="preview-heading">
+    <details className="group/preview mt-10 rounded-xl bg-muted/25 px-5 py-5 sm:px-6">
       <summary className="cursor-pointer list-none focus-visible:outline-2 focus-visible:outline-offset-4 [&::-webkit-details-marker]:hidden">
         <span className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
           <span>
             <span className="block text-eyebrow uppercase text-muted-foreground">Authority effect · none</span>
-            <span id="preview-heading" className="mt-1 block text-subtitle">{copy.title}</span>
+            {/* An `h2` inside the summary rather than beside it: `details`
+                exposes no role that takes an accessible name, so the
+                `aria-labelledby` this replaced was inert, and moving the block
+                into a disclosure had dropped it out of the heading outline —
+                a screen-reader user navigating by heading could no longer
+                reach the roots. */}
+            <h2 className="mt-1 text-subtitle">{copy.title}</h2>
           </span>
           <span className="font-mono text-micro text-muted-foreground">{preview.state.replaceAll("_", " ")}</span>
         </span>

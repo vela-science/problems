@@ -120,8 +120,21 @@ majority of them that is all there is. Reading order:
    never sits under one named "Checks": a source audit's own
    `does_not_establish` denies being a Vela Verification, and merging the two
    collapses two state axes.
-5. **Decisions**, **Next contribution**.
-6. **Exact provenance** — roots, record types, and raw exports. This is the
+5. **Latest contribution and reviews** — produced by, checked by, not
+   established by those checks, decided by. One block, in the protocol's
+   order, rather than the separate `Checks` and `Decisions` sections this
+   replaced: reading it as a sequence is what shows a producer, a verifier and
+   a Decision performer to be three different actors, which is the thing a
+   disclaimer sentence about verification not being acceptance can only
+   assert. The contribution shown is the one supporting current Standing, not
+   the newest — a withdrawn or pending Proposal keeps its own status word
+   instead of taking the heading, and where nothing supports the current Claim
+   the block says so rather than promoting an unrelated Proposal into it.
+6. **What remains** and **Next contribution**. Limits render in the record's
+   own words and never as a badge or a colour; where nothing is retained the
+   section is absent, because "nothing is uncertain" is a claim this product
+   must not make.
+7. **Exact provenance** — roots, record types, and raw exports. This is the
    layer progressive disclosure is for.
 
 No heading repeats the record's type word, and none carries an eyebrow naming

@@ -9,6 +9,7 @@ import { nativeSourceRecordByIdentity, repositoryBySlug, problemDetail } from "@
 import { StatusBadge } from "@vela/ui/vela/status-badge";
 import { ScientificText } from "@vela/ui/vela/scientific-text";
 import { Button } from "@vela/ui/components/button";
+import { canonicalProblemPath } from "@vela/projection-data";
 import { publicProblemPath } from "@/lib/problem-routes";
 import { ProblemSourceFacts } from "@/components/vela/problem-source-facts";
 import {
@@ -42,7 +43,14 @@ export async function generateMetadata({
     ? {
         title: `${repository.status.repository.name}: problem ${problem}`,
         description: `Exact rooted records for problem ${problem} in the ${repository.status.repository.name} repository.`,
-        alternates: { canonical: `/repositories/${slug}/problems/${problem}` },
+        /* The Problem's address, not this view's own.
+         *
+         * This declared itself canonical while the sitemap had stopped
+         * publishing it, which left exactly the duplicate-indexing situation
+         * dropping it was meant to fix: two URLs for one record, each claiming
+         * to be the one. This page is the advanced record view of a Problem
+         * that lives at the canonical address, so it points there. */
+        alternates: { canonical: canonicalProblemPath(slug, problem) ?? `/repositories/${slug}/problems/${problem}` },
       }
     : {};
 }

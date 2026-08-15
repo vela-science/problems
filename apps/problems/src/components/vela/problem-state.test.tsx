@@ -50,7 +50,11 @@ const state = {
     status: "accepted",
     kind: "claim.revise",
     target: `vcl_${"0".repeat(64)}`,
-    claim: "Accept the exact occurrence correction.",
+    /* The same text as the Claim this Problem holds. It read
+       "Accept the exact occurrence correction." — a different string — so the
+       fixture was exercising the fallback that handed an unrelated accepted
+       Proposal the current-Claim caption, and passing. */
+    claim: "The local assertion.",
     decision_provenance: "signed_record",
     decision_actor_class: "agent",
     decision_authority_principal_id: "local:repository-authority",
@@ -172,6 +176,23 @@ describe("Problem State", () => {
     expect(screen.getByText(/One formal statement is retained below/u)).toBeVisible();
     expect(screen.queryByText("Source-authored statement")).toBeNull();
     expect(screen.getByRole("link", { name: "Open the upstream source" })).toBeVisible();
+  });
+
+  /* An accepted Proposal for a different Claim must not take the heading
+     "Latest contribution and reviews" or the caption "Supports the Claim this
+     Problem currently holds", which would present its producer, verifiers,
+     limits and Decision reason as this Claim's provenance. */
+  it("does not attribute an unrelated accepted Proposal to the current Claim", () => {
+    render(<ProblemState state={{
+      ...state,
+      reviews: [{ ...state.reviews[0]!, claim: "A different accepted Claim entirely." }],
+    }} />);
+
+    expect(screen.queryByText("Supports the Claim this Problem currently holds")).toBeNull();
+    expect(screen.getByText("No accepted contribution is retained for this Problem.")).toBeVisible();
+    expect(screen.queryByRole("heading", { name: "Produced by" })).toBeNull();
+    /* It is still listed, under its own status word. */
+    expect(screen.getByRole("heading", { name: "One proposed change" })).toBeVisible();
   });
 
   it("keeps absent State projections readable without stacking empty cards", () => {

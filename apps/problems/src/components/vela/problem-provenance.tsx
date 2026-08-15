@@ -30,12 +30,18 @@ type Review = State["reviews"][number];
  * Problem holds is the one; everything else keeps its own status word. */
 export function currentReview(state: State): Review | null {
   const current = state.claims.find((claim) => claim.id === state.currentClaimId) ?? state.claims[0];
-  const accepted = state.reviews.filter((review) => review.status === "accepted");
-  if (current) {
-    const match = accepted.find((review) => review.claim === current.assertion);
-    if (match) return match;
-  }
-  return accepted[0] ?? null;
+  if (!current) return null;
+  /* Only the accepted review whose Claim is this Problem's Claim. The
+     fallback here used to be `accepted[0]`, which handed an unrelated accepted
+     Proposal the heading "Latest contribution and reviews" and the caption
+     "Supports the Claim this Problem currently holds" — presenting its
+     producer, verifiers, limits and Decision reason as the provenance of a
+     Claim it has nothing to do with. Two accepted Proposals for different
+     Claims, or any drift in assertion text, was enough. When nothing matches
+     the honest answer is nothing. */
+  return state.reviews.find(
+    (review) => review.status === "accepted" && review.claim === current.assertion,
+  ) ?? null;
 }
 
 function ChecksFor({ review, producer }: { review: Review; producer?: string | null }) {
@@ -144,7 +150,9 @@ export function ProblemProvenance({ state }: { state: State }) {
     {others.length ? (
       <div>
         <h3 className="text-eyebrow uppercase text-muted-foreground">
-          {others.length === 1 ? "One other proposed change" : `${others.length} other proposed changes`}
+          {current
+            ? others.length === 1 ? "One other proposed change" : `${others.length} other proposed changes`
+            : others.length === 1 ? "One proposed change" : `${others.length} proposed changes`}
         </h3>
         <ul className="mt-1.5 space-y-1.5 text-compact">
           {others.map((review) => (
