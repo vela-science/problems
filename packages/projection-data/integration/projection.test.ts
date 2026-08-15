@@ -107,7 +107,10 @@ describeProjection("Neon Problems projection", () => {
       const declared = manifest.source_repositories.find((entry) => handleFor(entry.repository_id) === repository.slug);
       expect(declared, `${repository.slug} is published without a manifest entry`).toBeDefined();
       const claims = await claimsForRepository(repository.slug, { limit: 1 });
-      expect(claims.total).toBe(declared!.claim_count);
+      const currentClaimCount = claims.facets.standing
+        .filter(({ value }) => value === "accepted" || value === "unassessed")
+        .reduce((total, { count }) => total + count, 0);
+      expect(currentClaimCount).toBe(declared!.claim_count);
       expect(repository.graph).toMatchObject({
         node_count: declared!.graph_node_count,
         edge_count: declared!.graph_edge_count,

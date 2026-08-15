@@ -239,7 +239,7 @@ describeDatabase("Math Source Registry database boundary", () => {
     const rows = await sql!.query(
       `SELECT table_name
        FROM information_schema.tables
-       WHERE table_schema = 'problems'
+       WHERE table_schema = 'projection'
          AND table_name = ANY($1::text[])
        ORDER BY table_name`,
       [[...publicRegistryTables]],
@@ -253,7 +253,7 @@ describeDatabase("Math Source Registry database boundary", () => {
     const columns = await sql!.query(
       `SELECT table_name, column_name
        FROM information_schema.columns
-       WHERE table_schema = 'problems'
+       WHERE table_schema = 'projection'
          AND table_name = ANY($1::text[])
        ORDER BY table_name, ordinal_position`,
       [[...publicRegistryTables]],
@@ -294,7 +294,7 @@ describeDatabase("Math Source Registry database boundary", () => {
       `SELECT table_name
        FROM information_schema.table_privileges
        WHERE grantee = $1
-         AND table_schema = 'problems'
+         AND table_schema = 'projection'
          AND privilege_type = 'SELECT'
        ORDER BY table_name`,
       [projectionReaderIdentity.permissionRole],
