@@ -7,11 +7,11 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@vela/ui/co
 import { Item, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemTitle } from "@vela/ui/components/item";
 import { StateGlyph } from "@vela/ui/vela/state-glyph";
 import { ScientificText } from "@vela/ui/vela/scientific-text";
-import { StatusBadge } from "@vela/ui/vela/status-badge";
 import { RootFact } from "@/components/vela/root-fact";
 import { RecordId } from "@/components/vela/record-id";
 import { ProblemFacts } from "@/components/vela/problem-facts";
 import { ProblemSourceFacts } from "@/components/vela/problem-source-facts";
+import { ProblemProvenance } from "@/components/vela/problem-provenance";
 import { ProblemSources } from "@/components/vela/problem-sources";
 import { FormalConjecturesAudit } from "@/components/vela/formal-conjectures-audit";
 import type { ScientificProblemState } from "@/lib/scientific-state";
@@ -33,13 +33,6 @@ function correctionRelations(claim: State["claims"][number]) {
 }
 
 export function ProblemState({ state, basePath }: { state: State; basePath?: string }) {
-  const decisions = state.reviews.filter((review) => (
-    review.decision_provenance !== "pending" && review.decision_provenance !== "producer_withdrawal"
-  ));
-  const checks = state.reviews.flatMap((review) => (review.verification_records ?? []).map((record) => ({
-    ...record,
-    proposal_id: review.proposal_id,
-  })));
   const corrections = state.claims.flatMap((claim) => correctionRelations(claim).map((relation) => ({ claim, relation })));
   const question = state.sources.statements.find((statement) => statement.source_id === "source:vibemathed") ?? state.sources.statements[0];
   return <div className="mt-8 max-w-5xl space-y-12">
@@ -100,20 +93,12 @@ export function ProblemState({ state, basePath }: { state: State; basePath?: str
     <ProblemSources sources={state.sources} />
     <FormalConjecturesAudit records={state.sourceAudits} />
 
-    <section aria-labelledby="checks-heading">
-      <div className="flex flex-wrap items-end justify-between gap-3"><h2 id="checks-heading" className="text-title">Checks</h2>{checks.length ? <span className="text-meta text-muted-foreground">{checks.length} scoped {checks.length === 1 ? "Verification Record" : "Verification Records"}</span> : null}</div>
-      {checks.length ? <ItemGroup className="mt-5 divide-y">{checks.map((check) => <Item key={check.verification_record_id} className="items-start rounded-none px-0 py-4"><ItemContent className="gap-2">
-        <div className="flex flex-wrap items-center gap-2"><ItemTitle className="line-clamp-none text-body font-normal">{check.property ?? "Scoped verification"}</ItemTitle><StatusBadge axis="verification" state={check.outcome}>verification {check.outcome.replaceAll("_", " ")}</StatusBadge></div>
-        <ItemDescription className="line-clamp-none">Attributed to {check.verifier_actor}. A Check reports this scope and does not decide Standing.</ItemDescription>
-        {(check.does_not_establish ?? []).length ? <ul className="list-disc space-y-1 pl-5 text-micro text-muted-foreground">{check.does_not_establish!.map((limit) => <li key={limit}>{limit}</li>)}</ul> : null}
-        <p className="text-micro"><Link href={`/repositories/${state.repositorySlug}/proposals/${check.proposal_id}`} className="underline underline-offset-4">Open the proposed change and exact Verification Record</Link></p>
-      </ItemContent></Item>)}</ItemGroup> : <p className="mt-4 max-w-2xl py-3 text-body text-muted-foreground">No scoped Verification Record is retained for the joined Claim.</p>}
-    </section>
-
-    <section aria-labelledby="decisions-heading">
-      <div className="flex flex-wrap items-end justify-between gap-3"><h2 id="decisions-heading" className="text-title">Decisions</h2>{decisions.length ? <span className="text-meta text-muted-foreground">{decisions.length} recorded</span> : null}</div>
-      {decisions.length ? <ItemGroup className="mt-5 gap-1">{decisions.map((decision) => <Item key={decision.proposal_id} className="items-start rounded-lg border-0 px-3 py-5 hover:bg-muted/30"><ItemContent className="gap-2"><div className="flex flex-wrap items-center gap-2"><Badge variant={decision.status === "accepted" ? "default" : "secondary"}>{decision.status.replaceAll("_", " ")}</Badge><span className="text-micro text-muted-foreground">Proposed change</span></div><ItemTitle className="line-clamp-none text-body font-normal">{decision.claim || decision.target}</ItemTitle><ItemDescription className="line-clamp-none">{decision.decision_reason ?? "A Decision is retained without a projected reason."}</ItemDescription><p className="text-micro text-muted-foreground">{decision.decision_actor_class === "agent" ? "Agent Decision" : decision.decision_actor_class === "human" ? "Human Decision" : "Attributed Decision"} · {decision.decision_provenance.replaceAll("_", " ")}{decision.reviewed_by ? <> · performer <RecordId value={decision.reviewed_by} prefix={24} copy={false} /></> : null}</p>{decision.decision_authority_principal_id ? <p className="text-micro text-muted-foreground">Repository authority <RecordId value={decision.decision_authority_principal_id} prefix={24} copy={false} /></p> : null}</ItemContent></Item>)}</ItemGroup> : <p className="mt-4 max-w-2xl py-3 text-body text-muted-foreground">No Decision is retained for this Problem. Checks and source labels do not fill that role.</p>}
-    </section>
+    {/* Producer, checks and Decision were three thin sections that each named
+        an actor and moved on; the retained provenance — method, performer,
+        independence, shared dependencies, and the Decision's own scope
+        sentence — rendered only on the Proposal page. One block, in protocol
+        order, over the same markup that page uses. */}
+    <ProblemProvenance state={state} />
 
     <section aria-labelledby="correction-heading">
       <div className="flex flex-wrap items-end justify-between gap-3"><h2 id="correction-heading" className="text-title">Correction history</h2>{corrections.length ? <span className="text-meta text-muted-foreground">{corrections.length} exact {corrections.length === 1 ? "relation" : "relations"}</span> : null}</div>

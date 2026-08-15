@@ -2875,15 +2875,26 @@ export async function problemDetail(slug: string, problem: string, requestedRoot
   /* Passing `reviewFromRow` to `map` by name handed it the row index as the
      Submission and the whole array as the Verification Records, so every row
      after the first reported a Submission it had not got and a Verification
-     count equal to the number of Proposals. This query reads neither table, so
-     the row alone is the honest argument. */
+     count equal to the number of Proposals.
+
+     The Submission is now read rather than withheld. Leaving it out made the
+     Problem page say a producer identity was "not retained" while the
+     Verification Records beside it named that same producer in their
+     independence declarations — the read was missing a fact the page was
+     already printing. Who produced a contribution is one of the questions a
+     Problem page exists to answer, and the join is the same SELECT-only one
+     the Repository read already performs. */
+  const submissionRows = proposalIds.length === 0 ? [] : await sql.query(`SELECT s.*
+    FROM projection.submissions s
+    WHERE s.release_root=$1 AND s.repository_id=$2 AND s.proposal_id = ANY($3::text[])`,
+    [root, repositoryKey(slug), proposalIds]);
   return {
     record,
     claims,
     current_claim_id: currentClaimId,
     reviews: reviewRows.map((review) => reviewFromRow(
       review,
-      undefined,
+      submissionRows.find((submission) => submission.proposal_id === review.proposal_id),
       verificationRows.filter((verification) => verification.proposal_id === review.proposal_id),
     )),
   };

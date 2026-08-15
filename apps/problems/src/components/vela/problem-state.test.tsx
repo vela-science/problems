@@ -89,7 +89,7 @@ const state = {
 describe("Problem State", () => {
   afterEach(cleanup);
 
-  it("leads with Current State, Decisions, and source-owned next work while keeping exact records disclosed", async () => {
+  it("leads with Current State, attributed provenance, and source-owned next work while keeping exact records disclosed", async () => {
     const user = userEvent.setup();
     render(<ProblemState state={state} />);
 
@@ -105,12 +105,20 @@ describe("Problem State", () => {
        behind a closed Collapsible, which Base UI keeps out of the DOM. */
     expect(screen.getByRole("heading", { name: "Source coverage" })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /Evidence, sources, and reviews/u })).not.toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Decisions" })).toBeInTheDocument();
-    expect(screen.getByText(/Agent Decision · signed record/u)).toBeInTheDocument();
-    expect(screen.getByText(/Repository authority/u)).toHaveTextContent("local:repository-authority");
-    expect(screen.getByRole("heading", { name: "Checks" })).toBeInTheDocument();
+    /* Producer, check and Decision are one block in protocol order, so a
+       reader watches three different actors act rather than reading a
+       disclaimer that a passing check is not an acceptance. */
+    expect(screen.getByRole("heading", { name: "Latest contribution and reviews" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Produced by" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Checked by" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Decided by" })).toBeInTheDocument();
     expect(screen.getByText("subject_occurrence_mapping")).toBeInTheDocument();
-    expect(screen.getByText(/Attributed to agent:independent-reviewer/u)).toBeInTheDocument();
+    expect(screen.getByText(/Verification by agent:independent-reviewer/u)).toBeInTheDocument();
+    expect(screen.getByText(/Agent Decision/u)).toBeInTheDocument();
+    expect(screen.getByText(/Repository authority/u)).toHaveTextContent("local:repository-authority");
+    expect(screen.getByText("Accept the exact correction after scoped checks.")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Not established by these checks" })).toBeInTheDocument();
+    expect(screen.getByText("Statement equivalence or Standing.")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Correction history" })).toBeInTheDocument();
     expect(screen.getByText("Claim correction")).toBeInTheDocument();
     expect(screen.getByText("corrects")).toBeInTheDocument();
@@ -137,7 +145,7 @@ describe("Problem State", () => {
     }} />);
 
     const assertion = screen.getByText("No Claim in this release names this Problem as its subject.").parentElement;
-    const decision = screen.getByText(/No Decision is retained/iu);
+    const decision = screen.getByText(/No accepted contribution is retained/iu);
 
     /* An absence says which fact is missing and offers the record that would
        carry it, rather than explaining the product. A zero count reads as
