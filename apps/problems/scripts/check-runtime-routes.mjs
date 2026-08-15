@@ -1,6 +1,7 @@
 import {
   allRepositories,
   claimsForRepository,
+  problemPublicRoutes,
   projectionManifest,
   problemsForRepository,
   slugForRepositoryId,
@@ -134,6 +135,19 @@ try {
   }
   await expectStatus(`/repositories/${slug}/problems/999999`, 404);
   await expectStatus("/repositories/not-a-repository/problems/1", 404);
+
+  /* The canonical Problem route, which is the address a reader bookmarks and
+     sends to a colleague. It was checked nowhere: the smoke test knew the
+     Repository-scoped record view and the legacy `/p/` path, and never the
+     public one. The unknown case is the half that matters — a canonical path
+     with no reviewed route behind it must answer 404 on the status line, not
+     stream 404 UI into a 200, and that is the regression `suspense-404` states
+     as a rule and this proves against a running server. */
+  const canonicalRoute = problemPublicRoutes.routes[0];
+  if (!canonicalRoute) throw new Error("the release publishes no canonical Problem route");
+  await expectRenderedHtml(canonicalRoute.canonical_path);
+  await expectStatus(`/problems/${canonicalRoute.canonical_namespace}/999999`, 404);
+  await expectStatus("/problems/not-a-namespace/1", 404);
   for (const path of routes) {
     await expectRenderedHtml(path);
   }
@@ -178,6 +192,7 @@ try {
     projection_root: manifest.release_root,
     repository: slug,
     routes_checked: routes.length,
+    canonical_problem_route: canonicalRoute.canonical_path,
     claims_checked: claims.length,
     skipped,
   }));

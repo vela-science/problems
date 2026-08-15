@@ -13,6 +13,15 @@ import { describe, expect, it } from "vitest";
  * declares `dynamicParams = false` the router rejects the param before
  * rendering, so the same file is harmless there.
  *
+ * `dynamicParams = true` was the original signal, and it was too narrow: it
+ * misses every page that reaches `notFound()` at request time without
+ * declaring it. Four do — `problems/[namespace]/[problem]`,
+ * `sources/[id]`, `codebases/[id]` and `repositories/[slug]/commits/compare`
+ * are all `force-dynamic` — and `repositories/[slug]/problems` declares no
+ * config at all, so it inherits the same default. The rule is therefore what
+ * the page *does*: calling `notFound()` is the hazard, and only an explicit
+ * `dynamicParams = false` retires it.
+ *
  * `check:runtime` catches this by booting the server and reading the status,
  * which is the real proof; it runs in CI and takes a minute. This test states
  * the rule where someone restoring a deleted file will read it in a second. */
@@ -42,7 +51,8 @@ async function has(directory: string, file: string): Promise<boolean> {
 async function rendersUnknownParams(directory: string): Promise<boolean> {
   try {
     const page = await readFile(join(directory, "page.tsx"), "utf8");
-    return /dynamicParams\s*=\s*true/u.test(page);
+    if (/dynamicParams\s*=\s*false/u.test(page)) return false;
+    return /dynamicParams\s*=\s*true/u.test(page) || /\bnotFound\s*\(\s*\)/u.test(page);
   } catch {
     return false;
   }
