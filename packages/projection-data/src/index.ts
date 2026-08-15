@@ -68,6 +68,7 @@ export * from "./source-corpus-map";
 export * from "./formal-conjectures-audit";
 export * from "./proposed-state-preview";
 export * from "./registry";
+export * from "./core-integration";
 
 export type { HashRoot } from "./canonical";
 import type { HashRoot } from "./canonical";

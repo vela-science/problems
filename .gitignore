@@ -32,6 +32,7 @@ tmp/
 output/
 prototypes/
 .vercel
+apps/problems/.generated/
 apps/problems/public/.well-known/vela-site.json
 apps/*/public/assets/fonts/
 apps/problems/public/favicon.svg

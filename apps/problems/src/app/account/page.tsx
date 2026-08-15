@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { Badge } from "@vela/ui/components/badge";
+import { Button } from "@vela/ui/components/button";
 import { Item, ItemContent, ItemDescription, ItemGroup, ItemTitle } from "@vela/ui/components/item";
 import { PageShell } from "@vela/ui/vela/page-shell";
 import { PageIntro } from "@/components/vela/page-intro";
@@ -55,5 +57,6 @@ export default async function AccountPage() {
         </ItemContent>
       </Item>
     </ItemGroup>
+    <div><Button nativeButton={false} render={<Link href="/account/connections" />} variant="outline">Connections and codebases</Button></div>
   </PageShell>;
 }

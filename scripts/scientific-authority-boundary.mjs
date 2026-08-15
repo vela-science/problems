@@ -38,6 +38,18 @@ const problemsActivityDraftRoute = "apps/problems/src/app/drafts/[id]/export/rou
 const problemsActivityWorkbench = "apps/problems/src/components/vela/workbench.tsx";
 const problemsAuthLibrary = "apps/problems/src/lib/auth.ts";
 const problemsIdentityProxy = "apps/problems/src/proxy.ts";
+const problemsGithubApp = "apps/problems/src/lib/github-app.ts";
+const problemsGithubState = "apps/problems/src/lib/github-install-state.ts";
+const problemsWorkosIdentities = "apps/problems/src/lib/workos-identities.ts";
+const problemsGithubInstallRoute = "apps/problems/src/app/api/github/install/route.ts";
+const problemsGithubSetupRoute = "apps/problems/src/app/api/github/setup/route.ts";
+const problemsGithubWebhookRoute = "apps/problems/src/app/api/github/webhooks/route.ts";
+const problemsImportAction = "apps/problems/src/app/import/actions.ts";
+const problemsConnectionsPage = "apps/problems/src/app/account/connections/page.tsx";
+const problemsImportPage = "apps/problems/src/app/import/page.tsx";
+const problemsCodebasePage = "apps/problems/src/app/codebases/[id]/page.tsx";
+const problemsHostedAccount = "apps/problems/src/lib/hosted-account.ts";
+const problemsCodebaseInspection = "apps/problems/src/lib/codebase-inspection.ts";
 
 export const PROBLEMS_IDENTITY_FILES = [
   problemsAccountRoute,
@@ -46,6 +58,12 @@ export const PROBLEMS_IDENTITY_FILES = [
   problemsSignOutAction,
   problemsAuthLibrary,
   problemsIdentityProxy,
+  problemsGithubApp,
+  problemsGithubState,
+  problemsWorkosIdentities,
+  problemsGithubInstallRoute,
+  problemsGithubSetupRoute,
+  problemsGithubWebhookRoute,
 ];
 
 /* Kept as an export while the Problems ESLint config migrates with this
@@ -56,12 +74,26 @@ const PROBLEMS_IDENTITY_ROUTES = new Set([
   problemsAccountRoute,
   problemsAuthCallbackRoute,
   problemsSignInRoute,
+  problemsGithubInstallRoute,
+  problemsGithubSetupRoute,
+  problemsGithubWebhookRoute,
+]);
+
+const PROBLEMS_PROVIDER_ROUTES = new Set([
+  problemsGithubInstallRoute, problemsGithubSetupRoute, problemsGithubWebhookRoute,
 ]);
 
 const PROBLEMS_ACTIVITY_FILES = new Set([
   problemsActivityAction,
   problemsActivityDraftRoute,
   problemsActivityWorkbench,
+  problemsImportAction,
+  problemsConnectionsPage,
+  problemsImportPage,
+  problemsCodebasePage,
+  problemsHostedAccount,
+  problemsGithubSetupRoute,
+  problemsGithubWebhookRoute,
 ]);
 
 const ALLOWED_IDENTITY_ACTIONS = new Map([
@@ -126,18 +158,18 @@ function inspectProblems(file, content, add) {
     add("app_route_handler", "Vela Route Handlers are confined to declared exact reads, identity, and draft export");
   }
   const methods = [...content.matchAll(mutationMethods)].map((match) => match[1]);
-  if (methods.length) add("app_mutation", "Vela may not expose arbitrary product or scientific mutation handlers");
+  if (methods.length && !PROBLEMS_PROVIDER_ROUTES.has(file)) add("app_mutation", "Vela may not expose arbitrary product or scientific mutation handlers");
   if (
     serverDirective.test(content)
     && !boundedIdentityActions(file, content)
-    && !(file === problemsActivityAction && activityImport.test(content))
+    && !(PROBLEMS_ACTIVITY_FILES.has(file) && activityImport.test(content))
   ) {
     add("problems_server_action", "Vela app Server Actions are confined to identity and the declared activity owner");
   }
   if (requestStateCall.test(content)) add("app_request_state", "Vela scientific reads may not depend on request state");
   if (
     runtimeEnvironment.test(content)
-    && file !== problemsAuthLibrary
+    && !new Set([problemsAuthLibrary, problemsGithubApp, problemsGithubState, problemsGithubInstallRoute, problemsWorkosIdentities, problemsCodebaseInspection]).has(file)
   ) {
     add("app_runtime_environment", "Vela runtime secrets are confined to its identity adapter");
   }
@@ -156,6 +188,7 @@ function inspectActivityAuthority(file, content, add) {
   }
   if (
     file !== localSigningModule
+    && file !== problemsGithubState
     && (forbiddenSigningCall.test(content) || forbiddenSigningImport.test(content))
   ) {
     add("server_signing", "Hosted activity code may hash roots but may not hold or use signing machinery");

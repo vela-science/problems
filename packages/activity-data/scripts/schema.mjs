@@ -22,8 +22,12 @@ const expectedTables = [
   "approaches",
   "artifact_refs",
   "attempts",
+  "connected_codebases",
   "discussion_entries",
   "follows",
+  "github_installation_repositories",
+  "github_installations",
+  "github_webhook_deliveries",
   "idempotency_records",
   "scientific_anchors",
   "submission_drafts",
@@ -77,12 +81,9 @@ async function assertCurrentShape(connection) {
 }
 
 if (migrate) {
-  const [existing] = await sql.query("SELECT to_regclass('activity.accounts') IS NOT NULL AS exists");
-  if (!existing?.exists) {
-    await sql.transaction((transaction) => schemaFiles.flatMap(({ source }) => (
-      sqlStatements(source).map((statement) => transaction.query(statement))
-    )));
-  }
+  await sql.transaction((transaction) => schemaFiles.flatMap(({ source }) => (
+    sqlStatements(source).map((statement) => transaction.query(statement))
+  )));
   await assertCurrentShape(sql);
 } else {
   await assertCurrentShape(sql);
@@ -95,8 +96,9 @@ if (migrate) {
       JOIN pg_catalog.pg_namespace namespace ON namespace.oid=relation.relnamespace
       WHERE namespace.nspname='activity' AND relation.relname='accounts'
     ), 'SELECT,INSERT,UPDATE,DELETE') AS base_access,
-    has_function_privilege(current_user, 'activity_api.ensure_account(text,text,text)', 'EXECUTE') AS account_api`);
-  if (!access?.api_usage || access.storage_usage || access.temporary_access || access.base_access || !access.account_api) {
+    has_function_privilege(current_user, 'activity_api.ensure_account(text,text,text)', 'EXECUTE') AS account_api,
+    has_function_privilege(current_user, 'activity_api.list_github_connections(uuid)', 'EXECUTE') AS github_api`);
+  if (!access?.api_usage || access.storage_usage || access.temporary_access || access.base_access || !access.account_api || !access.github_api) {
     throw new Error(`activity application role boundary failed: ${JSON.stringify(access)}`);
   }
 }

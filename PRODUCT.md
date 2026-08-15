@@ -33,9 +33,17 @@ The ecosystem has two current product surfaces:
 The hosted product spans two planes. The scientific-state plane contains exact
 Repository, Claim, Submission, Verification, Decision, and Standing records.
 The activity plane contains hosted accounts, workspaces, follows, approaches,
-attempts, discussion, assignments, artifact metadata, external session references, and
-unsigned drafts. Activity may refer to exact scientific roots. It cannot change
-them.
+attempts, discussion, artifact metadata, and unsigned drafts. Generic work
+sessions and checkpoints remain external provenance. Activity may refer to
+exact scientific roots. It cannot change them.
+
+Connected-codebase onboarding follows one bounded path: sign in, connect a
+selected GitHub repository or provide a public GitHub URL, pin an immutable
+commit, inspect the native Vela integration, and continue locally. A connection
+is repository access, not Repository authority. GitHub identity, installation,
+branch, pull-request, check, or administrator state never implies Verification,
+Decision, Standing, or signer access. Both import methods normalize the same
+public input to the same rooted inspection receipt.
 
 ## The visible product model
 

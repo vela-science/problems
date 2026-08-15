@@ -1,7 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { authConfiguration } from "@/lib/auth";
 
-export async function GET() {
+const allowedReturns = new Set(["/account", "/account/connections", "/import"]);
+
+export async function GET(request: NextRequest) {
   if (!authConfiguration().enabled) {
     return NextResponse.json({ error: "Authentication is not configured in this environment." }, {
       status: 503,
@@ -9,5 +11,6 @@ export async function GET() {
     });
   }
   const { getSignInUrl } = await import("@workos-inc/authkit-nextjs");
-  return NextResponse.redirect(await getSignInUrl({ returnTo: "/account" }));
+  const requested = request.nextUrl.searchParams.get("returnTo") ?? "/account";
+  return NextResponse.redirect(await getSignInUrl({ returnTo: allowedReturns.has(requested) ? requested : "/account" }));
 }

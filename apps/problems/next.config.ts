@@ -16,6 +16,9 @@ const nextConfig: NextConfig = {
   deploymentId: deploymentIdForEnvironment(process.env),
   transpilePackages: ["@vela/brand", "@vela/projection-data", "@vela/ui"],
   poweredByHeader: false,
+  outputFileTracingIncludes: {
+    "/import": ["./.generated/vela"],
+  },
   ...(localProjectionQualification
     ? { staticPageGenerationTimeout: 180, experimental: { cpus: 2 } }
     : {}),

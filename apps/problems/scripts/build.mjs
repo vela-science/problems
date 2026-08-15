@@ -17,6 +17,7 @@ async function run(command, options = {}) {
 }
 
 await run(["bun", resolve(repository, "packages/brand/scripts/sync-web-assets.mjs"), "public", "--profile", "product", "--favicon"]);
+await run(["bun", "scripts/prepare-vela.mjs"]);
 const projection = await currentProjectionManifest();
 const environment = {
   ...process.env,

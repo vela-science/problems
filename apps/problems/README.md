@@ -47,6 +47,10 @@ WORKOS_API_KEY
 WORKOS_CLIENT_ID
 WORKOS_COOKIE_PASSWORD       # at least 32 characters
 NEXT_PUBLIC_WORKOS_REDIRECT_URI=https://problems.science/auth/callback
+GITHUB_APP_ID                  # problems.science GitHub App numeric id
+GITHUB_APP_SLUG                # canonical public app slug
+GITHUB_APP_PRIVATE_KEY         # RSA key; server-only, never stored in Neon
+GITHUB_APP_WEBHOOK_SECRET      # at least 32 characters
 ```
 
 Three settings in the [WorkOS dashboard](https://dashboard.workos.com) have to
@@ -63,6 +67,14 @@ agree with those, and nothing in this repository can assert them:
 Keep provider secrets in the deployment environment, never in a checked-in
 file. An unconfigured build deliberately omits account controls and leaves the
 public Problems fully available.
+
+GitHub sign-in is enabled in the same WorkOS AuthKit application. Repository
+access is deliberately separate: the Problems GitHub App requests only
+Metadata read and Contents read for explicitly selected repositories. Its
+one-hour installation token stays in server memory while the exact commit is
+inspected and is never written to Neon, HTML, logs, or a Vela object. A manual
+public `https://github.com/OWNER/REPOSITORY` import uses the identical pinned
+inspection path without a GitHub identity or App installation.
 
 The Vercel project is the one deployed runtime environment source. Do not
 maintain a second `.env.local` copy of its secrets. Vercel deliberately does

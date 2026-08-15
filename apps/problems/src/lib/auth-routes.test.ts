@@ -33,10 +33,13 @@ describe("account routes", () => {
       expect(proxySource).not.toContain(broad);
     }
     for (const exact of [
-      '"/account"',
+      '"/account/:path*"',
       '"/api/account"',
+      '"/api/github/:path*"',
       '"/auth/callback"',
       '"/drafts/:id/export"',
+      '"/codebases/:path*"',
+      '"/import"',
       '"/sign-in"',
     ]) {
       expect(proxySource).toContain(exact);
@@ -65,7 +68,7 @@ describe("account routes", () => {
     const account = await accountRoute();
     expect(await account.json()).toEqual({ status: "unavailable" });
 
-    const signIn = await signInRoute();
+    const signIn = await signInRoute(new Request("https://problems.science/sign-in") as never);
     expect(signIn.status).toBe(503);
     expect(signIn.headers.get("Cache-Control")).toBe("no-store");
 

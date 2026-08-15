@@ -17,10 +17,13 @@ export const config = {
      Canonical and legacy Problem pages remain covered because Workspace mode
      is selected by query string and Next matchers cannot branch on its value. */
   matcher: [
-    "/account",
+    "/account/:path*",
+    "/api/github/:path*",
     "/api/account",
     "/auth/callback",
     "/drafts/:id/export",
+    "/codebases/:path*",
+    "/import",
     "/p/:repository/:problem",
     "/problems/:namespace/:problem",
     "/sign-in",
