@@ -5,7 +5,7 @@ import { parseEnv } from "node:util";
 import { filesBelow } from "./fs.mjs";
 import {
   allRepositories,
-  projectionManifest,
+  projectionManifest as readProjectionManifest,
   graphRead,
   searchRead,
 } from "../packages/projection-data/src/index.ts";
@@ -42,7 +42,7 @@ if (prebuilt.length >= 500) throw new Error(`Vela app prebuild has ${prebuilt.le
    embed the full projection, /search must stay prerendered, and the font
    profile must contain exactly its two identifier faces. */
 const searchHtml = readFileSync(resolve(problems, ".next/server/app/search.html"));
-const projectionManifest = await projectionManifest();
+const projectionManifest = await readProjectionManifest();
 const root = projectionManifest.release_root;
 /* The heaviest canvas the release can actually serve, found by asking the
    release which Repositories it has.
