@@ -5,6 +5,7 @@ import { canonicalJson, sha256 } from "../canonical";
 import {
   acquireBytes,
   acquireExactGitCheckout,
+  exactBlobLocator,
   gitBlobRoot,
 } from "./acquisition";
 import {
@@ -111,18 +112,6 @@ export const pinnedProofManifestAdapters = {
     ),
   },
 } as const;
-
-function exactBlobLocator(
-  repository: string,
-  commit: string,
-  path: string,
-): string {
-  const match = /(?:https:\/\/github\.com\/|git@github\.com:)?([^/\s]+\/[^/\s]+?)(?:\.git)?$/u
-    .exec(repository);
-  return match
-    ? `https://github.com/${match[1]}/blob/${commit}/${path}`
-    : `${repository}#${commit}:${path}`;
-}
 
 function parseYaml(bytes: Uint8Array, label: string): unknown {
   try {

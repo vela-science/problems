@@ -137,14 +137,21 @@ export const publicTableOrder = [
 export function completeCandidateTables(tables) {
   return Object.fromEntries(publicTableOrder.map((table) => {
     const rows = tables[table];
-    if (rows === undefined && registryTableOrder.includes(table)) return [table, []];
     if (!Array.isArray(rows)) throw new Error(`candidate is missing public table ${table}`);
     return [table, rows];
   }));
 }
 
+/* The declaration carries rights, adapter and coverage; the row carries the
+   roots. These were written as `row.rights ?? declaration.rights`, which reads
+   as though the flat field were the normal case and the declaration a
+   fallback. It is the other way round — `sourceDeclarationRows()` has never
+   emitted a flat `rights`, `adapter` or `coverage` — so the first operand was
+   always undefined and only a test fixture ever supplied it. Reading the
+   declaration directly means a row without one throws here rather than
+   projecting undefined into three NOT NULL jsonb columns. */
 function sourceDeclarationRow(row) {
-  const declaration = row.declaration ?? {};
+  const { declaration } = row;
   return {
     declaration_root: row.declaration_root,
     source_id: row.source_id,
@@ -153,17 +160,17 @@ function sourceDeclarationRow(row) {
     locators: row.locators,
     attributed_claims: row.attributed_claims,
     source_kind: row.source_kind,
-    rights: row.rights ?? declaration.rights,
+    rights: declaration.rights,
     snapshot_policy: row.snapshot_policy,
-    adapter: row.adapter ?? declaration.adapter,
-    coverage: row.coverage ?? declaration.coverage,
+    adapter: declaration.adapter,
+    coverage: declaration.coverage,
     row_root: row.row_root,
   };
 }
 
 function sourceObservationRow(row) {
   return {
-    observation_root: row.observation_root ?? row.row_root,
+    observation_root: row.observation_root,
     source_id: row.source_id,
     observation_id: row.observation_id,
     declaration_root: row.declaration_root,

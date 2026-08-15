@@ -162,29 +162,14 @@ describe("projection public table inventory", () => {
     expect(publicTableOrder).not.toContain("proposal_object_links");
   });
 
-  const legacyTables = Object.fromEntries(
-    publicTableOrder
-      .filter((table) => ![
-        "source_declarations",
-        "source_observations",
-        "native_records",
-        "release_sources",
-        "repository_source_bindings",
-      ].includes(table))
-      .map((table) => [table, []]),
-  );
-
-  test("adds empty registry tables to transitional candidates", () => {
-    const completed = completeCandidateTables(legacyTables);
-    expect(completed.source_declarations).toEqual([]);
-    expect(completed.source_observations).toEqual([]);
-    expect(completed.native_records).toEqual([]);
-    expect(completed.release_sources).toEqual([]);
-    expect(completed.repository_source_bindings).toEqual([]);
-  });
+  /* Every table, because every producer emits every table: the builder seeds
+     the five registry tables to `[]` and the math projection fills them. The
+     arm that used to substitute `[]` for a missing registry table was for
+     candidates that predate them, and no producer can make one. */
+  const completeTables = Object.fromEntries(publicTableOrder.map((table) => [table, []]));
 
   test("does not tolerate a missing established public table", () => {
-    const { repositories: _repositories, ...incomplete } = legacyTables;
+    const { repositories: _repositories, ...incomplete } = completeTables;
     expect(() => completeCandidateTables(incomplete)).toThrow(
       "candidate is missing public table repositories",
     );
@@ -238,7 +223,11 @@ describe("projection public table inventory", () => {
         generated_at: "2026-07-30T12:00:00Z",
       },
       tables: {
-        ...legacyTables,
+        ...completeTables,
+        /* The producer's shape: rights, adapter and coverage live on the
+           declaration, not flat on the row. The fixture used to spell them
+           flat, which is why the row builder's `row.rights ?? …` fallbacks
+           looked live when only this fixture reached them. */
         source_declarations: [{
           source_id: "source:fixture",
           native_namespace: "fixture",
@@ -246,10 +235,12 @@ describe("projection public table inventory", () => {
           locators: [],
           attributed_claims: [],
           source_kind: "frozen_reference",
-          rights: { access: "public" },
           snapshot_policy: { mode: "reference_only" },
-          adapter: { adapter_id: "fixture" },
-          coverage: { repository_slugs: ["erdos"] },
+          declaration: {
+            rights: { access: "public" },
+            adapter: { adapter_id: "fixture" },
+            coverage: { repository_slugs: ["math"] },
+          },
           declaration_root: root("c"),
           row_root: root("b"),
         }],

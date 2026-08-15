@@ -5,6 +5,7 @@ import { canonicalJson, sha256 } from "../canonical";
 import {
   acquireBytes,
   acquireExactGitCheckout,
+  exactBlobLocator,
   gitBlobRoot,
 } from "./acquisition";
 import {
@@ -100,18 +101,6 @@ function flatDeclaredStates(
         .map(([leaf, value]) => [`${field}_${leaf}`, value] as const),
     ];
   }));
-}
-
-function exactBlobLocator(
-  repository: string,
-  commit: string,
-  path: string,
-): string {
-  const match = /(?:https:\/\/github\.com\/|git@github\.com:)?([^/\s]+\/[^/\s]+?)(?:\.git)?$/u
-    .exec(repository);
-  return match
-    ? `https://github.com/${match[1]}/blob/${commit}/${path}`
-    : `${repository}#${commit}:${path}`;
 }
 
 export interface ErdosProblemsAcquisitionOptions {

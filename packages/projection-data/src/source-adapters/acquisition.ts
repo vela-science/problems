@@ -191,3 +191,20 @@ export async function gitBlobRoot(
     content_root: sha256(bytes),
   };
 }
+
+/* The GitHub blob URL an adapter records as a manifest locator.
+ *
+ * This was byte-identical in `erdos-problems.ts` and `proof-manifests.ts`.
+ * Two copies of a URL shape is two places to fix when a host or a path
+ * convention changes, and nothing about it is adapter-specific. */
+export function exactBlobLocator(
+  repository: string,
+  commit: string,
+  path: string,
+): string {
+  const match = /(?:https:\/\/github\.com\/|git@github\.com:)?([^/\s]+\/[^/\s]+?)(?:\.git)?$/u
+    .exec(repository);
+  return match
+    ? `https://github.com/${match[1]}/blob/${commit}/${path}`
+    : `${repository}#${commit}:${path}`;
+}
