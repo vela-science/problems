@@ -16,16 +16,6 @@ const nextConfig: NextConfig = {
   deploymentId: deploymentIdForEnvironment(process.env),
   transpilePackages: ["@vela/brand", "@vela/projection-data", "@vela/ui"],
   poweredByHeader: false,
-  async redirects() {
-    return [
-      { source: "/targets", destination: "/work", permanent: true },
-      {
-        source: "/repositories/:slug/targets",
-        destination: "/repositories/:slug/contribute",
-        permanent: true,
-      },
-    ];
-  },
   ...(localProjectionQualification
     ? { staticPageGenerationTimeout: 180, experimental: { cpus: 2 } }
     : {}),

@@ -77,10 +77,6 @@ const NOT_THE_VELA_NOUN: Array<[RegExp, string]> = [
    not say it. */
 const WHY_THE_WORD_STAYS: Array<[string, string]> = [
   [
-    "apps/problems/vercel.json",
-    "the permanent redirects that keep every published /frontiers URL reachable",
-  ],
-  [
     "eslint.bans.mjs",
     "the retired-component ban list, which has to name what it bans",
   ],

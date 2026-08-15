@@ -38,8 +38,7 @@ their published release root. Authentication is isolated to `/account`,
 in scientific projections or their roots. Those four paths are also exactly what
 `src/proxy.ts` matches, so the read-only surfaces never enter the session
 proxy at all. There is no `/sign-out` route — signing out is the
-`signOutAccount` Server Action in `src/app/actions/auth.ts`, and
-`src/app/retired-routes.test.ts` asserts that no page ever reintroduces one.
+`signOutAccount` Server Action in `src/app/actions/auth.ts`.
 
 AuthKit is enabled only when all four variables are valid:
 

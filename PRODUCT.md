@@ -145,9 +145,7 @@ The Problems does not use Work, Activity, Run, or Attempt as scientific
 objects. Problems may use Work, Activity, and Attempt for hosted records in the
 non-authoritative plane. Finding remains a retained protocol value and a
 view-only upstream term; the interface calls the record a Claim. Bundle is a
-protocol root and appears only as a labelled exact value. The release-level
-`/runs` path remains a permanent redirect to `/decisions` for the retired
-Problems route.
+protocol root and appears only as a labelled exact value.
 
 The protocol's own banned wording holds here: never "landed finding", "verified
 truth", "accepted by verifier", "AI approved", or an unqualified "verified",

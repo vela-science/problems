@@ -103,7 +103,6 @@ state axis.
 **Retired reader terms.** Finding is the predecessor name for a Claim. It may
 appear as an exact retained value, while the interface calls the record a
 Claim. Bundle is a protocol root and may appear only as a labelled exact value.
-The Problems `/runs` path remains a redirect to `/decisions`.
 
 Research Block is the readable presentation of a
 durable rooted contribution in the activity plane. The exact record type is
