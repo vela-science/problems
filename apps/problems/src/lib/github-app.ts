@@ -1,6 +1,7 @@
 import "server-only";
 
 import { App, Octokit } from "octokit";
+import { githubInstallUrlForSlug } from "./github-install-url";
 
 const required = ["GITHUB_APP_ID", "GITHUB_APP_SLUG", "GITHUB_APP_PRIVATE_KEY", "GITHUB_APP_WEBHOOK_SECRET"] as const;
 
@@ -40,10 +41,8 @@ export function publicGitHub(): Octokit {
   return new BoundedOctokit({ log: { debug() {}, info() {}, warn() {}, error() {} } });
 }
 
-export function githubInstallUrl(state: string): string {
-  const configuration = githubAppConfiguration();
+export function githubInstallUrl(environment: Readonly<Record<string, string | undefined>> = process.env): string {
+  const configuration = githubAppConfiguration(environment);
   if (!configuration.enabled) throw new Error("GitHub App is not configured");
-  const url = new URL(`https://github.com/apps/${configuration.slug}/installations/new`);
-  url.searchParams.set("state", state);
-  return url.toString();
+  return githubInstallUrlForSlug(configuration.slug);
 }
