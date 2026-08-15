@@ -122,6 +122,48 @@
   ],
   "entities": [
     {
+      "entity_id": "problem:erdos:94",
+      "resolution_namespace": "erdos-problems",
+      "label": "Erdős 94",
+      "problem_number": 94,
+      "canonical_occurrence": {
+        "source_id": "source:erdos-problems",
+        "native_id": "erdos:94",
+        "native_kind": "problem",
+        "content_root": "sha256:246d166026de8d99931c44824f9b0a242ae32beea27c43b1e6d0157a4a6fb2c8"
+      },
+      "reviewed_occurrences": [
+        {
+          "source_id": "source:formal-conjectures",
+          "native_id": "Erdos94.erdos_94",
+          "native_kind": "formal_conjecture",
+          "relation_kind": "formal_statement_reference",
+          "content_root": "sha256:00464b27aaa9dadf951ebe530269b8da32c854ac9586917b02cb532d7c3128ff"
+        },
+        {
+          "source_id": "source:formal-conjectures",
+          "native_id": "Erdos94.erdos_94.variants.no_three_on_a_line",
+          "native_kind": "formal_conjecture",
+          "relation_kind": "formal_statement_reference",
+          "content_root": "sha256:36b5f1fc82fc065cedac600025d4ca8cc615a483eed5e3b8f8842a898e6ac434"
+        },
+        {
+          "source_id": "source:formal-conjectures",
+          "native_id": "Erdos94.erdos_94.variants.regular_ngon",
+          "native_kind": "formal_conjecture",
+          "relation_kind": "formal_statement_reference",
+          "content_root": "sha256:d120340730ab3eaf2eaa1be1f0f40177bbcef838bdd307af3ec453de64747625"
+        },
+        {
+          "source_id": "source:formal-conjectures",
+          "native_id": "Erdos94.erdos_94.variants.sum_multiplicity",
+          "native_kind": "formal_conjecture",
+          "relation_kind": "formal_statement_reference",
+          "content_root": "sha256:b49ada921a91b89436f112da4a07a75e438640a075a7c390aca8162d3584c842"
+        }
+      ]
+    },
+    {
       "entity_id": "problem:erdos:203",
       "resolution_namespace": "erdos-problems",
       "label": "Erdős 203",

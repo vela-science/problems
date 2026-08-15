@@ -1,11 +1,23 @@
 {
   "schema": "vela.problem-public-routes.v1",
-  "resolver_root": "sha256:a9d6787719c5c8069a9e14ade0f5a62975410272e6cd1583865b282d1d8669dd",
+  "resolver_root": "sha256:50a07bcd158f13f60bf5bfa1c6cdf7d9f6f9bb66b9a2416fc34ce0006a3cecbd",
   "semantics": {
     "authority_effect": "none",
     "identity_effect": "reviewed_navigation_only"
   },
   "routes": [
+    {
+      "entity_id": "problem:erdos:94",
+      "canonical_namespace": "erdos-problems",
+      "canonical_problem": 94,
+      "canonical_path": "/problems/erdos-problems/94",
+      "current_repository": "math",
+      "current_problem": "94",
+      "current_path": "/p/math/94",
+      "legacy_paths": [
+        "/p/math/94"
+      ]
+    },
     {
       "entity_id": "problem:erdos:203",
       "canonical_namespace": "erdos-problems",

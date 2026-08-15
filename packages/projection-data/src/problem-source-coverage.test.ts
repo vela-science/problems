@@ -66,7 +66,7 @@ describe("reviewed Problem source coverage", () => {
       },
     });
     expect(coverage.sources).toHaveLength(8);
-    expect(coverage.problems.map(({ problem_number }) => problem_number)).toEqual([203, 264, 321, 521, 730]);
+    expect(coverage.problems.map(({ problem_number }) => problem_number)).toEqual([94, 203, 264, 321, 521, 730]);
     expect(coverage.problems.find(({ problem_number }) => problem_number === 321)).toMatchObject({
       entity_id: "problem:erdos:321",
       reviewed_occurrence_count: 8,
@@ -153,7 +153,7 @@ describe("reviewed Problem source coverage", () => {
 
   test("refuses root drift, missing entities and unknown Source coverage", () => {
     const reads = readsFor();
-    expect(() => summarizeReviewedProblemSourceCoverage(reads.slice(1))).toThrow(/exactly 5 reviewed entity reads/u);
+    expect(() => summarizeReviewedProblemSourceCoverage(reads.slice(1))).toThrow(/exactly 6 reviewed entity reads/u);
 
     const drifted = structuredClone(reads);
     drifted[0]!.resolver_root = sha256("drifted resolver");

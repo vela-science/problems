@@ -9,9 +9,9 @@ import {
 } from "./problem-public-routes";
 
 describe("reviewed public Problem routes", () => {
-  it("binds five durable aliases to the exact reviewed resolver", () => {
+  it("binds every durable alias to the exact reviewed resolver", () => {
     expect(problemPublicRoutes.resolver_root).toBe(problemResolutionConfigRoot);
-    expect(problemPublicRoutes.routes).toHaveLength(5);
+    expect(problemPublicRoutes.routes).toHaveLength(6);
     expect(problemPublicRoutesRoot).toMatch(/^sha256:[0-9a-f]{64}$/u);
     expect(problemPublicRouteForCanonicalPath("/problems/erdos-problems/321")).toMatchObject({
       entity_id: "problem:erdos:321",
