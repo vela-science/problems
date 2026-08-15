@@ -39,9 +39,9 @@ const problemsActivityWorkbench = "apps/problems/src/components/vela/workbench.t
 const problemsAuthLibrary = "apps/problems/src/lib/auth.ts";
 const problemsIdentityProxy = "apps/problems/src/proxy.ts";
 const problemsGithubApp = "apps/problems/src/lib/github-app.ts";
+const problemsGithubCompletion = "apps/problems/src/lib/github-installation.ts";
 const problemsWorkosIdentities = "apps/problems/src/lib/workos-identities.ts";
 const problemsGithubInstallRoute = "apps/problems/src/app/api/github/install/route.ts";
-const problemsGithubSetupRoute = "apps/problems/src/app/account/connections/complete/route.ts";
 const problemsGithubWebhookRoute = "apps/problems/src/app/api/github/webhooks/route.ts";
 const problemsImportAction = "apps/problems/src/app/import/actions.ts";
 const problemsConnectionsPage = "apps/problems/src/app/account/connections/page.tsx";
@@ -58,9 +58,9 @@ export const PROBLEMS_IDENTITY_FILES = [
   problemsAuthLibrary,
   problemsIdentityProxy,
   problemsGithubApp,
+  problemsGithubCompletion,
   problemsWorkosIdentities,
   problemsGithubInstallRoute,
-  problemsGithubSetupRoute,
   problemsGithubWebhookRoute,
 ];
 
@@ -73,12 +73,11 @@ const PROBLEMS_IDENTITY_ROUTES = new Set([
   problemsAuthCallbackRoute,
   problemsSignInRoute,
   problemsGithubInstallRoute,
-  problemsGithubSetupRoute,
   problemsGithubWebhookRoute,
 ]);
 
 const PROBLEMS_PROVIDER_ROUTES = new Set([
-  problemsGithubInstallRoute, problemsGithubSetupRoute, problemsGithubWebhookRoute,
+  problemsGithubInstallRoute, problemsGithubWebhookRoute,
 ]);
 
 const PROBLEMS_ACTIVITY_FILES = new Set([
@@ -90,7 +89,7 @@ const PROBLEMS_ACTIVITY_FILES = new Set([
   problemsImportPage,
   problemsCodebasePage,
   problemsHostedAccount,
-  problemsGithubSetupRoute,
+  problemsGithubCompletion,
   problemsGithubWebhookRoute,
 ]);
 

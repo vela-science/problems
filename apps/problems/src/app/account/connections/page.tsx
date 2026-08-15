@@ -10,16 +10,26 @@ import { PageIntro } from "@/components/vela/page-intro";
 import { currentActivityAccount } from "@/lib/hosted-account";
 import { githubIdentityForUser } from "@/lib/workos-identities";
 import { githubAppConfiguration } from "@/lib/github-app";
+import { completeGitHubInstallation } from "@/lib/github-installation";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Connections", robots: { index: false, follow: false } };
 
-export default async function ConnectionsPage() {
+export default async function ConnectionsPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const account = await currentActivityAccount();
   if (!account) redirect("/sign-in?returnTo=/account/connections");
-  const [identity, connections] = await Promise.all([
-    githubIdentityForUser(account.hosted.id), listGitHubConnections(account.activity.id),
-  ]);
+  const identity = await githubIdentityForUser(account.hosted.id);
+  const parameters = await searchParams;
+  if (typeof parameters.installation_id === "string") {
+    if (!identity) redirect("/account/connections?github_identity=required");
+    await completeGitHubInstallation({
+      accountId: account.activity.id,
+      workosIdentityId: identity.idpId,
+      installationId: Number(parameters.installation_id),
+    });
+    redirect("/account/connections?github_install=connected");
+  }
+  const connections = await listGitHubConnections(account.activity.id);
   const app = githubAppConfiguration();
   return <PageShell archetype="default" layout="reading" className="flex flex-col gap-6">
     <PageIntro title="Connections" description="Identity and read access for connected scientific codebases. None of these grant Vela authority."
