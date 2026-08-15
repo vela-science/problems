@@ -382,7 +382,7 @@ const catalogRows = catalogResults.at(-1);
 const catalog = catalogRows?.[0];
 if (!catalog) throw new Error("activity catalog probe returned no row");
 if (
-  Number(catalog.table_count) !== 13
+  Number(catalog.table_count) !== 17
   || Number(catalog.authority_secret_columns) !== 0
   || Number(catalog.retired_columns) !== 0
   || Number(catalog.unexpected_byte_columns) !== 0
