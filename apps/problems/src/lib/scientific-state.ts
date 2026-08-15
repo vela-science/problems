@@ -14,6 +14,7 @@ import {
   problemCatalogForRepository,
   problemDetail,
   problemPublicRouteForLegacyPath,
+  canonicalProblemPath,
   reviewedProblemSourceCoverageRead,
   repositoryBySlug,
   sourceCorpusMapRead,
@@ -29,7 +30,9 @@ export type ProblemDiscovery = {
   repository: string;
   collection: { key: string; name: string } | null;
   problem: string;
-  canonicalPath: string;
+  /* Null only for an address this release cannot compute; callers link
+     conditionally rather than emitting a path that resolves to nothing. */
+  canonicalPath: string | null;
   publicEntityId?: string;
   domain: { key: string; name: string } | null;
   /** Explicit taxonomy only. Erdős declares no Field, so this is null. */
@@ -74,14 +77,18 @@ export function problemSourceObservationCoverage(
   }
   const byRoute = new Map<string, ProblemSourceObservationCoverage>();
   for (const problem of catalog) {
+    /* Keyed by the address a reader uses. A Problem this release cannot
+       address has no key and no row to key. */
+    const route = problem.canonicalPath;
+    if (!route) continue;
     const coverage = bySource.get(problem.record.source_id);
     if (!coverage) {
-      throw new Error(`Problem ${problem.canonicalPath} primary Source ${problem.record.source_id} is absent from the complete source inventory`);
+      throw new Error(`Problem ${route} primary Source ${problem.record.source_id} is absent from the complete source inventory`);
     }
-    if (byRoute.has(problem.canonicalPath)) {
-      throw new Error(`Problem source observation coverage repeats public route ${problem.canonicalPath}`);
+    if (byRoute.has(route)) {
+      throw new Error(`Problem source observation coverage repeats public route ${route}`);
     }
-    byRoute.set(problem.canonicalPath, coverage);
+    byRoute.set(route, coverage);
   }
   return byRoute;
 }
@@ -310,7 +317,7 @@ async function discoveredProblemsAtRoot(root: string): Promise<ProblemDiscovery[
         repository,
         collection: profile.collection,
         problem: problem.problem,
-        canonicalPath: `/p/${repository}/${problem.problem}`,
+        canonicalPath: canonicalProblemPath(repository, problem.problem),
         domain: profile.area,
         field: profile.field,
         topics,
@@ -327,11 +334,21 @@ async function discoveredProblemsAtRoot(root: string): Promise<ProblemDiscovery[
     if (routes.has(route)) throw new Error(`Problem discovery route ${route} is ambiguous across exact source rows`);
     routes.add(route);
   }
+  /* The address every Problem row links to.
+   *
+   * This overlaid a canonical path only where the route table held a reviewed
+   * entity — six of 1,217 — and left the rest on the retired
+   * `/p/{repository}/{number}` form. So the release published a sitemap of
+   * canonical addresses while the directory, Home and the Hub map all emitted
+   * the retired one, and a reader copying a row's URL copied a redirect. The
+   * path is computed for every Problem now; the reviewed entity is still
+   * carried where one exists, because it is what the record page checks
+   * against. */
   return catalog.map((problem) => {
     const route = problemPublicRouteForLegacyPath(`/p/${problem.repository}/${problem.problem}`);
     return {
       ...problem,
-      ...(route ? { canonicalPath: route.canonical_path, publicEntityId: route.entity_id } : {}),
+      ...(route ? { publicEntityId: route.entity_id } : {}),
     };
   }).sort((left, right) => left.repository.localeCompare(right.repository)
     || left.problem.localeCompare(right.problem, undefined, { numeric: true }));

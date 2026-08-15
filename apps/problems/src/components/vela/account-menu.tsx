@@ -79,7 +79,11 @@ export function AccountMenu({ enabled }: { enabled: boolean }) {
         )}
       >
         <HugeiconsIcon icon={LogIn} aria-hidden className="size-4" />
-        <span className="hidden sm:inline">Sign in</span>
+        {/* Below `sm` the label is hidden, which left an icon-only link with
+            no accessible name on every page in the application. `sr-only`
+            keeps the name in the accessibility tree at every width instead of
+            removing it from the document. */}
+        <span className="sr-only sm:not-sr-only sm:inline">Sign in</span>
       </Link>
     );
   }

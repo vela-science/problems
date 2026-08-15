@@ -18,6 +18,7 @@ const problem = {
   domain: { key: "mathematics", name: "Mathematics" },
   hubs: [{ key: "erdos-problems", name: "Erdős Problems" }],
   theme: "Iterated logarithms",
+  canonicalPath: "/problems/erdos-problems/321",
   record: {
     problem: "321",
     declared_status: "solved",
@@ -117,7 +118,7 @@ describe("product compositions", () => {
     render(<HubMembershipMap name="Erdős Problems" problems={[problem]} />);
     const links = screen.getAllByRole("link", { name: /321/u });
     expect(links).toHaveLength(2);
-    for (const link of links) expect(link).toHaveAttribute("href", "/p/math/321");
+    for (const link of links) expect(link).toHaveAttribute("href", "/problems/erdos-problems/321");
     expect(screen.getByText("coordination only")).toBeVisible();
   });
 

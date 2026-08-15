@@ -18,6 +18,19 @@ export function localStandingLabel(standings: string[]): string {
   return `${standings.length === 1 ? "Claim" : "Claims"} ${values[0]!.replaceAll("_", " ")} locally`;
 }
 
+/* What the Standing actually ranges over.
+ *
+ * An earlier version of this said a Claim never binds the Problem's own
+ * canonical occurrence and always ranges over reviewed references. That was
+ * false: `reviewedProblemBindingOccurrences` returns the canonical occurrence
+ * first, with `relation_kind: null`, and for a Problem with no reviewed entity
+ * it returns nothing else — so on Erdős 887, one of the two Problems this
+ * Repository has admitted a Claim about, the page said "not to this Problem's
+ * own statement" about a binding that was exactly that. The sentence existed
+ * to stop an overstatement and was making one in the other direction.
+ *
+ * A null relation is the Problem's own statement. Everything else is a
+ * reference to it from another Source, and the two are named apart. */
 const relationNoun: Record<string, [string, string]> = {
   formal_statement_reference: ["formal statement reference", "formal statement references"],
   proof_manifest_reference: ["proof manifest reference", "proof manifest references"],
@@ -25,27 +38,22 @@ const relationNoun: Record<string, [string, string]> = {
   attributed_classification_reference: ["attributed classification record", "attributed classification records"],
 };
 
-/* What the Standing actually ranges over. A Claim binds reviewed source
-   occurrences and never the Problem's own canonical occurrence — the resolver
-   holds that one separately, and `problemClaimsFromBindingRows` builds its
-   lookup from reviewed occurrences alone. So no Claim on this surface has ever
-   ruled on the statement the Problem's own Source publishes, and saying so is
-   the difference between reporting a bounded Lean identity and announcing a
-   solved conjecture. */
 export function standingScopeSentence(state: State): string | null {
   const bindings = state.claims.flatMap((claim) => claim.source_bindings ?? []);
-  if (!state.claims.length) return null;
-  if (!bindings.length) return "No reviewed source occurrence is bound, so this Standing covers no statement on this page.";
+  if (!state.claims.length || !bindings.length) return null;
+  const canonical = bindings.filter(({ relation_kind }) => !relation_kind).length;
   const counts = new Map<string, number>();
   for (const binding of bindings) {
-    const key = binding.relation_kind ?? "reviewed source occurrence";
-    counts.set(key, (counts.get(key) ?? 0) + 1);
+    if (!binding.relation_kind) continue;
+    counts.set(binding.relation_kind, (counts.get(binding.relation_kind) ?? 0) + 1);
   }
-  const parts = [...counts].map(([kind, count]) => {
+  const references = [...counts].map(([kind, count]) => {
     const nouns = relationNoun[kind] ?? ["reviewed source occurrence", "reviewed source occurrences"];
     return `${count} ${count === 1 ? nouns[0] : nouns[1]}`;
   });
-  return `Scoped to ${parts.join(" and ")}, not to this Problem's own statement.`;
+  if (canonical && !references.length) return "Scoped to this Problem's own retained statement.";
+  if (!canonical) return `Scoped to ${references.join(" and ")}, not to this Problem's own statement.`;
+  return `Scoped to this Problem's own retained statement and ${references.join(" and ")}.`;
 }
 
 export function ProblemFacts({ state, className }: { state: State; className?: string }) {

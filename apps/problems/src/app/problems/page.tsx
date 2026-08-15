@@ -70,7 +70,7 @@ function ProblemRows({ problems }: { problems: ProblemDiscovery[] }) {
       <ItemMedia className="w-10 self-start pt-0.5 sm:w-20"><span className="font-mono text-title tabular-nums text-muted-foreground">{problem.problem}</span></ItemMedia>
       <ItemContent className="gap-3">
         <div className="flex flex-wrap items-center gap-2"><span className="text-eyebrow uppercase text-muted-foreground">{problem.field?.name ?? (problem.topics.map(({ name }) => name).join(" · ") || "Unclassified topic")}</span><Badge variant="secondary">{problem.collection?.name ?? "Unclassified collection"}</Badge></div>
-        <ItemTitle className="line-clamp-none max-w-[76ch] text-subtitle leading-snug"><Link href={problem.canonicalPath} className="underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4"><ScientificText text={decodeHtmlEntities(problem.record.statement || `Problem ${problem.problem}`)} /></Link></ItemTitle>
+        <ItemTitle className="line-clamp-none max-w-[76ch] text-subtitle leading-snug"><Link href={problem.canonicalPath ?? "/problems"} className="underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4"><ScientificText text={decodeHtmlEntities(problem.record.statement || `Problem ${problem.problem}`)} /></Link></ItemTitle>
         <ItemDescription className="line-clamp-none">{problem.theme} · {problem.record.formalized ? "formalized" : "not formalized"} · {problem.record.source_count} {problem.record.source_count === 1 ? "source" : "sources"}</ItemDescription>
         <ProblemDiscoveryFacts problem={problem} className="mt-1" />
       </ItemContent>
@@ -191,7 +191,7 @@ export default async function ProblemsPage({ searchParams }: { searchParams: Pro
     if (repository !== "all" && problem.repository !== repository) return false;
     if (formalized === "yes" && !problem.record.formalized) return false;
     if (formalized === "no" && problem.record.formalized) return false;
-    if (coverage !== "all" && sourceCoverageByRoute?.get(problem.canonicalPath) !== coverage) return false;
+    if (coverage !== "all" && sourceCoverageByRoute?.get(problem.canonicalPath ?? "") !== coverage) return false;
     if (exactId && ![
       problem.problem,
       problem.record.node_id,

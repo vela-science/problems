@@ -9,6 +9,7 @@ import { StateGlyph } from "@vela/ui/vela/state-glyph";
 import { ScientificText } from "@vela/ui/vela/scientific-text";
 import { RootFact } from "@/components/vela/root-fact";
 import { RecordId } from "@/components/vela/record-id";
+import { AssertionText } from "@/components/vela/assertion-text";
 import { ProblemFacts } from "@/components/vela/problem-facts";
 import { ProblemSourceFacts } from "@/components/vela/problem-source-facts";
 import { ProblemProvenance } from "@/components/vela/problem-provenance";
@@ -80,7 +81,7 @@ export function ProblemState({ state, basePath }: { state: State; basePath?: str
       {state.claims.length ? <ItemGroup className="mt-5 gap-1">{state.claims.map((claim) => <Item key={claim.id} className="items-start rounded-lg border-0 px-3 py-5 hover:bg-muted/30">
         <ItemMedia className="pt-1"><StateGlyph standing={claim.standing} verification="not_attempted" /></ItemMedia>
         <ItemContent className="gap-2">
-          <ItemTitle className="line-clamp-none text-body font-normal">{claim.assertion}</ItemTitle>
+          <ItemTitle className="line-clamp-none text-body font-normal [overflow-wrap:anywhere]"><AssertionText text={claim.assertion} /></ItemTitle>
           <ItemDescription className="line-clamp-none flex flex-wrap items-center gap-2"><Badge variant={claim.standing === "accepted" ? "default" : "secondary"}>{claim.standing.replaceAll("_", " ")}</Badge><span>Repository-local Standing</span>{claim.id === state.currentClaimId ? <span>· current Claim</span> : null}</ItemDescription>
           {claim.source_bindings?.length ? <div className="mt-1 text-meta text-muted-foreground">
             <p>{claim.source_bindings.length} exact reviewed source {claim.source_bindings.length === 1 ? "occurrence" : "occurrences"}</p>

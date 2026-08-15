@@ -51,7 +51,7 @@ export default async function HomePage() {
         </div>
         {lead ? <article className="mt-6">
           <div className="flex flex-wrap items-center gap-2"><Badge variant="secondary">{lead.feature.field?.name ?? lead.feature.topics[0]?.name ?? "Unclassified Topic"}</Badge><span className="text-meta text-muted-foreground">{lead.feature.collection?.name ?? "Unclassified collection"}</span></div>
-          <Link href={lead.feature.canonicalPath} className="group mt-4 grid gap-5 focus-visible:outline-2 focus-visible:outline-offset-4 sm:grid-cols-[5rem_minmax(0,1fr)_auto]">
+          <Link href={lead.feature.canonicalPath ?? "/problems"} className="group mt-4 grid gap-5 focus-visible:outline-2 focus-visible:outline-offset-4 sm:grid-cols-[5rem_minmax(0,1fr)_auto]">
             <div className="flex items-start gap-3"><StateGlyph className="mt-1" standing={lead.state.claims[0]?.standing ?? "unassessed"} verification="not_attempted" /><span className="font-mono text-title">{lead.feature.problem}</span></div>
             <div><p className="text-eyebrow uppercase text-muted-foreground">{lead.feature.theme}</p><h3 className="mt-2 max-w-[70ch] text-title leading-snug"><ScientificText text={decodeHtmlEntities(lead.state.problem.statement?.trim() || lead.state.source.summary?.trim() || lead.state.source.title)} /></h3></div>
             <HugeiconsIcon icon={ArrowRight} aria-hidden className="mt-1 size-5 transition-transform duration-200 group-hover:translate-x-1" />
@@ -60,7 +60,7 @@ export default async function HomePage() {
         </article> : null}
 
         <ItemGroup className="mt-6 gap-0 divide-y">
-          {states.filter((entry) => entry !== lead).slice(0, 4).map(({ feature, state }) => <Item key={`${feature.repository}/${feature.problem}`} render={<Link href={feature.canonicalPath} />} className="group rounded-none border-0 px-0 py-5">
+          {states.filter((entry) => entry !== lead).slice(0, 4).map(({ feature, state }) => <Item key={`${feature.repository}/${feature.problem}`} render={<Link href={feature.canonicalPath ?? "/problems"} />} className="group rounded-none border-0 px-0 py-5">
             <ItemMedia className="w-20 self-start"><StateGlyph standing={state.claims[0]?.standing ?? "unassessed"} verification="not_attempted" /><span className="font-mono text-label">{feature.problem}</span></ItemMedia>
             <ItemContent><ItemTitle className="line-clamp-none text-label"><ScientificText text={decodeHtmlEntities(state.problem.statement?.trim() || state.source.summary?.trim() || state.source.title)} /></ItemTitle><ItemDescription className="line-clamp-none">{feature.field?.name ?? feature.topics[0]?.name ?? "Unclassified Topic"} · {state.problem.source_count} exact {state.problem.source_count === 1 ? "source" : "sources"}</ItemDescription></ItemContent>
             <ItemActions><HugeiconsIcon icon={ArrowRight} aria-hidden className="size-4 transition-transform duration-200 group-hover:translate-x-1" /></ItemActions>

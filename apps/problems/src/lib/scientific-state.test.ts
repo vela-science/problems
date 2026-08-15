@@ -39,6 +39,12 @@ vi.mock("@vela/projection-data", () => ({
   allRepositories: reads.repositories,
   formalConjecturesAuditRecordsForProblem: reads.sourceAudits,
   problemPublicRouteForLegacyPath: reads.publicRoute,
+  /* Every Problem is addressed now, not only the reviewed ones. */
+  canonicalProblemPath: (repository: string, problem: string) => (
+    repository === "math" && /^[1-9][0-9]*$/u.test(problem)
+      ? `/problems/erdos-problems/${problem}`
+      : null
+  ),
 }));
 
 import { bindReviewedProblemSourceCoverage, discoveredProblems, observedSourceCorpusMap, problemDiscoveryCollections, problemDiscoveryHubs, problemDiscoveryScopeQuery, problemSourceObservationCoverage, reviewedProblemSourceCoverage, scientificProblemState } from "./scientific-state";
@@ -187,7 +193,7 @@ describe("Problems scientific state", () => {
       hubs: [{ key: "erdos-problems", name: "Erdős Problems" }],
       record: { declared_status: "solved", local_standing: "accepted" },
     });
-    expect(problems.find(({ problem }) => problem === "900")).toMatchObject({ canonicalPath: "/p/math/900", field: null, topics: [{ key: "geometry", name: "Geometry" }], record: { local_standing: null } });
+    expect(problems.find(({ problem }) => problem === "900")).toMatchObject({ canonicalPath: "/problems/erdos-problems/900", field: null, topics: [{ key: "geometry", name: "Geometry" }], record: { local_standing: null } });
   });
 
   it("derives published collections with explicit Fields and flat Topics without promoting tag order", () => {
@@ -280,7 +286,7 @@ describe("Problems scientific state", () => {
     const corpus = await observedSourceCorpusMap(Promise.resolve(catalog));
     expect(problemSourceObservationCoverage(corpus, catalog)).toEqual(new Map([
       ["/problems/erdos-problems/321", "complete"],
-      ["/p/math/900", "complete"],
+      ["/problems/erdos-problems/900", "complete"],
     ]));
 
     expect(() => problemSourceObservationCoverage({ ...corpus, release_root: root("e") } as typeof corpus, catalog)).toThrow(/do not share one exact release/u);
