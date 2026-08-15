@@ -43,3 +43,35 @@ describe("reviewed public Problem routes", () => {
     expect(() => parseProblemPublicRoutes(problemPublicRoutes, driftedResolution, problemResolutionConfigRoot)).toThrow(/drifts/u);
   });
 });
+
+/* The invariant any canonical-route migration has to preserve.
+ *
+ * A reader's address for a Problem is its canonical path, and the legacy `/p/`
+ * form is the address that already exists in links and bookmarks. Those two
+ * must name the same Problem in both directions, whatever the route table
+ * grows into: today six routes are entity-backed, and the open question is
+ * whether the other 1,211 source-native Problems get canonical addresses by
+ * being declared reviewed groupings (they have not been reviewed) or by
+ * resolving through their canonical occurrence instead.
+ *
+ * Either way this has to keep holding, and it is what makes the eventual
+ * `/p/…` redirect provably lossless rather than spot-checked. */
+describe("canonical and legacy Problem addresses", () => {
+  it("round-trip to each other for every published route", () => {
+    for (const route of problemPublicRoutes.routes) {
+      expect(problemPublicRouteForLegacyPath(route.current_path)?.canonical_path)
+        .toBe(route.canonical_path);
+      expect(problemPublicRouteForCanonicalPath(route.canonical_path)?.current_path)
+        .toBe(route.current_path);
+      for (const legacy of route.legacy_paths) {
+        expect(problemPublicRouteForLegacyPath(legacy)?.canonical_path).toBe(route.canonical_path);
+      }
+    }
+  });
+
+  it("resolves no address it does not publish", () => {
+    expect(problemPublicRouteForCanonicalPath("/problems/erdos-problems/999999")).toBeNull();
+    expect(problemPublicRouteForLegacyPath("/p/math/999999")).toBeNull();
+    expect(problemPublicRouteForCanonicalPath("/problems/not-a-namespace/1")).toBeNull();
+  });
+});
