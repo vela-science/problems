@@ -7,7 +7,7 @@ export type GitHubInstallState = {
   expiresAt: number;
 };
 
-export const GITHUB_INSTALL_CALLBACK_PATH = "/account/connections/github";
+export const GITHUB_INSTALL_CALLBACK_PATH = "/account/connections/complete";
 
 function key(environment: Readonly<Record<string, string | undefined>>): string {
   const value = environment.WORKOS_COOKIE_PASSWORD;
