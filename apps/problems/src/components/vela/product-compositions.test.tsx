@@ -1,7 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { ProblemDiscovery } from "@/lib/scientific-state";
-import { ApproachLineage } from "./approach-lineage";
 import { HubMembershipMap } from "./hub-membership-map";
 import { ProblemDiscoveryFacts, ProblemFacts } from "./problem-facts";
 import { ScientificChangeFeed, type ScientificChange } from "./scientific-change-feed";
@@ -122,13 +121,4 @@ describe("product compositions", () => {
     expect(screen.getByText("coordination only")).toBeVisible();
   });
 
-  it("labels activity forks as Approaches without Claim or Standing language", () => {
-    const { container } = render(<ApproachLineage approaches={[
-      { id: "root", title: "Finite reduction", summary: "Bound the obstruction" },
-      { id: "fork", parentApproachId: "root", title: "Computational fork", summary: "Search a bounded range" },
-    ]} />);
-    expect(screen.getByText("root approach")).toBeVisible();
-    expect(screen.getByText("forked approach")).toBeVisible();
-    expect(container).not.toHaveTextContent(/Claim|Standing|Decision|Verification/u);
-  });
 });

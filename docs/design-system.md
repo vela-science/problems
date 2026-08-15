@@ -106,7 +106,6 @@ contract. It does not mean the original block was installed.
 | --- | --- | --- |
 | `stats-connected-kpi-bar-minimal` | Adapt and catalog | `NetworkFacts` keeps the connected facts strip and removes animation, trends, health colour, and KPI language. |
 | `dashboard-activity-feed`, `timeline-filterable`, `timeline-commit-log` | Adapt locally | `ScientificChangeFeed` uses the rail, type filters, and commit identity while separating scientific transitions from ordinary commits. |
-| `timeline-branching` | Adapt locally | `ApproachLineage` applies the fork rhythm only to activity-plane Approaches; it never draws Claim lineage or implies Standing. |
 | `features-radial-hub-satellite-graph` | Adapt locally | `HubMembershipMap` binds every edge to projected membership, removes orbit choreography and fake integrations, and supplies a linear mobile list. |
 | `search-global`, `command-menu-workspace` | Adapt existing search only | Keep the grouped keyboard vocabulary, `Kbd`, and empty-result state; reuse Vela’s FlexSearch/Command owner rather than add static results or a second command primitive. |
 | `empty-state-getting-started` | Adapt selectively | Use its focused heading/body/action hierarchy for authentic empty Work states; reject progress theatre where no rooted completion model exists. |

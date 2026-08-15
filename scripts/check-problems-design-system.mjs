@@ -147,6 +147,10 @@ const forbiddenProblemsFiles = [
   "components/vela/object-header.tsx", "components/vela/provenance-trail.tsx", "components/vela/review-ledger.tsx",
   "components/vela/root-disclosure.tsx", "components/vela/status-distribution.tsx", "components/vela/summary-card.tsx",
   "components/vela/work-ledger.tsx", "components/ui/card.tsx", "components/ui/combobox.tsx",
+  /* Removed with zero importers. `approach-lineage.tsx` drew a fork rhythm no
+     surface asked for and `repository-about.tsx` a GitHub-style About rail;
+     both would come back as plausible-looking dead code. */
+  "components/vela/approach-lineage.tsx", "components/vela/repository-about.tsx",
 ];
 for (const file of forbiddenProblemsFiles) if (existsSync(join(problems, "src", file))) failures.push(`forbidden legacy presentation component exists: ${file}`);
 for (const file of ["status-badge.tsx", "exact-value.tsx", "copy-button.tsx", "scientific-text.tsx"]) {
