@@ -28,7 +28,11 @@ import {
 } from "../src/source-adapters/contracts";
 import { mathSourceRegistry } from "../src/math-sources";
 import { canonicalJson, sha256 } from "../src/canonical";
-import { problemResolutionConfig, problemResolutionConfigRoot } from "../src/problem-resolution";
+import {
+  problemResolutionConfig,
+  problemResolutionConfigRoot,
+  problemResolutionEntityRoot,
+} from "../src/problem-resolution";
 
 const root = (digit: string) => `sha256:${digit.repeat(64)}`;
 const fixtureRoot = mkdtempSync(join(tmpdir(), "vela-math-source-projection-"));
@@ -330,6 +334,8 @@ function fixtures() {
   ];
 }
 
+const REVIEWED_321_RESOLVER_ROOT = "sha256:a9d6787719c5c8069a9e14ade0f5a62975410272e6cd1583865b282d1d8669dd";
+
 describe("Math source projection", () => {
   test("resolves an accepted correction only through its current rooted correction packet", () => {
     const corrected = claim({
@@ -350,7 +356,11 @@ describe("Math source projection", () => {
       problem: "erdos:321",
       occurrence_resolution: {
         entity_id: entity.entity_id,
-        resolver_root: problemResolutionConfigRoot,
+        /* The literal root this packet's reviewer saw, not a recomputation.
+           Spelling `problemResolutionConfigRoot` here made the test agree with
+           the file rather than with the review, so it would have gone green on
+           the day a new entity silently invalidated the real packet. */
+        resolver_root: REVIEWED_321_RESOLVER_ROOT,
         canonical: entity.canonical_occurrence,
         related_occurrences: [formal, theta].map(({ source_id, native_id, content_root }) => ({
           source_id,
@@ -384,6 +394,55 @@ describe("Math source projection", () => {
     })).toThrow(/collapses unresolved semantics/u);
     expect(() => reviewedClaimSubjectOccurrences({ ...corrected, standing: "unassessed" }, packet))
       .toThrow(/only an accepted corrected Claim/u);
+  });
+
+  /* A pin says "these are the occurrences I reviewed". Rooting it in the whole
+     resolution file made it say "and nobody has reviewed anything since",
+     which no reviewer claimed and which a grouping for an unrelated Problem
+     falsifies. The general packet pins its own entity, so the file can grow. */
+  test("pins a general occurrence packet to its own entity, not to the whole resolution file", () => {
+    const corrected = claim({
+      digit: "5",
+      title: "Authenticated Submission",
+      assertion: "A bounded correction pinned to one reviewed entity.",
+    });
+    corrected.record.relations = [{ kind: "corrects", target_claim_id: `vcl_${"3".repeat(64)}` }];
+    const entity = problemResolutionConfig.entities.find(({ problem_number }) => problem_number === 321)!;
+    const theta = entity.reviewed_occurrences.find(({ native_id }) => native_id.endsWith(".variants.isTheta"))!;
+    const packet = {
+      schema: "vela.math.claim-occurrence-binding.v1",
+      authority_effect: "none",
+      problem: "erdos:321",
+      occurrence_resolution: {
+        entity_id: entity.entity_id,
+        resolver_root: problemResolutionEntityRoot(entity),
+        canonical: entity.canonical_occurrence,
+        related_occurrences: [{
+          source_id: theta.source_id,
+          native_id: theta.native_id,
+          content_root: theta.content_root,
+          relation: "related",
+        }],
+        semantic_equivalence: "unresolved",
+        scope: "navigation grouping only",
+      },
+      successor: { assertion: corrected.assertion, relation: "corrects" },
+      limitations: ["Occurrence grouping does not establish statement identity or semantic equivalence."],
+    };
+
+    expect(reviewedClaimSubjectOccurrences(corrected, packet)).toEqual([theta]);
+    expect(problemResolutionEntityRoot(entity)).not.toBe(problemResolutionConfigRoot);
+    expect(() => reviewedClaimSubjectOccurrences(corrected, {
+      ...packet,
+      occurrence_resolution: { ...packet.occurrence_resolution, resolver_root: problemResolutionConfigRoot },
+    })).toThrow(/resolver root drift/u);
+
+    /* One Claim selects one occurrence even where the reviewed entity holds
+       several. Erdős 94's accepted Claim proves a bounded counting identity
+       and its Decision says so; binding it to every occurrence the entity
+       groups would publish it against the cubic conjecture too. */
+    expect(reviewedClaimSubjectOccurrences(corrected, packet)).toHaveLength(1);
+    expect(entity.reviewed_occurrences.length).toBeGreaterThan(1);
   });
 
   test("loads an occurrence packet only from exact retained Repository bytes", () => {

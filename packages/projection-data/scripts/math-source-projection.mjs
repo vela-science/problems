@@ -15,7 +15,7 @@ import { canonicalJson, sha256 } from "../src/canonical.ts";
 import {
   occurrenceKey,
   problemResolutionConfig,
-  problemResolutionConfigRoot,
+  problemResolutionEntityRoot,
 } from "../src/problem-resolution.ts";
 import { repositoryRegistry } from "../src/registry.ts";
 import { materializeVerifiedSourceAdapterBundle } from "../src/source-adapters/projection.ts";
@@ -73,14 +73,37 @@ function retainedRepositoryFile(directory, path) {
   return lexical;
 }
 
+/* The two source-owned packet shapes this projector interprets.
+ *
+ * The first is the original Erdős 321 correction chain, whose reviewer pinned
+ * the whole resolution file. That root is retained here as the literal value
+ * the packet was reviewed against, because it is a historical fact about one
+ * review and not a live recomputation: the file has since gained entities the
+ * 321 reviewer never saw, and holding a signed packet to their existence would
+ * invalidate a binding nobody found fault with. Its Claim quotes this root in
+ * its own assertion text, so re-pinning it would mean re-signing science to
+ * accommodate a hashing choice.
+ *
+ * The second is the general shape, which pins the one entity it reviewed. */
+const OCCURRENCE_PACKET_SCHEMAS = new Set([
+  "vela.math.current-erdos-321-correction-chain.v1",
+  "vela.math.claim-occurrence-binding.v1",
+]);
+const REVIEWED_WHOLE_CONFIG_ROOTS = new Map([
+  [
+    "vela.math.current-erdos-321-correction-chain.v1",
+    "sha256:a9d6787719c5c8069a9e14ade0f5a62975410272e6cd1583865b282d1d8669dd",
+  ],
+]);
+
 /**
- * Interprets the current, source-owned Math correction packet attached to an
- * accepted correction. It does not infer subjects from assertion text or
- * Problem numbers. The packet must resolve through the exact reviewed Web
- * resolver and retain the unresolved-equivalence boundary.
+ * Interprets a source-owned Math occurrence packet attached to an accepted
+ * correction. It does not infer subjects from assertion text or Problem
+ * numbers. The packet must resolve through the exact reviewed Web resolver
+ * entity and retain the unresolved-equivalence boundary.
  */
 export function reviewedClaimSubjectOccurrences(claim, packet) {
-  assert(packet?.schema === "vela.math.current-erdos-321-correction-chain.v1", `${claim.claim_id}: unsupported current Claim subject packet`);
+  assert(OCCURRENCE_PACKET_SCHEMAS.has(packet?.schema), `${claim.claim_id}: unsupported current Claim subject packet`);
   assert(packet.authority_effect === "none", `${claim.claim_id}: Claim occurrence packet has authority effect`);
   assert(claim.standing === "accepted", `${claim.claim_id}: only an accepted corrected Claim may bind a canonical Problem`);
   const correctionRelations = (claim.record?.relations ?? []).filter(({ kind }) => kind === "corrects" || kind === "supersedes");
@@ -91,7 +114,8 @@ export function reviewedClaimSubjectOccurrences(claim, packet) {
   const entity = problemResolutionConfig.entities.find(({ entity_id }) => entity_id === resolution?.entity_id);
   assert(entity, `${claim.claim_id}: Claim occurrence packet names no reviewed resolver entity`);
   assert(packet.problem === `erdos:${entity.problem_number}`, `${claim.claim_id}: Claim occurrence packet Problem drift`);
-  assert(resolution.resolver_root === problemResolutionConfigRoot, `${claim.claim_id}: Claim occurrence packet resolver root drift`);
+  const reviewedRoot = REVIEWED_WHOLE_CONFIG_ROOTS.get(packet.schema) ?? problemResolutionEntityRoot(entity);
+  assert(resolution.resolver_root === reviewedRoot, `${claim.claim_id}: Claim occurrence packet resolver root drift`);
   assert(
     sourceNativeKey(resolution.canonical) === sourceNativeKey(entity.canonical_occurrence)
       && resolution.canonical?.content_root === entity.canonical_occurrence.content_root,
@@ -126,7 +150,7 @@ export function claimOccurrencePacket(material, claim) {
     } catch {
       continue;
     }
-    if (candidate?.schema !== "vela.math.current-erdos-321-correction-chain.v1") continue;
+    if (!OCCURRENCE_PACKET_SCHEMAS.has(candidate?.schema)) continue;
     const corrects = (claim.record?.relations ?? []).some(({ kind }) => kind === "corrects");
     if (!corrects) continue;
     assert(candidate.successor?.assertion === claim.assertion, `${claim.claim_id}: current correction packet successor drift`);

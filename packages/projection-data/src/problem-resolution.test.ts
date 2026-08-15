@@ -52,8 +52,8 @@ const vibe321 = () => record({ source_id: "source:vibemathed", native_id: "vibem
 describe("reviewed Problem source resolver", () => {
   test("roots the config and distinguishes occurrences, statements, relations and candidates", () => {
     expect(problemResolutionConfigRoot).toMatch(/^sha256:[0-9a-f]{64}$/u);
-    expect(problemResolutionConfig.entities).toHaveLength(5);
-    expect(problemResolutionConfig.entities.reduce((sum, entity) => sum + entity.reviewed_occurrences.length + 1, 0)).toBe(32);
+    expect(problemResolutionConfig.entities).toHaveLength(6);
+    expect(problemResolutionConfig.entities.reduce((sum, entity) => sum + entity.reviewed_occurrences.length + 1, 0)).toBe(37);
     const extraFormal = record({ source_id: "source:formal-conjectures", native_id: "Erdos321.unreviewed_variant", native_kind: "formal_conjecture", summary: "Unreviewed variant", metadata: {} });
     const reviewed = problemResolutionConfig.entities.find(({ problem_number }) => problem_number === 321)!.reviewed_occurrences.map((occurrence) => (
       occurrence.native_id === "Erdos321.erdos_321" ? formal321()

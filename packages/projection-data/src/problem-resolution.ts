@@ -129,6 +129,24 @@ export function parseProblemResolutionConfig(input: unknown): ProblemResolutionC
 export const problemResolutionConfig = parseProblemResolutionConfig(resolutionJson);
 export const problemResolutionConfigRoot: HashRoot = sha256(canonicalJson(problemResolutionConfig));
 
+/* The root of one reviewed entity, which is what a Claim's occurrence packet
+ * pins.
+ *
+ * The packet used to pin `problemResolutionConfigRoot`, the root of the whole
+ * file. That made every entity a hash preimage of every other: adding a
+ * reviewed grouping for one Problem changed the root, and every previously
+ * signed packet stopped validating — including one whose Claim quotes the root
+ * in its assertion text, so the coupling reached into signed bytes. A pin is
+ * meant to say "these are the occurrences I reviewed"; the file's root says
+ * "nobody has reviewed anything since", which is a different and much stronger
+ * claim than any reviewer made.
+ *
+ * The entity root says only what the reviewer saw. Adding a grouping for
+ * another Problem now leaves existing bindings exactly as valid as they were. */
+export function problemResolutionEntityRoot(entity: ProblemResolutionEntity): HashRoot {
+  return sha256(canonicalJson(entity));
+}
+
 export function occurrenceKey(input: { source_id: string; native_id: string; native_kind: string }): string {
   return `${input.source_id}\u0000${input.native_kind}\u0000${input.native_id}`;
 }
