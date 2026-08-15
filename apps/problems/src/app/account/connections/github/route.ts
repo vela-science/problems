@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { claimGitHubInstallation, syncGitHubRepositories } from "@vela/activity-data";
 import { currentActivityAccount } from "@/lib/hosted-account";
 import { githubIdentityForUser } from "@/lib/workos-identities";
-import { readGitHubInstallState } from "@/lib/github-install-state";
+import { GITHUB_INSTALL_CALLBACK_PATH, readGitHubInstallState } from "@/lib/github-install-state";
 import { githubApp } from "@/lib/github-app";
 
 export const runtime = "nodejs";
@@ -36,6 +36,6 @@ export async function GET(request: NextRequest) {
     visibility: repository.visibility, default_branch: repository.default_branch,
   })));
   const response = NextResponse.redirect(new URL("/account/connections?github_install=connected", request.url));
-  response.cookies.delete("problems_github_install");
+  response.cookies.delete({ name: "problems_github_install", path: GITHUB_INSTALL_CALLBACK_PATH });
   return response;
 }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { currentActivityAccount } from "@/lib/hosted-account";
 import { githubIdentityForUser } from "@/lib/workos-identities";
-import { createGitHubInstallState } from "@/lib/github-install-state";
+import { GITHUB_INSTALL_CALLBACK_PATH, createGitHubInstallState } from "@/lib/github-install-state";
 import { githubInstallUrl } from "@/lib/github-app";
 
 export const runtime = "nodejs";
@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
   const state = createGitHubInstallState(account.activity.id, identity.idpId);
   const response = NextResponse.redirect(githubInstallUrl(state));
   response.cookies.set("problems_github_install", state, {
-    httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", path: "/api/github/installation-callback", maxAge: 600,
+    httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", path: GITHUB_INSTALL_CALLBACK_PATH, maxAge: 600,
   });
   return response;
 }

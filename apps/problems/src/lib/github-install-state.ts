@@ -7,6 +7,8 @@ export type GitHubInstallState = {
   expiresAt: number;
 };
 
+export const GITHUB_INSTALL_CALLBACK_PATH = "/account/connections/github";
+
 function key(environment: Readonly<Record<string, string | undefined>>): string {
   const value = environment.WORKOS_COOKIE_PASSWORD;
   if (!value || value.length < 32) throw new Error("installation state signing is unavailable");
