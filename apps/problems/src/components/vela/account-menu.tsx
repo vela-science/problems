@@ -9,7 +9,8 @@ import {
   UserCircleIcon as UserCircle,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Button } from "@vela/ui/components/button";
+import { Button, buttonVariants } from "@vela/ui/components/button";
+import { cn } from "@vela/ui/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -62,15 +63,24 @@ export function AccountMenu({ enabled }: { enabled: boolean }) {
   }
   if (state.status === "signed_out") {
     return (
-      <Button
-        variant="outline"
-        size="sm"
-        className="h-11 min-w-11 gap-2 px-2.5 shadow-none md:h-8 md:min-w-0"
-        render={<Link href="/sign-in" prefetch={false} />}
+      /* Signing in navigates, so this is a link and carries a link's role.
+         Routing it through `Button` made Base UI put `role="button"` on an
+         `<a href>` and warn on every page in the application, because the
+         header shell renders this control everywhere. Borrowing the variants
+         keeps it identical to look at while `account-menu.test.tsx`'s
+         `findByRole("link")` — which was already asserting the truth — passes
+         unchanged. */
+      <Link
+        href="/sign-in"
+        prefetch={false}
+        className={cn(
+          buttonVariants({ variant: "outline", size: "sm" }),
+          "h-11 min-w-11 gap-2 px-2.5 shadow-none md:h-8 md:min-w-0",
+        )}
       >
         <HugeiconsIcon icon={LogIn} aria-hidden className="size-4" />
         <span className="hidden sm:inline">Sign in</span>
-      </Button>
+      </Link>
     );
   }
 
