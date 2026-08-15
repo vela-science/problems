@@ -68,7 +68,7 @@ export function ProposedStatePreviewSection({ preview }: { preview: ProposedStat
         <PreviewRoot label="Base revision" value={preview.base.revision_root} />
         <div className="min-w-0">
           <dt className="text-eyebrow uppercase text-muted-foreground">Base Git commit</dt>
-          <dd className="mt-1 break-all font-mono text-compact">{preview.base.git_commit}</dd>
+          <dd className="mt-1"><RecordId value={preview.base.git_commit} /></dd>
         </div>
         <PreviewRoot label="Base Repository root" value={preview.base.repository_root} />
         {preview.entry_root ? <PreviewRoot label="Decision Inbox entry" value={preview.entry_root} /> : null}
@@ -79,7 +79,7 @@ export function ProposedStatePreviewSection({ preview }: { preview: ProposedStat
         {preview.terminal ? <>
           <div className="min-w-0">
             <dt className="text-eyebrow uppercase text-muted-foreground">Terminal Git commit</dt>
-            <dd className="mt-1 break-all font-mono text-compact">{preview.terminal.git_commit}</dd>
+            <dd className="mt-1"><RecordId value={preview.terminal.git_commit} /></dd>
           </div>
           <PreviewRoot label="Terminal Repository root" value={preview.terminal.repository_root} />
         </> : null}

@@ -1,6 +1,7 @@
 import { canonicalJson } from "@vela/projection-data/canonical";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@vela/ui/components/collapsible";
 import { CopyButton } from "@vela/ui/vela/copy-button";
+import { RecordId } from "@/components/vela/record-id";
 
 /* The bytes the root is the digest of.
  *
@@ -54,7 +55,7 @@ export function CanonicalBytes({
         </p>
         {root ? (
           <p className="mt-2 flex flex-wrap items-center gap-1.5">
-            <span className="font-mono text-micro break-all">{root}</span>
+            <RecordId value={root} />
             <CopyButton compact value={root} label={`Copy ${root}`} />
           </p>
         ) : null}

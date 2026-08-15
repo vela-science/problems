@@ -51,7 +51,7 @@ import {
   TableHeader,
   TableRow,
 } from "@vela/ui/components/table";
-import { ExactValue } from "@vela/ui/vela/exact-value";
+import { RootFact } from "@/components/vela/root-fact";
 import {
   SourceRegistryFilters,
   type SourceRegistryFilterState,
@@ -1261,19 +1261,8 @@ function SourceRootList({
       }
     >
       {roots.map(({ label, value }) => (
-        <SourceRoot key={label} label={label} value={value} />
+        <RootFact key={label} label={label} value={value} />
       ))}
     </dl>
-  );
-}
-
-function SourceRoot({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="min-w-0">
-      <dt className="mb-1 text-label text-muted-foreground">{label}</dt>
-      <dd className="min-w-0">
-        <ExactValue value={value} label={label} />
-      </dd>
-    </div>
   );
 }

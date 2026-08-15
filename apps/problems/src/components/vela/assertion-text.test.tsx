@@ -15,8 +15,10 @@ describe("AssertionText", () => {
     expect(container).toHaveTextContent("the identity holds.");
     /* Elided on screen, complete in the accessibility tree and in a copy — the
        same contract every other exact value on these surfaces keeps. */
+    const completions = container.querySelectorAll("span.sr-only");
+    expect(completions).toHaveLength(1);
+    expect(completions[0]!.textContent).toBe(commit);
     expect(container.textContent).toContain(commit);
-    expect(container.querySelector("[aria-hidden='true']")?.textContent).not.toBe(commit);
   });
 
   it("elides a prefixed root", () => {
@@ -33,7 +35,10 @@ describe("AssertionText", () => {
   it("does not split a digest out of a math span", () => {
     const inside = `$x = ${"b".repeat(64)}$`;
     const { container } = render(<AssertionText text={inside} />);
-    expect(container.querySelectorAll("[data-slot='record-id']")).toHaveLength(0);
+    /* `RecordId` is what an elision renders as, and it emits exactly one
+       sr-only completion per digest. None here means the string went through
+       scientific text whole, which is the point. */
+    expect(container.querySelectorAll("span.sr-only")).toHaveLength(0);
   });
 
   it("leaves an assertion with no digest alone", () => {
