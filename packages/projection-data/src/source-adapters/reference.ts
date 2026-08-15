@@ -17,24 +17,7 @@ export function projectionSourceAdapterArtifactReleaseTag(setRoot: string): stri
   return `source-adapter-set-${setDigest(setRoot)}`;
 }
 
-function legacyArtifactLocator(setRoot: string): string {
-  return `https://github.com/vela-science/vela-web/releases/download/${projectionSourceAdapterArtifactReleaseTag(setRoot)}/${projectionSourceAdapterArtifactFilename(setRoot)}`;
-}
 
-const projectionSourceAdapterArtifactReferenceV1Schema = z.object({
-  schema: z.literal("vela.projection-source-adapter-artifact-reference.v1"),
-  set_root: hashRootSchema,
-  artifact_root: hashRootSchema,
-  locator: z.string().url(),
-}).strict().superRefine((value, context) => {
-  if (value.locator !== legacyArtifactLocator(value.set_root)) {
-    context.addIssue({
-      code: "custom",
-      path: ["locator"],
-      message: "legacy source-adapter artifact locator does not match its set root",
-    });
-  }
-});
 
 const projectionSourceAdapterArtifactReferenceV2Schema = z.object({
   schema: z.literal("vela.projection-source-adapter-artifact-reference.v2"),
@@ -56,10 +39,16 @@ const projectionSourceAdapterArtifactReferenceV2Schema = z.object({
   }
 });
 
-export const projectionSourceAdapterArtifactReferenceSchema = z.union([
-  projectionSourceAdapterArtifactReferenceV1Schema,
-  projectionSourceAdapterArtifactReferenceV2Schema,
-]);
+/* One shape, because only one was ever produced.
+ *
+ * `artifact.ts` hard-codes v2, every stored release manifest and the live site
+ * manifest report v2, and the v1 schema string appeared nowhere on disk except
+ * the arm that declared it. A union of one live shape and one that never
+ * existed is not compatibility, it is an unexercised branch — and it hid a
+ * real defect: `sources:verify` printed `reference.locator`, a field only v1
+ * defined, so the value silently dropped out of its own output. */
+export const projectionSourceAdapterArtifactReferenceSchema =
+  projectionSourceAdapterArtifactReferenceV2Schema;
 
 export type ProjectionSourceAdapterArtifactReference = z.infer<
   typeof projectionSourceAdapterArtifactReferenceSchema

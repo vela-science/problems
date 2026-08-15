@@ -122,7 +122,7 @@ async function verify(artifactPath) {
     command: "source-adapters.verify",
     artifact_root: verified.artifact.artifact_root,
     set_root: verified.manifest.set_root,
-    locator: verified.reference.locator,
+    retrieval: verified.reference.retrieval,
     sources: verified.manifest.sources,
   }));
 }

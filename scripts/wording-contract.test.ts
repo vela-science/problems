@@ -47,9 +47,7 @@ const RECORDS = [
 const AUTHORED = [
   "content/editorial/source/src/app/essay.tsx",
   "content/editorial/source/src/components/essay/the-test.tsx",
-  "content/editorial/source/src/components/editorial/masthead.tsx",
   "content/editorial/source/src/data/publications.ts",
-  "content/editorial/source/public/images/constellations/endless-og.png",
 ];
 
 /* Occurrences that are not the Vela noun at all, and would be wrong in any
@@ -59,17 +57,9 @@ const AUTHORED = [
 const NOT_THE_VELA_NOUN: Array<[RegExp, string]> = [
   [/erdos-frontier/gu, "archived repository, an address rather than a word"],
   [/sidon-frontier/gu, "archived repository"],
-  [/quantum-codes-frontier/gu, "archived repository"],
-  [/formal-conjectures-frontier/gu, "archived repository"],
-  [/vela-frontiers/gu, "archived repository"],
-  [/[Ff]rontier[Mm]ath/gu, "the benchmark, a proper noun"],
-  [/jagged[- ][Ff]rontier/gu, "term of art for the shape of model capability"],
   [/frontier[- ]risk/gu, "the governance term the source pages use"],
   [/[Ff]rontier[- ]lab/gu, "what those organizations are called"],
   [/[Ee]ndless [Ff]rontier/gu, "Vannevar Bush's 1945 report"],
-  [/frontier-to-commons/gu, "the named disposition in the source schema"],
-  [/disease-frontier/gu, "the named pilot in the essay"],
-  [/volume_frontier|multibrotSet_frontier/gu, "Mathlib: the topological frontier of a set"],
 ];
 
 /* Individual files that keep the word for a reason of their own, each with the
@@ -168,10 +158,19 @@ describe("the retired noun stays off the current surface", () => {
 
   /* A term allowlist is the more dangerous half: it applies everywhere at once.
      Each entry has to still match something, or it is a hole nobody is
-     watching. */
+     watching.
+
+     The corpus has to be the one the ban scan actually reads, which this got
+     wrong in both directions: it included the RECORDS trees, which the scan
+     excludes, and it included this file, whose regex literals spell every
+     protected term. So each entry matched itself and the guard passed no
+     matter what — it was checking that the allowlist contains the allowlist.
+     Eight entries with no occurrence anywhere else survived behind it. */
   test("every protected term is still present somewhere", () => {
     const corpus = trackedText()
       .filter((path) => !BINARY.test(path))
+      .filter((path) => !RECORDS.some((tree) => path.startsWith(tree)))
+      .filter((path) => !path.endsWith("scripts/wording-contract.test.ts"))
       .map((path) => {
         try {
           return readFileSync(resolve(repositoryRoot, path), "utf8");
