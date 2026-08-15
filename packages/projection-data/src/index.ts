@@ -193,10 +193,6 @@ export function statusClaimCount(status: CompactStatus): number {
   return status.counts.claims;
 }
 
-export function statusStateRoot(status: CompactStatus): { label: string; value: HashRoot } {
-  return statusStateRoots(status)[0];
-}
-
 export function statusStateRoots(status: CompactStatus): Array<{ label: string; value: HashRoot }> {
   if (status.roots.repository && status.roots.origin) {
     return [
@@ -241,8 +237,6 @@ const repositoryGraphProjectionSchema = z.object({
   problem_count: z.number().int().nonnegative(),
   claim_count: z.number().int().nonnegative(),
 });
-
-export type RepositoryGraphProjection = z.infer<typeof repositoryGraphProjectionSchema>;
 
 /* The protocol's four outcomes, from `verification-record-v1.schema.json`, plus
    the one case a projection can be in that no Verification Record can: none was
@@ -3087,19 +3081,6 @@ export async function revisionForRepository(
     [root, repositoryKey(slug), commit],
   ) as Record<string, any>[];
   return rows[0] ? revisionFromRow(rows[0]) : null;
-}
-
-export async function compareRepositoryRevisions(
-  slug: string,
-  beforeCommit: string,
-  afterCommit: string,
-): Promise<RepositoryRevisionComparison | null> {
-  const [before, after] = await Promise.all([
-    revisionForRepository(slug, beforeCommit),
-    revisionForRepository(slug, afterCommit),
-  ]);
-  if (!before || !after) return null;
-  return compareExactRepositoryRevisions(before, after);
 }
 
 export function compareExactRepositoryRevisions(

@@ -87,8 +87,11 @@ describe("AppShell accessibility boundary", () => {
       expect(source).toContain('<PageHero density="compact">');
       expect(source).not.toContain('<header className="border-b');
     }
+    /* One, since `RecordSkeleton` was deleted with no consumer. The count is
+       here so a skeleton cannot quietly stop using the shared hero; it tracks
+       how many skeletons open with one, not a fixed number. */
     const skeleton = readFileSync("src/components/vela/route-skeleton.tsx", "utf8");
-    expect(skeleton.match(/<PageHero density="compact">/gu)).toHaveLength(2);
+    expect(skeleton.match(/<PageHero density="compact">/gu)).toHaveLength(1);
     expect(skeleton).not.toContain('className="border-b pb-');
   });
 });

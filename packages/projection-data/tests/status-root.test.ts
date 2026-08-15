@@ -2,7 +2,6 @@ import { describe, expect, test } from "bun:test";
 import {
   compactStatusSchema,
   statusClaimCount,
-  statusStateRoot,
   statusStateRoots,
   type CompactStatus,
 } from "../src";
@@ -65,10 +64,6 @@ describe("current compact status roots", () => {
       { label: "Repository root", value: root("3") },
       { label: "Origin root", value: root("2") },
     ]);
-    expect(statusStateRoot(status)).toEqual({
-      label: "Repository root",
-      value: root("3"),
-    });
     expect(statusClaimCount(status)).toBe(12);
     expect(compactStatusSchema.parse(status)).toEqual(status);
   });

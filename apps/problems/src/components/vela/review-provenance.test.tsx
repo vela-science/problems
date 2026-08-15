@@ -70,4 +70,16 @@ describe("review provenance", () => {
     expect(human.label).toBe("Human");
     expect(ai.label).toBe("AI model");
   });
+
+  /* A Check whose method declares no performer is a complete record, not an
+     old one. It must not be labelled, and it must say why in words. */
+  test("names no performer, and no kind, when the method declares none", () => {
+    const html = renderToStaticMarkup(<ReviewProvenance record={{
+      verifier_actor: "verifier:tool",
+      verifier_profile: "replay-v1",
+    }} />);
+    expect(html).not.toContain("data-reviewer-kind");
+    expect(html).not.toContain("legacy");
+    expect(html).toContain("Method replay-v1 declares no performer");
+  });
 });

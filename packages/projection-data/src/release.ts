@@ -75,8 +75,6 @@ export const velaGeneratorBinaryRoots = new Set([
   ]),
 ]);
 
-export type VelaGeneratorPlatform = "darwin" | "linux";
-
 /**
  * Returns the one released generator binary root for the host executing a
  * projection refresh. The release record is the only source of these roots;

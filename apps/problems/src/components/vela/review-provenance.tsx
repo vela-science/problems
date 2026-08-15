@@ -54,8 +54,13 @@ export function reviewProvenanceText(record: ReviewProvenanceRecord) {
 
 export function ReviewProvenance({ record }: { record: ReviewProvenanceRecord }) {
   const text = reviewProvenanceText(record);
+  /* Omitted, not renamed. A null `reviewer_kind` is the current correct
+     state, not an old shape: a `vela.verification-method.v1` method carries no
+     `reviewer` object, so there is no performer to name, and the text below
+     already says exactly that. Only this attribute called it "legacy", and
+     nothing reads the value. */
   return (
-    <div data-reviewer-kind={record.reviewer_kind ?? "legacy"}>
+    <div data-reviewer-kind={record.reviewer_kind ?? undefined}>
       <p className="text-compact font-medium text-foreground">{text.headline}</p>
       <p className="mt-0.5 font-mono text-micro text-muted-foreground">{text.detail}</p>
       {text.methodRoot ? (

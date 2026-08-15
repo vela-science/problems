@@ -80,28 +80,3 @@ export function CanvasSkeleton({ className = "h-[34rem]" }: { className?: string
     </div>
   );
 }
-
-export function RecordSkeleton({ blocks = 3 }: { blocks?: number }) {
-  return (
-    <>
-      <PageHero density="compact">
-        <Skeleton className="h-5 w-32" />
-        <Skeleton className="mt-3 h-7 w-[46ch] max-w-full" />
-        <Skeleton className="mt-3 h-4 w-[30ch] max-w-full" />
-      </PageHero>
-      {Array.from({ length: blocks }, (_, index) => (
-        <section key={index} className="mt-8">
-          <Skeleton className="h-4 w-40" />
-          <div className="mt-3 divide-y">
-            {Array.from({ length: 3 }, (_, row) => (
-              <div key={row} className="py-4">
-                <Skeleton className="h-4 w-[34ch] max-w-full" />
-                <Skeleton className="mt-2 h-3 w-[50ch] max-w-full" />
-              </div>
-            ))}
-          </div>
-        </section>
-      ))}
-    </>
-  );
-}

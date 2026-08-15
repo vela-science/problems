@@ -102,8 +102,6 @@ export const BOUNDARY_PROFILES = Object.freeze([
   { name: "activity_data_owner", root: "packages/activity-data/src" },
 ]);
 
-export const BOUNDARY_SOURCES = BOUNDARY_PROFILES.map(({ root }) => root);
-
 function boundedIdentityActions(file, content) {
   const allowed = ALLOWED_IDENTITY_ACTIONS.get(file);
   if (!allowed) return false;

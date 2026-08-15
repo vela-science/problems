@@ -210,9 +210,7 @@ export const sourceAdapterBundleSchema = sourceAdapterBundleBodySchema.extend({
 export type SourceAdapterInput = z.infer<typeof sourceAdapterInputSchema>;
 export type SourceAdapterRevision = z.infer<typeof sourceAdapterRevisionSchema>;
 export type SourceAdapterCoverage = z.infer<typeof sourceAdapterCoverageSchema>;
-export type SourceAdapterDisclosure = z.infer<typeof sourceAdapterDisclosureSchema>;
-export type SourceAdapterChunk = z.infer<typeof sourceAdapterChunkSchema>;
-export type SourceAdapterBundle = z.infer<typeof sourceAdapterBundleSchema>;
+export type SourceAdapterDisclosure = z.infer<typeof sourceAdapterDisclosureSchema>;export type SourceAdapterBundle = z.infer<typeof sourceAdapterBundleSchema>;
 
 export function createSourceAdapterBundle(
   input: z.input<typeof sourceAdapterBundleBodySchema>,
