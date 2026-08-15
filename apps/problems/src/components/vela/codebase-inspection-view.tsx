@@ -1,5 +1,4 @@
 import { Badge } from "@vela/ui/components/badge";
-import { PageShell } from "@vela/ui/vela/page-shell";
 import { PageIntro } from "@/components/vela/page-intro";
 
 function text(value: unknown): string { return typeof value === "string" ? value : ""; }
@@ -11,7 +10,7 @@ export function CodebaseInspectionView({ codebase, retained }: { codebase: Recor
   const inspection = codebase.inspection as Record<string, unknown> | undefined;
   const detail = inspection?.detail as Record<string, unknown> | undefined;
   const inspected = detail?.inspected as Record<string, unknown> | undefined;
-  return <PageShell archetype="default" layout="reading" className="flex flex-col gap-7">
+  return <>
     <PageIntro title={fullName} description={retained ? "A connected codebase pinned to one immutable Git revision." : "A public codebase inspected at one immutable Git revision; no account receipt was retained."}
       signals={[{ label: "Inspection", value: status.replaceAll("_", " "), tone: status === "natively_verified" ? "evidence" : "neutral" },
         { label: "Authority", value: "None", detail: "Inspection only", tone: "neutral" }]} />
@@ -29,5 +28,5 @@ export function CodebaseInspectionView({ codebase, retained }: { codebase: Recor
       <pre className="overflow-x-auto rounded-lg bg-muted p-4 text-micro"><code>{`git clone ${text(codebase.canonical_locator)}\ncd ${fullName.split("/")[1] ?? "codebase"}\ngit checkout --detach ${commit}\nvela integration inspect . --json\nvela integration check . --json`}</code></pre>
       <p className="text-body text-muted-foreground">Continue in your native editor, Codex, Claude, Entire, or another workbench. Keep its session/checkpoint as optional attributed provenance, then prepare a bounded Submission locally. No hosted signer or Decision is available here.</p>
     </section>
-  </PageShell>;
+  </>;
 }

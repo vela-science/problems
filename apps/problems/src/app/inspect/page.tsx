@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { PageShell } from "@vela/ui/vela/page-shell";
 import { CodebaseInspectionView } from "@/components/vela/codebase-inspection-view";
 import { inspectGitHubCodebase, normalizeGitHubLocator } from "@/lib/codebase-inspection";
 import { publicGitHub } from "@/lib/github-app";
@@ -28,5 +29,7 @@ export default async function PublicInspectionPage({ searchParams }: { searchPar
     const exact = new URLSearchParams({ url, commit: inspection.source_commit });
     redirect(`/inspect?${exact}`);
   }
-  return <CodebaseInspectionView codebase={inspection as unknown as Record<string, unknown>} retained={false} />;
+  return <PageShell archetype="default" layout="reading" className="flex flex-col gap-7">
+    <CodebaseInspectionView codebase={inspection as unknown as Record<string, unknown>} retained={false} />
+  </PageShell>;
 }
