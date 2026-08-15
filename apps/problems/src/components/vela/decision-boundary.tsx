@@ -35,17 +35,32 @@ function PreviewRoot({ label, value }: { label: string; value: string }) {
   );
 }
 
+/* Nine roots, and they used to be the first thing on the page.
+ *
+ * The Proposal opened with Preview root, Base revision, Base Git commit, Base
+ * Repository root, Decision Inbox entry, If accepted, If rejected, Terminal
+ * Git commit and Terminal Repository root — before the producer, before the
+ * two Checks, before the Decision's own scope sentence. A reader met the
+ * apparatus and never reached the evidence.
+ *
+ * The roots stay exactly as they are and keep every value; they move below
+ * the Decision and open on request. Native `<details>` rather than a Base UI
+ * Collapsible, because Base UI keeps closed content out of the DOM, and a
+ * root a reader cannot find with the browser's own search is not disclosed,
+ * it is deleted. */
 export function ProposedStatePreviewSection({ preview }: { preview: ProposedStatePreview }) {
   const copy = previewStateCopy[preview.state];
   return (
-    <section className="mt-10" aria-labelledby="preview-heading">
-      <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
-        <div>
-          <p className="text-eyebrow uppercase text-muted-foreground">Authority effect · none</p>
-          <h2 id="preview-heading" className="mt-1 text-subtitle">{copy.title}</h2>
-        </div>
-        <span className="font-mono text-micro text-muted-foreground">{preview.state.replaceAll("_", " ")}</span>
-      </div>
+    <details className="group/preview mt-10 rounded-xl bg-muted/25 px-5 py-5 sm:px-6" aria-labelledby="preview-heading">
+      <summary className="cursor-pointer list-none focus-visible:outline-2 focus-visible:outline-offset-4 [&::-webkit-details-marker]:hidden">
+        <span className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+          <span>
+            <span className="block text-eyebrow uppercase text-muted-foreground">Authority effect · none</span>
+            <span id="preview-heading" className="mt-1 block text-subtitle">{copy.title}</span>
+          </span>
+          <span className="font-mono text-micro text-muted-foreground">{preview.state.replaceAll("_", " ")}</span>
+        </span>
+      </summary>
       <p className="mt-3 max-w-[85ch] text-body text-muted-foreground">{copy.detail}</p>
 
       <dl className="mt-5 grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -79,7 +94,7 @@ export function ProposedStatePreviewSection({ preview }: { preview: ProposedStat
       {preview.terminal?.applied_exactly_as_reviewed === true ? (
         <p className="mt-5 text-compact">Applied exactly as reviewed: the predicted and actual Repository roots are identical.</p>
       ) : null}
-    </section>
+    </details>
   );
 }
 

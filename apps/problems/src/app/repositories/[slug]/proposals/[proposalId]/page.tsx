@@ -144,10 +144,6 @@ export default async function ProposalPage({ params }: PageProps<"/repositories/
         commit={repository.source.commit}
       />
 
-      {review.proposed_state_preview
-        ? <ProposedStatePreviewSection preview={review.proposed_state_preview} />
-        : null}
-
       {shape.length ? (
         <section className="mt-8" aria-labelledby="shape-heading">
           <h2 id="shape-heading" className="mb-1 text-eyebrow uppercase text-muted-foreground">Stated parameters</h2>
@@ -209,6 +205,14 @@ export default async function ProposalPage({ params }: PageProps<"/repositories/
           </div>
         ) : null}
       </section>
+
+      {/* The roots follow the evidence and the Decision rather than leading
+          the page. What a reader needs first is what was claimed, who checked
+          it and what the Decision covered; the exact preview is how they
+          verify that afterwards. */}
+      {review.proposed_state_preview
+        ? <ProposedStatePreviewSection preview={review.proposed_state_preview} />
+        : null}
 
       <section className="mt-10" aria-labelledby="objects-heading">
         <h2 id="objects-heading" className="mb-3 text-subtitle">Exact records</h2>
