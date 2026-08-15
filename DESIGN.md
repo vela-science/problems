@@ -247,9 +247,9 @@ at a time. Its object collections do not define the primary Problems navigation.
   repeated destination. Hugeicons is the interface icon family; a Vela-drawn
   icon is added only where no generic glyph can express a scientific state
   without ambiguity.
-- A published URL never stops resolving. Retired paths keep permanent
-  redirects, and product state that a reader would bookmark or send to a
-  colleague lives in the URL.
+- A current canonical URL identifies the exact product state a reader would
+  bookmark or send to a colleague. Retired prelaunch aliases are deleted
+  rather than becoming a permanent compatibility surface.
 
 ## Page archetypes
 
@@ -270,14 +270,18 @@ teach a reader nothing about what is on them.
   not a page about one, so its name is the largest text on the screen for the
   same reason a Claim's assertion is on a Claim page.
 - **Workbench.** Opens with the exact Problem identity, a State or Work mode,
-  and one current activity context. The hosted surface uses an Entire-like
-  three-part grammar: shared object map, selected working object, and contextual
-  inspector. Its default canvas is a real projection of exact Workspace objects
-  and parent relationships, with a keyboard-equivalent object map. It exposes
-  sessions, code and artifact references, Research Blocks, reviews, and handoffs.
+  and one current activity context. The hosted surface uses a three-part
+  grammar: shared object map, selected working object, and contextual inspector.
+  Its default canvas is a real projection of exact Workspace objects and parent
+  relationships, with a keyboard-equivalent object map. It exposes scientific
+  Approaches, Attempts, Research Blocks, notes, artifact references, and
+  Submission preparation.
   The shared canvas note uses Loro updates rooted and retained as activity.
-  Local files, runtimes, secrets, signing,
-  and Repository mutation stay in the local Workbench. Mutation controls live
+  Entire is the sole first-party implementation for generic Git work sessions,
+  checkpoints, transcripts, resume, and search; when it is absent that
+  provenance is unavailable rather than recreated here. Local files, runtimes,
+  secrets, signing, and Repository mutation stay in the local Workbench.
+  Mutation controls live
   in Work mode. Each saved record carries its anchor freshness and version
   conflict state. Later Loro/CRDT fields may coordinate canvas geometry, drafts,
   annotations, task order, presence, and temporary approaches only behind an
