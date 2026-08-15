@@ -19,15 +19,28 @@ export async function importCodebase(formData: FormData) {
   if (Number.isSafeInteger(repositoryId) && repositoryId > 0 && Number.isSafeInteger(installationId) && installationId > 0) {
     const connections = await listGitHubConnections(account.activity.id);
     const selected = connections.repositories.find((repository) => repository.repositoryId === repositoryId && repository.installationId === installationId);
-    if (!selected) throw new Error("Selected GitHub repository access is unavailable");
+    if (!selected) redirect("/import?error=access");
     const octokit = await githubApp().getInstallationOctokit(installationId);
-    result = await inspectGitHubCodebase({ octokit, fullName: selected.fullName, requestedCommit });
+    try {
+      result = await inspectGitHubCodebase({ octokit, fullName: selected.fullName, requestedCommit });
+    } catch {
+      redirect("/import?error=unavailable");
+    }
     payload = { ...result, import_method: "github_app", installation_id: installationId,
       installation_permissions_root: sha256(canonicalJson({ contents: "read", metadata: "read" })) };
   } else {
-    const { fullName } = normalizeGitHubLocator(String(formData.get("url") ?? ""));
-    result = await inspectGitHubCodebase({ octokit: publicGitHub(), fullName, requestedCommit });
-    if (result.visibility !== "public") throw new Error("Manual import is restricted to public codebases");
+    let fullName: string;
+    try {
+      ({ fullName } = normalizeGitHubLocator(String(formData.get("url") ?? "")));
+    } catch {
+      redirect("/import?error=invalid_url");
+    }
+    try {
+      result = await inspectGitHubCodebase({ octokit: publicGitHub(), fullName, requestedCommit });
+    } catch {
+      redirect("/import?error=unavailable");
+    }
+    if (result.visibility !== "public") redirect("/import?error=public_only");
     payload = { ...result, import_method: "public_url", installation_id: null, installation_permissions_root: null };
   }
   const saved = await saveConnectedCodebase(account.activity.id, payload);

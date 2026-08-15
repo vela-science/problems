@@ -9,16 +9,19 @@ import { FormSelect } from "@/components/vela/form-select";
 import { PageIntro } from "@/components/vela/page-intro";
 import { currentActivityAccount } from "@/lib/hosted-account";
 import { importCodebase } from "./actions";
+import { importErrorMessage } from "./import-errors";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Import codebase", robots: { index: false, follow: false } };
 
-export default async function ImportPage() {
+export default async function ImportPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const account = await currentActivityAccount();
+  const error = importErrorMessage((await searchParams).error);
   const connections = account ? await listGitHubConnections(account.activity.id) : null;
   return <PageShell archetype="default" layout="reading" className="flex flex-col gap-8">
     <PageIntro title="Connect a codebase" description="Pin one Git revision, inspect its native Vela integration, and leave scientific authority unchanged."
       signals={[{ label: "Access", value: "Read only", tone: "evidence" }, { label: "Revision", value: "Immutable", tone: "neutral" }]} />
+    {error && <div role="alert" className="rounded-xl border border-status-conflict/35 bg-status-conflict/5 p-4 text-body">{error}</div>}
     {!account ? <div className="rounded-xl border p-5"><p className="text-body text-muted-foreground">Sign in with WorkOS to retain a rooted inspection receipt. GitHub identity is optional for a public URL.</p>
       <Button nativeButton={false} render={<Link href="/sign-in?returnTo=/import" />} className="mt-4">Sign in</Button></div> : <>
       {connections?.repositories.length ? <form action={importCodebase} className="space-y-4 rounded-xl border p-5">
