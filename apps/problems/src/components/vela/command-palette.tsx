@@ -23,7 +23,7 @@ type CommandContextValue = { open: boolean; setOpen: (open: boolean) => void };
 
 const CommandContext = createContext<CommandContextValue | null>(null);
 export const COMMAND_PALETTE_TRIGGER_ID = "vela-command-palette-trigger";
-export const PRODUCT_DOCS_URL = "https://www.vela.space/docs";
+export const PRODUCT_DOCS_URL = "https://github.com/vela-science/vela/tree/main/docs";
 
 export function useCommandPalette() {
   const value = useContext(CommandContext);

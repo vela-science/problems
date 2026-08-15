@@ -7,8 +7,8 @@ import { cn } from "@vela/ui/lib/utils";
  * nothing: four Repositories rendered as four identical rows of text, so the
  * container the whole product is organised around had no identity at all.
  *
- * The editorial site already draws each Repository as a constellation whose marks
- * bind to real counts (apps/www/src/data/repository-chart.ts). This is that idea
+ * The retained editorial composition draws each Repository as a constellation whose marks
+ * bind to real counts. This is that idea
  * at identity scale, and it decodes the same way — the seven stars are the
  * seven stages of the loop, filled where this Repository has reached them, with
  * the gold route running as far as recorded Standing carries.

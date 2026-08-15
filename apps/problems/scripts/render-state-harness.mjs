@@ -47,8 +47,7 @@ const CONSTRUCTED = "Constructed";
 const root = (seed) => `sha256:${seed.repeat(64).slice(0, 64)}`;
 const claimId = (seed) => `vcl_${seed.repeat(64).slice(0, 64)}`;
 
-/* The live release, read once from the checked-in editorial summary rather than
-   from Neon, so the harness runs offline and states its own basis. */
+/* A fixed release fixture keeps the harness offline and makes its basis explicit. */
 const LIVE = {
   release: "sha256:5c0df33530097a06a3be49cc26eb79fa65d3db5e9bc9aa7c89ecc646ec95256b",
   repositoryCommit: "c654010cfc7eb09d0f93f68c6792982d38f28b99",

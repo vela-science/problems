@@ -18,8 +18,7 @@ import { resolve } from "node:path";
   the zod schema to it — every field upstream requires must be one this package
   refuses to go without.
 
-  Same reasoning as the docs vendored into apps/www, and the same procedure:
-  the source of truth is one commit, the one in config/vela-release.v1.json, and
+  The source of truth is one commit, the one in config/vela-release.v1.json, and
   the working tree is never read. Run it when the pin moves:
 
     bun packages/projection-data/scripts/sync-vela-schemas.mjs

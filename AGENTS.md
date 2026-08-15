@@ -2,12 +2,11 @@
 
 ## Product boundary
 
-This private Bun workspace contains two independently deployable Next.js
-applications and four shared packages:
+This private Bun workspace contains one deployed Next.js application, retained
+non-runnable editorial source, and four shared packages:
 
-- `apps/www`: static editorial site for `www.vela.space`;
 - `apps/problems`: the unified Vela product application at canonical
-  `problems.science`, with `app.vela.space` retained as a compatibility alias,
+  `problems.science`,
   combining exact scientific State, non-authoritative Work, and advanced record
   inspection;
 - `packages/brand`: framework-neutral tokens, fonts, marks, and licenses;
@@ -29,9 +28,7 @@ accounts remain separate from Vela actor identities.
 
 ## Sources of truth
 
-- Editorial routes: `apps/www/src/app`
-- Editorial compositions and content: `apps/www/src/components`,
-  `apps/www/src/content`, `apps/www/src/styles`
+- Retained landing and essay source: `content/editorial`
 - Vela product routes and compositions: `apps/problems/src/app`,
   `apps/problems/src/components`
 - Brand contract: `packages/brand/vela.tokens.json` and its generated outputs
@@ -56,7 +53,7 @@ when their authors wrote them. Do not rewrite them to match the current system.
 - Licensed Tailwind Plus source may be adapted inside this private repository.
   Record the source and license, normalize interaction through shadcn/Base UI,
   and keep one-off compositions app-local. Move a composition into `@vela/ui`
-  after two applications use a stable version.
+  only after two maintained consumers use a stable version.
 - Keep global styles to Tailwind imports, token/profile bridges, base
   typography, accessibility, print, and cross-route requirements. Route
   presentation belongs with the route or component.
@@ -120,7 +117,7 @@ QA. Browser automation is not part of the installed toolchain.
 
 ## Release safety
 
-- RC deployments use noncanonical Vercel projects and domains.
-- Do not attach `www.vela.space`, `app.vela.space`, or `problems.science`, change
+- RC deployments use noncanonical Vercel domains.
+- Do not attach `problems.science`, change
   DNS, merge, or tag a final release without user authorization.
 - Keep prior production deployments available for the rollback window.

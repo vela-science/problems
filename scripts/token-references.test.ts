@@ -24,20 +24,20 @@ afterEach(() => {
 describe("custom property references", () => {
   test("resolves a reference against a definition in another file", () => {
     const root = fixture({
-      "apps/www/src/styles/tokens.css": ":root { --gold-ink: oklch(46.8% 0.102 82); }\n",
-      "apps/www/src/components/mark.tsx": "export const M = () => <a style={{ color: \"var(--gold-ink)\" }} />;\n",
+      "apps/problems/src/styles/tokens.css": ":root { --gold-ink: oklch(46.8% 0.102 82); }\n",
+      "apps/problems/src/components/mark.tsx": "export const M = () => <a style={{ color: \"var(--gold-ink)\" }} />;\n",
     });
     expect(inspectTokenReferences(root).unresolved).toEqual([]);
   });
 
   test("reports a reference that is never defined", () => {
     const root = fixture({
-      "apps/www/src/components/mast.tsx": "export const M = () => <a style={{ color: \"var(--gold-1)\" }} />;\n",
+      "apps/problems/src/components/mast.tsx": "export const M = () => <a style={{ color: \"var(--gold-1)\" }} />;\n",
     });
     const report = inspectTokenReferences(root);
     expect(report.unresolved).toHaveLength(1);
     expect(report.unresolved[0]).toMatchObject({
-      file: "apps/www/src/components/mast.tsx",
+      file: "apps/problems/src/components/mast.tsx",
       line: 1,
       name: "--gold-1",
     });
@@ -45,14 +45,14 @@ describe("custom property references", () => {
 
   test("accepts an undefined property when the use site carries a fallback", () => {
     const root = fixture({
-      "apps/www/src/components/rail.tsx": "export const R = () => <i style={{ transform: \"scaleY(var(--rail-progress, 0))\" }} />;\n",
+      "apps/problems/src/components/rail.tsx": "export const R = () => <i style={{ transform: \"scaleY(var(--rail-progress, 0))\" }} />;\n",
     });
     expect(inspectTokenReferences(root).unresolved).toEqual([]);
   });
 
   test("treats a property written from script as defined", () => {
     const root = fixture({
-      "apps/www/src/components/wake.tsx":
+      "apps/problems/src/components/wake.tsx":
         'const style = { offsetDistance: "var(--wake-progress)" };\n' +
         'el.style.setProperty("--wake-progress", String(p));\n',
     });
@@ -70,7 +70,7 @@ describe("custom property references", () => {
 
   test("assert throws and names every unresolved site", () => {
     const root = fixture({
-      "apps/www/src/app/manifesto/page.tsx": "export default () => <h1 style={{ fontFamily: \"var(--font-serif)\" }} />;\n",
+      "apps/problems/src/app/manifesto/page.tsx": "export default () => <h1 style={{ fontFamily: \"var(--font-serif)\" }} />;\n",
     });
     expect(() => assertTokenReferences(root)).toThrow(/--font-serif/u);
   });

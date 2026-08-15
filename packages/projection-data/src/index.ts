@@ -2927,41 +2927,6 @@ export async function allProblemRouteIds(): Promise<Array<{ repository: string; 
   return [...routes.values()];
 }
 
-/*
-  The editorial summary: the handful of scalars apps/www bakes into HTML.
-
-  Every field is read through the same helpers the Problems renders from,
-  rather than off `status` directly, so the two surfaces cannot disagree about
-  which root is canonical. Current contribution guidance stays in the exact
-  Repository status action; there is no parallel work inventory to summarize.
-
-  See editorial-schema.ts for the v2 shape and why each field moved.
-*/
-export function compactEditorialSummary(bundle: ProjectionRelease) {
-  return {
-    schema: "site.repository-editorial-summary.v5" as const,
-    generated_at: bundle.generated_at,
-    vela_version: bundle.generator.vela_version,
-    repositories: bundle.repositories.map((repository) => {
-      const canonical = statusStateRoot(repository.status);
-      return {
-        slug: repository.slug,
-        name: repository.status.repository.name,
-        source: { remote: repository.source.remote, commit: repository.source.commit },
-        canonical_root: canonical.value,
-        canonical_root_label: canonical.label,
-        origin_root: repository.status.roots.origin,
-        replay: repository.status.integrity.replay,
-        strict_blockers: repository.status.integrity.blocker_count,
-        counts: {
-          claims: statusClaimCount(repository.status),
-          pending_review: repository.status.counts.pending_review,
-        },
-      };
-    }),
-  };
-}
-
 export interface RepositoryCommit {
   sha: string;
   parent_sha: string | null;

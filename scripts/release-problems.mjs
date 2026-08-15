@@ -58,10 +58,6 @@ function githubEnvironment(environment) {
   return releaseChildEnvironment(environment, ["GH_TOKEN", "GH_CONFIG_DIR"]);
 }
 
-export function releaseCommitEnvironment(environment) {
-  return { ...environmentFor(environment), ...RELEASE_GIT_IDENTITY };
-}
-
 function shellQuote(value) {
   return `'${value.replaceAll("'", `'"'"'`)}'`;
 }
@@ -387,7 +383,6 @@ function projectionQualification(environment, context) {
   const reader = environmentFor(environment, ["VELA_PROJECTION_DATABASE_URL"]);
   run("bun", ["run", "db:check"], { environment: reader });
   run("bun", ["run", "projection:verify"], { environment: reader });
-  run("bun", ["run", "projection:snapshot"], { environment: reader });
 }
 
 function initializeProjectionSchema(environment) {
@@ -461,62 +456,11 @@ function writeRollbackCheckpoint(context, phase) {
   context.rollbackCheckpoint = record;
 }
 
-export function releaseChangedPaths(repository = root, environment = process.env) {
-  const paths = new Set();
-  for (const args of [
-    ["diff", "--no-renames", "--name-only", "-z"],
-    ["diff", "--cached", "--no-renames", "--name-only", "-z"],
-    ["ls-files", "--others", "--exclude-standard", "-z"],
-  ]) {
-    const result = spawnSync("git", args, {
-      cwd: repository,
-      env: environment,
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "pipe"],
-      maxBuffer: 64 * 1024 * 1024,
-    });
-    if (result.status !== 0) {
-      throw new Error(`git ${args.join(" ")} failed: ${result.stderr.trim()}`);
-    }
-    for (const path of result.stdout.split("\0").filter(Boolean)) {
-      paths.add(path);
-    }
-  }
-  return [...paths].sort();
-}
-
-function stageSnapshot(environment, context) {
-  const safe = environmentFor(environment);
-  const remote = githubGitEnvironment(environment);
-  const commit = releaseCommitEnvironment(environment);
-  const snapshot = "packages/projection-data/config/editorial-summary.v5.json";
-  const changed = releaseChangedPaths(root, safe);
-  if (changed.some((path) => path !== snapshot)) {
-    throw new Error(`refresh modified files outside the editorial snapshot: ${changed.join(", ")}`);
-  }
-  run("git", ["fetch", "--quiet", "origin", "main"], { environment: remote });
-  if (git(["rev-parse", "origin/main"], root, safe) !== context.siteCommit) {
-    throw new Error("origin/main advanced after qualification; refusing to adopt unqualified bytes");
-  }
-  context.publishedSiteCommit = context.siteCommit;
-  if (changed.length === 1) {
-    run("git", ["add", "--", snapshot], { environment: safe });
-    run("git", ["commit", "-m", "Refresh editorial snapshot after direct projection release"], {
-      environment: commit,
-    });
-  }
-  context.siteCommit = git(["rev-parse", "HEAD"], root, safe);
-  if (git(["status", "--porcelain"], root, safe)) throw new Error("post-refresh checkout is dirty");
-}
-
 function publishSiteCommit(environment, context) {
   const safe = githubGitEnvironment(environment);
   run("git", ["fetch", "--quiet", "origin", "main"], { environment: safe });
-  if (git(["rev-parse", "origin/main"], root, safe) !== context.publishedSiteCommit) {
+  if (git(["rev-parse", "origin/main"], root, safe) !== context.siteCommit) {
     throw new Error("origin/main advanced before publication; refusing unqualified overwrite");
-  }
-  if (context.siteCommit !== context.publishedSiteCommit) {
-    run("git", ["push", "origin", "HEAD:main"], { environment: safe });
   }
   run("git", ["fetch", "--quiet", "origin", "main"], { environment: safe });
   if (git(["rev-parse", "origin/main"], root, safe) !== context.siteCommit) {
@@ -690,13 +634,6 @@ async function readiness(environment, context) {
     }
     if (status !== 404) throw new Error(`${path}: missing record returned ${status}`);
   }
-  for (const host of ["app.vela.space", "app.constellate.science"]) {
-    const response = await fetch(`https://${host}/repositories`, { redirect: "manual" });
-    if (![307, 308].includes(response.status)) throw new Error(`${host}: canonical redirect is absent`);
-    if (new URL(response.headers.get("location"), `https://${host}`).hostname !== "problems.science") {
-      throw new Error(`${host}: redirect target is not problems.science`);
-    }
-  }
   const reader = environmentFor(environment, ["VELA_PROJECTION_DATABASE_URL"]);
   run("bun", [
     "apps/problems/scripts/check-deployed-manifest.mjs",
@@ -749,7 +686,6 @@ function retainQualification(environment, context) {
       "static_check_lint_test_format",
       "activity_migrate_check_verify",
       "projection_migrate_activate_verify",
-      "editorial_snapshot_commit",
       "projection_backed_build_runtime_budgets_manifests",
       "provider_loss_reconstruction",
       "production_manifest_routes_aliases_and_404",
@@ -793,8 +729,6 @@ const stageDefinitions = Object.freeze([
   ["projection_schema_initialize", (environment) => initializeProjectionSchema(environment)],
   ["projection_activate", (environment, context) => projectionQualification(environment, context)],
   ["activity_qualification", (environment) => activityQualification(environment)],
-  ["snapshot_stage", (environment, context) => stageSnapshot(environment, context)],
-  ["snapshot_static_requalification", (environment) => runStaticQualification(environment)],
   ["postactivation_product", (environment, context) => productQualification(environment, context, { projectionTests: true })],
   ["provider_loss_reconstruction", (environment, context) => reconstruct(environment, context)],
   ["site_publish", (environment, context) => {

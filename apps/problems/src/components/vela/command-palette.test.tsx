@@ -42,7 +42,7 @@ afterEach(() => {
 
 describe("CommandPaletteProvider exact record search", () => {
   it("points product documentation at the canonical documentation host", () => {
-    expect(PRODUCT_DOCS_URL).toBe("https://www.vela.space/docs");
+    expect(PRODUCT_DOCS_URL).toBe("https://github.com/vela-science/vela/tree/main/docs");
   });
 
   it("keeps the dialog root mounted and returns focus after Base UI completes close", () => {

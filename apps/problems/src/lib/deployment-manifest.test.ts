@@ -1,7 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { computeBrandRoot } from "@vela/brand/integrity";
 import {
-  createEditorialDeploymentManifest,
   createCurrentProblemsDeploymentManifest,
   createProblemsDeploymentManifest,
   problemsDeploymentManifestSchema,
@@ -74,13 +73,7 @@ describe("Problems deployment identity", () => {
       projection: projectionManifestFixture(),
       environment: {},
     });
-    const editorial = createEditorialDeploymentManifest({
-      version: "0.430.0",
-      brandRoot,
-      environment: {},
-    });
     expect(problems.site).not.toHaveProperty("tag");
-    expect(editorial.web).not.toHaveProperty("tag");
   });
 
   test("publishes exact current repository and origin roots", () => {

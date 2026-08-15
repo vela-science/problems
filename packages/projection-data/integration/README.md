@@ -2,18 +2,12 @@
 
 These suites query Neon. Everything in `../tests` is pure and runs anywhere.
 
-The split exists because the editorial site's build was failing on them.
-`apps/www`'s build chain runs `bun run --filter @vela/projection-data check`, and
-`check` used to be `bun test tests`, which meant **building the marketing site ran
-the Problems's live-database integration suite**. `apps/www` reads a committed
-snapshot (`config/editorial-summary.v5.json`) and touches no database at any point
-— not in `check-projection-compatibility.mjs`, not in
-the editorial deployment-manifest build, not at runtime — so a schema drift in the
-Problems's read model could, and did, take the front page's build down with it.
+The split keeps the package's pure parser/projector checks independent of a live
+provider while preserving an explicit database-backed qualification surface.
 
 The failure that prompted this was schema drift: code began reading
-`projection.verifications` before the live projection exposed it, so every www
-build died on `42P01 undefined_table`. The current model uses one desired-state
+`projection.verifications` before the live projection exposed it, so provider-backed
+checks died on `42P01 undefined_table`. The current model uses one desired-state
 `schema.sql` as the desired-state mirror plus a content-rooted forward migration
 ledger. `db:migrate` is explicit and runs before projection activation.
 

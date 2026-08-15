@@ -46,18 +46,6 @@ const RETIRED: Array<[source: string, destination: string]> = [
 ];
 
 describe("retired routes", () => {
-  test.each(["app.vela.space", "app.constellate.science"])(
-    "%s redirects every path to the canonical product origin",
-    (host) => {
-      const rule = config.redirects.find((entry) =>
-        entry.source === "/:path*"
-        && entry.has?.some((condition) => condition.type === "host" && condition.value === host)
-      );
-      expect(rule?.destination).toBe("https://problems.science/:path*");
-      expect(rule?.permanent).toBe(true);
-    },
-  );
-
   test.each(RETIRED)("%s permanently redirects to %s", (source, destination) => {
     const rule = config.redirects.find((entry) => entry.source === source);
     expect(rule, `vercel.json lost the redirect for ${source}`).toBeDefined();

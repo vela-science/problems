@@ -38,7 +38,6 @@ import { pathToFileURL } from "node:url";
 
 const ROOT_MANIFEST = "package.json";
 const WORKSPACE_MANIFESTS = [
-  "apps/www/package.json",
   "apps/problems/package.json",
   "packages/brand/package.json",
   "packages/activity-data/package.json",

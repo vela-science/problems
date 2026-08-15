@@ -84,8 +84,6 @@ describe("projection release ownership", () => {
       "projection_schema_initialize",
       "projection_activate",
       "activity_qualification",
-      "snapshot_stage",
-      "snapshot_static_requalification",
       "postactivation_product",
       "provider_loss_reconstruction",
       "site_publish",

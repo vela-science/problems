@@ -23,7 +23,7 @@ Mono stays a pair of static Latin subsets. Exact hashes are recorded in
 `licenses/FONT-WEB-MANIFEST.sha256`; the licence status of each face, ITF Free
 Font License or SIL OFL 1.1, is recorded in `licenses/README.md`.
 
-The current WWW composition selects separate governed system editorial roles:
+The retained landing and essay sources record separate governed system editorial roles:
 Iowan Old Style when installed, then Baskerville and Times New Roman. Those
 roles transfer no font bytes. The licensed web faces remain retained delivery
 assets rather than the selected WWW reading stack.

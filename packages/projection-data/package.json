@@ -19,7 +19,6 @@
     "db:check": "bun scripts/schema.mjs --check",
     "db:migrate:local": "VELA_PROJECTION_WRITER_DATABASE_URL=\"$(neonctl connection-string --project-id lingering-meadow-20929365 --database-name vela_projection --role-name neondb_owner)\" bun scripts/schema.mjs --migrate",
     "db:sql": "psql \"$(neonctl connection-string --project-id lingering-meadow-20929365 --database-name vela_projection --role-name neondb_owner)\"",
-    "projection:snapshot": "bun scripts/write-editorial-snapshot.mjs",
     "schemas:sync": "bun scripts/sync-vela-schemas.mjs",
     "sources:refresh": "bun scripts/source-adapters.mjs refresh",
     "sources:verify": "bun scripts/source-adapters.mjs verify",

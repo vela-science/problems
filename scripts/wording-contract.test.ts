@@ -38,7 +38,6 @@ const RECORDS = [
   "docs/releases/",
   "packages/projection-data/evidence/",
   "packages/projection-data/config/formal-conjectures/",
-  "apps/www/src/content/docs/",
 ];
 
 /* Prose in an authored voice. `constellations` coins "public frontier" as its
@@ -46,11 +45,11 @@ const RECORDS = [
    account; the essay components and the publication catalogue quote it. An
    argument is not a vocabulary to be swept, and a citation is not drift. */
 const AUTHORED = [
-  "apps/www/src/app/constellations/page.tsx",
-  "apps/www/src/components/essay/the-test.tsx",
-  "apps/www/src/components/editorial/masthead.tsx",
-  "apps/www/src/data/publications.ts",
-  "apps/www/public/images/constellations/endless-og.png",
+  "content/editorial/source/src/app/essay.tsx",
+  "content/editorial/source/src/components/essay/the-test.tsx",
+  "content/editorial/source/src/components/editorial/masthead.tsx",
+  "content/editorial/source/src/data/publications.ts",
+  "content/editorial/source/public/images/constellations/endless-og.png",
 ];
 
 /* Occurrences that are not the Vela noun at all, and would be wrong in any
@@ -63,7 +62,6 @@ const NOT_THE_VELA_NOUN: Array<[RegExp, string]> = [
   [/quantum-codes-frontier/gu, "archived repository"],
   [/formal-conjectures-frontier/gu, "archived repository"],
   [/vela-frontiers/gu, "archived repository"],
-  [/frontier\.(json|yaml|toml)/gu, "retired filenames current code refuses by name"],
   [/[Ff]rontier[Mm]ath/gu, "the benchmark, a proper noun"],
   [/jagged[- ][Ff]rontier/gu, "term of art for the shape of model capability"],
   [/frontier[- ]risk/gu, "the governance term the source pages use"],
@@ -81,10 +79,6 @@ const WHY_THE_WORD_STAYS: Array<[string, string]> = [
   [
     "apps/problems/vercel.json",
     "the permanent redirects that keep every published /frontiers URL reachable",
-  ],
-  [
-    "apps/www/vercel.json",
-    "the same redirects, from the editorial host",
   ],
   [
     "eslint.bans.mjs",

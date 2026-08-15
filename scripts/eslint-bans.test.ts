@@ -40,7 +40,6 @@ function eslintFor(app: string) {
 }
 
 const problems = eslintFor("problems");
-const www = eslintFor("www");
 
 /* One package per spelling, so a rule that only handles static imports cannot
    pass by reporting the same module four times. */
@@ -69,7 +68,6 @@ const LINT_BUDGET_MS = 60_000;
 describe("import bans", () => {
   test.each([
     ["problems", problems, "src/lib/probe.ts"],
-    ["www", www, "src/lib/probe.ts"],
   ])(
     "%s reports a database reached by any of the four import spellings",
     (_name, lint, file) => {
@@ -81,7 +79,6 @@ describe("import bans", () => {
 
   test.each([
     ["problems", problems, "src/lib/probe.ts"],
-    ["www", www, "src/lib/probe.ts"],
   ])(
     "%s stays quiet on a file that imports nothing banned",
     (_name, lint, file) => {

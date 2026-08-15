@@ -1,6 +1,7 @@
 # Editorial reference ledger
 
-This ledger records outside patterns studied for `www.vela.space`. References
+This ledger records outside patterns studied for the retained landing and essay
+sources under `content/editorial`. References
 inform composition and interaction; they are not runtime dependencies, copied
 templates, or visual identities.
 

@@ -10,7 +10,6 @@ function fixture(files: Record<string, string>) {
   const root = mkdtempSync(resolve(tmpdir(), "vela-web-authority-boundary-"));
   roots.push(root);
   for (const directory of [
-    "apps/www/src",
     "apps/problems/src",
     "packages/activity-data/src",
     "packages/projection-data/src",
@@ -30,32 +29,14 @@ afterEach(() => {
 });
 
 describe("scientific-authority profiles", () => {
-  test("allows static www, exact State reads, and the declared activity action", () => {
+  test("allows exact State reads and the declared activity action", () => {
     const root = fixture({
-      "apps/www/src/app/page.tsx": "export default function Page() { return null; }\n",
       "apps/problems/src/app/api/search/route.ts": "export async function GET() { return Response.json([]); }\n",
       "apps/problems/src/app/.well-known/vela-site.json/route.ts": "export async function GET() { return Response.json({ authority: 'read_only_projection' }); }\n",
       "apps/problems/src/app/actions/activity.ts": "'use server';\nimport { createAttempt } from '@vela/activity-data';\nexport async function save() { return createAttempt(); }\n",
       "packages/activity-data/src/contracts.ts": "import { canonicalJson } from '@vela/projection-data/canonical';\nexport const root = canonicalJson({});\n",
     });
     expect(inspectScientificAuthorityBoundary(root)).toEqual([]);
-  });
-
-  test("keeps www static", () => {
-    const root = fixture({
-      "apps/www/src/app/api/write/route.ts": "export async function POST() { return new Response(); }\n",
-      "apps/www/src/app/action.ts": "'use server';\nexport async function mutate() {}\n",
-      "apps/www/src/lib/request.ts": "export const value = headers();\n",
-      "apps/www/src/lib/env.ts": "export const secret = process.env.SECRET;\n",
-      "apps/www/src/lib/remote.ts": "export const state = fetch('/api/state');\n",
-    });
-    expect(new Set(inspectScientificAuthorityBoundary(root).map(({ rule }) => rule))).toEqual(new Set([
-      "static_route_handler",
-      "static_server_action",
-      "static_request_state",
-      "static_runtime_environment",
-      "static_request_fetch",
-    ]));
   });
 
   test("keeps Vela scientific routes exact and confines mutation", () => {
@@ -104,7 +85,6 @@ describe("scientific-authority profiles", () => {
 
   test("keeps the mutable and scientific data packages acyclic", () => {
     const root = fixture({
-      "apps/www/src/lib/activity.ts": "import '@vela/activity-data';\n",
       "apps/problems/src/lib/activity.ts": "export * from '@vela/activity-data/contracts';\n",
       "apps/problems/src/lib/sign.ts": "import('@vela/activity-data/local-signing');\n",
       "packages/activity-data/src/projection.ts": "import { canonicalJson } from '@vela/projection-data/canonical';\nimport { load } from '@vela/projection-data';\nexport { canonicalJson, load };\n",

@@ -12,34 +12,12 @@
   "redirects": [
     {
       "source": "/docs",
-      "destination": "https://www.vela.space/docs",
+      "destination": "https://github.com/vela-science/vela/tree/main/docs",
       "permanent": true
     },
     {
       "source": "/docs/:path*",
-      "destination": "https://www.vela.space/docs/:path*",
-      "permanent": true
-    },
-    {
-      "source": "/:path*",
-      "has": [
-        {
-          "type": "host",
-          "value": "app.constellate.science"
-        }
-      ],
-      "destination": "https://problems.science/:path*",
-      "permanent": true
-    },
-    {
-      "source": "/:path*",
-      "has": [
-        {
-          "type": "host",
-          "value": "app.vela.space"
-        }
-      ],
-      "destination": "https://problems.science/:path*",
+      "destination": "https://github.com/vela-science/vela/tree/main/docs",
       "permanent": true
     },
     {

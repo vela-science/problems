@@ -5,26 +5,21 @@ Earlier design and migration plans live under `docs/history/`.
 
 ## Product boundary
 
-- `www.vela.space` is the canonical editorial surface: Next.js 16, App
-  Router, static export (`output: "export"`). Moved off Astro 2026-07-28.
-- `problems.science` is the canonical Vela application origin.
-  `app.vela.space` remains a compatibility alias during the canonical-domain
-  cutover. Problems is the application's conceptual center, while Home orients
+- `problems.science` is the sole canonical and deployed Vela application
+  origin. Problems is the application's conceptual center, while Home orients
   readers across current
   change, direct contribution, communities, and the exact scientific record. Advanced
   records remain available in the same runtime.
-- `vela.space` redirects to `www`; Problems paths on `www` redirect to
-  `problems.science`.
+- `content/editorial` retains only the landing and *Endless Frontiers* authored
+  sources. It is not a package, renderer, route, or deployment.
 - Hosted Vela is non-authoritative. The Problems reads a bounded SELECT-only
   projection from Neon. Work mode writes hosted research activity through
   `@vela/activity-data`. Canonical custody remains in Repository Git
   repositories.
-- Normative protocol and CLI documentation remains in the Vela repository at
-  an exact release commit. This repository owns onboarding and explanation,
-  and serves it from `www.vela.space/docs`.
+- Normative protocol and CLI documentation remains in the public Vela
+  repository. Problems links directly to that maintained source.
 
-`bun run check:boundary` applies one profile per deployable application. It
-keeps www static, limits Vela Route Handlers to declared exact-root reads,
+`bun run check:boundary` limits Problems Route Handlers to declared exact-root reads,
 identity, and draft export, and requires Work mutations to call
 `@vela/activity-data`. ESLint blocks
 direct database clients, hosted signing machinery, and WorkOS imports outside
@@ -32,11 +27,12 @@ the named identity files. The package-direction check keeps
 `@vela/projection-data` independent of mutable activity and limits
 `@vela/activity-data` reuse to exact canonical and read contracts.
 
-The repository is a Bun workspace with six maintained boundaries:
+The repository is a Bun workspace with five maintained runtime boundaries and
+one non-runnable content area:
 
 ```text
-apps/www                editorial Next.js application (static export)
 apps/problems        unified Vela application: Problem State, Work, and Records
+content/editorial       retained landing and essay source; no runtime
 packages/brand          governed identity, tokens, fonts, and delivery assets
 packages/ui             shared shadcn/Base UI source and Vela presentation semantics
 packages/projection-data  Git-to-Neon projection, validation, search, and manifests
@@ -44,8 +40,8 @@ packages/activity-data  hosted activity schema, authorization, and mutation API
 ```
 
 `packages/brand` is framework-neutral. `packages/ui` is private React source
-shared by eligible interactions in the two applications and future private
-Vela applications. Route composition stays app-local. The internal registry is
+shared by eligible Problems interactions and future private Vela applications.
+Route composition stays app-local. The internal registry is
 product-bound and is never published as a separate UI library; see
 [`design-system.md`](design-system.md).
 
@@ -62,63 +58,9 @@ Decision in that named Repository changes Standing; replay derives the successor
 state and current actions. Problems may coordinate candidate work, but hosted state
 cannot issue a Vela Event or Decision, change Standing, or sign as a user.
 
-The editorial application owns one current route vocabulary:
-
-```text
-/                 the editorial scientific-state gateway
-/constellations   Endless Frontiers
-/docs             the vendored Vela documentation
-/docs/[section]   16 pages in five groups, synced from the Vela release pin
-```
-
-The retired `/essays`, `/developers`, and `/security` pages remain permanent
-redirects to `/constellations`, `/docs/quickstart`, and `/docs/threat-model`.
-They preserve old links without maintaining three parallel explanations of
-material the essay and exact manual already own.
-
-`apps/www/scripts/check-public-routes.mjs` holds the set as an executable
-contract: a route that ships without being added there fails the build, and so
-does a route in the set that stops shipping. Publication metadata may retain
-future entries, but the site labels them in preparation and does not link them
-until a substantive page joins this contract.
-
-The masthead carries the sail as the Home affordance and exposes one Essay,
-Docs, Problems, and GitHub. Problems leaves the editorial site for the shared
-Vela application. Developer onboarding and the security boundary live in the
-pinned manual instead of separate editorial shells.
-
-### Docs moved off the Problems, 2026-07-28
-
-`/docs` used to redirect from www to `app.vela.space/docs`, where five
-hand-written guidance sections lived. It now lives here, and the Problems
-redirects its old paths to www permanently, so existing links keep working in
-the direction they were written.
-
-Two changes, not one. The route moved because the Problems is a read-only
-view of projected state and should not also be the manual. The *content*
-changed because a paraphrase of a protocol is a second source of truth: the
-five guidance sections have been deleted, and the site now serves the Vela
-repository's own documentation.
-
-**Vendored at the pinned commit.** `apps/www/scripts/sync-vela-docs.mjs`
-extracts 16 files with `git show <pin>:docs/<file>` from any Vela clone that
-contains the commit recorded in `vela-release.v1.json`, and writes them into
-`src/content/docs/manifest.json`. The working tree is never read — when this
-was built the local checkout was 1889 insertions across 19 files ahead of the
-pin, which is precisely the drift the script exists to prevent. The output is
-committed, so no build reads a Vela clone to render the manual, and the content
-is reviewable in a diff. Projection releases use a separately installed binary
-whose version and bytes are checked against the same release record.
-
-Re-run it whenever the release pin moves:
-
-```bash
-bun apps/www/scripts/sync-vela-docs.mjs
-```
-
-`src/data/docs.test.ts` asserts the manifest commit equals `velaRelease.commit`,
-so a moved pin with a stale sync fails CI rather than shipping the manual for
-a release the site no longer advertises.
+Problems links `/docs` directly to the maintained Vela Core repository. There
+is no vendored documentation renderer or synchronized documentation copy in
+this workspace.
 
 **The wire schemas, vendored the same way.** `vela.status.v4` is declared twice
 — once upstream, generated from the Rust type that emits it, and once here as
@@ -294,40 +236,6 @@ release's first-live timestamp. Selecting an older root therefore makes later
 roots temporarily unreadable; pruning in that interval deletes them and removes
 the forward route. Exact-root selection and any later pruning are separate
 operator decisions.
-
-### The editorial snapshot
-
-The Problems reads Neon at build. `apps/www` does not: it is a static export
-and reads one committed file,
-`packages/projection-data/config/editorial-summary.v5.json`, so the editorial site
-builds with no database credential at all.
-
-That file is the only projection data the public editorial site serves, which
-makes its staleness a correctness problem rather than a freshness one. It has
-failed that way once. Between 2026-07-25 and 2026-07-28 the protocol moved
-`status.roots.event_log` and the work counts out of `vela status`;
-`compactEditorialSummary` read both by hand, so `bun run projection:snapshot`
-started throwing, and the site went on serving the last values anyone had
-committed — 646 open targets on Erdős against a real 1, and 23 pending reviews
-on Sidon sets against a real 0.
-
-Three things now prevent that recurring:
-
-- The generator reads current Repository counts, roots, and direct-Submission
-  actions through the same typed status reader the Problems uses, rather
-  than reaching into `status` by hand.
-- `packages/projection-data/tests/editorial-summary.test.ts` runs the generator
-  against a status shaped like the one the emitter publishes today and asserts
-  the output satisfies the schema. It needs no database, so it runs in CI.
-- The direct release regenerates and commits the snapshot before requalification.
-  Before this the release path refreshed Neon
-  and redeployed the Problems only, which is precisely how www's numbers
-  froze while the Problems's stayed current.
-
-The v5 snapshot contains current Repository counts, roots, and the exact
-`status.actions.work` direct-Submission action. It contains no work inventory.
-Regenerate by hand with `bun run projection:snapshot` (needs
-`VELA_PROJECTION_DATABASE_URL` once).
 
 There is no checked-in repository snapshot for the Problems, no copied search
 index, and no Build Week JSON. The Problems reads release-scoped rows from
@@ -546,12 +454,11 @@ and desktop widths. Stale screenshot binaries are not treated as product truth.
 
 ## Deployment topology
 
-The `constellate-dc388081` Vercel team has two active Vela Web projects:
+The `constellate-dc388081` Vercel team has one active Vela Web project:
 
 | Project | Application | Production domains |
 | --- | --- | --- |
-| `vela-web-www` | `apps/www` | `www.vela.space`, redirect aliases |
-| `vela-web-problems` | `apps/problems` | `problems.science` canonical, `app.vela.space` compatibility alias, `app.constellate.science` redirect |
+| `vela-web-problems` | `apps/problems` | `problems.science` canonical; `www.problems.science` redirects here |
 
 There is no active legacy Vela Vercel project. `prospect` and `snowchild` are
 unrelated and outside this workspace.
@@ -562,9 +469,9 @@ Vercel's CDN. Keep `bunVersion: "1.x"`: it is the only supported Vercel Bun
 runtime selector, while the workspace `packageManager` and lockfile continue to
 pin the development and build toolchain.
 
-Vercel's monorepo link belongs at the repository root, never inside either app.
-From a fresh checkout, one command discovers both configured projects and their
-Root Directories:
+Vercel's monorepo link belongs at the repository root, never inside the app.
+From a fresh checkout, one command discovers the configured project and its
+Root Directory:
 
 ```sh
 vercel link --repo --yes --scope constellate-dc388081
@@ -579,23 +486,19 @@ target drift.
 
 ### Pushing deploys
 
-The two active applications deliberately use different release paths:
-
-- `www.vela.space` uses Vercel's Git deployment for relevant `main` changes.
-- The unified application has automatic Git deployment disabled. An operator
+The unified application has automatic Git deployment disabled. An operator
   runs `bun run release:problems` from clean exact `main`. The command owns
   static qualification, fresh source acquisition, a compatibility deployment,
   rooted activity migration, projection activation, local snapshot staging,
   post-activation qualification,
   provider-loss reconstruction, exact commit publication, Vercel deployment,
   public readiness and durable qualification. Each child receives only its
-  required credential class. One deployment serves both product domains.
+  required credential class.
 
 This ordering is mandatory. It prevents current application code from racing a
 predecessor read model. GitHub Actions is optional static automation and does
-not participate in production. Only `apps/www/vercel.json` carries an
-`ignoreCommand`, so `scripts/vercel-should-build.mjs` filters the editorial
-build alone; every explicit exact-SHA deployment request builds. A branch-head hook is
+not participate in production. Every explicit exact-SHA deployment request
+builds. A branch-head hook is
 not used: it could resolve a newer `main` commit than the tree the workflow
 qualified.
 
@@ -609,15 +512,12 @@ Application code does not carry readers for predecessor shapes.
 `AGENTS.md` release safety still applies to attaching domains and tagging final
 releases.
 
-Public manifests:
+The public manifest is
+`https://problems.science/.well-known/vela-site.json`.
 
-- `https://www.vela.space/.well-known/vela-web.json`
-- `https://problems.science/.well-known/vela-site.json`
-
-The manifests use `vela.web-deployment.v3` and `vela.site-deployment.v4`; each
-records the exact Git commit, brand schema/root, deployment
-identity, and delivery mode. The editorial manifest is immutable deployment
-output. The Problems manifest is a non-cached read-only route: it combines
+The production manifest uses `vela.site-deployment.v4` and records the exact
+Git commit, brand schema/root, deployment identity, and delivery mode. It is a
+non-cached read-only route that combines
 that deployment's immutable identity with the current Neon projection on every
 request, so a data-only projection activation cannot leave a copied public JSON
 file behind. Ordinary Problems pages remain bound to the exact retained root
@@ -636,13 +536,8 @@ a version lives; commit and deployment id come from `VERCEL_GIT_COMMIT_SHA` and 
 which `deploymentIdentity()` reads directly and which production manifest
 generation refuses to go without. Git tags remain useful release pointers, but deployment
 truth is the exact commit rather than a tag inferred from a version string.
-`apps/www/scripts/check-deployed-manifest.mjs` and
-`apps/problems/scripts/check-deployed-manifest.mjs` confirm that the deployed
+`apps/problems/scripts/check-deployed-manifest.mjs` confirms that the deployed
 bytes identify the exact repository commit and projection root.
-
-Several legacy domains currently show Vercel's `DNS Change Recommended`
-advisory while resolving successfully. Treat DNS migration as a separate
-provider-controlled operation; do not combine it with a code release.
 
 ## Fly retirement
 
@@ -663,13 +558,10 @@ shipping one; the preconditions are the gates.
    redirects, semantics, roots, accessibility, responsive states, and cache
    isolation. A release-candidate build is available on a `v*-rc.*` tag when a
    change is worth exercising in CI before it lands.
-2. Merge to clean `main`. `vercel-should-build.mjs` scopes the editorial Git
-   integration; `bun run release:problems` explicitly refreshes and deploys
-   the Vela application. A shared brand or data-contract change may deploy both;
-   editorial-only work does not redeploy the Vela application.
-3. Verify the production manifests and canonical domains against the exact
-   merged commit and the activated projection root. The untouched application
-   must retain its prior deployment identity and behavior.
+2. Merge to clean `main`. `bun run release:problems` explicitly refreshes and
+   deploys the Vela application.
+3. Verify the production manifest and canonical domain against the exact
+   merged commit and the activated projection root.
 4. Cut a tag afterwards when the release means something. It is a pointer to
    the commit, not the thing that shipped it.
 5. Remove generated dependencies and build output after the release audit.

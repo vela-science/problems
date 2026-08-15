@@ -23,13 +23,11 @@ and sign it with a local key. The receiving Repository, Vela verification, and
 an authorized, attributed Decision remains the only route to new Standing.
 Human and agent performers are peer actor classes with explicit provenance.
 
-The ecosystem has three surfaces:
+The ecosystem has two current product surfaces:
 
-1. `www.vela.space` publishes editorial and protocol documentation.
-2. The Vela product application at canonical `problems.science` reads exact
-   scientific State and writes hosted research activity. `app.vela.space`
-   remains a compatibility alias.
-3. The local Vela and Repository surface signs, verifies, decides, publishes,
+1. The Vela product application at canonical `problems.science` reads exact
+   scientific State and writes hosted research activity.
+2. The local Vela and Repository surface signs, verifies, decides, publishes,
    and replays canonical scientific state outside the hosted service.
 
 The hosted product spans two planes. The scientific-state plane contains exact
@@ -174,33 +172,17 @@ supply one.
 
 ## Surfaces
 
-### `www.vela.space`
+### Retained editorial source
 
-The editorial gateway explains why Vela exists, how its trust boundary works,
-how a builder starts, and which authored work is ready to read. It is a
-statically exported Next.js application. The landing page is a paced editorial
-journey through the missing scientific-state layer, the exact public map, the
-protocol crossing, correction lineage, one published essay, and a local quick
-start. `/constellations` retains the published `Endless Frontiers` essay, and
-`/docs` plus `/docs/[section]` serve the normative manual. The older `/essays`,
-`/developers`, and `/security` shells redirect to the essay, Quickstart, and
-Threat model respectively instead of repeating those surfaces.
-
-The editorial site may explain the product in authored language. Live values
-and scientific marks still come from checked projection data, protocol examples
-are labelled as examples, and atmosphere never masquerades as evidence. The
-gateway does not become the Workspace or the scientific authority surface.
-
-Documentation is not written here. It is the upstream Vela markdown vendored at
-an exact pinned release and rendered without paraphrase; only the duplicate
-title heading is dropped, because the route already sets it. A reader compares
-the product's explanation against the protocol's own words.
+`content/editorial` keeps only the authored landing composition and the
+published *Endless Frontiers* essay. It is intentionally non-runnable: it has
+no package, route, docs renderer, live-data reader, or deployment contract.
+Normative documentation is owned and published by Vela Core.
 
 ### `problems.science`
 
-This is the canonical origin for the Vela product application. Home is its
-front door and Problems is its conceptual center. `app.vela.space` redirects
-to the same path here for compatibility rather than serving a second origin.
+This is the sole canonical origin for the Vela product application. Home is its
+front door and Problems is its conceptual center.
 The same application preserves durable record routes, search, graph,
 reproduction, and release-wide ledgers as an advanced Records layer. Protocol
 collections do not compete with Problems in primary navigation.
@@ -288,7 +270,7 @@ Problem.
 
 ## Shared system
 
-The two applications are independently deployable surfaces of one product:
+The workspace contains one deployed application:
 
 - `@vela/brand` supplies framework-neutral identity, tokens, type roles, fonts,
   and marks;
@@ -298,9 +280,9 @@ The two applications are independently deployable surfaces of one product:
 - `@vela/activity-data` owns hosted mutable product records, activity
   migrations, tenant authorization, and unsigned Submission drafts.
 
-Applications share foundations, not whole page implementations. Editorial
-compositions remain in `apps/www`; Problem State, Work, record inspection,
-search, and graph compositions live together in `apps/problems`.
+Problem State, Work, record inspection, search, and graph compositions live
+together in `apps/problems`. The retained editorial source is not an
+application or a shared UI implementation.
 
 The Vela design system is private and product-bound. `packages/ui` is source
 shared by this workspace and future private Vela applications, consumed through

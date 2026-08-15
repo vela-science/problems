@@ -11,7 +11,6 @@ make evidence and direction legible; it is not a separately published product.
 | --- | --- | --- |
 | Brand | `packages/brand` | All Vela surfaces and exported assets |
 | React primitives and semantics | `packages/ui` | Problems, Problems, eligible www interactions, future private React applications |
-| Editorial profile | `packages/ui/src/styles/editorial.css` | Home, the Constellations essay, and the vendored Vela documentation |
 | Product profile | `packages/ui/src/styles/product.css` | Problems, Problems, and future private product surfaces |
 | Exact data | `packages/projection-data` | www, Problems, and Problems State mode |
 | Activity data | `packages/activity-data` | Problems Work mode; no visual primitives |
@@ -23,9 +22,8 @@ delivered fonts, canonical sail, mark exports, licenses, and integrity checks.
 shadcn/Base UI primitives and the small set of stable Vela presentation
 semantics. Application shells and route compositions remain app-local.
 
-The two applications use Next.js 16 and React 19. That shared
-runtime makes a common primitive source useful; it does not justify merging the
-editorial and workbench composition systems.
+Problems uses Next.js 16 and React 19. Shared workspace packages make a common
+primitive source useful; retained editorial source is not a runtime consumer.
 
 ## shadcn and Base UI
 
@@ -52,7 +50,7 @@ shadcn diff
 The workspace pins shadcn `4.16.1`; scripts always resolve that installed
 binary. `bunx shadcn@…` is deliberately excluded because it fetched a second
 version beside the reviewed one. `bun run check:design-system` runs `shadcn
-info --json` in `packages/ui`, `apps/problems`, and `apps/www`, then requires
+info --json` in `packages/ui` and `apps/problems`, then requires
 the same Base UI base, `base-nova`, Hugeicons, Tailwind v4, and shared UI target.
 
 Review generated source before accepting it. A registry update may change
@@ -60,12 +58,9 @@ markup, state attributes, dependencies, or focus behavior. Keep the source
 close to upstream; put Vela semantics in composition rather than forking a
 generic primitive.
 
-`apps/problems/components.json` and `apps/www/components.json` are consumer
-maps. They point UI and utility aliases at `@vela/ui`; neither is a second
-installation destination. Problems consumes package exports and does not
-create an app-local primitive directory. www uses the same controls, focus,
-motion, state, marks, and icon contracts while keeping only authored editorial
-composition, assets, and content-specific figure styling local.
+`apps/problems/components.json` is the application consumer map. It points UI
+and utility aliases at `@vela/ui`; Problems consumes package exports and does
+not create an app-local primitive directory.
 
 ### Private source catalog and lab
 
@@ -255,7 +250,7 @@ requirements. Remove a global selector when its last consumer is removed.
 - spacious, asymmetric composition
 - figures as arguments
 
-The `www` landing composition follows a scientific-atlas story: a midnight
+The retained landing composition follows a scientific-atlas story: a midnight
 opening, paper reading sections, one exact source instrument, and a quiet
 horizon close. It may use existing Vela paintings as atmosphere, but atmospheric
 marks never appear inside evidence-bearing figures. Homepage sections and
@@ -263,9 +258,8 @@ publication compositions stay app-local CSS modules. Shared controls, focus,
 tokens, motion limits, and type sources still come from `@vela/ui` and
 `@vela/brand`.
 
-Tailwind Plus editorial and documentation compositions may remain local to
-`apps/www` with provenance. Generic controls should converge on `@vela/ui`
-when doing so reduces code and preserves the editorial register.
+The landing and essay sources remain under `content/editorial` with provenance,
+but they are not runtime consumers or a second design-system target.
 
 ### Problems
 

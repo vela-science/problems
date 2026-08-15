@@ -33,9 +33,6 @@ function deliveredFiles(repository) {
   ].filter((path) => deliveredExtensions.test(path) && !path.endsWith(".map"));
 
   return [
-    ...filesBelow(resolve(app("www"), "out"))
-      .filter((path) => deliveredExtensions.test(path) && !path.endsWith(".map"))
-      .map((path) => ({ path, profile: "www" })),
     ...nextFiles("problems").map((path) => ({ path, profile: "app" })),
   ];
 }

@@ -50,33 +50,6 @@ const deploymentSchema = z.object({
   id: z.string().nullable(),
 });
 
-const editorialDeploymentManifestBase = z.object({
-  schema: z.literal("vela.web-deployment.v3"),
-  authority: z.literal("editorial_only"),
-  canonical_url: z.literal("https://www.vela.space/"),
-  web: z.object({
-    version: z.string(),
-    commit: commitSchema.nullable(),
-    brand: z.object({ schema: z.literal("vela.brand-root.v2"), root: rootSchema }),
-  }),
-  delivery: z.object({ mode: z.literal("immutable_isr") }),
-  deployment: deploymentSchema,
-});
-
-export const editorialDeploymentManifestSchema = editorialDeploymentManifestBase.superRefine((value, context) => {
-  if (value.deployment.provider === "vercel") {
-    if (value.web.commit === null) {
-      context.addIssue({ code: "custom", path: ["web", "commit"], message: "production editorial commit is missing" });
-    }
-    if (!value.deployment.id) {
-      context.addIssue({ code: "custom", path: ["deployment", "id"], message: "production editorial deployment ID is missing" });
-    }
-    if (value.deployment.environment !== "production") {
-      context.addIssue({ code: "custom", path: ["deployment", "environment"], message: "Vercel editorial deployment is not identified as production" });
-    }
-  }
-});
-
 const problemsDeploymentManifestBase = z.object({
   schema: z.literal("vela.site-deployment.v4"),
   authority: z.literal("read_only_projection"),
@@ -133,26 +106,6 @@ function deploymentIdentity(environment: Environment, label: string) {
       id,
     },
   };
-}
-
-export function createEditorialDeploymentManifest(input: {
-  version: string;
-  brandRoot: `sha256:${string}`;
-  environment?: Environment;
-}) {
-  const identity = deploymentIdentity(input.environment ?? process.env, "editorial");
-  return editorialDeploymentManifestSchema.parse({
-    schema: "vela.web-deployment.v3",
-    authority: "editorial_only",
-    canonical_url: "https://www.vela.space/",
-    web: {
-      version: input.version,
-      commit: identity.commit,
-      brand: { schema: brandRootSchema, root: input.brandRoot },
-    },
-    delivery: { mode: "immutable_isr" },
-    deployment: identity.deployment,
-  });
 }
 
 export function createProblemsDeploymentManifest(input: {

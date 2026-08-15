@@ -15,8 +15,6 @@ import {
   githubGitEnvironment,
   parsePruneResult,
   releaseChildEnvironment,
-  releaseChangedPaths,
-  releaseCommitEnvironment,
   releaseLookupState,
   releaseOrder,
   releaseWorkDirectory,
@@ -36,22 +34,15 @@ describe("direct Problems release", () => {
     expect(source).not.toContain("workflow_dispatch");
     expect(source).toContain("source-adapter-set-");
     expect(source).toContain("refresh-neon-projection.mjs");
-    expect(source).toContain("projection:snapshot");
     expect(source).toContain("refs/heads/ops/problems-release-lock");
     expect(source).toContain("--force-with-lease=");
     expect(source).toContain("VELA_GITHUB_CLI");
     expect(source).toContain("auth git-credential");
     expect(source).toContain("githubCli, [\"auth\", \"token\"");
-    expect(source).toContain("origin/main advanced after qualification");
+    expect(source).toContain("origin/main advanced before publication");
     expect(source).toContain("rollback-checkpoint.json");
     expect(source).toContain('["observatory", "problems"].includes(manifest.site?.product)');
     expect(source).toContain('manifest?.site?.product !== "problems"');
-    const snapshotStage = source.slice(
-      source.indexOf("function stageSnapshot"),
-      source.indexOf("function publishSiteCommit"),
-    );
-    expect(snapshotStage).toContain("const remote = githubGitEnvironment(environment)");
-    expect(snapshotStage).toContain('{ environment: remote }');
     const activation = source.indexOf("context.refresh = JSON.parse");
     const checkpoint = source.indexOf(
       "writeRollbackCheckpoint(context, \"projection_activated\")",
@@ -77,8 +68,6 @@ describe("direct Problems release", () => {
       "projection_schema_initialize",
       "projection_activate",
       "activity_qualification",
-      "snapshot_stage",
-      "snapshot_static_requalification",
       "postactivation_product",
       "provider_loss_reconstruction",
       "site_publish",
@@ -117,55 +106,6 @@ describe("direct Problems release", () => {
       XDG_CONFIG_HOME: "/release/home/.config",
       XDG_CACHE_HOME: "/release/home/.cache",
     });
-  });
-
-  test("Git commits have one fixed identity inside the private release home", () => {
-    const environment = releaseCommitEnvironment({
-      PATH: process.env.PATH,
-      HOME: "/operator",
-      VELA_RELEASE_HOME: "/release/home",
-      NODE_OPTIONS: "--require=/operator/inject.js",
-    });
-    const result = spawnSync("git", ["var", "GIT_AUTHOR_IDENT"], {
-      encoding: "utf8",
-      env: environment,
-    });
-    expect(result.status).toBe(0);
-    expect(result.stdout).toContain("Vela Problems release <release@vela.space>");
-    expect(environment.NODE_OPTIONS).toBeUndefined();
-    expect(environment.HOME).toBe("/release/home");
-  });
-
-  test("identifies the exact changed paths without parsing trimmed porcelain status", () => {
-    const directory = mkdtempSync(join(tmpdir(), "vela-release-changed-paths-"));
-    const environment = {
-      ...process.env,
-      GIT_AUTHOR_NAME: "Release test",
-      GIT_AUTHOR_EMAIL: "release-test@example.test",
-      GIT_COMMITTER_NAME: "Release test",
-      GIT_COMMITTER_EMAIL: "release-test@example.test",
-    };
-    const git = (...args: string[]) => spawnSync("git", args, {
-      cwd: directory,
-      env: environment,
-      encoding: "utf8",
-    });
-    try {
-      expect(git("init", "--quiet").status).toBe(0);
-      writeFileSync(join(directory, "snapshot.json"), "old\n");
-      expect(git("add", "snapshot.json").status).toBe(0);
-      expect(git("commit", "--quiet", "-m", "base").status).toBe(0);
-      writeFileSync(join(directory, "snapshot.json"), "new\n");
-      expect(releaseChangedPaths(directory, environment)).toEqual(["snapshot.json"]);
-      writeFileSync(join(directory, " snapshot.json"), "lookalike\n");
-      expect(git("add", " snapshot.json").status).toBe(0);
-      expect(releaseChangedPaths(directory, environment)).toEqual([
-        " snapshot.json",
-        "snapshot.json",
-      ]);
-    } finally {
-      rmSync(directory, { recursive: true, force: true });
-    }
   });
 
   test("private-origin Git uses only the scoped GitHub credential helper", () => {

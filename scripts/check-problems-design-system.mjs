@@ -18,12 +18,6 @@ const workspaces = [
     css: "../../packages/ui/src/styles/product.css",
     aliases: { components: "@/components", utils: "@vela/ui/lib/utils", ui: "@vela/ui/components", lib: "@/lib", hooks: "@/hooks" },
   },
-  {
-    name: "www",
-    directory: join(root, "apps/www"),
-    css: "../../packages/ui/src/styles/editorial.css",
-    aliases: { components: "@/components", utils: "@vela/ui/lib/utils", ui: "@vela/ui/components", lib: "@/lib", hooks: "@/hooks" },
-  },
 ];
 
 function filesAt(directory, extensions = /\.(?:ts|tsx)$/u) {
@@ -66,18 +60,15 @@ const pageShellCss = readFileSync(join(ui, "src/components/vela/page-shell.modul
 if (!pageShellCss.includes('.page[data-layout="canvas"]') || !pageShellCss.includes("max-width: none")) failures.push("PageShell layouts must use the full shared content rail");
 if (!pageShellCss.includes("padding: var(--vela-page-block) var(--vela-page-gutter)")) failures.push("PageShell must retain the shared responsive page gutter");
 if (productCss.split("\n").length + themeCss.split("\n").length > 180) failures.push("authored product and theme CSS exceed the 180-line aggregate cap");
-const editorialCss = readFileSync(join(ui, "src/styles/editorial.css"), "utf8");
 const typesetCss = readFileSync(join(ui, "src/styles/typeset.css"), "utf8");
 if (!productCss.includes('@source "../components"')) failures.push("@vela/ui product profile must own Tailwind workspace source detection");
 if (!productCss.includes('@import "./foundation.css"')) failures.push("@vela/ui product profile must import the shared interaction foundation");
-if (!editorialCss.includes('@import "./product.css"')) failures.push("editorial profile must extend the product profile, not fork it");
 for (const preset of [".typeset-reading", ".typeset-docs", ".typeset-compact", ".not-typeset", ".typeset-scroll"]) {
   if (!typesetCss.includes(preset)) failures.push(`Typeset contract missing ${preset}`);
 }
 
 const problems = join(root, "apps/problems");
-const www = join(root, "apps/www");
-for (const app of [problems, www]) {
+for (const app of [problems]) {
   if (existsSync(join(app, "src/components/ui"))) failures.push(`${relative(root, app)} retains an app-local primitive layer`);
   const manifest = JSON.parse(readFileSync(join(app, "package.json"), "utf8"));
   if (manifest.dependencies?.["@vela/ui"] !== "workspace:*") failures.push(`${manifest.name}: canonical @vela/ui workspace is required`);
@@ -103,7 +94,7 @@ for (const file of problemsRoutes) {
     failures.push(`${label}: every app page must compose the canonical PageShell`);
   }
 }
-for (const app of [problems, www]) {
+for (const app of [problems]) {
   for (const file of filesAt(join(app, "src"), /\.(?:ts|tsx|js|mjs)$/u)) {
     const source = readFileSync(file, "utf8");
     if (/packages\/ui\/(?:lab|registry)|@vela\/ui\/(?:lab|registry)|vela\.ui-component-lab/u.test(source)) {
@@ -146,13 +137,7 @@ for (const file of [
 const workbenchSource = readFileSync(join(problems, "src/components/vela/workbench.tsx"), "utf8");
 if (/\b(?:border-y|divide-y|border-t|border-b|border-l|border-dashed)\b/u.test(workbenchSource)) failures.push("Work mode restores a wireframe separator or perimeter ladder");
 
-const wwwGlobals = readFileSync(join(www, "src/app/globals.css"), "utf8");
-const wwwTokens = readFileSync(join(www, "src/styles/tokens.css"), "utf8");
-if (!wwwGlobals.includes('@import "@vela/ui/editorial.css"') || !wwwGlobals.includes('@import "@vela/ui/typeset.css"')) failures.push("www must consume shared editorial and Typeset profiles");
-if (/tailwindcss\/typography|--tw-prose-|(?:^|[\s.{])\.prose\b/mu.test(wwwGlobals + typesetCss + readFileSync(join(www, "src/styles/docs.css"), "utf8") + readFileSync(join(www, "src/styles/essay.css"), "utf8"))) failures.push("www retains the parallel typography/prose implementation");
-if (/^\s*--(?:paper|ink|gold|rule|font|ease|dur|focus-ring|radius(?:-lg)?)(?:-|:)/mu.test(wwwTokens)) failures.push("www tokens.css redefines shared semantic/type/motion/focus/radius tokens");
-if (existsSync(join(www, "src/components/editorial/vela-mark.tsx")) || existsSync(join(problems, "src/components/vela/vela-mark.tsx"))) failures.push("an app-local Vela mark remains beside @vela/ui");
-if (existsSync(join(www, "src/components/editorial/icons.tsx"))) failures.push("www retains a parallel interface-icon component");
+if (existsSync(join(problems, "src/components/vela/vela-mark.tsx"))) failures.push("an app-local Vela mark remains beside @vela/ui");
 
 const itemSource = readFileSync(join(ui, "src/components/ui/item.tsx"), "utf8");
 if (!/data-slot="item-content"[\s\S]{0,220}"flex min-w-0 flex-1/u.test(itemSource)) failures.push("shadcn ItemContent must retain min-w-0 for scientific identifiers");
@@ -170,7 +155,7 @@ for (const file of ["status-badge.tsx", "exact-value.tsx", "copy-button.tsx", "s
 
 const EXTERNAL_NAVIGATION = 'if (/^https?:/u.test(href)) window.location.assign(href);';
 
-for (const app of [problems, www]) {
+for (const app of [problems]) {
   for (const file of filesAt(join(app, "src"))) {
     const source = readFileSync(file, "utf8");
     const label = relative(root, file);
@@ -188,17 +173,9 @@ for (const app of [problems, www]) {
   }
 }
 
-for (const directory of [join(www, "src/components/protocol"), join(www, "src/components/editorial")]) {
-  for (const file of filesAt(directory)) {
-    const source = readFileSync(file, "utf8");
-    if (/<svg\b/u.test(source)) failures.push(`${relative(root, file)}: interface SVG bypasses Hugeicons`);
-    if (/<button\b/u.test(source)) failures.push(`${relative(root, file)}: raw interface button bypasses @vela/ui`);
-  }
-}
-
 if (failures.length) {
   console.error(["Vela design-system check failed:", ...failures.map((failure) => `- ${failure}`)].join("\n"));
   process.exit(1);
 }
 
-console.log("Vela design system verified: three Base UI/Hugeicons workspaces on local shadcn 4.16.1; shared Typeset/focus/motion; no parallel app primitive or editorial token bridge.");
+console.log("Vela design system verified: shared UI and Problems use Base UI/Hugeicons on local shadcn 4.16.1; shared Typeset/focus/motion; no parallel app primitive.");

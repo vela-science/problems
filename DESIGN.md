@@ -29,14 +29,14 @@ composition.
 | --- | --- | --- |
 | Brand | `packages/brand` | DTCG-shaped tokens, type roles, fonts, sail geometry, state colours, licences, deterministic exports |
 | React UI | `packages/ui` | Official shadcn `base-nova` primitives on Base UI and stable Vela presentation semantics |
-| Editorial composition | `apps/www` | Authored publications, figures, product narrative, and documentation layouts |
+| Editorial source | `content/editorial` | Non-runnable landing and essay composition source; no route or deployment |
 | Vela application | `apps/problems` | Problem Current State and Workspace, advanced records, hosted activity, URL state, local-signing handoff, and the Sigma graph |
 | Exact data | `packages/projection-data` | Rooted scientific projections consumed by both applications |
 | Activity data | `packages/activity-data` | Mutable hosted workspaces, attempts, discussion, rooted metadata, append-only Loro canvas updates, and unsigned drafts |
 
 `@vela/brand` is framework-neutral. `@vela/ui` is the shared React source for
-the two Next.js applications and future private Vela applications. Applications
-share primitives and stable semantics; they do not share whole route layouts.
+the Problems application and future private Vela applications. Runtime
+applications share primitives and stable semantics, not whole route layouts.
 
 `packages/ui/components.json` is the only shadcn source configuration.
 `packages/ui/registry.json` and `packages/ui/lab/catalog.json` govern canonical
@@ -48,7 +48,7 @@ the package exports.
 
 ### Editorial
 
-`www.vela.space` is the authored register: paper and midnight grounds, a
+The retained editorial source records the authored register: paper and midnight grounds, a
 system Iowan Old Style/Baskerville book stack for display and reading, Switzer
 metadata, and IBM Plex Mono for exact values. Zodiak and Gambetta remain
 licensed delivery assets but are not selected by the current WWW composition.
@@ -58,7 +58,8 @@ The landing page is a scientific atlas rather than a dashboard or a condensed
 manual. It opens at midnight, crosses into paper, gives one exact data-derived
 source instrument, explains the protocol and authority boundary, and closes
 at the horizon. Authored prose may explain the product. Exact values, scientific
-marks, version, and observation date still come from checked sources. A diagram
+marks, version, and observation date were derived from checked sources when the
+composition was active. A diagram
 that is only a protocol example says so in its visible caption.
 
 Editorial motion is episodic. One horizon arrival, one evidence-path draw, and
@@ -68,8 +69,8 @@ palette, constellation, or second design system.
 
 ### Product
 
-`problems.science` is the canonical application origin; `app.vela.space` is a
-compatibility redirect. The product uses the instrument register: a
+`problems.science` is the sole canonical application origin. The product uses
+the instrument register: a
 cool-tinted light ground and an equivalent midnight one, both drawn from a single hue family so a small
 luminance step still reads as a step; Geist for interface text, IBM Plex Mono
 for identifiers and exact values, compact controls, and dense but readable
@@ -354,7 +355,8 @@ compositions may enter `@vela/ui`. Raw template source is never committed.
 
 - Editorial prose stays within a readable measure; wide figures break out from
   the reading axis, not blindly from the viewport.
-- Editorial motion has five tiers in `apps/www/src/styles/tokens.css`: 160ms
+- The retained editorial source records its historical motion tiers in
+  `content/editorial/source/src/styles/tokens.css`: 160ms
   feedback, 240ms standard, 420ms deliberate settle, 900ms for an evidence path
   drawing itself, and 1100ms for the one arrival a plate is allowed. Product
   applications keep motion to bounded 160–240ms state transitions: mode

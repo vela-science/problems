@@ -15,7 +15,6 @@ function fixture(entries: Record<string, string> = {}) {
   const root = mkdtempSync(join(tmpdir(), "vela-web-public-output-"));
   temporary.push(root);
   const defaults = [
-    "apps/www/out/index.html",
     "apps/problems/.next/static/chunks/app.js",
     "apps/problems/public/favicon.svg",
     "apps/problems/.next/server/app/index.html",
@@ -36,7 +35,7 @@ describe("public output secret and privacy scan", () => {
         "user_verification is absent; no hosted account identifier is published",
     }))).toMatchObject({
       ok: true,
-      profiles: ["app", "www"],
+      profiles: ["app"],
     });
   });
 
@@ -54,15 +53,10 @@ describe("public output secret and privacy scan", () => {
     expect(() => scanPublicOutput(root)).toThrow("hosted account identifier");
   });
 
-  test("rejects private registry or component-lab metadata from every delivered profile", () => {
+  test("rejects private registry or component-lab metadata from delivered output", () => {
     const server = fixture({
       "apps/problems/.next/server/app/index.html": "vela.ui-component-lab.v1",
     });
     expect(() => scanPublicOutput(server)).toThrow("private UI registry or component-lab metadata");
-
-    const www = fixture({
-      "apps/www/out/index.html": "private-source-only",
-    });
-    expect(() => scanPublicOutput(www)).toThrow("private UI registry or component-lab metadata");
   });
 });

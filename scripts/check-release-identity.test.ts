@@ -16,7 +16,6 @@ import { checkReleaseIdentity } from "./check-release-identity.mjs";
 const repository = resolve(import.meta.dirname, "..");
 const ROOT = "package.json";
 const WORKSPACES = [
-  "apps/www/package.json",
   "apps/problems/package.json",
   "packages/brand/package.json",
   "packages/activity-data/package.json",
@@ -84,7 +83,7 @@ describe("one Web release identity", () => {
   test("rejects a workspace version even when it agrees with the root", () => {
     const root = fixture();
     const version = JSON.parse(readFileSync(resolve(root, ROOT), "utf8")).version;
-    patch(root, "apps/www/package.json", (manifest) => { manifest.version = version; });
+    patch(root, "apps/problems/package.json", (manifest) => { manifest.version = version; });
     expect(() => checkReleaseIdentity(root)).toThrow("declares its own version");
   });
 });

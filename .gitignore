@@ -32,8 +32,6 @@ tmp/
 output/
 prototypes/
 .vercel
-apps/www/public/.well-known/vela-web.json
-apps/www/public/.well-known/vela-site.json
 apps/problems/public/.well-known/vela-site.json
 apps/*/public/assets/fonts/
 apps/problems/public/favicon.svg

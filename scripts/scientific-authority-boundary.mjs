@@ -69,7 +69,6 @@ const ALLOWED_IDENTITY_ACTIONS = new Map([
 ]);
 
 export const BOUNDARY_PROFILES = Object.freeze([
-  { name: "www_static", root: "apps/www/src" },
   { name: "vela_app", root: "apps/problems/src" },
   { name: "activity_data_owner", root: "packages/activity-data/src" },
 ]);
@@ -117,14 +116,6 @@ function exactProblemsFetch(file, content, fetches) {
   }
   return file === accountMenu
     && content.includes('fetch("/api/account", { cache: "no-store", credentials: "same-origin" })');
-}
-
-function inspectStatic(file, content, add) {
-  if (routeHandler.test(file)) add("static_route_handler", "www is a static export and may not define Route Handlers");
-  if (serverDirective.test(content)) add("static_server_action", "www may not define Server Actions");
-  if (requestStateCall.test(content)) add("static_request_state", "www may not read request-scoped state");
-  if (runtimeEnvironment.test(content)) add("static_runtime_environment", "www source may not read runtime secrets");
-  if ([...content.matchAll(fetchCall)].length) add("static_request_fetch", "www source may not perform request-time fetches");
 }
 
 function inspectProblems(file, content, add) {
@@ -177,7 +168,7 @@ function inspectActivityAuthority(file, content, add) {
 function inspectDependencyDirection(file, content, add) {
   const imports = importedSpecifiers(content);
   if (
-    (file.startsWith("apps/www/") || file.startsWith("apps/problems/"))
+    file.startsWith("apps/problems/")
     && importsPackage(imports, "@vela/activity-data")
     && !PROBLEMS_ACTIVITY_FILES.has(file)
   ) {
@@ -271,7 +262,6 @@ export function inspectScientificAuthorityBoundary(repository) {
     const add = (rule, detail) => violations.push({ file, profile, rule, detail });
 
     inspectDependencyDirection(file, content, add);
-    if (profile === "www_static") inspectStatic(file, content, add);
     if (profile === "vela_app") {
       inspectProblems(file, content, add);
       if (PROBLEMS_ACTIVITY_FILES.has(file)) {
