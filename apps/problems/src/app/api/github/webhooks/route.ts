@@ -24,7 +24,16 @@ export async function POST(request: NextRequest) {
   if (Buffer.byteLength(body, "utf8") > 2 * 1024 * 1024) {
     return NextResponse.json({ error: "invalid payload size" }, { status: 413 });
   }
-  if (!await githubApp().webhooks.verify(body, signature)) return NextResponse.json({ error: "invalid signature" }, { status: 401 });
+  if (!/^sha256=[0-9a-f]{64}$/u.test(signature)) {
+    return NextResponse.json({ error: "invalid signature" }, { status: 401 });
+  }
+  let verified = false;
+  try {
+    verified = await githubApp().webhooks.verify(body, signature);
+  } catch {
+    return NextResponse.json({ error: "invalid signature" }, { status: 401 });
+  }
+  if (!verified) return NextResponse.json({ error: "invalid signature" }, { status: 401 });
   if (!(["installation", "installation_repositories", "push"] as string[]).includes(eventName)) {
     return NextResponse.json({ ignored: true, authority_effect: "none" });
   }

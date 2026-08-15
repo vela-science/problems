@@ -23,7 +23,7 @@ function request(body: string, headers: Record<string, string> = {}) {
       "content-length": String(Buffer.byteLength(body)),
       "x-github-delivery": "00000000-0000-0000-0000-000000000001",
       "x-github-event": "installation",
-      "x-hub-signature-256": "sha256=signed",
+      "x-hub-signature-256": `sha256=${"a".repeat(64)}`,
       ...headers,
     },
   });
@@ -49,6 +49,20 @@ describe("GitHub webhook boundary", () => {
     expect(boundary.record).not.toHaveBeenCalled();
   });
 
+  it("refuses a missing signature without invoking Octokit", async () => {
+    const response = await POST(request("{}", { "x-hub-signature-256": "" }));
+    expect(response.status).toBe(401);
+    expect(boundary.verify).not.toHaveBeenCalled();
+    expect(boundary.record).not.toHaveBeenCalled();
+  });
+
+  it("maps verifier refusal errors to a closed 401 boundary", async () => {
+    boundary.verify.mockRejectedValue(new Error("missing or malformed signature"));
+    const response = await POST(request("{}"));
+    expect(response.status).toBe(401);
+    expect(boundary.record).not.toHaveBeenCalled();
+  });
+
   it("retains only a closed lifecycle projection and the raw-body root", async () => {
     const body = JSON.stringify({
       action: "created",
@@ -63,7 +77,7 @@ describe("GitHub webhook boundary", () => {
     });
     const response = await POST(request(body));
     expect(response.status).toBe(200);
-    expect(boundary.verify).toHaveBeenCalledWith(body, "sha256=signed");
+    expect(boundary.verify).toHaveBeenCalledWith(body, `sha256=${"a".repeat(64)}`);
     const input = boundary.record.mock.calls[0]?.[0];
     expect(input).toMatchObject({
       deliveryId: "00000000-0000-0000-0000-000000000001",
