@@ -1,6 +1,7 @@
 import "server-only";
 
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { constants } from "node:fs";
+import { access, mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { resolve, sep } from "node:path";
 import { Readable } from "node:stream";
@@ -55,6 +56,24 @@ export function assertSafeGitHubArchiveEntry(path: string, type: string): void {
   if (type !== "File" && type !== "Directory") throw new Error("GitHub archive contains an unsupported entry");
 }
 
+export async function resolveBundledVelaPath(cwd = process.cwd()): Promise<string> {
+  const candidates = [
+    resolve(cwd, ".generated", "vela"),
+    resolve(cwd, "apps", "problems", ".generated", "vela"),
+  ];
+  const available: string[] = [];
+  for (const candidate of candidates) {
+    try {
+      await access(candidate, constants.X_OK);
+      available.push(candidate);
+    } catch {
+      // A deployment has exactly one traced executable at either the app or monorepo root.
+    }
+  }
+  if (available.length !== 1) throw new Error("Bundled Core binary custody is unavailable or ambiguous");
+  return available[0]!;
+}
+
 export async function extractGitHubArchive(bytes: Uint8Array, destination: string): Promise<void> {
   if (bytes.byteLength === 0 || bytes.byteLength > archiveLimit) throw new Error("GitHub archive exceeds the bounded import size");
   const destinationPrefix = resolve(destination) + sep;
@@ -86,7 +105,7 @@ async function runCore(checkout: string): Promise<{ status: InspectionStatus; de
   } catch {
     return { status: "connected", detail: { schema: "vela.codebase-inspection.v1", vela_toml: "absent", authority_effect: "none" } };
   }
-  const vela = process.env.VELA_BIN ?? resolve(process.cwd(), ".generated", "vela");
+  const vela = process.env.VELA_BIN ?? await resolveBundledVelaPath();
   try {
     const result = await inspectCoreIntegration(vela, checkout);
     return result.checked
