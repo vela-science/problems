@@ -11,6 +11,7 @@ import { currentActivityAccount } from "@/lib/hosted-account";
 import { githubIdentityForUser } from "@/lib/workos-identities";
 import { githubAppConfiguration } from "@/lib/github-app";
 import { completeGitHubInstallation } from "@/lib/github-installation";
+import { accessibleGitHubRepositoryCount } from "@/lib/github-connections";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Connections", robots: { index: false, follow: false } };
@@ -30,6 +31,7 @@ export default async function ConnectionsPage({ searchParams }: { searchParams: 
     redirect("/account/connections?github_install=connected");
   }
   const connections = await listGitHubConnections(account.activity.id);
+  const accessibleRepositories = accessibleGitHubRepositoryCount(connections);
   const app = githubAppConfiguration();
   return <PageShell archetype="default" layout="reading" className="flex flex-col gap-6">
     <PageIntro title="Connections" description="Identity and read access for connected scientific codebases. None of these grant Vela authority."
@@ -42,7 +44,7 @@ export default async function ConnectionsPage({ searchParams }: { searchParams: 
         {!identity && <Button nativeButton={false} render={<Link href="/sign-in?returnTo=/account/connections" />} variant="outline" className="mt-3">Continue with GitHub</Button>}
       </ItemContent></Item>
       <Item variant="outline"><ItemContent><ItemTitle>Selected repository access</ItemTitle>
-        <ItemDescription>{connections.installations.length ? `${connections.installations.length} installation${connections.installations.length === 1 ? "" : "s"}; ${connections.repositories.length} accessible codebase${connections.repositories.length === 1 ? "" : "s"}.` : "No GitHub App installation is connected."}</ItemDescription>
+        <ItemDescription>{connections.installations.length ? `${connections.installations.length} installation${connections.installations.length === 1 ? "" : "s"}; ${accessibleRepositories} accessible codebase${accessibleRepositories === 1 ? "" : "s"}.` : "No GitHub App installation is connected."}</ItemDescription>
         {identity && app.enabled && <Button nativeButton={false} render={<Link href="/api/github/install" />} className="mt-3">Install or update GitHub access</Button>}
         {!app.enabled && <p className="mt-3 text-body text-muted-foreground">Repository connection is not configured in this deployment.</p>}
       </ItemContent></Item>
