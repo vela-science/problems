@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { z } from "zod";
 import {
   compactStatusSchema,
   statusClaimCount,
@@ -120,7 +121,7 @@ describe("current compact status roots", () => {
 
   test("accepts the current direct-submission action", () => {
     const status = currentStatus();
-    const direct = {
+    const direct: z.input<typeof compactStatusSchema> = {
       ...status,
       actions: {
         ...status.actions,

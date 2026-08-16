@@ -102,12 +102,20 @@ function invariant(condition, message) {
   if (!condition) throw new Error(message);
 }
 
+/* Typed here rather than at the call sites: `write`'s parameter infers as
+   `any` and `attempt`'s default of `null` narrows the parameter to `null`, so
+   a TypeScript caller could neither pass a real writer nor an attempt number.
+ *
+ * @param {{ now?: () => number, write?: (line: string) => void }} [options]
+ * @returns {(phase: string, attempt?: number | null) => void}
+ */
 export function createReconstructionPhaseReporter({
   now = () => performance.now(),
-  write = (line) => process.stderr.write(line),
+  write = (line) => { process.stderr.write(line); },
 } = {}) {
   const startedAt = now();
   let previousElapsed = 0;
+  /** @type {(phase: string, attempt?: number | null) => void} */
   return (phase, attempt = null) => {
     invariant(reconstructionDiagnosticPhases.includes(phase), "unsupported reconstruction diagnostic phase");
     invariant(attempt === null || attempt === 1 || attempt === 2, "invalid reconstruction attempt");

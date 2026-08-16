@@ -361,11 +361,11 @@ process.stdout.write(${JSON.stringify(JSON.stringify(current))});
       unassessed_claim_ids: ["vcl_exact"],
     });
     const transitions = readRepositoryTransitions(directory, commits, revisions);
-    expect(transitions.find(({ commit_sha }) => commit_sha === before)).toMatchObject({
+    expect(transitions.find(({ commit_sha }: { commit_sha: string }) => commit_sha === before)).toMatchObject({
       comparison_state: "unavailable",
       semantic_delta: null,
     });
-    expect(transitions.find(({ commit_sha }) => commit_sha === after)).toMatchObject({
+    expect(transitions.find(({ commit_sha }: { commit_sha: string }) => commit_sha === after)).toMatchObject({
       comparison_state: "verified",
       semantic_delta: {
         schema: "vela.projection-semantic-delta.v1",
@@ -695,7 +695,7 @@ describe("current repository object projection", () => {
       }],
     });
     const current = currentRepositoryFromProjection(core);
-    expect(current.claims.map(({ standing }) => standing)).toEqual(["accepted"]);
+    expect(current.claims.map(({ standing }: { standing: string }) => standing)).toEqual(["accepted"]);
     const projected = projectCurrentObjects(current);
     expect(projected.submissions[0]).toMatchObject({
       submission_id: submissionId, proposal_id: proposalId, claim_id: claimId,

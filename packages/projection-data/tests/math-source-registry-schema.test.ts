@@ -36,7 +36,7 @@ describe("current Math Source Registry schema contract", () => {
       schema.matchAll(/CREATE TABLE IF NOT EXISTS projection\.([a-z_]+)/gu),
       (match) => match[1],
     ).filter((name) => tableNames.includes(name as (typeof tableNames)[number]));
-    expect(created).toEqual(tableNames);
+    expect(created).toEqual([...tableNames]);
 
     for (const name of [
       "source_declarations",
@@ -176,7 +176,9 @@ describe("current Math Source Registry schema contract", () => {
 
     const bindings = tableDefinition("repository_source_bindings");
     for (const [rule, input] of Object.entries(violations)) {
-      expect(() => createRepositorySourceBinding(input)).toThrow();
+      /* Each `input` is deliberately invalid — that is what the assertion
+         checks — so it cannot satisfy the valid parameter type. */
+      expect(() => createRepositorySourceBinding(input as never)).toThrow();
       expect(bindings).toContain(`CHECK (${rule})`);
     }
 

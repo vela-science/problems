@@ -52,7 +52,7 @@ describe("clean-room production parity", () => {
     const output: string[] = [];
     const report = createReconstructionPhaseReporter({
       now: () => ticks.shift() ?? 112,
-      write: (line: string) => output.push(line),
+      write: (line: string) => { output.push(line); },
     });
 
     report("inputs_loaded");

@@ -20,7 +20,7 @@ import {
 import { sqlStatements } from "../scripts/sql-statements.mjs";
 import { canonicalJson, sha256 } from "../src/canonical";
 
-const root = (digit: string) => `sha256:${digit.repeat(64)}`;
+const root = (digit: string): `sha256:${string}` => `sha256:${digit.repeat(64)}`;
 const emptyRoot = sha256(canonicalJson([]));
 const firstLive = {
   a: "2026-08-10T08:00:00.000Z",
@@ -100,10 +100,15 @@ function instant(value: unknown): string | null {
   return value === null || value === undefined ? null : new Date(value as string).toISOString();
 }
 
+/* Bun's SQL tag resolves to untyped rows. Naming the two columns these
+   tests read lets `snapshot()` infer a real return type, which is what
+   gives every downstream `find`/`filter`/`map` over `releases` its types. */
+type ReleaseRow = { release_root: string; activated_at: unknown; confirmed_at?: unknown };
+
 async function snapshot() {
-  const pointer = await sql`SELECT release_root, activated_at, confirmed_at
+  const pointer: ReleaseRow[] = await sql`SELECT release_root, activated_at, confirmed_at
     FROM projection.current_release WHERE singleton`;
-  const releases = await sql`SELECT release_root, activated_at
+  const releases: ReleaseRow[] = await sql`SELECT release_root, activated_at
     FROM projection.releases ORDER BY release_root`;
   return {
     pointer: pointer.map((row) => ({
@@ -132,7 +137,7 @@ async function retainedRoots() {
         release.activated_at DESC, release.release_root DESC
       LIMIT 3
     ) SELECT release_root FROM retained`;
-  return rows.map(({ release_root }) => release_root as string);
+  return rows.map(({ release_root }: ReleaseRow) => release_root);
 }
 
 async function client() {
@@ -399,9 +404,13 @@ describe("projection release pointer transactions", () => {
       const after = await snapshot();
       expect([left.release_root, right.release_root]).toContain(after.pointer[0].release_root);
       expect(after.releases).toEqual(beforeReleases);
-      expect(after.pointer[0].activated_at).toBe(
-        after.releases.find(({ release_root }) => release_root === after.pointer[0].release_root)?.activated_at,
+      /* Asserted, not optional-chained: `?? null` here would let a pointer
+         with no matching release read as a null match and pass. */
+      const pointed = after.releases.find(
+        ({ release_root }) => release_root === after.pointer[0].release_root,
       );
+      expect(pointed).toBeDefined();
+      expect(after.pointer[0].activated_at).toBe(pointed!.activated_at);
     } finally {
       await leftClient.close({ timeout: 5 });
       await rightClient.close({ timeout: 5 });

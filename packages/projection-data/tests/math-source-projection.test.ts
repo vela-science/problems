@@ -34,7 +34,7 @@ import {
   problemResolutionEntityRoot,
 } from "../src/problem-resolution";
 
-const root = (digit: string) => `sha256:${digit.repeat(64)}`;
+const root = (digit: string): `sha256:${string}` => `sha256:${digit.repeat(64)}`;
 const fixtureRoot = mkdtempSync(join(tmpdir(), "vela-math-source-projection-"));
 
 function claim(input: {
@@ -60,6 +60,9 @@ function claim(input: {
     contested: false,
     retracted: false,
     source_path: `records/claims/${input.digit}.json`,
+    /* `relations` and an evidence `artifact_path` are set by the correction
+       tests after construction, so the record type has to admit them; an
+       inferred literal does not. */
     record: {
       schema: "vela.claim-record.v1",
       claim_id: `vcl_${input.digit.repeat(64)}`,
@@ -69,9 +72,10 @@ function claim(input: {
         title: input.title,
         ...(input.locator ? { locator: input.locator } : {}),
       }],
-      evidence: input.evidenceRoot
+      relations: [] as Array<{ kind: string; target_claim_id: string }>,
+      evidence: (input.evidenceRoot
         ? [{ artifact_root: input.evidenceRoot, relation: "supports" }]
-        : [],
+        : []) as Array<{ artifact_root: string; relation?: string; artifact_path?: string }>,
     },
   };
 }
@@ -613,8 +617,11 @@ describe("Math source projection", () => {
     expect(scoped.bundle.repository_bindings.every(
       (row) => row.release_root === finalRoot,
     )).toBe(true);
-    expect(scoped.tables.native_records.map(({ row_root }) => row_root)).toEqual(
-      first.tables.native_records.map(({ row_root }) => row_root),
+    /* `tables` comes back from the untyped builder script, so name the one
+       column this comparison reads. */
+    type RowRoot = { row_root: string };
+    expect(scoped.tables.native_records.map(({ row_root }: RowRoot) => row_root)).toEqual(
+      first.tables.native_records.map(({ row_root }: RowRoot) => row_root),
     );
   });
 

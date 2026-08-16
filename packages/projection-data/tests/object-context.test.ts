@@ -11,7 +11,7 @@ import {
   parseGraphNodeRecord,
 } from "../src/read-contracts";
 
-const root = "sha256:1faedc24f040a60a22177b456c74b969a61ce8836082297b1835797a57b4fa56";
+const root: `sha256:${string}` = "sha256:1faedc24f040a60a22177b456c74b969a61ce8836082297b1835797a57b4fa56";
 const object: ObjectContextNode = {
   id: "vcl_130aa0182cb91b362a44aefda896dc6b71f39273ce6a4052bced4b3d77414364",
   kind: "claim",
@@ -235,7 +235,9 @@ describe("closed graph database boundary", () => {
 
   test("accepts only closed node and edge records", () => {
     expect(parseGraphNodeRecord(nodeRow)).toEqual(nodeRow);
-    expect(parseGraphEdgeRecord(edgeRow)).toEqual(edgeRow);
+    /* The parser takes the validated shape; this fixture is a plain literal,
+       so the call needs the cast while the comparison stays on the literal. */
+    expect(parseGraphEdgeRecord(edgeRow as never)).toEqual(edgeRow);
     expect(parseGraphNeighborRecord({
       ...related[0],
       x: 2,

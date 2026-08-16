@@ -14,6 +14,7 @@ function claim(standing: ClaimSummary["standing"] = "accepted"): ClaimSummary {
   return {
     id: "vcl_exact",
     root: claimRoot,
+    source_path: "records/claims/sha256/a",
     standing,
     assertion: "An exact bounded Claim.",
     assertion_type: "computational",
