@@ -533,7 +533,7 @@ export interface ClaimStandingLineage {
     verifier_profile: string | null;
     reviewer_kind?: "human" | "ai_model" | "organization" | "deterministic_tool";
     reviewer_display_name?: string;
-    reviewer_identifier?: string;
+    reviewer_identifier?: string | null;
     reviewer_provider?: string | null;
     reviewer_version?: string | null;
     review_method_root?: HashRoot;
@@ -640,11 +640,18 @@ export function buildClaimStandingView(
         does_not_establish: record.does_not_establish ?? [],
         verifier: record.verifier_actor,
         verifier_profile: record.verifier_profile ?? null,
-        ...(record.reviewer_kind && record.reviewer_display_name && record.reviewer_identifier
+        /* Two fields, matching what the reader branches on.
+         *
+         * This required an identifier as well, while `reviewProvenanceText`
+         * needs only the kind and the display name — so a Check declaring a
+         * performer without an identifier was dropped here and rendered
+         * through this path as though its method declared no performer at
+         * all. The guard is the reader's, not a third rule. */
+        ...(record.reviewer_kind && record.reviewer_display_name
           ? {
               reviewer_kind: record.reviewer_kind,
               reviewer_display_name: record.reviewer_display_name,
-              reviewer_identifier: record.reviewer_identifier,
+              reviewer_identifier: record.reviewer_identifier ?? null,
               reviewer_provider: record.reviewer_provider ?? null,
               reviewer_version: record.reviewer_version ?? null,
               ...(record.review_method_root ? { review_method_root: record.review_method_root } : {}),

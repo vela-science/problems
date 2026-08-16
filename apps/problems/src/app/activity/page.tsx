@@ -27,7 +27,7 @@ export default async function ActivityPage({ searchParams }: { searchParams: Pro
       { label: "State changes", value: transitions, detail: "typed separately" },
       { label: "Repositories", value: repositories, detail: "in this feed" },
     ]} />
-    <nav aria-label="State history views" className="mt-8 flex flex-wrap gap-2">{([ ["all", "Entire State history"], ["transitions", "State changes"], ["commits", "Repository commits"] ] as const).map(([value, label]) => <Button key={value} size="sm" variant={view === value ? "default" : "outline"} nativeButton={false} render={<Link href={value === "all" ? "/activity" : `/activity?view=${value}`} />}>{label}</Button>)}</nav>
+    <nav aria-label="State history views" className="mt-8 flex flex-wrap gap-2">{([ ["all", "All history"], ["transitions", "State changes"], ["commits", "Repository commits"] ] as const).map(([value, label]) => <Button key={value} size="sm" variant={view === value ? "default" : "outline"} nativeButton={false} render={<Link href={value === "all" ? "/activity" : `/activity?view=${value}`} />}>{label}</Button>)}</nav>
     <PageSection aria-labelledby="activity-feed"><PageSectionHeader><h2 id="activity-feed" className="text-title">Recent State history</h2><span className="font-mono text-meta text-muted-foreground">{filtered.length} records</span></PageSectionHeader><ScientificChangeFeed changes={filtered} /></PageSection>
   </PageShell>;
 }

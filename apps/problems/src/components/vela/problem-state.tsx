@@ -101,7 +101,6 @@ export function ProblemState({ state, basePath }: { state: State; basePath: stri
         <p className="mt-1 text-meta text-muted-foreground">This Repository has admitted Claims; a record reaches a Problem only through the subject it declares.</p>
         <p className="mt-2 text-meta"><Link href={`/repositories/${state.repositorySlug}/claims`} className="underline underline-offset-4">Open the Claim ledger</Link></p>
       </div>}
-      <p className="mt-5 text-meta"><Link href={`${basePath}?mode=work`} className="font-medium underline underline-offset-4">Next: open the Workspace to prepare a bounded Submission</Link></p>
     </section>
 
     {/* These were behind a closed Collapsible, and Base UI keeps closed content
@@ -120,15 +119,21 @@ export function ProblemState({ state, basePath }: { state: State; basePath: stri
       />
     </section>
 
-    <ProblemSources sources={state.sources} />
-    <FormalConjecturesAudit records={state.sourceAudits} />
-
+    {/* What was contributed and who checked it comes before the corpus it was
+        checked against. This sat sixth, under the full source matrix and the
+        retained statement text, so on an assessed Problem the two questions a
+        reader arrives with — what is known, and who established it — were
+        answered furthest down the page. */}
     {/* Producer, checks and Decision were three thin sections that each named
         an actor and moved on; the retained provenance — method, performer,
         independence, shared dependencies, and the Decision's own scope
         sentence — rendered only on the Proposal page. One block, in protocol
         order, over the same markup that page uses. */}
     <ProblemProvenance state={state} />
+
+    <ProblemSources sources={state.sources} />
+    <FormalConjecturesAudit records={state.sourceAudits} />
+
 
     <section aria-labelledby="correction-heading">
       <div className="flex flex-wrap items-end justify-between gap-3"><h2 id="correction-heading" className="text-title">Correction history</h2>{corrections.length ? <span className="text-meta text-muted-foreground">{corrections.length} exact {corrections.length === 1 ? "relation" : "relations"}</span> : null}</div>

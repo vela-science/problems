@@ -44,6 +44,15 @@ function displayedOccurrenceKey(value: string): string {
  */
 export function ProblemSources({ sources }: { sources: ProblemSourceReadResult }) {
   const reviewed = sources.coverage.reduce((total, source) => total + source.reviewed_occurrences, 0);
+  /* A Source contributing nothing to this Problem is a true row and a
+     fact about coverage, but on a Problem with one occurrence it puts
+     seven empty rows between the reader and the one that matters. The
+     empty ones are counted and disclosed rather than dropped: the count
+     is the coverage fact, and the rows stay one click away. */
+  const contributing = sources.coverage.filter(
+    (source) => source.source_occurrences > 0 || source.statement_occurrences > 0,
+  );
+  const empty = sources.coverage.length - contributing.length;
 
   return (
     <section aria-labelledby="problem-sources-heading" className="min-w-0">
@@ -93,7 +102,7 @@ export function ProblemSources({ sources }: { sources: ProblemSourceReadResult }
             </tr>
           </thead>
           <tbody className="divide-y">
-            {sources.coverage.map((source) => (
+            {contributing.map((source) => (
               <tr key={source.source_id}>
                 <th scope="row" className="py-3 pr-2 align-top font-normal">
                   <span className="block text-compact font-medium [overflow-wrap:anywhere]">{source.label}</span>
@@ -106,6 +115,15 @@ export function ProblemSources({ sources }: { sources: ProblemSourceReadResult }
             ))}
           </tbody>
         </table>
+        {empty ? <details className="border-t px-1 py-3">
+          <summary className="cursor-pointer text-meta text-muted-foreground">
+            {empty === 1 ? "1 Source retains no record for this Problem" : `${empty} Sources retain no record for this Problem`}
+          </summary>
+          <ul className="mt-2 space-y-1 text-micro text-muted-foreground">
+            {sources.coverage.filter((source) => source.source_occurrences === 0 && source.statement_occurrences === 0)
+              .map((source) => <li key={source.source_id}>{source.label} · <span className="capitalize">{words(source.source_role)}</span></li>)}
+          </ul>
+        </details> : null}
       </div>
 
       <section aria-labelledby="source-statements-heading" className="mt-8">

@@ -171,8 +171,13 @@ describe("ProblemSources", () => {
     const formal = within(table).getByRole("rowheader", { name: /Formal Conjectures/u }).closest("tr");
     expect(formal).not.toBeNull();
     expect(within(formal as HTMLElement).getAllByRole("cell").map((cell) => cell.textContent)).toEqual(["1", "1", "1"]);
-    const emptySource = within(table).getByRole("rowheader", { name: /GPT Erdős/u }).closest("tr");
-    expect(within(emptySource as HTMLElement).getAllByRole("cell").map((cell) => cell.textContent)).toEqual(["0", "0", "0"]);
+    /* A Source with no record for this Problem is a true coverage fact and is
+       still disclosed, but it is not a table row: on a Problem with one
+       occurrence those rows outnumbered the one that matters. */
+    expect(within(table).queryByRole("rowheader", { name: /GPT Erdős/u })).toBeNull();
+    const withheld = screen.getByText(/Sources? retains? no record for this Problem/u);
+    expect(withheld).toBeVisible();
+    expect(within(withheld.closest("details") as HTMLElement).getByText(/GPT Erdős/u)).toBeInTheDocument();
 
     const statementLedger = screen.getByRole("list", { name: "Retained source statements" });
     expect(within(statementLedger).getAllByRole("listitem")).toHaveLength(2);

@@ -44,6 +44,7 @@ describe("review provenance", () => {
       label: "Verification",
       headline: "Verification by verifier:replay",
       detail: "Method lean-kernel-replay-v1 declares no performer",
+      model: null,
       methodRoot: null,
     });
 

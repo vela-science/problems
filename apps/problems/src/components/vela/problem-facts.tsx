@@ -9,13 +9,20 @@ type State = NonNullable<ScientificProblemState>;
    assertion says it "supplies a candidate answer ... not a proof of it", and
    the sentence that qualified it sat two blocks below and lost. A Claim is
    what an authorised Decision ruled on, so a Claim is what the word belongs
-   to. "locally" continues to carry Repository scope, which is a different
-   scope and also load-bearing. */
-export function localStandingLabel(standings: string[]): string {
+   to.
+
+   The authority is named rather than gestured at. "locally" carried the
+   Repository scope correctly but left the reader to guess which Repository,
+   and Standing is per-Repository — there is no global one. Where the name is
+   unavailable the wording falls back to the scope word rather than inventing
+   an authority. */
+export function localStandingLabel(standings: string[], repositoryName?: string | null): string {
   const values = [...new Set(standings)];
-  if (values.length === 0) return "Not assessed locally";
-  if (values.length > 1) return "Mixed local Standing";
-  return `${standings.length === 1 ? "Claim" : "Claims"} ${values[0]!.replaceAll("_", " ")} locally`;
+  const scope = repositoryName ? `in ${repositoryName}` : "locally";
+  if (values.length === 0) return repositoryName ? `Not assessed in ${repositoryName}` : "Not assessed locally";
+  if (values.length > 1) return repositoryName ? `Mixed Standing in ${repositoryName}` : "Mixed local Standing";
+  const word = values[0]!.replaceAll("_", " ");
+  return `${standings.length === 1 ? "Claim" : "Claims"} ${word} ${scope}`;
 }
 
 /* What the Standing actually ranges over.
@@ -61,7 +68,7 @@ export function standingScopeSentence(state: State): string | null {
 
 export function ProblemFacts({ state, className }: { state: State; className?: string }) {
   const values = [...new Set(state.claims.map((claim) => claim.standing.replaceAll("_", " ")))];
-  const localStanding = localStandingLabel(state.claims.map((claim) => claim.standing));
+  const localStanding = localStandingLabel(state.claims.map((claim) => claim.standing), state.repositoryName);
   const standingState = values.length === 1 ? state.claims[0]!.standing : "unassessed";
   const scope = standingScopeSentence(state);
   return <dl className={cn("grid border-y sm:grid-cols-3 sm:divide-x", className)}>

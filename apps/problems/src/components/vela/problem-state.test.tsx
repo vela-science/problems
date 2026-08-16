@@ -135,7 +135,9 @@ describe("Problem State", () => {
     expect(screen.getByRole("heading", { name: "Next contribution" })).toBeInTheDocument();
     expect(screen.getByText("Submit bounded evidence directly.")).toBeInTheDocument();
     expect(screen.getByText(/Open Workspace to assemble the packet in the browser/u)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /Next: open the Workspace/u })).toHaveAttribute("href", "/problems/erdos-problems/321?mode=work");
+    /* One Workspace affordance per page beyond the mode tab. The inline link
+       under Current State said the same thing as the button below it. */
+    expect(screen.queryByRole("link", { name: /Next: open the Workspace/u })).toBeNull();
     expect(screen.getByRole("button", { name: "Open Workspace" })).toHaveAttribute("href", "/problems/erdos-problems/321?mode=work");
 
     const exact = screen.getByRole("button", { name: /Exact provenance/u });
