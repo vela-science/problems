@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { repositoryBySlug, reviewVerification, type ReviewSummary } from "@vela/projection-data";
 import { StatusBadge } from "@vela/ui/vela/status-badge";
 import { AssertionText } from "@/components/vela/assertion-text";
+import { WorkSessionRef } from "@/components/vela/work-session-ref";
 import { ProposalEvidence } from "@/components/vela/proposal-evidence";
 import { ProposalObjectChain } from "@/components/vela/proposal-object-chain";
 import { RecordFacts, type RecordFact } from "@/components/vela/record-facts";
@@ -183,8 +184,7 @@ export default async function ProposalPage({ params }: PageProps<"/repositories/
             {review.decision_session_ref ? (
               <>
                 <span aria-hidden>·</span>
-                <span>session</span>
-                <RecordId value={review.decision_session_ref} prefix={22} />
+                <WorkSessionRef reference={review.decision_session_ref} />
               </>
             ) : null}
             {review.decision_authority_principal_id ? (

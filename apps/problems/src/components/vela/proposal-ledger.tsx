@@ -5,6 +5,7 @@ import { ScientificText } from "@vela/ui/vela/scientific-text";
 import { StatusBadge } from "@vela/ui/vela/status-badge";
 import type { ProposalStatus } from "@vela/ui/vela/state-glyph";
 import { RecordId } from "@/components/vela/record-id";
+import { WorkSessionRef } from "@/components/vela/work-session-ref";
 import { formatDate, formatElapsed } from "@/lib/format";
 
 /* The Proposal ledger, with the evidence in the row.
@@ -163,7 +164,7 @@ export function ProposalLedger({
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-micro text-muted-foreground">
                   <span>{formatDate(review.reviewed_at ?? review.created_at)}</span>
                   {!withdrawn && review.reviewed_by ? <RecordId value={review.reviewed_by} prefix={26} copy={false} /> : null}
-                  {!withdrawn && review.decision_session_ref ? <span>session <RecordId value={review.decision_session_ref} prefix={18} copy={false} /></span> : null}
+                  {!withdrawn && review.decision_session_ref ? <span><WorkSessionRef reference={review.decision_session_ref} prefix={18} /></span> : null}
                   {!withdrawn ? <span>{review.decision_provenance.replaceAll("_", " ")}</span> : null}
                 </div>
               ) : null}

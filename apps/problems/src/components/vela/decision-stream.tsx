@@ -4,6 +4,7 @@ import { GitCommitHorizontalIcon } from "@hugeicons/core-free-icons";
 import { Avatar, AvatarFallback } from "@vela/ui/components/avatar";
 import { stateIcons, stateTones, type StatusTone } from "@vela/ui/vela/status-badge";
 import { RecordId } from "@/components/vela/record-id";
+import { WorkSessionRef } from "@/components/vela/work-session-ref";
 import { RelativeTime } from "@/components/vela/relative-time";
 
 /* The authority event stream, which is the thing "Activity" was always naming.
@@ -135,8 +136,8 @@ export function DecisionStream({ entries }: { entries: DecisionEntry[] }) {
                       </span>
                     ) : null}
                     {entry.sessionRef ? (
-                      <span className="font-mono text-micro text-muted-foreground" title={entry.sessionRef}>
-                        session {entry.sessionRef}
+                      <span className="text-micro text-muted-foreground" title={entry.sessionRef}>
+                        <WorkSessionRef reference={entry.sessionRef} prefix={18} />
                       </span>
                     ) : null}
                     <RecordId value={entry.proposalId} copy={false} />
