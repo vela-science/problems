@@ -3,6 +3,7 @@ import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { basename, join, resolve } from "node:path";
 import { promisify } from "node:util";
+import { z } from "zod";
 import { canonicalJson, sha256 } from "../canonical";
 import type {
   SourceAdapterInput,
@@ -207,4 +208,57 @@ export function exactBlobLocator(
   return match
     ? `https://github.com/${match[1]}/blob/${commit}/${path}`
     : `${repository}#${commit}:${path}`;
+}
+
+const exactRootSchema = z.string().regex(/^sha256:[0-9a-f]{64}$/u);
+
+/* The blob URL for a path at an exact commit, on a public repository already
+   spelled as a browsable URL. Adapters use it both as the manifest locator for
+   a file they read and as the locator they record on each native record. */
+export function publicBlobLocator(
+  publicRepository: string,
+  commit: string,
+  path: string,
+): string {
+  return `${publicRepository}/blob/${commit}/${path}`;
+}
+
+export interface ExactFile {
+  acquired: AcquiredBytes;
+  root: `sha256:${string}`;
+}
+
+/* One file, read at an exact commit and checked twice.
+ *
+ * This existed once per adapter and the copies differed only in the source
+ * name inside their two error messages — so the fixity check that is the whole
+ * point of the function, that the working bytes match the committed blob and
+ * that both match a pinned root, was maintained in duplicate. The name is a
+ * parameter; nothing else about the two copies differed. */
+export async function acquireExactFile(
+  label: string,
+  checkoutDirectory: string,
+  commit: string,
+  publicRepository: string,
+  path: string,
+  inputId: string,
+  mediaType: string,
+  expectedRoot?: string,
+): Promise<ExactFile> {
+  const committed = await gitBlobRoot(checkoutDirectory, commit, path);
+  if (expectedRoot !== undefined && committed.content_root !== exactRootSchema.parse(expectedRoot)) {
+    throw new Error(
+      `${label} ${path} root ${committed.content_root} does not match pinned root ${expectedRoot}`,
+    );
+  }
+  const acquired = await acquireBytes(join(checkoutDirectory, path), {
+    inputId,
+    role: "published_dataset",
+    mediaType,
+    manifestLocator: publicBlobLocator(publicRepository, commit, path),
+  });
+  if (acquired.input.content_root !== committed.content_root) {
+    throw new Error(`${label} ${path} working bytes differ from the exact committed blob`);
+  }
+  return { acquired, root: committed.content_root };
 }

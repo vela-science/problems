@@ -4,10 +4,10 @@ import { join, relative, sep } from "node:path";
 import { z } from "zod";
 import { canonicalJson, sha256 } from "../canonical";
 import {
-  acquireBytes,
+  acquireExactFile,
   acquireExactGitCheckout,
   gitBlobRoot,
-  type AcquiredBytes,
+  publicBlobLocator,
 } from "./acquisition";
 import type { SourceAdapterOutput } from "./bundle";
 import {
@@ -15,8 +15,6 @@ import {
   createSourceNativeRecord,
   type SourceNativeRecord,
 } from "./contracts";
-
-const hashRootSchema = z.string().regex(/^sha256:[0-9a-f]{64}$/u);
 
 export const physlibRelease = Object.freeze({
   repository: "https://github.com/leanprover-community/physlib.git",
@@ -67,11 +65,6 @@ const apiMapSchema = z.object({
 
 type ExactRootKey = keyof typeof physlibRelease.exact_roots;
 
-interface ExactFile {
-  acquired: AcquiredBytes;
-  root: `sha256:${string}`;
-}
-
 export interface PhyslibAcquisitionOptions {
   repository?: string;
   publicRepository?: string;
@@ -80,36 +73,8 @@ export interface PhyslibAcquisitionOptions {
   expectedRoots?: Partial<Record<ExactRootKey, string>>;
 }
 
-function exactLocator(publicRepository: string, commit: string, path: string): string {
-  return `${publicRepository}/blob/${commit}/${path}`;
-}
-
-async function exactFile(
-  checkoutDirectory: string,
-  commit: string,
-  publicRepository: string,
-  path: string,
-  inputId: string,
-  mediaType: string,
-  expectedRoot?: string,
-): Promise<ExactFile> {
-  const committed = await gitBlobRoot(checkoutDirectory, commit, path);
-  if (expectedRoot !== undefined && committed.content_root !== hashRootSchema.parse(expectedRoot)) {
-    throw new Error(
-      `Physlib ${path} root ${committed.content_root} does not match pinned root ${expectedRoot}`,
-    );
-  }
-  const acquired = await acquireBytes(join(checkoutDirectory, path), {
-    inputId,
-    role: "published_dataset",
-    mediaType,
-    manifestLocator: exactLocator(publicRepository, commit, path),
-  });
-  if (acquired.input.content_root !== committed.content_root) {
-    throw new Error(`Physlib ${path} working bytes differ from the exact committed blob`);
-  }
-  return { acquired, root: committed.content_root };
-}
+/* This source's name, bound to the shared exact-file read. */
+const exactFile = acquireExactFile.bind(null, "Physlib");
 
 async function apiMapPaths(root: string): Promise<string[]> {
   const found: string[] = [];
@@ -244,9 +209,9 @@ export async function acquirePhyslib(
           summary: `${map.Title} · source reports ${requirement.done ? "implemented" : "planned"}`,
           source_path: path,
           locators: [
-            exactLocator(publicRepository, checkout.commit, path),
+            publicBlobLocator(publicRepository, checkout.commit, path),
             ...declaredPaths.map((sourcePath) => (
-              exactLocator(publicRepository, checkout.commit, sourcePath)
+              publicBlobLocator(publicRepository, checkout.commit, sourcePath)
             )),
           ],
           metadata: {

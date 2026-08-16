@@ -4,10 +4,10 @@ import { join } from "node:path";
 import { z } from "zod";
 import { canonicalJson, sha256 } from "../canonical";
 import {
-  acquireBytes,
+  acquireExactFile,
   acquireExactGitCheckout,
   gitBlobRoot,
-  type AcquiredBytes,
+  publicBlobLocator,
 } from "./acquisition";
 import type { SourceAdapterOutput } from "./bundle";
 import {
@@ -15,8 +15,6 @@ import {
   createSourceNativeRecord,
   type SourceNativeRecord,
 } from "./contracts";
-
-const hashRootSchema = z.string().regex(/^sha256:[0-9a-f]{64}$/u);
 
 /* Re-pinned 2026-08-05. openai/ten-proofs rewrote its history and the previous
    commit stopped being reachable — `upload-pack: not our ref` — which failed the
@@ -101,11 +99,6 @@ const lakeManifestSchema = z.object({
 
 type ExactRootKey = keyof typeof openAiTenProofsRelease.exact_roots;
 
-interface ExactFile {
-  acquired: AcquiredBytes;
-  root: `sha256:${string}`;
-}
-
 export interface OpenAiTenProofsAcquisitionOptions {
   repository?: string;
   publicRepository?: string;
@@ -118,40 +111,8 @@ function modulePath(moduleName: string): string {
   return `${moduleName.replaceAll(".", "/")}.lean`;
 }
 
-function exactLocator(
-  publicRepository: string,
-  commit: string,
-  path: string,
-): string {
-  return `${publicRepository}/blob/${commit}/${path}`;
-}
-
-async function exactFile(
-  checkoutDirectory: string,
-  commit: string,
-  publicRepository: string,
-  path: string,
-  inputId: string,
-  mediaType: string,
-  expectedRoot?: string,
-): Promise<ExactFile> {
-  const committed = await gitBlobRoot(checkoutDirectory, commit, path);
-  if (expectedRoot !== undefined && committed.content_root !== hashRootSchema.parse(expectedRoot)) {
-    throw new Error(
-      `OpenAI ten-proofs ${path} root ${committed.content_root} does not match pinned root ${expectedRoot}`,
-    );
-  }
-  const acquired = await acquireBytes(join(checkoutDirectory, path), {
-    inputId,
-    role: "published_dataset",
-    mediaType,
-    manifestLocator: exactLocator(publicRepository, commit, path),
-  });
-  if (acquired.input.content_root !== committed.content_root) {
-    throw new Error(`OpenAI ten-proofs ${path} working bytes differ from the exact committed blob`);
-  }
-  return { acquired, root: committed.content_root };
-}
+/* This source's name, bound to the shared exact-file read. */
+const exactFile = acquireExactFile.bind(null, "OpenAI ten-proofs");
 
 function unique(values: ReadonlyArray<string>, label: string): void {
   if (new Set(values).size !== values.length) {
@@ -344,9 +305,9 @@ export async function acquireOpenAiTenProofs(
         summary: `${parsed.theorem_names.length} declared theorem${parsed.theorem_names.length === 1 ? "" : "s"} in ${parsed.solution_module}`,
         source_path: result.comparator_config,
         locators: [
-          exactLocator(publicRepository, checkout.commit, result.comparator_config),
-          exactLocator(publicRepository, checkout.commit, challengePath),
-          exactLocator(publicRepository, checkout.commit, solutionPath),
+          publicBlobLocator(publicRepository, checkout.commit, result.comparator_config),
+          publicBlobLocator(publicRepository, checkout.commit, challengePath),
+          publicBlobLocator(publicRepository, checkout.commit, solutionPath),
         ],
         metadata: {
           challenge_module: parsed.challenge_module,
