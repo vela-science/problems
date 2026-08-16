@@ -157,7 +157,7 @@ describe("AppSidebar mobile navigation", () => {
     for (const [label, href] of [
       ["Home", "/"],
       ["Problems", "/problems"],
-      ["Contribute", "/work"],
+      ["Contribute", "/contribute"],
       ["State history", "/activity"],
       ["Sources", "/sources"],
     ]) {
@@ -211,7 +211,7 @@ describe("AppSidebar mobile navigation", () => {
     fireEvent.click(screen.getByRole("button", { name: "Open test navigation" }));
 
     expect(await screen.findByRole("link", { name: "Problems" })).toHaveAttribute("href", "/problems");
-    expect(screen.getByRole("link", { name: "Contribute" })).toHaveAttribute("href", "/work");
+    expect(screen.getByRole("link", { name: "Contribute" })).toHaveAttribute("href", "/contribute");
     expect(screen.getByRole("link", { name: "State history" })).toHaveAttribute("href", "/activity");
     expect(screen.getByRole("link", { name: "Sources" })).toHaveAttribute("href", "/sources");
     expect(screen.queryByRole("link", { name: "Current State" })).not.toBeInTheDocument();
@@ -225,7 +225,7 @@ describe("AppSidebar mobile navigation", () => {
     fireEvent.click(screen.getByRole("button", { name: "Open test navigation" }));
 
     expect(await screen.findByRole("link", { name: "Problems" })).toHaveAttribute("href", "/problems");
-    expect(screen.getByRole("link", { name: "Contribute" })).toHaveAttribute("href", "/work");
+    expect(screen.getByRole("link", { name: "Contribute" })).toHaveAttribute("href", "/contribute");
     expect(screen.getByRole("link", { name: "Repositories" })).toHaveAttribute("href", "/repositories");
     expect(screen.queryByRole("link", { name: "Current State" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Workspace" })).not.toBeInTheDocument();

@@ -308,7 +308,7 @@ describe("indexed and announced text", () => {
     "app/graph/page.tsx",
     "app/sources/page.tsx",
     "app/decisions/page.tsx",
-    "app/work/page.tsx",
+    "app/contribute/page.tsx",
     "app/proposals/page.tsx",
     "app/search/page.tsx",
   ];

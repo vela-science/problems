@@ -33,7 +33,7 @@ export default async function HomePage() {
         <p className="typeset typeset-compact mt-4 max-w-2xl text-muted-foreground">Start with the question. Current State, evidence, source-owned work, and shared activity stay connected without being collapsed into one status.</p>
         <div className="mt-7 flex flex-wrap gap-3">
           <Button nativeButton={false} render={<Link href="/problems" />}>Browse Problems <HugeiconsIcon icon={ArrowRight} aria-hidden data-icon="inline-end" /></Button>
-          <Button nativeButton={false} variant="outline" render={<Link href="/work" />}>Contribute</Button>
+          <Button nativeButton={false} variant="outline" render={<Link href="/contribute" />}>Contribute</Button>
         </div>
       </div>
       <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-5 border-t pt-6 text-meta lg:mt-0 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
@@ -76,7 +76,7 @@ export default async function HomePage() {
 
     <PageSection as="nav" aria-label="Explore the network" className="grid rounded-xl bg-muted/30 px-4 md:grid-cols-3">
       {[
-        { href: "/work", icon: WorkIcon, title: "Contribute", detail: "prepare a bounded direct Submission" },
+        { href: "/contribute", icon: WorkIcon, title: "Contribute", detail: "prepare a bounded direct Submission" },
         { href: "/activity", icon: Activity01Icon, title: "State history", detail: `${activity.length} recent retained records` },
       ].map((item) => <Link key={item.href} href={item.href} className="group flex items-center gap-4 border-b px-2 py-6 transition-colors last:border-b-0 hover:bg-muted/30 focus-visible:outline-2 focus-visible:outline-offset-2 md:border-b-0 md:border-r md:px-6 md:first:pl-0 md:last:border-r-0 md:last:pr-0"><HugeiconsIcon icon={item.icon} aria-hidden className="size-5" /><span><span className="block text-subtitle">{item.title}</span><span className="mt-1 block text-meta text-muted-foreground">{item.detail}</span></span><HugeiconsIcon icon={ArrowRight} aria-hidden className="ml-auto size-4 transition-transform duration-200 group-hover:translate-x-1" /></Link>)}
     </PageSection>

@@ -77,7 +77,7 @@ describe("AppHeader trail", () => {
   });
 
   it("names the retained routes by their truthful product surfaces", () => {
-    navigation.pathname = "/work";
+    navigation.pathname = "/contribute";
     const { rerender } = render(<Shell />);
     expect(screen.getByText("Contribute")).toHaveAttribute("aria-current", "page");
 

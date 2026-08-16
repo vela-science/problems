@@ -66,7 +66,7 @@ const releaseDestinations: SidebarDestinationGroup[] = [
     label: "Explore",
     items: [
       { href: "/problems", label: "Problems", icon: PuzzleIcon },
-      { href: "/work", label: "Contribute", icon: WorkIcon },
+      { href: "/contribute", label: "Contribute", icon: WorkIcon },
       { href: "/activity", label: "State history", icon: Activity01Icon },
     ],
   },

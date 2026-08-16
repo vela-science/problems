@@ -97,7 +97,7 @@ try {
     /* The ledger renders at any cardinality — a repository that retains no
        Problem says so there rather than resolving to nothing. */
     `/repositories/${slug}/problems`,
-    "/work",
+    "/contribute",
     "/proposals",
     "/decisions",
     "/search",

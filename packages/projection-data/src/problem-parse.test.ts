@@ -1,3 +1,4 @@
+import type { HashRoot } from "./canonical";
 import { describe, expect, test } from "bun:test";
 import { problemClaimsFromBindingRows, problemFromRow } from "./index";
 import { createRepositorySourceBinding } from "./math-sources";
@@ -84,7 +85,7 @@ describe("Problem Claim Binding provenance", () => {
   function bindingRow(claimDigit: string, occurrenceIndex: number) {
     const occurrence = selected[occurrenceIndex]!;
     const claimId = `vcl_${claimDigit.repeat(64)}`;
-    const claimRoot = `sha256:${claimDigit.repeat(64)}`;
+    const claimRoot: HashRoot = `sha256:${claimDigit.repeat(64)}`;
     const binding = createRepositorySourceBinding({
       schema: "vela.repository-source-binding.v1",
       release_root: releaseRoot,

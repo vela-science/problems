@@ -219,7 +219,7 @@ export function CommandPaletteProvider({
                   <CommandGroup heading="Vela">
                     <CommandItem onSelect={() => navigate("/")}><HugeiconsIcon icon={Home01Icon} aria-hidden />Home</CommandItem>
                     <CommandItem onSelect={() => navigate("/problems")}><HugeiconsIcon icon={PuzzleIcon} aria-hidden />Problems</CommandItem>
-                    <CommandItem onSelect={() => navigate("/work")}><HugeiconsIcon icon={WorkIcon} aria-hidden />Contribute</CommandItem>
+                    <CommandItem onSelect={() => navigate("/contribute")}><HugeiconsIcon icon={WorkIcon} aria-hidden />Contribute</CommandItem>
                     <CommandItem onSelect={() => navigate("/activity")}><HugeiconsIcon icon={Activity01Icon} aria-hidden />State history</CommandItem>
                   </CommandGroup>
                   <CommandSeparator />

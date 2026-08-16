@@ -2,7 +2,9 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "bunVersion": "1.x",
   "framework": "nextjs",
-  "regions": ["cle1"],
+  "regions": [
+    "cle1"
+  ],
   "installCommand": "cd ../.. && bun install --frozen-lockfile",
   "buildCommand": "cd ../.. && bun run --filter @vela/problems build",
   "git": {
@@ -10,6 +12,11 @@
   },
   "cleanUrls": true,
   "redirects": [
+    {
+      "source": "/work",
+      "destination": "/contribute",
+      "permanent": true
+    },
     {
       "source": "/docs",
       "destination": "https://github.com/vela-science/vela/tree/main/docs",
