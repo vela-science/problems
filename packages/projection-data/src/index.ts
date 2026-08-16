@@ -2354,6 +2354,12 @@ const PROBLEM_FROM = `projection.native_records n
              WHEN count(*) FILTER (WHERE current) = 0 AND count(*) = 1
                THEN min(standing)
            END AS standing,
+           CASE
+             WHEN count(*) FILTER (WHERE current) = 1
+               THEN min(created_at) FILTER (WHERE current)
+             WHEN count(*) FILTER (WHERE current) = 0 AND count(*) = 1
+               THEN min(created_at)
+           END AS created_at,
            count(*) FILTER (WHERE current)::integer AS current_claim_count,
            count(*)::integer AS bound_claim_count
          FROM selected
