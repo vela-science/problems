@@ -1,11 +1,12 @@
+import type { HashRoot } from "./canonical";
 import { describe, expect, test } from "bun:test";
 import { compareExactRepositoryRevisions, type RepositoryRevision } from "./index";
 
-const root = (digit: string) => `sha256:${digit.repeat(64)}`;
+const root = (digit: string): HashRoot => `sha256:${digit.repeat(64)}`;
 
 function revision(overrides: Partial<RepositoryRevision> = {}): RepositoryRevision {
   const gitCommit = overrides.git_commit ?? "1".repeat(40);
-  const repositoryRoot = overrides.repository_root === undefined ? root("1") : overrides.repository_root;
+  const repositoryRoot: HashRoot | null = overrides.repository_root === undefined ? root("1") : overrides.repository_root;
   const replayState = overrides.replay_state ?? "verified";
   return {
     git_commit: gitCommit,

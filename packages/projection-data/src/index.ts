@@ -3007,7 +3007,7 @@ export interface RepositoryRevision {
   git_tree: string;
   source_repository_id: string;
   source_index_root: string;
-  repository_root: string | null;
+  repository_root: HashRoot | null;
   replay_state: "verified" | "unavailable";
   revision_root: string;
   record: z.infer<typeof revisionRecordSchema>;

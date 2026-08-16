@@ -7,7 +7,11 @@ import {
   type ProjectionSourceAdapterArtifactReference,
 } from "./source-adapters/reference";
 
-const hashRootSchema = z.string().regex(/^sha256:[0-9a-f]{64}$/u);
+/* Typed as the root it validates, matching `index.ts`. Left as a bare
+   `z.string()`, every root read off a native record came back as `string`, so
+   a value this module had already validated could not be handed to anything
+   that asks for a root without a cast. */
+const hashRootSchema = z.templateLiteral(["sha256:", z.string().regex(/^[0-9a-f]{64}$/u)]);
 const sourceIdSchema = z.string().regex(/^source:[a-z0-9]+(?:-[a-z0-9]+)*$/u);
 const repositorySlugSchema = z.enum(repositorySlugs);
 /* A binding names the repository the protocol names, not the handle a URL

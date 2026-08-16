@@ -1,11 +1,12 @@
+import type { HashRoot } from "./canonical";
 import { describe, expect, test } from "bun:test";
 import { buildClaimStandingView, reviewFromRow, siteRepositorySchema, verificationCore } from "./index";
 import { currentProposedStatePreview } from "./proposed-state-preview";
 
-const CLAIM_ROOT = `sha256:${"a".repeat(64)}`;
-const SUBMISSION_ROOT = `sha256:${"b".repeat(64)}`;
-const VERIFICATION_ROOT = `sha256:${"c".repeat(64)}`;
-const ARTIFACT_DIGEST = `sha256:${"d".repeat(64)}`;
+const CLAIM_ROOT: HashRoot = `sha256:${"a".repeat(64)}`;
+const SUBMISSION_ROOT: HashRoot = `sha256:${"b".repeat(64)}`;
+const VERIFICATION_ROOT: HashRoot = `sha256:${"c".repeat(64)}`;
+const ARTIFACT_DIGEST: HashRoot = `sha256:${"d".repeat(64)}`;
 
 function reviewRow(overrides: Record<string, unknown> = {}) {
   return {
@@ -94,7 +95,7 @@ function verificationRow(overrides: Record<string, unknown> = {}) {
 
 describe("reviewFromRow lifts the Verification Record's own words", () => {
   test("verifies the rooted proposed-state preview instead of trusting JSONB", () => {
-    const hash = (digit: string) => `sha256:${digit.repeat(64)}`;
+    const hash = (digit: string): HashRoot => `sha256:${digit.repeat(64)}`;
     const preview = currentProposedStatePreview({
       entry: {
         proposal_id: "vpr_exact",
@@ -334,7 +335,7 @@ describe("the lift does not change what already read this projection", () => {
   });
 
   test("a Decision Inbox v2 packet normalizes to attributed Decision readiness", () => {
-    const hash = (digit: string) => `sha256:${digit.repeat(64)}`;
+    const hash = (digit: string): HashRoot => `sha256:${digit.repeat(64)}`;
     const reviews = siteRepositorySchema.shape.reviews;
     const parsed = reviews.parse([{
       ...reviewFromRow(reviewRow(), submissionRow(), [verificationRow()]),
@@ -376,6 +377,7 @@ describe("the lift does not change what already read this projection", () => {
       {
         id: "vcl_exact",
         root: CLAIM_ROOT,
+        source_path: "records/claims/sha256/a",
         standing: "accepted",
         assertion: "An exact bounded Claim.",
         assertion_type: "computational",

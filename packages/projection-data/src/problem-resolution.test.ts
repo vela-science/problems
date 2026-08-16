@@ -1,3 +1,4 @@
+import type { HashRoot } from "./canonical";
 import { describe, expect, test } from "bun:test";
 import { canonicalJson, sha256 } from "./canonical";
 import { createNativeSourceRecord, type NativeSourceRecord } from "./math-sources";
@@ -21,7 +22,7 @@ function record(input: {
   metadata?: Record<string, string | number | boolean | null>;
   summary?: string | null;
   content_root?: `sha256:${string}`;
-}): NativeSourceRecord {
+}): NativeSourceRecord & { content_root: HashRoot } {
   const metadata = input.metadata ?? {};
   const created = createNativeSourceRecord({
     schema: "vela.math-native-record.v1",
@@ -36,7 +37,8 @@ function record(input: {
     availability: "reference_only",
     ...input,
   });
-  return created;
+  /* `content_root` is set above, so the narrowed return is truthful. */
+  return created as NativeSourceRecord & { content_root: HashRoot };
 }
 
 function configuredOccurrence(sourceId: string, nativeId: string) {

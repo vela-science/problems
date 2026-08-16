@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import type { ScientificProblemState } from "@/lib/scientific-state";
 import { ProblemState } from "./problem-state";
 
-const root = (digit: string) => `sha256:${digit.repeat(64)}`;
+const root = (digit: string): `sha256:${string}` => `sha256:${digit.repeat(64)}`;
 
 const state = {
   repositorySlug: "math",

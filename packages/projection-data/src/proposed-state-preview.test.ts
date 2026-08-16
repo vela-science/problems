@@ -1,3 +1,4 @@
+import type { HashRoot } from "./canonical";
 import { describe, expect, test } from "bun:test";
 import {
   classifyRetainedProposedStatePreview,
@@ -7,7 +8,7 @@ import {
   verifyProposedStatePreview,
 } from "./proposed-state-preview";
 
-const hash = (digit: string) => `sha256:${digit.repeat(64)}`;
+const hash = (digit: string): HashRoot => `sha256:${digit.repeat(64)}`;
 const revision = (git: string, root: string, row = hash("9")) => ({
   git_commit: git.repeat(40),
   repository_root: root,
