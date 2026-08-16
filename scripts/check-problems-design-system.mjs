@@ -134,7 +134,9 @@ for (const file of [
   join(problems, "src/components/vela/stat-row.tsx"),
   join(problems, "src/components/vela/hub-membership-map.tsx"),
   join(problems, "src/components/vela/workbench.tsx"),
-  join(problems, "src/app/sources/source-registry-view.tsx"),
+  join(problems, "src/components/vela/source-registry/shared.tsx"),
+  join(problems, "src/components/vela/source-registry/registry-view.tsx"),
+  join(problems, "src/components/vela/source-registry/record-view.tsx"),
 ]) {
   const source = readFileSync(file, "utf8");
   if (/\b(?:border-y|divide-y|border-t)\b/u.test(source)) failures.push(`${relative(root, file)}: list-strip separators bypass the authored surface/spacing contract`);

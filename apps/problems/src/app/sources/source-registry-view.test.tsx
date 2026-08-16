@@ -4,7 +4,7 @@ import {
   SourceRecordView,
   SourceRegistryView,
   type SourceRegistryViewModel,
-} from "./source-registry-view";
+} from "@/components/vela/source-registry";
 
 vi.mock("next/navigation", () => ({
   usePathname: () => "/sources",

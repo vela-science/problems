@@ -4,7 +4,7 @@ import {
 } from "@vela/projection-data";
 import {
   SourceRegistryView,
-} from "./source-registry-view";
+} from "@/components/vela/source-registry";
 import { PageShell } from "@vela/ui/vela/page-shell";
 
 export const metadata: Metadata = {

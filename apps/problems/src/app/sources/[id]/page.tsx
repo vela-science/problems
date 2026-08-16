@@ -4,7 +4,7 @@ import {
   formalConjecturesAuditProjection,
   mathSourceRegistryRead,
 } from "@vela/projection-data";
-import { SourceRecordView } from "../source-registry-view";
+import { SourceRecordView } from "@/components/vela/source-registry";
 import { PageShell } from "@vela/ui/vela/page-shell";
 import { Button } from "@vela/ui/components/button";
 import { PageIntro } from "@/components/vela/page-intro";
