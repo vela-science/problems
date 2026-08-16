@@ -2068,6 +2068,11 @@ export interface ProblemRecord {
   source_count: number;
   /** Repository-local Claim standing, when this source Problem is bound to a Claim. */
   local_standing: string | null;
+  /* When the bound Claim was created, so a reader can order by what was
+     assessed most recently. Read off the same join that produces the standing;
+     without it "recently assessed" has to fall back to problem number, which
+     orders by nothing a reader cares about. */
+  local_assessed_at: string | null;
 }
 
 export interface ProblemClaimSourceBinding {
@@ -2297,7 +2302,7 @@ const PROBLEM_FROM = `projection.native_records n
        JOIN projection.repositories fr ON fr.release_root = rs.release_root
        LEFT JOIN LATERAL (
          WITH bound_claims AS (
-           SELECT DISTINCT c.claim_id, c.claim_root, c.standing
+           SELECT DISTINCT c.claim_id, c.claim_root, c.standing, c.created_at
            FROM projection.repository_source_bindings b
            JOIN projection.native_records bound_native
              ON bound_native.observation_root = b.observation_root
@@ -2499,6 +2504,7 @@ export async function problemsForRepository(slug: string, input: ProblemLedgerFi
          n.metadata,
          f.claim_id,
          f.standing AS local_standing,
+         f.created_at AS local_assessed_at,
          n.summary AS statement,
          ${PROBLEM_STATUS_SQL} AS declared_status,
          ${PROBLEM_FORMALIZED_SQL} AS formalized,
@@ -2653,7 +2659,7 @@ export async function problemCatalogForRepository(
     ),
     sql.query(
       `SELECT b.source_id, b.native_id, native_record.native_kind,
-         native_record.content_root, c.claim_id, c.standing
+         native_record.content_root, c.claim_id, c.standing, c.created_at
        FROM projection.repository_source_bindings b
        JOIN projection.native_records native_record
          ON native_record.observation_root = b.observation_root
@@ -2704,6 +2710,7 @@ export async function problemCatalogForRepository(
         ...row,
         claim_id: claim?.claim_id ?? null,
         local_standing: claim?.standing ?? null,
+        local_assessed_at: claim?.created_at ?? null,
         source_ids: sourceIds,
         source_count: sourceIds.length,
       });
@@ -2736,6 +2743,7 @@ export function problemFromRow(row: any): ProblemRecord {
     source_ids: stringList(row.source_ids),
     source_count: Number(row.source_count ?? 0),
     local_standing: typeof row.local_standing === "string" ? row.local_standing : null,
+    local_assessed_at: instant(row.local_assessed_at),
   };
 }
 
