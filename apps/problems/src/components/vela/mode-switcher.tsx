@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
 
-export function ModeSwitcher({ repository, problem, mode, basePath }: { repository: string; problem: string; mode: "state" | "work"; basePath?: string }) {
-  const href = (next: "state" | "work") => `${basePath ?? `/p/${repository}/${problem}`}?mode=${next}`;
+export function ModeSwitcher({ mode, basePath }: { mode: "state" | "work"; basePath: string }) {
+  const href = (next: "state" | "work") => `${basePath}?mode=${next}`;
   const reduceMotion = useReducedMotion();
   return <nav aria-label="Problem mode" className="inline-grid grid-cols-2 border-b">
     {(["state", "work"] as const).map((item) => <Link

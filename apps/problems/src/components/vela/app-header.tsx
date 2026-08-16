@@ -58,8 +58,8 @@ function recordTrailLabel(segment: string) {
 
 function headerTrail(pathname: string, repositories: PublishedRepository[]) {
   const canonicalProblem = pathname.match(/^\/problems\/[^/]+\/([^/]+)$/u);
-  if (pathname.startsWith("/p/") || canonicalProblem) {
-    const problem = canonicalProblem?.[1] ?? pathname.split("/").filter(Boolean)[2];
+  if (canonicalProblem) {
+    const problem = canonicalProblem[1];
     return {
       repository: null,
       section: "Problems",

@@ -45,7 +45,7 @@ export async function ProblemPageView({ repository, problem, route, query, expec
         <div className="flex flex-wrap items-center gap-2"><span className="text-eyebrow uppercase text-muted-foreground">Problem · {state.repositoryName}</span><span aria-hidden>·</span><Badge variant="outline">#{problem}</Badge></div>
         <h1 className="mt-3 max-w-5xl text-display leading-tight"><ScientificText text={decodeHtmlEntities(state.problem.statement?.trim() || state.source.summary?.trim() || state.source.title)} /></h1>
       </div>
-      <ModeSwitcher repository={repository} problem={problem} mode={mode} basePath={route} />
+      <ModeSwitcher mode={mode} basePath={route} />
     </PageHero>
     {mode === "state"
       ? <ProblemState state={state} basePath={route} />

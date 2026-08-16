@@ -86,7 +86,3 @@ export const problemPublicRoutesRoot: HashRoot = sha256(canonicalJson(problemPub
 export function problemPublicRouteForCanonicalPath(pathname: string): ProblemPublicRoute | null {
   return problemPublicRoutes.routes.find((route) => route.canonical_path === pathname) ?? null;
 }
-
-export function problemPublicRouteForLegacyPath(pathname: string): ProblemPublicRoute | null {
-  return problemPublicRoutes.routes.find((route) => route.legacy_paths.includes(pathname)) ?? null;
-}

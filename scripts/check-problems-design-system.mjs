@@ -122,7 +122,6 @@ for (const file of [
   join(problems, "src/app/problems/page.tsx"),
   join(problems, "src/app/contribute/page.tsx"),
   join(problems, "src/app/activity/page.tsx"),
-  join(problems, "src/app/p/[repository]/[problem]/page.tsx"),
   join(problems, "src/components/vela/problem-state.tsx"),
 ]) {
   const source = readFileSync(file, "utf8");

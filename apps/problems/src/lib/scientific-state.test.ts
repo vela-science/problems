@@ -38,7 +38,7 @@ vi.mock("@vela/projection-data", () => ({
   problemsForRepository: vi.fn(),
   allRepositories: reads.repositories,
   formalConjecturesAuditRecordsForProblem: reads.sourceAudits,
-  problemPublicRouteForLegacyPath: reads.publicRoute,
+  problemPublicRouteForCanonicalPath: reads.publicRoute,
   /* Every Problem is addressed now, not only the reviewed ones. */
   canonicalProblemPath: (repository: string, problem: string) => (
     repository === "math" && /^[1-9][0-9]*$/u.test(problem)
@@ -55,7 +55,7 @@ describe("Problems scientific state", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     cache.calls = [];
-    reads.publicRoute.mockImplementation((pathname: string) => pathname === "/p/math/321" ? {
+    reads.publicRoute.mockImplementation((pathname: string) => pathname === "/problems/erdos-problems/321" ? {
       canonical_path: "/problems/erdos-problems/321",
       entity_id: "problem:erdos:321",
     } : null);

@@ -149,24 +149,17 @@ try {
   await expectStatus(`/problems/${canonicalRoute.canonical_namespace}/999999`, 404);
   await expectStatus("/problems/not-a-namespace/1", 404);
 
-  /* Every Problem is addressed, not only the reviewed ones, and the retired
-     Repository-shaped path forwards to exactly the canonical address rather
-     than to something plausible. Both halves are what let the legacy form stop
-     being a second Problem surface. */
+  /* Every Problem is addressed, not only the reviewed ones. The
+     Repository-shaped `/p/` form is gone rather than redirected: it was a
+     prelaunch address, it was the only remaining second Problem surface, and
+     a redirect kept the route table carrying two identities per record. It
+     must answer 404, which is also what proves no internal link still builds
+     one — a surviving constructor would surface here as a broken page rather
+     than as a silent extra hop. */
   if (problems.length) {
     const unreviewed = problems[0].problem;
     await expectRenderedHtml(`/problems/${canonicalRoute.canonical_namespace}/${unreviewed}`);
-    const forwarded = await expectStatus(`/p/${slug}/${unreviewed}`, 308);
-    const location = forwarded.headers.get("location") ?? "";
-    const expected = `/problems/${canonicalRoute.canonical_namespace}/${unreviewed}`;
-    if (!location.endsWith(expected)) {
-      throw new Error(`retired Problem path forwarded to ${location}, expected ${expected}`);
-    }
-    const carried = await expectStatus(`/p/${slug}/${unreviewed}?mode=work&tracking=drop-me`, 308);
-    const carriedLocation = carried.headers.get("location") ?? "";
-    if (!carriedLocation.includes("mode=work") || carriedLocation.includes("tracking")) {
-      throw new Error(`retired Problem path mishandled URL-backed state: ${carriedLocation}`);
-    }
+    await expectStatus(`/p/${slug}/${unreviewed}`, 404);
   }
   await expectStatus(`/p/${slug}/not-a-number`, 404);
   for (const path of routes) {

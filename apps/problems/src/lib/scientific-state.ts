@@ -13,7 +13,7 @@ import {
   problemRepositorySlugs,
   problemCatalogForRepository,
   problemDetail,
-  problemPublicRouteForLegacyPath,
+  problemPublicRouteForCanonicalPath,
   canonicalProblemPath,
   reviewedProblemSourceCoverageRead,
   repositoryBySlug,
@@ -344,7 +344,9 @@ async function discoveredProblemsAtRoot(root: string): Promise<ProblemDiscovery[
    * carried where one exists, because it is what the record page checks
    * against. */
   return catalog.map((problem) => {
-    const route = problemPublicRouteForLegacyPath(`/p/${problem.repository}/${problem.problem}`);
+    /* Looked up by the retired address, for all 1,217 Problems, on every
+       catalogue build. The canonical path is already on the row. */
+    const route = problem.canonicalPath ? problemPublicRouteForCanonicalPath(problem.canonicalPath) : null;
     return {
       ...problem,
       ...(route ? { publicEntityId: route.entity_id } : {}),

@@ -3,7 +3,6 @@ import { problemResolutionConfig, problemResolutionConfigRoot } from "./problem-
 import {
   parseProblemPublicRoutes,
   problemPublicRouteForCanonicalPath,
-  problemPublicRouteForLegacyPath,
   problemPublicRoutes,
   problemPublicRoutesRoot,
 } from "./problem-public-routes";
@@ -17,8 +16,7 @@ describe("reviewed public Problem routes", () => {
       entity_id: "problem:erdos:321",
       current_path: "/p/math/321",
     });
-    expect(problemPublicRouteForLegacyPath("/p/math/321")?.canonical_path).toBe("/problems/erdos-problems/321");
-    expect(problemPublicRouteForLegacyPath("/p/math/999")).toBeNull();
+    expect(problemPublicRouteForCanonicalPath("/problems/erdos-problems/999")).toBeNull();
   });
 
   it("refuses resolver drift, duplicate paths, unknown entities, and malformed bindings", () => {
@@ -56,22 +54,19 @@ describe("reviewed public Problem routes", () => {
  *
  * Either way this has to keep holding, and it is what makes the eventual
  * `/p/…` redirect provably lossless rather than spot-checked. */
-describe("canonical and legacy Problem addresses", () => {
-  it("round-trip to each other for every published route", () => {
+describe("canonical Problem addresses", () => {
+  /* The retired `/p/` form is gone as a route and as a lookup; the config
+     still records `current_path` as the address these entities once had, and
+     that record is not a resolvable address. */
+  it("resolve for every published route", () => {
     for (const route of problemPublicRoutes.routes) {
-      expect(problemPublicRouteForLegacyPath(route.current_path)?.canonical_path)
-        .toBe(route.canonical_path);
       expect(problemPublicRouteForCanonicalPath(route.canonical_path)?.current_path)
         .toBe(route.current_path);
-      for (const legacy of route.legacy_paths) {
-        expect(problemPublicRouteForLegacyPath(legacy)?.canonical_path).toBe(route.canonical_path);
-      }
     }
   });
 
   it("resolves no address it does not publish", () => {
     expect(problemPublicRouteForCanonicalPath("/problems/erdos-problems/999999")).toBeNull();
-    expect(problemPublicRouteForLegacyPath("/p/math/999999")).toBeNull();
     expect(problemPublicRouteForCanonicalPath("/problems/not-a-namespace/1")).toBeNull();
   });
 });

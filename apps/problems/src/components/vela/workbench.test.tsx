@@ -20,14 +20,14 @@ describe("Problem Workspace", () => {
   afterEach(cleanup);
 
   it("keeps signed-out coordination separate from scientific State", async () => {
-    render(await Workbench({ state, hostedAccount: null }));
+    render(await Workbench({ basePath: "/problems/erdos-problems/321", state, hostedAccount: null }));
     expect(screen.getByRole("heading", { name: "Sign in to join this Workspace" })).toBeVisible();
     expect(screen.getByRole("heading", { name: "Shared coordination" })).toBeVisible();
     expect(screen.getByRole("button", { name: "Open codebase record" })).toBeVisible();
   });
 
   it("offers no dead sign-in when accounts are unavailable", async () => {
-    render(await Workbench({ state, hostedAccount: null, accountsEnabled: false }));
+    render(await Workbench({ basePath: "/problems/erdos-problems/321", state, hostedAccount: null, accountsEnabled: false }));
     expect(screen.getByRole("heading", { name: "Hosted coordination is not enabled here" })).toBeVisible();
     expect(screen.queryByRole("link", { name: "Sign in" })).not.toBeInTheDocument();
     expect(screen.getByText(/Current State remains fully readable/u)).toBeVisible();
