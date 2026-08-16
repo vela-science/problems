@@ -107,13 +107,37 @@ bun run test:manifests
 git diff --check
 ```
 
+`check:public-output` runs only inside `bun run build`, so a skipped build
+skips the secret scan.
+
+Two of these are ordering rules, both learned by breaking them:
+
+- **`rm -rf apps/problems/.next` before any production build that follows an
+  edit under `packages/`.** `next build` reuses a stale compile of workspace
+  packages, so the app serves the old code while the source says otherwise.
+  This produced two false readings in one session — once showing a regression
+  that did not exist, once showing a fix as absent.
+- **Run `bun run --filter @vela/problems check:runtime` before deploying, not
+  after.** It boots the built app and fetches real reader URLs. A change to a
+  shared projection reader can leave the page you verified working while every
+  page fed by the other reader raises; that shipped once and served 500 on
+  every Problem detail page for a deployment. The full route sweep costs
+  seconds and is the difference between "the page I changed works" and "the
+  app works".
+
 Database changes also require the activity migration, role, cross-tenant,
 idempotency, version-conflict, append-only audit, and plane-independence tests.
 Use the fixed Neon `main` branch and the separate `vela_activity` database. Do
 not create a Neon branch for routine work.
 
-Use the Codex in-app Browser for responsive, keyboard, interaction, and visual
-QA. Browser automation is not part of the installed toolchain.
+Use the in-app Browser for responsive, keyboard, interaction, and visual QA,
+against a local production build (`next start`) rather than `dev`. Drive it
+through the harness's own browser tools; no separate automation stack is
+installed, and none should be added.
+
+Synthetic key events dispatched through those tools may not move focus, so
+verify keyboard behaviour through `focus()`, computed styles and event-
+cancellation probes rather than concluding from a keystroke that did nothing.
 
 ## Release safety
 
@@ -121,3 +145,31 @@ QA. Browser automation is not part of the installed toolchain.
 - Do not attach `problems.science`, change
   DNS, merge, or tag a final release without user authorization.
 - Keep prior production deployments available for the rollback window.
+- Deploy through `bun run deploy:problems`. Without `VERCEL_TOKEN` it falls
+  back to the authenticated Vercel CLI and needs `VERCEL_GLOBAL_CONFIG` set to
+  the CLI config directory — a path, not a secret. Do not deploy with
+  `vercel --prod`: the script pins the project and team, asserts the
+  deployment is production, and binds `VELA_SITE_COMMIT` to an exact SHA,
+  which is what the deployment manifest reports.
+- **Verify the `vela` binary by digest, not by name.** More than one build can
+  report the same version while only one is an accepted generator:
+  `config/vela-release.v1.json` declares the accepted digests and
+  `integration/projection.test.ts` asserts a projection's
+  `vela_binary_sha256` is one of them. A locally rebuilt binary of the right
+  version is not automatically an accepted generator.
+- **Never `git checkout --` a file that also holds uncommitted work.**
+  Reverting a scratch edit that way discarded a real fix in the same file and
+  shipped a typecheck error.
+
+## Working with the projection locally
+
+`apps/problems/.env.local` is required for any projection-backed page; without
+it the app renders nothing real. Read the projection read-only from
+`packages/projection-data`:
+
+```bash
+set -a && . ../../apps/problems/.env.local && set +a && bun -e '...'
+```
+
+using `neon()` from `@neondatabase/serverless`, and `sql.query(text, params)`
+for parameterised SQL — the bare tagged template rejects that call shape.
