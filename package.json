@@ -22,7 +22,7 @@
     "deploy:problems": "VELA_SITE_COMMIT=$(git rev-parse HEAD) bun scripts/deploy-vercel-problems.mjs",
     "release:problems": "bun scripts/release-problems.mjs",
     "lint": "bun run --filter @vela/problems lint",
-    "typecheck": "bun run --filter @vela/ui typecheck && bun run --filter @vela/activity-data typecheck && bun run --filter @vela/problems typecheck",
+    "typecheck": "bun run --filter @vela/ui typecheck && bun run --filter @vela/projection-data typecheck && bun run --filter @vela/activity-data typecheck && bun run --filter @vela/problems typecheck",
     "check": "bun run check:release-identity && bun run check:brand && bun run check:bundle && bun run check:activity && bun run check:boundary && bun run check:tokens && bun run check:design-system && bun run typecheck",
     "check:release-identity": "bun scripts/check-release-identity.mjs",
     "check:brand": "bun run --filter @vela/brand check",

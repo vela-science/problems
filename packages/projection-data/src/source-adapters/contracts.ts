@@ -1,7 +1,14 @@
 import { z } from "zod";
 import { canonicalJson, sha256, type HashRoot } from "../canonical";
 
-const hashRootSchema = z.string().regex(/^sha256:[0-9a-f]{64}$/u);
+/* Typed as the root it validates, not as `string`.
+ *
+ * Every other module in this package spells a root as `HashRoot`, so a value
+ * read back off an adapter contract could not be passed to a function that
+ * asks for one without a cast — which is how `local-snapshots.ts` came to hand
+ * a plain string to `snapshotRevision`. The regex already guarantees the
+ * shape; this makes the type say so. */
+const hashRootSchema = z.string().regex(/^sha256:[0-9a-f]{64}$/u) as z.ZodType<HashRoot>;
 const sourceIdSchema = z.string().regex(/^source:[a-z0-9]+(?:-[a-z0-9]+)*$/u);
 const semanticVersionSchema = z.string().regex(/^[0-9]+\.[0-9]+\.[0-9]+$/u);
 const gitCommitSchema = z.string().regex(/^[0-9a-f]{40}$/u);
