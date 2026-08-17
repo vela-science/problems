@@ -620,7 +620,7 @@ async function readiness(environment, context) {
   }
   for (const path of [
     "/sources/source%3Anot-a-source",
-    "/problems/erdos-problems/887",
+    "/problems/erdos-problems/999999",
     ...repositoryPaths.flatMap((repositoryPath) => [
       `${repositoryPath}/claims/vcl_not-a-real-claim`,
       `${repositoryPath}/problems/999999`,
@@ -689,7 +689,7 @@ function retainQualification(environment, context) {
       "projection_backed_build_runtime_budgets_manifests",
       "provider_loss_reconstruction",
       "production_manifest_routes_aliases_and_404",
-      "erdos_321_correction_and_unmapped_887",
+      "erdos_321_v3_history_and_missing_problem",
       "current_and_two_projection_release_retention",
       "clean_projection_database_baseline",
     ],

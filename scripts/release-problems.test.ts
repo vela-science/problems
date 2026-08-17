@@ -43,6 +43,9 @@ describe("direct Problems release", () => {
     expect(source).toContain("rollback-checkpoint.json");
     expect(source).toContain('["observatory", "problems"].includes(manifest.site?.product)');
     expect(source).toContain('manifest?.site?.product !== "problems"');
+    expect(source).toContain('/problems/erdos-problems/321?view=history');
+    expect(source).toContain('"/problems/erdos-problems/999999"');
+    expect(source).not.toContain('"/problems/erdos-problems/887"');
     const activation = source.indexOf("context.refresh = JSON.parse");
     const checkpoint = source.indexOf(
       "writeRollbackCheckpoint(context, \"projection_activated\")",
