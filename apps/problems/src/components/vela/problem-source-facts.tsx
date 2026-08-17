@@ -52,10 +52,17 @@ export function ProblemSourceFacts({
           <dd className="font-mono tabular-nums">{record.prize}</dd>
         </div>
       ) : null}
+      {/* `gap-y-2`, not the `gap-y-1` its siblings use. These two values wrap
+          to five tappable source ids and a dozen subjects, and with no row gap
+          at all the wrapped lines sat on a 16px pitch — adjacent tap targets
+          touching, on the narrow viewport where the list wraps most. Eight
+          pixels puts a 24px pitch between them. The links stay inline runs
+          separated by "·", which is what keeps them legible as one value
+          rather than a stack of chips. */}
       {tags.length ? (
         <div className="flex items-center gap-1.5">
           <dt className="text-eyebrow uppercase">Subjects</dt>
-          <dd className="flex flex-wrap items-center gap-x-2">
+          <dd className="flex flex-wrap items-center gap-x-2 gap-y-2">
             {tags.map((tag, index) => (
               <span key={tag}>
                 {index ? <span aria-hidden className="mr-2 text-border">·</span> : null}
@@ -77,7 +84,7 @@ export function ProblemSourceFacts({
       {sourceIds.length ? (
         <div className="flex items-center gap-1.5">
           <dt className="text-eyebrow uppercase">Sources</dt>
-          <dd className="flex flex-wrap items-center gap-x-2">
+          <dd className="flex flex-wrap items-center gap-x-2 gap-y-2">
             {sourceIds.map((sourceId, index) => (
               <span key={sourceId}>
                 {index ? <span aria-hidden className="mr-2 text-border">·</span> : null}
