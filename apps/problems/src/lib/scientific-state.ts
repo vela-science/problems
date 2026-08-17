@@ -360,7 +360,13 @@ async function discoveredProblemsAtRoot(root: string): Promise<ProblemDiscovery[
    can reuse the assembled catalogue without risking pointer drift. */
 const cachedDiscoveredProblemsAtRoot = unstable_cache(
   discoveredProblemsAtRoot,
-  ["problems-problem-discovery-v1"],
+  /* The key is a contract on the SHAPE of the cached value, not just on the
+     release root. Vercel's data cache outlives a deployment, so a reader that
+     starts returning a new field keeps serving the old one under an unchanged
+     key: statements resolved to formal text locally and to "Erdős problem N" in
+     production, from the same commit and the same projection root. Bump this
+     whenever what the reader returns changes. */
+  ["problems-problem-discovery-v2-statement-kind"],
   { revalidate: 3_600 },
 );
 
@@ -448,7 +454,7 @@ async function scientificProblemStateAtRoot(repositorySlug: string, problemNumbe
 
 const cachedScientificProblemStateAtRoot = unstable_cache(
   scientificProblemStateAtRoot,
-  ["problems-scientific-problem-state-v1"],
+  ["problems-scientific-problem-state-v2-statement-kind"],
   { revalidate: 3_600 },
 );
 
