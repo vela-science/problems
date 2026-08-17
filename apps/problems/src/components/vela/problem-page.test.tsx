@@ -8,9 +8,11 @@ vi.mock("@/lib/auth", () => ({
   authConfiguration: () => ({ enabled: true }),
 }));
 vi.mock("next/navigation", () => ({ notFound: () => { mocks.notFound(); throw new Error("NOT_FOUND"); } }));
-vi.mock("@/components/vela/mode-switcher", () => ({ ModeSwitcher: () => <nav>Problem mode</nav> }));
-vi.mock("@/components/vela/problem-state", () => ({ ProblemState: () => <section>Exact current State</section> }));
-vi.mock("@/components/vela/workbench", () => ({ Workbench: () => <section>Workspace</section> }));
+vi.mock("@/components/vela/link-tabs", () => ({ LinkTabs: () => <nav>Problem views</nav> }));
+vi.mock("@/components/vela/problem-state", () => ({
+  ProblemState: ({ view }: { view: string }) => <section>Public view: {view}</section>,
+}));
+vi.mock("@/components/vela/workbench", () => ({ Workbench: () => <section>Workspace surface</section> }));
 
 import { ProblemPageView } from "./problem-page";
 
@@ -61,5 +63,58 @@ describe("canonical Problem source binding", () => {
       },
     })).rejects.toThrow("NOT_FOUND");
     expect(mocks.notFound).toHaveBeenCalledOnce();
+  });
+});
+
+describe("Problem view addressing", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.state.mockResolvedValue(exactState);
+  });
+
+  const page = (query: Record<string, string>) => ProblemPageView({
+    repository: "math",
+    problem: "321",
+    route: "/problems/erdos-problems/321",
+    query,
+  });
+
+  it("defaults the bare URL to the Overview", async () => {
+    render(await page({}));
+    expect(screen.getByText("Public view: overview")).toBeInTheDocument();
+  });
+
+  it.each(["sources", "record"] as const)("serves %s as its own address", async (view) => {
+    render(await page({ view }));
+    expect(screen.getByText(`Public view: ${view}`)).toBeInTheDocument();
+  });
+
+  it("serves the Workspace as the fourth view", async () => {
+    render(await page({ view: "workspace" }));
+    expect(screen.getByText("Workspace surface")).toBeInTheDocument();
+  });
+
+  /* Published links keep meaning what they meant: the retired mode param
+     resolves to the same surfaces rather than 404ing or falling silently to
+     the default. */
+  it("resolves the legacy mode=work address to the Workspace view", async () => {
+    render(await page({ mode: "work" }));
+    expect(screen.getByText("Workspace surface")).toBeInTheDocument();
+  });
+
+  it("resolves an unknown view to the Overview rather than an empty page", async () => {
+    render(await page({ view: "poem" }));
+    expect(screen.getByText("Public view: overview")).toBeInTheDocument();
+  });
+
+  /* The frame holds still across the tabs: one archetype for all four views,
+     with only the layout widening for the Workspace. A tab switch must not
+     repaint the page's ground or move the hero. */
+  it("keeps one archetype across public and Workspace views", async () => {
+    const { container: statePage } = render(await page({}));
+    const { container: workPage } = render(await page({ view: "workspace" }));
+    expect(statePage.querySelector("article")).toHaveAttribute("data-archetype", "problem");
+    expect(workPage.querySelector("article")).toHaveAttribute("data-archetype", "problem");
+    expect(workPage.querySelector("article")).toHaveAttribute("data-layout", "canvas");
   });
 });

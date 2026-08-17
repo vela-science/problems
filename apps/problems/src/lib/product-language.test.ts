@@ -76,8 +76,8 @@ describe("current product language", () => {
     expect(sidebar).not.toContain('label: "Review"');
     expect(sidebar).toContain('label: "Provenance"');
     expect(sidebar).not.toContain("function problemSections");
-    expect(source("components/vela/problem-page.tsx")).toContain("<ModeSwitcher");
-    expect(source("components/vela/mode-switcher.tsx")).toContain('aria-label="Problem mode"');
+    expect(source("components/vela/problem-page.tsx")).toContain("<LinkTabs");
+    expect(source("components/vela/link-tabs.tsx")).toContain("aria-label={label}");
     /* Group headings are named after the protocol's own axes, so a heading can
        never be mistaken for a destination that is missing its page. */
     for (const axis of ["Exact State records", "Contribution", "Repository provenance"]) {

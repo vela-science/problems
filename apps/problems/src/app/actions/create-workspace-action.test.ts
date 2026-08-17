@@ -109,7 +109,7 @@ describe("Problem Workspace creation", () => {
     );
     expect(mocks.revalidatePath).toHaveBeenCalledOnce();
     expect(mocks.redirect).toHaveBeenCalledWith(
-      `/problems/erdos-problems/321?mode=work&workspace=${workspace.id}`,
+      `/problems/erdos-problems/321?view=workspace&workspace=${workspace.id}`,
     );
     expect(mocks.followProblem.mock.invocationCallOrder[0])
       .toBeLessThan(mocks.redirect.mock.invocationCallOrder[0] ?? Number.POSITIVE_INFINITY);
@@ -123,7 +123,7 @@ describe("Problem Workspace creation", () => {
     expect(mocks.createWorkspace).not.toHaveBeenCalled();
     expect(mocks.followProblem).toHaveBeenCalledOnce();
     expect(mocks.redirect).toHaveBeenCalledWith(
-      `/problems/erdos-problems/321?mode=work&workspace=${workspace.id}`,
+      `/problems/erdos-problems/321?view=workspace&workspace=${workspace.id}`,
     );
   });
 

@@ -105,37 +105,59 @@ nothing behind it carries no chip.
 
 ## What a Problem paints
 
-A Problem Record opens with what the Problem *is*, because for the great
-majority of them that is all there is. Reading order:
+A Problem is one record with four sibling surfaces, each a complete HTML page
+at its own URL — **Overview** (the bare address), **Sources**
+(`?view=sources`), **Record** (`?view=record`), and **Workspace**
+(`?view=workspace`) — behind one link-addressed tab bar. A sibling surface is
+not progressive disclosure: nothing is DOM-hidden behind a closed control, so
+the rule that a closed disclosure is deletion is satisfied by address.
+`Collapsible` remains forbidden for record content — Base UI keeps closed
+content out of the DOM.
 
-1. **Current State** — Source status and Local Standing as separate axes, then
+**Overview** answers the reader's questions, in the reader's order:
+
+1. **Question** — the retained prose statement, or the honest sentence naming
+   what is not retained, with the upstream locator. Formal notation never
+   opens the page; it keeps its own face under Sources.
+2. **Current State** — Source status and Local Standing as separate axes, then
    the Repository's Assertions or a sentence naming what is absent.
-2. **Source-declared facts** — status, formalization, prize, subjects, OEIS,
-   bound sources, upstream statement, and the source's own commentary.
-3. **Source coverage** and the **retained statement text**, in the flow. These
-   are the record. They are not progressive detail and must not sit behind a
-   `Collapsible` — Base UI keeps closed content out of the DOM, so a closed
-   disclosure is not disclosure, it is deletion.
-4. **Source review**, where a source publishes one. It keeps its own heading and
-   never sits under one named "Checks": a source audit's own
-   `does_not_establish` denies being a Vela Verification, and merging the two
-   collapses two state axes.
-5. **Latest contribution and reviews** — produced by, checked by, not
-   established by those checks, decided by. One block, in the protocol's
-   order, rather than the separate `Checks` and `Decisions` sections this
-   replaced: reading it as a sequence is what shows a producer, a verifier and
-   a Decision performer to be three different actors, which is the thing a
-   disclaimer sentence about verification not being acceptance can only
-   assert. The contribution shown is the one supporting current Standing, not
-   the newest — a withdrawn or pending Proposal keeps its own status word
-   instead of taking the heading, and where nothing supports the current Claim
-   the block says so rather than promoting an unrelated Proposal into it.
-6. **What remains** and **Next contribution**. Limits render in the record's
+3. **What was checked** — a one-line summary of the contribution supporting
+   current Standing, linking to the Record surface.
+4. **What remains** and **Next contribution**. Limits render in the record's
    own words and never as a badge or a colour; where nothing is retained the
    section is absent, because "nothing is uncertain" is a claim this product
    must not make.
-7. **Exact provenance** — roots, record types, and raw exports. This is the
-   layer progressive disclosure is for.
+
+**Record-tier material — roots, record ids, verification record detail,
+occurrence tables, audit bodies, correction relations — never renders on
+Overview. Overview may summarize it in one line with a link.** This sentence
+is what keeps the provenance wall from regrowing.
+
+**Sources** is what the sources themselves publish:
+
+- **Source-declared facts** — status, formalization, prize, subjects, OEIS,
+  bound sources, upstream statement, and the source's own commentary.
+- **Source coverage** and the **retained statement text**, in the flow. These
+  are the record, not progressive detail.
+- **Source review**, where a source publishes one. It keeps its own heading and
+  never sits under one named "Checks": a source audit's own
+  `does_not_establish` denies being a Vela Verification, and merging the two
+  collapses two state axes. Placement enforces this: source-published facts
+  live on Sources, Vela checks live on Record.
+
+**Record** is the disclosure tier, in the flow with nothing collapsed:
+
+- **Latest contribution and reviews** — produced by, checked by, not
+  established by those checks, decided by. One block, in the protocol's
+  order: reading it as a sequence is what shows a producer, a verifier and
+  a Decision performer to be three different actors, which is the thing a
+  disclaimer sentence about verification not being acceptance can only
+  assert. The contribution shown is the one supporting current Standing, not
+  the newest — a withdrawn or pending Proposal keeps its own status word
+  instead of taking the heading, and where nothing supports the current Claim
+  the block says so rather than promoting an unrelated Proposal into it.
+- **Correction history** — exact relations, with the predecessor retained.
+- **Exact provenance** — roots, record types, and raw exports.
 
 No heading repeats the record's type word, and none carries an eyebrow naming
 the category it already names.
