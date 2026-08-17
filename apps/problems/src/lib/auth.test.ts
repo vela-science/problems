@@ -34,6 +34,17 @@ describe("Problems authentication boundary", () => {
       enabled: false,
       reason: "invalid_redirect_uri",
     });
+    expect(authConfiguration({ ...completeEnvironment, NEXT_PUBLIC_WORKOS_REDIRECT_URI: "http://problems.science/auth/callback" })).toEqual({
+      enabled: false,
+      reason: "invalid_redirect_uri",
+    });
+  });
+
+  it("accepts the exact staging localhost callback", () => {
+    expect(authConfiguration({
+      ...completeEnvironment,
+      NEXT_PUBLIC_WORKOS_REDIRECT_URI: "http://localhost:4322/auth/callback",
+    })).toEqual({ enabled: true });
   });
 
   it("projects only the account fields used by the product", () => {
@@ -52,6 +63,10 @@ describe("Problems authentication boundary", () => {
 
   it("derives the sign-out return from the validated callback origin", () => {
     expect(accountReturnTo(completeEnvironment)).toBe("https://problems.science/problems");
+    expect(accountReturnTo({
+      ...completeEnvironment,
+      NEXT_PUBLIC_WORKOS_REDIRECT_URI: "http://localhost:4322/auth/callback",
+    })).toBe("http://localhost:4322/problems");
     expect(accountReturnTo({
       ...completeEnvironment,
       NEXT_PUBLIC_WORKOS_REDIRECT_URI: "https://attacker.example/other",
