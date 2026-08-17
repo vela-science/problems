@@ -33,11 +33,11 @@ that archive.
 ## Human accounts
 
 Public evidence routes remain readable without an account and deterministic at
-their published release root. Authentication is isolated to `/account`,
-`/api/account`, `/sign-in`, and `/auth/callback`; no session state participates
-in scientific projections or their roots. Those four paths are also exactly what
-`src/proxy.ts` matches, so the read-only surfaces never enter the session
-proxy at all. There is no `/sign-out` route — signing out is the
+their published release root. Authentication is isolated to account, import,
+callback, and Problem Work requests; no session state participates in
+scientific projections or their roots. `src/proxy.ts` names those route shapes
+explicitly instead of intercepting the entire public application. There is no
+`/sign-out` route — signing out is the
 `signOutAccount` Server Action in `src/app/actions/auth.ts`.
 
 AuthKit is enabled only when all four variables are valid:
@@ -53,16 +53,26 @@ GITHUB_APP_PRIVATE_KEY         # RSA key; server-only, never stored in Neon
 GITHUB_APP_WEBHOOK_SECRET      # at least 32 characters
 ```
 
-Three settings in the [WorkOS dashboard](https://dashboard.workos.com) have to
-agree with those, and nothing in this repository can assert them:
+The [WorkOS dashboard](https://dashboard.workos.com) has to agree with those,
+and nothing in this repository can assert it. WorkOS permits HTTP localhost
+redirects in **staging** but requires HTTPS for production web applications, so
+local development uses the staging environment/application credentials instead
+of adding localhost to the production application:
 
-- **Redirect URI**: exactly `https://problems.science/auth/callback`. Development
-  may use `http://localhost:4322/auth/callback`.
-- **Sign-in URL** (`initiate_login_uri`): `https://problems.science/sign-in`.
+- **Production Redirect URI**: exactly `https://problems.science/auth/callback`.
+- **Staging/local Redirect URI**: exactly `http://localhost:4322/auth/callback`.
+- **Production Sign-in URL** (`initiate_login_uri`): `https://problems.science/sign-in`.
   Without it, WorkOS-initiated flows such as impersonation cannot complete the
   PKCE verification the library enforces on every callback.
-- **Logout redirect**: `https://problems.science/repositories`, which is where
-  `accountReturnTo()` sends a signed-out reader.
+- **Sign-out redirects**: `https://problems.science/problems` in production and
+  `http://localhost:4322/problems` in staging/local. `accountReturnTo()` derives
+  the appropriate origin from the validated callback.
+
+Do not mix a production WorkOS API key/client ID with the local callback. Keep
+both the local callback and local sign-out destination in the same staging
+application selected by `WORKOS_CLIENT_ID`; keep the production values in the
+production application. The local `.env.local` is untracked and must use the
+staging pair plus the exact localhost callback above.
 
 Keep provider secrets in the deployment environment, never in a checked-in
 file. An unconfigured build deliberately omits account controls and leaves the

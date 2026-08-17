@@ -43,6 +43,7 @@ describe("account routes", () => {
       '"/drafts/:id/export"',
       '"/codebases/:path*"',
       '"/import"',
+      '"/my-work"',
       '"/sign-in"',
     ]) {
       expect(proxySource).toContain(exact);

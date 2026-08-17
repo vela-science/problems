@@ -227,18 +227,18 @@ not infer a change in Standing.
 
 ## Navigation
 
-The visible product model is **Home → Problem → Current State | Workspace**.
-Global navigation answers four user intents: Home, Problems, Contribute, and
-State history. Two of those destinations still live at `/work` and
-`/activity`: the labels were corrected and the paths were not, so a reader
-bookmarks a URL that does not say what the page is. That divergence is
-recorded rather than defended.
-Repositories and Sources are visually subordinate provenance Library links.
-Hubs are a Problems discovery facet and secondary destination. Current State
-and Workspace are modes of the same Problem, never parallel products or domains.
+The visible product model is **Home → Problem → Overview | Evidence | Work |
+History**. Global navigation is Problems, Updates, My work when signed in, and
+Search; the sail is Home. Adding a Contribution is a contextual Problem action,
+not a permanent category. Repositories, Sources, Decisions, Proposals, Hubs,
+Graph, and exact Records remain reachable through contextual provenance,
+search, the footer, and technical-detail disclosures.
+
 The global product map remains stable inside a Problem; the Problem header owns
-the local Current State and Workspace switch. Protocol records appear as context
-and progressive detail; search and account remain utilities.
+the local section switch. Protocol records appear as context and progressive
+detail. The three primary actions use plain language: Read what is known, Check
+prior work, and Add a contribution. Similarity is advisory; exact identity is
+authoritative.
 
 Source coverage is a reading instrument inside Current State. Its compact
 matrix answers which exact Sources have a numbered candidate, a reviewed
@@ -248,13 +248,13 @@ Conjectures, proof manifests, and VibeMathed activity never receive Standing
 glyphs. A reviewed Problem entity is a navigation grouping, not a scientific
 identity claim.
 
-The advanced Records layer uses one contextual navigation system and one scope
-at a time. Its object collections do not define the primary Problems navigation.
+The exact Records layer uses one contextual navigation system and one scope at
+a time. Its object collections do not define the primary Problems navigation.
 
 - The **sidebar** is contextual. Outside a Repository it lists release-wide
   destinations. Inside a Repository it becomes that Repository's own sections,
   grouped under Exact State records, Exact direction records, and Repository
-  provenance. The headings explicitly mark this as the advanced inspector, so
+  provenance. The headings explicitly mark this as exact context, so
   no exact record collection competes with the public product concepts.
 - The **header** carries one trail, and beside it only tools that are not
   places: the navigation toggle, search-and-jump, notifications, theme, and

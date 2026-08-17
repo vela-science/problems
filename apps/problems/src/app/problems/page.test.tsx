@@ -79,7 +79,7 @@ describe("Problems directory", () => {
     render(await ProblemsPage({ searchParams: Promise.resolve({}) }));
     expect(screen.getByRole("heading", { level: 1, name: "Problems" })).toBeInTheDocument();
     expect(screen.getByRole("form", { name: "Filter Problems" })).toBeInTheDocument();
-    expect(screen.getByText("Advanced source, taxonomy, and exact State")).toBeInTheDocument();
+    expect(screen.getByText("More filters")).toBeInTheDocument();
     for (const name of ["Scientific area", "Source status", "Observed Source occurrence", "Current Repository", "Formalization", "Source observation coverage", "Local Standing"]) {
       expect(screen.getByRole("combobox", { name })).toBeInTheDocument();
     }

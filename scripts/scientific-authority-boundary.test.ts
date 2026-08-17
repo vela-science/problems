@@ -34,6 +34,8 @@ describe("scientific-authority profiles", () => {
       "apps/problems/src/app/api/search/route.ts": "export async function GET() { return Response.json([]); }\n",
       "apps/problems/src/app/.well-known/vela-site.json/route.ts": "export async function GET() { return Response.json({ authority: 'read_only_projection' }); }\n",
       "apps/problems/src/app/actions/activity.ts": "'use server';\nimport { createAttempt } from '@vela/activity-data';\nexport async function save() { return createAttempt(); }\n",
+      "apps/problems/src/app/my-work/page.tsx": "import { listWorkspaces } from '@vela/activity-data';\nexport default async function Page() { return listWorkspaces('account'); }\n",
+      "apps/problems/src/components/vela/account-state.tsx": "export const account = fetch(\"/api/account\", { cache: \"no-store\", credentials: \"same-origin\" });\n",
       "packages/activity-data/src/contracts.ts": "import { canonicalJson } from '@vela/projection-data/canonical';\nexport const root = canonicalJson({});\n",
     });
     expect(inspectScientificAuthorityBoundary(root)).toEqual([]);

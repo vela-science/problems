@@ -2076,6 +2076,8 @@ export async function objectContextById(slug: string, id: string): Promise<SiteO
 
 export interface ProblemRecord {
   problem: string;
+  /** Source-owned readable label, retained even when the best exact statement is formal notation. */
+  label: string;
   node_id: string;
   /** Exact source that owns this projected native Problem row. */
   source_id: string;
@@ -2604,6 +2606,7 @@ export async function problemsForRepository(slug: string, input: ProblemLedgerFi
       `${PROBLEM_SOURCES_CTE}
        SELECT n.native_id AS node_id,
          ${PROBLEM_NUMBER_SQL} AS problem,
+         n.title AS label,
          n.source_id,
          n.native_kind,
          n.content_root,
@@ -2854,6 +2857,11 @@ export function problemFromRow(row: any): ProblemRecord {
   }
   return {
     problem: row.problem,
+    label: typeof row.label === "string" && row.label.trim()
+      ? row.label.trim()
+      : typeof row.title === "string" && row.title.trim()
+        ? row.title.trim()
+        : `Problem ${row.problem}`,
     node_id: row.node_id,
     source_id: row.source_id,
     native_kind: typeof row.native_kind === "string" ? row.native_kind : "problem",

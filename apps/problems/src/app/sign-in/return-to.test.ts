@@ -10,7 +10,7 @@ const { safeReturnTo } = await import("./route");
  * within the routes this product itself serves. */
 describe("safeReturnTo", () => {
   it("keeps the original allowlist", () => {
-    for (const path of ["/account", "/account/connections", "/import"]) {
+    for (const path of ["/account", "/account/connections", "/import", "/my-work"]) {
       expect(safeReturnTo(path)).toBe(path);
     }
   });

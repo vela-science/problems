@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { authConfiguration } from "@/lib/auth";
 
-const allowedReturns = new Set(["/account", "/account/connections", "/import"]);
+const allowedReturns = new Set(["/account", "/account/connections", "/import", "/my-work"]);
 
 /* A Problem or repository address may also round-trip, so signing in from a
  * Workspace returns to that Workspace instead of stranding the reader on

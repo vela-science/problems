@@ -20,7 +20,7 @@ const localSigningModule = "packages/activity-data/src/local-signing.ts";
 
 const searchFetcher = "apps/problems/src/lib/search-index.ts";
 const graphFetcher = "apps/problems/src/lib/graph-client.ts";
-const accountMenu = "apps/problems/src/components/vela/account-menu.tsx";
+const accountState = "apps/problems/src/components/vela/account-state.tsx";
 const problemsReadRoutes = new Set([
   "apps/problems/src/app/api/search/route.ts",
   "apps/problems/src/app/api/graph/route.ts",
@@ -36,6 +36,7 @@ const problemsSignOutAction = "apps/problems/src/app/actions/auth.ts";
 const problemsActivityAction = "apps/problems/src/app/actions/activity.ts";
 const problemsActivityDraftRoute = "apps/problems/src/app/drafts/[id]/export/route.ts";
 const problemsActivityWorkbench = "apps/problems/src/components/vela/workbench.tsx";
+const problemsMyWorkPage = "apps/problems/src/app/my-work/page.tsx";
 const problemsAuthLibrary = "apps/problems/src/lib/auth.ts";
 const problemsIdentityProxy = "apps/problems/src/proxy.ts";
 const problemsGithubApp = "apps/problems/src/lib/github-app.ts";
@@ -84,6 +85,7 @@ const PROBLEMS_ACTIVITY_FILES = new Set([
   problemsActivityAction,
   problemsActivityDraftRoute,
   problemsActivityWorkbench,
+  problemsMyWorkPage,
   problemsImportAction,
   problemsConnectionsPage,
   problemsImportPage,
@@ -141,7 +143,7 @@ function exactProblemsFetch(file, content, fetches) {
       && content.includes("`/api/graph?${params}`")
       && content.includes("fetch(`/api/graph?");
   }
-  return file === accountMenu
+  return file === accountState
     && content.includes('fetch("/api/account", { cache: "no-store", credentials: "same-origin" })');
 }
 
@@ -292,7 +294,7 @@ export function inspectScientificAuthorityBoundary(repository) {
     if (profile === "vela_app") {
       inspectProblems(file, content, add);
       if (PROBLEMS_ACTIVITY_FILES.has(file)) {
-      inspectActivityAuthority(file, content, add);
+        inspectActivityAuthority(file, content, add);
       }
     }
     if (profile === "activity_data_owner") inspectActivityAuthority(file, content, add);

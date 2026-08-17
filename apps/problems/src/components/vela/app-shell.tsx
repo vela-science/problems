@@ -8,6 +8,7 @@ import { AppHeader } from "@/components/vela/app-header";
 import { CommandPaletteProvider } from "@/components/vela/command-palette";
 import { ProjectionRootProvider } from "@/components/vela/record-preview";
 import { SiteFooter } from "@/components/vela/site-footer";
+import { AccountStateProvider } from "@/components/vela/account-state";
 
 type PublishedRepository = { slug: string; name: string; pending: number; hasGraph: boolean; hasProblems: boolean };
 
@@ -28,7 +29,8 @@ export function AppShell({
 }) {
   return (
     <TooltipProvider delay={800}>
-      <ProjectionRootProvider root={projectionRoot}>
+      <AccountStateProvider enabled={authEnabled}>
+       <ProjectionRootProvider root={projectionRoot}>
         <CommandPaletteProvider repositories={publishedRepositories} projectionRoot={projectionRoot}>
           <SidebarProvider
             defaultOpen
@@ -48,7 +50,6 @@ export function AppShell({
             >
               <AppHeader
                 repositories={publishedRepositories}
-                authEnabled={authEnabled}
               />
               <div className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain print:h-auto print:overflow-visible">
                 {children}
@@ -58,6 +59,7 @@ export function AppShell({
           </SidebarProvider>
         </CommandPaletteProvider>
       </ProjectionRootProvider>
+      </AccountStateProvider>
     </TooltipProvider>
   );
 }

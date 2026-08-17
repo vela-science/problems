@@ -10,7 +10,6 @@ import {
   Compass01Icon,
   Activity01Icon,
   GitCommitIcon,
-  Home01Icon,
   InboxUploadIcon,
   Search01Icon,
   Note04Icon,
@@ -36,6 +35,7 @@ import {
 } from "@vela/ui/components/sidebar";
 import { RecordId } from "@/components/vela/record-id";
 import { BrandMark as VelaMark } from "@vela/ui/vela/brand-mark";
+import { useAccountState } from "@/components/vela/account-state";
 
 export type SidebarRepository = {
   slug: string;
@@ -58,22 +58,17 @@ type SidebarDestinationGroup = { label?: string; items: SidebarDestination[] };
  * per PRODUCT.md's model. Repositories, Sources, Decisions, Proposals,
  * Hubs, and Graph keep their durable routes, reached through contextual
  * links, search, and the footer map rather than competing here. */
-const releaseDestinations: SidebarDestinationGroup[] = [
-  {
-    label: "Home",
-    items: [
-      { href: "/", label: "Home", icon: Home01Icon, exact: true },
-    ],
-  },
+function releaseDestinations(signedIn: boolean): SidebarDestinationGroup[] { return [
   {
     label: "Explore",
     items: [
       { href: "/problems", label: "Problems", icon: PuzzleIcon },
       { href: "/activity", label: "Updates", icon: Activity01Icon },
+      ...(signedIn ? [{ href: "/my-work", label: "My work", icon: WorkIcon }] : []),
       { href: "/search", label: "Search", icon: Search01Icon },
     ],
   },
-];
+] }
 
 function repositorySections(repository: SidebarRepository): SidebarDestinationGroup[] {
   const base = `/repositories/${repository.slug}`;
@@ -174,6 +169,7 @@ export function AppSidebar({
   confirmedAt?: string | null;
 }) {
   const pathname = usePathname();
+  const accountState = useAccountState();
   const activatedLabel = activatedAt(activationTime);
   /* Two different facts, and the second is the one a reader is actually asking
      about. "Activated" is when this release first went live and stops moving the
@@ -188,7 +184,7 @@ export function AppSidebar({
      different scopes on the same screen. */
   const repository = repositories.find(({ slug }) =>
     pathname === `/repositories/${slug}` || pathname.startsWith(`/repositories/${slug}/`));
-  const destinations = repository ? repositorySections(repository) : releaseDestinations;
+  const destinations = repository ? repositorySections(repository) : releaseDestinations(accountState.status === "signed_in");
   const closeMobileNavigation = () => setOpenMobile(false);
 
   return (

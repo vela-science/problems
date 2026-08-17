@@ -69,7 +69,7 @@ describe("current product language", () => {
 
   it("separates the user-intent product navigation from contextual scientific records", () => {
     const sidebar = source("components/vela/app-sidebar.tsx");
-    for (const label of ["Home", "Problems", "Updates", "Search", "Assertions", "Contribution handoff", "Proposed changes"]) {
+    for (const label of ["Problems", "Updates", "My work", "Search", "Assertions", "Contribution handoff", "Proposed changes"]) {
       expect(sidebar).toContain(`label: "${label}"`);
     }
     expect(sidebar).not.toContain('label: "Hubs"');
@@ -88,7 +88,7 @@ describe("current product language", () => {
     }
     /* One navigation system: the sidebar shows release destinations OR one
        Repository's sections, never both, so no label means two scopes at once. */
-    expect(sidebar).toContain("const releaseDestinations");
+    expect(sidebar).toContain("function releaseDestinations");
     expect(sidebar).toContain("function repositorySections");
     /* The repository tab bar owns section naming; the header carries only the
        ancestor it does not provide. */

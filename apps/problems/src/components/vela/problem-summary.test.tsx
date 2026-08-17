@@ -28,8 +28,8 @@ const review = {
   created_at: "2026-08-15T20:00:00Z",
   producer_package: { producer_actor: "agent:producer" },
   verification_records: [
-    { verification_record_id: "vvr_1", verifier_actor: "agent:a", does_not_establish: ["The cubic conjecture itself."] },
-    { verification_record_id: "vvr_2", verifier_actor: "agent:b", does_not_establish: [] },
+    { verification_record_id: "vvr_1", verifier_actor: "agent:a", outcome: "pass", does_not_establish: ["The cubic conjecture itself."] },
+    { verification_record_id: "vvr_2", verifier_actor: "agent:b", outcome: "pass", does_not_establish: [] },
   ],
 };
 
@@ -52,12 +52,12 @@ describe("Problem answer strip", () => {
   afterEach(cleanup);
 
   it("answers state, understanding, evidence, and recency without record-tier identifiers", () => {
-    render(<ProblemAnswerStrip state={{ ...base, currentClaimId: claim.id, claims: [claim], reviews: [review] } as never} />);
+    render(<ProblemAnswerStrip basePath="/problems/erdos-problems/321" state={{ ...base, currentClaimId: claim.id, claims: [claim], reviews: [review] } as never} />);
     expect(screen.getByText("Partial")).toBeInTheDocument();
     expect(screen.getByText(/open per source; bounded results accepted here/u)).toBeInTheDocument();
-    expect(screen.getByText("The local assertion.")).toBeInTheDocument();
-    expect(screen.getByText(/2 scoped verification passes/u)).toBeInTheDocument();
-    expect(screen.getByText(/Aug 15, 2026/u)).toBeInTheDocument();
+    expect(screen.getByText(/1 accepted Contribution/u)).toBeInTheDocument();
+    expect(screen.getByText(/2 pass/u)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Add contribution" })).toHaveAttribute("href", "/problems/erdos-problems/321?view=work#add-contribution");
     /* Summaries never carry record ids, roots, or Standing words dressed as
        the Problem's status. */
     expect(screen.queryByText(/vvr_/u)).toBeNull();
@@ -69,18 +69,18 @@ describe("Problem answer strip", () => {
      Contribution whose record is not retained, and a source-declared
      solution nothing here reflects. */
   it("keeps the honest empties distinct", () => {
-    render(<ProblemAnswerStrip state={base} />);
+    render(<ProblemAnswerStrip basePath="/problems/erdos-problems/321" state={base} />);
     expect(screen.getByText("Open")).toBeInTheDocument();
     expect(screen.getByText("Nothing checked by this Repository")).toBeInTheDocument();
     expect(screen.getByText("No Contribution to this Problem has been accepted here.")).toBeInTheDocument();
-    expect(screen.getByText("No local change recorded")).toBeInTheDocument();
+    expect(screen.getByText("The source question remains open; no accepted Contribution is retained here.")).toBeInTheDocument();
     cleanup();
 
-    render(<ProblemAnswerStrip state={{ ...base, currentClaimId: claim.id, claims: [claim] } as never} />);
+    render(<ProblemAnswerStrip basePath="/problems/erdos-problems/321" state={{ ...base, currentClaimId: claim.id, claims: [claim] } as never} />);
     expect(screen.getByText("No Verification Record is retained for the current Contribution")).toBeInTheDocument();
     cleanup();
 
-    render(<ProblemAnswerStrip state={{ ...base, problem: { ...base.problem, declared_status: "solved" } } as never} />);
+    render(<ProblemAnswerStrip basePath="/problems/erdos-problems/321" state={{ ...base, problem: { ...base.problem, declared_status: "solved" } } as never} />);
     expect(screen.getByText("The source records a solution; no Contribution here reflects it yet.")).toBeInTheDocument();
   });
 });

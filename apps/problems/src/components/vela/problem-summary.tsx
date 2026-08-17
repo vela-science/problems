@@ -1,6 +1,5 @@
-import { AssertionText } from "@/components/vela/assertion-text";
+import { standingScopeSentence } from "@/components/vela/problem-facts";
 import { currentReview } from "@/components/vela/problem-provenance";
-import { formatDate } from "@/lib/format";
 import type { ScientificProblemState } from "@/lib/scientific-state";
 
 type State = NonNullable<ScientificProblemState>;
@@ -44,25 +43,42 @@ const STATE_DOT: Record<ProblemPublicState["word"], string> = {
  * what state the Problem is in, what is currently understood, how strong the
  * checking is, and when it last changed. Each cell is one line derived from
  * loaded data; the detail lives one tab away. */
-export function ProblemAnswerStrip({ state }: { state: State }) {
+export function ProblemAnswerStrip({ state, basePath }: { state: State; basePath: string }) {
   const review = currentReview(state);
   const publicState = problemPublicState(state);
-  const current = state.claims.find((claim) => claim.id === state.currentClaimId) ?? state.claims[0] ?? null;
+  const accepted = state.claims.filter((claim) => ["accepted", "accepted_with_conditions"].includes(String(claim.standing)));
+  const scope = standingScopeSentence(state);
   const records = review?.verification_records ?? [];
-  const understanding = current
-    ? <AssertionText text={current.assertion} />
+  const understanding = accepted.length
+    ? <>{accepted.length} accepted {accepted.length === 1 ? "Contribution" : "Contributions"}.{scope ? ` ${scope}` : ""}</>
+    : state.claims.length
+      ? `${state.claims.length} retained ${state.claims.length === 1 ? "Contribution" : "Contributions"}; none is currently accepted.`
     : publicState.word === "Resolved"
       ? "The source records a solution; no Contribution here reflects it yet."
       : "No Contribution to this Problem has been accepted here.";
+  const outcomes = records.reduce<Record<string, number>>((counts, record) => {
+    const outcome = record.outcome ?? "not reported";
+    counts[outcome] = (counts[outcome] ?? 0) + 1;
+    return counts;
+  }, {});
+  const outcomeSummary = Object.entries(outcomes).map(([outcome, count]) => `${count} ${outcome.replaceAll("_", " ")}`).join(" · ");
   const evidence = review
-    ? `${records.length || "No"} scoped verification ${records.length === 1 ? "pass" : "passes"}${state.sourceAudits.length ? " · source publishes its own audit" : ""}`
+    ? `${outcomeSummary || "No scoped Verification Record"}${state.sourceAudits.length ? " · source publishes its own audit" : ""}`
     : state.claims.length
       ? "No Verification Record is retained for the current Contribution"
       : state.sourceAudits.length
         ? "Source publishes its own audit; nothing checked here"
         : "Nothing checked by this Repository";
-  const updated = review?.reviewed_at ?? review?.created_at ?? state.problem.local_assessed_at ?? null;
-  return <dl className="mt-6 grid gap-x-6 gap-y-4 border-y py-4 text-meta sm:grid-cols-2 lg:grid-cols-[auto_minmax(0,1.6fr)_minmax(0,1fr)_auto]">
+  const remains = publicState.word === "Contested"
+    ? "Current Contributions require reconciliation or correction."
+    : publicState.word === "Resolved"
+      ? accepted.length && scope?.includes("not to this Problem")
+        ? "The source marks the question resolved; retained evidence here remains narrower."
+        : "The source records no unresolved question; evidence scope may still be bounded."
+      : accepted.length
+        ? "The source still marks the Problem open beyond the accepted scope."
+        : "The source question remains open; no accepted Contribution is retained here.";
+  return <dl className="mt-6 grid gap-x-6 gap-y-4 border-y py-4 text-meta sm:grid-cols-2 lg:grid-cols-[auto_minmax(0,1.35fr)_minmax(0,.8fr)_minmax(0,1fr)_auto]">
     <div className="min-w-0">
       <dt className="text-eyebrow uppercase text-muted-foreground">Problem state</dt>
       <dd className="mt-1.5">
@@ -71,16 +87,25 @@ export function ProblemAnswerStrip({ state }: { state: State }) {
       </dd>
     </div>
     <div className="min-w-0">
-      <dt className="text-eyebrow uppercase text-muted-foreground">Current understanding</dt>
+      <dt className="text-eyebrow uppercase text-muted-foreground">What is known</dt>
       <dd className="mt-1.5 line-clamp-3 text-compact [overflow-wrap:anywhere]">{understanding}</dd>
     </div>
     <div className="min-w-0">
-      <dt className="text-eyebrow uppercase text-muted-foreground">Evidence</dt>
+      <dt className="text-eyebrow uppercase text-muted-foreground">Evidence strength</dt>
       <dd className="mt-1.5 text-compact">{evidence}</dd>
     </div>
     <div className="min-w-0">
-      <dt className="text-eyebrow uppercase text-muted-foreground">Updated</dt>
-      <dd className="mt-1.5 text-compact tabular-nums">{updated ? formatDate(updated) : "No local change recorded"}</dd>
+      <dt className="text-eyebrow uppercase text-muted-foreground">What remains open</dt>
+      <dd className="mt-1.5 text-compact">{remains}</dd>
+    </div>
+    <div className="min-w-0">
+      <dt className="text-eyebrow uppercase text-muted-foreground">Next</dt>
+      <dd className="mt-1.5 flex flex-col items-start gap-1 text-compact">
+        <Link className="underline underline-offset-4" href={`${basePath}?view=evidence`}>Read Evidence</Link>
+        <Link className="underline underline-offset-4" href={`${basePath}?view=work#prior-work`}>Check prior work</Link>
+        <Link className="underline underline-offset-4" href={`${basePath}?view=work#add-contribution`}>Add contribution</Link>
+      </dd>
     </div>
   </dl>;
 }
+import Link from "next/link";

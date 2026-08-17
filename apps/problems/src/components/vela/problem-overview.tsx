@@ -54,10 +54,26 @@ export function ProblemOverview({ state, basePath }: { state: State; basePath: s
         remains, one link each. */}
     <ProvenanceSummary state={state} basePath={basePath} />
 
-    <section aria-labelledby="next-contribution-heading">
-      <div className="flex flex-wrap items-end justify-between gap-3"><h2 id="next-contribution-heading" className="text-title">Contribute</h2><Button nativeButton={false} render={<Link href={`${basePath}?view=work`} />}>Start work</Button></div>
-      <p className="mt-4 max-w-[70ch] text-body text-muted-foreground">{state.repository.status.actions.work.note}</p>
-      <p className="mt-3 max-w-[70ch] text-meta text-muted-foreground">Work coordinates approaches and drafts in the browser; the CLI command runs in the source Repository checkout. <Link href="/contribute" className="underline underline-offset-4">How contribution works</Link></p>
+    <section aria-labelledby="next-actions-heading">
+      <h2 id="next-actions-heading" className="text-title">What can I do?</h2>
+      <ol className="mt-5 divide-y border-y">
+        <li className="grid gap-3 py-5 sm:grid-cols-[2rem_minmax(0,1fr)_auto] sm:items-start">
+          <span className="font-mono text-meta text-muted-foreground">01</span>
+          <div><h3 className="text-label">Read what is known</h3><p className="mt-1 max-w-[70ch] text-compact text-muted-foreground">See accepted Contributions, scoped checks, sources, partial results, and what those records do not establish.</p></div>
+          <Button nativeButton={false} size="sm" variant="outline" render={<Link href={`${basePath}?view=evidence`} />}>Open Evidence</Button>
+        </li>
+        <li className="grid gap-3 py-5 sm:grid-cols-[2rem_minmax(0,1fr)_auto] sm:items-start">
+          <span className="font-mono text-meta text-muted-foreground">02</span>
+          <div><h3 className="text-label">Check prior work</h3><p className="mt-1 max-w-[70ch] text-compact text-muted-foreground">Compare retained approaches, negative results, and exact artifacts before starting. Similarity is advisory; exact IDs and roots decide identity.</p></div>
+          <Button nativeButton={false} size="sm" variant="outline" render={<Link href={`${basePath}?view=work#prior-work`} />}>Review prior work</Button>
+        </li>
+        <li className="grid gap-3 py-5 sm:grid-cols-[2rem_minmax(0,1fr)_auto] sm:items-start">
+          <span className="font-mono text-meta text-muted-foreground">03</span>
+          <div><h3 className="text-label">Add a contribution</h3><p className="mt-1 max-w-[70ch] text-compact text-muted-foreground">Start from this exact Problem, work in its native codebase, and retain bounded evidence with its assumptions, environment, outcome, and retry boundary.</p></div>
+          <Button nativeButton={false} size="sm" render={<Link href={`${basePath}?view=work#add-contribution`} />}>Start from this Problem</Button>
+        </li>
+      </ol>
+      <p className="mt-4 max-w-[70ch] text-meta text-muted-foreground">The browser coordinates shared work; execution and signing stay local. <Link href="/contribute" className="underline underline-offset-4">Contribution handoff details</Link></p>
       <code className="mt-3 block w-fit max-w-full rounded bg-command px-2 py-1 font-mono text-micro break-all text-command-foreground">{state.repository.status.actions.work.command}</code>
     </section>
   </>;

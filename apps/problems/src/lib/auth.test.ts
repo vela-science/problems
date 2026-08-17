@@ -51,7 +51,7 @@ describe("Problems authentication boundary", () => {
   });
 
   it("derives the sign-out return from the validated callback origin", () => {
-    expect(accountReturnTo(completeEnvironment)).toBe("https://problems.science/repositories");
+    expect(accountReturnTo(completeEnvironment)).toBe("https://problems.science/problems");
     expect(accountReturnTo({
       ...completeEnvironment,
       NEXT_PUBLIC_WORKOS_REDIRECT_URI: "https://attacker.example/other",

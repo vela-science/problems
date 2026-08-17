@@ -71,7 +71,7 @@ export async function ProblemPageView({ repository, problem, route, query, expec
             kind already resolves to. */}
         <h1 className="mt-3 max-w-5xl text-display leading-tight"><ScientificText text={decodeHtmlEntities(
           (state.problem.statement_kind === "prose" ? state.problem.statement?.trim() : "")
-          || state.source.summary?.trim() || state.source.title,
+          || state.source.summary?.trim() || state.problem.label || state.source.title,
         )} /></h1>
       </div>
       <LinkTabs label="Problem views" layoutId="problem-view" current={view} tabs={[
@@ -83,7 +83,7 @@ export async function ProblemPageView({ repository, problem, route, query, expec
       {/* The thirty-second answer rides with the hero on every public view,
           so switching sections never loses the Problem's state. The Work
           surface keeps its own toolbar instead. */}
-      {view !== "work" ? <div className="lg:col-span-2"><ProblemAnswerStrip state={state} /></div> : null}
+      {view !== "work" ? <div className="lg:col-span-2"><ProblemAnswerStrip state={state} basePath={route} /></div> : null}
     </PageHero>
     {view === "work"
       ? <Workbench state={state} hostedAccount={account} accountsEnabled={accountsEnabled} selectedWorkspace={query.workspace} selectedObject={query.object} selectedInspector={query.inspector} mutationError={query.workError} basePath={route} />

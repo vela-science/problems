@@ -21,8 +21,8 @@ describe("Problem Workspace", () => {
 
   it("keeps signed-out coordination separate from scientific State", async () => {
     render(await Workbench({ basePath: "/problems/erdos-problems/321", state, hostedAccount: null }));
-    expect(screen.getByRole("heading", { name: "Sign in to join this Workspace" })).toBeVisible();
-    expect(screen.getByRole("heading", { name: "Shared coordination" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Add a contribution" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Check prior work" })).toBeVisible();
     expect(screen.getByRole("link", { name: "Open codebase record" })).toBeVisible();
   });
 
@@ -61,9 +61,10 @@ describe("Problem Workspace", () => {
 
     const overview = objects.find(({ id }) => id === "workspace")!;
     render(<>{overview.content}</>);
-    fireEvent.click(screen.getByRole("button", { name: /Reference an exact contribution/iu }));
+    fireEvent.click(screen.getByRole("button", { name: /Attach contribution evidence/iu }));
     expect(screen.getByRole("combobox", { name: "Producing Attempt" })).toBeRequired();
-    fireEvent.click(screen.getByRole("button", { name: /Advanced: prepare exact handoff/iu }));
+    expect(screen.getByRole("combobox", { name: "Evidence type" })).toBeRequired();
+    fireEvent.click(screen.getByRole("button", { name: /Prepare repository handoff/iu }));
     expect(screen.getByRole("combobox", { name: "Research Block" })).toBeRequired();
   });
 

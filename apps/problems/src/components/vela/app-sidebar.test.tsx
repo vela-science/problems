@@ -97,7 +97,7 @@ describe("AppSidebar mobile navigation", () => {
     fireEvent.click(screen.getByRole("button", { name: "Open test navigation" }));
 
     expect(await screen.findByRole("link", { name: "Problems" })).toHaveAttribute("aria-current", "page");
-    expect(screen.getByRole("link", { name: "Home" })).not.toHaveAttribute("aria-current");
+    expect(screen.getByRole("link", { name: "Vela" })).not.toHaveAttribute("aria-current");
   });
 
   it("provides an explicit close control", async () => {
@@ -154,13 +154,13 @@ describe("AppSidebar mobile navigation", () => {
     fireEvent.click(screen.getByRole("button", { name: "Open test navigation" }));
 
     for (const [label, href] of [
-      ["Home", "/"],
       ["Problems", "/problems"],
       ["Updates", "/activity"],
       ["Search", "/search"],
     ]) {
       expect(await screen.findByRole("link", { name: label })).toHaveAttribute("href", href);
     }
+    expect(screen.getByRole("link", { name: "Vela" })).toHaveAttribute("href", "/");
     expect(screen.getByText("Explore")).toBeInTheDocument();
     /* Repositories, Sources, and the other record routes keep their pages
        but reach the reader through contextual links, search, and the footer

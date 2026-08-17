@@ -12,12 +12,12 @@ const GROUPS: ReadonlyArray<{ label: string; links: ReadonlyArray<{ href: string
     links: [
       { href: "/", label: "Home" },
       { href: "/problems", label: "Problems" },
-      { href: "/contribute", label: "Contribute" },
       { href: "/activity", label: "Updates" },
+      { href: "/search", label: "Search" },
     ],
   },
   {
-    label: "Records",
+    label: "Technical details",
     links: [
       { href: "/repositories", label: "Repositories" },
       { href: "/sources", label: "Sources" },
@@ -26,13 +26,7 @@ const GROUPS: ReadonlyArray<{ label: string; links: ReadonlyArray<{ href: string
       { href: "/hubs", label: "Hubs" },
     ],
   },
-  {
-    label: "Instruments",
-    links: [
-      { href: "/search", label: "Search" },
-      { href: "/graph", label: "Graph" },
-    ],
-  },
+  { label: "Explore context", links: [{ href: "/graph", label: "Relationship graph" }] },
   {
     label: "Exact release",
     links: [

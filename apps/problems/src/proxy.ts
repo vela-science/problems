@@ -24,6 +24,7 @@ export const config = {
     "/drafts/:id/export",
     "/codebases/:path*",
     "/import",
+    "/my-work",
     "/problems/:namespace/:problem",
     "/sign-in",
   ],

@@ -69,9 +69,10 @@ const selectItems = (allLabel: string, entries: ReadonlyArray<readonly [string, 
  * `theme` computed identically and printed twice. What is left is the number,
  * the question, and the handful of facts that differ between two rows.
  *
- * A formal statement is marked as one. It is the retained mathematics for 604
- * Problems whose catalogue may not retain prose, and it is not the question in
- * the reader's language, so it says which it is rather than pretending. */
+ * A formal statement is exact supporting detail, not the directory heading.
+ * The Source-owned label remains the scannable question handle. Formal notation
+ * stays on the Problem's Evidence surface, one interaction away, so the
+ * directory does not become a wall of implementation syntax. */
 function ProblemRows({ problems }: { problems: ProblemDiscovery[] }) {
   if (!problems.length) {
     return <p className="py-10 text-body text-muted-foreground">No Problems match this view.</p>;
@@ -80,6 +81,7 @@ function ProblemRows({ problems }: { problems: ProblemDiscovery[] }) {
     {problems.map((problem) => {
       const record = problem.record;
       const kind = record.statement_kind;
+      const readableLabel = record.label?.trim() || (kind === "formal" ? `Problem ${problem.problem}` : record.statement) || `Problem ${problem.problem}`;
       const facts = [
         record.declared_status,
         record.formalized ? "formalized" : null,
@@ -91,10 +93,10 @@ function ProblemRows({ problems }: { problems: ProblemDiscovery[] }) {
         <span className="pt-0.5 font-mono text-meta tabular-nums text-muted-foreground">{problem.problem}</span>
         <div className="min-w-0">
           <Link href={problem.canonicalPath ?? "/problems"} className="block max-w-[74ch] text-body leading-snug underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4">
-            <StatementText statement={record.statement} kind={kind} className="text-compact" />
+            <StatementText statement={kind === "formal" ? readableLabel : record.statement || readableLabel} kind={kind === "formal" ? "label" : kind} className="text-label" />
           </Link>
           <p className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-meta text-muted-foreground">
-            {kind === "formal" ? <span className="text-foreground/70">formal statement</span> : null}
+            {kind === "formal" ? <span className="text-foreground/70">exact formal statement available</span> : null}
             {kind === "label" ? <span className="text-foreground/70">no statement retained</span> : null}
             {facts.map((fact) => <span key={String(fact)}>{fact}</span>)}
           </p>
@@ -250,7 +252,7 @@ export default async function ProblemsPage({ searchParams }: { searchParams: Pro
         <Button type="submit" className="h-11 sm:col-span-2 xl:col-span-1">Filter</Button>
       </div>
       <details className="group mt-3" open={advancedActive}>
-        <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 text-label font-medium marker:content-none focus-visible:outline-2 focus-visible:outline-offset-2"><span aria-hidden className="transition-transform group-open:rotate-90">›</span>Advanced source, taxonomy, and exact State</summary>
+        <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 text-label font-medium marker:content-none focus-visible:outline-2 focus-visible:outline-offset-2"><span aria-hidden className="transition-transform group-open:rotate-90">›</span>More filters</summary>
         <div className="grid gap-3 pb-2 pt-2 sm:grid-cols-2 xl:grid-cols-4">
           <label><span className="sr-only">Coordination Hub</span><Select name="hub" defaultValue={selectedHub} items={selectItems("All coordination Hubs", hubs)}><SelectTrigger className="h-11 w-full"><SelectValue /></SelectTrigger><SelectContent align="start"><SelectItem value="all">All coordination Hubs</SelectItem>{hubs.map(([key, label]) => <SelectItem key={key} value={key}>{label}</SelectItem>)}</SelectContent></Select></label>
           <label><span className="sr-only">Published collection</span><Select name="collection" defaultValue={selectedCollection} items={selectItems("All collections", collections.map((value) => [value.key, value.name]))}><SelectTrigger className="h-11 w-full"><SelectValue /></SelectTrigger><SelectContent align="start"><SelectItem value="all">All collections</SelectItem>{collections.map((value) => <SelectItem key={value.key} value={value.key}>{value.name}</SelectItem>)}</SelectContent></Select></label>

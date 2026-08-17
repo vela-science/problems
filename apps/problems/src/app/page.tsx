@@ -31,7 +31,11 @@ function standingOf(problem: ProblemDiscovery): ClaimStanding {
 /* The projection resolves every row to a non-empty statement and its kind;
    this page only decides typography, through the shared `StatementText`. */
 function problemStatement(problem: ProblemDiscovery) {
-  return <StatementText statement={problem.record.statement} kind={problem.record.statement_kind} />;
+  const formal = problem.record.statement_kind === "formal";
+  const statement = formal
+    ? problem.record.label?.trim() || `Problem ${problem.problem}`
+    : problem.record.statement || problem.record.label?.trim() || `Problem ${problem.problem}`;
+  return <StatementText statement={statement} kind={formal ? "label" : problem.record.statement_kind} />;
 }
 
 export default async function HomePage() {
@@ -60,17 +64,17 @@ export default async function HomePage() {
     <PageHero density="compact" className="isolate lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(20rem,.42fr)] lg:items-end lg:gap-12">
       <div>
         <p className="text-eyebrow uppercase text-muted-foreground">Problems.science</p>
-        <h1 className="mt-3 max-w-4xl text-display">Find a scientific Problem. See what is known. Contribute.</h1>
-        <p className="typeset typeset-compact mt-4 max-w-2xl text-muted-foreground">Start with the question. Current State, evidence, source-owned work, and shared activity stay connected without being collapsed into one status.</p>
+        <h1 className="mt-3 max-w-4xl text-display">Start with the question.</h1>
+        <p className="typeset typeset-compact mt-4 max-w-2xl text-muted-foreground">Read what is known, check prior work, and add a bounded Contribution without losing the exact sources and records underneath.</p>
         <div className="mt-7 flex flex-wrap gap-3">
           <Button nativeButton={false} render={<Link href="/problems" />}>Browse Problems <HugeiconsIcon icon={ArrowRight} aria-hidden data-icon="inline-end" /></Button>
-          <Button nativeButton={false} variant="outline" render={<Link href="/contribute" />}>Contribute</Button>
+          <Button nativeButton={false} variant="outline" render={<Link href="/search" />}>Search exact records</Button>
         </div>
       </div>
       <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-5 border-t pt-6 text-meta lg:mt-0 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
         <div><dt className="text-muted-foreground">Problems published</dt><dd className="mt-1 font-mono text-subtitle tabular-nums">{catalog.length}</dd></div>
         <div><dt className="text-muted-foreground">Assessed by a Repository</dt><dd className="mt-1 font-mono text-subtitle tabular-nums">{assessed.length}</dd></div>
-        <div className="col-span-2"><dt className="text-muted-foreground">Where to begin</dt><dd className="mt-1 text-label"><Link href="/problems" className="underline decoration-border underline-offset-4 hover:decoration-current">Choose a Problem and open its Workspace</Link></dd></div>
+        <div className="col-span-2"><dt className="text-muted-foreground">Where to begin</dt><dd className="mt-1 text-label"><Link href="/problems" className="underline decoration-border underline-offset-4 hover:decoration-current">Choose a Problem and read what is known</Link></dd></div>
       </dl>
     </PageHero>
 

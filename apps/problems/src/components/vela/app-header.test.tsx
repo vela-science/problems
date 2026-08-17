@@ -17,7 +17,7 @@ vi.mock("@/components/vela/theme-toggle", () => ({
   ThemeToggle: () => <button type="button" aria-label="Choose appearance" />,
 }));
 vi.mock("@/components/vela/account-menu", () => ({
-  AccountMenu: ({ enabled }: { enabled: boolean }) => enabled ? <a href="/sign-in">Sign in</a> : null,
+  AccountMenu: () => <a href="/sign-in">Sign in</a>,
 }));
 
 import { AppHeader } from "@/components/vela/app-header";
@@ -33,10 +33,10 @@ const repositories = [{
 /* The header owns a real SidebarTrigger, so it needs the real provider around
    it. Mocking the trigger away is what let the mobile open-control regress
    unnoticed. */
-function Shell({ authEnabled = false }: { authEnabled?: boolean }) {
+function Shell() {
   return (
     <SidebarProvider>
-      <AppHeader repositories={repositories} authEnabled={authEnabled} />
+      <AppHeader repositories={repositories} />
     </SidebarProvider>
   );
 }
@@ -79,7 +79,7 @@ describe("AppHeader trail", () => {
   it("names the retained routes by their truthful product surfaces", () => {
     navigation.pathname = "/contribute";
     const { rerender } = render(<Shell />);
-    expect(screen.getByText("Contribute")).toHaveAttribute("aria-current", "page");
+    expect(screen.getByText("Add a contribution")).toHaveAttribute("aria-current", "page");
 
     navigation.pathname = "/activity";
     rerender(<Shell />);
@@ -124,7 +124,7 @@ describe("AppHeader trail", () => {
   });
 
   it("keeps global search, notifications, appearance, and account access in the header", () => {
-    render(<Shell authEnabled />);
+    render(<Shell />);
 
     expect(screen.getByRole("button", { name: "Search or navigate Vela" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Notifications" })).toBeInTheDocument();
@@ -161,7 +161,7 @@ describe("AppHeader navigation access", () => {
       const user = userEvent.setup();
       render(
         <SidebarProvider>
-          <AppHeader repositories={repositories} authEnabled={false} />
+          <AppHeader repositories={repositories} />
           <ReportOpenMobile />
         </SidebarProvider>,
       );

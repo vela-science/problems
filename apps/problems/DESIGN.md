@@ -119,17 +119,18 @@ content out of the DOM.
 
 The hero carries a compact strip on every public surface, readable before
 learning the protocol: **Problem state** (Open, Partial, Resolved, or
-Contested, with its derivation basis beside it), **Current understanding**
-(one plain line), **Evidence** (a verification-strength summary), and
-**Updated**. Repository-local Standing never appears in this strip — it
+Contested, with its derivation basis beside it), **What is known**
+(one plain line), **Evidence strength** (a verification summary), **What remains
+open**, and the next Problem actions. Repository-local Standing never appears in this strip — it
 governs exact Contributions and renders on them, under Evidence.
 
 **Overview** answers the reader's questions, in the reader's order: the
 **Question** (retained prose, or the formalizers' own docstring attributed
 as their wording, or the honest absence sentence with the upstream locator;
 formal notation renders as a file panel, never as the opening paragraph),
-**What was checked** (one line, full record one link away), and
-**Contribute** (the primary next action). Record-tier material — roots,
+**What was checked** (one line, full record one link away), and the three
+actions **Read what is known**, **Check prior work**, and **Add a contribution**.
+Record-tier material — roots,
 record ids, verification record detail, occurrence tables, audit bodies,
 correction relations — never renders on Overview; Overview may summarize it
 in one line with a link. That sentence is what keeps the provenance wall

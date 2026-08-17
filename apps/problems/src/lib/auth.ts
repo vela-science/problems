@@ -82,5 +82,5 @@ export function accountReturnTo(
   environment: Readonly<Record<string, string | undefined>> = process.env,
 ): string | null {
   if (!authConfiguration(environment).enabled) return null;
-  return new URL("/repositories", environment.NEXT_PUBLIC_WORKOS_REDIRECT_URI).toString();
+  return new URL("/problems", environment.NEXT_PUBLIC_WORKOS_REDIRECT_URI).toString();
 }

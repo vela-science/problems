@@ -48,14 +48,13 @@ public input to the same rooted inspection receipt.
 ## The visible product model
 
 The product has one conceptual center: **Problems**. A reader chooses a Problem,
-then chooses **Current State** or **Workspace** on that same page. The public
-concepts cover the complete reader and contributor journey:
+then reads its Overview, Evidence, Work, or History. The public concepts cover
+the complete reader and contributor journey:
 
 - **Problem** is the scientific question.
-- **Current State** is the evidence-supported view, with source status and Local
-  Standing shown as separate axes.
-- **Research Block** is a durable contribution such as an experiment, proof
-  attempt, dataset, argument, or negative result with rooted artifacts.
+- **Contribution** is a bounded proof, computation, dataset, review, negative
+  result, correction, or other evidence. Its exact underlying record type stays
+  visible in technical details.
 - **Workspace** is private or team-local coordination. Its shared canvas, approaches,
   sessions, notes, code and artifact references, requests, reviews, and drafts remain
   outside public scientific truth.
@@ -79,36 +78,28 @@ Only exact protocol records retain protocol meaning, and only an eligible,
 attributed human or agent
 Decision inside a Repository can change local Standing.
 
-The global application has four user-intent destinations:
+Global navigation is **Problems**, **Updates**, **My work** when signed in, and
+**Search**; the sail is Home. Adding a Contribution is a contextual action on a
+Problem, not a peer information category. Repositories, Sources, Decisions,
+Proposals, Hubs, Graph, and exact Records keep durable routes through contextual
+links, search, the footer map, and technical-detail disclosures.
 
-- **Home** answers what changed, what matters, and what needs attention.
-- **Problems** is the cross-domain scientific-question directory.
-- **Contribute** opens the exact Repository handoff and optional Problem-scoped
-  Workspace without creating a central work inventory.
-- **State history** opens exact scientific changes and ordinary Repository
-  commits as separate lanes. Workspace activity appears only in a
-  separate lane when retained global activity data can support it.
-
-Repositories and Sources form a quieter **Provenance** group. Hubs are a
-Problems discovery facet and secondary destination, not a global peer. Contributors,
-Following, and Your work join that navigation only when their retained product
-records are populated enough to make the pages useful.
-
-- **Current State** answers what is currently known, what remains open, and which exact
-  records support that view.
-- **Workspace** answers what people and agents are trying now, and provides the
-  bounded actions needed to contribute.
+Every Problem offers three plain actions: **Read what is known**, **Check prior
+work**, and **Add a contribution**. Its stable sections are Overview, Evidence,
+Work, and History. Exact identity is authoritative; similarity and possible
+overlap are advisory and must name uncertainty, stale indexing, and intentional
+replication where relevant.
 
 Repository is source context, not a prerequisite destination. Assertions,
 Proposed changes, Checks, Decisions, Sources, roots,
-and graphs remain inspectable inside Current State or through an advanced
-records view. Exact protocol types remain visible in provenance. They do not compete with
+and graphs remain inspectable inside Evidence, History, or technical details.
+Exact protocol types remain visible in provenance. They do not compete with
 Problems in primary navigation.
 
 The domains and the two storage planes are architecture. They must not become
 parallel products or conceptual models that users have to learn. Editorial
 explains Vela, Home orients the live network, Problems is the conceptual
-center, Records is the advanced inspector, and local Vela is the authority
+center, contextual technical details expose exact records, and local Vela is the authority
 handoff.
 
 A Problem may have exact occurrences in several Sources: an upstream question,
@@ -261,12 +252,13 @@ activity database cannot remove or change that state.
 
 ### Navigation
 
-The global sidebar follows user intent: Home, Problems, Contribute, and State
-history, with Repositories and Sources visually subordinated as Provenance. Hubs live in
-Problems discovery. That global map remains visible on a Problem page; Current
-State and Workspace are the Problem's local mode switch in its header. Account
-controls and search are tools, not destinations.
-Advanced record collections do not become global peers of Problems.
+The global sidebar follows user intent: Problems, Updates, My work when signed
+in, and Search. The sail is the Home affordance. Repositories, Sources, and
+exact record collections do not become global peers of Problems.
+
+Overview, Evidence, Work, and History are the Problem's local section switch.
+Account controls remain tools; My work is a signed-in destination for retained
+coordination rather than a new scientific ontology.
 
 Records keeps one contextual record-navigation system for expert use.
 Outside a Repository it may expose release-wide ledgers; inside one it becomes
@@ -342,8 +334,8 @@ documentation, not above every page that lists them.
 - The Vela sail is the Home affordance on both surfaces. In the Problems it
   is the mark alone, sized to the sidebar's icon column, with no wordmark.
 - Editorial navigation stays small. The application leads with Problems and
-  keeps advanced record navigation secondary. Current State and Workspace remain explicit
-  modes of the same Problem.
+  keeps exact record navigation contextual. Overview, Evidence, Work, and
+  History remain sections of the same Problem.
 - A page picks one archetype: a collection gets to its rows, a record opens with
   the record, a Repository opens as a repository whose most prominent action is
   getting the record, an instrument opens with its toolbar and canvas.

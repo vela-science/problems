@@ -32,7 +32,7 @@ const sectionTitles: Record<string, string> = {
 const globalTitles: Record<string, string> = {
   "/": "Home",
   "/problems": "Problems",
-  "/contribute": "Contribute",
+  "/contribute": "Add a contribution",
   "/hubs": "Hubs",
   "/activity": "Updates",
   "/repositories": "Repositories",
@@ -42,6 +42,7 @@ const globalTitles: Record<string, string> = {
   "/search": "Search",
   "/graph": "Graph",
   "/account": "Account",
+  "/my-work": "My work",
 };
 
 /* A record's own identity, for the end of the trail.
@@ -114,10 +115,8 @@ function headerTrail(pathname: string, repositories: PublishedRepository[]) {
 
 export function AppHeader({
   repositories,
-  authEnabled,
 }: {
   repositories: PublishedRepository[];
-  authEnabled: boolean;
 }) {
   const pathname = usePathname();
   const { setOpen } = useCommandPalette();
@@ -204,7 +203,7 @@ export function AppHeader({
           </Button>
           <NotificationCenter repositories={repositories} />
           <ThemeToggle className="size-11 md:size-8" />
-          <AccountMenu enabled={authEnabled} />
+          <AccountMenu />
         </div>
       </Toolbar.Root>
     </header>

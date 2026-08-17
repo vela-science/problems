@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import Link from "next/link";
 import { signOutAccount } from "@/app/actions/auth";
 import {
@@ -20,43 +20,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@vela/ui/components/dropdown-menu";
+import { useAccountState } from "@/components/vela/account-state";
 
-type AccountState =
-  | { status: "loading" }
-  | { status: "unavailable" }
-  | { status: "signed_out" }
-  | { status: "signed_in"; account: { displayName: string; email: string; initials: string } };
-
-function isAccountState(value: unknown): value is Exclude<AccountState, { status: "loading" }> {
-  if (!value || typeof value !== "object" || !("status" in value)) return false;
-  const record = value as Record<string, unknown>;
-  if (record.status === "unavailable" || record.status === "signed_out") return true;
-  if (record.status !== "signed_in" || !record.account || typeof record.account !== "object") return false;
-  const account = record.account as Record<string, unknown>;
-  return [account.displayName, account.email, account.initials].every((field) => typeof field === "string");
-}
-
-export function AccountMenu({ enabled }: { enabled: boolean }) {
-  const [state, setState] = useState<AccountState>({ status: "loading" });
+export function AccountMenu() {
+  const state = useAccountState();
   const signOutForm = useRef<HTMLFormElement>(null);
-
-  useEffect(() => {
-    if (!enabled) return;
-    let current = true;
-    void fetch("/api/account", { cache: "no-store", credentials: "same-origin" })
-      .then(async (response) => {
-        if (!response.ok) throw new Error("account request failed");
-        const value: unknown = await response.json();
-        if (!isAccountState(value)) throw new Error("invalid account response");
-        if (current) setState(value);
-      })
-      .catch(() => {
-        if (current) setState({ status: "unavailable" });
-      });
-    return () => { current = false; };
-  }, [enabled]);
-
-  if (!enabled) return null;
   if (state.status === "unavailable") return null;
   if (state.status === "loading") {
     return <span aria-label="Loading account" className="size-8 shrink-0 animate-pulse rounded-full bg-muted" />;
@@ -115,6 +83,9 @@ export function AccountMenu({ enabled }: { enabled: boolean }) {
             </DropdownMenuLabel>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
+          <DropdownMenuItem className="min-h-9" render={<Link href="/my-work" prefetch={false} />}>
+            My work
+          </DropdownMenuItem>
           <DropdownMenuItem className="min-h-9" render={<Link href="/account" prefetch={false} />}>
             <HugeiconsIcon icon={UserCircle} aria-hidden />
             Account
