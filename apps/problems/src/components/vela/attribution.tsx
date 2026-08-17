@@ -91,10 +91,13 @@ export function DecisionAttribution({ review }: {
       : "Attributed Decision";
   return (
     <div className="text-micro text-muted-foreground">
-      <p className="flex flex-wrap items-center gap-x-2 gap-y-1">
+      {/* No leading middots. These are flex items and the gap separates them; a
+          middot written into the front of an item becomes the first thing on
+          the line the moment that item wraps, which at 390px it does. */}
+      <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
         <span className="font-medium text-foreground">{performer}</span>
-        <span>· {review.decision_provenance.replaceAll("_", " ")}</span>
-        {review.reviewed_by ? <>· performer <RecordId value={review.reviewed_by} prefix={24} copy={false} /></> : null}
+        <span>{review.decision_provenance.replaceAll("_", " ")}</span>
+        {review.reviewed_by ? <span>performer <RecordId value={review.reviewed_by} prefix={24} copy={false} /></span> : null}
       </p>
       {review.decision_authority_principal_id ? (
         <p className="mt-0.5 flex flex-wrap items-center gap-x-2">

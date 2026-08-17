@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 const status = vi.hoisted(() => ({ pending: false }));
@@ -42,5 +42,29 @@ describe("import feedback", () => {
     expect(screen.getByRole("button", { name: "Inspecting" })).toBeDisabled();
     expect(screen.getByRole("status")).toHaveTextContent("Reading the pinned revision from GitHub");
     status.pending = false;
+  });
+
+  /* The signed-out page submits `<form action="/inspect" method="get">`, a plain
+     browser navigation. `useFormStatus` only reports forms React dispatched, so
+     it stays false there for the whole ~25s round trip — on the one path a
+     signed-out reader has. The form's own submit event is what covers it. */
+  it("reports a plain GET navigation, which useFormStatus cannot see", () => {
+    status.pending = false;
+    render(
+      <form action="/inspect" method="get">
+        <ImportSubmit pending="Inspecting">Inspect public codebase</ImportSubmit>
+      </form>,
+    );
+
+    expect(screen.getByRole("button", { name: "Inspect public codebase" })).toBeEnabled();
+    expect(screen.getByRole("status")).toBeEmptyDOMElement();
+
+    const form = document.querySelector("form")!;
+    act(() => {
+      form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+    });
+
+    expect(screen.getByRole("button", { name: "Inspecting" })).toBeDisabled();
+    expect(screen.getByRole("status")).toHaveTextContent("Reading the pinned revision from GitHub");
   });
 });

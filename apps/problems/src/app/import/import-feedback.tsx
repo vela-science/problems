@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { Button } from "@vela/ui/components/button";
 
@@ -38,6 +38,30 @@ export function ImportError({ message }: { message: string }) {
   );
 }
 
+/* `useFormStatus` only reports a form React itself dispatched, meaning one whose
+ * `action` is a function. The signed-out page submits `<form action="/inspect"
+ * method="get">`, a plain browser navigation, so `pending` stayed false for the
+ * whole ~25s round trip to GitHub: the button never disarmed, the label never
+ * changed, and the status region never filled. That is the one path a signed-out
+ * reader has, and it was the path this component was written for.
+ *
+ * Listening for the form's own `submit` event covers both. It fires after
+ * constraint validation, so a rejected commit SHA does not disarm the control,
+ * and a GET navigation replaces the document soon after, which ends the state
+ * without needing to reset it. */
+function useSubmitting() {
+  const anchor = useRef<HTMLDivElement>(null);
+  const [navigating, setNavigating] = useState(false);
+  useEffect(() => {
+    const form = anchor.current?.closest("form");
+    if (!form) return;
+    const onSubmit = () => setNavigating(true);
+    form.addEventListener("submit", onSubmit);
+    return () => form.removeEventListener("submit", onSubmit);
+  }, []);
+  return { anchor, navigating };
+}
+
 export function ImportSubmit({
   children,
   pending: pendingLabel,
@@ -47,9 +71,11 @@ export function ImportSubmit({
   pending: string;
   variant?: "default" | "outline";
 }) {
-  const { pending } = useFormStatus();
+  const status = useFormStatus();
+  const { anchor, navigating } = useSubmitting();
+  const pending = status.pending || navigating;
   return (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+    <div ref={anchor} className="flex flex-wrap items-center gap-x-3 gap-y-2">
       <Button type="submit" variant={variant} disabled={pending}>
         {pending ? pendingLabel : children}
       </Button>

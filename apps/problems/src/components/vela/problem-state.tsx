@@ -82,7 +82,13 @@ export function ProblemState({ state, basePath }: { state: State; basePath: stri
         <ItemMedia className="pt-1"><StateGlyph standing={claim.standing} verification="not_attempted" /></ItemMedia>
         <ItemContent className="gap-2">
           <ItemTitle className="line-clamp-none text-body font-normal [overflow-wrap:anywhere]"><AssertionText text={claim.assertion} /></ItemTitle>
-          <ItemDescription className="line-clamp-none flex flex-wrap items-center gap-2"><Badge variant={claim.standing === "accepted" ? "default" : "secondary"}>{claim.standing.replaceAll("_", " ")}</Badge><span>Repository-local Standing</span>{claim.id === state.currentClaimId ? <span>· current Claim</span> : null}</ItemDescription>
+          {/* No middot. These are three flex items of different kinds — a
+              Standing token, the axis it belongs to, and a qualifier — and the
+              gap is what separates flex items; a middot joins inline facts of
+              one kind on one line. It was written as a leading "· current
+              Claim", so at 390px the third item wrapped and the line opened
+              with a bare middot. */}
+          <ItemDescription className="line-clamp-none flex flex-wrap items-center gap-x-3 gap-y-1.5"><Badge variant={claim.standing === "accepted" ? "default" : "secondary"}>{claim.standing.replaceAll("_", " ")}</Badge><span>Repository-local Standing</span>{claim.id === state.currentClaimId ? <span>current Claim</span> : null}</ItemDescription>
           {claim.source_bindings?.length ? <div className="mt-1 text-meta text-muted-foreground">
             <p>{claim.source_bindings.length} exact reviewed source {claim.source_bindings.length === 1 ? "occurrence" : "occurrences"}</p>
             <ul className="mt-1 space-y-1 font-mono text-micro [overflow-wrap:anywhere]">

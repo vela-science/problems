@@ -100,15 +100,20 @@ export function ProblemList({
               </ItemTitle>
               {/* `gap-y-1`: seventeen of fifty of these lines wrap, and with no
                   row gap at all the wrapped lines sat on a 14px pitch — two
-                  rows of targets touching. */}
+                  rows of targets touching.
+
+                  `gap-x-3` is also the separator, and there are no middot
+                  glyphs left to misplace. As characters they failed twice:
+                  leading, they opened a wrapped line; trailing, `items-center`
+                  centred one against the three-line OEIS run so it landed
+                  beside the middle line, and even bundled inline a separator
+                  could still take the break and sit alone at the start of the
+                  next line. These are flex items, and a gap is what separates
+                  flex items; a middot joins inline facts of one kind on one
+                  line, which this row is not. */}
               {facts.length ? (
-                <div className="mt-1 flex flex-wrap items-center gap-y-1 text-micro text-muted-foreground">
-                  {facts.map((fact, index) => (
-                    <span key={fact.key} className="flex items-center">
-                      {fact.node}
-                      {index < facts.length - 1 ? <span aria-hidden className="mx-2 text-border">·</span> : null}
-                    </span>
-                  ))}
+                <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-micro text-muted-foreground">
+                  {facts.map((fact) => <span key={fact.key}>{fact.node}</span>)}
                 </div>
               ) : null}
             </ItemContent>
