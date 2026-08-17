@@ -133,7 +133,7 @@ export function WorkspaceShell({
         <TabsTrigger value="object">Selected object</TabsTrigger>
       </TabsList>
     </div>
-    <TabsContent value="canvas" className="m-0 min-w-0 overflow-hidden bg-muted/10">
+    <TabsContent value="canvas" className="m-0 min-w-0 overflow-hidden bg-muted/10 print:overflow-visible">
       {canvasNote}
       <WorkspaceCanvas objects={objects} selectedId={selectedObject.id} onSelect={selectCanvasObject} />
     </TabsContent>
@@ -169,7 +169,10 @@ export function WorkspaceShell({
         <HugeiconsIcon icon={ViewSidebarRightIcon} strokeWidth={1.8} aria-hidden className="size-4 text-muted-foreground" />
       </div>
         {surfaceTabs("min-w-0")}
-      </div> : <div className="mt-4 h-[min(72vh,56rem)] min-h-[42rem] overflow-hidden rounded-xl border bg-background max-lg:hidden">
+      </div> : /* Print gets the selected object's full flow, not a 72vh clip:
+          the fixed viewport height exists for the resizable screen layout and
+          would truncate everything below the fold on paper. */
+      <div className="mt-4 h-[min(72vh,56rem)] min-h-[42rem] overflow-hidden rounded-xl border bg-background max-lg:hidden print:h-auto print:min-h-0 print:overflow-visible print:rounded-none print:border-0">
           <ResizablePanelGroup
             id="scientific-workspace"
             orientation="horizontal"

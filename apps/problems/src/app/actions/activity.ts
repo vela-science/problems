@@ -308,8 +308,14 @@ export async function saveSubmissionDraftAction(form: FormData) {
       emitted_at: emittedAt,
     },
   };
+  /* Naming a draft revises it under its version guard; omitting one creates
+     it. Both branches existed in SQL from the start — the form simply never
+     named the draft, so every save minted a sibling. */
+  const draftId = optionalText(form, "draftId", 64);
+  const expectedVersion = draftId ? Number(text(form, "expectedVersion", 16)) : undefined;
   await runWorkspaceMutation(scope, () => saveSubmissionDraft(scope.context, {
     anchor: scope.anchor,
     payload,
-  }, scope.command));
+    draftId: draftId ?? undefined,
+  }, scope.command, expectedVersion));
 }
