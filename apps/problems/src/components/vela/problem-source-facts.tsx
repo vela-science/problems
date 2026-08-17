@@ -52,7 +52,17 @@ export function ProblemSourceFacts({
           <dd className="font-mono tabular-nums">{record.prize}</dd>
         </div>
       ) : null}
-      {/* `gap-y-2`, not the `gap-y-1` its siblings use. These two values wrap
+      {/* The middot trails its fact rather than leading the next one.
+          DESIGN.md gives the spaced middot one job — joining inline facts of
+          the same kind *on one line* — and a run that wraps has no such line.
+          Leading, it arrived at the start of the new line joining nothing and
+          reading as a list bullet; trailing, it stays at the end of the line
+          it belongs to, where it reads as continuation. There is no CSS
+          selector for "first on this line": the usual trick clips a leading
+          separator with `overflow:hidden` and a negative margin, and that
+          would clip the focus ring off the first link of every wrapped line.
+
+          `gap-y-2`, not the `gap-y-1` its siblings use. These two values wrap
           to five tappable source ids and a dozen subjects, and with no row gap
           at all the wrapped lines sat on a 16px pitch — adjacent tap targets
           touching, on the narrow viewport where the list wraps most. Eight
@@ -65,8 +75,8 @@ export function ProblemSourceFacts({
           <dd className="flex flex-wrap items-center gap-x-2 gap-y-2">
             {tags.map((tag, index) => (
               <span key={tag}>
-                {index ? <span aria-hidden className="mr-2 text-border">·</span> : null}
                 <Link className="underline underline-offset-2 hover:text-foreground" href={ledgerHref("tag", tag)}>{tag}</Link>
+                {index < tags.length - 1 ? <span aria-hidden className="ml-2 text-border">·</span> : null}
               </span>
             ))}
           </dd>
@@ -87,8 +97,8 @@ export function ProblemSourceFacts({
           <dd className="flex flex-wrap items-center gap-x-2 gap-y-2">
             {sourceIds.map((sourceId, index) => (
               <span key={sourceId}>
-                {index ? <span aria-hidden className="mr-2 text-border">·</span> : null}
                 <Link className="underline underline-offset-2 hover:text-foreground" href={`/sources/${encodeURIComponent(sourceId)}`}>{sourceId}</Link>
+                {index < sourceIds.length - 1 ? <span aria-hidden className="ml-2 text-border">·</span> : null}
               </span>
             ))}
           </dd>

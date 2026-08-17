@@ -105,8 +105,8 @@ export function ProblemList({
                 <div className="mt-1 flex flex-wrap items-center gap-y-1 text-micro text-muted-foreground">
                   {facts.map((fact, index) => (
                     <span key={fact.key} className="flex items-center">
-                      {index ? <span aria-hidden className="mx-2 text-border">·</span> : null}
                       {fact.node}
+                      {index < facts.length - 1 ? <span aria-hidden className="mx-2 text-border">·</span> : null}
                     </span>
                   ))}
                 </div>
