@@ -4,6 +4,7 @@ import { ScientificText } from "@vela/ui/vela/scientific-text";
 import { PageHero, PageShell } from "@vela/ui/vela/page-shell";
 import { decodeHtmlEntities } from "@vela/ui/lib/html-entities";
 import { LinkTabs } from "@/components/vela/link-tabs";
+import { ProblemAnswerStrip } from "@/components/vela/problem-summary";
 import { ProblemState, type ProblemStateView } from "@/components/vela/problem-state";
 import { Workbench } from "@/components/vela/workbench";
 import { authConfiguration, currentAccount } from "@/lib/auth";
@@ -75,6 +76,10 @@ export async function ProblemPageView({ repository, problem, route, query, expec
         { key: "record", href: `${route}?view=record`, label: "Record" },
         { key: "workspace", href: `${route}?view=workspace`, label: "Workspace" },
       ]} />
+      {/* The thirty-second answer rides with the hero on every public view,
+          so switching to Sources or Record never loses the state axes. The
+          Workspace keeps its own toolbar instead. */}
+      {view !== "workspace" ? <div className="lg:col-span-2"><ProblemAnswerStrip state={state} /></div> : null}
     </PageHero>
     {view === "workspace"
       ? <Workbench state={state} hostedAccount={account} accountsEnabled={accountsEnabled} selectedWorkspace={query.workspace} selectedObject={query.object} selectedInspector={query.inspector} mutationError={query.workError} basePath={route} />

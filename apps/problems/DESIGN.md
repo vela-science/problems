@@ -123,10 +123,15 @@ content out of the DOM.
    the Repository's Assertions or a sentence naming what is absent.
 3. **What was checked** — a one-line summary of the contribution supporting
    current Standing, linking to the Record surface.
-4. **What remains** and **Next contribution**. Limits render in the record's
-   own words and never as a badge or a colour; where nothing is retained the
-   section is absent, because "nothing is uncertain" is a claim this product
-   must not make.
+4. **What remains** and **Next contribution**. The hero strip's unresolved
+   cell carries the record's own first limit — never a badge or a colour —
+   and the full list keeps its place on Record; where nothing is retained the
+   strip says a fact about the record, because "nothing is uncertain" is a
+   claim this product must not make.
+
+The hero carries a compact answer strip on every public surface — the two
+state axes, what was checked, what remains — each cell a one-line summary of
+material whose detail lives at its own address.
 
 **Record-tier material — roots, record ids, verification record detail,
 occurrence tables, audit bodies, correction relations — never renders on

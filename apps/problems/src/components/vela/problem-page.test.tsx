@@ -9,6 +9,7 @@ vi.mock("@/lib/auth", () => ({
 }));
 vi.mock("next/navigation", () => ({ notFound: () => { mocks.notFound(); throw new Error("NOT_FOUND"); } }));
 vi.mock("@/components/vela/link-tabs", () => ({ LinkTabs: () => <nav>Problem views</nav> }));
+vi.mock("@/components/vela/problem-summary", () => ({ ProblemAnswerStrip: () => <dl>Answer strip</dl> }));
 vi.mock("@/components/vela/problem-state", () => ({
   ProblemState: ({ view }: { view: string }) => <section>Public view: {view}</section>,
 }));

@@ -5,7 +5,7 @@ import { Item, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemTitle } f
 import { StateGlyph } from "@vela/ui/vela/state-glyph";
 import { ScientificText } from "@vela/ui/vela/scientific-text";
 import { AssertionText } from "@/components/vela/assertion-text";
-import { ProblemFacts } from "@/components/vela/problem-facts";
+import { ProvenanceSummary } from "@/components/vela/provenance-summary";
 import type { ScientificProblemState } from "@/lib/scientific-state";
 
 type State = NonNullable<ScientificProblemState>;
@@ -39,8 +39,10 @@ export function ProblemOverview({ state, basePath }: { state: State; basePath: s
     </section>
 
     <section aria-labelledby="current-state-heading">
+      {/* The two axes themselves ride in the hero strip; this section owns
+          the caption that keeps them apart and the Claims the Standing
+          ranges over. */}
       <div className="flex flex-wrap items-end justify-between gap-3"><h2 id="current-state-heading" className="text-title">Current State</h2><span className="text-meta text-muted-foreground">Source status and Local Standing remain separate</span></div>
-      <ProblemFacts state={state} className="mt-5" />
       <p className="mt-4 max-w-[76ch] text-compact text-muted-foreground">Source status is publisher-declared. Repository-local Standing applies only to the exact Claim below; it does not mean this Problem is proved or resolved.</p>
       {/* A count chip reading zero says "this failed"; a heading with no count
           says "nothing here yet", which is what is true. */}
@@ -75,6 +77,8 @@ export function ProblemOverview({ state, basePath }: { state: State; basePath: s
         <p className="mt-2 text-meta"><Link href={`/repositories/${state.repositorySlug}/claims`} className="underline underline-offset-4">Open the Claim ledger</Link></p>
       </div>}
     </section>
+
+    <ProvenanceSummary state={state} basePath={basePath} />
 
     <section aria-labelledby="next-contribution-heading">
       <div className="flex flex-wrap items-end justify-between gap-3"><h2 id="next-contribution-heading" className="text-title">Next contribution</h2><Button nativeButton={false} render={<Link href={`${basePath}?view=workspace`} />}>Open Workspace</Button></div>
