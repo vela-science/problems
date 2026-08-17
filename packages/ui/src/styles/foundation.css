@@ -17,6 +17,27 @@
   }
 }
 
+/* The focus ring has to survive forced colors, and `:where()` cannot make it.
+ *
+ * The base rule above is zero-specificity by design, so a component's own
+ * `outline-none` utility beats it — which is what shadcn's button carries. In
+ * normal rendering that is fine: the button paints its ring with `box-shadow`
+ * instead. Forced colors drops box-shadow, and the old override here only set
+ * `outline-color`, so it had nothing to colour: `outline-style` was still
+ * `none`. Eight of twelve focusable elements on the Workspace had no visible
+ * focus at all in that mode.
+ *
+ * Written without `:where()` so it outranks a single utility class, and
+ * declaring the whole outline rather than just its colour. */
 @media (forced-colors: active) {
-  :where(a, button, summary, input, select, textarea, [tabindex]):focus-visible { outline-color: Highlight; }
+  a:focus-visible,
+  button:focus-visible,
+  summary:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: 3px;
+  }
 }

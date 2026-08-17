@@ -56,6 +56,12 @@ function recordTrailLabel(segment: string) {
   return decoded.length > 22 ? `${decoded.slice(0, 18)}…` : decoded;
 }
 
+/* The ancestor crumb yields before the current page does.
+ *
+ * It was `shrink-0`, so at 320px it held full width, squeezed the current page
+ * to `clientWidth: 0` — the page name vanished rather than ellipsising — and
+ * ran nine pixels under the search trigger, which made its own right edge
+ * unclickable. The page a reader is on is the part worth keeping. */
 function headerTrail(pathname: string, repositories: PublishedRepository[]) {
   const canonicalProblem = pathname.match(/^\/problems\/[^/]+\/([^/]+)$/u);
   if (canonicalProblem) {
@@ -129,7 +135,7 @@ export function AppHeader({
           rather than a link: switching Repository from inside one used to mean
           going back to the list and picking again. The current section is the
           last element and is text, not a link — it is the page you are on. */}
-      <nav aria-label="Breadcrumb" className="flex min-w-0 flex-1 items-center gap-1.5 text-body text-muted-foreground">
+      <nav aria-label="Breadcrumb" className="flex min-w-0 flex-1 items-center gap-1.5 overflow-hidden pr-2 text-body text-muted-foreground">
         {trail.repository ? (
           <RepositorySwitcher
             current={trail.repository}
@@ -139,9 +145,9 @@ export function AppHeader({
         ) : null}
         {trail.section ? (
           <>
-            {trail.repository ? <span aria-hidden className="text-muted-foreground/60">/</span> : null}
+            {trail.repository ? <span aria-hidden className="hidden text-muted-foreground/60 sm:inline">/</span> : null}
             {trail.sectionHref ? (
-              <Link href={trail.sectionHref} className="shrink-0 hover:text-foreground hover:underline">
+              <Link href={trail.sectionHref} className="hidden min-w-0 shrink truncate hover:text-foreground hover:underline sm:inline">
                 {trail.section}
               </Link>
             ) : (

@@ -85,7 +85,7 @@ export function ProblemState({ state, basePath }: { state: State; basePath: stri
           <ItemDescription className="line-clamp-none flex flex-wrap items-center gap-2"><Badge variant={claim.standing === "accepted" ? "default" : "secondary"}>{claim.standing.replaceAll("_", " ")}</Badge><span>Repository-local Standing</span>{claim.id === state.currentClaimId ? <span>· current Claim</span> : null}</ItemDescription>
           {claim.source_bindings?.length ? <div className="mt-1 text-meta text-muted-foreground">
             <p>{claim.source_bindings.length} exact reviewed source {claim.source_bindings.length === 1 ? "occurrence" : "occurrences"}</p>
-            <ul className="mt-1 space-y-1 font-mono text-micro">
+            <ul className="mt-1 space-y-1 font-mono text-micro [overflow-wrap:anywhere]">
               {claim.source_bindings.map((binding) => <li key={binding.binding_id}>{binding.source_id} · {binding.native_id} · {binding.relation_kind?.replaceAll("_", " ") ?? "canonical occurrence"}</li>)}
             </ul>
           </div> : null}
