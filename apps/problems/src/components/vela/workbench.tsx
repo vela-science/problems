@@ -17,6 +17,8 @@ import { Input } from "@vela/ui/components/input";
 import { Label } from "@vela/ui/components/label";
 import { Textarea } from "@vela/ui/components/textarea";
 import { RootedArtifactFrame } from "@vela/ui/vela/rooted-artifact-frame";
+import { StatusBadge } from "@vela/ui/vela/status-badge";
+import { localStandingLabel } from "@/components/vela/problem-facts";
 import type { AccountIdentity } from "@/lib/auth";
 import type { ScientificProblemState } from "@/lib/scientific-state";
 import { FormSelect } from "@/components/vela/form-select";
@@ -108,6 +110,10 @@ function WorkspacePrelude({ state }: { state: State }) {
     <div className="min-w-0">
       <h2 id="workspace-surface-heading" className="text-title">Shared coordination</h2>
       <p className="mt-1 max-w-[76ch] text-meta text-muted-foreground">Coordinate here; execute locally. Repositories, runtimes, secrets, artifact bytes, and signing keys stay on your machine, and nothing here changes scientific State.</p>
+      {/* What the work here is anchored against, without leaving the surface:
+          the same Standing the Overview's strip shows. Stale-anchor handling
+          stays with the per-object notices below. */}
+      <p className="mt-2.5"><StatusBadge state={new Set((state.claims ?? []).map((claim) => claim.standing)).size === 1 ? state.claims[0]!.standing : "unassessed"} axis="standing">{localStandingLabel((state.claims ?? []).map((claim) => claim.standing), state.repositoryName)}</StatusBadge></p>
     </div>
     <div className="flex flex-wrap gap-3">
       <Button nativeButton={false} size="sm" variant="outline" render={<Link href={`/repositories/${state.repositorySlug}`} />}>Open codebase record</Button>

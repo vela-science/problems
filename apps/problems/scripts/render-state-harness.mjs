@@ -243,14 +243,26 @@ async function main() {
   await mkdir(output, { recursive: true });
 
   const bodies = [];
+  /* Each scenario renders once per public surface. The Problem is one record
+     with sibling views, and a state that reads correctly on the Overview can
+     still be wrong on Record — the empty-review sentence lives there — so
+     coverage means the cross product, not the default view. */
+  const views = ["overview", "sources", "record"];
   for (const scenario of SCENARIOS) {
-    const markup = renderToStaticMarkup(
-      React.createElement(ProblemState, {
-        state: scenario.state,
-        basePath: `/p/math/${scenario.state.problem.problem}`,
-      }),
-    );
-    bodies.push(scenarioSection(scenario, markup));
+    for (const view of views) {
+      const markup = renderToStaticMarkup(
+        React.createElement(ProblemState, {
+          state: scenario.state,
+          basePath: `/p/math/${scenario.state.problem.problem}`,
+          view,
+        }),
+      );
+      bodies.push(scenarioSection({
+        ...scenario,
+        id: `${scenario.id}-${view}`,
+        title: `${scenario.title} · ${view}`,
+      }, markup));
+    }
   }
 
   await writeFile(resolve(output, "harness.css"), CSS, "utf8");
@@ -262,6 +274,7 @@ async function main() {
     schema: "vela.projection-state-harness.v1",
     authority_effect: "none",
     scenarios: SCENARIOS.length,
+    views: views.length,
     tiers,
     release_basis: LIVE.release,
     output: resolve(output, "index.html"),
