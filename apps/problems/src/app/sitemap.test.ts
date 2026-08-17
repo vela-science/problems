@@ -22,6 +22,8 @@ describe("public sitemap", () => {
      so publishing both asked a crawler to index two URLs for one record. */
   it("publishes one canonical address per Problem", async () => {
     const urls = (await sitemap()).map(({ url }) => url);
+    expect(urls).toContain("https://problems.science/problems");
+    expect(urls).toContain("https://problems.science/problems/erdos-problems");
     expect(urls).toContain("https://problems.science/problems/erdos-problems/321");
     expect(urls).toContain("https://problems.science/problems/erdos-problems/999");
     expect(urls).not.toContain("https://problems.science/p/math/321");

@@ -1,115 +1,49 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 
-const mocks = vi.hoisted(() => ({
-  discovered: vi.fn(),
-  recent: vi.fn(),
-  coverage: vi.fn(),
-  corpora: vi.fn(),
-}));
+const mocks = vi.hoisted(() => ({ discovered: vi.fn(), redirect: vi.fn() }));
 
+vi.mock("next/navigation", () => ({ redirect: (href: string) => { mocks.redirect(href); throw new Error("NEXT_REDIRECT"); } }));
 vi.mock("@/lib/scientific-state", () => ({
   discoveredProblems: mocks.discovered,
-  recentScientificChanges: mocks.recent,
-  reviewedProblemSourceCoverage: mocks.coverage,
-  observedSourceCorpusMap: mocks.corpora,
-  problemSourceObservationCoverage: (corpus: { inventory: { sources: Array<{ source_id: string; coverage_status: string }> } }, catalog: Array<{ canonicalPath: string; record: { source_id: string } }>) => new Map(catalog.map((entry) => [
-    entry.canonicalPath,
-    corpus.inventory.sources.find(({ source_id }) => source_id === entry.record.source_id)?.coverage_status,
-  ])),
   problemDiscoveryCollections: (catalog: Array<Record<string, unknown>>) => [{
-    key: "erdos-problems",
-    name: "Erdős Problems",
-    repositories: ["math"],
-    problemCount: catalog.length,
-    localStanding: 0,
-    fields: [],
-    topics: [{ key: "number theory", name: "Number Theory", problemCount: 1, localStanding: 0 }],
+    key: "erdos-problems", name: "Erdős Problems", problemCount: catalog.length,
   }],
-  problemDiscoveryScopeQuery: (input: Record<string, string>) => Object.fromEntries(Object.entries(input).filter(([, value]) => value !== "all")),
 }));
-vi.mock("@/components/vela/problem-facts", () => ({ ProblemDiscoveryFacts: () => <div>Problem facts</div> }));
-vi.mock("@/components/vela/source-corpus-map", () => ({ SourceCorpusMap: () => <div>Source corpus</div> }));
-vi.mock("@/components/vela/problem-source-coverage", () => ({ ProblemSourceCoverage: () => <div>Source coverage</div> }));
-vi.mock("@/components/vela/scientific-change-feed", () => ({ ScientificChangeFeed: () => <div>State history</div> }));
 
-import ProblemsPage from "./page";
+import ProblemsPage, { metadata } from "./page";
 
-const problem = {
-  releaseRoot: `sha256:${"1".repeat(64)}`,
+const problem = (number: string, standing: string | null = null) => ({
   repository: "math",
-  collection: { key: "erdos-problems", name: "Erdős Problems" },
-  problem: "321",
-  canonicalPath: "/problems/erdos-problems/321",
-  publicEntityId: "problem:erdos:321",
-  domain: { key: "mathematics", name: "Mathematics" },
-  field: null,
-  topics: [{ key: "number theory", name: "Number Theory" }],
-  hubs: [{ key: "erdos-problems", name: "Erdős Problems" }],
-  theme: "Number Theory",
+  problem: number,
+  canonicalPath: `/problems/erdos-problems/${number}`,
   record: {
-    problem: "321",
-    node_id: "erdos:321",
-    native_kind: "problem",
-    claim_id: null,
-    source_id: "source:erdos-problems",
-    statement: "A source-native Problem statement",
+    statement_kind: "prose",
+    statement: `Question ${number}`,
+    label: `Erdős problem ${number}`,
     declared_status: "open",
-    local_standing: null,
-    tags: ["number theory"],
-    source_ids: ["source:erdos-problems"],
-    source_count: 1,
-    formalized: false,
+    local_standing: standing,
   },
-};
+});
 
-describe("Problems directory", () => {
+describe("global Problems entry", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.discovered.mockResolvedValue([problem]);
-    mocks.corpora.mockResolvedValue({
-      release_root: problem.releaseRoot,
-      inventory: {
-        sources: [{ source_id: "source:erdos-problems", coverage_status: "complete" }],
-      },
-    });
+    mocks.discovered.mockResolvedValue([problem("321", "accepted"), problem("94")]);
   });
 
-  it("makes the searchable directory the default and keeps exact controls advanced", async () => {
+  it("states the one-collection scope and links its directory", async () => {
+    expect(metadata.alternates).toEqual({ canonical: "/problems" });
     render(await ProblemsPage({ searchParams: Promise.resolve({}) }));
     expect(screen.getByRole("heading", { level: 1, name: "Problems" })).toBeInTheDocument();
-    expect(screen.getByRole("form", { name: "Filter Problems" })).toBeInTheDocument();
-    expect(screen.getByText("More filters")).toBeInTheDocument();
-    for (const name of ["Scientific area", "Source status", "Observed Source occurrence", "Current Repository", "Formalization", "Source observation coverage", "Local Standing"]) {
-      expect(screen.getByRole("combobox", { name })).toBeInTheDocument();
-    }
-    expect(screen.getByRole("textbox", { name: "Exact Problem identifier" })).toHaveAttribute("maxlength", "256");
-    expect(screen.getByRole("link", { name: "Inspect coverage" })).toHaveAttribute("href", "/problems?view=overview");
-    expect(screen.getByRole("link", { name: /source-native Problem statement/u })).toHaveAttribute("href", "/problems/erdos-problems/321");
-    expect(mocks.recent).not.toHaveBeenCalled();
-    expect(mocks.coverage).not.toHaveBeenCalled();
-    expect(mocks.corpora).not.toHaveBeenCalled();
+    expect(screen.getByText(/current release contains one collection/u)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Browse Erdős Problems/u })).toHaveAttribute("href", "/problems/erdos-problems");
+    expect(screen.getByText("Erdős Problems · #321")).toBeInTheDocument();
   });
 
-  it("retains the source-oriented overview only behind an explicit view", async () => {
-    mocks.recent.mockResolvedValue([]);
-    mocks.coverage.mockResolvedValue(null);
-    mocks.corpora.mockResolvedValue(null);
-    render(await ProblemsPage({ searchParams: Promise.resolve({ view: "overview" }) }));
-    expect(screen.getByText("Published collections and Topics")).toBeInTheDocument();
-    expect(mocks.recent).toHaveBeenCalledOnce();
-  });
-
-  it("matches exact identifiers without treating partial text as identity", async () => {
-    render(await ProblemsPage({ searchParams: Promise.resolve({ exact_id: "problem:erdos:32" }) }));
-    expect(screen.queryByRole("link", { name: /source-native Problem statement/u })).not.toBeInTheDocument();
-    expect(screen.getByText("No Problems match this view.")).toBeInTheDocument();
-  });
-
-  it("filters by the primary Source observation without calling it Problem completeness", async () => {
-    render(await ProblemsPage({ searchParams: Promise.resolve({ coverage: "partial" }) }));
-    expect(screen.queryByRole("link", { name: /source-native Problem statement/u })).not.toBeInTheDocument();
-    expect(screen.getByText("No Problems match this view.")).toBeInTheDocument();
-    expect(screen.getByText(/Coverage is source-observation coverage, not Problem completeness/u)).toBeInTheDocument();
+  it("preserves old directory query links at the collection address", async () => {
+    await expect(ProblemsPage({ searchParams: Promise.resolve({ q: "prime", status: "open" }) })).rejects.toThrow("NEXT_REDIRECT");
+    expect(mocks.redirect).toHaveBeenCalledWith("/problems/erdos-problems?q=prime&status=open");
+    expect(mocks.discovered).not.toHaveBeenCalled();
   });
 });

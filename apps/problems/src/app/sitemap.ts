@@ -9,6 +9,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const routes = [
     "/",
     "/problems",
+    "/problems/erdos-problems",
     "/contribute",
     "/hubs",
     "/activity",
@@ -51,6 +52,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     url: `${base}${route}`,
     lastModified: new Date(release.generated_at),
     changeFrequency: "weekly",
-    priority: route === "/" ? 1 : route === "/problems" ? 0.9 : route.startsWith("/repositories/") ? 0.8 : 0.6,
+    priority: route === "/" ? 1 : route === "/problems" ? 0.9 : route === "/problems/erdos-problems" ? 0.85 : route.startsWith("/repositories/") ? 0.8 : 0.6,
   }));
 }

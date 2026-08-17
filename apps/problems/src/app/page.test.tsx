@@ -58,7 +58,7 @@ describe("Home", () => {
 
     /* 14 rows, of which 2 carry a standing. The defect this pins returned 12
        and 0 for exactly this shape. */
-    const published = screen.getByText("Problems published").closest("div")!;
+    const published = screen.getByText("Erdős problems published").closest("div")!;
     expect(within(published).getByText("14")).toBeVisible();
     const assessed = screen.getByText("Assessed by a Repository").closest("div")!;
     expect(within(assessed).getByText("2")).toBeVisible();

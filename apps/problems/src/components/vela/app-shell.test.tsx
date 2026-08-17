@@ -36,6 +36,7 @@ describe("AppShell accessibility boundary", () => {
     render(
       <AppShell
         publishedRepositories={[]}
+        problemCollections={[{ namespace: "erdos-problems", name: "Erdős Problems" }]}
         projectionRoot={`sha256:${"a".repeat(64)}`}
         activationTime="2026-08-10T12:00:00.000Z"
         confirmedAt="2026-08-10T13:00:00.000Z"

@@ -25,6 +25,11 @@ shape or icon, and color.
   release. Contribution routes group Problems by Repository and link each row
   into that Repository's own page; the product does not synthesize a global
   ranked work inventory.
+- **Problem index:** the global entry presents published collections and a few
+  current starting points; it never silently renders one collection's full
+  directory. Collection pages own filtering and pagination. Global result rows
+  name the collection before the local number. One published collection gets
+  an explicit coverage statement, not a decorative comparison chart.
 - **Records:** object heading, semantic badges, Tabs or Item groups, one
   metadata Sheet, and Collapsible exact roots.
 - **Instruments:** compact toolbar, principal canvas or command surface,
@@ -45,6 +50,9 @@ footer. Two Problems-specific rules remain:
 - Notifications open a triage surface: Proposals awaiting a Decision, counted
   per Repository, over `/proposals` and `/decisions`. They never duplicate either
   ledger or imply that a Verification is an accepted Decision.
+- The Problem breadcrumb retains all three identities on detail routes:
+  Problems, the collection, and its local Problem number. On narrow screens the
+  last label may shorten to `#N`; the collection is not discarded.
 
 ## Ownership
 
@@ -70,6 +78,30 @@ wrappers, token palettes, or icon systems.
 - Complex maps and timelines include an equivalent record view.
 - Mobile uses the same primitives and data order, recomposed for the available
   width rather than squeezed into a desktop layout.
+
+## Dense information and visualisation
+
+The collection directory is a compact filter toolbar over an exact row ledger;
+it is not a grid of summary cards. Search uses the shared Command composition,
+plain-language filters, Skeleton while resolving, and one whole-surface empty
+state when no result matches. Contextual side panels are reserved for actions
+or inspection that can close without changing the route's reading order.
+
+Updates and Problem History use a left-aligned timeline when chronology is the
+relationship the reader needs to see. Every event still has an ordinary text
+row with its date, actor, action, target, and resulting state. Corrections use
+before/after presentation and supersession or dependency paths only when those
+edges exist in exact data. Evidence may summarize verification strength and
+provenance, but it keeps performer/provider/model/method/environment and
+limitations legible and never treats human or agent identity as a quality
+score.
+
+The global and collection surfaces may add a shadcn Chart/Recharts figure only
+when it reveals a real comparison among rooted collection, status, or evidence
+dimensions. Every figure ships with a table or text equivalent, truthful axis
+labels, keyboard-readable values, responsive recomposition, and print,
+forced-colors, and reduced-motion behavior. A single collection or a handful
+of headline counts does not justify a chart.
 
 ## Motion and accessibility
 

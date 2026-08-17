@@ -33,9 +33,10 @@ function resolveView(query: ProblemPageQuery): ProblemView {
   return "overview";
 }
 
-export async function ProblemPageView({ repository, problem, route, query, expectedSource }: {
+export async function ProblemPageView({ repository, problem, collectionName, route, query, expectedSource }: {
   repository: string;
   problem: string;
+  collectionName: string;
   route: string;
   query: ProblemPageQuery;
   expectedSource?: ExpectedProblemSource;
@@ -57,22 +58,32 @@ export async function ProblemPageView({ repository, problem, route, query, expec
      The Workspace needs to know that, because otherwise the only control it
      offers is one that cannot work. */
   const accountsEnabled = authConfiguration().enabled;
+  const question = decodeHtmlEntities(
+    (state.problem.statement_kind === "prose" ? state.problem.statement?.trim() : "")
+    || state.source.summary?.trim() || state.problem.label || state.source.title,
+  );
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Question",
+    name: question,
+    url: `https://problems.science${route}`,
+    identifier: { "@type": "PropertyValue", propertyID: collectionName, value: problem },
+    isPartOf: { "@type": "CollectionPage", name: collectionName, url: `https://problems.science${route.slice(0, route.lastIndexOf("/"))}` },
+  };
 
   /* The archetype holds still across the tabs — switching surface must not
      repaint the page's ground or move the hero. The Workspace widens through
      `layout` alone, which touches the content region and not the frame. */
   return <PageShell as="article" archetype="problem" layout={view === "work" ? "canvas" : "reading"}>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
     <PageHero density="compact" className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
       <div>
-        <div className="flex flex-wrap items-center gap-2"><span className="text-eyebrow uppercase text-muted-foreground">Problem · {state.repositoryName}</span><span aria-hidden>·</span><Badge variant="outline">#{problem}</Badge></div>
+        <div className="flex flex-wrap items-center gap-2"><span className="text-eyebrow uppercase text-muted-foreground">{collectionName}</span><span aria-hidden>·</span><Badge variant="outline">#{problem}</Badge></div>
         {/* The display serif carries language, not notation. A resolved formal
             statement stays in the Question section in its own face; here the
             catalogue's retained label stands, which is also what the `label`
             kind already resolves to. */}
-        <h1 className="mt-3 max-w-5xl text-display leading-tight"><ScientificText text={decodeHtmlEntities(
-          (state.problem.statement_kind === "prose" ? state.problem.statement?.trim() : "")
-          || state.source.summary?.trim() || state.problem.label || state.source.title,
-        )} /></h1>
+        <h1 className="mt-3 max-w-5xl text-display leading-tight"><ScientificText text={question} /></h1>
       </div>
       <LinkTabs label="Problem views" layoutId="problem-view" current={view} tabs={[
         { key: "overview", href: route, label: "Overview" },

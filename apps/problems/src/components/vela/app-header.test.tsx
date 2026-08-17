@@ -29,6 +29,7 @@ const repositories = [{
   hasGraph: false,
   hasProblems: false,
 }];
+const problemCollections = [{ namespace: "erdos-problems", name: "Erdős Problems" }];
 
 /* The header owns a real SidebarTrigger, so it needs the real provider around
    it. Mocking the trigger away is what let the mobile open-control regress
@@ -36,7 +37,7 @@ const repositories = [{
 function Shell() {
   return (
     <SidebarProvider>
-      <AppHeader repositories={repositories} />
+      <AppHeader repositories={repositories} problemCollections={problemCollections} />
     </SidebarProvider>
   );
 }
@@ -97,8 +98,17 @@ describe("AppHeader trail", () => {
     navigation.pathname = "/problems/erdos-problems/321";
     render(<Shell />);
 
-    expect(screen.getByText("Problem 321")).toHaveAttribute("aria-current", "page");
-    expect(screen.getByText("Problems")).toBeInTheDocument();
+    expect(screen.getByText("Erdős problem 321").parentElement).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("link", { name: "Problems" })).toHaveAttribute("href", "/problems");
+    expect(screen.getByRole("link", { name: "Erdős Problems" })).toHaveAttribute("href", "/problems/erdos-problems");
+  });
+
+  it("names the collection directory between the global entry and its records", () => {
+    navigation.pathname = "/problems/erdos-problems";
+    render(<Shell />);
+
+    expect(screen.getByRole("link", { name: "Problems" })).toHaveAttribute("href", "/problems");
+    expect(screen.getByText("Erdős Problems")).toHaveAttribute("aria-current", "page");
   });
 
   /* Collapsing the section crumb below `sm` left its separator behind, so a
@@ -110,7 +120,7 @@ describe("AppHeader trail", () => {
     const { rerender } = render(<Shell />);
 
     const [collapsing] = screen.getAllByText("/");
-    expect(screen.getByText("Problems").className).toContain("hidden");
+    expect(screen.getByRole("link", { name: "Problems" }).className).toContain("hidden");
     expect(collapsing!.className).toContain("hidden");
     expect(collapsing!.className).toContain("sm:inline");
 
@@ -161,7 +171,7 @@ describe("AppHeader navigation access", () => {
       const user = userEvent.setup();
       render(
         <SidebarProvider>
-          <AppHeader repositories={repositories} />
+            <AppHeader repositories={repositories} problemCollections={problemCollections} />
           <ReportOpenMobile />
         </SidebarProvider>,
       );

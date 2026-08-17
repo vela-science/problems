@@ -72,7 +72,7 @@ export default async function HomePage() {
         </div>
       </div>
       <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-5 border-t pt-6 text-meta lg:mt-0 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
-        <div><dt className="text-muted-foreground">Problems published</dt><dd className="mt-1 font-mono text-subtitle tabular-nums">{catalog.length}</dd></div>
+        <div><dt className="text-muted-foreground">Erdős problems published</dt><dd className="mt-1 font-mono text-subtitle tabular-nums">{catalog.length}</dd></div>
         <div><dt className="text-muted-foreground">Assessed by a Repository</dt><dd className="mt-1 font-mono text-subtitle tabular-nums">{assessed.length}</dd></div>
         <div className="col-span-2"><dt className="text-muted-foreground">Where to begin</dt><dd className="mt-1 text-label"><Link href="/problems" className="underline decoration-border underline-offset-4 hover:decoration-current">Choose a Problem and read what is known</Link></dd></div>
       </dl>
@@ -87,7 +87,7 @@ export default async function HomePage() {
         {lead ? <article className="mt-6">
           <div className="flex flex-wrap items-center gap-2"><Badge variant="secondary">{lead.field?.name ?? lead.topics[0]?.name ?? "Unclassified Topic"}</Badge><span className="text-meta text-muted-foreground">{lead.collection?.name ?? "Unclassified collection"}</span></div>
           <Link href={lead.canonicalPath ?? "/problems"} className="group mt-4 grid gap-5 focus-visible:outline-2 focus-visible:outline-offset-4 sm:grid-cols-[5rem_minmax(0,1fr)_auto]">
-            <div className="flex items-start gap-3"><StateGlyph className="mt-1" standing={standingOf(lead)} verification="not_attempted" /><span className="font-mono text-title">{lead.problem}</span></div>
+            <div className="flex items-start gap-3"><StateGlyph className="mt-1" standing={standingOf(lead)} verification="not_attempted" /><span className="font-mono text-title">#{lead.problem}</span></div>
             <div><p className="text-eyebrow uppercase text-muted-foreground">{lead.theme}</p><h3 className="mt-2 max-w-[70ch] text-title leading-snug">{problemStatement(lead)}</h3></div>
             <HugeiconsIcon icon={ArrowRight} aria-hidden className="mt-1 size-5 transition-transform duration-200 group-hover:translate-x-1" />
           </Link>
@@ -96,7 +96,7 @@ export default async function HomePage() {
 
         {assessed.length > 1 ? <ItemGroup className="mt-6 gap-0 divide-y">
           {assessed.slice(1, 5).map((problem) => <Item key={`${problem.repository}/${problem.problem}`} render={<Link href={problem.canonicalPath ?? "/problems"} />} className="group rounded-none border-0 px-0 py-5">
-            <ItemMedia className="w-20 self-start"><StateGlyph standing={standingOf(problem)} verification="not_attempted" /><span className="font-mono text-label">{problem.problem}</span></ItemMedia>
+            <ItemMedia className="w-24 self-start"><StateGlyph standing={standingOf(problem)} verification="not_attempted" /><span className="font-mono text-label">#{problem.problem}</span></ItemMedia>
             <ItemContent><ItemTitle className="line-clamp-none text-label">{problemStatement(problem)}</ItemTitle><ItemDescription className="line-clamp-none">{problem.field?.name ?? problem.topics[0]?.name ?? "Unclassified Topic"} · {problem.record.source_count} exact {problem.record.source_count === 1 ? "source" : "sources"}</ItemDescription></ItemContent>
             <ItemActions><HugeiconsIcon icon={ArrowRight} aria-hidden className="size-4 transition-transform duration-200 group-hover:translate-x-1" /></ItemActions>
           </Item>)}
@@ -107,12 +107,12 @@ export default async function HomePage() {
             product publishes no central priority. */}
         <div className="mt-12 flex items-end justify-between gap-4">
           <div><p className="text-eyebrow uppercase text-muted-foreground">Source-declared</p><h2 className="mt-1 text-title">Open Problems</h2></div>
-          <Link href={{ pathname: "/problems", query: { status: "open" } }} className="text-meta font-medium underline-offset-4 hover:underline">{open.length} open</Link>
+          <Link href={{ pathname: "/problems/erdos-problems", query: { status: "open" } }} className="text-meta font-medium underline-offset-4 hover:underline">{open.length} open</Link>
         </div>
         <ItemGroup className="mt-4 gap-0 divide-y">
           {open.slice(0, 5).map((problem) => <Item key={`${problem.repository}/${problem.problem}`} render={<Link href={problem.canonicalPath ?? "/problems"} />} className="group rounded-none border-0 px-0 py-5">
-            <ItemMedia className="w-20 self-start"><span className="font-mono text-label">{problem.problem}</span></ItemMedia>
-            <ItemContent><ItemTitle className="line-clamp-none text-label">{problemStatement(problem)}</ItemTitle><ItemDescription className="line-clamp-none">{problem.field?.name ?? problem.topics[0]?.name ?? "Unclassified Topic"} · {problem.record.formalized ? "formalized" : "not formalized"} · {problem.record.source_count} exact {problem.record.source_count === 1 ? "source" : "sources"}</ItemDescription></ItemContent>
+            <ItemMedia className="w-24 self-start"><span className="font-mono text-label">#{problem.problem}</span></ItemMedia>
+            <ItemContent><ItemTitle className="line-clamp-none text-label">{problemStatement(problem)}</ItemTitle><ItemDescription className="line-clamp-none">{problem.collection?.name ?? "Unclassified collection"} · {problem.field?.name ?? problem.topics[0]?.name ?? "Unclassified Topic"} · {problem.record.formalized ? "formalized" : "not formalized"} · {problem.record.source_count} exact {problem.record.source_count === 1 ? "source" : "sources"}</ItemDescription></ItemContent>
             <ItemActions><HugeiconsIcon icon={ArrowRight} aria-hidden className="size-4 transition-transform duration-200 group-hover:translate-x-1" /></ItemActions>
           </Item>)}
         </ItemGroup>

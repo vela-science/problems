@@ -12,6 +12,7 @@ import { AccountMenu } from "@/components/vela/account-menu";
 import { COMMAND_PALETTE_TRIGGER_ID, useCommandPalette } from "@/components/vela/command-palette";
 import { NotificationCenter } from "@/components/vela/notification-center";
 import { ThemeToggle } from "@/components/vela/theme-toggle";
+import type { PublishedProblemCollection } from "@/lib/problem-collections";
 
 type PublishedRepository = {
   slug: string;
@@ -63,16 +64,33 @@ function recordTrailLabel(segment: string) {
  * to `clientWidth: 0` — the page name vanished rather than ellipsising — and
  * ran nine pixels under the search trigger, which made its own right edge
  * unclickable. The page a reader is on is the part worth keeping. */
-function headerTrail(pathname: string, repositories: PublishedRepository[]) {
-  const canonicalProblem = pathname.match(/^\/problems\/[^/]+\/([^/]+)$/u);
+function headerTrail(pathname: string, repositories: PublishedRepository[], problemCollections: PublishedProblemCollection[]) {
+  const canonicalProblem = pathname.match(/^\/problems\/([^/]+)\/([^/]+)$/u);
   if (canonicalProblem) {
-    const problem = canonicalProblem[1];
+    const namespace = canonicalProblem[1];
+    const problem = canonicalProblem[2];
+    const collection = problemCollections.find((entry) => entry.namespace === namespace);
     return {
       repository: null,
       section: "Problems",
       sectionHref: "/problems",
       sectionKey: null,
-      record: problem ? `Problem ${recordTrailLabel(problem)}` : null,
+      collection: collection ? { name: collection.name, href: `/problems/${collection.namespace}` } : null,
+      record: problem && collection ? `${collection.name.replace(/ Problems$/u, " problem")} ${recordTrailLabel(problem)}` : null,
+      compactRecord: problem ? `#${recordTrailLabel(problem)}` : null,
+    };
+  }
+  const collectionMatch = pathname.match(/^\/problems\/([^/]+)$/u);
+  if (collectionMatch) {
+    const collection = problemCollections.find(({ namespace }) => namespace === collectionMatch[1]);
+    if (collection) return {
+      repository: null,
+      section: "Problems",
+      sectionHref: "/problems",
+      sectionKey: null,
+      collection: null,
+      record: collection.name,
+      compactRecord: collection.name,
     };
   }
   const repository = repositories.find(({ slug }) =>
@@ -85,7 +103,9 @@ function headerTrail(pathname: string, repositories: PublishedRepository[]) {
         section: "Sources",
         sectionHref: "/sources",
         sectionKey: null,
+        collection: null,
         record: id ? recordTrailLabel(id) : null,
+        compactRecord: null,
       };
     }
     return {
@@ -93,7 +113,9 @@ function headerTrail(pathname: string, repositories: PublishedRepository[]) {
       section: globalTitles[pathname] ?? "Vela",
       sectionHref: null,
       sectionKey: null,
+      collection: null,
       record: null,
+      compactRecord: null,
     };
   }
   const base = `/repositories/${repository.slug}`;
@@ -109,18 +131,22 @@ function headerTrail(pathname: string, repositories: PublishedRepository[]) {
     /* The raw key, not a path: whether it survives a switch depends on the
        destination Repository, so `switchDestination` decides per entry. */
     sectionKey: named ? key : null,
+    collection: null,
     record: named && rest[1] ? recordTrailLabel(rest[1]) : null,
+    compactRecord: null,
   };
 }
 
 export function AppHeader({
   repositories,
+  problemCollections,
 }: {
   repositories: PublishedRepository[];
+  problemCollections: PublishedProblemCollection[];
 }) {
   const pathname = usePathname();
   const { setOpen } = useCommandPalette();
-  const trail = headerTrail(pathname, repositories);
+  const trail = headerTrail(pathname, repositories, problemCollections);
   return (
     <header className="shrink-0 print:hidden">
       <Toolbar.Root className="flex min-h-12 min-w-0 flex-wrap items-center gap-1 px-(--vela-page-gutter) py-1 sm:h-12 sm:flex-nowrap sm:py-0">
@@ -160,6 +186,14 @@ export function AppHeader({
             )}
           </>
         ) : null}
+        {trail.collection ? (
+          <>
+            <span aria-hidden className="hidden text-muted-foreground/60 sm:inline">/</span>
+            <Link href={trail.collection.href} className="min-w-0 shrink truncate hover:text-foreground hover:underline">
+              {trail.collection.name}
+            </Link>
+          </>
+        ) : null}
         {trail.record ? (
           <>
             {/* A separator needs something on its left. Collapsing the section
@@ -172,7 +206,7 @@ export function AppHeader({
             <span
               aria-hidden
               className={
-                trail.repository || (trail.section && !trail.sectionHref)
+                trail.repository || trail.collection || (trail.section && !trail.sectionHref)
                   ? "text-muted-foreground/60"
                   : "hidden text-muted-foreground/60 sm:inline"
               }
@@ -183,7 +217,9 @@ export function AppHeader({
               className="min-w-0 truncate font-mono text-label text-foreground"
               aria-current="page"
             >
-              {trail.record}
+              {trail.compactRecord && trail.compactRecord !== trail.record
+                ? <><span className="sm:hidden">{trail.compactRecord}</span><span className="hidden sm:inline">{trail.record}</span></>
+                : trail.record}
             </span>
           </>
         ) : null}

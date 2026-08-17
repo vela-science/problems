@@ -17,6 +17,7 @@ import {
 } from "@vela/ui/components/command";
 import { JUMP_DESTINATIONS, KeyboardShortcuts } from "@/components/vela/keyboard-shortcuts";
 import { loadSearchIndex } from "@/lib/search-index";
+import { problemCollectionForPath, type PublishedProblemCollection } from "@/lib/problem-collections";
 
 type PublishedRepository = { slug: string; name: string; pending: number; hasGraph: boolean; hasProblems: boolean };
 type CommandContextValue = { open: boolean; setOpen: (open: boolean) => void };
@@ -34,10 +35,12 @@ export function useCommandPalette() {
 export function CommandPaletteProvider({
   children,
   repositories,
+  problemCollections,
   projectionRoot,
 }: {
   children: React.ReactNode;
   repositories: PublishedRepository[];
+  problemCollections: PublishedProblemCollection[];
   projectionRoot: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -170,13 +173,15 @@ export function CommandPaletteProvider({
             <CommandList>
               {hasQuery && records.length ? (
                 <CommandGroup heading="Exact published records">
-                  {records.map((record) => (
+                  {records.map((record) => {
+                    const problem = record.kind === "problem" ? problemCollectionForPath(record.href, problemCollections) : null;
+                    return (
                     <CommandItem key={`${record.repository}:${record.id}`} value={`${record.id} ${record.assertion}`} onSelect={() => navigate(record.href)}>
                       <HugeiconsIcon icon={FileSearch} aria-hidden />
-                      <span className="truncate">{record.id} · {record.assertion}</span>
-                      <CommandShortcut>{record.repository}</CommandShortcut>
+                      <span className="truncate">{problem?.problem ? `${problem.name} · #${problem.problem} · ${record.assertion}` : `${record.id} · ${record.assertion}`}</span>
+                      <CommandShortcut>{problem?.name ?? record.repository}</CommandShortcut>
                     </CommandItem>
-                  ))}
+                  );})}
                 </CommandGroup>
               ) : null}
               {hasQuery ? (
@@ -219,6 +224,7 @@ export function CommandPaletteProvider({
                   <CommandGroup heading="Vela">
                     <CommandItem onSelect={() => navigate("/")}><HugeiconsIcon icon={Home01Icon} aria-hidden />Home</CommandItem>
                     <CommandItem onSelect={() => navigate("/problems")}><HugeiconsIcon icon={PuzzleIcon} aria-hidden />Problems</CommandItem>
+                    {problemCollections.map((collection) => <CommandItem key={collection.namespace} onSelect={() => navigate(`/problems/${collection.namespace}`)}><HugeiconsIcon icon={PuzzleIcon} aria-hidden />{collection.name}</CommandItem>)}
                     <CommandItem onSelect={() => navigate("/contribute")}><HugeiconsIcon icon={WorkIcon} aria-hidden />Contribute</CommandItem>
                     <CommandItem onSelect={() => navigate("/activity")}><HugeiconsIcon icon={Activity01Icon} aria-hidden />Updates</CommandItem>
                   </CommandGroup>

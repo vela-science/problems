@@ -18,6 +18,7 @@ import { LedgerSkeleton } from "@/components/vela/route-skeleton";
 import { kindLabel, recordHeading, stateBadge } from "@/lib/product-language";
 import { loadSearchIndex } from "@/lib/search-index";
 import { useQueryNavigation } from "@/lib/use-query-navigation";
+import { problemCollectionForPath, type PublishedProblemCollection } from "@/lib/problem-collections";
 
 /* One projected column, four vocabularies: a Repository row carries repository
    integrity, a Claim carries its standing, a Proposal carries its status, a
@@ -32,7 +33,7 @@ const STATES = ["accepted", "contested", "pending_review", "recorded", "rejected
 const KINDS = ["repository", "claim", "problem", "artifact", "proposal", "verifier_attachment", "attempt", "producer", "channel", "lease", "commit"];
 
 
-export function SearchResults({ projectionRoot, repositories }: { projectionRoot: string; repositories: string[] }) {
+export function SearchResults({ projectionRoot, repositories, problemCollections }: { projectionRoot: string; repositories: string[]; problemCollections: PublishedProblemCollection[] }) {
   const params = useSearchParams();
   const router = useRouter();
   const { replace } = useQueryNavigation();
@@ -66,6 +67,7 @@ export function SearchResults({ projectionRoot, repositories }: { projectionRoot
   const records = !hasIntent ? [] : result.key === queryKey ? result.records : null;
   const error = hasIntent && result.key === queryKey ? result.error : null;
   const exact = records?.find((record) => record.id.toLocaleLowerCase() === deferredQuery);
+  const exactProblem = exact?.kind === "problem" ? problemCollectionForPath(exact.href, problemCollections) : null;
   const filtered = Boolean(query || repository !== "all" || kind !== "all" || standing !== "all");
 
   if (hasIntent && error) return <Alert variant="destructive"><HugeiconsIcon icon={Search} aria-hidden /><AlertTitle>Search integrity check failed</AlertTitle><AlertDescription>{error}. Published records remain available from Repositories.</AlertDescription></Alert>;
@@ -100,7 +102,7 @@ export function SearchResults({ projectionRoot, repositories }: { projectionRoot
         ))}
         {filtered ? <Button variant="ghost" size="sm" className="mb-0.5" onClick={() => replace({ q: null, repository: null, kind: null, standing: null })}>Clear</Button> : null}
       </div>
-      {exact ? <Button className="mt-3" size="sm" nativeButton={false} render={<Link href={exact.href} />}>Open exact ID {exact.id}<HugeiconsIcon icon={ArrowRight} aria-hidden data-icon="inline-end" /></Button> : null}
+      {exact ? <Button className="mt-3" size="sm" nativeButton={false} render={<Link href={exact.href} />}>{exactProblem?.problem ? `Open ${exactProblem.name} · #${exactProblem.problem}` : `Open exact ID ${exact.id}`}<HugeiconsIcon icon={ArrowRight} aria-hidden data-icon="inline-end" /></Button> : null}
     </div>
     {/* Relevance, not lexical order — but still not authority. The sentence
         exists because rank on a scientific record is the one place a reader
@@ -113,6 +115,7 @@ export function SearchResults({ projectionRoot, repositories }: { projectionRoot
       {hasIntent && records ? <CommandEmpty><Empty className="border-0"><EmptyHeader><EmptyMedia variant="icon"><HugeiconsIcon icon={Search}  /></EmptyMedia><EmptyTitle>No matching records</EmptyTitle><EmptyDescription>Try a broader query or remove a filter.</EmptyDescription></EmptyHeader></Empty></CommandEmpty> : null}
       {hasIntent && records?.length ? <CommandGroup heading="Published records">{records.map((record) => {
         const heading = recordHeading(record);
+        const problem = record.kind === "problem" ? problemCollectionForPath(record.href, problemCollections) : null;
         return <CommandItem key={`${record.repository}:${record.id}`} value={`${record.id} ${record.assertion}`} onSelect={() => router.push(record.href)} className="min-h-16 items-start px-3 py-2.5">
           <div className="min-w-0 flex-1">
             {/* The assertion leads, rendered as mathematics. The heading used to
@@ -125,7 +128,7 @@ export function SearchResults({ projectionRoot, repositories }: { projectionRoot
               {heading ? <ScientificText text={heading} /> : <span className="font-mono text-meta">{record.id}</span>}
             </p>
             <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-micro text-muted-foreground">
-              <span>{record.repository}</span>
+              <span>{problem?.problem ? `${problem.name} · #${problem.problem}` : record.repository}</span>
               <span aria-hidden>·</span>
               <span>{kindLabel(record.kind)}</span>
               {heading ? <><span aria-hidden>·</span><RecordId value={record.id} prefix={10} copy={false} /></> : null}

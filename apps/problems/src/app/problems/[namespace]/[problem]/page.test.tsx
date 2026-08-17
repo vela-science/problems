@@ -19,6 +19,9 @@ vi.mock("@vela/projection-data", () => ({
 vi.mock("@/components/vela/problem-page", () => ({
   ProblemPageView: (props: Record<string, unknown>) => { mocks.view(props); return <div>Problem</div>; },
 }));
+vi.mock("@/lib/published-problem-collections", () => ({
+  publishedProblemCollections: [{ namespace: "erdos-problems", name: "Erdős Problems" }],
+}));
 vi.mock("next/navigation", () => ({ notFound: () => { mocks.notFound(); throw new Error("NOT_FOUND"); } }));
 
 import ProblemPage, { generateMetadata } from "./page";
@@ -38,6 +41,7 @@ describe("the canonical Problem address", () => {
     expect(mocks.view).toHaveBeenCalledWith(expect.objectContaining({
       repository: "math",
       problem: "321",
+      collectionName: "Erdős Problems",
       route: "/problems/erdos-problems/321",
       expectedSource: { sourceId: "source:erdos-problems", nativeId: "erdos:321", nativeKind: "problem", contentRoot: "sha256:source" },
     }));
@@ -68,6 +72,6 @@ describe("the canonical Problem address", () => {
   it("declares its own canonical address", async () => {
     mocks.reviewed.mockReturnValue(null);
     expect(await generateMetadata({ params: Promise.resolve({ namespace: "erdos-problems", problem: "999" }), searchParams: Promise.resolve({}) }))
-      .toMatchObject({ alternates: { canonical: "/problems/erdos-problems/999" } });
+      .toMatchObject({ title: "Erdős problem 999", alternates: { canonical: "/problems/erdos-problems/999" } });
   });
 });

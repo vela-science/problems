@@ -19,6 +19,9 @@ vi.mock("@/components/vela/app-shell", () => ({
 vi.mock("@/lib/auth", () => ({
   authConfiguration: () => ({ enabled: false, reason: "missing" }),
 }));
+vi.mock("@/lib/published-problem-collections", () => ({
+  publishedProblemCollections: [{ namespace: "erdos-problems", name: "Erdős Problems" }],
+}));
 
 import RootLayout, { themeScript } from "@/app/layout";
 

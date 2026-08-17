@@ -4,6 +4,8 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import { SearchResults } from "@/components/controllers/search-results";
 import { loadSearchIndex } from "@/lib/search-index";
 
+const problemCollections = [{ namespace: "erdos-problems", name: "Erdős Problems" }];
+
 const navigation = vi.hoisted(() => ({ params: new URLSearchParams() }));
 vi.mock("next/navigation", () => ({
   usePathname: () => "/search",
@@ -29,7 +31,7 @@ describe("SearchResults", () => {
   });
 
   test("waits for explicit search intent instead of dumping the corpus", () => {
-    const view = render(<SearchResults projectionRoot="sha256:test" repositories={["erdos"]} />);
+    const view = render(<SearchResults projectionRoot="sha256:test" repositories={["erdos"]} problemCollections={problemCollections} />);
 
     expect(screen.getByText("Find a published record")).toBeVisible();
     expect(screen.getByText("Ready for a query")).toBeVisible();
@@ -48,7 +50,7 @@ describe("SearchResults", () => {
       ],
     } as never);
 
-    const view = render(<SearchResults projectionRoot="sha256:test" repositories={["erdos"]} />);
+    const view = render(<SearchResults projectionRoot="sha256:test" repositories={["erdos"]} problemCollections={problemCollections} />);
     await waitFor(() => expect(screen.getByText("standing · accepted")).toBeVisible());
     expect(screen.getByText("proposal · withdrawn")).toBeVisible();
     expect(screen.getByText("integrity · strict pass")).toBeVisible();
@@ -57,8 +59,24 @@ describe("SearchResults", () => {
     view.unmount();
   });
 
+  test("identifies a Problem by collection and collection-local number", async () => {
+    navigation.params = new URLSearchParams("q=321");
+    vi.mocked(loadSearchIndex).mockResolvedValue({ records: [record({
+      kind: "problem",
+      repository: "math",
+      id: "erdos:321",
+      assertion: "A question about arithmetic progressions",
+      href: "/problems/erdos-problems/321",
+      standing: "unassessed",
+    })] } as never);
+
+    const view = render(<SearchResults projectionRoot="sha256:test" repositories={["math"]} problemCollections={problemCollections} />);
+    expect(await screen.findByText("Erdős Problems · #321")).toBeVisible();
+    view.unmount();
+  });
+
   test("does not offer one filter named for a single axis", async () => {
-    const view = render(<SearchResults projectionRoot="sha256:test" repositories={["erdos"]} />);
+    const view = render(<SearchResults projectionRoot="sha256:test" repositories={["erdos"]} problemCollections={problemCollections} />);
 
     /* Named "State", not "Standing" — and now labelled on screen rather than
        only in an aria-label, because three unlabelled triggers all reading

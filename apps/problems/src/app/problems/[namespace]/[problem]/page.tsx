@@ -7,6 +7,7 @@ import {
   repositoryForCanonicalProblemNamespace,
 } from "@vela/projection-data";
 import { ProblemPageView, type ProblemPageQuery } from "@/components/vela/problem-page";
+import { publishedProblemCollections } from "@/lib/published-problem-collections";
 
 export const dynamic = "force-dynamic";
 
@@ -28,21 +29,23 @@ function resolve(namespace: string, problem: string) {
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/u.test(namespace) || !/^[1-9][0-9]*$/u.test(problem)) return null;
   const repository = repositoryForCanonicalProblemNamespace(namespace);
   if (!repository) return null;
+  const collection = publishedProblemCollections.find((entry) => entry.namespace === namespace);
+  if (!collection) return null;
   const route = canonicalProblemPath(repository, problem);
   if (!route) return null;
   const reviewed = problemPublicRouteForCanonicalPath(route);
   const entity = reviewed
     ? problemResolutionConfig.entities.find(({ entity_id }) => entity_id === reviewed.entity_id) ?? null
     : null;
-  return { repository, route, entity };
+  return { repository, route, entity, collection };
 }
 
 export async function generateMetadata({ params }: PageProps<"/problems/[namespace]/[problem]">): Promise<Metadata> {
   const { namespace, problem } = await params;
   const resolved = resolve(namespace, problem);
   return resolved ? {
-    title: `Problem ${problem}`,
-    description: `Exact current State and non-authoritative Workspace for Problem ${problem}.`,
+    title: `${resolved.collection.name.replace(/ Problems$/u, " problem")} ${problem}`,
+    description: `Read what is known, check prior work, and inspect exact evidence for ${resolved.collection.name.replace(/ Problems$/u, " problem")} ${problem}.`,
     alternates: { canonical: resolved.route },
   } : {};
 }
@@ -51,10 +54,11 @@ export default async function ProblemPage({ params, searchParams }: PageProps<"/
   const [{ namespace, problem }, query] = await Promise.all([params, searchParams]);
   const resolved = resolve(namespace, problem);
   if (!resolved) notFound();
-  const { repository, route, entity } = resolved;
+  const { repository, route, entity, collection } = resolved;
   return <ProblemPageView
     repository={repository}
     problem={problem}
+    collectionName={collection.name}
     route={route}
     query={query}
     expectedSource={entity ? {

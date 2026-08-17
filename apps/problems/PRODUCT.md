@@ -60,6 +60,20 @@ permanent information category. Repositories, Sources, Records, Decisions,
 Proposals, Hubs, and Graph keep their durable routes, reached through
 contextual links, search, the footer map, and technical-detail disclosures.
 
+The Problems navigation is three levels, not one flattened catalog:
+
+- `/problems` lists the Problem collections explicitly published in this
+  release and states the present coverage honestly;
+- `/problems/erdos-problems` is the current 1,217-row **Erdős Problems**
+  directory;
+- `/problems/erdos-problems/{number}` is the canonical Problem page.
+
+Problem numbers are collection-local. Breadcrumbs, search results, recent-item
+surfaces, metadata, and structured data therefore retain **Erdős Problems** as
+part of the identity. Evidence sources do not become new collections by
+inference; future collections require source-owned stable identities and an
+explicit resolver/profile.
+
 A Problem page has four sections: **Overview** (the question, its state,
 plain-language current understanding, what remains unknown, the primary
 next action), **Evidence** (contributions, verification strength,
@@ -68,6 +82,14 @@ current state), **Work** (open next steps, approaches, negative results,
 start or continue work, submit a contribution), and **History**
 (corrections, reviews, included and rejected contributions, supersession,
 exact technical provenance on expansion).
+
+Data displays follow the question the reader is answering. Collection and
+search pages use exact filterable ledgers; History uses chronology;
+corrections use before/after or supersession paths; provenance summaries keep
+their underlying facets readable. Charts appear only for real comparisons and
+always retain a text or table equivalent. The current single-collection release
+therefore states its coverage directly instead of presenting a decorative
+dashboard.
 
 Repository-local Standing appears on the exact Contribution it governs; it
 never reads as the status of the whole Problem. The Problem's own state is

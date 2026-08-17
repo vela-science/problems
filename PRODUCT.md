@@ -65,7 +65,7 @@ The public product nouns do not all live in the same layer:
 
 | Public noun | Product class | Exact basis | Authority effect |
 | --- | --- | --- | --- |
-| **Problem** | derived reader concept | one or more reviewed source-native Problem occurrences, each retaining its Repository and source identity | none |
+| **Problem** | derived reader concept | a source-owned stable collection identity plus its exact occurrence; reviewed cross-source occurrences remain explicit | none |
 | **Workspace** | hosted product object | activity database Workspace plus exact scientific anchor roots | none |
 | **Contribution** | derived reader envelope, introduced only when its routes are backed by retained records | Research Block, Artifact, Attempt result, signed package, paper, dataset, proof, or negative result; the underlying type remains visible | none by itself |
 | **Profile** | conditional hosted presentation concept | explicit links among Account, human or agent profile, signer/producer identities, and sponsorship records | none |
@@ -83,6 +83,15 @@ Global navigation is **Problems**, **Updates**, **My work** when signed in, and
 Problem, not a peer information category. Repositories, Sources, Decisions,
 Proposals, Hubs, Graph, and exact Records keep durable routes through contextual
 links, search, the footer map, and technical-detail disclosures.
+
+`/problems` is the global entry to explicitly published Problem collections;
+it is not an alias for whichever collection happens to exist. The current
+release publishes exactly one collection, **Erdős Problems**, with 1,217
+collection-local numbered Problems at `/problems/erdos-problems`. A global
+result always names both collection and local number. Formal Conjectures, Lean
+proofs, VibeMathed, and other source occurrences remain evidence unless they
+gain source-owned stable identities and an explicit discovery resolver/profile;
+they are not inferred into collections.
 
 Every Problem offers three plain actions: **Read what is known**, **Check prior
 work**, and **Add a contribution**. Its stable sections are Overview, Evidence,
@@ -102,9 +111,10 @@ explains Vela, Home orients the live network, Problems is the conceptual
 center, contextual technical details expose exact records, and local Vela is the authority
 handoff.
 
-A Problem may have exact occurrences in several Sources: an upstream question,
+A Problem has a source-owned stable identity inside an explicitly published
+collection and may have exact occurrences in several Sources: an upstream question,
 a formal statement, a proof manifest, or an attributed activity record. Vela
-groups only reviewed exact occurrences. A matching source number is a candidate
+groups only reviewed exact occurrences beyond that canonical source identity. A matching source number is a candidate
 navigation link, never a claim that two statements are identical, equivalent,
 proved, or accepted. Source-authored classifications and activity status never
 become Local Standing. The discovery profile and the reviewed resolver are
@@ -354,6 +364,10 @@ documentation, not above every page that lists them.
   identity without asserting review, and no entity is minted to buy a URL. Editorial
   aliases resolve directly to a published essay or an exact pinned manual page;
   they never terminate at a placeholder index.
+- Keep `/problems` as the global collection entry, collection directories at
+  `/problems/{namespace}`, and canonical details at
+  `/problems/{namespace}/{number}`. Breadcrumbs and global search preserve the
+  collection name because a numeric Problem id has no global meaning.
 - Navigation and loading preserve the application shell rather than replacing
   the document.
 - Product guidance links normative details to the exact Vela release rather than

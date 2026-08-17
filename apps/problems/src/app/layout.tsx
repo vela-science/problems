@@ -4,6 +4,7 @@ import Script from "next/script";
 import { allRepositories, projectionManifest, projectionConfirmedAt } from "@vela/projection-data";
 import { AppShell } from "@/components/vela/app-shell";
 import { authConfiguration } from "@/lib/auth";
+import { publishedProblemCollections } from "@/lib/published-problem-collections";
 import "@react-sigma/core/lib/style.css";
 import "./globals.css";
 
@@ -71,6 +72,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         </a>
         <AppShell
           publishedRepositories={publishedRepositories}
+          problemCollections={publishedProblemCollections}
           projectionRoot={manifest.release_root}
           activationTime={manifest.activation_time}
           confirmedAt={confirmedAt}

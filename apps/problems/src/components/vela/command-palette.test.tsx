@@ -25,6 +25,7 @@ import { COMMAND_PALETTE_TRIGGER_ID, CommandPaletteProvider, PRODUCT_DOCS_URL, u
 const proposalId = "vpr_7aba66544ffefd99";
 const projectionRoot = `sha256:${"7".repeat(64)}`;
 const repositories = [{ slug: "formal-conjectures", name: "Formal Conjectures", pending: 0, hasGraph: true, hasProblems: true }];
+const problemCollections = [{ namespace: "erdos-problems", name: "Erdős Problems" }];
 
 function OpenPalette() {
   const { setOpen } = useCommandPalette();
@@ -46,7 +47,7 @@ describe("CommandPaletteProvider exact record search", () => {
   });
 
   it("keeps the dialog root mounted and returns focus after Base UI completes close", () => {
-    render(<CommandPaletteProvider repositories={repositories} projectionRoot={projectionRoot}><OpenPalette /></CommandPaletteProvider>);
+    render(<CommandPaletteProvider repositories={repositories} problemCollections={problemCollections} projectionRoot={projectionRoot}><OpenPalette /></CommandPaletteProvider>);
     const trigger = screen.getByRole("button", { name: "Open palette" });
 
     trigger.focus();
@@ -60,7 +61,7 @@ describe("CommandPaletteProvider exact record search", () => {
   });
 
   it("uses current display language while retaining the published target routes", () => {
-    render(<CommandPaletteProvider repositories={repositories} projectionRoot={projectionRoot}><OpenPalette /></CommandPaletteProvider>);
+    render(<CommandPaletteProvider repositories={repositories} problemCollections={problemCollections} projectionRoot={projectionRoot}><OpenPalette /></CommandPaletteProvider>);
     fireEvent.click(screen.getByRole("button", { name: "Open palette" }));
 
     const targets = screen.getAllByRole("button", { name: "Contribution handoff" });
@@ -86,7 +87,7 @@ describe("CommandPaletteProvider exact record search", () => {
       }],
     });
 
-    render(<CommandPaletteProvider repositories={repositories} projectionRoot={projectionRoot}><OpenPalette /></CommandPaletteProvider>);
+    render(<CommandPaletteProvider repositories={repositories} problemCollections={problemCollections} projectionRoot={projectionRoot}><OpenPalette /></CommandPaletteProvider>);
     fireEvent.click(screen.getByRole("button", { name: "Open palette" }));
     fireEvent.change(screen.getByPlaceholderText("Search Problems, Assertions, and sources…"), { target: { value: proposalId } });
 
@@ -98,10 +99,32 @@ describe("CommandPaletteProvider exact record search", () => {
     expect(navigation.push).toHaveBeenCalledWith(`/repositories/formal-conjectures/proposals/${proposalId}`);
   });
 
+  it("identifies Problem search results by collection and local number", async () => {
+    search.load.mockResolvedValue({
+      schema: "site.search-index.v1",
+      bundle_root: projectionRoot,
+      generated_at: "2026-08-03T00:00:00Z",
+      records: [{
+        id: "erdos:321",
+        kind: "problem",
+        repository: "math",
+        standing: "unassessed",
+        assertion: "A question about arithmetic progressions",
+        href: "/problems/erdos-problems/321",
+      }],
+    });
+
+    render(<CommandPaletteProvider repositories={repositories} problemCollections={problemCollections} projectionRoot={projectionRoot}><OpenPalette /></CommandPaletteProvider>);
+    fireEvent.click(screen.getByRole("button", { name: "Open palette" }));
+    fireEvent.change(screen.getByPlaceholderText("Search Problems, Assertions, and sources…"), { target: { value: "321" } });
+
+    expect(await screen.findByText("Erdős Problems · #321 · A question about arithmetic progressions")).toBeInTheDocument();
+  });
+
   it("keeps a query-addressed full-search path when the palette finds no record", async () => {
     search.load.mockResolvedValue({ schema: "site.search-index.v1", bundle_root: projectionRoot, generated_at: "2026-08-03T00:00:00Z", records: [] });
 
-    render(<CommandPaletteProvider repositories={repositories} projectionRoot={projectionRoot}><OpenPalette /></CommandPaletteProvider>);
+    render(<CommandPaletteProvider repositories={repositories} problemCollections={problemCollections} projectionRoot={projectionRoot}><OpenPalette /></CommandPaletteProvider>);
     fireEvent.click(screen.getByRole("button", { name: "Open palette" }));
     fireEvent.change(screen.getByPlaceholderText("Search Problems, Assertions, and sources…"), { target: { value: "unknown-record" } });
 
@@ -116,7 +139,7 @@ describe("CommandPaletteProvider exact record search", () => {
    collision rather than about the navigation. */
 describe("CommandPaletteProvider keyboard shortcuts", () => {
   const mount = () =>
-    render(<CommandPaletteProvider repositories={repositories} projectionRoot={projectionRoot}><OpenPalette /></CommandPaletteProvider>);
+    render(<CommandPaletteProvider repositories={repositories} problemCollections={problemCollections} projectionRoot={projectionRoot}><OpenPalette /></CommandPaletteProvider>);
 
   it("jumps on a g prefix followed by a destination key", () => {
     mount();

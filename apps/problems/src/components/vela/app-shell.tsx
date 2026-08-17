@@ -9,12 +9,14 @@ import { CommandPaletteProvider } from "@/components/vela/command-palette";
 import { ProjectionRootProvider } from "@/components/vela/record-preview";
 import { SiteFooter } from "@/components/vela/site-footer";
 import { AccountStateProvider } from "@/components/vela/account-state";
+import type { PublishedProblemCollection } from "@/lib/problem-collections";
 
 type PublishedRepository = { slug: string; name: string; pending: number; hasGraph: boolean; hasProblems: boolean };
 
 export function AppShell({
   children,
   publishedRepositories,
+  problemCollections,
   projectionRoot,
   activationTime,
   confirmedAt,
@@ -22,6 +24,7 @@ export function AppShell({
 }: {
   children: React.ReactNode;
   publishedRepositories: PublishedRepository[];
+  problemCollections: PublishedProblemCollection[];
   projectionRoot: string;
   activationTime: string;
   confirmedAt?: string | null;
@@ -31,7 +34,7 @@ export function AppShell({
     <TooltipProvider delay={800}>
       <AccountStateProvider enabled={authEnabled}>
        <ProjectionRootProvider root={projectionRoot}>
-        <CommandPaletteProvider repositories={publishedRepositories} projectionRoot={projectionRoot}>
+        <CommandPaletteProvider repositories={publishedRepositories} problemCollections={problemCollections} projectionRoot={projectionRoot}>
           <SidebarProvider
             defaultOpen
             className="h-svh min-w-0 overflow-y-hidden print:block print:h-auto print:overflow-visible print:bg-background"
@@ -50,6 +53,7 @@ export function AppShell({
             >
               <AppHeader
                 repositories={publishedRepositories}
+                problemCollections={problemCollections}
               />
               <div className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain print:h-auto print:overflow-visible">
                 {children}

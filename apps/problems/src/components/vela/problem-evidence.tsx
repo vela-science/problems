@@ -49,7 +49,7 @@ export function ProblemEvidence({ state }: { state: State }) {
       <ProblemSourceFacts
         record={state.problem}
         locator={state.locator}
-        ledgerHref={(name, value) => `/problems?${new URLSearchParams({ [name]: value })}`}
+        ledgerHref={(name, value) => `/problems/erdos-problems?${new URLSearchParams({ [name]: value })}`}
         className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-meta text-muted-foreground"
       />
     </section>

@@ -240,6 +240,13 @@ detail. The three primary actions use plain language: Read what is known, Check
 prior work, and Add a contribution. Similarity is advisory; exact identity is
 authoritative.
 
+Problems navigation has an explicit hierarchy: the global `/problems` entry,
+the source-owned collection directory, then the Problem. In the current release
+the trail is **Problems / Erdős Problems / Erdős problem N**. The first two
+crumbs are links on a detail page. At narrow widths the final label may contract
+to `#N`, but the collection crumb remains visible; a bare number or “Problem N”
+never stands as global identity.
+
 Source coverage is a reading instrument inside Current State. Its compact
 matrix answers which exact Sources have a numbered candidate, a reviewed
 reference, or retained statement text. The full statement and occurrence ledger
@@ -261,7 +268,8 @@ a time. Its object collections do not define the primary Problems navigation.
   account. The trail's last element is the current page as text marked
   `aria-current="page"`. Inside a Repository its first element is the Repository
   switcher, a control rather than a link, which preserves the current section
-  across a switch; outside one, the page name stands alone.
+  across a switch; outside one, the page name stands alone except where the
+  Problems hierarchy requires global, collection, and record crumbs.
 - A view of a collection is entered from the collection, not listed beside it.
   The graph is the Claim ledger drawn as a graph, so it is reached from the
   ledger's toolbar and from the palette rather than from the sidebar. It renders
@@ -364,6 +372,23 @@ imply authority.
 
 Figures maximise data-ink, annotate directly, and carry a caption below the
 visual. A complex visual must have a text or ledger equivalent.
+
+Problems uses visualisation to reveal a relationship, never to manufacture a
+dashboard. The global entry may compare collection coverage once two or more
+published collections make that comparison useful; with one collection it
+states the coverage directly. A collection may chart status or evidence only
+when the same rooted rows remain available as a filterable ledger. History may
+use a left-aligned chronology for Contribution, Check, Decision, correction,
+and supersession events; correction and dependency diagrams require exact
+edges and a before/after or ledger equivalent. Provenance breakdowns retain
+performer, provider, model, method, environment, independence, and limitations
+as readable facets rather than reducing quality to actor kind.
+
+Use the maintained shadcn Chart composition and Recharts only when a chart
+passes that test. Labels are written onto or beside marks, focusable data has a
+keyboard path, and the underlying values remain readable without colour,
+motion, hover, or JavaScript. At narrow widths and in print or forced colours,
+prefer the exact table or chronology over shrinking a dense plot.
 
 ## Components and compositions
 

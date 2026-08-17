@@ -32,6 +32,7 @@ describe("account routes", () => {
        done for a response that carries no account state. */
     expect(proxySource).not.toContain('"/p/:repository/:problem"');
     expect(proxySource).toContain('"/problems/:namespace/:problem"');
+    expect(proxySource).not.toMatch(/"\/problems\/:namespace",/u);
     for (const broad of ['"/p/:path*"', '"/auth/:path*"', '"/drafts/:path*"']) {
       expect(proxySource).not.toContain(broad);
     }

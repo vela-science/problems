@@ -38,6 +38,7 @@ describe("canonical Problem source binding", () => {
     render(await ProblemPageView({
       repository: "math",
       problem: "321",
+      collectionName: "Erdős Problems",
       route: "/problems/erdos-problems/321",
       query: {},
       expectedSource: {
@@ -54,6 +55,7 @@ describe("canonical Problem source binding", () => {
     await expect(ProblemPageView({
       repository: "math",
       problem: "321",
+      collectionName: "Erdős Problems",
       route: "/problems/erdos-problems/321",
       query: {},
       expectedSource: {
@@ -76,6 +78,7 @@ describe("Problem view addressing", () => {
   const page = (query: Record<string, string>) => ProblemPageView({
     repository: "math",
     problem: "321",
+    collectionName: "Erdős Problems",
     route: "/problems/erdos-problems/321",
     query,
   });
