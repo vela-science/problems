@@ -54,25 +54,28 @@ GITHUB_APP_WEBHOOK_SECRET      # at least 32 characters
 ```
 
 The [WorkOS dashboard](https://dashboard.workos.com) has to agree with those,
-and nothing in this repository can assert it. WorkOS permits HTTP localhost
+and nothing in this repository can assert it. WorkOS permits HTTP loopback
 redirects in **staging** but requires HTTPS for production web applications, so
-local development uses the staging environment/application credentials instead
-of adding localhost to the production application:
+local development uses staging credentials instead of adding a development
+callback to the production application:
 
 - **Production Redirect URI**: exactly `https://problems.science/auth/callback`.
-- **Staging/local Redirect URI**: exactly `http://localhost:4322/auth/callback`.
+- **Staging/local Redirect URI**: the exact callback declared by the selected
+  environment, for example `http://localhost:4322/auth/callback`.
 - **Production Sign-in URL** (`initiate_login_uri`): `https://problems.science/sign-in`.
   Without it, WorkOS-initiated flows such as impersonation cannot complete the
   PKCE verification the library enforces on every callback.
 - **Sign-out redirects**: `https://problems.science/problems` in production and
-  `http://localhost:4322/problems` in staging/local. `accountReturnTo()` derives
-  the appropriate origin from the validated callback.
+  the matching `/problems` URL for the selected staging origin. For the example
+  callback above that is `http://localhost:4322/problems`. `accountReturnTo()`
+  derives the origin from the validated callback; there is no second app-origin
+  setting to keep in sync.
 
 Do not mix a production WorkOS API key/client ID with the local callback. Keep
 both the local callback and local sign-out destination in the same staging
 application selected by `WORKOS_CLIENT_ID`; keep the production values in the
 production application. The local `.env.local` is untracked and must use the
-staging pair plus the exact localhost callback above.
+staging pair plus the exact callback for the server being run.
 
 Keep provider secrets in the deployment environment, never in a checked-in
 file. An unconfigured build deliberately omits account controls and leaves the
@@ -104,7 +107,7 @@ From the repository root:
 
 ```bash
 bun install --frozen-lockfile
-bun run dev:problems
+PORT=4322 HOST=localhost bun run dev:problems # example; match the staging callback
 bun run --filter @vela/problems typecheck
 bun run --filter @vela/problems test
 VELA_PROJECTION_DATABASE_URL="$(neonctl connection-string main --project-id lingering-meadow-20929365 --role-name vela_projection_reader_20260813 --database-name vela_projection --pooled --no-color)" \

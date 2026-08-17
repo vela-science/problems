@@ -34,16 +34,28 @@ describe("Problems authentication boundary", () => {
       enabled: false,
       reason: "invalid_redirect_uri",
     });
+    expect(authConfiguration({ ...completeEnvironment, NEXT_PUBLIC_WORKOS_REDIRECT_URI: "https://problems.science/auth/callback#fragment" })).toEqual({
+      enabled: false,
+      reason: "invalid_redirect_uri",
+    });
+    expect(authConfiguration({ ...completeEnvironment, NEXT_PUBLIC_WORKOS_REDIRECT_URI: "https://user:password@problems.science/auth/callback" })).toEqual({
+      enabled: false,
+      reason: "invalid_redirect_uri",
+    });
     expect(authConfiguration({ ...completeEnvironment, NEXT_PUBLIC_WORKOS_REDIRECT_URI: "http://problems.science/auth/callback" })).toEqual({
       enabled: false,
       reason: "invalid_redirect_uri",
     });
   });
 
-  it("accepts the exact staging localhost callback", () => {
+  it.each([
+    "http://localhost:4322/auth/callback",
+    "http://localhost:9876/auth/callback",
+    "http://127.0.0.1:5173/auth/callback",
+  ])("accepts a valid local callback without assigning a canonical port: %s", (redirectUri) => {
     expect(authConfiguration({
       ...completeEnvironment,
-      NEXT_PUBLIC_WORKOS_REDIRECT_URI: "http://localhost:4322/auth/callback",
+      NEXT_PUBLIC_WORKOS_REDIRECT_URI: redirectUri,
     })).toEqual({ enabled: true });
   });
 
@@ -65,8 +77,8 @@ describe("Problems authentication boundary", () => {
     expect(accountReturnTo(completeEnvironment)).toBe("https://problems.science/problems");
     expect(accountReturnTo({
       ...completeEnvironment,
-      NEXT_PUBLIC_WORKOS_REDIRECT_URI: "http://localhost:4322/auth/callback",
-    })).toBe("http://localhost:4322/problems");
+      NEXT_PUBLIC_WORKOS_REDIRECT_URI: "http://127.0.0.1:5173/auth/callback",
+    })).toBe("http://127.0.0.1:5173/problems");
     expect(accountReturnTo({
       ...completeEnvironment,
       NEXT_PUBLIC_WORKOS_REDIRECT_URI: "https://attacker.example/other",
