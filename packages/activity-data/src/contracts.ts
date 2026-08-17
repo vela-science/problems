@@ -172,7 +172,7 @@ export type ActivitySubmissionDraft = {
   workspaceId: string;
   anchorRoot: HashRoot;
   createdByAccountId: string;
-  schemaName: "vela.submission.v2";
+  schemaName: "vela.submission.v3";
   payloadRoot: HashRoot;
   version: number;
   createdAt: string;

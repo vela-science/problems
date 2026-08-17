@@ -54,7 +54,7 @@ function fixture() {
     }],
     drafts: [{
       id: "draft-1", workspace_id: workspaceId, anchor_root: anchorRoot,
-      created_by_account_id: accountId, schema_name: "vela.submission.v2",
+      created_by_account_id: accountId, schema_name: "vela.submission.v3",
       payload_root: root("9"), authority_effect: "none", version: 1,
       created_at: createdAt, updated_at: createdAt,
     }],

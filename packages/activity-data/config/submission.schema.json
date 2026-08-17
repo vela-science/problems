@@ -80,39 +80,6 @@
       ],
       "type": "object"
     },
-    "execution_binding": {
-      "additionalProperties": false,
-      "properties": {
-        "packet_root": {
-          "pattern": "^sha256:[0-9a-f]{64}$",
-          "type": "string"
-        },
-        "profile_root": {
-          "pattern": "^sha256:[0-9a-f]{64}$",
-          "type": "string"
-        },
-        "result_contract_root": {
-          "pattern": "^sha256:[0-9a-f]{64}$",
-          "type": "string"
-        },
-        "schema": {
-          "const": "vela.execution-binding.v1",
-          "type": "string"
-        },
-        "verifier_capsule_root": {
-          "pattern": "^sha256:[0-9a-f]{64}$",
-          "type": "string"
-        }
-      },
-      "required": [
-        "schema",
-        "packet_root",
-        "profile_root",
-        "verifier_capsule_root",
-        "result_contract_root"
-      ],
-      "type": "object"
-    },
     "identity": {
       "additionalProperties": false,
       "properties": {
@@ -297,7 +264,7 @@
       "type": "object"
     },
     "schema": {
-      "const": "vela.submission.v2",
+      "const": "vela.submission.v3",
       "type": "string"
     },
     "verification_requirements": {
@@ -322,6 +289,6 @@
     "requested_change",
     "provenance"
   ],
-  "title": "Vela Submission v2",
+  "title": "Vela Submission v3",
   "type": "object"
 }

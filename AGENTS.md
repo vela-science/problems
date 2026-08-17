@@ -79,7 +79,7 @@ when their authors wrote them. Do not rewrite them to match the current system.
   Surface staleness when canonical roots advance.
 - Keep external session references on Attempts provider-neutral. Do not add Modal-, Buzz-, or
   vendor-specific runtime code without a separate product decision.
-- Export only unsigned `vela.submission.v2` payloads that validate against the
+- Export only unsigned `vela.submission.v3` payloads that validate against the
   pinned public schema. Signing uses an explicit local handoff and a user-held
   key. Hosted code may not call the local signing helper.
 - Do not add a server-held signer, repository authority key, hosted Decision,

@@ -665,7 +665,7 @@ describe("current repository object projection", () => {
           provenance: { producer: "agent:producer", emitted_at: "2026-07-27T12:00:00Z" },
           authentication: { identity_binding: { actor_id: "agent:producer" } },
         },
-        envelope: { payloadType: "application/vnd.vela.submission.v2+json" },
+        envelope: { payloadType: "application/vnd.vela.submission.v3+json" },
       }],
       verifications: [{
         object_id: "vvr_current",

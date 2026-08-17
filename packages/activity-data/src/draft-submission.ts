@@ -3,10 +3,10 @@ import addFormats from "ajv-formats";
 import { canonicalJson, sha256, type HashRoot } from "@vela/projection-data/canonical";
 import submissionSchema from "../config/submission.schema.json" with { type: "json" };
 
-export const VELA_SUBMISSION_SCHEMA = "vela.submission.v2" as const;
-export const VELA_SUBMISSION_PAYLOAD_TYPE = "application/vnd.vela.submission.v2+json" as const;
+export const VELA_SUBMISSION_SCHEMA = "vela.submission.v3" as const;
+export const VELA_SUBMISSION_PAYLOAD_TYPE = "application/vnd.vela.submission.v3+json" as const;
 
-export type VelaSubmissionV2 = {
+export type VelaSubmissionV3 = {
   schema: typeof VELA_SUBMISSION_SCHEMA;
   identity: {
     schema: "vela.signer-identity.v1";
@@ -50,10 +50,10 @@ export type VelaSubmissionV2 = {
    constraint and the rest of strict mode. */
 const ajv = new Ajv2020({ allErrors: true, strict: true, strictRequired: false });
 addFormats(ajv);
-const validateSchema = ajv.compile<VelaSubmissionV2>(submissionSchema);
+const validateSchema = ajv.compile<VelaSubmissionV3>(submissionSchema);
 
 export type SubmissionDraftValidation =
-  | { valid: true; payload: VelaSubmissionV2 }
+  | { valid: true; payload: VelaSubmissionV3 }
   | { valid: false; errors: string[] };
 
 function formatSchemaError(error: ErrorObject): string {
@@ -92,20 +92,20 @@ export function validateSubmissionDraft(value: unknown): SubmissionDraftValidati
   return { valid: true, payload: value };
 }
 
-export function assertSubmissionDraft(value: unknown): VelaSubmissionV2 {
+export function assertSubmissionDraft(value: unknown): VelaSubmissionV3 {
   const result = validateSubmissionDraft(value);
-  if (!result.valid) throw new Error(`invalid vela.submission.v2 draft:\n${result.errors.join("\n")}`);
+  if (!result.valid) throw new Error(`invalid vela.submission.v3 draft:\n${result.errors.join("\n")}`);
   return result.payload;
 }
 
 export type SaveSubmissionDraftInput = {
   anchor: import("./contracts").ScientificAnchor;
-  payload: VelaSubmissionV2;
+  payload: VelaSubmissionV3;
   draftId?: string;
 };
 
 export type SubmissionDraftExport = {
-  payload: VelaSubmissionV2;
+  payload: VelaSubmissionV3;
   canonicalPayload: string;
   payloadRoot: HashRoot;
   mediaType: "application/json";

@@ -3,7 +3,7 @@ import { canonicalJson, sha256, type HashRoot } from "@vela/projection-data/cano
 import {
   assertSubmissionDraft,
   VELA_SUBMISSION_PAYLOAD_TYPE,
-  type VelaSubmissionV2,
+  type VelaSubmissionV3,
 } from "./draft-submission";
 
 const ED25519_SPKI_PREFIX = Buffer.from("302a300506032b6570032100", "hex");
@@ -46,7 +46,7 @@ export function signSubmissionDraftLocally(
   value: unknown,
   privateKeyPem: string,
 ): LocalSignedSubmission {
-  const payload: VelaSubmissionV2 = assertSubmissionDraft(value);
+  const payload: VelaSubmissionV3 = assertSubmissionDraft(value);
   const privateKey = createPrivateKey(privateKeyPem);
   const publicKey = rawEd25519PublicKey(privateKeyPem);
   const publicKeyHex = publicKey.toString("hex");

@@ -382,7 +382,7 @@ metadata roots, bounded descriptive metadata, paths, media types, sizes, and
 optional locators only. Attempt provider and external-session fields are
 neutral records; they do not embed a Modal, Buzz, or other runtime.
 
-An exported draft must validate against the public `vela.submission.v2` schema
+An exported draft must validate against the public `vela.submission.v3` schema
 vendored from the exact Vela release pin. The hosted service exports canonical,
 unsigned bytes with their payload root. A user may pass those bytes to the
 explicit local helper:

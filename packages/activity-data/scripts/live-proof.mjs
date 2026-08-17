@@ -320,7 +320,7 @@ const historicalAfterCurrentUnfollow = await getProblemActivity({
 if (!historicalAfterCurrentUnfollow.following) throw new Error("current unfollow erased historical following");
 
 const payload = {
-  schema: "vela.submission.v2",
+  schema: "vela.submission.v3",
   identity: {
     schema: "vela.signer-identity.v1",
     actor_id: "agent:live-proof",

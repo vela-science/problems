@@ -18,7 +18,7 @@ import {
   scientificAnchorRoot,
   updateAttempt,
   type ScientificAnchor,
-  type VelaSubmissionV2,
+  type VelaSubmissionV3,
 } from "@vela/activity-data";
 import { currentAccount } from "@/lib/auth";
 import { publicProblemPath, publicProblemWorkspacePath } from "@/lib/problem-routes";
@@ -271,13 +271,13 @@ export async function saveSubmissionDraftAction(form: FormData) {
   const scope = await mutationContext(form);
   const producer = text(form, "actorId", 200);
   if (!producer.startsWith("agent:")) throw new Error("Vela actor ID must use the agent: namespace");
-  const requestedKind = text(form, "requestedChange", 32) as VelaSubmissionV2["requested_change"]["kind"];
+  const requestedKind = text(form, "requestedChange", 32) as VelaSubmissionV3["requested_change"]["kind"];
   const researchBlockId = text(form, "researchBlockId", 64);
   const activity = await problemActivity(scope);
   const artifact = requireCurrentArtifact(activity, researchBlockId, scope.anchorRoot);
   const emittedAt = new Date().toISOString().replace(/\.\d{3}Z$/u, "Z");
-  const payload: VelaSubmissionV2 = {
-    schema: "vela.submission.v2",
+  const payload: VelaSubmissionV3 = {
+    schema: "vela.submission.v3",
     identity: {
       schema: "vela.signer-identity.v1",
       actor_id: producer,
@@ -287,12 +287,12 @@ export async function saveSubmissionDraftAction(form: FormData) {
     },
     claim: {
       assertion: text(form, "assertion"),
-      type: text(form, "claimType", 32) as VelaSubmissionV2["claim"]["type"],
+      type: text(form, "claimType", 32) as VelaSubmissionV3["claim"]["type"],
       conditions: optionalText(form, "condition") ? [text(form, "condition")] : [],
     },
     artifacts: [{ kind: artifact.kind, path: artifact.path, digest: artifact.contentRoot }],
     caveats: [text(form, "caveat")],
-    replayability: text(form, "replayability", 24) as VelaSubmissionV2["replayability"],
+    replayability: text(form, "replayability", 24) as VelaSubmissionV3["replayability"],
     producer_checks: [{ method: text(form, "checkMethod", 200), outcome: text(form, "checkOutcome", 16) as "pass" | "fail" | "error" | "skipped" | "unknown", authority: "producer_reported" }],
     verification_requirements: [text(form, "verificationRequirement")],
     requested_change: requestedKind === "add_claim" ? { kind: "add_claim" } : {

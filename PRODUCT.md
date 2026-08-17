@@ -254,7 +254,7 @@ over the same activity objects:
 
 Problems stores no artifact bytes, Vela Event, Verification Record, Decision,
 or Standing. It has no repository authority credential. Draft export validates
-the full `vela.submission.v2` payload against the pinned public schema, then
+the full `vela.submission.v3` payload against the pinned public schema, then
 hands the canonical unsigned bytes to a local signer. Hosted code never imports
 that signing helper.
 

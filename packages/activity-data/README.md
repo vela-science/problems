@@ -51,7 +51,7 @@ in `../../docs/security/vela-web-threat-model.md`.
 Current writers create Problem-scoped Approaches, Attempts, Research Blocks,
 discussion notes, canvas updates, and unsigned Submission drafts. Generic
 agent sessions, transcripts, checkpoints, provider locators, retired Target
-bindings, and execution-binding lineages are outside this database. The
+bindings and source-owned execution lineage are outside this database. The
 application role has execute access only to membership-gated API functions and
 no base-table access. Canvas bytes coordinate one shared Workspace document;
 they are not Artifact bytes, protocol records, Git history, or scientific

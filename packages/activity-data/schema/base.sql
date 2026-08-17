@@ -152,7 +152,7 @@ CREATE TABLE IF NOT EXISTS activity.submission_drafts (
   workspace_id uuid NOT NULL REFERENCES activity.workspaces(id) ON DELETE CASCADE,
   anchor_root text NOT NULL,
   created_by_account_id uuid NOT NULL REFERENCES activity.accounts(id),
-  schema_name text NOT NULL DEFAULT 'vela.submission.v2' CHECK (schema_name = 'vela.submission.v2'),
+  schema_name text NOT NULL DEFAULT 'vela.submission.v3' CHECK (schema_name = 'vela.submission.v3'),
   payload jsonb NOT NULL CHECK (jsonb_typeof(payload) = 'object'),
   payload_root text NOT NULL CHECK (payload_root ~ '^sha256:[0-9a-f]{64}$'),
   authority_effect text NOT NULL DEFAULT 'none' CHECK (authority_effect = 'none'),
@@ -623,7 +623,7 @@ BEGIN
     subject_kind := 'artifact_ref'; subject_id := artifact.id::text; answer := to_jsonb(artifact);
 
   ELSIF p_kind = 'submission_draft.save' THEN
-    IF p_payload->'payload'->>'schema' <> 'vela.submission.v2'
+    IF p_payload->'payload'->>'schema' <> 'vela.submission.v3'
       OR p_payload->'payload'->'identity'->>'actor_class' <> 'agent'
       OR p_payload->'payload'->'identity'->>'actor_id' <> p_payload->'payload'->'provenance'->>'producer' THEN
       RAISE EXCEPTION 'invalid Submission draft authority boundary' USING ERRCODE='22023';

@@ -161,7 +161,7 @@ function draftFrom(value: unknown): ActivitySubmissionDraft {
     id: text(row.id, "submission draft id"), workspaceId: text(row.workspace_id, "submission draft workspace_id"),
     anchorRoot: hashRoot(row, "anchor_root", "submission draft anchor_root"),
     createdByAccountId: text(row.created_by_account_id, "submission draft created_by_account_id"),
-    schemaName: member(row.schema_name, ["vela.submission.v2"] as const, "submission draft schema_name"),
+    schemaName: member(row.schema_name, ["vela.submission.v3"] as const, "submission draft schema_name"),
     payloadRoot: hashRoot(row, "payload_root", "submission draft payload_root"),
     version: integer(row.version, "submission draft version", 1), createdAt: text(row.created_at, "submission draft created_at"),
     updatedAt: text(row.updated_at, "submission draft updated_at"),

@@ -411,11 +411,8 @@ membership. Any cell not explicitly allowed is denied.
 | `packages/activity-data/src/activity.ts` | Fixed SQL vocabulary, canonical request roots, and draft export client | TM-001, TM-004, TM-007 |
 | `packages/activity-data/src/draft-submission.ts` | Closed schema and canonical unsigned bytes | TM-004, TM-011 |
 | `packages/activity-data/src/local-signing.ts` | Sole allowed signing implementation and key-match check | TM-003, TM-004 |
-| `packages/activity-data/migrations/20260811_activity_v1.sql` | Tenant policy, `SECURITY DEFINER` functions, audit, versions, and grants | TM-001, TM-004, TM-007, TM-008 |
-| `packages/activity-data/migrations/20260812_current_anchor_read.sql` | Current/historical follow semantics and membership-gated activity response | TM-001, TM-002 |
-| `packages/activity-data/migrations/20260812_target_bound_approach.sql`; `20260813_execution_binding_lineage.sql` | Retained migration history needed to decode pre-migration rows; not a current writer surface | TM-004, TM-007 |
-| `packages/activity-data/migrations/20260814_problem_scoped_activity.sql` | Freezes retained bound rows, strips inherited binding from forks, and refuses new Target or execution lineage | TM-002, TM-004, TM-007, TM-010 |
-| `packages/activity-data/migrations/20260813_workspace_crdt.sql` | Adds one bounded, rooted, exact-anchor Loro update stream with membership-gated append/read and no authority effect | TM-001, TM-007, TM-008, TM-010, TM-012 |
+| `packages/activity-data/schema/base.sql`; `current-anchor-read.sql` | Current clean tenant policy, `SECURITY DEFINER` functions, audit, versions, exact-current reads, and grants | TM-001, TM-002, TM-004, TM-007, TM-008 |
+| `packages/activity-data/schema/problem-workspaces.sql`; `workspace-crdt.sql` | Problem-scoped activity and one bounded, rooted, exact-anchor Loro update stream with no authority effect | TM-001, TM-002, TM-004, TM-007, TM-008, TM-010, TM-012 |
 | `packages/activity-data/roles.sql` | Defines the non-login owner and least-privilege login roles | TM-008 |
 | `packages/activity-data/database-privileges.sql` | Enforces database-level cross-plane isolation | TM-008 |
 | `packages/activity-data/scripts/live-proof.mjs` | Proves exact Problem-scoped create/fork/retry/audit plus tenant, privacy, export, role, and plane independence | TM-001, TM-002, TM-004, TM-005, TM-007, TM-008 |

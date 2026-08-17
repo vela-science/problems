@@ -8,14 +8,14 @@ import { canonicalJson } from "@vela/projection-data/canonical";
 import {
   createSubmissionDraftExport,
   validateSubmissionDraft,
-  type VelaSubmissionV2,
+  type VelaSubmissionV3,
 } from "../src/draft-submission";
 import { signSubmissionDraftLocally } from "../src/local-signing";
 
 const packageRoot = resolve(import.meta.dirname, "..");
 const digest = `sha256:${"a".repeat(64)}` as const;
-const fixture = (publicKeyHex = "b".repeat(64)): VelaSubmissionV2 => ({
-  schema: "vela.submission.v2",
+const fixture = (publicKeyHex = "b".repeat(64)): VelaSubmissionV3 => ({
+  schema: "vela.submission.v3",
   identity: {
     schema: "vela.signer-identity.v1",
     actor_id: "agent:problems-local",
@@ -38,7 +38,7 @@ const fixture = (publicKeyHex = "b".repeat(64)): VelaSubmissionV2 => ({
   },
 });
 
-describe("vela.submission.v2 drafts", () => {
+describe("vela.submission.v3 drafts", () => {
   test("pins the exact official schema bytes and compiles the production export path", () => {
     const bytes = readFileSync(resolve(packageRoot, "config/submission.schema.json"));
     const provenance = JSON.parse(readFileSync(
@@ -47,15 +47,15 @@ describe("vela.submission.v2 drafts", () => {
     ));
     const schemaRoot = `sha256:${createHash("sha256").update(bytes).digest("hex")}`;
     expect(schemaRoot)
-      .toBe("sha256:d58dda0ddca3ee01c99b0584c604779d1b10250a5472003e7ea2a7aade872134");
+      .toBe("sha256:c931f3a454c2a6544ac08e40adb2e0eb77f71131b7593957de8ff88f748d7318");
     expect(provenance.files[0].sha256).toBe(schemaRoot);
     expect(provenance).toMatchObject({
-      vela_version: "0.972.1",
-      vela_tag: "v0.972.1",
-      vela_commit: "26e7afa2f1eb5ef8d4c384bb72e65633192a6864",
+      vela_version: "0.977.0",
+      vela_tag: "v0.977.0",
+      vela_commit: "00d567c879138733ba22949efc985b54578c148b",
     });
     const exported = createSubmissionDraftExport(fixture());
-    expect(exported.payload.schema).toBe("vela.submission.v2");
+    expect(exported.payload.schema).toBe("vela.submission.v3");
     expect(exported.payloadRoot).toMatch(/^sha256:[0-9a-f]{64}$/);
     expect(exported.signingHandoff).toMatchObject({ state: "unsigned", serverHeldKey: false });
   });
@@ -73,6 +73,22 @@ describe("vela.submission.v2 drafts", () => {
     fractionalTimestamp.identity.declared_at = "2026-08-11T12:00:00.123Z";
     fractionalTimestamp.provenance.emitted_at = "2026-08-11T12:00:00.123Z";
     expect(validateSubmissionDraft(fractionalTimestamp)).toMatchObject({ valid: false });
+  });
+
+  test("refuses retired v2 and execution-binding payloads", () => {
+    const retired = structuredClone(fixture()) as Record<string, any>;
+    retired.schema = "vela.submission.v2";
+    expect(validateSubmissionDraft(retired)).toMatchObject({ valid: false });
+
+    const bound = structuredClone(fixture()) as Record<string, any>;
+    bound.execution_binding = {
+      schema: "vela.execution-binding.v1",
+      packet_root: digest,
+      profile_root: digest,
+      verifier_capsule_root: digest,
+      result_contract_root: digest,
+    };
+    expect(validateSubmissionDraft(bound)).toMatchObject({ valid: false });
   });
 
   test("hands signing to an explicit local Ed25519 key and self-verifies", () => {

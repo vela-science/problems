@@ -1,14 +1,14 @@
 {
   "schema": "site.vela-schemas.v1",
-  "vela_version": "0.972.1",
-  "vela_tag": "v0.972.1",
-  "vela_commit": "26e7afa2f1eb5ef8d4c384bb72e65633192a6864",
+  "vela_version": "0.977.0",
+  "vela_tag": "v0.977.0",
+  "vela_commit": "00d567c879138733ba22949efc985b54578c148b",
   "files": [
     {
       "file": "submission.schema.json",
       "upstream": "schemas/submission.schema.json",
       "id": "https://vela.science/schemas/submission.schema.json",
-      "sha256": "sha256:d58dda0ddca3ee01c99b0584c604779d1b10250a5472003e7ea2a7aade872134"
+      "sha256": "sha256:c931f3a454c2a6544ac08e40adb2e0eb77f71131b7593957de8ff88f748d7318"
     }
   ]
 }
