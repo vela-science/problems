@@ -3,6 +3,7 @@ import { Item, ItemContent, ItemDescription, ItemGroup, ItemTitle } from "@vela/
 import { StatusBadge } from "@vela/ui/vela/status-badge";
 import { RootFact } from "@/components/vela/root-fact";
 import { RecordId } from "@/components/vela/record-id";
+import { CorrectionComparison } from "@/components/vela/correction-comparison";
 import { formatDate } from "@/lib/format";
 import type { ScientificProblemState } from "@/lib/scientific-state";
 
@@ -31,23 +32,32 @@ export function ProblemHistory({ state }: { state: State }) {
   const corrections = state.claims.flatMap((claim) => correctionRelations(claim).map((relation) => ({ claim, relation })));
   return <>
     <section aria-labelledby="proposed-changes-heading">
-      <div className="flex flex-wrap items-end justify-between gap-3"><h2 id="proposed-changes-heading" className="text-title">Proposed changes</h2>{state.reviews.length ? <span className="text-meta text-muted-foreground">{state.reviews.length} {state.reviews.length === 1 ? "record" : "records"}</span> : null}</div>
-      {state.reviews.length ? <ul className="mt-5 space-y-2 text-compact">
-        {state.reviews.map((review) => <li key={review.proposal_id} className="flex flex-wrap items-center gap-x-3 gap-y-1">
-          <StatusBadge axis="proposal" state={review.status}>{review.status.replaceAll("_", " ")}</StatusBadge>
-          <a href={`/repositories/${state.repositorySlug}/proposals/${review.proposal_id}`} className="min-w-0 underline underline-offset-4"><RecordId value={review.proposal_id} copy={false} /></a>
-          <span className="text-micro text-muted-foreground">{formatDate(review.reviewed_at ?? review.created_at)}</span>
+      <div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-eyebrow uppercase text-muted-foreground">Chronology</p><h2 id="proposed-changes-heading" className="mt-1 text-title">Contribution history</h2></div>{state.reviews.length ? <span className="text-meta text-muted-foreground">{state.reviews.length} {state.reviews.length === 1 ? "event" : "events"}</span> : null}</div>
+      {state.reviews.length ? <ol className="relative mt-6 space-y-0 before:absolute before:bottom-5 before:left-[.4375rem] before:top-5 before:w-px before:bg-border">
+        {state.reviews.map((review) => <li key={review.proposal_id} className="relative grid grid-cols-[1rem_minmax(0,1fr)] gap-4 pb-7 last:pb-0">
+          <span aria-hidden className="relative z-10 mt-1.5 size-3.5 rounded-full border-4 border-background bg-status-evidence ring-1 ring-border forced-colors:border-2" />
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2"><StatusBadge axis="proposal" state={review.status}>{review.status.replaceAll("_", " ")}</StatusBadge><span className="text-meta text-muted-foreground">{formatDate(review.reviewed_at ?? review.created_at)}</span></div>
+            <p className="mt-2 text-compact">{review.status === "accepted" ? "A proposed Contribution was accepted by a retained Decision." : `A proposed Contribution is ${review.status.replaceAll("_", " ")}.`}</p>
+            {review.producer_package?.producer_actor ? <p className="mt-1 text-micro text-muted-foreground">Produced by {review.producer_package.producer_actor}</p> : null}
+            <a href={`/repositories/${state.repositorySlug}/proposals/${review.proposal_id}`} className="mt-2 inline-block text-meta font-medium underline underline-offset-4">Open event <span className="sr-only"><RecordId value={review.proposal_id} copy={false} /></span></a>
+          </div>
         </li>)}
-      </ul> : <p className="mt-4 max-w-2xl py-3 text-body text-muted-foreground">No proposed change is retained for this Problem.</p>}
+      </ol> : <div className="mt-5 rounded-lg border border-dashed p-5"><p className="text-label font-medium">No Contribution history yet</p><p className="mt-1 text-meta text-muted-foreground">No proposed change is retained for this Problem.</p></div>}
     </section>
 
     <section aria-labelledby="correction-heading">
       <div className="flex flex-wrap items-end justify-between gap-3"><h2 id="correction-heading" className="text-title">Correction history</h2>{corrections.length ? <span className="text-meta text-muted-foreground">{corrections.length} exact {corrections.length === 1 ? "relation" : "relations"}</span> : null}</div>
-      {corrections.length ? <ItemGroup className="mt-5 divide-y">{corrections.map(({ claim, relation }) => <Item key={`${claim.id}:${relation.kind}:${relation.target_claim_id}`} className="items-start rounded-none px-0 py-4"><ItemContent className="gap-2"><ItemTitle className="line-clamp-none text-body font-normal">Claim {relation.kind === "corrects" ? "correction" : "supersession"}</ItemTitle><ItemDescription className="line-clamp-none flex flex-wrap items-center gap-x-2 gap-y-1"><RecordId value={claim.id} /><span>{relation.kind}</span><RecordId value={relation.target_claim_id} /></ItemDescription><p className="text-meta text-muted-foreground">The predecessor remains retained. This relation does not transport source equivalence or another Repository&apos;s Standing.</p></ItemContent></Item>)}</ItemGroup> : <p className="mt-4 max-w-2xl py-3 text-body text-muted-foreground">No correction or supersession relation is retained for the joined Claim.</p>}
+      {corrections.length ? <ItemGroup className="mt-5 divide-y">{corrections.map(({ claim, relation }) => {
+        const predecessor = state.claims.find((candidate) => candidate.id === relation.target_claim_id);
+        return <Item key={`${claim.id}:${relation.kind}:${relation.target_claim_id}`} className="items-start rounded-none px-0 py-4"><ItemContent className="gap-2"><ItemTitle className="line-clamp-none text-body font-normal">Contribution {relation.kind === "corrects" ? "correction" : "supersession"}</ItemTitle><ItemDescription className="line-clamp-none flex flex-wrap items-center gap-x-2 gap-y-1"><RecordId value={claim.id} /><span>{relation.kind}</span><RecordId value={relation.target_claim_id} /></ItemDescription><p className="text-meta text-muted-foreground">The predecessor remains retained. This relation does not transport source equivalence or another Repository&apos;s Standing.</p>{predecessor ? <CorrectionComparison kind={relation.kind as "corrects" | "supersedes"} before={predecessor.assertion} after={claim.assertion} /> : <p className="mt-2 text-meta text-muted-foreground">The predecessor statement is not present in this Problem projection, so no textual comparison is shown.</p>}</ItemContent></Item>;
+      })}</ItemGroup> : <div className="mt-5 rounded-lg border border-dashed p-5"><p className="text-label font-medium">No correction history</p><p className="mt-1 text-meta text-muted-foreground">No correction or supersession relation is retained for the joined Contribution.</p></div>}
     </section>
 
-    <section aria-labelledby="exact-provenance-heading">
-      <div className="flex flex-wrap items-end justify-between gap-3"><h2 id="exact-provenance-heading" className="text-title">Exact provenance</h2><span className="text-meta text-muted-foreground">Roots, source, and advanced protocol record types</span></div>
+    <details className="group border-y py-1">
+      <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-3 marker:content-none focus-visible:outline-2 focus-visible:outline-offset-2"><span><span aria-hidden className="mr-2 inline-block transition-transform group-open:rotate-90">›</span><span className="text-label font-medium">Technical details</span></span><span className="text-meta text-muted-foreground">Exact roots, source, and retained record identifiers</span></summary>
+      <section aria-labelledby="exact-provenance-heading" className="pb-6 pt-3">
+      <h2 id="exact-provenance-heading" className="sr-only">Exact provenance</h2>
       <div className="mt-6 grid gap-6 sm:grid-cols-2">
         <dl className="space-y-3">
           <RootFact label="Problem row" value={state.source.row_root} />
@@ -67,6 +77,7 @@ export function ProblemHistory({ state }: { state: State }) {
         <Button nativeButton={false} variant="outline" render={<a href={`/repositories/${state.repositorySlug}/problems/${state.problem.problem}`} />}>Inspect records</Button>
         <Button nativeButton={false} variant="outline" render={<a href={`/problems.json?${new URLSearchParams({ root: state.anchor.projectionReleaseRoot, resolver: state.sources.resolver_root, source: state.source.source_id, native_id: state.source.native_id, kind: state.source.native_kind })}`} />}>Source JSON</Button>
       </div>
-    </section>
+      </section>
+    </details>
   </>;
 }

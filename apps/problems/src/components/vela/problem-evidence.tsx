@@ -5,6 +5,7 @@ import { StateGlyph } from "@vela/ui/vela/state-glyph";
 import { AssertionText } from "@/components/vela/assertion-text";
 import { standingScopeSentence } from "@/components/vela/problem-facts";
 import { ProblemProvenance } from "@/components/vela/problem-provenance";
+import { ScientificLineage } from "@/components/vela/scientific-lineage";
 import { ProblemSourceFacts } from "@/components/vela/problem-source-facts";
 import { ProblemSources } from "@/components/vela/problem-sources";
 import { FormalConjecturesAudit } from "@/components/vela/formal-conjectures-audit";
@@ -22,6 +23,8 @@ export function ProblemEvidence({ state }: { state: State }) {
      reference-scoped acceptance from reading as a solved conjecture. */
   const scope = standingScopeSentence(state);
   return <>
+    <ScientificLineage state={state} />
+
     <section aria-labelledby="contributions-heading">
       <div className="flex flex-wrap items-end justify-between gap-3"><h2 id="contributions-heading" className="text-title">Contributions</h2>{state.claims.length ? <span className="text-meta text-muted-foreground">{state.claims.length} {state.claims.length === 1 ? "Contribution" : "Contributions"} in current State</span> : null}</div>
       {scope ? <p className="mt-3 max-w-[76ch] text-compact text-muted-foreground">{scope}</p> : null}

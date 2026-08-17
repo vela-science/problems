@@ -13,6 +13,7 @@ import { Input } from "@vela/ui/components/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@vela/ui/components/select";
 import { PageHero, PageSection, PageSectionHeader, PageShell } from "@vela/ui/vela/page-shell";
 import { StatementText } from "@/components/vela/statement-text";
+import { CollectionDistribution } from "@/components/vela/collection-distribution";
 import { SourceCorpusMap } from "@/components/vela/source-corpus-map";
 import { ProblemSourceCoverage } from "@/components/vela/problem-source-coverage";
 import { LedgerPager } from "@/components/vela/ledger-pager";
@@ -242,14 +243,17 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
 
   return <PageShell archetype="problem">
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionStructuredData) }} />
-    {/* No band. The header trail already says "Problems", and a Collection
-        opens quiet and gets to its rows: this page put an eyebrow, a title, a
-        paragraph and a button above a boxed filter panel, so the first row
-        began 527px down a 900px screen and roughly 1,300px down a phone. Both
-        catalogues worth copying, formal-conjectures and entire.io, ship no h1
-        at all and reach their first row inside 220px. */}
     <RouteTitle title="Erdős Problems" scope={`${catalog.length.toLocaleString()} source-owned questions`} />
-    <form action={COLLECTION_PATH} className="mt-2" aria-label="Filter Erdős Problems">
+    <div className="mt-4 grid gap-6 border-y py-6 lg:grid-cols-[minmax(0,.72fr)_minmax(24rem,1.28fr)] lg:items-start">
+      <div>
+        <p className="text-eyebrow uppercase text-muted-foreground">One published collection</p>
+        <h2 className="mt-2 text-title">Browse this collection</h2>
+        <p className="mt-3 max-w-[54ch] text-compact text-muted-foreground">Browse {catalog.length.toLocaleString()} source-owned questions. Status below is the source declaration; reviewed evidence and current Repository state remain separate.</p>
+        <div className="mt-4 flex flex-wrap gap-3 text-meta"><Link href="/contribute" className="font-medium underline underline-offset-4">Add a contribution</Link><Link href={{ pathname: COLLECTION_PATH, query: { view: "overview" } }} className="font-medium underline underline-offset-4">Explore Topics and sources</Link></div>
+      </div>
+      <CollectionDistribution problems={catalog} compact />
+    </div>
+    <form action={COLLECTION_PATH} className="mt-6" aria-label="Filter Erdős Problems">
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(15rem,1fr)_repeat(2,minmax(10rem,.4fr))_auto]">
         <label className="relative block"><span className="sr-only">Search Problems</span><HugeiconsIcon icon={Search01Icon} aria-hidden className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /><Input className="h-11 pl-9" name="q" maxLength={200} defaultValue={query.q?.slice(0, 200)} placeholder="Number, Topic, or statement" /></label>
         <label><span className="sr-only">Scientific area</span><Select name="domain" defaultValue={selectedDomain} items={selectItems("All scientific areas", domains)}><SelectTrigger className="h-11 w-full"><SelectValue /></SelectTrigger><SelectContent align="start"><SelectItem value="all">All scientific areas</SelectItem>{domains.map(([key, label]) => <SelectItem key={key} value={key}>{label}</SelectItem>)}</SelectContent></Select></label>
@@ -275,17 +279,17 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
     </form>
     {/* The count is a fact about the rows, so it sits with them in one line
         rather than under an h2 naming the page's own content. */}
-    <PageSection aria-labelledby="problem-list" className="mt-6">
+    <section aria-labelledby="problem-list" className="mt-8">
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b pb-2">
         <h2 id="problem-list" className="sr-only">Problems</h2>
         <p className="text-meta text-muted-foreground">
           {problems.length.toLocaleString()} {problems.length === 1 ? "Problem" : "Problems"}
-          {assessedCount ? <>{" · "}{assessedCount} assessed by a Repository</> : null}
+          {assessedCount ? <>{" · "}{assessedCount} with reviewed evidence</> : null}
         </p>
         {pageCount > 1 ? <p className="font-mono text-meta tabular-nums text-muted-foreground">{page}/{pageCount}</p> : null}
       </div>
       <ProblemRows problems={visibleProblems} />
       <LedgerPager page={page} pages={pageCount} label="Erdős Problem pages" hrefFor={(next) => ({ pathname: COLLECTION_PATH, query: { ...retainedQuery, page: next } }) as never} />
-    </PageSection>
+    </section>
   </PageShell>;
 }

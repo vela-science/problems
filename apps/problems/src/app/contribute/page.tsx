@@ -2,15 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import {
   ArrowRight01Icon as ArrowRight,
-  BookOpen01Icon,
   PuzzleIcon,
-  SearchList01Icon,
   WorkIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "@vela/ui/components/button";
-import { Item, ItemContent, ItemDescription, ItemGroup, ItemTitle } from "@vela/ui/components/item";
 import { PageHero, PageSection, PageShell } from "@vela/ui/vela/page-shell";
+import { ContributionStepper } from "@/components/vela/contribution-stepper";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -37,22 +35,9 @@ export default function WorkPage() {
       </PageHero>
 
       <PageSection aria-labelledby="contribution-path-heading">
-        <p className="text-eyebrow uppercase text-muted-foreground">The public path</p>
-        <h2 id="contribution-path-heading" className="mt-1 text-title">Question before machinery</h2>
-        <ItemGroup className="mt-5 border-y">
-          {[
-            { icon: BookOpen01Icon, title: "Read what is known", detail: "Orient on accepted Contributions, partial and negative results, exact artifacts, and the unresolved gap." },
-            { icon: SearchList01Icon, title: "Check prior work", detail: "Compare the approach with retained work. Possible overlap is advisory; exact identity remains authoritative." },
-            { icon: WorkIcon, title: "Continue locally", detail: "Use the Problem's Work section to open its repository or agent workflow, then return a bounded Contribution with assumptions, environment, outcome, and retry boundary." },
-          ].map((step, index) => <Item key={step.title} className="px-0" variant="default">
-            <span aria-hidden className="flex size-8 items-center justify-center rounded-full bg-muted text-meta font-semibold">{index + 1}</span>
-            <HugeiconsIcon icon={step.icon} aria-hidden className="size-5 text-muted-foreground" />
-            <ItemContent>
-              <ItemTitle>{step.title}</ItemTitle>
-              <ItemDescription className="line-clamp-none max-w-[76ch]">{step.detail}</ItemDescription>
-            </ItemContent>
-          </Item>)}
-        </ItemGroup>
+        <span id="contribution-path-heading" className="sr-only">Contribution path</span>
+        <ContributionStepper current={1} />
+        <p className="mt-6 max-w-[76ch] border-l-2 border-status-evidence pl-4 text-compact text-muted-foreground">Before attaching new work, read accepted and partial results and check retained approaches. Similarity can suggest overlap, but exact identity remains authoritative.</p>
       </PageSection>
 
       <PageSection as="nav" aria-label="Choose a scientific Problem">

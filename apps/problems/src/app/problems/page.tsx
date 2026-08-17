@@ -6,6 +6,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "@vela/ui/components/button";
 import { PageHero, PageSection, PageSectionHeader, PageShell } from "@vela/ui/vela/page-shell";
 import { StatementText } from "@/components/vela/statement-text";
+import { CollectionDistribution } from "@/components/vela/collection-distribution";
 import { discoveredProblems, problemDiscoveryCollections, type ProblemDiscovery } from "@/lib/scientific-state";
 
 export const dynamic = "force-dynamic";
@@ -86,7 +87,7 @@ export default async function ProblemsPage({
           <Button nativeButton={false} render={<Link href={COLLECTION_PATH} />}>
             Browse Erdős Problems <HugeiconsIcon icon={ArrowRight} aria-hidden data-icon="inline-end" />
           </Button>
-          <Button nativeButton={false} variant="outline" render={<Link href="/search" />}>Search exact records</Button>
+          <Button nativeButton={false} variant="outline" render={<Link href="/search" />}>Search problems</Button>
         </div>
       </div>
       <div className="vela-evidence-surface rounded-xl px-5 py-5">
@@ -94,11 +95,15 @@ export default async function ProblemsPage({
         <p className="mt-2 text-title">Erdős Problems</p>
         <dl className="mt-4 grid grid-cols-2 gap-x-5 gap-y-3 text-meta">
           <div><dt className="text-muted-foreground">Problems</dt><dd className="mt-1 font-mono text-label">{collectionCount.toLocaleString()}</dd></div>
-          <div><dt className="text-muted-foreground">Locally assessed</dt><dd className="mt-1 font-mono text-label">{assessed.length.toLocaleString()}</dd></div>
+          <div><dt className="text-muted-foreground">Reviewed evidence</dt><dd className="mt-1 font-mono text-label">{assessed.length.toLocaleString()}</dd></div>
         </dl>
         <p className="mt-4 text-meta text-muted-foreground">Formal Conjectures, Lean proofs, VibeMathed, and other retained records support these Problems as sources or evidence. They are not separate Problem collections.</p>
       </div>
     </PageHero>
+
+    <PageSection aria-label="Erdős Problems collection coverage">
+      <CollectionDistribution problems={catalog} />
+    </PageSection>
 
     <PageSection aria-labelledby="published-collections">
       <PageSectionHeader>
@@ -132,7 +137,7 @@ export default async function ProblemsPage({
           <Link href={problem.canonicalPath ?? COLLECTION_PATH} className="group block focus-visible:outline-2 focus-visible:outline-offset-4">
             <p className="text-eyebrow uppercase text-muted-foreground">Erdős Problems · #{problem.problem}</p>
             <StatementText statement={readableProblemLabel(problem)} kind={problem.record.statement_kind === "formal" ? "label" : problem.record.statement_kind} className="mt-1 block max-w-[72ch] text-label leading-snug group-hover:underline" />
-            <p className="mt-1.5 text-meta text-muted-foreground">{problem.record.declared_status}{problem.record.local_standing ? ` · Repository-local Claim ${problem.record.local_standing.replaceAll("_", " ")}` : " · not assessed by a Repository"}</p>
+            <p className="mt-1.5 text-meta text-muted-foreground">{problem.record.declared_status}{problem.record.local_standing ? ` · reviewed Contribution ${problem.record.local_standing.replaceAll("_", " ")}` : " · no reviewed Contribution here yet"}</p>
           </Link>
         </li>)}
       </ul>

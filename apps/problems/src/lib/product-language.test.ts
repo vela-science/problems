@@ -56,15 +56,14 @@ function destinationsAndHeadings(contents: string): string[] {
 describe("current product language", () => {
   it("classifies the five public product nouns without promoting them to protocol authority", () => {
     const contract = productContract();
-    for (const noun of ["Problem", "Workspace", "Contribution", "Profile", "Organization"]) {
-      expect(contract).toMatch(new RegExp(`\\| \\*\\*${noun}\\*\\* \\|`, "u"));
-    }
-    expect(contract).toContain("`Problem` and `Contribution` are derived views, not new canonical objects.");
-    expect(contract).toContain("`Workspace` is hosted activity.");
-    expect(contract).toContain("`Profile` and `Organization` remain deferred");
-    expect(contract).toContain("Only exact protocol records retain protocol meaning");
-    expect(contract).toContain("Decision** is an attributed human or agent action");
-    expect(contract).not.toContain("Decision** is an explicit human or Repository-authority action");
+    expect(contract).toContain("The Problem is the canonical frame. A Contribution is the public unit of work");
+    expect(contract).toContain("My work groups followed Problems, workspaces, approaches, imports, drafts, and");
+    expect(contract).toContain("### Profile and account");
+    expect(contract).toContain("Current or curated evidence stays distinct from newer Contributions.");
+    expect(contract).toContain("WorkOS account identity, public scientific");
+    expect(contract).toContain("It cannot sign, issue a Decision, or change Standing.");
+    expect(contract).toContain("A Check records scoped evidence. A Decision accepts or rejects a proposed");
+    expect(contract).not.toContain("Profile` and `Organization` remain deferred");
   });
 
   it("separates the user-intent product navigation from contextual scientific records", () => {

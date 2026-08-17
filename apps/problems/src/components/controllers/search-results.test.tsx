@@ -33,7 +33,7 @@ describe("SearchResults", () => {
   test("waits for explicit search intent instead of dumping the corpus", () => {
     const view = render(<SearchResults projectionRoot="sha256:test" repositories={["erdos"]} problemCollections={problemCollections} />);
 
-    expect(screen.getByText("Find a published record")).toBeVisible();
+    expect(screen.getByText("Find a scientific Problem or Contribution")).toBeVisible();
     expect(screen.getByText("Ready for a query")).toBeVisible();
     expect(loadSearchIndex).not.toHaveBeenCalled();
     view.unmount();

@@ -78,27 +78,27 @@ export function ProblemAnswerStrip({ state, basePath }: { state: State; basePath
       : accepted.length
         ? "The source still marks the Problem open beyond the accepted scope."
         : "The source question remains open; no accepted Contribution is retained here.";
-  return <dl className="mt-6 grid gap-x-6 gap-y-4 border-y py-4 text-meta sm:grid-cols-2 lg:grid-cols-[auto_minmax(0,1.35fr)_minmax(0,.8fr)_minmax(0,1fr)_auto]">
-    <div className="min-w-0">
+  return <dl className="mt-6 grid overflow-hidden rounded-xl border bg-background/70 text-meta shadow-xs sm:grid-cols-2 lg:grid-cols-[minmax(9rem,.7fr)_minmax(0,1.35fr)_minmax(0,.8fr)_minmax(0,1fr)_minmax(8rem,.6fr)]">
+    <div className="min-w-0 border-b border-r-0 bg-muted/35 p-4 sm:border-r lg:border-b-0">
       <dt className="text-eyebrow uppercase text-muted-foreground">Problem state</dt>
       <dd className="mt-1.5">
         <span className="inline-flex items-center gap-2 text-label font-medium"><span aria-hidden className={`size-2 rounded-full ${STATE_DOT[publicState.word]}`} />{publicState.word}</span>
         <span className="mt-1 block text-micro text-muted-foreground">{publicState.basis}</span>
       </dd>
     </div>
-    <div className="min-w-0">
+    <div className="min-w-0 border-b p-4 sm:border-r lg:border-b-0">
       <dt className="text-eyebrow uppercase text-muted-foreground">What is known</dt>
       <dd className="mt-1.5 line-clamp-3 text-compact [overflow-wrap:anywhere]">{understanding}</dd>
     </div>
-    <div className="min-w-0">
+    <div className="min-w-0 border-b p-4 sm:border-r lg:border-b-0">
       <dt className="text-eyebrow uppercase text-muted-foreground">Evidence strength</dt>
       <dd className="mt-1.5 text-compact">{evidence}</dd>
     </div>
-    <div className="min-w-0">
+    <div className="min-w-0 border-b p-4 sm:border-r sm:border-b-0">
       <dt className="text-eyebrow uppercase text-muted-foreground">What remains open</dt>
       <dd className="mt-1.5 text-compact">{remains}</dd>
     </div>
-    <div className="min-w-0">
+    <div className="min-w-0 p-4">
       <dt className="text-eyebrow uppercase text-muted-foreground">Next</dt>
       <dd className="mt-1.5 flex flex-col items-start gap-1 text-compact">
         <Link className="underline underline-offset-4" href={`${basePath}?view=evidence`}>Read Evidence</Link>

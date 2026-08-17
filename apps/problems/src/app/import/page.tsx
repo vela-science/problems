@@ -6,6 +6,7 @@ import { Input } from "@vela/ui/components/input";
 import { Label } from "@vela/ui/components/label";
 import { PageShell } from "@vela/ui/vela/page-shell";
 import { FormSelect } from "@/components/vela/form-select";
+import { ContributionStepper } from "@/components/vela/contribution-stepper";
 import { PageIntro } from "@/components/vela/page-intro";
 import { currentActivityAccount } from "@/lib/hosted-account";
 import { importCodebase } from "./actions";
@@ -66,6 +67,7 @@ export default async function ImportPage({ searchParams }: { searchParams: Promi
   return <PageShell archetype="default" layout="reading" className="flex flex-col gap-8">
     <PageIntro title="Connect a codebase" description="Pin one Git revision, inspect its native Vela integration, and leave scientific authority unchanged."
       signals={[{ label: "Access", value: "Read only", tone: "evidence" }, { label: "Revision", value: "Immutable", tone: "neutral" }]} />
+    <ContributionStepper current={2} heading="Connect code to scientific work" />
     {error && <ImportError message={error} />}
     {!account ? <><div className="rounded-xl border p-5"><p className="text-body text-muted-foreground">Inspect a public codebase without an account. Sign in only to retain its rooted receipt.</p>
       <Button nativeButton={false} render={<Link href="/sign-in?returnTo=/import" />} className="mt-4">Sign in to retain receipts</Button></div>
