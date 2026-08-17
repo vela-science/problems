@@ -584,17 +584,17 @@ async function readiness(environment, context) {
     || manifest?.deployment?.id !== context.deployment.deployment_id
   ) throw new Error("production manifest did not converge to the qualified commit and projection");
 
-  const flagship = await fetch("https://problems.science/problems/erdos-problems/321", {
+  const flagship = await fetch("https://problems.science/problems/erdos-problems/321?view=history", {
     redirect: "error",
     cache: "no-store",
   });
   const flagshipBody = flagship.ok ? await flagship.text() : "";
   for (const identity of [
-    "vcl_0d3f0fa5b619afd182e83d8a52347b7e6531554837a8e83e580d9e85e0817e31",
-    "vcl_97de71a97b57c7fe4c115e9d632e7c997de90f935963a3058913ba37812a18ba",
+    "vcl_1da4282b752192c52c2a985476fc13bfe460da01e4fe26c5543b7acb37d8b120",
+    "vcl_b9c6915de55e15c69d06b9aeed786b0e632986374a347d77ff447ad244f67a2e",
   ]) {
     if (!flagshipBody.includes(identity)) {
-      throw new Error(`Erdős 321 flagship is missing exact Claim identity ${identity}`);
+      throw new Error(`Erdős 321 history is missing exact Claim identity ${identity}`);
     }
   }
 
