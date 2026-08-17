@@ -12,8 +12,8 @@ describe("NotificationCenter", () => {
 
     expect(await screen.findByRole("dialog", { name: "Notifications" })).toBeInTheDocument();
     expect(screen.getByText("No Proposal needs attention")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Open proposals" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Open decisions" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Open proposals" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Open decisions" })).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Close" }));
     await waitFor(() => expect(screen.queryByRole("dialog", { name: "Notifications" })).not.toBeInTheDocument());

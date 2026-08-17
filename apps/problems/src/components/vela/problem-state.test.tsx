@@ -138,14 +138,14 @@ describe("Problem State", () => {
     /* One Workspace affordance per page beyond the mode tab. The inline link
        under Current State said the same thing as the button below it. */
     expect(screen.queryByRole("link", { name: /Next: open the Workspace/u })).toBeNull();
-    expect(screen.getByRole("button", { name: "Open Workspace" })).toHaveAttribute("href", "/problems/erdos-problems/321?mode=work");
+    expect(screen.getByRole("link", { name: "Open Workspace" })).toHaveAttribute("href", "/problems/erdos-problems/321?mode=work");
 
     const exact = screen.getByRole("button", { name: /Exact provenance/u });
     expect(screen.queryByText("Problem row")).not.toBeInTheDocument();
     await user.click(exact);
     expect(screen.getByText("Problem row")).toBeInTheDocument();
     expect(screen.getByText("Exact Claim-to-Problem Bindings")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Source JSON" })).toHaveAttribute("href", `/problems.json?root=${encodeURIComponent(root("7"))}&resolver=${encodeURIComponent(root("a"))}&source=source%3Aerdos-problems&native_id=erdos%3A321&kind=problem`);
+    expect(screen.getByRole("link", { name: "Source JSON" })).toHaveAttribute("href", `/problems.json?root=${encodeURIComponent(root("7"))}&resolver=${encodeURIComponent(root("a"))}&source=source%3Aerdos-problems&native_id=erdos%3A321&kind=problem`);
   });
 
   /* Erdős 94 opened with
@@ -250,6 +250,6 @@ describe("Problem State", () => {
     expect(screen.getByText(/Adapter conformance 9 \/ 9/u)).toBeVisible();
     expect(screen.getByText("Adapter profile")).toBeVisible();
     expect(screen.getByText("Adapter contract")).toBeVisible();
-    expect(screen.getByRole("button", { name: "Open upstream PR" })).toHaveAttribute("href", "https://github.com/google-deepmind/formal-conjectures/pull/1237");
+    expect(screen.getByRole("link", { name: "Open upstream PR" })).toHaveAttribute("href", "https://github.com/google-deepmind/formal-conjectures/pull/1237");
   });
 });

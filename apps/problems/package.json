@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "bun ../../packages/brand/scripts/sync-web-assets.mjs public --profile product --favicon && next dev --port 4322",
+    "start": "next start --port 4400",
     "build": "bun scripts/build.mjs",
     "check:runtime": "bun scripts/check-runtime-routes.mjs",
     "typecheck": "next typegen && tsc --noEmit",

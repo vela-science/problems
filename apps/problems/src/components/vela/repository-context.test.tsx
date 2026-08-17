@@ -61,7 +61,7 @@ describe("RepositoryContext", () => {
   it("makes Standing the primary read while Clone remains a secondary integrity action", () => {
     render(<RepositoryContext repository={repository} latestCommit={null} />);
 
-    expect(screen.getByRole("button", { name: /Inspect current Standing/u })).toHaveAttribute("href", "/repositories/math/claims");
+    expect(screen.getByRole("link", { name: /Inspect current Standing/u })).toHaveAttribute("href", "/repositories/math/claims");
     expect(screen.getByRole("button", { name: "Clone exact source" })).toBeInTheDocument();
   });
 

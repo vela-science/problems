@@ -23,7 +23,7 @@ describe("Problem Workspace", () => {
     render(await Workbench({ basePath: "/problems/erdos-problems/321", state, hostedAccount: null }));
     expect(screen.getByRole("heading", { name: "Sign in to join this Workspace" })).toBeVisible();
     expect(screen.getByRole("heading", { name: "Shared coordination" })).toBeVisible();
-    expect(screen.getByRole("button", { name: "Open codebase record" })).toBeVisible();
+    expect(screen.getByRole("link", { name: "Open codebase record" })).toBeVisible();
   });
 
   it("offers no dead sign-in when accounts are unavailable", async () => {

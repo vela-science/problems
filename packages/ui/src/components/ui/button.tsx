@@ -1,5 +1,6 @@
 import { Button as ButtonPrimitive } from "@base-ui/react/button"
 import { cva, type VariantProps } from "class-variance-authority"
+import { cloneElement, isValidElement } from "react"
 
 import { cn } from "#lib/utils"
 
@@ -40,17 +41,55 @@ const buttonVariants = cva(
   }
 )
 
+/* A link stays a link, however it is styled.
+ *
+ * `nativeButton={false}` tells Base UI the rendered element is not a native
+ * button, so it supplies `role="button"` and `tabindex="0"`. That is right for
+ * a `<span>` acting as a button. It is wrong for an anchor: the anchor keeps
+ * link activation, where Enter follows the href and Space scrolls the page. A
+ * screen reader announced "button" and then Space did nothing — the promised
+ * behaviour and the real behaviour disagreed (WCAG 4.1.2). It also hid the one
+ * fact worth knowing about "Upstream source", which leaves the site.
+ *
+ * Eighty-seven call sites pass a `<Link>` or `<a>` here, so the fix belongs at
+ * the primitive rather than at each of them. When the render target carries an
+ * `href`, apply the styling and leave its own semantics alone. Everything else
+ * goes through Base UI unchanged.
+ *
+ * This is a hand edit to a shadcn-installed primitive: reapply it if
+ * `base-nova` ever reinstalls this file. */
+type ButtonProps = ButtonPrimitive.Props & VariantProps<typeof buttonVariants>
+
 function Button({
   className,
   variant = "default",
   size = "default",
   ...props
-}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+}: ButtonProps) {
+  const classes = cn(buttonVariants({ variant, size, className }))
+  const { render, nativeButton, ...rest } = props
+  const linkRender =
+    nativeButton === false &&
+    isValidElement<{ href?: unknown; className?: string }>(render) &&
+    render.props.href != null
+      ? render
+      : null
+
+  if (linkRender) {
+    return cloneElement(linkRender, {
+      "data-slot": "button",
+      className: cn(classes, linkRender.props.className),
+      ...rest,
+    } as Partial<typeof linkRender.props>)
+  }
+
   return (
     <ButtonPrimitive
       data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
-      {...props}
+      className={classes}
+      nativeButton={nativeButton}
+      render={render}
+      {...rest}
     />
   )
 }

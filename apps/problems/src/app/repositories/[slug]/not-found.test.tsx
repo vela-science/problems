@@ -9,6 +9,6 @@ describe("Repository not-found boundary", () => {
     render(<RepositoryRouteScope slug="not-published"><RepositoryNotFound /></RepositoryRouteScope>);
 
     expect(screen.getByRole("heading", { level: 1, name: "Repository “not-published” is not published here." })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Read published repositories/u })).toHaveAttribute("href", "/repositories");
+    expect(screen.getByRole("link", { name: /Read published repositories/u })).toHaveAttribute("href", "/repositories");
   });
 });
