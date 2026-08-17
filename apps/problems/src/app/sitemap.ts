@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { allClaimRouteIds, allRepositories, allProblemRouteIds, canonicalProblemPath, mathSourceRegistryRead, projectionManifest } from "@vela/projection-data";
+import { allClaimRouteIds, allRepositories, allProblemRouteIds, canonicalProblemPath, mathSourceRegistryRead, projectionManifest, slugForRepositoryId } from "@vela/projection-data";
 
 const base = "https://problems.science";
 export const dynamic = "force-static";
@@ -29,7 +29,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         `${root}/reproduce`,
       ];
     }),
-    ...claims.map(({ repository, id }) => `/repositories/${repository}/claims/${id}`),
+    /* `repository` here is the `repository_id`, and the roots above are built
+       from `slug` — so the sitemap advertised both addresses for one
+       Repository and asked a crawler to index the UUID form of every Claim.
+       One canonical address, the handle the app links. */
+    ...claims
+      .map(({ repository, id }) => {
+        const slug = slugForRepositoryId(repository);
+        return slug ? `/repositories/${slug}/claims/${id}` : null;
+      })
+      .filter((path): path is string => path !== null),
     /* One address per Problem. The Repository-scoped record view is a
        different page about the same Problem, so listing both asked a crawler
        to index two URLs for one record; that view now declares the canonical

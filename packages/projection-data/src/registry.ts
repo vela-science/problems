@@ -144,8 +144,19 @@ export function slugForRepositoryId(repositoryId: string): string | undefined {
  * row, so a bad slug stays the empty read every caller already renders as a
  * 404 — which is what these paths did before there was a lookup to fail. */
 export function repositoryKey(slug: string): string {
-  return repositoryIdForSlug(slug) ?? slug;
+  /* An unregistered handle resolves to something no row can hold, never to
+     itself. The `?? slug` fallback meant a `repository_id` typed into the URL
+     also worked as a handle, so `/repositories/<uuid>/...` answered 200 across
+     the subtree — except the problem ledger, which additionally matches source
+     coverage on the slug and so rendered "This repository retains no
+     source-native problem at this release" for a Repository holding 1,217. A
+     page asserting an empty ledger is a false statement about scientific state,
+     and the rule above is that an unknown handle is a 404 rather than a lookup
+     that invents an id. Every caller already refuses an unresolved read. */
+  return repositoryIdForSlug(slug) ?? UNREGISTERED_REPOSITORY_HANDLE;
 }
+
+const UNREGISTERED_REPOSITORY_HANDLE = "unregistered:repository-handle";
 
 /* The locator to show a person: the first, by declaration order. Named rather
    than spelled `remotes[0]` at each call site, so that what "first" means lives

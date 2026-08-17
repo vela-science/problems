@@ -11,6 +11,7 @@ import {
 } from "./proposed-state-preview";
 import {
   repositoryCheckoutCommand,
+  repositoryIdForSlug,
   repositoryIdSchema,
   repositoryKey,
   repositoryRegistry,
@@ -71,6 +72,25 @@ export * from "./registry";
 export * from "./core-integration";
 
 export type { HashRoot } from "./canonical";
+
+/* `repository_id` is what every projection table keys on; `slug` is the handle a
+ * URL carries. Three binding reads compared the handle straight against the
+ * column, so `repository_id = 'math'` matched none of the rows holding
+ * `8138c6da-…` and every Repository-scoped binding count came back 0. The
+ * Repository page then stated that all fourteen Sources were declared with no
+ * retained binding, and `/sources` contradicted itself on one screen: the
+ * unscoped tile read the precomputed count of 3 while the scoped row counted 0.
+ *
+ * An unresolvable handle must match no Repository rather than every one, so it
+ * becomes a value no `repository_id` can equal. Returning null would make the
+ * filter fall through to unfiltered, which is how a bad handle would start
+ * reporting some other Repository's bindings. */
+const UNRESOLVED_REPOSITORY_HANDLE = "unresolved:repository-handle";
+
+function repositoryIdFilter(slug: string | null): string | null {
+  if (slug === null) return null;
+  return repositoryIdForSlug(slug) ?? UNRESOLVED_REPOSITORY_HANDLE;
+}
 import type { HashRoot } from "./canonical";
 /* Re-exported so an application can build the one link a content-addressed
    record most needs: the exact file at the exact commit. The parser existed
@@ -1028,6 +1048,7 @@ export async function mathSourceRegistryRead(
   const sourceId = input.sourceId?.trim() || null;
   const recordSourceId = input.recordSourceId?.trim() || sourceId;
   const repositorySlug = input.repositorySlug?.trim() || null;
+  const repositoryId = repositoryIdFilter(repositorySlug);
   const nativeId = input.nativeId?.trim() || null;
   const nativeKind = input.nativeKind?.trim() || null;
   const query = input.query?.trim() || null;
@@ -1077,7 +1098,7 @@ export async function mathSourceRegistryRead(
      WHERE release_source.release_root = $1
        AND ($2::text IS NULL OR release_source.source_id = $2)
      ORDER BY release_source.source_id`,
-    [root, sourceId, repositorySlug],
+    [root, sourceId, repositoryId],
   );
 
   const sources = sourceRows
@@ -1254,7 +1275,7 @@ export async function mathSourceRegistryRead(
       [
         root,
         recordSourceId,
-        repositorySlug,
+        repositoryId,
         nativeId,
         query,
         nativeKind,
@@ -1612,7 +1633,7 @@ export async function repositoryObjectSourceRecord(input: {
        AND binding.repository_object_id = $4
      ORDER BY binding.binding_id
      LIMIT 1`,
-    [manifest.release_root, input.repositorySlug, input.objectKind, input.objectId],
+    [manifest.release_root, repositoryIdFilter(input.repositorySlug), input.objectKind, input.objectId],
   );
   const row = rows.at(0);
   if (!row) return null;
@@ -2207,6 +2228,14 @@ export interface ProblemLedgerFilter {
    * rerun four whole-corpus aggregations for every page.
    */
   includeFacets?: boolean;
+  /**
+   * Match `q` as the whole problem number rather than as a prefix or a search.
+   * A detail lookup wants one row, and the search branch is why it did not get
+   * one: `websearch_to_tsquery` reads a leading `-` as NOT, so `-11` matched
+   * every problem without "11" in it and the caller paged the entire corpus to
+   * find nothing.
+   */
+  exact?: boolean;
 }
 
 export interface ProblemCatalogRead {
@@ -2481,12 +2510,16 @@ function sourceCoversRepository(coverage: unknown, slug: string): boolean {
    all take the numeric branch, so this disjunct matches nothing in the current
    release; it is what lets a repository whose problems are not numbered have a
    detail page at all. */
-const PROBLEM_WHERE = `rs.release_root = $1 AND fr.repository_id = $2 AND primary_profile.source_role = 'problem_catalog'
+/* Still eight parameters in both shapes, because the facet aggregations below
+   share this predicate and pass exactly eight. */
+const problemWhere = (exact: boolean) => `rs.release_root = $1 AND fr.repository_id = $2 AND primary_profile.source_role = 'problem_catalog'
       AND (sd.coverage -> 'repository_slugs') ? $3
-      AND ($4 = '' OR CASE WHEN $4 ~ '^[0-9]+$'
+      AND ($4 = '' OR ${exact
+        ? `${PROBLEM_NUMBER_SQL} = $4`
+        : `CASE WHEN $4 ~ '^[0-9]+$'
             THEN ${PROBLEM_NUMBER_SQL} LIKE $4 || '%'
             ELSE (${PROBLEM_NUMBER_SQL} = $4
-                  OR n.search_document @@ websearch_to_tsquery('simple', $4)) END)
+                  OR n.search_document @@ websearch_to_tsquery('simple', $4)) END`})
       AND ($5 = '' OR ${PROBLEM_STATUS_SQL} = $5)
       AND ($6 = '' OR CASE WHEN ${PROBLEM_FORMALIZED_SQL} THEN 'formalized' ELSE 'not formalized' END = $6)
       AND ($7 = '' OR $7 = ANY(${PROBLEM_TAGS_SQL}))
@@ -2539,7 +2572,7 @@ export async function problemsForRepository(slug: string, input: ProblemLedgerFi
          coalesce(array_length(ps.source_ids, 1), 0) AS source_count,
          count(*) OVER()::integer AS total
        FROM ${PROBLEM_FROM}
-       WHERE ${PROBLEM_WHERE} ORDER BY ${order} LIMIT $9 OFFSET $10`,
+       WHERE ${problemWhere(input.exact === true)} ORDER BY ${order} LIMIT $9 OFFSET $10`,
       [...scope, limit, offset],
     );
   if (!includeFacets) {
@@ -2557,7 +2590,7 @@ export async function problemsForRepository(slug: string, input: ProblemLedgerFi
       `${PROBLEM_SOURCES_CTE}
        SELECT ${PROBLEM_STATUS_SQL} AS value, count(*)::integer AS count,
          count(*) FILTER (WHERE ${PROBLEM_FORMALIZED_SQL})::integer AS formalized
-       FROM ${PROBLEM_FROM} WHERE ${PROBLEM_WHERE}
+       FROM ${PROBLEM_FROM} WHERE ${problemWhere(false)}
        GROUP BY 1 ORDER BY count DESC, 1 ASC`,
       withoutOwnTerm(4),
     ),
@@ -2565,7 +2598,7 @@ export async function problemsForRepository(slug: string, input: ProblemLedgerFi
       `${PROBLEM_SOURCES_CTE}
        SELECT CASE WHEN ${PROBLEM_FORMALIZED_SQL} THEN 'formalized' ELSE 'not formalized' END AS value,
          count(*)::integer AS count
-       FROM ${PROBLEM_FROM} WHERE ${PROBLEM_WHERE}
+       FROM ${PROBLEM_FROM} WHERE ${problemWhere(false)}
        GROUP BY 1 ORDER BY count DESC, 1 ASC`,
       withoutOwnTerm(5),
     ),
@@ -2573,7 +2606,7 @@ export async function problemsForRepository(slug: string, input: ProblemLedgerFi
       `${PROBLEM_SOURCES_CTE}
        SELECT tag AS value, count(*)::integer AS count
        FROM ${PROBLEM_FROM}, LATERAL unnest(${PROBLEM_TAGS_SQL}) AS tag
-       WHERE ${PROBLEM_WHERE}
+       WHERE ${problemWhere(false)}
        GROUP BY 1 ORDER BY count DESC, 1 ASC`,
       withoutOwnTerm(6),
     ),
@@ -2584,7 +2617,7 @@ export async function problemsForRepository(slug: string, input: ProblemLedgerFi
        SELECT sibling AS value, count(DISTINCT n.native_id)::integer AS count
        FROM ${PROBLEM_FROM}
        CROSS JOIN LATERAL unnest(${PROBLEM_SOURCE_IDS_SQL}) AS sibling
-       WHERE ${PROBLEM_WHERE}
+       WHERE ${problemWhere(false)}
        GROUP BY 1 ORDER BY count DESC, 1 ASC`,
       withoutOwnTerm(7),
     ),
@@ -2816,19 +2849,28 @@ export async function problemRepositorySlugs(requestedRoot?: string): Promise<st
 }
 
 export async function problemByNumber(slug: string, problem: string, root?: string): Promise<ProblemRecord | undefined> {
-  /* A detail lookup consumes no facet rail. Running all four aggregate queries
-     here made every Problem navigation pay directory-page cost. */
-  const first = await problemsForRepository(slug, { root, q: problem, limit: 250, includeFacets: false });
-  const remaining = await Promise.all(Array.from(
-    { length: Math.max(0, Math.ceil((first.total - first.items.length) / 250)) },
-    (_, index) => problemsForRepository(slug, { root, q: problem, limit: 250, offset: first.items.length + index * 250, includeFacets: false }),
-  ));
-  const exact = [...first.items, ...remaining.flatMap((page) => page.items)]
-    .filter((item) => item.problem === problem);
-  if (exact.length > 1) {
-    throw new Error(`Problem route ${slug}/${problem} is ambiguous across ${exact.length} exact source rows`);
+  /* One query, matching the number rather than searching for it.
+   *
+   * A detail lookup consumes no facet rail. Running all four aggregate queries
+   * here made every Problem navigation pay directory-page cost.
+   *
+   * It also paged the whole corpus. The lookup asked for `q = problem` and then
+   * fetched every remaining page before filtering in JavaScript, because the
+   * search branch matches far more than the row it wants: a digits-only term is
+   * a prefix, so "9" also returns 94 and 900, and anything else goes to
+   * `websearch_to_tsquery`, which reads a leading `-` as NOT. `-11` therefore
+   * matched the 1,216 problems without "11" in them, and the route spent seven
+   * to nine seconds paging them to return a 404. Every other malformed segment
+   * answered in about 0.2s, which is what made this look like a parsing fault
+   * rather than the lookup it was.
+   *
+   * `limit: 2` rather than 1, because the ambiguity check below is the point of
+   * the exact read and cannot fire on a page of one. */
+  const page = await problemsForRepository(slug, { root, q: problem, exact: true, limit: 2, includeFacets: false });
+  if (page.items.length > 1) {
+    throw new Error(`Problem route ${slug}/${problem} is ambiguous across ${page.items.length} exact source rows`);
   }
-  return exact[0];
+  return page.items[0];
 }
 
 /* Bounded by `[slug]`, like every other Problem reader in this file. It read
