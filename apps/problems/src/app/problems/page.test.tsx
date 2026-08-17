@@ -84,7 +84,7 @@ describe("Problems directory", () => {
       expect(screen.getByRole("combobox", { name })).toBeInTheDocument();
     }
     expect(screen.getByRole("textbox", { name: "Exact Problem identifier" })).toHaveAttribute("maxlength", "256");
-    expect(screen.getByRole("link", { name: "Source coverage" })).toHaveAttribute("href", "/problems?view=overview");
+    expect(screen.getByRole("link", { name: "Inspect coverage" })).toHaveAttribute("href", "/problems?view=overview");
     expect(screen.getByRole("link", { name: /source-native Problem statement/u })).toHaveAttribute("href", "/problems/erdos-problems/321");
     expect(mocks.recent).not.toHaveBeenCalled();
     expect(mocks.coverage).not.toHaveBeenCalled();

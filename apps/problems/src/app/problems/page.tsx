@@ -10,11 +10,9 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { Badge } from "@vela/ui/components/badge";
 import { Button } from "@vela/ui/components/button";
 import { Input } from "@vela/ui/components/input";
-import { Item, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemTitle } from "@vela/ui/components/item";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@vela/ui/components/select";
 import { PageHero, PageSection, PageSectionHeader, PageShell } from "@vela/ui/vela/page-shell";
-import { ScientificText } from "@vela/ui/vela/scientific-text";
-import { decodeHtmlEntities } from "@vela/ui/lib/html-entities";
+import { StatementText } from "@/components/vela/statement-text";
 import { SourceCorpusMap } from "@/components/vela/source-corpus-map";
 import { ProblemSourceCoverage } from "@/components/vela/problem-source-coverage";
 import { LedgerPager } from "@/components/vela/ledger-pager";
@@ -93,9 +91,7 @@ function ProblemRows({ problems }: { problems: ProblemDiscovery[] }) {
         <span className="pt-0.5 font-mono text-meta tabular-nums text-muted-foreground">{problem.problem}</span>
         <div className="min-w-0">
           <Link href={problem.canonicalPath ?? "/problems"} className="block max-w-[74ch] text-body leading-snug underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4">
-            {kind === "formal"
-              ? <span className="font-mono text-compact [overflow-wrap:anywhere]">{record.statement}</span>
-              : <ScientificText text={decodeHtmlEntities(record.statement || `Erdős problem ${problem.problem}`)} />}
+            <StatementText statement={record.statement} kind={kind} className="text-compact" />
           </Link>
           <p className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-meta text-muted-foreground">
             {kind === "formal" ? <span className="text-foreground/70">formal statement</span> : null}

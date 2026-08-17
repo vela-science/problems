@@ -43,7 +43,14 @@ export async function ProblemPageView({ repository, problem, route, query, expec
     <PageHero density="compact" className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
       <div>
         <div className="flex flex-wrap items-center gap-2"><span className="text-eyebrow uppercase text-muted-foreground">Problem · {state.repositoryName}</span><span aria-hidden>·</span><Badge variant="outline">#{problem}</Badge></div>
-        <h1 className="mt-3 max-w-5xl text-display leading-tight"><ScientificText text={decodeHtmlEntities(state.problem.statement?.trim() || state.source.summary?.trim() || state.source.title)} /></h1>
+        {/* The display serif carries language, not notation. A resolved formal
+            statement stays in the Question section in its own face; here the
+            catalogue's retained label stands, which is also what the `label`
+            kind already resolves to. */}
+        <h1 className="mt-3 max-w-5xl text-display leading-tight"><ScientificText text={decodeHtmlEntities(
+          (state.problem.statement_kind === "prose" ? state.problem.statement?.trim() : "")
+          || state.source.summary?.trim() || state.source.title,
+        )} /></h1>
       </div>
       <ModeSwitcher mode={mode} basePath={route} />
     </PageHero>

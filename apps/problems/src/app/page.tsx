@@ -6,10 +6,9 @@ import { Badge } from "@vela/ui/components/badge";
 import { Button } from "@vela/ui/components/button";
 import { Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemTitle } from "@vela/ui/components/item";
 import { PageHero, PageSection, PageShell } from "@vela/ui/vela/page-shell";
-import { ScientificText } from "@vela/ui/vela/scientific-text";
 import { StateGlyph, type ClaimStanding } from "@vela/ui/vela/state-glyph";
-import { decodeHtmlEntities } from "@vela/ui/lib/html-entities";
 import { ProblemDiscoveryFacts } from "@/components/vela/problem-facts";
+import { StatementText } from "@/components/vela/statement-text";
 import { ScientificChangeFeed } from "@/components/vela/scientific-change-feed";
 import { discoveredProblems, recentScientificChanges, type ProblemDiscovery } from "@/lib/scientific-state";
 
@@ -29,8 +28,10 @@ function standingOf(problem: ProblemDiscovery): ClaimStanding {
   return STANDINGS.find((standing) => standing === value) ?? "unassessed";
 }
 
-function problemStatement(problem: ProblemDiscovery): string {
-  return decodeHtmlEntities(problem.record.statement?.trim() || `Problem ${problem.problem}`);
+/* The projection resolves every row to a non-empty statement and its kind;
+   this page only decides typography, through the shared `StatementText`. */
+function problemStatement(problem: ProblemDiscovery) {
+  return <StatementText statement={problem.record.statement} kind={problem.record.statement_kind} />;
 }
 
 export default async function HomePage() {
@@ -83,7 +84,7 @@ export default async function HomePage() {
           <div className="flex flex-wrap items-center gap-2"><Badge variant="secondary">{lead.field?.name ?? lead.topics[0]?.name ?? "Unclassified Topic"}</Badge><span className="text-meta text-muted-foreground">{lead.collection?.name ?? "Unclassified collection"}</span></div>
           <Link href={lead.canonicalPath ?? "/problems"} className="group mt-4 grid gap-5 focus-visible:outline-2 focus-visible:outline-offset-4 sm:grid-cols-[5rem_minmax(0,1fr)_auto]">
             <div className="flex items-start gap-3"><StateGlyph className="mt-1" standing={standingOf(lead)} verification="not_attempted" /><span className="font-mono text-title">{lead.problem}</span></div>
-            <div><p className="text-eyebrow uppercase text-muted-foreground">{lead.theme}</p><h3 className="mt-2 max-w-[70ch] text-title leading-snug"><ScientificText text={problemStatement(lead)} /></h3></div>
+            <div><p className="text-eyebrow uppercase text-muted-foreground">{lead.theme}</p><h3 className="mt-2 max-w-[70ch] text-title leading-snug">{problemStatement(lead)}</h3></div>
             <HugeiconsIcon icon={ArrowRight} aria-hidden className="mt-1 size-5 transition-transform duration-200 group-hover:translate-x-1" />
           </Link>
           <ProblemDiscoveryFacts problem={lead} className="mt-6" />
@@ -92,7 +93,7 @@ export default async function HomePage() {
         {assessed.length > 1 ? <ItemGroup className="mt-6 gap-0 divide-y">
           {assessed.slice(1, 5).map((problem) => <Item key={`${problem.repository}/${problem.problem}`} render={<Link href={problem.canonicalPath ?? "/problems"} />} className="group rounded-none border-0 px-0 py-5">
             <ItemMedia className="w-20 self-start"><StateGlyph standing={standingOf(problem)} verification="not_attempted" /><span className="font-mono text-label">{problem.problem}</span></ItemMedia>
-            <ItemContent><ItemTitle className="line-clamp-none text-label"><ScientificText text={problemStatement(problem)} /></ItemTitle><ItemDescription className="line-clamp-none">{problem.field?.name ?? problem.topics[0]?.name ?? "Unclassified Topic"} · {problem.record.source_count} exact {problem.record.source_count === 1 ? "source" : "sources"}</ItemDescription></ItemContent>
+            <ItemContent><ItemTitle className="line-clamp-none text-label">{problemStatement(problem)}</ItemTitle><ItemDescription className="line-clamp-none">{problem.field?.name ?? problem.topics[0]?.name ?? "Unclassified Topic"} · {problem.record.source_count} exact {problem.record.source_count === 1 ? "source" : "sources"}</ItemDescription></ItemContent>
             <ItemActions><HugeiconsIcon icon={ArrowRight} aria-hidden className="size-4 transition-transform duration-200 group-hover:translate-x-1" /></ItemActions>
           </Item>)}
         </ItemGroup> : null}
@@ -107,7 +108,7 @@ export default async function HomePage() {
         <ItemGroup className="mt-4 gap-0 divide-y">
           {open.slice(0, 5).map((problem) => <Item key={`${problem.repository}/${problem.problem}`} render={<Link href={problem.canonicalPath ?? "/problems"} />} className="group rounded-none border-0 px-0 py-5">
             <ItemMedia className="w-20 self-start"><span className="font-mono text-label">{problem.problem}</span></ItemMedia>
-            <ItemContent><ItemTitle className="line-clamp-none text-label"><ScientificText text={problemStatement(problem)} /></ItemTitle><ItemDescription className="line-clamp-none">{problem.field?.name ?? problem.topics[0]?.name ?? "Unclassified Topic"} · {problem.record.formalized ? "formalized" : "not formalized"} · {problem.record.source_count} exact {problem.record.source_count === 1 ? "source" : "sources"}</ItemDescription></ItemContent>
+            <ItemContent><ItemTitle className="line-clamp-none text-label">{problemStatement(problem)}</ItemTitle><ItemDescription className="line-clamp-none">{problem.field?.name ?? problem.topics[0]?.name ?? "Unclassified Topic"} · {problem.record.formalized ? "formalized" : "not formalized"} · {problem.record.source_count} exact {problem.record.source_count === 1 ? "source" : "sources"}</ItemDescription></ItemContent>
             <ItemActions><HugeiconsIcon icon={ArrowRight} aria-hidden className="size-4 transition-transform duration-200 group-hover:translate-x-1" /></ItemActions>
           </Item>)}
         </ItemGroup>

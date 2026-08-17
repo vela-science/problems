@@ -366,7 +366,7 @@ const cachedDiscoveredProblemsAtRoot = unstable_cache(
      key: statements resolved to formal text locally and to "Erdős problem N" in
      production, from the same commit and the same projection root. Bump this
      whenever what the reader returns changes. */
-  ["problems-problem-discovery-v2-statement-kind"],
+  ["problems-problem-discovery-v3-label-statement"],
   { revalidate: 3_600 },
 );
 
@@ -454,7 +454,7 @@ async function scientificProblemStateAtRoot(repositorySlug: string, problemNumbe
 
 const cachedScientificProblemStateAtRoot = unstable_cache(
   scientificProblemStateAtRoot,
-  ["problems-scientific-problem-state-v2-statement-kind"],
+  ["problems-scientific-problem-state-v3-label-statement"],
   { revalidate: 3_600 },
 );
 
