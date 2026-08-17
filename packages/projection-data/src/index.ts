@@ -810,9 +810,9 @@ const projectionManifestBaseSchema = z.object({
 
 export const currentProjectionManifestSchema = projectionManifestBaseSchema.extend({
   schema: z.literal(currentProjectionManifestSchemaId),
-  /* Not a literal on the pinned release: a projection is generated after the
-     code that reads it lands, so equality here makes a version bump
-     unperformable. See readable_predecessors in release.ts. */
+  /* Submission v3 is an explicit hard cut. Refresh the exact current projection
+     with the pinned release before publishing this reader; no predecessor is
+     silently interpreted. */
   vela_version: z.enum(velaReadableVersions as [string, ...string[]]),
   source_repositories: z.array(currentProjectionSourceRepositorySchema),
   source_registry: mathSourceRegistryReleaseSchema,

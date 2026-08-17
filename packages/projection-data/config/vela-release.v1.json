@@ -8,6 +8,5 @@
   "generator_binary_sha256": "sha256:c80e571ea056e04c1a14274e75c1e065b10ab3e49091ced2b6e69d0e90c1f8e2",
   "macos_generator_binary_sha256": "sha256:4332427789bf3dac83ebad9843670047b448f6ba370661f48a0100cbb61bc00c",
   "linux_archive_sha256": "sha256:6fa37c2e1fb9d413be03e6303962447c92d4b369f94f2f99da4bdef325b18bf0",
-  "macos_archive_sha256": "sha256:ca5b007f333f102de1c8330fba5c14d881edf0a189da8fc0eb8b38fc0edd011a",
-  "readable_predecessors": []
+  "macos_archive_sha256": "sha256:ca5b007f333f102de1c8330fba5c14d881edf0a189da8fc0eb8b38fc0edd011a"
 }

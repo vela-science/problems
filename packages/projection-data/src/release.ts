@@ -3,29 +3,6 @@ import releaseJson from "../config/vela-release.v1.json";
 
 const root = z.string().regex(/^sha256:[0-9a-f]{64}$/u);
 
-/**
- * A release this code can still READ a projection from, distinct from the one
- * it generates with.
- *
- * The record used to state one version and the reader asserted equality against
- * it, which made a version bump unperformable. Code lands first; the projection
- * is generated afterwards, by the workflow whose own gate runs that reader. So
- * for the whole window between the two, every projection-reading check failed —
- * including the gate on the refresh that would have closed the window. Bumping
- * to 0.966.3 deadlocked exactly there, and the only reason production stayed up
- * is that it was serving pages prerendered before the bump.
- *
- * Projection selection and pruning retain exact roots, not version labels. A
- * predecessor belongs here only while one of those retained manifests still
- * carries it; remove the entry in the same release tranche once no retained
- * root does. This is temporary compatibility, not a permanent reader mode.
- */
-const readablePredecessorSchema = z.object({
-  version: z.string().regex(/^0\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?$/u),
-  generator_binary_sha256: root,
-  macos_generator_binary_sha256: root,
-});
-
 export const velaReleaseSchema = z.object({
   schema: z.literal("vela.release-record.v1"),
   version: z.string().regex(/^0\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?$/u),
@@ -37,7 +14,6 @@ export const velaReleaseSchema = z.object({
   macos_generator_binary_sha256: root,
   linux_archive_sha256: root,
   macos_archive_sha256: root,
-  readable_predecessors: z.array(readablePredecessorSchema).default([]),
 })
   /* Each field above is well-formed on its own; these two say the record
      agrees with itself. They were asserted by the bespoke installer that used
@@ -57,22 +33,13 @@ export const velaReleaseSchema = z.object({
 export type VelaReleaseRecord = z.infer<typeof velaReleaseSchema>;
 export const velaRelease: VelaReleaseRecord = velaReleaseSchema.parse(releaseJson);
 
-/** Every `vela_version` string a stored projection may carry and still be read. */
-export const velaReadableVersions: readonly string[] = [
-  `vela ${velaRelease.version}`,
-  ...velaRelease.readable_predecessors.map((entry) => `vela ${entry.version}`),
-];
+/** The one `vela_version` a current projection may carry. */
+export const velaReadableVersions: readonly string[] = [`vela ${velaRelease.version}`];
 
-/* Reading is the widened set. GENERATING is not: the refresh resolves its
-   binary through velaGeneratorBinaryRootForPlatform below, which knows only the
-   pinned release, so a predecessor can never produce a new projection. */
+/** The released binaries that may have generated the current projection. */
 export const velaGeneratorBinaryRoots = new Set([
   velaRelease.generator_binary_sha256,
   velaRelease.macos_generator_binary_sha256,
-  ...velaRelease.readable_predecessors.flatMap((entry) => [
-    entry.generator_binary_sha256,
-    entry.macos_generator_binary_sha256,
-  ]),
 ]);
 
 /**
