@@ -1,486 +1,432 @@
-# Vela design system
-
-Vela turns retained scientific state into legible direction. The design system
-does the same: it makes evidence, standing, relationships, and next actions
-clear without decorating uncertainty away.
-
-The governing idea is **direction through evidence**.
-
-- The sail represents movement from recorded state toward a bounded next
-  direction.
-- In a figure, a constellation represents real relationships among records.
-  Every mark in a figure decodes to something a reader can check.
-- Atmosphere is not a figure and is not held to that rule. An editorial surface
-  may carry a drawn sky whose job is the register of the page. It stays behind
-  the type at hairline weights, carries no labels, claims no quantities, and
-  does not print. A reader must never have to ask whether it is data. When in
-  doubt, it is not atmosphere, it is a figure, and it decodes. The Problems
-  has no atmosphere at all.
-- Space is expressed through scale, quiet, contrast, and orientation, not neon,
-  particles, glow, or generic science-fiction styling.
-- Gold marks direction and provenance. It is not a general highlight colour.
-
-This document defines the shared system. It does not prescribe every page
-composition.
-
-## Architecture
-
-| Layer | Source | Responsibility |
-| --- | --- | --- |
-| Brand | `packages/brand` | DTCG-shaped tokens, type roles, fonts, sail geometry, state colours, licences, deterministic exports |
-| React UI | `packages/ui` | Official shadcn `base-nova` primitives on Base UI and stable Vela presentation semantics |
-| Editorial source | `content/editorial` | Non-runnable landing and essay composition source; no route or deployment |
-| Vela application | `apps/problems` | Problem Current State and Workspace, advanced records, hosted activity, URL state, local-signing handoff, and the Sigma graph |
-| Exact data | `packages/projection-data` | Rooted scientific projections consumed by both applications |
-| Activity data | `packages/activity-data` | Mutable hosted workspaces, attempts, discussion, rooted metadata, append-only Loro canvas updates, and unsigned drafts |
-
-`@vela/brand` is framework-neutral. `@vela/ui` is the shared React source for
-the Problems application and future private Vela applications. Runtime
-applications share primitives and stable semantics, not whole route layouts.
-
-`packages/ui/components.json` is the only shadcn source configuration.
-`packages/ui/registry.json` and `packages/ui/lab/catalog.json` govern canonical
-private source and agent-readable review scenarios; neither is served,
-published, exported, or copied into an application. Runtime consumers use only
-the package exports.
-
-## Two registers
-
-### Editorial
-
-The retained editorial source records the authored register: paper and midnight grounds, a
-system Iowan Old Style/Baskerville book stack for display and reading, Switzer
-metadata, and IBM Plex Mono for exact values. Zodiak and Gambetta remain
-licensed delivery assets but are not selected by the current WWW composition.
-Its rhythm is spacious and asymmetric. Figures carry arguments.
-
-The landing page is a scientific atlas rather than a dashboard or a condensed
-manual. It opens at midnight, crosses into paper, gives one exact data-derived
-source instrument, explains the protocol and authority boundary, and closes
-at the horizon. Authored prose may explain the product. Exact values, scientific
-marks, version, and observation date were derived from checked sources when the
-composition was active. A diagram
-that is only a protocol example says so in its visible caption.
-
-Editorial motion is episodic. One horizon arrival, one evidence-path draw, and
-small interaction feedback are enough. Prose is immediately readable. The
-personal-site influence is pacing and atmosphere, not a copied component tree,
-palette, constellation, or second design system.
-
-### Product
-
-`problems.science` is the sole canonical application origin. The product uses
-the instrument register: a
-cool-tinted light ground and an equivalent midnight one, both drawn from a single hue family so a small
-luminance step still reads as a step; Geist for interface text, IBM Plex Mono
-for identifiers and exact values, compact controls, and dense but readable
-ledgers. Dark mode is equivalent, not a separate aesthetic.
-
-The registers share the sail, state semantics, token source, accessible
-interaction, and exact data. Work mode adds writable controls without changing
-the scientific-state presentation.
-
-## Vocabulary
-
-The words on screen are the product's first design decision. A reader who
-cannot name what they are looking at cannot check it.
-
-**Public concepts.** Problem, Current State, Research Block,
-Workspace, Decision. These are the reader's orientation layer, not a new
-protocol ontology.
-
-**Exact provenance.** Repository, Claim, Submission, Proposal, Verification
-Record, Event, Source, Artifact, root, and format. Exact types
-remain one disclosure away and keep their durable routes.
-
-**Hosted activity.** Account, Workspace, Follow, Approach, Attempt (presented as
-a Session where performer provenance is the useful reader concept), Comment,
-Note, Assignment, Reproduction Request, Artifact, Agent Session, Submission
-Draft, and bounded CRDT update. A rooted Artifact contribution may be presented as a Research Block.
-Activity nouns appear in a Problem's Workspace and never label a scientific
-state axis.
-
-**Retired reader terms.** Finding is the predecessor name for a Claim. It may
-appear as an exact retained value, while the interface calls the record a
-Claim. Bundle is a protocol root and may appear only as a labelled exact value.
-
-Research Block is the readable presentation of a
-durable rooted contribution in the activity plane. The exact record type is
-always available in advanced provenance. Sources is a release-scoped registry
-and a navigation grouping.
-
-A destination is named after a retained record. Where the protocol's word and
-the reader's word differ, the reader's wins in interface text and the protocol's
-appears beside it as the exact value.
-
-## Type
-
-The product register has ten roles, generated from `packages/brand/vela.tokens.json`
-into `@vela/brand/type-product.css` and imported by the product applications'
-`globals.css` files:
-
-`display`, `statement`, `title`, `subtitle`, `body`, `compact`, `label`,
-`meta`, `micro`, `eyebrow`.
-
-`statement` is the role a record's own content takes: larger than any section
-heading so the record stays the largest text on its page, and at normal weight
-so that largest text is not bold chrome. It is what lets "the largest text is
-never the word for the record's type" hold on a Claim or a Proposal, whose
-content is a sentence rather than a name.
-
-Each role fixes size, leading, weight, and tracking together, because that is
-what makes a hierarchy legible at a glance. Reach for a role, not for a size
-utility plus `text-muted-foreground`. The role names avoid Tailwind's default
-size names on purpose, so `text-meta` cannot be confused with `text-xs`.
-
-The generated file is a `@theme` block. It is generated rather than authored so
-a scale derived from tokens does not consume the authored-CSS allowance.
-
-## Colour
-
-- Edit core values in `packages/brand/vela.tokens.json`, then regenerate. Never
-  copy brand values into prose documentation or route CSS.
-- `packages/ui/src/styles/product.css` owns the shadcn semantic bridge and the
-  product theme. Each application `globals.css` is an integration layer:
-  imports, Tailwind theme mapping, base typography, accessibility, print, and
-  true cross-route rules. Route presentation belongs beside its component.
-- Grounds and ink in the product register share one cool hue family. A ground
-  with no chroma makes every neighbouring surface read as the same surface;
-  a little shared chroma lets a small luminance step do the separating instead
-  of an outline. The page-to-panel step is 0.012 on paper, 0.026 on midnight.
-- Gold (`--direction`) has no foreground pair, and must not be given one. It can
-  be a stroke, a glyph, or a rule; it can never be a fill with text on it. Under
-  forced colours it maps to the system link keyword. The one wash of gold in
-  the product is the text-selection tint, which both registers share.
-- `--command` is the one plate that ships its own foreground. In dark mode it
-  lifts above the ground rather than sinking below it, because on midnight there
-  is no darker value left that carries contrast.
-- The grounds the contrast test reads out of the stylesheet — background, card,
-  and muted — are literal `oklch()` values in both themes, so the test can
-  measure them. An alias such as `--popover: var(--card)` is fine.
-- Use semantic variables and utilities. Raw colours are reserved for token
-  definitions and derived data visualisations with an explicit legend.
-- IBM Plex Mono is limited to roots, identifiers, commands, and exact tabular
-  values.
-
-## State
-
-Four state axes are independent, and collapsing any two of them is the
-protocol's named failure mode:
-
-| Axis | What it records | Values |
-| --- | --- | --- |
-| Claim standing | what an authorised, attributed Decision established | unassessed, accepted, accepted with conditions, retracted, superseded, corrected |
-| Verification outcome | what a scoped reviewer or check reported | pass, fail, inconclusive, error, not attempted |
-| Proposal status | where a candidate transition sits in review | pending review, accepted, rejected, and withdrawn as a separate appended record |
-| Repository integrity | whether the repository replays | replay verified or not initialised; strict pass or blocked, with blocker counts |
-
-The CLI emits four of those six: `accepted` after an accepted Decision on an
-addition or a revision, `retracted` after one on a withdrawal, `superseded`
-after a `finding.superseded` Event, and `unassessed` over every Claim no ruling
-stands over. `accepted with conditions` and `corrected` stay declared and
-underived, because a Decision records no conditions and `corrects` is a Claim
-relation no Decision reads.
-
-Through `0.966.3` the CLI answered this axis in the Proposal's words, returning
-pending review, rejected and withdrawn as a Claim's standing, and the product
-translated them back on read. Both halves are gone: the protocol took the
-decision upstream, and the projection now stores the declared word, so these
-surfaces render the column rather than a correction of it. Nothing is promoted
-onto the axis either — producer-side flags and Submission-authored conditions
-are shown as what they are, because reading them as `corrected` or `accepted
-with conditions` would say an authority had ruled where none has.
-
-A badge names exactly one axis and says which. Standing and verification never
-share a glyph, and neither appears without the word for its axis; the tone
-palette is shared across all four, so the glyph and the wording do the
-separating. Status always combines text with shape or icon and
-colour, never colour alone. A passing verifier is not an acceptance, a Git merge
-is not a Decision, and rank, search order, and graph position confer nothing.
-
-The state glyph encodes two axes in one mark so a ledger row can carry both
-without two badges: the ring is standing, the core is verification, and an inner
-ring marks a transitive cone. A half core is acceptance with conditions.
-
-A Standing badge names the object it is about. `Accepted locally` over a
-Problem reads as a verdict on the Problem, and the sentence qualifying it two
-blocks below loses; `Claim accepted locally` says whose Standing it is. Where
-the Claim covers a variant occurrence rather than the Problem's own statement,
-the surface says which, because a Claim binds reviewed source occurrences and
-never the Problem's canonical one — no Claim on these surfaces has ruled on the
-statement a Problem's own Source publishes.
-
-Independence is a set of declared facets, not a rank. A verifier declares what
-it was independent of and what it shared with the work it checked, and those
-run on different axes — actor kind, provider, context, toolchain, evidence —
-that no single ordering summarises. Render the declared facets and the
-shared-dependency disclosure verbatim and counted. Do not rank them, and do not
-let actor kind read as a quality grade: a human review is not automatically
-independent of the producer, and an agent review is not automatically less so.
-The disclosure is the more informative half, and a surface that drops it reads
-as though independence were simply unaddressed.
-
-Activity status and anchor freshness use separate labels. An active Attempt is
-not a pending Proposal. A completed Attempt is not a passing Verification or an
-accepted Claim. A stale activity anchor names a newer canonical root; it does
-not infer a change in Standing.
-
-## Navigation
-
-The visible product model is **Home → Problem → Overview | Evidence | Work |
-History**. Global navigation is Problems, Updates, My work when signed in, and
-Search; the sail is Home. Adding a Contribution is a contextual Problem action,
-not a permanent category. Repositories, Sources, Decisions, Proposals, Hubs,
-Graph, and exact Records remain reachable through contextual provenance,
-search, the footer, and technical-detail disclosures.
-
-The global product map remains stable inside a Problem; the Problem header owns
-the local section switch. Protocol records appear as context and progressive
-detail. The three primary actions use plain language: Read what is known, Check
-prior work, and Add a contribution. Similarity is advisory; exact identity is
-authoritative.
-
-Problems navigation has an explicit hierarchy: the global `/problems` entry,
-the source-owned collection directory, then the Problem. In the current release
-the trail is **Problems / Erdős Problems / Erdős problem N**. The first two
-crumbs are links on a detail page. At narrow widths the final label may contract
-to `#N`, but the collection crumb remains visible; a bare number or “Problem N”
-never stands as global identity.
-
-Source coverage is a reading instrument inside Current State. Its compact
-matrix answers which exact Sources have a numbered candidate, a reviewed
-reference, or retained statement text. The full statement and occurrence ledger
-is progressive detail. It uses neutral source labels and exact roots; Formal
-Conjectures, proof manifests, and VibeMathed activity never receive Standing
-glyphs. A reviewed Problem entity is a navigation grouping, not a scientific
-identity claim.
-
-The exact Records layer uses one contextual navigation system and one scope at
-a time. Its object collections do not define the primary Problems navigation.
-
-- The **sidebar** is contextual. Outside a Repository it lists release-wide
-  destinations. Inside a Repository it becomes that Repository's own sections,
-  grouped under Exact State records, Exact direction records, and Repository
-  provenance. The headings explicitly mark this as exact context, so
-  no exact record collection competes with the public product concepts.
-- The **header** carries one trail, and beside it only tools that are not
-  places: the navigation toggle, search-and-jump, notifications, theme, and
-  account. The trail's last element is the current page as text marked
-  `aria-current="page"`. Inside a Repository its first element is the Repository
-  switcher, a control rather than a link, which preserves the current section
-  across a switch; outside one, the page name stands alone except where the
-  Problems hierarchy requires global, collection, and record crumbs.
-- A view of a collection is entered from the collection, not listed beside it.
-  The graph is the Claim ledger drawn as a graph, so it is reached from the
-  ledger's toolbar and from the palette rather than from the sidebar. It renders
-  on its own route, because it is an instrument carrying its own state.
-- Every route body owns exactly one descriptive `h1`. On a collection the trail
-  already names the page, so that heading is visually hidden and carries its
-  scope; a screen reader then gets the orientation a sighted reader gets from
-  the trail. On a record or a Repository the heading is the record's own content
-  and stays visible.
-- Every glyph in a navigation surface is distinct. A repeated mark reads as a
-  repeated destination. Hugeicons is the interface icon family; a Vela-drawn
-  icon is added only where no generic glyph can express a scientific state
-  without ambiguity.
-- A current canonical URL identifies the exact product state a reader would
-  bookmark or send to a colleague. Retired prelaunch aliases are deleted
-  rather than becoming a permanent compatibility surface.
-
-## Page archetypes
-
-A page picks one archetype and does not blend two. Three pages that look alike
-teach a reader nothing about what is on them.
-
-- **Home.** A fast front door, not a state console or metrics dashboard. The
-  first viewport has one descriptive headline, a useful Problem search, the
-  Browse Problems and Add a Contribution actions, and one honest availability
-  sentence. Below it, an open three-step path leads to one published collection
-  row, a small list of Problems with reviewed evidence, and a plain-language
-  activity timeline. Exact provenance remains linked through contextual routes;
-  it does not become onboarding copy.
-- **Collection.** Opens quiet and horizontal and gets to its rows. The count and
-  the controls sit in the content's own toolbar, beside the thing they count or
-  control, not in a band above it. A paragraph explaining what a Claim is
-  belongs in the glossary, not above every page that lists them.
-- **Record.** Opens with the record. Its kind is a small eyebrow above, its own
-  content is the largest text on the screen, and provenance is one line of small
-  facts beneath. The largest text is never the word for the record's type.
-- **Problem.** Four blocks, in the order a reader needs them: what the Problem
-  asks, what is currently known, who or what produced and checked the latest
-  contribution, and what remains with the next action. Producer, check and
-  Decision render as a sequence, because watching three different actors act is
-  what makes "a passing verifier is not an acceptance" legible without a
-  disclaimer sentence. The latest contribution is the one supporting current
-  Standing, never the newest by timestamp; a withdrawn or pending Proposal
-  keeps its own status word instead of taking the headline. Source coverage and
-  retained statement text stay in the flow. Exact roots are the layer
-  progressive disclosure is for.
-- **Repository.** A Repository's own page: name, integrity, and the clone
-  affordance in the primary-action position, because the product's claim is that
-  nothing sits between a reader and the record. Content left, exact facts right.
-  This is the one archetype whose heading is visible. A Repository is the record,
-  not a page about one, so its name is the largest text on the screen for the
-  same reason a Claim's assertion is on a Claim page.
-- **Workbench.** Opens with the exact Problem identity, a State or Work mode,
-  and one current activity context. The hosted surface uses a three-part
-  grammar: shared object map, selected working object, and contextual inspector.
-  Its default canvas is a real projection of exact Workspace objects and parent
-  relationships, with a keyboard-equivalent object map. It exposes scientific
-  Approaches, Attempts, Research Blocks, notes, artifact references, and
-  Submission preparation.
-  The shared canvas note uses Loro updates rooted and retained as activity.
-  Entire is the sole first-party implementation for generic Git work sessions,
-  checkpoints, transcripts, resume, and search; when it is absent that
-  provenance is unavailable rather than recreated here. Local files, runtimes,
-  secrets, signing, and Repository mutation stay in the local Workbench.
-  Mutation controls live
-  in Work mode. Each saved record carries its anchor freshness and version
-  conflict state. Later Loro/CRDT fields may coordinate canvas geometry, drafts,
-  annotations, task order, presence, and temporary approaches only behind an
-  explicit activity contract; they never carry Decision or Standing semantics.
-- **Instrument.** A compact toolbar, the canvas, and a ledger equivalent for
-  everything the canvas shows.
-
-A four-cell signal grid belongs on a directory page, if anywhere. It is not the
-opening of a record, and it is not a substitute for hierarchy.
-
-## Separators
-
-Three separators, three jobs, never mixed.
-
-- A dimmed `/` joins the header trail, and is `aria-hidden`.
-- A spaced middot joins inline facts of the same kind on one line.
-- A hairline (`border-b`, `divide-y`) divides structure. One horizontal rule per
-  block: a component does not draw a boundary the page will draw again.
-
-Vertical dividers stay, because they separate peers. Stacked horizontal rules
-separate nothing that whitespace had not already separated.
-
-## Scientific visual language
-
-Use one small vocabulary across diagrams:
-
-- ring — the Claim's standing, always drawn; its colour and style say which
-  standing, never its presence;
-- filled core — a scoped Verification that passed; a half core, acceptance with
-  conditions;
-- amber ring — a Claim awaiting an authorized Decision;
-- faded ring with a forward chevron — standing moved on to a successor;
-- gold stroke — the route carrying standing or direction forward;
-- plain stroke — a recorded relationship;
-- dashed stroke — a relationship not yet realised;
-- seam or cross — correction, retraction, or conflict, never communicated by
-  colour alone.
-
-Every mark must decode to a real record or relationship. Derive geometry and
-counts from rooted data. Graph location, visual weight, and search rank never
-imply authority.
-
-Figures maximise data-ink, annotate directly, and carry a caption below the
-visual. A complex visual must have a text or ledger equivalent.
-
-Problems uses visualisation to reveal a relationship, never to manufacture a
-dashboard. The global entry may compare collection coverage once two or more
-published collections make that comparison useful; with one collection it
-states the coverage directly. A collection may chart status or evidence only
-when the same rooted rows remain available as a filterable ledger. History may
-use a left-aligned chronology for Contribution, Check, Decision, correction,
-and supersession events; correction and dependency diagrams require exact
-edges and a before/after or ledger equivalent. Provenance breakdowns retain
-performer, provider, model, method, environment, independence, and limitations
-as readable facets rather than reducing quality to actor kind.
-
-Use the maintained shadcn Chart composition and Recharts only when a chart
-passes that test. Labels are written onto or beside marks, focusable data has a
-keyboard path, and the underlying values remain readable without colour,
-motion, hover, or JavaScript. At narrow widths and in print or forced colours,
-prefer the exact table or chronology over shrinking a dense plot.
-
-## Components and compositions
-
-Generic interaction comes from official shadcn/Base UI source in `@vela/ui`:
-buttons, fields, dialogs, sheets, sidebar, command, selection, table,
-disclosure, tooltip, focus, and keyboard behaviour.
-
-Vela-owned shared components are limited to stable scientific presentation
-semantics: status badges, the state glyph, exact values, copy feedback, and
-bounded mathematical text. Shells, domain columns, source filters, graph
-controllers, reading rails, and authored figures stay with the application that
-owns them.
-
-The Problems ships no Card. A record row is an article or an Item on
-hairlines; a boxed surface is reserved for genuinely detachable overlays, and is
-never nested.
-
-Problems may use a bounded panel for an editable activity record. It does not
-wrap exact State content in dashboard cards or use card prominence to imply
-scientific authority.
-
-Tailwind Plus is licensed for use in this private repository. Its patterns may
-be adapted where they improve a real surface. Adaptations retain provenance in a
-comment, use the shared token system, and converge on shadcn/Base UI behaviour
-instead of introducing Headless UI, Heroicons, Motion, or a second component
-suite by accident. One-off adaptations remain app-local; stable cross-app
-compositions may enter `@vela/ui`. Raw template source is never committed.
-
-## Layout, motion, and accessibility
-
-- Editorial prose stays within a readable measure; wide figures break out from
-  the reading axis, not blindly from the viewport.
-- The retained editorial source records its historical motion tiers in
-  `content/editorial/source/src/styles/tokens.css`: 160ms
-  feedback, 240ms standard, 420ms deliberate settle, 900ms for an evidence path
-  drawing itself, and 1100ms for the one arrival a plate is allowed. Product
-  applications keep motion to bounded 160–240ms state transitions: mode
-  continuity, disclosures, mutation feedback, and loading. Problems may use
-  Motion for layout continuity while shared controls retain shadcn/Base UI
-  interaction behaviour. Every app owns its reduced-motion clamp.
-- Animate opacity or transform for controls. Prose never animates into
-  readability.
-- Honour `prefers-reduced-motion`, forced colours, keyboard navigation, and 200%
-  zoom.
-- Text clears WCAG contrast. Focus is visible immediately and uses its own
-  token rather than borrowing a state colour; in the product register that token
-  is never gold. No core content depends on hover, JavaScript
-  arrival, or horizontal scrolling.
-- At narrow widths, recompose diagrams and ledgers instead of shrinking a
-  desktop canvas into texture.
-
-## Budgets
-
-Sizes are measured and reported, never enforced as a ceiling. A threshold picked
-once cannot tell a regression from a surface that grew because it now says more.
-
-What fails the build is a category error rather than a number: a heavy runtime
-entering an initial chunk, a browser file embedding the projection, per-record
-routes going static, the search surface losing its prerender, a font profile
-gaining a face. The one size that does fail a build is authored global and
-theme CSS, capped at 180 lines, and that cap is structural too: it exists so
-route presentation cannot accumulate in a global stylesheet.
-
-## Avoid
-
-- Generic admin-dashboard metrics as the primary hierarchy
-- Stars, orbital lines, or space imagery inside a figure without data meaning,
-  or anywhere a reader could mistake them for evidence
-- Dark-neon AI styling, glass, glow, gradient text, or fake depth
-- Parallel primitive libraries, token palettes, icon systems, or global CSS
-  vocabularies
-- Repeated authority explanations and manually copied release facts
-- A band above a page that repeats what the header already said
-- Hiding exact state instead of progressively disclosing it
-- Styling hosted activity as a Decision, Verification, or Standing change
-
-When a surface feels flat, reach for evidence, hierarchy, and composition first.
-They are what usually fix it. Atmosphere is allowed to be the answer on an
-editorial opening, where the register of the page is part of what it is saying,
-but it is the answer least often, and never in place of an argument.
-
-## Related contracts
-
-This file governs the shared system. [`PRODUCT.md`](PRODUCT.md) defines what the
-product is and what it may never become; [`docs/design-system.md`](docs/design-system.md)
-records the package, shadcn/Base UI, Tailwind, and licensed-source workflow;
-[`docs/WEB.md`](docs/WEB.md) records operations. A rule in those files that
-contradicts this one is a defect in that file.
+---
+version: alpha
+name: Vela Direction Through Evidence
+description: A calm scientific workspace that makes questions, evidence, provenance, and next actions legible.
+colors:
+  background: "oklch(0.973 0.006 245)"
+  foreground: "oklch(0.21 0.032 265)"
+  surface: "oklch(0.985 0.005 245)"
+  surface-subtle: "oklch(0.945 0.01 245)"
+  border: "oklch(0.891 0.006 264)"
+  primary: "oklch(0.184 0.04 261)"
+  primary-foreground: "oklch(0.973 0.006 245)"
+  focus: "oklch(0.235 0.082 258)"
+  direction: "#846315"
+  evidence: "#2F6F6B"
+  progress: "#3F744B"
+  caution: "#805A16"
+  conflict: "#9C3F4A"
+  link: "#4E7499"
+  data-blue: "#4E7499"
+  data-teal: "#4F8F8B"
+  data-green: "#6E9F77"
+  data-amber: "#B7832F"
+typography:
+  display:
+    fontFamily: Geist
+    fontSize: 24px
+    fontWeight: 600
+    lineHeight: 28px
+  statement:
+    fontFamily: Geist
+    fontSize: 22px
+    fontWeight: 500
+    lineHeight: 32px
+  title:
+    fontFamily: Geist
+    fontSize: 18px
+    fontWeight: 600
+    lineHeight: 24px
+  subtitle:
+    fontFamily: Geist
+    fontSize: 15px
+    fontWeight: 500
+    lineHeight: 22px
+  body:
+    fontFamily: Geist
+    fontSize: 14px
+    fontWeight: 400
+    lineHeight: 22px
+  compact:
+    fontFamily: Geist
+    fontSize: 13px
+    fontWeight: 400
+    lineHeight: 20px
+  label:
+    fontFamily: Geist
+    fontSize: 12px
+    fontWeight: 600
+    lineHeight: 16px
+  exact:
+    fontFamily: IBM Plex Mono
+    fontSize: 12px
+    fontWeight: 400
+    lineHeight: 18px
+rounded:
+  dense: "5px"
+  control: "6px"
+  panel: "8px"
+  feature: "11px"
+  full: "999px"
+spacing:
+  xs: "4px"
+  sm: "8px"
+  md: "12px"
+  base: "16px"
+  lg: "24px"
+  xl: "32px"
+  2xl: "48px"
+  3xl: "72px"
+  touch: "44px"
+  reading-measure: "72ch"
+  shell-max: "1600px"
+components:
+  button-primary:
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.primary-foreground}"
+    typography: "{typography.label}"
+    rounded: "{rounded.control}"
+    padding: "{spacing.md}"
+    height: "{spacing.touch}"
+  button-secondary:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.foreground}"
+    typography: "{typography.label}"
+    rounded: "{rounded.control}"
+    padding: "{spacing.md}"
+    height: "{spacing.touch}"
+  search:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.foreground}"
+    typography: "{typography.body}"
+    rounded: "{rounded.panel}"
+    padding: "{spacing.base}"
+    height: "{spacing.2xl}"
+  panel:
+    backgroundColor: "{colors.surface-subtle}"
+    textColor: "{colors.foreground}"
+    typography: "{typography.body}"
+    rounded: "{rounded.panel}"
+    padding: "{spacing.lg}"
+  feature-tile:
+    backgroundColor: "{colors.background}"
+    textColor: "{colors.foreground}"
+    typography: "{typography.title}"
+    rounded: "{rounded.feature}"
+    padding: "{spacing.xl}"
+  data-row:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.foreground}"
+    typography: "{typography.compact}"
+    rounded: "{rounded.dense}"
+    padding: "{spacing.sm}"
+  status-evidence:
+    backgroundColor: "{colors.evidence}"
+    textColor: "{colors.background}"
+    typography: "{typography.label}"
+    rounded: "{rounded.full}"
+    padding: "{spacing.xs}"
+  status-progress:
+    backgroundColor: "{colors.progress}"
+    textColor: "{colors.background}"
+    typography: "{typography.label}"
+    rounded: "{rounded.full}"
+    padding: "{spacing.xs}"
+  status-caution:
+    backgroundColor: "{colors.caution}"
+    textColor: "{colors.background}"
+    typography: "{typography.label}"
+    rounded: "{rounded.full}"
+    padding: "{spacing.xs}"
+  status-conflict:
+    backgroundColor: "{colors.conflict}"
+    textColor: "{colors.background}"
+    typography: "{typography.label}"
+    rounded: "{rounded.full}"
+    padding: "{spacing.xs}"
+  code-panel:
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.primary-foreground}"
+    typography: "{typography.exact}"
+    rounded: "{rounded.panel}"
+    padding: "{spacing.base}"
+  timeline-node:
+    backgroundColor: "{colors.direction}"
+    textColor: "{colors.background}"
+    typography: "{typography.subtitle}"
+    rounded: "{rounded.full}"
+    size: "{spacing.base}"
+  focus-indicator:
+    backgroundColor: "{colors.focus}"
+    textColor: "{colors.background}"
+    rounded: "{rounded.dense}"
+    size: "{spacing.xs}"
+  link:
+    backgroundColor: "{colors.background}"
+    textColor: "{colors.link}"
+    typography: "{typography.body}"
+  chart-blue:
+    backgroundColor: "{colors.data-blue}"
+    textColor: "{colors.background}"
+  chart-teal:
+    backgroundColor: "{colors.data-teal}"
+    textColor: "{colors.foreground}"
+  chart-green:
+    backgroundColor: "{colors.data-green}"
+    textColor: "{colors.foreground}"
+  chart-amber:
+    backgroundColor: "{colors.data-amber}"
+    textColor: "{colors.foreground}"
+  hairline:
+    backgroundColor: "{colors.border}"
+    textColor: "{colors.foreground}"
+    height: "1px"
+  reading-measure:
+    width: "{spacing.reading-measure}"
+  application-shell:
+    width: "{spacing.shell-max}"
+    padding: "{spacing.3xl}"
+---
+
+# Vela Web design system
+
+## Overview
+
+Vela's visual thesis is **direction through evidence**. The interface should
+feel like a modern scientific working environment: calm enough for close
+reading, vivid enough to explain state and relationships, and familiar enough
+that search, files, diffs, timelines, and settings need no tutorial.
+
+The physical scene is a bright editorial workspace by day and a dim instrument
+panel by night. Paper-like reading surfaces sit inside a navy product shell.
+Warm gold marks direction, while teal, green, amber, red, and blue carry
+evidence, progress, caution, conflict, and links. Sails suggest movement from a
+known state toward useful work. Constellation lines appear only when they encode
+real relationships.
+
+The product synthesizes task patterns from GitHub, Entire, Hugging Face,
+Linear, Ramp, and scientific working-document interfaces. These references do
+not set Vela's brand or ontology. Shadcn and Base UI supply accessible behavior.
+Vela tokens, data, compositions, and editorial judgement supply the identity.
+
+Cards, panels, tiles, rows, canvases, tables, and charts are all valid. Choose
+the form that makes the user's comparison or action easiest. Avoid making every
+section a card or turning every count into a dashboard tile.
+
+## Colors
+
+The default light theme uses a cool off-white workspace, near-navy text, and
+white raised reading surfaces. The dark theme inverts the same hierarchy: a
+deep navy workspace, slightly lighter panels, warm white text, and semantic
+colours adjusted to retain contrast. Theme changes must not change meaning.
+
+Use colour by role:
+
+- **direction** marks the recommended path, active collection cue, or next step;
+- **evidence** marks sources, artifacts, and corroborating material;
+- **progress** marks completed or supported outcomes;
+- **caution** marks uncertainty, staleness, pending work, and partial results;
+- **conflict** marks contradictions, failed checks, and destructive actions;
+- **link** marks navigation and relationships.
+
+Every semantic colour appears with text, a glyph, pattern, position, or shape.
+Do not use colour as the sole state signal. Forced-colour mode uses system
+colours and preserves borders, focus, selection, and graph edges.
+
+Data visualizations use blue, teal, green, amber, and conflict red in that
+order. Use one hue with intensity for ordered values. Use multiple hues only
+for distinct categories. Legends include exact totals and a text or table
+equivalent. “Unknown” is a named category, never transparent missing colour.
+
+## Typography
+
+Geist is the product face. IBM Plex Mono is reserved for hashes, identifiers,
+paths, commands, code, and other exact values. Scientific statements use Geist
+with mathematical notation rendered by the existing scientific-text pipeline.
+
+Use the token scale in frontmatter. Display type introduces a page; statement
+type carries the scientific question; title and subtitle establish sections;
+body supports reading; compact and label support dense metadata. Do not shrink
+critical metadata below 12px. At narrow widths and 200% zoom, allow lines to
+wrap rather than compressing type.
+
+Headings use sentence case. Labels are short and concrete. Long-form reading
+stays within 72 characters per line where practical. Numbers in comparable
+columns use tabular figures. Exact values may truncate visually only when copy
+and full-value disclosure remain available.
+
+## Layout
+
+The app shell has a maximum width of 1600px and uses a 12-column mental grid.
+Content does not need to draw all twelve columns. Standard page gutters are
+32px on wide screens, 24px on compact desktop, 16px on mobile, and 12px only
+for dense data that needs the width. Touch targets remain at least 44px.
+
+Primary compositions:
+
+- **reading**: a 72ch main column with a 280 to 320px contextual rail;
+- **directory**: toolbar, optional distribution summary, then dense rows or
+  varied editorial tiles;
+- **timeline**: one chronological spine with grouped events and inline previews;
+- **compare**: aligned before and after panes that stack on narrow screens;
+- **workspace**: resizable file or context rail, main canvas, and task panel;
+- **canvas**: diagram or graph with a synchronized list fallback.
+
+At 1024px, rails may become inline summaries or drawers. At 768px, split panes
+stack and toolbars wrap into grouped controls. At 390px and 320px, preserve the
+question, state, and primary action first; secondary metadata moves into
+disclosure. Horizontal scrolling is limited to code, tables, and diagrams with
+an explicit scroll region and an alternative view.
+
+Density follows the task. Reading pages use generous rhythm. Search results,
+files, activity, and evidence lists use compact aligned rows. Controls can be
+compact without reducing target size.
+
+## Elevation & Depth
+
+Depth comes from a restrained surface ladder:
+
+1. **workspace**: page background;
+2. **reading surface**: white or dark-panel content plane;
+3. **contained panel**: subtle tonal shift plus border;
+4. **floating control**: popover, dialog, command menu, or sticky rail with a
+   small shadow;
+5. **modal focus**: overlay plus the strongest supported shadow.
+
+Use borders and tonal contrast before shadows. Shadows indicate overlap, not
+importance. Nested panels should normally differ by tone or spacing rather
+than accumulating borders and shadows.
+
+## Shapes
+
+Controls use the current Tailwind radius ladder: about 5px for dense elements,
+6px for standard controls, 8px for panels, and 11px for feature tiles. Pills
+are reserved for tags, filters, compact statuses, and people, not containers.
+
+Sail angles can shape selected markers, progress rails, or editorial crops.
+Constellation lines connect real source, evidence, review, and state nodes.
+Arrows encode direction or dependency, not decoration. Avatars and source
+marks retain their native shape inside consistent frames.
+
+## Components
+
+### Navigation and search
+
+The header keeps Home on the sail and exposes Problems, Updates, My work when
+signed in, and Search. Breadcrumbs preserve collection and Problem identity.
+Global search follows a command-menu model with scoped results, keyboard
+movement, recent queries, and explicit empty and unavailable states.
+
+Segmented controls switch views of the same dataset. Tabs switch stable page
+areas. Filters use URL-backed values and show active selections. Mobile
+navigation retains the same labels and reading order.
+
+### Discovery and scientific records
+
+Collection tiles combine editorial identity, exact Problem count, source and
+last-check information, and one action. Collection distributions show
+source-declared open, solved, formalized, reviewed, and unknown coverage with
+exact totals and a table equivalent.
+
+Problem rows identify collection, question, source state, current Vela state,
+evidence strength, last check, and contribution readiness as separate axes.
+Related or parameter-family views are derived only from exact source
+relationships. They preserve each Problem identity and label unknown or
+expensive cells honestly.
+
+The Problem header uses statement typography, a compact visual state summary,
+and a persistent fact rail. It distinguishes source status, current
+Repository-local state, review strength, publication state, and staleness.
+
+### Evidence and provenance
+
+Evidence maps show source to artifact to check or review to current state.
+Nodes use typed glyphs, short labels, and semantic colour. Edges use direction,
+relation labels, and a synchronized list. Exact roots and provider details live
+in progressive disclosure.
+
+Provenance flows name performer, provider, model or method, environment,
+independence, limitations, and time. Human and AI performers use the same
+hierarchy. Actor kind never substitutes for quality.
+
+Evidence lists support papers, proofs, computations, datasets, code, negative
+results, and corrections. Every public search or agent-visible object has a
+durable route or an explicit unavailable or private state.
+
+### Chronology, corrections, and comparison
+
+Activity and History use a true timeline. Each node shows what changed, who or
+what acted, the before and after state when relevant, and expandable technical
+detail. Group repetitive low-signal events without hiding meaningful changes.
+
+Diffs label added, removed, and changed content semantically. Formal statements
+and code use line-level comparison when source is available. Corrections show
+supersession and retain immutable identity. Mutable presentation metadata can
+be corrected with visible history.
+
+### Work and account
+
+Contribution uses a stepper: choose Problem, attach work or evidence, review
+scope and provenance, submit. File trees, code previews, artifact summaries,
+upload state, retry state, and local-agent handoff sit beside the step that
+needs them. Do not show success until metadata and references are durable.
+
+My work and Account use grouped rows, activity, connections, repositories, and
+next actions. Profiles use avatars and real contribution or review summaries.
+Do not invent streaks, reputation, quotas, authority badges, or activity heatmaps
+when data is absent.
+
+### Charts and relationship views
+
+Use charts to answer a named question about distribution, chronology,
+comparison, verification strength, provenance, dependency, or change. Prefer
+server-rendered SVG or HTML for small views and lazy-load heavier interactive
+graphs below the fold. Every chart has a visible title, explanation, legend,
+exact values, keyboard path, and text or table alternative.
+
+Relationship canvases provide search, zoom controls, reset, selection detail,
+and a synchronized list. Reduced-motion mode removes animated traversal.
+Print renders the alternative view and the selected relationship summary.
+
+### Interaction states
+
+- **hover** increases local contrast without moving layout;
+- **focus** uses the focus token with a visible two-pixel outline or ring;
+- **active** acknowledges the press through colour or one-pixel depth;
+- **selected** persists with colour, glyph, and `aria-current` or state;
+- **loading** preserves layout with skeletons and names long-running work;
+- **empty** explains why the area is empty and offers the next valid action;
+- **error** states what failed, what was preserved, and how to retry;
+- **degraded** distinguishes stale, rate-limited, and unavailable reads;
+- **disabled** remains legible and explains the requirement when useful.
+
+Motion uses 140ms for control feedback, 240ms for layout transitions, and
+420ms only for meaningful diagrams or progress. Respect reduced motion and
+never delay a task for animation.
+
+## Do's and Don'ts
+
+### Do
+
+- Put the scientific question, current understanding, and next action first.
+- Use diagrams, timelines, charts, files, diffs, and previews when they shorten
+  the path to understanding.
+- Pair compact density with alignment, grouping, and generous section rhythm.
+- Show provenance where it changes interpretation, then disclose exact detail.
+- Design loading, empty, error, stale, retry, offline, and narrow states with
+  the primary composition.
+- Use panels and cards when containment or comparison improves the task.
+- Test at 1280px, 390px, 320px, 200% zoom, forced colours, reduced motion,
+  keyboard, touch, and print.
+
+### Don't
+
+- Do not make protocol terms, hashes, roots, or authority prose the first task.
+- Do not collapse source status, Vela state, evidence strength, and publication
+  state into one badge.
+- Do not use generic KPI grids, identical card walls, decorative charts,
+  star fields, gradients, glass, or force-directed hairballs.
+- Do not encode meaning only in colour, animation, hover, or pointer position.
+- Do not use tiny dense type, ambiguous counts, orphan routes, or false success.
+- Do not copy a reference product's ontology, branding, reputation system, or
+  centralized review semantics.

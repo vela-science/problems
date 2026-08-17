@@ -1,113 +1,115 @@
 ---
 register: product
+extends: ../../PRODUCT.md
 ---
 
-# Vela Problems
+# Problems product contract
 
-## Purpose
+Problems is the unified application at `problems.science`. It turns an exact,
+read-only scientific projection into a useful public reading experience and
+connects that experience to non-authoritative hosted work.
 
-Vela Problems joins a read-only scientific State surface with a writable,
-non-authoritative Workspace. It helps researchers inspect published
-repositories, find direct contribution paths, coordinate attempts, retain rooted Research
-Blocks, and prepare unsigned handoffs without confusing activity for authority.
+## Release truth
 
-Its canonical closed loop is `Problem -> native work -> Submission -> Proposal
--> Verification -> Decision -> Event -> Replay -> Standing`. A Problem-scoped
-Workspace may retain an Approach and Attempt as bounded coordination, but that
-activity is not a protocol object and never becomes evidence or Standing by
-itself. Historical protocol objects retain their exact bytes and names; retired
-hosted work inventories are not part of the current product.
+The current release contains one published collection: 1,217 Erdős Problems.
+The global architecture supports future source-owned collections without
+pretending that evidence providers or formal libraries are collections.
 
-## Users
+## Route jobs
 
-- Researchers locating a Problem, its exact sources, or a direct contribution path.
-- Producers inspecting exact packets and verifier requirements.
-- Reviewers separating proposal, verification, and terminal decisions.
-- Readers tracing a result to its evidence and reproduction path.
+| Route | User job | First useful action |
+| --- | --- | --- |
+| `/` | Understand Vela and resume meaningful work | Search or browse Problems |
+| `/problems` | See what collections actually exist | Open Erdős Problems |
+| `/problems/erdos-problems` | Scan and filter the collection | Open a Problem |
+| `/problems/erdos-problems/{number}` | Read the question and current evidence | Read what is known |
+| `/activity` | Review meaningful recent changes | Open the affected Problem |
+| `/search` | Find Problems, Contributions, and public artifacts | Open an exact result |
+| `/my-work` | Resume followed Problems, drafts, imports, and workspaces | Continue work |
+| `/contribute` | Add a scoped Contribution | Choose a Problem |
+| `/import/github` | Connect repository work | Select and inspect a repository |
+| `/codebases` | Browse connected code context | Open files or continue locally |
+| `/account` | Manage private identity, connections, security, and activity | Continue work or manage a connection |
 
-## Product principles
+Repository, source, record, and graph routes remain durable contextual
+destinations. They do not become primary navigation sections.
 
-- Lead with the scientific object or workflow, not explanation about the interface.
-- Use familiar repository and data-table behavior.
-- Keep exact roots one interaction away without making them the primary reading layer.
-- Preserve accepted, pending, rejected, withdrawn, replayed, verified, recorded, and strict-blocked as distinct states.
-- Workspaces may change hosted activity, but never sign, mutate a Repository,
-  or imply that verification is acceptance.
-- Human accounts personalize product workflow only. A signed-in account is not
-  a Vela actor identity and carries no repository authority.
-- Center each claim record on “Why this stands”: retained evidence, scoped
-  verification, Decisions, Events, corrections, and the resulting Standing.
+## Home
 
-## Product model
+Home is the fast front door. The first viewport states what the product does,
+what exists today, and where to begin. Signed-out readers get search, Browse
+problems, and Add a contribution. Signed-in readers also get work to resume,
+followed Problems, and meaningful changes. Exact roots stay below progressive
+disclosure.
 
-The public product has two prominent nouns:
+## Global Problems and collection discovery
 
-- **Problem** — the canonical scientific question and current understanding.
-- **Contribution** — a proof, computation, dataset, review, negative result,
-  correction, or other bounded evidence.
+`/problems` is a true global collection entry, not an alias for the Erdős
+catalog. It names the single current collection and may show useful recent or
+reviewed Problems without implying a multi-domain inventory.
 
-Everything else is contextual to those two: a Review or Check evaluates a
-Contribution; a Decision changes whether a Contribution is included in
-current state; a Source supports a statement or Contribution; a Repository
-contains relevant code or formal material; human, agent, model, tool,
-method, and environment are provenance; exact records, hashes, signatures,
-and protocol objects are technical details. All of these remain real and
-linkable, but they do not compete for global navigation.
+The Erdős directory provides search, filters, bounded pagination, exact counts,
+source-state distribution, evidence coverage, last-check information, and
+honest unknowns. Parameter-family views appear only when exact source relations
+support them. They group navigation and comparison without merging distinct
+Problem identities or changing Standing.
 
-Global navigation is Problems, Updates, My work (signed in), and Search.
-The logo is Home. "Add contribution" is a contextual action, not a
-permanent information category. Repositories, Sources, Records, Decisions,
-Proposals, Hubs, and Graph keep their durable routes, reached through
-contextual links, search, the footer map, and technical-detail disclosures.
+## Problem contract
 
-The Problems navigation is three levels, not one flattened catalog:
+Every Problem answers, above the fold:
 
-- `/problems` lists the Problem collections explicitly published in this
-  release and states the present coverage honestly;
-- `/problems/erdos-problems` is the current 1,217-row **Erdős Problems**
-  directory;
-- `/problems/erdos-problems/{number}` is the canonical Problem page.
+- What is the question?
+- What is its current state, and whose state is it?
+- What is the strongest evidence?
+- What remains uncertain or open?
+- What can I do next?
 
-Home is the fast front door to that hierarchy. Its first viewport explains the
-product in plain language, offers Problem search and the two primary actions,
-and states the current one-collection, 1,217-Problem coverage without presenting
-evidence sources as collections. Activity and reviewed starting points follow
-orientation; exact record context stays progressive.
+The stable reading model is Question, What is known, Evidence, Contributions,
+Work, and History. Existing route tabs may group these areas, but Contributions,
+evidence, and corrections cannot be reachable only through secret deep links.
 
-Problem numbers are collection-local. Breadcrumbs, search results, recent-item
-surfaces, metadata, and structured data therefore retain **Erdős Problems** as
-part of the identity. Evidence sources do not become new collections by
-inference; future collections require source-owned stable identities and an
-explicit resolver/profile.
+The fact rail names collection identity, source status and last check, current
+Repository-local state, evidence strength, contributors, staleness, and one
+handoff action. Source status, current state, verification strength, performer
+provenance, and publication state remain separate axes.
 
-A Problem page has four sections: **Overview** (the question, its state,
-plain-language current understanding, what remains unknown, the primary
-next action), **Evidence** (contributions, verification strength,
-human/agent/tool attribution as peers, sources and artifacts, inclusion in
-current state), **Work** (open next steps, approaches, negative results,
-start or continue work, submit a contribution), and **History**
-(corrections, reviews, included and rejected contributions, supersession,
-exact technical provenance on expansion).
+## Contributions and prior work
 
-Data displays follow the question the reader is answering. Collection and
-search pages use exact filterable ledgers; History uses chronology;
-corrections use before/after or supersession paths; provenance summaries keep
-their underlying facets readable. Charts appear only for real comparisons and
-always retain a text or table equivalent. The current single-collection release
-therefore states its coverage directly instead of presenting a decorative
-dashboard.
+Contributions are typed as proof, computation, dataset, review, negative result,
+correction, or other evidence. Rows show contributor, kind, target, assessment,
+publication state, and expandable provenance. Human and AI performers use the
+same presentation hierarchy.
 
-Repository-local Standing appears on the exact Contribution it governs; it
-never reads as the status of the whole Problem. The Problem's own state is
-the four-word public axis: Open, Partial, Resolved, or Contested, each
-derived from declared source status and accepted Contributions, with its
-basis stated beside it.
+Prior-work matching is advisory. Results distinguish possible duplicate,
+intentional replication, no confident match, and stale index. Partial and
+negative results show target, approach, assumptions, environment, outcome, and
+retry boundary.
 
-## Anti-references
+## Contribution and import reliability
 
-- Generic admin dashboards dominated by metric cards.
-- Bespoke ledgers, page frames, filter bars, and disclosure widgets.
-- Dark-neon AI tooling, decorative graphs, or marketing chrome.
-- Repeated authority explanations and dense introductory prose.
-- Navigation that mirrors the internal data model instead of the two
-  public nouns.
+The contribution flow derives scope from the selected Problem and target. It
+uses constrained choices, a plain-language preview, and fail-closed validation.
+Titles are presentation metadata, not prompts or immutable evidence identity.
+
+Hosted metadata handoffs are idempotent and show pending, saved, failed,
+rate-limited, stale, and retry states. Large bytes stay in repositories or
+external stores. A failed handoff keeps the user's input and gives recovery
+instructions. No interface reports success before durable references exist.
+
+Every public object exposed through search or agent context has a durable UI
+route or an explicit unavailable or private state. Route-contract tests enforce
+that parity.
+
+## Account and authority
+
+Account is a private profile hub unless durable public contributor data justifies
+a separate public route. WorkOS identity, scientific attribution, and Vela
+authority remain distinct. Hosted code creates unsigned Submission v3 drafts
+only; local repositories retain signing and scientific authority.
+
+## Acceptance
+
+Representative empty, partial, resolved, contested, stale, failed, and degraded
+states must work across diverse Problems. Verify desktop, 390px, 320px, 200%
+zoom, keyboard, touch, forced colours, reduced motion, print, signed-out and
+signed-in paths against a local production build in the in-app Browser.
