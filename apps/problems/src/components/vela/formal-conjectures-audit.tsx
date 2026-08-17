@@ -99,7 +99,7 @@ export function FormalConjecturesAudit({
     </p>
     <div className="mt-7">{records.map((record) => <AuditRecord key={record.fixture_id} record={record} />)}</div>
     <div className="mt-7 rounded-lg bg-muted/25 p-4">
-      <p className="text-label">Read-only projection · authority effect none</p>
+      <p className="text-label">Read-only projection</p>
       <p className="mt-1 text-meta leading-5 text-muted-foreground">Approval and merge remain upstream PR state. A passing build does not establish semantic fidelity. An unavailable artifact identity is not a proof failure.</p>
       <p className="mt-3 text-meta leading-5 text-muted-foreground">
         Adapter conformance {formalConjecturesAuditProjection.conformance.requirement_ids.length} / 9: exact source revision, bounded complete reads, typed roots, custody, implementation identity, reconstructibility, unsupported-state refusal, rights, and lifecycle semantics.

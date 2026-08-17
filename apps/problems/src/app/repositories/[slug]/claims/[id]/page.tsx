@@ -232,7 +232,7 @@ export default async function FindingPage({ params }: PageProps<"/repositories/[
               `text-subtitle` while its own parent H2 was `text-sm`, i.e. drawn
               larger than the heading that contained it. */}
           <h3 className="text-label">Evidence and Decision</h3>
-            <p className="mt-1 text-meta text-muted-foreground">Exact retained path. Verification does not accept the Claim.</p>
+            <p className="mt-1 text-meta text-muted-foreground">Exact retained path.</p>
             <div className="mt-3 space-y-3">{standingView.lineages.map((lineage) => <Lineage key={lineage.proposal.id} repository={repository.slug} lineage={lineage} />)}</div>
           </div>
         )}

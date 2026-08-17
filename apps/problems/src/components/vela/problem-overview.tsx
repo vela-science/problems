@@ -42,7 +42,9 @@ export function ProblemOverview({ state, basePath }: { state: State; basePath: s
       {/* The two axes themselves ride in the hero strip; this section owns
           the caption that keeps them apart and the Claims the Standing
           ranges over. */}
-      <div className="flex flex-wrap items-end justify-between gap-3"><h2 id="current-state-heading" className="text-title">Current State</h2><span className="text-meta text-muted-foreground">Source status and Local Standing remain separate</span></div>
+      <h2 id="current-state-heading" className="text-title">Current State</h2>
+      {/* The one home of the rule the two axes obey; the strip shows the
+          axes, and no other line on this screen restates their separation. */}
       <p className="mt-4 max-w-[76ch] text-compact text-muted-foreground">Source status is publisher-declared. Repository-local Standing applies only to the exact Claim below; it does not mean this Problem is proved or resolved.</p>
       {/* A count chip reading zero says "this failed"; a heading with no count
           says "nothing here yet", which is what is true. */}
@@ -83,8 +85,7 @@ export function ProblemOverview({ state, basePath }: { state: State; basePath: s
     <section aria-labelledby="next-contribution-heading">
       <div className="flex flex-wrap items-end justify-between gap-3"><h2 id="next-contribution-heading" className="text-title">Next contribution</h2><Button nativeButton={false} render={<Link href={`${basePath}?view=workspace`} />}>Open Workspace</Button></div>
       <p className="mt-4 max-w-[70ch] text-body text-muted-foreground">{state.repository.status.actions.work.note}</p>
-      <p className="mt-3 max-w-[70ch] text-meta text-muted-foreground">The Repository publishes no central ranked queue. Work stays source-owned until an exact bounded Submission is prepared.</p>
-      <p className="mt-3 max-w-[70ch] text-meta text-muted-foreground">Open Workspace to assemble the packet in the browser. The CLI command runs in the source Repository checkout.</p>
+      <p className="mt-3 max-w-[70ch] text-meta text-muted-foreground">Open Workspace to assemble the packet in the browser. The CLI command runs in the source Repository checkout. <Link href="/contribute" className="underline underline-offset-4">How contribution works</Link></p>
       <code className="mt-3 block w-fit max-w-full rounded bg-command px-2 py-1 font-mono text-micro break-all text-command-foreground">{state.repository.status.actions.work.command}</code>
     </section>
   </>;

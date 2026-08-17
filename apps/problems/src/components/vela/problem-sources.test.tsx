@@ -203,7 +203,9 @@ describe("ProblemSources", () => {
     expect(within(ledger).getByText("Formal statement reference")).toBeVisible();
     expect(within(ledger).getByText("Canonical source occurrence")).toBeVisible();
     expect(within(ledger).getAllByText("Number candidate")).toHaveLength(1);
-    expect(within(ledger).getAllByText(/Statement identity not established · no authority effect/u)).toHaveLength(3);
+    /* The identity and authority rule is stated once in the section's opening
+       paragraph, not once per row — three rows carried it three times. */
+    expect(within(ledger).queryByText(/Statement identity not established · no authority effect/u)).not.toBeInTheDocument();
     expect(within(ledger).getByText("Source contributor labels this solved")).toBeVisible();
     expect(within(ledger).queryByText(/Standing accepted|Standing solved/u)).not.toBeInTheDocument();
   });

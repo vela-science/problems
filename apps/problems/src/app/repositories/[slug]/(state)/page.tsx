@@ -1,6 +1,7 @@
 import { PageShell } from "@vela/ui/vela/page-shell";
 
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   allRepositories,
@@ -94,7 +95,7 @@ export default async function RepositoryPage({ params }: PageProps<"/repositorie
         <section className="min-w-0" aria-labelledby="direction-heading">
           <h2 id="direction-heading" className="mb-3 text-subtitle">Contribution path</h2>
           <p className="max-w-[72ch] text-compact text-muted-foreground">{work.note}</p>
-          <p className="mt-2 max-w-[72ch] text-meta text-muted-foreground">No central ranked queue is published. Work remains source-owned until it becomes an exact bounded Submission.</p>
+          <p className="mt-2 max-w-[72ch] text-meta text-muted-foreground"><Link href="/contribute" className="underline underline-offset-4">How contribution works</Link></p>
           <pre className="mt-3 overflow-x-auto rounded-md bg-command p-3 text-micro leading-5 text-command-foreground"><code>{work.command}</code></pre>
         </section>
 

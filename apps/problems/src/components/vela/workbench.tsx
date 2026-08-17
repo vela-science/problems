@@ -109,7 +109,9 @@ function WorkspacePrelude({ state }: { state: State }) {
   return <section aria-labelledby="workspace-surface-heading" className="mt-8 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3">
     <div className="min-w-0">
       <h2 id="workspace-surface-heading" className="text-title">Shared coordination</h2>
-      <p className="mt-1 max-w-[76ch] text-meta text-muted-foreground">Coordinate here; execute locally. Repositories, runtimes, secrets, artifact bytes, and signing keys stay on your machine, and nothing here changes scientific State.</p>
+      {/* The State boundary is stated where it binds — on the shell above the
+          canvas — not restated in this band. */}
+      <p className="mt-1 max-w-[76ch] text-meta text-muted-foreground">Coordinate here; execute locally. Repositories, runtimes, secrets, artifact bytes, and signing keys stay on your machine.</p>
       {/* What the work here is anchored against, without leaving the surface:
           the same Standing the Overview's strip shows. Stale-anchor handling
           stays with the per-object notices below. */}

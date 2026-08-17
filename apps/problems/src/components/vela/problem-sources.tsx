@@ -183,8 +183,10 @@ export function ProblemSources({ sources }: { sources: ProblemSourceReadResult }
                   </div>
                   <div className="min-w-0 text-micro text-muted-foreground sm:text-right">
                     <p className="capitalize">{words(occurrence.native_kind)}</p>
+                    {/* The section's opening paragraph states the identity and
+                        authority rule once for every row; a per-row restatement
+                        printed it up to eight times on one screen. */}
                     <p className="mt-1">{occurrence.relation_kind ? relationLabels[occurrence.relation_kind] : "No reviewed relation"}</p>
-                    <p className="mt-1">Statement identity not established · no authority effect</p>
                     {occurrence.locators.length ? (
                       <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 sm:justify-end">
                         {occurrence.locators.map((locator) => (
