@@ -5,6 +5,7 @@ import { Item, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemTitle } f
 import { StateGlyph } from "@vela/ui/vela/state-glyph";
 import { ScientificText } from "@vela/ui/vela/scientific-text";
 import { AssertionText } from "@/components/vela/assertion-text";
+import { Docstring, FormalStatementCard } from "@/components/vela/formal-statement-card";
 import { ProvenanceSummary } from "@/components/vela/provenance-summary";
 import type { ScientificProblemState } from "@/lib/scientific-state";
 
@@ -27,13 +28,27 @@ export function ProblemOverview({ state, basePath }: { state: State; basePath: s
      statement is deliberately not retained here and the locator is the whole
      of what this release may show. */
   const question = state.sources.statements.find((statement) => statement.statement_form === "prose") ?? null;
-  const formalStatements = state.sources.statements.filter((statement) => statement.statement_form === "formal").length;
+  /* Where the catalogue may not retain its prose, the formal library often
+     retains its authors' own docstring — LaTeX prose, Apache-licensed,
+     already in the projection. Base declarations sort first (native_id
+     order), so the statement leads and its variants stay under Sources. The
+     occurrence's association status travels with the text: a shared number
+     is navigation, not identity, and the caption says which one this is. */
+  const formalOccurrences = state.sources.occurrences.filter((occurrence) => occurrence.formal && occurrence.summary?.trim());
+  const primaryFormal = formalOccurrences.find((occurrence) => occurrence.formal?.docstring) ?? formalOccurrences[0] ?? null;
   return <>
     <section aria-labelledby="question-heading">
-      <div className="flex flex-wrap items-end justify-between gap-3"><h2 id="question-heading" className="text-title">Question</h2>{question ? <span className="text-meta text-muted-foreground">Source-authored statement</span> : null}</div>
-      {question ? <><p className="mt-5 max-w-[90ch] text-body leading-7"><ScientificText text={question.text} /></p><p className="mt-3 text-micro text-muted-foreground">Retained from <span className="font-medium text-foreground">{question.source_id}</span>. This is readable source text, not a Vela Claim or a statement-equivalence judgment.</p></> : <div className="mt-5 max-w-[76ch] py-2">
+      <div className="flex flex-wrap items-end justify-between gap-3"><h2 id="question-heading" className="text-title">Question</h2>{question ? <span className="text-meta text-muted-foreground">Source-authored statement</span> : primaryFormal ? <span className="text-meta text-muted-foreground">As formalized by {primaryFormal.source_label}</span> : null}</div>
+      {question ? <><p className="mt-5 max-w-[90ch] text-body leading-7"><ScientificText text={question.text} /></p><p className="mt-3 text-micro text-muted-foreground">Retained from <span className="font-medium text-foreground">{question.source_id}</span>. This is readable source text, not a Vela Claim or a statement-equivalence judgment.</p></> : primaryFormal ? <div className="mt-5 min-w-0">
+        {primaryFormal.formal?.docstring ? <Docstring text={primaryFormal.formal.docstring} className="mb-5" /> : null}
+        <FormalStatementCard occurrence={primaryFormal} showDocstring={false} />
+        <p className="mt-3 text-micro text-muted-foreground">
+          The formalizers&apos; own wording and notation, retained from <span className="font-medium text-foreground">{primaryFormal.source_id}</span>
+          {primaryFormal.occurrence_status === "candidate_number_link" ? <> and associated with this Problem by its shared number only; statement identity is not established.</> : <>; not the catalogue&apos;s own text.</>}
+          {formalOccurrences.length > 1 ? <> {formalOccurrences.length - 1} more {formalOccurrences.length === 2 ? "declaration" : "declarations"} under Sources.</> : null}
+        </p>
+      </div> : <div className="mt-5 max-w-[76ch] py-2">
         <p className="font-medium">No natural-language question is retained in this release.</p>
-        {formalStatements ? <p className="mt-1 text-meta text-muted-foreground">{formalStatements === 1 ? "One formal statement is" : `${formalStatements} formal statements are`} retained under Sources, in the source&apos;s own notation.</p> : null}
         {state.locator ? <p className="mt-2 text-meta"><a href={state.locator} className="underline underline-offset-4">Open the upstream source</a></p> : null}
       </div>}
     </section>

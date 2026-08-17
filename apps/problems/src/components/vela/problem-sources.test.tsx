@@ -66,6 +66,7 @@ const sources = {
       relation_kind: null,
       statement_identity: "not_established",
       authority_effect: "none",
+      formal: null,
     },
     {
       occurrence_key: "source:formal-conjectures\u0000formal_conjecture\u0000Erdos321.erdos_321",
@@ -82,6 +83,19 @@ const sources = {
       relation_kind: "formal_statement_reference",
       statement_identity: "not_established",
       authority_effect: "none",
+      formal: {
+        docstring: "The sum of $1/n$ over a covering system's moduli exceeds one.",
+        module: "FormalConjectures.ErdosProblems.321",
+        category_label: "Open",
+        subject_names: ["Number theory"],
+        proof_present: false,
+        proof_kind: null,
+        proof_sorry_free: null,
+        proof_locator: null,
+        blob_root: root("9"),
+        file_first_added: "2026-08-03T12:50:51-04:00",
+        file_last_modified: "2026-08-03T12:50:51-04:00",
+      },
     },
     {
       occurrence_key: "source:vibemathed\u0000attributed_activity\u0000vibemathed:erdos-321",
@@ -98,6 +112,7 @@ const sources = {
       relation_kind: null,
       statement_identity: "not_established",
       authority_effect: "none",
+      formal: null,
     },
   ],
   statements: [
@@ -179,10 +194,18 @@ describe("ProblemSources", () => {
     expect(withheld).toBeVisible();
     expect(within(withheld.closest("details") as HTMLElement).getByText(/GPT Erdős/u)).toBeInTheDocument();
 
+    /* Prose statements keep the ledger; formal declarations render as file
+       panels grouped by the module their library declares. */
     const statementLedger = screen.getByRole("list", { name: "Retained source statements" });
-    expect(within(statementLedger).getAllByRole("listitem")).toHaveLength(2);
-    expect(within(statementLedger).getByText(/Lean declaration with an unfilled proof body/u)).toBeVisible();
+    expect(within(statementLedger).getAllByRole("listitem")).toHaveLength(1);
     expect(within(statementLedger).getByText(/attributed activity record, not a Vela Decision/u)).toBeVisible();
+    const filePanel = screen.getByRole("region", { name: "FormalConjectures/ErdosProblems/321.lean" });
+    /* The notation renders through the tokenizer, so the sentence spans
+       several nodes; the panel's text is the assertable unit. */
+    expect(filePanel).toHaveTextContent("Lean declaration with an unfilled proof body");
+    expect(within(filePanel).getByText("Open")).toBeVisible();
+    expect(within(filePanel).getByText("statement only")).toBeVisible();
+    expect(within(filePanel).getByText(/covering system/u)).toBeVisible();
     expect(container.querySelector("[data-slot='card']")).toBeNull();
   });
 

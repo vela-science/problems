@@ -7,6 +7,7 @@ import {
   CollapsibleTrigger,
 } from "@vela/ui/components/collapsible";
 import { ScientificText } from "@vela/ui/vela/scientific-text";
+import { SourceFileExplorer } from "@/components/vela/source-file-explorer";
 
 type Occurrence = ProblemSourceReadResult["occurrences"][number];
 type RelationKind = Exclude<Occurrence["relation_kind"], null>;
@@ -126,39 +127,49 @@ export function ProblemSources({ sources }: { sources: ProblemSourceReadResult }
         </details> : null}
       </div>
 
-      <section aria-labelledby="source-statements-heading" className="mt-8">
-        <div className="flex flex-wrap items-baseline justify-between gap-3">
-          <h3 id="source-statements-heading" className="text-subtitle">Retained statement text</h3>
-          <span className="text-meta text-muted-foreground">{number.format(sources.statements.length)} exact {sources.statements.length === 1 ? "statement" : "statements"}</span>
-        </div>
-        {sources.statements.length ? (
-          <ol aria-label="Retained source statements" className="mt-3 divide-y">
-            {sources.statements.map((statement) => (
-              <li key={statement.statement_id} className="min-w-0 py-5 first:pt-4 last:pb-4">
-                <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-micro text-muted-foreground">
-                  <span className="font-medium text-foreground">{statement.source_id}</span>
-                  <code className="min-w-0 break-all font-mono">{displayedOccurrenceKey(statement.occurrence_key)}</code>
-                </div>
-                <p className="mt-3 max-w-[90ch] text-body leading-7">
-                  <ScientificText text={statement.text} />
-                </p>
-                <div className="mt-3 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-micro text-muted-foreground">
-                  {statement.locator_url ? (
-                    <a className="font-medium text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground" href={statement.locator_url}>
-                      Open source location
-                    </a>
-                  ) : <span>No source location retained</span>}
-                  <code className="min-w-0 break-all font-mono">{statement.row_root}</code>
-                </div>
-              </li>
-            ))}
-          </ol>
-        ) : (
-          <p className="mt-3 py-4 text-compact text-muted-foreground">
-            No statement text is retained in this reviewed source set. Exact source occurrences remain available below.
-          </p>
-        )}
-      </section>
+      {(() => {
+        /* Formal declarations render as file panels; everything else keeps
+           the prose card. One flat list hid the corpus's actual shape — a
+           file of declarations with docstrings beside two sentences of
+           catalogue prose — behind identical rows. */
+        const formalOccurrences = sources.occurrences.filter((occurrence) => occurrence.formal && occurrence.summary?.trim());
+        const proseStatements = sources.statements.filter((statement) => statement.statement_form !== "formal");
+        return <section aria-labelledby="source-statements-heading" className="mt-8">
+          <div className="flex flex-wrap items-baseline justify-between gap-3">
+            <h3 id="source-statements-heading" className="text-subtitle">Retained statements</h3>
+            <span className="text-meta text-muted-foreground">{number.format(sources.statements.length)} exact {sources.statements.length === 1 ? "statement" : "statements"}</span>
+          </div>
+          {proseStatements.length ? (
+            <ol aria-label="Retained source statements" className="mt-3 divide-y">
+              {proseStatements.map((statement) => (
+                <li key={statement.statement_id} className="min-w-0 py-5 first:pt-4 last:pb-4">
+                  <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-micro text-muted-foreground">
+                    <span className="font-medium text-foreground">{statement.source_id}</span>
+                    <code className="min-w-0 break-all font-mono">{displayedOccurrenceKey(statement.occurrence_key)}</code>
+                  </div>
+                  <p className="mt-3 max-w-[90ch] text-body leading-7">
+                    <ScientificText text={statement.text} />
+                  </p>
+                  <div className="mt-3 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-micro text-muted-foreground">
+                    {statement.locator_url ? (
+                      <a className="font-medium text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground" href={statement.locator_url}>
+                        Open source location
+                      </a>
+                    ) : <span>No source location retained</span>}
+                    <code className="min-w-0 break-all font-mono">{statement.row_root}</code>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          ) : null}
+          {formalOccurrences.length ? <SourceFileExplorer occurrences={formalOccurrences} /> : null}
+          {!proseStatements.length && !formalOccurrences.length ? (
+            <p className="mt-3 py-4 text-compact text-muted-foreground">
+              No statement text is retained in this reviewed source set. Exact source occurrences remain available below.
+            </p>
+          ) : null}
+        </section>;
+      })()}
 
       <Collapsible className="group/source-ledger mt-8 border-t pt-5">
         <CollapsibleTrigger className="flex min-h-11 w-full items-center justify-between gap-4 text-left focus-visible:outline-2 focus-visible:outline-offset-4">

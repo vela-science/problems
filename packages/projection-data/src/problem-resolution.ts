@@ -257,6 +257,65 @@ export function reviewedProblemBindingOccurrences(
   ];
 }
 
+/* What a formal library retains about one declaration, typed out of the
+ * record's metadata so a surface can render a real file panel instead of a
+ * bare string: the authors' own docstring (LaTeX prose, Apache-licensed and
+ * retained under `full_under_license`), the module the declaration lives in,
+ * and the proof facts the library publishes about itself. Everything here is
+ * a verbatim retained value; absence stays null rather than being guessed. */
+export type FormalStatementFacts = {
+  docstring: string | null;
+  module: string | null;
+  category_label: string | null;
+  subject_names: string[];
+  proof_present: boolean | null;
+  proof_kind: string | null;
+  proof_sorry_free: boolean | null;
+  proof_locator: string | null;
+  blob_root: string | null;
+  file_first_added: string | null;
+  file_last_modified: string | null;
+};
+
+const metadataString = (metadata: NativeSourceRecord["metadata"], key: string): string | null => {
+  const value = metadata[key];
+  return typeof value === "string" && value.trim() ? value : null;
+};
+
+const metadataBoolean = (metadata: NativeSourceRecord["metadata"], key: string): boolean | null => {
+  const value = metadata[key];
+  if (typeof value === "boolean") return value;
+  if (value === "true") return true;
+  if (value === "false") return false;
+  return null;
+};
+
+export function formalStatementFacts(record: NativeSourceRecord): FormalStatementFacts {
+  const names = metadataString(record.metadata, "subject_names");
+  let subjects: string[] = [];
+  if (names) {
+    try {
+      const parsed: unknown = JSON.parse(names);
+      if (Array.isArray(parsed)) subjects = parsed.filter((entry): entry is string => typeof entry === "string");
+    } catch {
+      /* A malformed list renders as no subjects, not as a crash. */
+    }
+  }
+  return {
+    docstring: metadataString(record.metadata, "docstring"),
+    module: metadataString(record.metadata, "display_module") ?? metadataString(record.metadata, "module"),
+    category_label: metadataString(record.metadata, "category_label"),
+    subject_names: subjects,
+    proof_present: metadataBoolean(record.metadata, "formal_proof_present"),
+    proof_kind: metadataString(record.metadata, "formal_proof_kind"),
+    proof_sorry_free: metadataBoolean(record.metadata, "formal_proof_sorry_free"),
+    proof_locator: metadataString(record.metadata, "formal_proof_locator"),
+    blob_root: metadataString(record.metadata, "source_blob_root"),
+    file_first_added: metadataString(record.metadata, "file_first_added"),
+    file_last_modified: metadataString(record.metadata, "file_last_modified"),
+  };
+}
+
 export type ProblemSourceOccurrence = {
   occurrence_key: string;
   source_id: string;
@@ -272,6 +331,8 @@ export type ProblemSourceOccurrence = {
   relation_kind: ProblemRelationKind | null;
   statement_identity: "not_established";
   authority_effect: "none";
+  /** Present only for formal-library occurrences. */
+  formal: FormalStatementFacts | null;
 };
 
 export type StatementForm = "prose" | "formal" | "label";
@@ -429,6 +490,7 @@ export function resolveProblemSources(
       relation_kind: relationKind,
       statement_identity: "not_established",
       authority_effect: "none",
+      formal: profile.source_role === "formal_statement_library" ? formalStatementFacts(record) : null,
     };
   });
   const statements = occurrences.flatMap((occurrence): ProblemSourceStatement[] => {
