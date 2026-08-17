@@ -46,6 +46,7 @@ import {
   type ProblemSourceResolution,
   type ProblemRelationKind,
   type ProblemResolutionCandidateSource,
+  type StatementForm,
 } from "./problem-resolution";
 import { assertProblemSourceCoverageBounds, summarizeReviewedProblemSourceCoverage, type ProblemSourceCoverageSummary } from "./problem-source-coverage";
 import {
@@ -2508,12 +2509,18 @@ const PROBLEM_SOURCES_CTE = `WITH problem_resolution_profiles(source_id, resolut
  * The kind travels with the text so a reader is never shown a Lean expression
  * dressed as the question, and never shown a filing label dressed as either.
  * Widening this is a retention decision in `problem-resolution.v1.json`, not a
- * presentation one here. */
-export type ProblemStatementKind = "prose" | "formal" | "label";
+ * presentation one here.
+ *
+ * The label branch carries the catalogue record's own `title` — retained
+ * source data ("Erdős problem 94"), not a string a component synthesizes. The
+ * kind is the same closed set `statement_form` uses per Source, so the two
+ * cannot drift. */
+export type ProblemStatementKind = StatementForm;
 
 export function resolveStatement(
   ownSummary: string,
   retained: { prose: string | null; formal: string | null } | undefined,
+  label: string,
 ): { statement: string; kind: ProblemStatementKind } {
   const own = ownSummary.trim();
   if (own) return { statement: own, kind: "prose" };
@@ -2521,7 +2528,7 @@ export function resolveStatement(
   if (prose) return { statement: prose, kind: "prose" };
   const formal = retained?.formal?.trim();
   if (formal) return { statement: formal, kind: "formal" };
-  return { statement: "", kind: "label" };
+  return { statement: label.trim(), kind: "label" };
 }
 
 /* Absent reads as empty, which is what a Problem no source has published a
@@ -2604,7 +2611,7 @@ export async function problemsForRepository(slug: string, input: ProblemLedgerFi
          f.claim_id,
          f.standing AS local_standing,
          f.created_at AS local_assessed_at,
-         coalesce(nullif(btrim(n.summary), ''), ps.prose_statement, ps.formal_statement) AS statement,
+         coalesce(nullif(btrim(n.summary), ''), ps.prose_statement, ps.formal_statement, n.title) AS statement,
          CASE
            WHEN nullif(btrim(n.summary), '') IS NOT NULL OR ps.prose_statement IS NOT NULL THEN 'prose'
            WHEN ps.formal_statement IS NOT NULL THEN 'formal'
@@ -2732,6 +2739,7 @@ export async function problemCatalogForRepository(
          n.content_root,
          n.metadata,
          n.summary AS statement,
+         n.title AS label,
          ${PROBLEM_STATUS_SQL} AS declared_status,
          ${PROBLEM_FORMALIZED_SQL} AS formalized,
          ${PROBLEM_PRIZE_SQL} AS prize,
@@ -2822,7 +2830,7 @@ export async function problemCatalogForRepository(
       const claim = liveClaims[0] ?? (uniqueClaims.length === 1 ? uniqueClaims[0] : undefined);
       const key = sourceKey(row.resolution_namespace, row.problem);
       const sourceIds = sources.get(key) ?? [];
-      const resolved = resolveStatement(String(row.statement ?? ""), retained.get(key));
+      const resolved = resolveStatement(String(row.statement ?? ""), retained.get(key), String(row.label ?? ""));
       return problemFromRow({
         ...row,
         statement: resolved.statement,
