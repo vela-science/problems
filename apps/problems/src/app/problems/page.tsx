@@ -15,9 +15,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { PageHero, PageSection, PageSectionHeader, PageShell } from "@vela/ui/vela/page-shell";
 import { ScientificText } from "@vela/ui/vela/scientific-text";
 import { decodeHtmlEntities } from "@vela/ui/lib/html-entities";
-import { ProblemDiscoveryFacts } from "@/components/vela/problem-facts";
 import { SourceCorpusMap } from "@/components/vela/source-corpus-map";
 import { ProblemSourceCoverage } from "@/components/vela/problem-source-coverage";
+import { LedgerPager } from "@/components/vela/ledger-pager";
+import { RouteTitle } from "@/components/vela/route-title";
 import { ScientificChangeFeed } from "@/components/vela/scientific-change-feed";
 import {
   discoveredProblems,
@@ -61,21 +62,50 @@ const selectItems = (allLabel: string, entries: ReadonlyArray<readonly [string, 
   ...entries,
 ]);
 
+/* The statement is the row.
+ *
+ * Every other element earns its place by varying. Four did not: the collection
+ * badge (one collection is published, so it printed on all 1,217 rows), the
+ * contribution path (a hard-coded literal), the Local Standing caption ("not
+ * assessed" on 1,215 of 1,217), and the topic list, which the eyebrow and
+ * `theme` computed identically and printed twice. What is left is the number,
+ * the question, and the handful of facts that differ between two rows.
+ *
+ * A formal statement is marked as one. It is the retained mathematics for 604
+ * Problems whose catalogue may not retain prose, and it is not the question in
+ * the reader's language, so it says which it is rather than pretending. */
 function ProblemRows({ problems }: { problems: ProblemDiscovery[] }) {
-  return problems.length ? <ItemGroup className="gap-1">
-    {problems.map((problem) => <Item key={`${problem.repository}/${problem.problem}`} className="rounded-lg border-0 px-3 py-5 transition-colors hover:bg-background/60 sm:flex-nowrap sm:gap-5">
-      {/* Four digits at most, so the gutter only needs to be wide enough to
-          keep the numbers aligned. At 320 the old `w-16` plus the duplicate
-          Open action left the row's content column 128px of a 288px row. */}
-      <ItemMedia className="w-10 self-start pt-0.5 sm:w-20"><span className="font-mono text-title tabular-nums text-muted-foreground">{problem.problem}</span></ItemMedia>
-      <ItemContent className="gap-3">
-        <div className="flex flex-wrap items-center gap-2"><span className="text-eyebrow uppercase text-muted-foreground">{problem.field?.name ?? (problem.topics.map(({ name }) => name).join(" · ") || "Unclassified topic")}</span><Badge variant="secondary">{problem.collection?.name ?? "Unclassified collection"}</Badge></div>
-        <ItemTitle className="line-clamp-none max-w-[76ch] text-subtitle leading-snug"><Link href={problem.canonicalPath ?? "/problems"} className="underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4"><ScientificText text={decodeHtmlEntities(problem.record.statement || `Problem ${problem.problem}`)} /></Link></ItemTitle>
-        <ItemDescription className="line-clamp-none">{problem.theme} · {problem.record.formalized ? "formalized" : "not formalized"} · {problem.record.source_count} {problem.record.source_count === 1 ? "source" : "sources"}</ItemDescription>
-        <ProblemDiscoveryFacts problem={problem} className="mt-1" />
-      </ItemContent>
-    </Item>)}
-  </ItemGroup> : <div className="py-10"><p className="text-subtitle">No Problems match this view.</p><p className="mt-2 text-meta text-muted-foreground">Choose another collection or Topic, or open the complete directory.</p></div>;
+  if (!problems.length) {
+    return <p className="py-10 text-body text-muted-foreground">No Problems match this view.</p>;
+  }
+  return <ul className="mt-2">
+    {problems.map((problem) => {
+      const record = problem.record;
+      const kind = record.statement_kind;
+      const facts = [
+        record.declared_status,
+        record.formalized ? "formalized" : null,
+        record.source_count > 1 ? `${record.source_count} sources` : null,
+        record.prize,
+        record.local_standing ? `Claim ${record.local_standing.replaceAll("_", " ")}` : null,
+      ].filter(Boolean);
+      return <li key={`${problem.repository}/${problem.problem}`} className="grid grid-cols-[2.75rem_minmax(0,1fr)] gap-x-4 border-t py-4 first:border-t-0">
+        <span className="pt-0.5 font-mono text-meta tabular-nums text-muted-foreground">{problem.problem}</span>
+        <div className="min-w-0">
+          <Link href={problem.canonicalPath ?? "/problems"} className="block max-w-[74ch] text-body leading-snug underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4">
+            {kind === "formal"
+              ? <span className="font-mono text-compact [overflow-wrap:anywhere]">{record.statement}</span>
+              : <ScientificText text={decodeHtmlEntities(record.statement || `Erdős problem ${problem.problem}`)} />}
+          </Link>
+          <p className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-meta text-muted-foreground">
+            {kind === "formal" ? <span className="text-foreground/70">formal statement</span> : null}
+            {kind === "label" ? <span className="text-foreground/70">no statement retained</span> : null}
+            {facts.map((fact) => <span key={String(fact)}>{fact}</span>)}
+          </p>
+        </div>
+      </li>;
+    })}
+  </ul>;
 }
 
 export default async function ProblemsPage({ searchParams }: { searchParams: Promise<Query> }) {
@@ -204,19 +234,26 @@ export default async function ProblemsPage({ searchParams }: { searchParams: Pro
   const pageCount = Math.max(1, Math.ceil(problems.length / PAGE_SIZE));
   const page = Number.isFinite(requestedPage) ? Math.min(Math.max(requestedPage, 1), pageCount) : 1;
   const visibleProblems = problems.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const assessedCount = problems.filter(({ record }) => record.local_standing).length;
   const retainedQuery = { ...(query.q ? { q: query.q.slice(0, 200) } : {}), ...scopeQuery(), ...(status !== "all" ? { status } : {}), ...(standing !== "all" ? { standing } : {}), ...(source !== "all" ? { source } : {}), ...(repository !== "all" ? { repository } : {}), ...(formalized !== "all" ? { formalized } : {}), ...(coverage !== "all" ? { coverage } : {}), ...(exactId ? { exact_id: exactId } : {}) };
   const advancedActive = selectedHub !== "all" || selectedCollection !== "all" || selectedField !== "all" || selectedTopic !== "all" || standing !== "all" || source !== "all" || repository !== "all" || formalized !== "all" || coverage !== "all" || Boolean(exactId);
 
   return <PageShell archetype="problem">
-    <PageHero density="compact" className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end"><div><p className="text-eyebrow uppercase text-muted-foreground">Problem directory</p><h1 className="mt-3 text-display">Problems</h1><p className="mt-3 max-w-2xl text-body text-muted-foreground">Search the question first. Filter by area, source status, or Repository-local Standing when you need to narrow the map.</p></div><Button nativeButton={false} variant="outline" className="h-11 md:h-8" render={<Link href={{ pathname: "/problems", query: { view: "overview" } }} />}>Source coverage</Button></PageHero>
-    <form action="/problems" className="mt-8 rounded-xl bg-muted/40 p-4" aria-label="Filter Problems">
+    {/* No band. The header trail already says "Problems", and a Collection
+        opens quiet and gets to its rows: this page put an eyebrow, a title, a
+        paragraph and a button above a boxed filter panel, so the first row
+        began 527px down a 900px screen and roughly 1,300px down a phone. Both
+        catalogues worth copying, formal-conjectures and entire.io, ship no h1
+        at all and reach their first row inside 220px. */}
+    <RouteTitle title="Problems" />
+    <form action="/problems" className="mt-2" aria-label="Filter Problems">
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(15rem,1fr)_repeat(2,minmax(10rem,.4fr))_auto]">
         <label className="relative block"><span className="sr-only">Search Problems</span><HugeiconsIcon icon={Search01Icon} aria-hidden className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /><Input className="h-11 pl-9" name="q" maxLength={200} defaultValue={query.q?.slice(0, 200)} placeholder="Number, Topic, or statement" /></label>
         <label><span className="sr-only">Scientific area</span><Select name="domain" defaultValue={selectedDomain} items={selectItems("All scientific areas", domains)}><SelectTrigger className="h-11 w-full"><SelectValue /></SelectTrigger><SelectContent align="start"><SelectItem value="all">All scientific areas</SelectItem>{domains.map(([key, label]) => <SelectItem key={key} value={key}>{label}</SelectItem>)}</SelectContent></Select></label>
         <label><span className="sr-only">Source status</span><Select name="status" defaultValue={status} items={selectItems("All source statuses", statuses.map((value) => [value, optionLabel(value)]))}><SelectTrigger className="h-11 w-full"><SelectValue /></SelectTrigger><SelectContent align="start"><SelectItem value="all">All source statuses</SelectItem>{statuses.map((value) => <SelectItem key={value} value={value}>{optionLabel(value)}</SelectItem>)}</SelectContent></Select></label>
         <Button type="submit" className="h-11 sm:col-span-2 xl:col-span-1">Filter</Button>
       </div>
-      <details className="group mt-3 border-t border-border/70 pt-2" open={advancedActive}>
+      <details className="group mt-3" open={advancedActive}>
         <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 text-label font-medium marker:content-none focus-visible:outline-2 focus-visible:outline-offset-2"><span aria-hidden className="transition-transform group-open:rotate-90">›</span>Advanced source, taxonomy, and exact State</summary>
         <div className="grid gap-3 pb-2 pt-2 sm:grid-cols-2 xl:grid-cols-4">
           <label><span className="sr-only">Coordination Hub</span><Select name="hub" defaultValue={selectedHub} items={selectItems("All coordination Hubs", hubs)}><SelectTrigger className="h-11 w-full"><SelectValue /></SelectTrigger><SelectContent align="start"><SelectItem value="all">All coordination Hubs</SelectItem>{hubs.map(([key, label]) => <SelectItem key={key} value={key}>{label}</SelectItem>)}</SelectContent></Select></label>
@@ -234,6 +271,19 @@ export default async function ProblemsPage({ searchParams }: { searchParams: Pro
       </details>
       {(selectedDomain !== "all" || selectedHub !== "all") ? <div className="flex flex-wrap gap-2 border-t border-border/70 pt-3 text-meta"><span className="text-muted-foreground">Active scope:</span>{selectedDomain !== "all" ? <Badge variant="secondary">Area · {domains.find(([key]) => key === selectedDomain)?.[1]}</Badge> : null}{selectedHub !== "all" ? <Badge variant="secondary">Hub · {hubs.find(([key]) => key === selectedHub)?.[1]}</Badge> : null}<Link href="/problems" className="font-medium underline-offset-4 hover:underline">Clear filters</Link></div> : null}
     </form>
-    <PageSection aria-labelledby="problem-list"><PageSectionHeader><h2 id="problem-list" className="text-subtitle">Current directory</h2><p className="text-meta text-muted-foreground">{problems.length} matching exact source records · showing at most {PAGE_SIZE}</p></PageSectionHeader><ProblemRows problems={visibleProblems} />{pageCount > 1 ? <nav aria-label="Problem pages" className="mt-6 flex items-center justify-between gap-4 rounded-lg bg-muted/30 px-4 py-3"><p className="text-meta text-muted-foreground">Page {page} of {pageCount} · {problems.length} matching Problems</p><div className="flex gap-2">{page > 1 ? <Button nativeButton={false} size="sm" variant="outline" render={<Link href={{ pathname: "/problems", query: { ...retainedQuery, page: page - 1 } }} />}>Previous</Button> : null}{page < pageCount ? <Button nativeButton={false} size="sm" variant="outline" render={<Link href={{ pathname: "/problems", query: { ...retainedQuery, page: page + 1 } }} />}>Next</Button> : null}</div></nav> : null}</PageSection>
+    {/* The count is a fact about the rows, so it sits with them in one line
+        rather than under an h2 naming the page's own content. */}
+    <PageSection aria-labelledby="problem-list" className="mt-6">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b pb-2">
+        <h2 id="problem-list" className="sr-only">Problems</h2>
+        <p className="text-meta text-muted-foreground">
+          {problems.length.toLocaleString()} {problems.length === 1 ? "Problem" : "Problems"}
+          {assessedCount ? <>{" · "}{assessedCount} assessed by a Repository</> : null}
+        </p>
+        {pageCount > 1 ? <p className="font-mono text-meta tabular-nums text-muted-foreground">{page}/{pageCount}</p> : null}
+      </div>
+      <ProblemRows problems={visibleProblems} />
+      <LedgerPager page={page} pages={pageCount} label="Problem pages" hrefFor={(next) => ({ pathname: "/problems", query: { ...retainedQuery, page: next } }) as never} />
+    </PageSection>
   </PageShell>;
 }

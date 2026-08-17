@@ -2086,6 +2086,7 @@ export interface ProblemRecord {
   /** Exact Repository-local Claim binding, absent for source-native Problems that have not entered local State. */
   claim_id: string | null;
   statement: string;
+  statement_kind: ProblemStatementKind;
   declared_status: string;
   formalized: boolean;
   lean_url: string | null;
@@ -2469,7 +2470,16 @@ const PROBLEM_SOURCES_CTE = `WITH problem_resolution_profiles(source_id, resolut
              (array_agg(n2.summary ORDER BY n2.source_id)
                FILTER (WHERE profile.statement_retention = 'summary'
                  AND profile.source_role IN ('problem_catalog', 'attributed_activity_catalog')
-                 AND n2.summary IS NOT NULL AND length(btrim(n2.summary)) > 0))[1] AS prose_statement
+                 AND n2.summary IS NOT NULL AND length(btrim(n2.summary)) > 0))[1] AS prose_statement,
+             -- The formal statement, for the 604 Problems a formal library
+             -- retains one for and the prose catalogue may not. Ordered by
+             -- native_id so the base declaration wins over its variants:
+             -- Erdos94.erdos_94 is a prefix of Erdos94.erdos_94.variants.*
+             -- and therefore sorts first.
+             (array_agg(n2.summary ORDER BY n2.native_id)
+               FILTER (WHERE profile.statement_retention = 'summary'
+                 AND profile.source_role = 'formal_statement_library'
+                 AND n2.summary IS NOT NULL AND length(btrim(n2.summary)) > 0))[1] AS formal_statement
       FROM projection.native_records n2
       JOIN projection.release_sources rs2
         ON rs2.observation_root = n2.observation_root AND rs2.source_id = n2.source_id
@@ -2480,6 +2490,39 @@ const PROBLEM_SOURCES_CTE = `WITH problem_resolution_profiles(source_id, resolut
         ELSE n2.metadata ->> 'problem_number' END IS NOT NULL
       GROUP BY 1, 2
     )`;
+
+/* What a row is allowed to say about itself, and what kind of thing that is.
+ *
+ * `source:erdos-problems` is the problem catalogue and its rights are
+ * `locator_only`, so it retains a label ("Erdős problem 94") and never a
+ * question. Every row therefore read "Problem N" while the same projection held
+ * a retained Lean statement for 604 of the 1,217 and retained prose for another
+ * 148 — the page had the mathematics and printed the filing number.
+ *
+ * Precedence, most specific first, gated on retention rather than on role:
+ *
+ *   prose   a Source permitted to retain natural language has one
+ *   formal  a formal library retains the statement in its own notation
+ *   label   nothing is retained; the catalogue's own label stands
+ *
+ * The kind travels with the text so a reader is never shown a Lean expression
+ * dressed as the question, and never shown a filing label dressed as either.
+ * Widening this is a retention decision in `problem-resolution.v1.json`, not a
+ * presentation one here. */
+export type ProblemStatementKind = "prose" | "formal" | "label";
+
+export function resolveStatement(
+  ownSummary: string,
+  retained: { prose: string | null; formal: string | null } | undefined,
+): { statement: string; kind: ProblemStatementKind } {
+  const own = ownSummary.trim();
+  if (own) return { statement: own, kind: "prose" };
+  const prose = retained?.prose?.trim();
+  if (prose) return { statement: prose, kind: "prose" };
+  const formal = retained?.formal?.trim();
+  if (formal) return { statement: formal, kind: "formal" };
+  return { statement: "", kind: "label" };
+}
 
 /* Absent reads as empty, which is what a Problem no source has published a
    second record about has. */
@@ -2561,7 +2604,12 @@ export async function problemsForRepository(slug: string, input: ProblemLedgerFi
          f.claim_id,
          f.standing AS local_standing,
          f.created_at AS local_assessed_at,
-         coalesce(nullif(btrim(n.summary), ''), ps.prose_statement) AS statement,
+         coalesce(nullif(btrim(n.summary), ''), ps.prose_statement, ps.formal_statement) AS statement,
+         CASE
+           WHEN nullif(btrim(n.summary), '') IS NOT NULL OR ps.prose_statement IS NOT NULL THEN 'prose'
+           WHEN ps.formal_statement IS NOT NULL THEN 'formal'
+           ELSE 'label'
+         END AS statement_kind,
          ${PROBLEM_STATUS_SQL} AS declared_status,
          ${PROBLEM_FORMALIZED_SQL} AS formalized,
          ${PROBLEM_PRIZE_SQL} AS prize,
@@ -2708,7 +2756,7 @@ export async function problemCatalogForRepository(
     ),
     sql.query(
       `${PROBLEM_SOURCES_CTE}
-       SELECT resolution_namespace, problem_number, source_ids, prose_statement
+       SELECT resolution_namespace, problem_number, source_ids, prose_statement, formal_statement
        FROM problem_sources
        ORDER BY resolution_namespace, problem_number`,
       [root],
@@ -2741,9 +2789,12 @@ export async function problemCatalogForRepository(
   /* The prose catalogue is `locator_only`, so a Problem's own record carries
      no question. Where another Source is permitted to retain one, the row
      carries it — otherwise every catalogue row reads "Problem N". */
-  const prose = new Map(sourceRows.map((row) => [
+  const retained = new Map(sourceRows.map((row) => [
     sourceKey(row.resolution_namespace, row.problem_number),
-    typeof row.prose_statement === "string" ? row.prose_statement : null,
+    {
+      prose: typeof row.prose_statement === "string" ? row.prose_statement : null,
+      formal: typeof row.formal_statement === "string" ? row.formal_statement : null,
+    },
   ]));
   const bindingKey = (value: { source_id: string; native_id: string; native_kind: string; content_root: string }) => (
     `${value.source_id}\u0000${value.native_kind}\u0000${value.native_id}\u0000${value.content_root}`
@@ -2771,9 +2822,11 @@ export async function problemCatalogForRepository(
       const claim = liveClaims[0] ?? (uniqueClaims.length === 1 ? uniqueClaims[0] : undefined);
       const key = sourceKey(row.resolution_namespace, row.problem);
       const sourceIds = sources.get(key) ?? [];
+      const resolved = resolveStatement(String(row.statement ?? ""), retained.get(key));
       return problemFromRow({
         ...row,
-        statement: String(row.statement ?? "").trim() || prose.get(key) || "",
+        statement: resolved.statement,
+        statement_kind: resolved.kind,
         claim_id: claim?.claim_id ?? null,
         local_standing: claim?.standing ?? null,
         local_assessed_at: claim?.created_at ?? null,
@@ -2800,6 +2853,9 @@ export function problemFromRow(row: any): ProblemRecord {
     metadata: row.metadata && typeof row.metadata === "object" && !Array.isArray(row.metadata) ? { ...row.metadata } : {},
     claim_id: typeof row.claim_id === "string" ? row.claim_id : null,
     statement: row.statement ?? "",
+    /* Both readers resolve the precedence before calling here, one in SQL and
+       one in JS. A row that reached this point with neither is a label. */
+    statement_kind: row.statement_kind === "prose" || row.statement_kind === "formal" ? row.statement_kind : "label",
     declared_status: row.declared_status,
     formalized: row.formalized === true,
     lean_url: row.lean_url ?? null,
