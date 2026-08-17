@@ -152,7 +152,7 @@ function projection(overrides: Record<string, unknown> = {}) {
     authority_effect: "none",
     projection_root: root("0"),
     projection_root_definition: "sha256 of RFC 8785 canonical JSON after removing only projection_root",
-    reader_version: "0.976.1",
+    reader_version: "0.977.0",
     repository: {
       repository_id: "123e4567-e89b-42d3-a456-426614174000",
       name: "Test repository",
