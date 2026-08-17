@@ -215,9 +215,9 @@ export function SourceRecordView({
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.45fr)]">
         <div className="min-w-0 space-y-8">
           <section aria-labelledby="source-observation-heading">
-            <h3 id="source-observation-heading" className="mb-3 text-subtitle">
+            <h2 id="source-observation-heading" className="mb-3 text-subtitle">
               Exact observation
-            </h3>
+            </h2>
             {observation ? (
               <ItemGroup className="grid gap-1.5">
                 <FactItem
@@ -254,9 +254,9 @@ export function SourceRecordView({
           </section>
 
           <section aria-labelledby="source-projection-heading">
-            <h3 id="source-projection-heading" className="mb-3 text-subtitle">
+            <h2 id="source-projection-heading" className="mb-3 text-subtitle">
               Source-native objects and Repository bindings
-            </h3>
+            </h2>
             <ItemGroup className="grid gap-1.5">
               <FactItem
                 title="Projected source-native rows"
@@ -276,9 +276,9 @@ export function SourceRecordView({
           </section>
 
           <section aria-labelledby="source-coverage-heading">
-            <h3 id="source-coverage-heading" className="mb-3 text-subtitle">
+            <h2 id="source-coverage-heading" className="mb-3 text-subtitle">
               Coverage and omissions
-            </h3>
+            </h2>
             <ItemGroup className="grid gap-1.5">
               {(observation?.coverage.included ?? []).map((included) => (
                 <Item key={included} className="items-start rounded-md bg-background/60 px-3 py-3">
@@ -310,7 +310,7 @@ export function SourceRecordView({
 
         <aside className="min-w-0 space-y-6" aria-label="Source identity and rights">
           <section>
-            <h3 className="mb-3 text-subtitle">Attributed identity</h3>
+            <h2 className="mb-3 text-subtitle">Attributed identity</h2>
             <ItemGroup className="grid gap-1.5">
               {declaration.attributed_claims.map((claim) => (
                 <FactItem
@@ -323,7 +323,7 @@ export function SourceRecordView({
           </section>
 
           <section>
-            <h3 className="mb-3 text-subtitle">Rights and retention</h3>
+            <h2 className="mb-3 text-subtitle">Rights and retention</h2>
             <ItemGroup className="grid gap-1.5">
               <FactItem title="License" description={declaration.rights.license_expression ?? "Not established"} />
               <FactItem title="Access" description={words(declaration.rights.access)} />
@@ -333,7 +333,7 @@ export function SourceRecordView({
           </section>
 
           <section>
-            <h3 className="mb-3 text-subtitle">Source locators</h3>
+            <h2 className="mb-3 text-subtitle">Source locators</h2>
             <ItemGroup className="grid gap-1.5">
               {declaration.locators.map((locator) => (
                 <Item key={locator.locator_id} className="items-start rounded-md bg-background/60 px-3 py-3">
@@ -434,9 +434,9 @@ function NativeRecordLedger({
   return (
     <section id="source-native-records" aria-labelledby="source-native-records-heading" className="min-w-0 scroll-mt-16">
       <div className="mb-3">
-        <h3 id="source-native-records-heading" className="text-subtitle">
+        <h2 id="source-native-records-heading" className="text-subtitle">
           Source-native objects
-        </h3>
+        </h2>
         <p className="mt-1 text-meta text-muted-foreground">
           Stable native key order · {number.format(records.length)} shown
         </p>
@@ -590,9 +590,9 @@ function RepositoryBindingLedger({
   return (
     <section id="source-repository-bindings" aria-labelledby="source-repository-bindings-heading" className="min-w-0 scroll-mt-16">
       <div className="mb-3">
-        <h3 id="source-repository-bindings-heading" className="text-subtitle">
+        <h2 id="source-repository-bindings-heading" className="text-subtitle">
           Repository bindings
-        </h3>
+        </h2>
         <p className="mt-1 text-meta text-muted-foreground">
           Exact local relationships · {number.format(bindings.length)} shown
         </p>

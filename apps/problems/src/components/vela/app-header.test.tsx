@@ -101,6 +101,28 @@ describe("AppHeader trail", () => {
     expect(screen.getByText("Problems")).toBeInTheDocument();
   });
 
+  /* Collapsing the section crumb below `sm` left its separator behind, so a
+     Problem or Source page opened with a bare "/" on a phone — the shape of
+     1,217 of the 1,253 URLs in the sitemap. A separator is hidden exactly when
+     the crumb to its left is. */
+  it("hides a separator that would lead the trail on a small viewport", () => {
+    navigation.pathname = "/problems/erdos-problems/321";
+    const { rerender } = render(<Shell />);
+
+    const [collapsing] = screen.getAllByText("/");
+    expect(screen.getByText("Problems").className).toContain("hidden");
+    expect(collapsing!.className).toContain("hidden");
+    expect(collapsing!.className).toContain("sm:inline");
+
+    /* Inside a Repository the switcher never collapses, so the separator after
+       it has something to separate and must stay. */
+    navigation.pathname = "/repositories/quantum-codes/claims";
+    rerender(<Shell />);
+
+    const separators = screen.getAllByText("/");
+    expect(separators.some((node) => !node.className.includes("hidden"))).toBe(true);
+  });
+
   it("keeps global search, notifications, appearance, and account access in the header", () => {
     render(<Shell authEnabled />);
 

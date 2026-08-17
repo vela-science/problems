@@ -137,4 +137,29 @@ describe("problem ledger composition", () => {
     expect(html).toContain('href="/repositories/erdos/problems?sort=sources&amp;page=1"');
     expect(html).toContain('href="/repositories/erdos/problems?sort=sources&amp;page=3"');
   });
+
+  /* Most Problems retain no statement, and the row is one stretched link whose
+     only content is that statement — so the row rendered visually blank and a
+     screen reader announced the URL. Forty-six of fifty rows shipped that way.
+     The number is the fallback, never the replacement. */
+  test("a Problem with no retained statement still names its row", async () => {
+    repository = {
+      slug: "erdos",
+      status: { repository: { name: "Erdős" } },
+      graph: { node_count: 4063, problem_count: 1217 },
+    };
+    ledger = {
+      items: [{ ...problem(1056), statement: "" }, problem(1057)],
+      total: 2,
+      facets: empty,
+    };
+    const html = await render();
+
+    expect(html).toContain(">Problem 1056<");
+    /* The row that does retain one is unaffected. */
+    expect(html).toContain("\\subseteq");
+    expect(html).not.toContain(">Problem 1057<");
+    /* No link is left with nothing inside it. */
+    expect(html).not.toMatch(/<a[^>]*after:absolute[^>]*>(?:<span[^>]*>)?\s*(?:<\/span>)?<\/a>/u);
+  });
 });

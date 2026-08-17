@@ -145,7 +145,13 @@ export function AppHeader({
         ) : null}
         {trail.section ? (
           <>
-            {trail.repository ? <span aria-hidden className="hidden text-muted-foreground/60 sm:inline">/</span> : null}
+            {/* Hidden exactly when the crumb to its right is. The section is a
+                link only when it is not the current page, and only the link
+                collapses below `sm`; the plain span stays, and so must the
+                separator before it. */}
+            {trail.repository ? (
+              <span aria-hidden className={trail.sectionHref ? "hidden text-muted-foreground/60 sm:inline" : "text-muted-foreground/60"}>/</span>
+            ) : null}
             {trail.sectionHref ? (
               <Link href={trail.sectionHref} className="hidden min-w-0 shrink truncate hover:text-foreground hover:underline sm:inline">
                 {trail.section}
@@ -157,7 +163,23 @@ export function AppHeader({
         ) : null}
         {trail.record ? (
           <>
-            <span aria-hidden className="text-muted-foreground/60">/</span>
+            {/* A separator needs something on its left. Collapsing the section
+                crumb below `sm` left this one leading the breadcrumb, so every
+                Problem and Source page opened with a bare "/" — 1,217 of the
+                1,253 URLs in the sitemap. Hide it exactly when nothing visible
+                precedes it: the Repository switcher never collapses, and a
+                section without an href renders as a plain span that also
+                stays. */}
+            <span
+              aria-hidden
+              className={
+                trail.repository || (trail.section && !trail.sectionHref)
+                  ? "text-muted-foreground/60"
+                  : "hidden text-muted-foreground/60 sm:inline"
+              }
+            >
+              /
+            </span>
             <span
               className="min-w-0 truncate font-mono text-label text-foreground"
               aria-current="page"

@@ -20,6 +20,17 @@ import { decodeHtmlEntities } from "@vela/ui/lib/html-entities";
  * tag and formalization links stay clickable above it. Nothing is nested inside
  * anything else, which is what the previous pair of per-row ghost buttons cost. */
 
+/* Most Problems have no retained statement, and the row is one stretched link
+ * whose only content is that statement — so 46 of 50 rows on this ledger were
+ * a link with no text at all: visually blank, and announced to a screen reader
+ * as its own URL (WCAG 2.4.4). The detail page and the canonical `/problems`
+ * list both already fall back to the number; only this ledger did not. The
+ * fallback stays a fallback — where a Source permits the statement, the
+ * statement is still the row. */
+function rowTitle(problem: ProblemRecord): string {
+  return decodeHtmlEntities(problem.statement ?? "").trim() || `Problem ${problem.problem}`;
+}
+
 export function ProblemList({
   problems,
   slug,
@@ -77,7 +88,7 @@ export function ProblemList({
               </div>
               <ItemTitle className="mt-1 line-clamp-2 block w-full text-body">
                 <Link className="after:absolute after:inset-0" href={`/repositories/${slug}/problems/${problem.problem}`}>
-                  <ScientificText text={decodeHtmlEntities(problem.statement)} />
+                  <ScientificText text={rowTitle(problem)} />
                 </Link>
               </ItemTitle>
               {facts.length ? (
