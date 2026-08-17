@@ -57,7 +57,8 @@ type SidebarDestinationGroup = { label?: string; items: SidebarDestination[] };
  * carries the two public nouns and their pulse — Problems, Updates, Search —
  * per PRODUCT.md's model. Repositories, Sources, Decisions, Proposals,
  * Hubs, and Graph keep their durable routes, reached through contextual
- * links, search, and the footer map rather than competing here. */
+ * links, search, shortcuts, and the command palette rather than competing
+ * here. */
 function releaseDestinations(signedIn: boolean): SidebarDestinationGroup[] { return [
   {
     label: "Explore",
@@ -252,7 +253,7 @@ export function AppSidebar({
           failed strict. A signal with no input is worse than no signal, and a
           health verdict on a scientific corpus is not this page's to give.
 
-          The activation instant is the fact the footer actually holds, and it
+          The activation instant is the fact this status strip actually holds, and it
           answers the one thing a build stamp is read for: how old this is. UTC,
           because this is a client component and a locale-formatted date would
           differ between the server's HTML and the browser's. */}

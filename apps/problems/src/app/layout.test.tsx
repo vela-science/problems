@@ -10,7 +10,7 @@ vi.mock("@vela/projection-data", () => ({
      the stub carries them rather than a bare root. */
   projectionManifest: async () => ({ release_root: "sha256:test", source_repositories: [] }),
   /* Null is the honest stub: a release nothing has confirmed yet is a real
-     state, and it is the one where the footer falls back to activation. */
+     state, and it is the one where the sidebar status falls back to activation. */
   projectionConfirmedAt: async () => null,
 }));
 vi.mock("@/components/vela/app-shell", () => ({

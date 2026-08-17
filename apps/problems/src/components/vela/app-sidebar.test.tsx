@@ -163,8 +163,8 @@ describe("AppSidebar mobile navigation", () => {
     expect(screen.getByRole("link", { name: "Vela" })).toHaveAttribute("href", "/");
     expect(screen.getByText("Explore")).toBeInTheDocument();
     /* Repositories, Sources, and the other record routes keep their pages
-       but reach the reader through contextual links, search, and the footer
-       map rather than the spine. */
+       but reach the reader through contextual links, search, shortcuts, and
+       the command palette rather than the spine. */
     expect(screen.queryByRole("link", { name: "Repositories" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Sources" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Contribute" })).not.toBeInTheDocument();

@@ -3,19 +3,22 @@ import { describe, expect, it } from "vitest";
 import { SiteFooter } from "./site-footer";
 
 describe("SiteFooter", () => {
-  it("links product trust surfaces without promoting record types to global destinations", () => {
+  it("keeps one compact trust landmark without repeating task navigation", () => {
     render(<SiteFooter />);
+    expect(screen.getByRole("contentinfo")).toBeVisible();
+    expect(screen.getByRole("navigation", { name: "Product information" })).toBeVisible();
     for (const [name, href] of [
-      ["How it works", "/about"],
+      ["About", "/about"],
       ["Privacy", "/privacy"],
       ["Terms", "/terms"],
       ["Accessibility", "/accessibility"],
       ["Contact", "/contact"],
     ] as const) expect(screen.getByRole("link", { name })).toHaveAttribute("href", href);
 
-    expect(screen.queryByRole("link", { name: "Decisions" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Proposed changes" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Hubs" })).not.toBeInTheDocument();
-    expect(screen.getByText(/source-owned Problems and Repository-local scientific state/iu)).toBeVisible();
+    for (const name of [
+      "Home", "Problems", "Updates", "Search", "Add a contribution",
+      "Repositories", "Sources", "Relationship graph", "Deployment manifest",
+      "Decisions", "Proposed changes", "Hubs",
+    ]) expect(screen.queryByRole("link", { name })).not.toBeInTheDocument();
   });
 });
