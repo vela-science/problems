@@ -116,6 +116,32 @@ async function runCore(checkout: string): Promise<{ status: InspectionStatus; de
   }
 }
 
+/* What the reader typed is not yet a revision the inspector can take.
+ *
+ * `inspectGitHubCodebase` throws on a malformed commit, and both callers catch
+ * that into `error=unavailable` — "The pinned revision could not be inspected"
+ * — which is also what a deleted repository, a private one, and an unreachable
+ * GitHub produce. The one cause the reader can actually do something about was
+ * the one indistinguishable from the rest.
+ *
+ * Uppercase is accepted and folded down. A Git object name is case-insensitive
+ * hex and lowercase is only its canonical spelling, so a digest pasted from a
+ * tool that prints capitals described exactly the same revision and was turned
+ * away. Everything downstream still sees the canonical form.
+ *
+ * `null` means present and malformed. An empty field is not an error: it pins
+ * the default branch head at import time, which is what the field says. */
+export function normalizeRequestedCommit(value: unknown): { commit?: string } | null {
+  if (value === undefined || value === null) return {};
+  /* A repeated `?commit=` arrives as an array and an uploaded part as a File.
+     Neither names a revision, and quietly pinning the default branch head
+     instead would answer a question the caller did not ask. */
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  if (!trimmed) return {};
+  return /^[0-9a-fA-F]{40}$/u.test(trimmed) ? { commit: trimmed.toLowerCase() } : null;
+}
+
 export async function inspectGitHubCodebase(input: {
   octokit: Octokit;
   fullName: string;

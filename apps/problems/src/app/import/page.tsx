@@ -15,11 +15,46 @@ import { importErrorMessage } from "./import-errors";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Import codebase", robots: { index: false, follow: false } };
 
+/* The field accepted exactly one spelling and named none of it.
+ *
+ * `pattern` alone rejects a 7-character short SHA at the browser's own prompt,
+ * which says only that the value does not match the requested format — and the
+ * requested format appeared nowhere on the page. The placeholder describes what
+ * happens when the field is empty, which is the one case that needs no help.
+ *
+ * The hint is programmatically attached, not merely adjacent, and `title` is
+ * what the browser reads out when the pattern rejects a value. Autocapitalize
+ * and spellcheck are off because a phone keyboard will otherwise offer to
+ * correct a hex digest.
+ *
+ * No placeholder. It held the sentence about the empty case, which the hint
+ * now makes durably — a placeholder leaves the moment anyone types, and in the
+ * monospace this field wants it overflowed the input at 375px anyway. */
+function CommitField({ id }: { id: string }) {
+  return <>
+    <Label htmlFor={id}>Exact commit (optional)</Label>
+    <Input
+      id={id}
+      name="commit"
+      pattern="[0-9a-fA-F]{40}"
+      title="A full 40-character commit SHA"
+      aria-describedby={`${id}-hint`}
+      autoCapitalize="none"
+      autoCorrect="off"
+      spellCheck={false}
+      className="font-mono"
+    />
+    <p id={`${id}-hint`} className="text-meta text-muted-foreground">
+      The full 40-character SHA, not an abbreviated one. Leave it empty to pin the default branch head at import time.
+    </p>
+  </>;
+}
+
 function PublicFields() {
   return <>
     <div><h2 className="text-subtitle font-medium">Public GitHub URL</h2><p className="text-body text-muted-foreground">Uses the same immutable inspection path without GitHub identity or installation access.</p></div>
     <Label htmlFor="url">Repository URL</Label><Input id="url" name="url" type="url" required placeholder="https://github.com/owner/repository" />
-    <Label htmlFor="public-commit">Exact commit (optional)</Label><Input id="public-commit" name="commit" pattern="[0-9a-f]{40}" placeholder="default branch head at import time" />
+    <CommitField id="public-commit" />
     <ImportSubmit variant="outline" pending="Inspecting">Inspect public codebase</ImportSubmit>
   </>;
 }
@@ -41,7 +76,7 @@ export default async function ImportPage({ searchParams }: { searchParams: Promi
           value: `${repository.installationId}:${repository.repositoryId}`,
           label: `${repository.fullName} (${repository.visibility})`,
         }))} />
-        <Label htmlFor="private-commit">Exact commit (optional)</Label><Input id="private-commit" name="commit" pattern="[0-9a-f]{40}" placeholder="default branch head at import time" />
+        <CommitField id="private-commit" />
         <ImportSubmit pending="Pinning">Pin and inspect</ImportSubmit>
       </form> : <div className="rounded-xl border p-5"><p className="text-body text-muted-foreground">Connect selected repositories from your account first.</p>
         <Button nativeButton={false} render={<Link href="/account/connections" />} className="mt-4">Connect GitHub</Button></div>}

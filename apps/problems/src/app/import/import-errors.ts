@@ -2,6 +2,7 @@ export const importErrors = {
   invalid_url: "Enter a public GitHub repository URL in the form https://github.com/owner/repository.",
   access: "That selected repository is no longer available to this GitHub installation. Update access and try again.",
   public_only: "Manual URL import is limited to public GitHub repositories. Use selected GitHub access for a private codebase.",
+  invalid_commit: "A commit must be the full 40-character SHA. Leave the field empty to pin the default branch head at import time.",
   unavailable: "The pinned revision could not be inspected. Check the repository and full commit, then try again.",
 } as const;
 
