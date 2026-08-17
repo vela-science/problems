@@ -98,7 +98,7 @@ const workspaceB = await createWorkspace(accountB.id, {
 const contextA = { accountId: accountA.id, workspaceId: workspaceA.id };
 const anchor = {
   projectionReleaseRoot: standingBefore.releaseRoot,
-  repositoryId: "8138c6da-46c4-47ee-b493-5bbfbec09b1e",
+  repositoryId: "3d012325-3768-4b95-a385-c94e9f2a57a6",
   repositoryRoot: root("1"),
   sourceCommit: "2".repeat(40),
   sourceTree: "3".repeat(40),

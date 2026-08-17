@@ -18,7 +18,7 @@ function manifest(overrides: Record<string, unknown> = {}) {
     release_root: root("2"),
     table_roots: { claims: root("3") },
     source_repositories: [{
-      repository_id: "8138c6da-46c4-47ee-b493-5bbfbec09b1e",
+      repository_id: "3d012325-3768-4b95-a385-c94e9f2a57a6",
       commit: "a".repeat(40),
     }],
     source_registry: {
@@ -74,7 +74,7 @@ describe("clean-room production parity", () => {
 
   test("keys reconstruction inputs by the canonical Repository UUID", () => {
     expect(repositoryCommits(manifest().source_repositories)).toEqual({
-      "8138c6da-46c4-47ee-b493-5bbfbec09b1e": "a".repeat(40),
+      "3d012325-3768-4b95-a385-c94e9f2a57a6": "a".repeat(40),
     });
   });
 

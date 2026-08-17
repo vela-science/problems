@@ -293,7 +293,7 @@ describe("projection public table inventory", () => {
         publicTableOrder.map((table) => [table, emptyRoot]),
       ),
       source_repositories: [{
-        repository_id: "8138c6da-46c4-47ee-b493-5bbfbec09b1e",
+        repository_id: "3d012325-3768-4b95-a385-c94e9f2a57a6",
         slug: "math",
         graph_node_count: 0,
         graph_edge_count: 0,

@@ -32,7 +32,7 @@ describe("typed repository registry and canonical compact repository", () => {
     expect(repositoryRegistry.required_vela_version).toBe(`vela ${velaRelease.version}`);
     expect(new Set(repositoryRegistry.repositories.map(({ slug }) => slug)).size).toBe(repositoryRegistry.repositories.length);
     expect(repositoryRegistry.repositories.map(({ slug, repository_id }) => ({ slug, repository_id }))).toEqual([
-      { slug: "math", repository_id: "8138c6da-46c4-47ee-b493-5bbfbec09b1e" },
+      { slug: "math", repository_id: "3d012325-3768-4b95-a385-c94e9f2a57a6" },
     ]);
   });
 

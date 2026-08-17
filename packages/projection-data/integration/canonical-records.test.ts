@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { neon } from "@neondatabase/serverless";
 import { canonicalJson, sha256 } from "../src/canonical";
 import { claimRecordById, projectionManifest } from "../src/index";
+import { slugForRepositoryId } from "../src/registry";
 
 const databaseUrl = process.env.VELA_PROJECTION_DATABASE_URL;
 if (process.env.VELA_REQUIRE_PROJECTION_TESTS === "1" && !databaseUrl) {
@@ -64,7 +65,9 @@ describeDatabase("Core-authenticated records retain exact source bindings", () =
       console.info(`skipped: ${emptyRelease("claims")}`);
       return;
     }
-    const claim = await claimRecordById(rows[0].repository_id, rows[0].claim_id);
+    const slug = slugForRepositoryId(rows[0].repository_id);
+    expect(slug).toBeDefined();
+    const claim = await claimRecordById(slug!, rows[0].claim_id);
     expect(claim?.source_path).toBe(
       `records/claims/sha256/${claim!.root!.replace("sha256:", "")}.json`,
     );

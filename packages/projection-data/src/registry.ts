@@ -78,9 +78,9 @@ export const repositoryRegistry = registrySchema.parse({
          The current lineage compactly re-authored the still-wanted 321 and 887
          scientific state. Old implementation history remains ordinary Git
          history, not a second readable protocol generation. */
-      repository_id: "8138c6da-46c4-47ee-b493-5bbfbec09b1e",
+      repository_id: "3d012325-3768-4b95-a385-c94e9f2a57a6",
       directory: "math",
-      branch: "coh-00",
+      branch: "submission-v3",
       canonical_problem_namespace: "erdos-problems",
       access: "public",
       remotes: ["https://github.com/vela-science/math.git"],

@@ -49,11 +49,10 @@ async function everyProblem(slug: string) {
   and the page drew a source that had recorded nothing. Silence, again, and no
   exception anywhere. These assertions turn it into a failing refresh.
 
-  Statements are not among them. `source:erdos-problems` is declared
-  `reference_only` with `retention: "none"`: the prose lives on
-  erdosproblems.com, which this repository does not observe, and the adapter
-  discloses the omission rather than retaining bytes its rights do not cover. A
-  Problem here is an identifier, a locator and the labels upstream publishes.
+  The catalogue's own record does not retain statement prose. The reader may
+  still resolve a question from another exact Problem occurrence whose Source
+  permits retaining prose or formal notation; that source and statement kind
+  remain visible on the row.
 */
 describeProjection("what the Problem ledger reads off a Source record", () => {
   test("the declared statuses account for every problem the release publishes", async () => {
@@ -118,11 +117,13 @@ describeProjection("what the Problem ledger reads off a Source record", () => {
     for (const problem of items) {
       if (problem.prize) expect(problem.prize).toMatch(/^\D{1,2}[\d,]+$/u);
     }
-    /* Statements are gone by design: this source is `reference_only` with
-       `retention: "none"`, so a row carries a locator to the prose and none of
-       it. A release that started retaining them would be retaining bytes its
-       declared rights do not cover. */
-    expect(items.every((problem) => problem.statement === "")).toBe(true);
+    /* A row always gives the reader something intelligible: permitted retained
+       prose/formal notation when another exact occurrence supplies it, or the
+       source-owned catalogue label. The statement kind prevents a label from
+       being presented as if it were question prose. */
+    expect(items.every((problem) => problem.statement.trim().length > 0)).toBe(true);
+    expect(items.every((problem) => ["prose", "formal", "label"].includes(problem.statement_kind))).toBe(true);
+    expect(items.some((problem) => problem.statement_kind !== "label")).toBe(true);
     expect(items.every((problem) => problem.source_ids.length > 0)).toBe(true);
   }, wholeCorpus);
 

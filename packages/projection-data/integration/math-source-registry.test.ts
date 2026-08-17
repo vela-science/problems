@@ -3,6 +3,7 @@ import { neon } from "@neondatabase/serverless";
 import { mathSourceRegistryRead, nativeProblemSourceRead, nativeSourceRecordByIdentity, projectionManifest, problemDetail, problemsForRepository, sourceCorpusMapRead } from "../src/index";
 import { mathSourceRegistry } from "../src/math-sources";
 import { projectionReaderIdentity } from "../src/projection-reader";
+import { slugForRepositoryId } from "../src/registry";
 
 const databaseUrl = process.env.VELA_PROJECTION_DATABASE_URL;
 if (process.env.VELA_REQUIRE_PROJECTION_TESTS === "1" && !databaseUrl) {
@@ -85,11 +86,13 @@ describeDatabase("Math Source Registry database boundary", () => {
       console.info("skipped: the release publishes no Repository binding");
       return;
     }
+    const repositorySlug = slugForRepositoryId(binding.repository_id);
+    expect(repositorySlug).toBeDefined();
     const bound = await mathSourceRegistryRead({
       root: sample.release_root,
       sourceId: binding.source_id,
       nativeId: binding.native_id!,
-      repositorySlug: binding.repository_id,
+      repositorySlug,
       includeRecords: true,
       limit: 10,
     });
