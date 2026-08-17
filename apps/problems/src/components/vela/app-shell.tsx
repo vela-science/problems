@@ -7,6 +7,7 @@ import { AppSidebar } from "@/components/vela/app-sidebar";
 import { AppHeader } from "@/components/vela/app-header";
 import { CommandPaletteProvider } from "@/components/vela/command-palette";
 import { ProjectionRootProvider } from "@/components/vela/record-preview";
+import { SiteFooter } from "@/components/vela/site-footer";
 
 type PublishedRepository = { slug: string; name: string; pending: number; hasGraph: boolean; hasProblems: boolean };
 
@@ -51,6 +52,7 @@ export function AppShell({
               />
               <div className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain print:h-auto print:overflow-visible">
                 {children}
+                <SiteFooter />
               </div>
             </SidebarInset>
           </SidebarProvider>
