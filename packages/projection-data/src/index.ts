@@ -2402,6 +2402,7 @@ const PROBLEM_RESOLUTION_PROFILE_VALUES = problemResolutionConfig.candidate_sour
     nativeKind,
     source.source_role,
     source.number_extraction.kind,
+    source.statement_retention,
   ].map(sqlText).join(", ")})`)
 )).join(", ");
 
@@ -2418,7 +2419,7 @@ const PROBLEM_REVIEWED_OCCURRENCE_VALUES = problemResolutionConfig.entities.flat
   ].map(sqlText).join(", ")})`)
 )).join(", ");
 
-const PROBLEM_SOURCES_CTE = `WITH problem_resolution_profiles(source_id, resolution_namespace, native_kind, source_role, number_extraction) AS (
+const PROBLEM_SOURCES_CTE = `WITH problem_resolution_profiles(source_id, resolution_namespace, native_kind, source_role, number_extraction, statement_retention) AS (
       VALUES ${PROBLEM_RESOLUTION_PROFILE_VALUES}
     ), reviewed_problem_occurrences(
       canonical_source_id, canonical_native_id, canonical_native_kind, canonical_content_root,
@@ -2430,7 +2431,16 @@ const PROBLEM_SOURCES_CTE = `WITH problem_resolution_profiles(source_id, resolut
              CASE WHEN profile.number_extraction = 'erdos_formal_native_id'
                THEN substring(n2.native_id from '^Erdos([1-9][0-9]*)(?:\\.|$)')
                ELSE n2.metadata ->> 'problem_number' END AS problem_number,
-             array_agg(DISTINCT n2.source_id) AS source_ids
+             array_agg(DISTINCT n2.source_id) AS source_ids,
+             -- The readable question, where a Source is permitted to retain
+             -- one. Retention is the gate, not the role: two Sources share the
+             -- attributed-activity role and only one declares summary
+             -- retention, while the other's text is an outcome label. Ordering
+             -- by source_id keeps the choice deterministic across releases.
+             (array_agg(n2.summary ORDER BY n2.source_id)
+               FILTER (WHERE profile.statement_retention = 'summary'
+                 AND profile.source_role IN ('problem_catalog', 'attributed_activity_catalog')
+                 AND n2.summary IS NOT NULL AND length(btrim(n2.summary)) > 0))[1] AS prose_statement
       FROM projection.native_records n2
       JOIN projection.release_sources rs2
         ON rs2.observation_root = n2.observation_root AND rs2.source_id = n2.source_id
@@ -2518,7 +2528,7 @@ export async function problemsForRepository(slug: string, input: ProblemLedgerFi
          f.claim_id,
          f.standing AS local_standing,
          f.created_at AS local_assessed_at,
-         n.summary AS statement,
+         coalesce(nullif(btrim(n.summary), ''), ps.prose_statement) AS statement,
          ${PROBLEM_STATUS_SQL} AS declared_status,
          ${PROBLEM_FORMALIZED_SQL} AS formalized,
          ${PROBLEM_PRIZE_SQL} AS prize,
@@ -2632,7 +2642,7 @@ export async function problemCatalogForRepository(
      memory cuts cold catalogue latency without weakening any identity key. */
   const [rows, sourceRows, claimRows] = await Promise.all([
     sql.query(
-      `WITH problem_resolution_profiles(source_id, resolution_namespace, native_kind, source_role, number_extraction) AS (
+      `WITH problem_resolution_profiles(source_id, resolution_namespace, native_kind, source_role, number_extraction, statement_retention) AS (
          VALUES ${PROBLEM_RESOLUTION_PROFILE_VALUES}
        ) SELECT n.native_id AS node_id,
          ${PROBLEM_NUMBER_SQL} AS problem,
@@ -2665,7 +2675,7 @@ export async function problemCatalogForRepository(
     ),
     sql.query(
       `${PROBLEM_SOURCES_CTE}
-       SELECT resolution_namespace, problem_number, source_ids
+       SELECT resolution_namespace, problem_number, source_ids, prose_statement
        FROM problem_sources
        ORDER BY resolution_namespace, problem_number`,
       [root],
@@ -2690,9 +2700,17 @@ export async function problemCatalogForRepository(
   ]);
   const total = rows.length;
   const boundedRows = rows.slice(0, limit);
+  const sourceKey = (namespace: unknown, problem: unknown) => `${String(namespace)}\u0000${String(problem)}`;
   const sources = new Map(sourceRows.map((row) => [
-    `${row.resolution_namespace}\u0000${row.problem_number}`,
+    sourceKey(row.resolution_namespace, row.problem_number),
     stringList(row.source_ids),
+  ]));
+  /* The prose catalogue is `locator_only`, so a Problem's own record carries
+     no question. Where another Source is permitted to retain one, the row
+     carries it — otherwise every catalogue row reads "Problem N". */
+  const prose = new Map(sourceRows.map((row) => [
+    sourceKey(row.resolution_namespace, row.problem_number),
+    typeof row.prose_statement === "string" ? row.prose_statement : null,
   ]));
   const bindingKey = (value: { source_id: string; native_id: string; native_kind: string; content_root: string }) => (
     `${value.source_id}\u0000${value.native_kind}\u0000${value.native_id}\u0000${value.content_root}`
@@ -2718,9 +2736,11 @@ export async function problemCatalogForRepository(
         throw new Error(`Problem ${row.source_id}/${row.node_id} resolves to multiple current Repository Claims`);
       }
       const claim = liveClaims[0] ?? (uniqueClaims.length === 1 ? uniqueClaims[0] : undefined);
-      const sourceIds = sources.get(`${row.resolution_namespace}\u0000${row.problem}`) ?? [];
+      const key = sourceKey(row.resolution_namespace, row.problem);
+      const sourceIds = sources.get(key) ?? [];
       return problemFromRow({
         ...row,
+        statement: String(row.statement ?? "").trim() || prose.get(key) || "",
         claim_id: claim?.claim_id ?? null,
         local_standing: claim?.standing ?? null,
         local_assessed_at: claim?.created_at ?? null,
@@ -2771,7 +2791,7 @@ export async function problemRepositorySlugs(requestedRoot?: string): Promise<st
     ? (await projectionManifestAtRoot(requestedRoot)).release_root
     : await boundReleaseRoot();
   const rows = await neon(projectionDatabaseUrl()).query(
-    `WITH problem_resolution_profiles(source_id, resolution_namespace, native_kind, source_role, number_extraction) AS (
+    `WITH problem_resolution_profiles(source_id, resolution_namespace, native_kind, source_role, number_extraction, statement_retention) AS (
        VALUES ${PROBLEM_RESOLUTION_PROFILE_VALUES}
      ) SELECT DISTINCT fr.repository_id, sd.coverage
      FROM projection.repositories fr
@@ -2928,7 +2948,7 @@ export async function allClaimRouteIds(): Promise<Array<{ repository: string; id
    returns the pair the route actually takes. */
 export async function allProblemRouteIds(): Promise<Array<{ repository: string; problem: string }>> {
   const root = await boundReleaseRoot();
-  const rows = await neon(projectionDatabaseUrl()).query(`WITH problem_resolution_profiles(source_id, resolution_namespace, native_kind, source_role, number_extraction) AS (
+  const rows = await neon(projectionDatabaseUrl()).query(`WITH problem_resolution_profiles(source_id, resolution_namespace, native_kind, source_role, number_extraction, statement_retention) AS (
       VALUES ${PROBLEM_RESOLUTION_PROFILE_VALUES}
     ) SELECT fr.repository_id AS repository,
       ${PROBLEM_NUMBER_SQL} AS problem, sd.coverage
