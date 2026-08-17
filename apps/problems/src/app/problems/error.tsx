@@ -17,10 +17,10 @@ export default function ProblemsError({ reset }: { error: Error; reset: () => vo
   return (
     <PageShell archetype="problem" className="grid min-h-[56svh] content-center">
       <Alert variant="destructive" className="max-w-2xl">
-        <AlertTitle>This Problem view could not render.</AlertTitle>
+        <AlertTitle>This Problem could not load.</AlertTitle>
         <AlertDescription>
-          No scientific state has been inferred or substituted. The exact projection release this
-          view reads may have advanced since it was requested.
+          problems.science does not substitute unverified scientific state when a published view
+          fails. Try again or return to the Problems directory.
         </AlertDescription>
       </Alert>
       <div className="mt-5 flex flex-wrap items-center gap-3">

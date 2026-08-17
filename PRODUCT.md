@@ -59,6 +59,11 @@ Check, Decision, exact record type, hash, performer, model, tool, and environmen
 appear where they explain a Contribution. They do not compete with Problems in
 primary navigation.
 
+About, Privacy, Terms, Accessibility, and Contact are concise trust surfaces in
+the product shell. They explain current behavior and user choices; they are not
+a marketing site, protocol manual, or substitute for source-owned reference
+documentation.
+
 The Problems hierarchy is durable:
 
 - `/problems` is the global collection entry;
@@ -119,6 +124,14 @@ The browser path stays short:
 2. attach work or evidence;
 3. review scope and provenance;
 4. submit an unsigned contribution draft.
+
+The browser owns public discovery and shared, authority-free coordination. It
+may save workspaces, notes, Research Blocks, comments, selected artifact
+references, and unsigned drafts. Repository checkout, filesystem and terminal
+access, proof or experiment execution, environment secrets, generic agent
+sessions, artifact harvesting, signing, and key custody stay in user-selected
+local tools. Handoffs pass explicit HTTPS references and user-selected
+artifacts; they never imply local access or upload local state automatically.
 
 Users can import a GitHub repository, attach rooted artifacts, or continue in
 Codex, Claude, Entire, or another local tool. Vela links exact external session

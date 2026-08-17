@@ -27,9 +27,11 @@ pretending that evidence providers or formal libraries are collections.
 | `/search` | Find Problems, Contributions, and public artifacts | Open an exact result |
 | `/my-work` | Resume followed Problems, drafts, imports, and workspaces | Continue work |
 | `/contribute` | Add a scoped Contribution | Choose a Problem |
-| `/import/github` | Connect repository work | Select and inspect a repository |
+| `/import` | Connect repository work | Select and inspect a repository |
 | `/codebases` | Browse connected code context | Open files or continue locally |
 | `/account` | Manage private identity, connections, security, and activity | Continue work or manage a connection |
+| `/about` | Understand the product and its scientific-state boundaries | Browse Problems |
+| `/privacy`, `/terms`, `/accessibility`, `/contact` | Understand current policies and get help | Use the relevant account, contribution, or private-support path |
 
 Repository, source, record, and graph routes remain durable contextual
 destinations. They do not become primary navigation sections.
@@ -99,6 +101,12 @@ instructions. No interface reports success before durable references exist.
 Every public object exposed through search or agent context has a durable UI
 route or an explicit unavailable or private state. Route-contract tests enforce
 that parity.
+
+The Work view is a shared Workspace, not a local development environment. It
+does not claim repository checkout, filesystem access, terminals, native
+method execution, secret management, agent orchestration, generic session
+storage, artifact harvesting, or signing. “Continue locally” passes exact
+public references and user-selected artifacts to a tool the user controls.
 
 ## Account and authority
 

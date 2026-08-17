@@ -35,7 +35,7 @@ const problemsSignInRoute = "apps/problems/src/app/sign-in/route.ts";
 const problemsSignOutAction = "apps/problems/src/app/actions/auth.ts";
 const problemsActivityAction = "apps/problems/src/app/actions/activity.ts";
 const problemsActivityDraftRoute = "apps/problems/src/app/drafts/[id]/export/route.ts";
-const problemsActivityWorkbench = "apps/problems/src/components/vela/workbench.tsx";
+const problemsActivityWorkspace = "apps/problems/src/components/vela/problem-workspace.tsx";
 const problemsMyWorkPage = "apps/problems/src/app/my-work/page.tsx";
 const problemsAuthLibrary = "apps/problems/src/lib/auth.ts";
 const problemsIdentityProxy = "apps/problems/src/proxy.ts";
@@ -50,6 +50,7 @@ const problemsImportPage = "apps/problems/src/app/import/page.tsx";
 const problemsCodebasePage = "apps/problems/src/app/codebases/[id]/page.tsx";
 const problemsHostedAccount = "apps/problems/src/lib/hosted-account.ts";
 const problemsCodebaseInspection = "apps/problems/src/lib/codebase-inspection.ts";
+const problemsPublicContact = "apps/problems/src/lib/public-contact.ts";
 
 export const PROBLEMS_IDENTITY_FILES = [
   problemsAccountRoute,
@@ -84,7 +85,7 @@ const PROBLEMS_PROVIDER_ROUTES = new Set([
 const PROBLEMS_ACTIVITY_FILES = new Set([
   problemsActivityAction,
   problemsActivityDraftRoute,
-  problemsActivityWorkbench,
+  problemsActivityWorkspace,
   problemsMyWorkPage,
   problemsImportAction,
   problemsConnectionsPage,
@@ -166,9 +167,9 @@ function inspectProblems(file, content, add) {
   if (requestStateCall.test(content)) add("app_request_state", "Vela scientific reads may not depend on request state");
   if (
     runtimeEnvironment.test(content)
-    && !new Set([problemsAuthLibrary, problemsGithubApp, problemsGithubInstallRoute, problemsWorkosIdentities, problemsCodebaseInspection]).has(file)
+    && !new Set([problemsAuthLibrary, problemsGithubApp, problemsGithubInstallRoute, problemsWorkosIdentities, problemsCodebaseInspection, problemsPublicContact]).has(file)
   ) {
-    add("app_runtime_environment", "Vela runtime secrets are confined to its identity adapter");
+    add("app_runtime_environment", "Vela runtime configuration is confined to declared adapters");
   }
   const fetches = [...content.matchAll(fetchCall)].length;
   if (fetches && !exactProblemsFetch(file, content, fetches)) {

@@ -164,15 +164,15 @@ export function CommandPaletteProvider({
           open={open}
           onOpenChange={setOpen}
           onOpenChangeComplete={handleOpenChangeComplete}
-          title="Search Vela Problems"
-          description="Open a published repository or product route"
+          title="Search problems.science"
+          description="Find a Problem, Contribution, source, or page"
           className="border-border bg-popover sm:max-w-xl"
         >
           <Command shouldFilter={false}>
-            <CommandInput placeholder="Search Problems, Assertions, and sources…" autoFocus value={query} onValueChange={setQuery} />
+            <CommandInput placeholder="Search Problems, Contributions, and sources…" autoFocus value={query} onValueChange={setQuery} />
             <CommandList>
               {hasQuery && records.length ? (
-                <CommandGroup heading="Exact published records">
+                <CommandGroup heading="Published results">
                   {records.map((record) => {
                     const problem = record.kind === "problem" ? problemCollectionForPath(record.href, problemCollections) : null;
                     return (
@@ -186,9 +186,9 @@ export function CommandPaletteProvider({
               ) : null}
               {hasQuery ? (
                 <>
-                  {searching ? <p className="px-3 py-2 text-body text-muted-foreground" role="status">Searching the exact projection…</p> : null}
-                  {!searching && !searchError && records.length === 0 ? <p className="px-3 py-2 text-body text-muted-foreground" role="status">No exact published record matches.</p> : null}
-                  {searchError ? <p className="px-3 py-2 text-body text-destructive" role="alert">Exact record search is unavailable.</p> : null}
+                  {searching ? <p className="px-3 py-2 text-body text-muted-foreground" role="status">Searching published data…</p> : null}
+                  {!searching && !searchError && records.length === 0 ? <p className="px-3 py-2 text-body text-muted-foreground" role="status">No published result matches.</p> : null}
+                  {searchError ? <p className="px-3 py-2 text-body text-destructive" role="alert">Search is temporarily unavailable.</p> : null}
                   {records.length === 0 ? (
                     <CommandGroup heading="Continue">
                       <CommandItem value={`full search ${normalized}`} onSelect={() => navigate(`/search?q=${encodeURIComponent(normalized)}`)}><HugeiconsIcon icon={Search} aria-hidden />Open full search for “{normalized}”</CommandItem>
@@ -221,12 +221,13 @@ export function CommandPaletteProvider({
                     ))}
                   </CommandGroup>
                   <CommandSeparator />
-                  <CommandGroup heading="Vela">
+                  <CommandGroup heading="Go to">
                     <CommandItem onSelect={() => navigate("/")}><HugeiconsIcon icon={Home01Icon} aria-hidden />Home</CommandItem>
                     <CommandItem onSelect={() => navigate("/problems")}><HugeiconsIcon icon={PuzzleIcon} aria-hidden />Problems</CommandItem>
                     {problemCollections.map((collection) => <CommandItem key={collection.namespace} onSelect={() => navigate(`/problems/${collection.namespace}`)}><HugeiconsIcon icon={PuzzleIcon} aria-hidden />{collection.name}</CommandItem>)}
                     <CommandItem onSelect={() => navigate("/contribute")}><HugeiconsIcon icon={WorkIcon} aria-hidden />Contribute</CommandItem>
                     <CommandItem onSelect={() => navigate("/activity")}><HugeiconsIcon icon={Activity01Icon} aria-hidden />Updates</CommandItem>
+                    <CommandItem onSelect={() => navigate("/about")}><HugeiconsIcon icon={BookOpen} aria-hidden />About problems.science</CommandItem>
                   </CommandGroup>
                   <CommandSeparator />
                   <CommandGroup heading="Provenance">

@@ -23,7 +23,7 @@ export const metadata: Metadata = {
      was missed — it is the indexed description of the app's root destination,
      since vercel.json 308s `/` here. A number here is wrong the moment the
      projection publishes a different set, and metadata is static. */
-  description: "Exact published scientific state from pinned Vela repository checkouts.",
+  description: "The repositories that publish current scientific state to problems.science.",
   alternates: { canonical: "/repositories" },
 };
 
@@ -46,7 +46,7 @@ export default async function RepositoriesPage() {
            checkouts" from the epoch that had four subject repositories, and went
            on saying it after they were consolidated into one authority — a
            header claiming four above a page listing one. */
-        description="Exact Git repositories and their current scientific Standing."
+        description="Source repositories and the scientific state each one currently publishes."
         signals={[
           { label: "Repositories", value: number.format(repositories.length), detail: "exact Git custody boundaries", tone: "neutral" },
           { label: "Standing", value: number.format(acceptedClaims), detail: "accepted Repository-local Claims", tone: "progress" },

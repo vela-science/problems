@@ -13,7 +13,7 @@ vi.mock("@/components/vela/problem-summary", () => ({ ProblemAnswerStrip: () => 
 vi.mock("@/components/vela/problem-state", () => ({
   ProblemState: ({ view }: { view: string }) => <section>Public view: {view}</section>,
 }));
-vi.mock("@/components/vela/workbench", () => ({ Workbench: () => <section>Workspace surface</section> }));
+vi.mock("@/components/vela/problem-workspace", () => ({ ProblemWorkspace: () => <section>Workspace surface</section> }));
 
 import { ProblemPageView } from "./problem-page";
 

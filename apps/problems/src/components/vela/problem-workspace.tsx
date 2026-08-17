@@ -160,11 +160,11 @@ function DraftForm({ scope, state, artifacts, drafts }: { scope: Scope; state: S
   return <form action={saveSubmissionDraftAction} className="grid gap-4 sm:grid-cols-2"><ScopeFields scope={scope} />{draft ? <><input type="hidden" name="draftId" value={draft.id} /><input type="hidden" name="expectedVersion" value={draft.version} /><p className="text-meta text-muted-foreground sm:col-span-2">Saving revises the existing unsigned draft (v{draft.version}) for this anchor.</p></> : null}<div className="sm:col-span-2"><FormSelect label="Research Block" name="researchBlockId" options={artifacts.map((artifact) => ({ value: artifact.id, label: artifact.path }))} /></div><FormField label="Vela agent actor ID" name="actorId" placeholder="agent:my-research-agent" /><FormField label="Ed25519 public key (hex)" name="publicKey" placeholder="64 lowercase hex characters" /><FormSelect label="Requested change" name="requestedChange" options={[{ value: "add_claim", label: "Add Claim" }, ...(state.anchor.claimId ? [{ value: "correct_claim", label: "Correct bound Claim" }, { value: "supersede_claim", label: "Supersede bound Claim" }, { value: "retract_claim", label: "Retract bound Claim" }] : [])]} /><FormSelect label="Claim type" name="claimType" options={[{ value: "theoretical", label: "Theoretical" }, { value: "computational", label: "Computational" }, { value: "empirical", label: "Empirical" }, { value: "negative", label: "Negative" }, { value: "contradiction", label: "Contradiction" }]} /><div className="sm:col-span-2"><Label htmlFor="draft-assertion">Claim assertion</Label><Textarea id="draft-assertion" name="assertion" required placeholder="The exact assertion this Submission proposes" /></div><FormField label="Condition" name="condition" placeholder="Optional explicit condition" required={false} /><FormSelect label="Replayability" name="replayability" options={[{ value: "exact", label: "Exact" }, { value: "bounded", label: "Bounded" }, { value: "approximate", label: "Approximate" }, { value: "unavailable", label: "Unavailable" }, { value: "unknown", label: "Unknown" }]} /><FormField label="Caveat" name="caveat" placeholder="What this does not establish" /><FormField label="Producer check" name="checkMethod" placeholder="lake build" /><FormSelect label="Check outcome" name="checkOutcome" options={[{ value: "pass", label: "Pass" }, { value: "fail", label: "Fail" }, { value: "error", label: "Error" }, { value: "skipped", label: "Skipped" }, { value: "unknown", label: "Unknown" }]} /><div className="sm:col-span-2"><FormField label="Verification requirement" name="verificationRequirement" placeholder="Independent statement-fidelity review" /></div><Button className="w-fit sm:col-span-2" type="submit">Validate and save unsigned draft</Button></form>;
 }
 
-export function EmptyHostedWorkbench({ state, accountId }: { state: State; accountId: string }) {
+export function EmptyHostedWorkspace({ state, accountId }: { state: State; accountId: string }) {
   return <><WorkspacePrelude state={state} /><EmptyWorkspace state={state} accountId={accountId} /></>;
 }
 
-function UnavailableHostedWorkbench({ state, code }: { state: State; code: ActivityDataError["code"] | "unknown" }) {
+function UnavailableHostedWorkspace({ state, code }: { state: State; code: ActivityDataError["code"] | "unknown" }) {
   return <><WorkspacePrelude state={state} /><ActivityUnavailable code={code} /></>;
 }
 
@@ -182,7 +182,7 @@ export function workspaceObjects({ state, activity, workspace, scope, currentAnc
     meta: `${activity.approaches.length} approaches · ${activity.attempts.length} attempts · ${activity.artifacts.length} Research Blocks`,
     version: workspace.version,
     anchorRoot: currentAnchorRoot,
-    content: <div><p className="text-eyebrow uppercase text-muted-foreground">Workspace overview</p><h2 className="mt-1 text-title">{workspace.name}</h2><p className="mt-2 max-w-2xl text-body text-muted-foreground">Move from a shared direction to a bounded Attempt, a rooted Research Block, review, and—when ready—an exact local handoff.</p><p className="mt-3 max-w-2xl text-meta text-muted-foreground">Generic session, transcript, checkpoint, and performer provenance is omitted here. Consult Entire outside Vela when that work provenance was captured.</p><dl className="mt-6 grid gap-3 sm:grid-cols-3"><div className="rounded-lg bg-muted/25 p-4"><dt className="text-meta text-muted-foreground">Approaches</dt><dd className="mt-1 font-mono text-subtitle">{activity.approaches.length}</dd></div><div className="rounded-lg bg-muted/25 p-4"><dt className="text-meta text-muted-foreground">Attempts</dt><dd className="mt-1 font-mono text-subtitle">{activity.attempts.length}</dd></div><div className="rounded-lg bg-muted/25 p-4"><dt className="text-meta text-muted-foreground">Research Blocks</dt><dd className="mt-1 font-mono text-subtitle">{activity.artifacts.length}</dd></div></dl><div className="mt-8 grid gap-3"><WorkAction title="New Approach" description="Name a direction for this exact Problem."><NewApproachForm scope={scope} /></WorkAction><WorkAction title="Add a note" description="Retain reasoning in this Workspace or keep it private."><AddNoteForm scope={scope} /></WorkAction><WorkAction title="Attach contribution evidence" description="Attach one Attempt result by exact root; artifact bytes remain in their named custody location."><ResearchBlockForm scope={scope} attempts={activity.attempts.filter(isCurrent)} /></WorkAction><WorkAction title="Prepare repository handoff" description="Build a portable unsigned payload for the local Workbench to inspect and sign."><DraftForm scope={scope} state={state} artifacts={activity.artifacts.filter(isCurrent)} drafts={activity.drafts.filter(isCurrent)} /></WorkAction></div></div>,
+    content: <div><p className="text-eyebrow uppercase text-muted-foreground">Workspace overview</p><h2 className="mt-1 text-title">{workspace.name}</h2><p className="mt-2 max-w-2xl text-body text-muted-foreground">Move from a shared direction to an Attempt, an attached Research Block, review, and—when ready—an explicit local handoff.</p><p className="mt-3 max-w-2xl text-meta text-muted-foreground">This shared Workspace does not store generic agent sessions, transcripts, or checkpoints. Those remain in their native tools; an exact reference can be attached when it helps explain a Contribution.</p><dl className="mt-6 grid gap-3 sm:grid-cols-3"><div className="rounded-lg bg-muted/25 p-4"><dt className="text-meta text-muted-foreground">Approaches</dt><dd className="mt-1 font-mono text-subtitle">{activity.approaches.length}</dd></div><div className="rounded-lg bg-muted/25 p-4"><dt className="text-meta text-muted-foreground">Attempts</dt><dd className="mt-1 font-mono text-subtitle">{activity.attempts.length}</dd></div><div className="rounded-lg bg-muted/25 p-4"><dt className="text-meta text-muted-foreground">Research Blocks</dt><dd className="mt-1 font-mono text-subtitle">{activity.artifacts.length}</dd></div></dl><div className="mt-8 grid gap-3"><WorkAction title="New Approach" description="Name a direction for this Problem."><NewApproachForm scope={scope} /></WorkAction><WorkAction title="Add a note" description="Share reasoning in this Workspace or keep it private."><AddNoteForm scope={scope} /></WorkAction><WorkAction title="Attach contribution evidence" description="Attach one Attempt result by exact root; artifact bytes remain at the selected external location."><ResearchBlockForm scope={scope} attempts={activity.attempts.filter(isCurrent)} /></WorkAction><WorkAction title="Prepare repository handoff" description="Build a portable unsigned payload to inspect and sign in your chosen local tool."><DraftForm scope={scope} state={state} artifacts={activity.artifacts.filter(isCurrent)} drafts={activity.drafts.filter(isCurrent)} /></WorkAction></div></div>,
     detail: <div className="text-meta text-muted-foreground"><p>Hosted records can reference exact State, but they do not change it.</p><p className="mt-2">Authority effect: <strong className="font-medium text-foreground">none</strong>.</p></div>,
   });
 
@@ -229,7 +229,7 @@ export function workspaceObjects({ state, activity, workspace, scope, currentAnc
   return objects;
 }
 
-type WorkbenchLoad =
+type WorkspaceLoad =
   | { status: "empty"; accountId: string }
   | { status: "error"; code: ActivityDataError["code"] | "unknown" }
   | {
@@ -242,7 +242,7 @@ type WorkbenchLoad =
       activity: ProblemActivity;
     };
 
-async function loadWorkbench(state: State, hostedAccount: AccountIdentity, selectedWorkspace?: string): Promise<WorkbenchLoad> {
+async function loadWorkspace(state: State, hostedAccount: AccountIdentity, selectedWorkspace?: string): Promise<WorkspaceLoad> {
   try {
     const account = await ensureCurrentAccount({ workosUserId: hostedAccount.id, displayName: hostedAccount.displayName, email: hostedAccount.email });
     const workspaces = await listProblemWorkspaces(
@@ -262,15 +262,15 @@ async function loadWorkbench(state: State, hostedAccount: AccountIdentity, selec
   }
 }
 
-export async function Workbench({ state, hostedAccount, accountsEnabled = true, selectedWorkspace, selectedObject, selectedInspector, mutationError, basePath }: { state: State; hostedAccount: AccountIdentity | null; accountsEnabled?: boolean; selectedWorkspace?: string; selectedObject?: string; selectedInspector?: string; mutationError?: string; basePath: string }) {
+export async function ProblemWorkspace({ state, hostedAccount, accountsEnabled = true, selectedWorkspace, selectedObject, selectedInspector, mutationError, basePath }: { state: State; hostedAccount: AccountIdentity | null; accountsEnabled?: boolean; selectedWorkspace?: string; selectedObject?: string; selectedInspector?: string; mutationError?: string; basePath: string }) {
   /* Offering sign-in on a deployment that has no identity provider is a dead
      control: `/sign-in` answers 503, and it is the only thing on the surface.
      Say what the deployment does instead. */
   if (!hostedAccount && !accountsEnabled) return <><WorkspacePrelude state={state} /><section aria-labelledby="hosted-workspace-heading" className="mt-8"><h2 id="hosted-workspace-heading" className="mt-2 text-title">Hosted coordination is not enabled here</h2><p className="mt-3 max-w-2xl text-body text-muted-foreground">This deployment carries no account provider, so no Workspace can be opened on it. Current State remains fully readable.</p></section></>;
   if (!hostedAccount) return <><WorkspacePrelude state={state} /><section id="add-contribution" aria-labelledby="hosted-workspace-heading" className="mt-8 grid gap-6 scroll-mt-16 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end"><div><h2 id="hosted-workspace-heading" className="mt-2 text-title">Add a contribution</h2><p className="mt-3 max-w-2xl text-body text-muted-foreground">Sign in to compare retained work and coordinate a bounded Contribution for this exact Problem. Public State remains readable, and a hosted account creates neither scientific authorship nor repository authority.</p></div><Button className="w-fit" nativeButton={false} render={<Link href={`/sign-in?returnTo=${encodeURIComponent(`${basePath}?view=work`)}`} prefetch={false} />}>Sign in to continue</Button></section></>;
-  const loaded = await loadWorkbench(state, hostedAccount, selectedWorkspace);
-  if (loaded.status === "error") return <UnavailableHostedWorkbench state={state} code={loaded.code} />;
-  if (loaded.status === "empty") return <EmptyHostedWorkbench state={state} accountId={loaded.accountId} />;
+  const loaded = await loadWorkspace(state, hostedAccount, selectedWorkspace);
+  if (loaded.status === "error") return <UnavailableHostedWorkspace state={state} code={loaded.code} />;
+  if (loaded.status === "empty") return <EmptyHostedWorkspace state={state} accountId={loaded.accountId} />;
 
   const { workspaces, workspace, scope, currentAnchor, currentAnchorRoot, activity } = loaded;
   const objects = workspaceObjects({

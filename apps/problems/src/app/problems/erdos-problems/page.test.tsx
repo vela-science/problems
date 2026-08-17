@@ -81,7 +81,7 @@ describe("Erdős Problems directory", () => {
     expect(screen.getByRole("heading", { level: 1, name: /Erdős Problems/u })).toBeInTheDocument();
     expect(screen.getByRole("form", { name: "Filter Erdős Problems" })).toBeInTheDocument();
     expect(screen.getByText("More filters")).toBeInTheDocument();
-    for (const name of ["Scientific area", "Source status", "Observed Source occurrence", "Current Repository", "Formalization", "Source observation coverage", "Local Standing"]) {
+    for (const name of ["Scientific area", "Source status", "Observed Source occurrence", "Current Repository", "Formalization", "Source observation coverage", "Contribution decision"]) {
       expect(screen.getByRole("combobox", { name })).toBeInTheDocument();
     }
     expect(screen.getByRole("textbox", { name: "Exact Problem identifier" })).toHaveAttribute("maxlength", "256");
@@ -97,7 +97,7 @@ describe("Erdős Problems directory", () => {
     mocks.coverage.mockResolvedValue(null);
     mocks.corpora.mockResolvedValue(null);
     render(await ErdosProblemsPage({ searchParams: Promise.resolve({ view: "overview" }) }));
-    expect(screen.getByText("Published collections and Topics")).toBeInTheDocument();
+    expect(screen.getByText("Topics and related sources")).toBeInTheDocument();
     expect(mocks.recent).toHaveBeenCalledOnce();
   });
 

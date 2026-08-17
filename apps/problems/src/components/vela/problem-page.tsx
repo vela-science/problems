@@ -6,7 +6,7 @@ import { decodeHtmlEntities } from "@vela/ui/lib/html-entities";
 import { LinkTabs } from "@/components/vela/link-tabs";
 import { ProblemAnswerStrip } from "@/components/vela/problem-summary";
 import { ProblemState, type ProblemStateView } from "@/components/vela/problem-state";
-import { Workbench } from "@/components/vela/workbench";
+import { ProblemWorkspace } from "@/components/vela/problem-workspace";
 import { authConfiguration, currentAccount } from "@/lib/auth";
 import { scientificProblemState } from "@/lib/scientific-state";
 
@@ -97,7 +97,7 @@ export async function ProblemPageView({ repository, problem, collectionName, rou
       {view !== "work" ? <div className="lg:col-span-2"><ProblemAnswerStrip state={state} basePath={route} /></div> : null}
     </PageHero>
     {view === "work"
-      ? <Workbench state={state} hostedAccount={account} accountsEnabled={accountsEnabled} selectedWorkspace={query.workspace} selectedObject={query.object} selectedInspector={query.inspector} mutationError={query.workError} basePath={route} />
+      ? <ProblemWorkspace state={state} hostedAccount={account} accountsEnabled={accountsEnabled} selectedWorkspace={query.workspace} selectedObject={query.object} selectedInspector={query.inspector} mutationError={query.workError} basePath={route} />
       : <ProblemState state={state} basePath={route} view={view} />}
   </PageShell>;
 }

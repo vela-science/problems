@@ -20,14 +20,14 @@ describe("problem-scoped Workspace discovery", () => {
     expect(migration).toContain("TO vela_activity_app");
   });
 
-  test("binds the application query and Workbench selection to the current Problem", () => {
+  test("binds the application query and Workspace selection to the current Problem", () => {
     const activity = read("packages/activity-data/src/activity.ts");
-    const workbench = read("apps/problems/src/components/vela/workbench.tsx");
+    const workspace = read("apps/problems/src/components/vela/problem-workspace.tsx");
     expect(activity).toContain("activity_api.list_problem_workspaces($1::uuid, $2, $3)");
     expect(activity).toContain("[accountId, repositoryId, problemId]");
-    expect(workbench).toContain("listProblemWorkspaces(");
-    expect(workbench).toContain("state.anchor.repositoryId");
-    expect(workbench).toContain("state.anchor.problemId");
-    expect(workbench).not.toContain("const workspaces = await listWorkspaces(account.id)");
+    expect(workspace).toContain("listProblemWorkspaces(");
+    expect(workspace).toContain("state.anchor.repositoryId");
+    expect(workspace).toContain("state.anchor.problemId");
+    expect(workspace).not.toContain("const workspaces = await listWorkspaces(account.id)");
   });
 });

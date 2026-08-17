@@ -28,5 +28,8 @@ describe("public sitemap", () => {
     expect(urls).toContain("https://problems.science/problems/erdos-problems/999");
     expect(urls).not.toContain("https://problems.science/p/math/321");
     expect(urls).not.toContain("https://problems.science/repositories/math/problems/321");
+    for (const route of ["about", "privacy", "terms", "accessibility", "contact"]) {
+      expect(urls).toContain(`https://problems.science/${route}`);
+    }
   });
 });

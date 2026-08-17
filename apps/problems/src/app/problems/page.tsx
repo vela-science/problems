@@ -12,7 +12,7 @@ import { discoveredProblems, problemDiscoveryCollections, type ProblemDiscovery 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Problems",
-  description: "Enter the Problem collections explicitly published in the current problems.science release.",
+  description: "Browse the scientific Problem collections published on problems.science.",
   alternates: { canonical: "/problems" },
 };
 
@@ -65,7 +65,7 @@ export default async function ProblemsPage({
     "@type": "CollectionPage",
     name: "Problems",
     url: "https://problems.science/problems",
-    description: "The explicit Problem collections published by problems.science.",
+    description: "The Problem collections published by problems.science.",
     hasPart: collection ? [{
       "@type": "CollectionPage",
       name: collection.name,
@@ -97,7 +97,7 @@ export default async function ProblemsPage({
           <div><dt className="text-muted-foreground">Problems</dt><dd className="mt-1 font-mono text-label">{collectionCount.toLocaleString()}</dd></div>
           <div><dt className="text-muted-foreground">Reviewed evidence</dt><dd className="mt-1 font-mono text-label">{assessed.length.toLocaleString()}</dd></div>
         </dl>
-        <p className="mt-4 text-meta text-muted-foreground">Formal Conjectures, Lean proofs, VibeMathed, and other retained records support these Problems as sources or evidence. They are not separate Problem collections.</p>
+        <p className="mt-4 text-meta text-muted-foreground">Formal libraries, papers, datasets, and research tools may support these Problems as sources or evidence. They do not become separate Problem collections.</p>
       </div>
     </PageHero>
 
@@ -128,7 +128,7 @@ export default async function ProblemsPage({
       <PageSectionHeader>
         <div>
           <p className="text-eyebrow uppercase text-muted-foreground">Current starting points</p>
-          <h2 id="starting-points" className="mt-1 text-title">Assessed and open Erdős problems</h2>
+          <h2 id="starting-points" className="mt-1 text-title">Reviewed and open Erdős problems</h2>
         </div>
         <Link href={COLLECTION_PATH} className="text-meta font-medium underline-offset-4 hover:underline">Full collection</Link>
       </PageSectionHeader>

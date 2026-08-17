@@ -97,12 +97,12 @@ describe("Workspace implementation permission matrix", () => {
   });
 
   test("does not load hosted locators or activity for a signed-out reader", () => {
-    const workbench = read("apps/problems/src/components/vela/workbench.tsx");
-    const signedOutReturn = workbench.indexOf("if (!hostedAccount) return");
-    const activityLoad = workbench.indexOf("const loaded = await loadWorkbench");
+    const workspace = read("apps/problems/src/components/vela/problem-workspace.tsx");
+    const signedOutReturn = workspace.indexOf("if (!hostedAccount) return");
+    const activityLoad = workspace.indexOf("const loaded = await loadWorkspace");
     expect(signedOutReturn).toBeGreaterThan(-1);
     expect(activityLoad).toBeGreaterThan(signedOutReturn);
-    expect(workbench.match(/getProblemActivity\(/gu)).toHaveLength(1);
+    expect(workspace.match(/getProblemActivity\(/gu)).toHaveLength(1);
 
     const artifactFrame = read("packages/ui/src/components/vela/rooted-artifact-frame.tsx");
     expect(artifactFrame).toContain("artifact.locator");

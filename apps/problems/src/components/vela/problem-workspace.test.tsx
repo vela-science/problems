@@ -4,7 +4,7 @@ import type { ScientificProblemState } from "@/lib/scientific-state";
 
 vi.mock("server-only", () => ({}));
 
-import { EmptyHostedWorkbench, Workbench, workspaceObjects } from "./workbench";
+import { EmptyHostedWorkspace, ProblemWorkspace, workspaceObjects } from "./problem-workspace";
 
 const state = {
   repositorySlug: "math",
@@ -20,21 +20,21 @@ describe("Problem Workspace", () => {
   afterEach(cleanup);
 
   it("keeps signed-out coordination separate from scientific State", async () => {
-    render(await Workbench({ basePath: "/problems/erdos-problems/321", state, hostedAccount: null }));
+    render(await ProblemWorkspace({ basePath: "/problems/erdos-problems/321", state, hostedAccount: null }));
     expect(screen.getByRole("heading", { name: "Add a contribution" })).toBeVisible();
     expect(screen.getByRole("heading", { name: "Check prior work" })).toBeVisible();
     expect(screen.getByRole("link", { name: "Open codebase record" })).toBeVisible();
   });
 
   it("offers no dead sign-in when accounts are unavailable", async () => {
-    render(await Workbench({ basePath: "/problems/erdos-problems/321", state, hostedAccount: null, accountsEnabled: false }));
+    render(await ProblemWorkspace({ basePath: "/problems/erdos-problems/321", state, hostedAccount: null, accountsEnabled: false }));
     expect(screen.getByRole("heading", { name: "Hosted coordination is not enabled here" })).toBeVisible();
     expect(screen.queryByRole("link", { name: "Sign in" })).not.toBeInTheDocument();
     expect(screen.getByText(/Current State remains fully readable/u)).toBeVisible();
   });
 
   it("starts one Problem-scoped Workspace", () => {
-    render(<EmptyHostedWorkbench state={state} accountId="account-1" />);
+    render(<EmptyHostedWorkspace state={state} accountId="account-1" />);
     expect(screen.getByRole("heading", { name: "Start a workspace for this Problem" })).toBeVisible();
     expect(screen.getByText("Hosted identity")).toBeVisible();
   });

@@ -28,7 +28,7 @@ export function problemPublicState(state: State): ProblemPublicState {
   const sourceResolved = ["solved", "proved", "disproved"].some((word) => declared.includes(word));
   if (disturbed && new Set(standings).size > 1) return { word: "Contested", basis: "a Contribution here was corrected or withdrawn" };
   if (sourceResolved) return { word: "Resolved", basis: "per the source's own declaration" };
-  if (accepted) return { word: "Partial", basis: "open per source; bounded results accepted here" };
+  if (accepted) return { word: "Partial", basis: "open per source; scoped results accepted here" };
   return { word: "Open", basis: "per the source's own declaration" };
 }
 
@@ -63,18 +63,18 @@ export function ProblemAnswerStrip({ state, basePath }: { state: State; basePath
   }, {});
   const outcomeSummary = Object.entries(outcomes).map(([outcome, count]) => `${count} ${outcome.replaceAll("_", " ")}`).join(" · ");
   const evidence = review
-    ? `${outcomeSummary || "No scoped Verification Record"}${state.sourceAudits.length ? " · source publishes its own audit" : ""}`
+    ? `${outcomeSummary || "No scoped check retained"}${state.sourceAudits.length ? " · source publishes its own audit" : ""}`
     : state.claims.length
-      ? "No Verification Record is retained for the current Contribution"
+      ? "The current Contribution has no retained check"
       : state.sourceAudits.length
         ? "Source publishes its own audit; nothing checked here"
-        : "Nothing checked by this Repository";
+        : "No scoped check retained here";
   const remains = publicState.word === "Contested"
     ? "Current Contributions require reconciliation or correction."
     : publicState.word === "Resolved"
       ? accepted.length && scope?.includes("not to this Problem")
         ? "The source marks the question resolved; retained evidence here remains narrower."
-        : "The source records no unresolved question; evidence scope may still be bounded."
+        : "The source records no unresolved question; the evidence here may still have a narrower scope."
       : accepted.length
         ? "The source still marks the Problem open beyond the accepted scope."
         : "The source question remains open; no accepted Contribution is retained here.";

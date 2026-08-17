@@ -89,7 +89,7 @@ describe("CommandPaletteProvider exact record search", () => {
 
     render(<CommandPaletteProvider repositories={repositories} problemCollections={problemCollections} projectionRoot={projectionRoot}><OpenPalette /></CommandPaletteProvider>);
     fireEvent.click(screen.getByRole("button", { name: "Open palette" }));
-    fireEvent.change(screen.getByPlaceholderText("Search Problems, Assertions, and sources…"), { target: { value: proposalId } });
+    fireEvent.change(screen.getByPlaceholderText("Search Problems, Contributions, and sources…"), { target: { value: proposalId } });
 
     await waitFor(() => expect(search.load).toHaveBeenCalledWith(projectionRoot, { q: proposalId }));
     const resultLabel = await screen.findByText(`${proposalId} · Retain the exact foreign-reference package.`);
@@ -116,7 +116,7 @@ describe("CommandPaletteProvider exact record search", () => {
 
     render(<CommandPaletteProvider repositories={repositories} problemCollections={problemCollections} projectionRoot={projectionRoot}><OpenPalette /></CommandPaletteProvider>);
     fireEvent.click(screen.getByRole("button", { name: "Open palette" }));
-    fireEvent.change(screen.getByPlaceholderText("Search Problems, Assertions, and sources…"), { target: { value: "321" } });
+    fireEvent.change(screen.getByPlaceholderText("Search Problems, Contributions, and sources…"), { target: { value: "321" } });
 
     expect(await screen.findByText("Erdős Problems · #321 · A question about arithmetic progressions")).toBeInTheDocument();
   });
@@ -126,9 +126,9 @@ describe("CommandPaletteProvider exact record search", () => {
 
     render(<CommandPaletteProvider repositories={repositories} problemCollections={problemCollections} projectionRoot={projectionRoot}><OpenPalette /></CommandPaletteProvider>);
     fireEvent.click(screen.getByRole("button", { name: "Open palette" }));
-    fireEvent.change(screen.getByPlaceholderText("Search Problems, Assertions, and sources…"), { target: { value: "unknown-record" } });
+    fireEvent.change(screen.getByPlaceholderText("Search Problems, Contributions, and sources…"), { target: { value: "unknown-record" } });
 
-    expect(await screen.findByText("No exact published record matches.")).toBeInTheDocument();
+    expect(await screen.findByText("No published result matches.")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Open full search for “unknown-record”" }));
     expect(navigation.push).toHaveBeenCalledWith("/search?q=unknown-record");
   });

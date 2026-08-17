@@ -64,6 +64,8 @@ describe("current product language", () => {
     expect(contract).toContain("It cannot sign, issue a Decision, or change Standing.");
     expect(contract).toContain("A Check records scoped evidence. A Decision accepts or rejects a proposed");
     expect(contract).not.toContain("Profile` and `Organization` remain deferred");
+    expect(contract).toContain("The browser owns public discovery and shared, authority-free coordination.");
+    expect(contract).not.toMatch(/local Workbench/iu);
   });
 
   it("separates the user-intent product navigation from contextual scientific records", () => {

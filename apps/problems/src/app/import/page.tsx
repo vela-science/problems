@@ -65,12 +65,12 @@ export default async function ImportPage({ searchParams }: { searchParams: Promi
   const error = importErrorMessage((await searchParams).error);
   const connections = account ? await listGitHubConnections(account.activity.id) : null;
   return <PageShell archetype="default" layout="reading" className="flex flex-col gap-8">
-    <PageIntro title="Connect a codebase" description="Pin one Git revision, inspect its native Vela integration, and leave scientific authority unchanged."
+    <PageIntro title="Connect a codebase" description="Connect one GitHub revision to your work. problems.science reads the repository metadata and files needed for inspection; it does not write to GitHub."
       signals={[{ label: "Access", value: "Read only", tone: "evidence" }, { label: "Revision", value: "Immutable", tone: "neutral" }]} />
     <ContributionStepper current={2} heading="Connect code to scientific work" />
     {error && <ImportError message={error} />}
-    {!account ? <><div className="rounded-xl border p-5"><p className="text-body text-muted-foreground">Inspect a public codebase without an account. Sign in only to retain its rooted receipt.</p>
-      <Button nativeButton={false} render={<Link href="/sign-in?returnTo=/import" />} className="mt-4">Sign in to retain receipts</Button></div>
+    {!account ? <><div className="rounded-xl border p-5"><p className="text-body text-muted-foreground">Inspect a public codebase without an account. Sign in only if you want to save the inspected revision to your account.</p>
+      <Button nativeButton={false} render={<Link href="/sign-in?returnTo=/import" />} className="mt-4">Sign in to save this revision</Button></div>
       <form action="/inspect" method="get" className="space-y-4 rounded-xl border p-5"><PublicFields /></form></> : <>
       {connections?.repositories.length ? <form action={importCodebase} className="space-y-4 rounded-xl border p-5">
         <div><h2 className="text-subtitle font-medium">Selected GitHub codebase</h2><p className="text-body text-muted-foreground">Installation tokens are short lived and never stored.</p></div>

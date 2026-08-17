@@ -54,7 +54,7 @@ describe("Problem answer strip", () => {
   it("answers state, understanding, evidence, and recency without record-tier identifiers", () => {
     render(<ProblemAnswerStrip basePath="/problems/erdos-problems/321" state={{ ...base, currentClaimId: claim.id, claims: [claim], reviews: [review] } as never} />);
     expect(screen.getByText("Partial")).toBeInTheDocument();
-    expect(screen.getByText(/open per source; bounded results accepted here/u)).toBeInTheDocument();
+    expect(screen.getByText(/open per source; scoped results accepted here/u)).toBeInTheDocument();
     expect(screen.getByText(/1 accepted Contribution/u)).toBeInTheDocument();
     expect(screen.getByText(/2 pass/u)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Add contribution" })).toHaveAttribute("href", "/problems/erdos-problems/321?view=work#add-contribution");
@@ -71,13 +71,13 @@ describe("Problem answer strip", () => {
   it("keeps the honest empties distinct", () => {
     render(<ProblemAnswerStrip basePath="/problems/erdos-problems/321" state={base} />);
     expect(screen.getByText("Open")).toBeInTheDocument();
-    expect(screen.getByText("Nothing checked by this Repository")).toBeInTheDocument();
+    expect(screen.getByText("No scoped check retained here")).toBeInTheDocument();
     expect(screen.getByText("No Contribution to this Problem has been accepted here.")).toBeInTheDocument();
     expect(screen.getByText("The source question remains open; no accepted Contribution is retained here.")).toBeInTheDocument();
     cleanup();
 
     render(<ProblemAnswerStrip basePath="/problems/erdos-problems/321" state={{ ...base, currentClaimId: claim.id, claims: [claim] } as never} />);
-    expect(screen.getByText("No Verification Record is retained for the current Contribution")).toBeInTheDocument();
+    expect(screen.getByText("The current Contribution has no retained check")).toBeInTheDocument();
     cleanup();
 
     render(<ProblemAnswerStrip basePath="/problems/erdos-problems/321" state={{ ...base, problem: { ...base.problem, declared_status: "solved" } } as never} />);

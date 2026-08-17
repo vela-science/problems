@@ -1,11 +1,8 @@
 import Link from "next/link";
 
-/* The complete public route map, in one quiet landmark. The sidebar stays the
- * four-destination product spine; the routes that are published but not spine
- * — decisions, proposals, hubs, graph, search — were reachable only through
- * the command palette or a link someone already had. A footer is where a
- * reader expects the full map, and `contentinfo` is what a screen reader
- * asks for to find it. */
+/* Public orientation in one quiet landmark. Exact record routes remain
+ * reachable from their context; the footer names stable product, trust, and
+ * provenance destinations rather than repeating the internal object model. */
 const GROUPS: ReadonlyArray<{ label: string; links: ReadonlyArray<{ href: string; label: string }> }> = [
   {
     label: "Product",
@@ -14,25 +11,31 @@ const GROUPS: ReadonlyArray<{ label: string; links: ReadonlyArray<{ href: string
       { href: "/problems", label: "Problems" },
       { href: "/activity", label: "Updates" },
       { href: "/search", label: "Search" },
+      { href: "/contribute", label: "Add a contribution" },
     ],
   },
   {
-    label: "Technical details",
+    label: "About",
     links: [
-      { href: "/repositories", label: "Repositories" },
+      { href: "/about", label: "How it works" },
+      { href: "/contact", label: "Contact" },
+      { href: "/accessibility", label: "Accessibility" },
+    ],
+  },
+  {
+    label: "Policies",
+    links: [
+      { href: "/privacy", label: "Privacy" },
+      { href: "/terms", label: "Terms" },
+    ],
+  },
+  {
+    label: "Technical context",
+    links: [
+      { href: "/graph", label: "Relationship graph" },
       { href: "/sources", label: "Sources" },
-      { href: "/decisions", label: "Decisions" },
-      { href: "/proposals", label: "Proposed changes" },
-      { href: "/hubs", label: "Hubs" },
-    ],
-  },
-  { label: "Explore context", links: [{ href: "/graph", label: "Relationship graph" }] },
-  {
-    label: "Exact release",
-    links: [
+      { href: "/repositories", label: "Repositories" },
       { href: "/.well-known/vela-site.json", label: "Deployment manifest" },
-      { href: "/problems.json", label: "Problems JSON" },
-      { href: "/sources.json", label: "Sources JSON" },
     ],
   },
 ];
@@ -49,6 +52,6 @@ export function SiteFooter() {
         </ul>
       </div>)}
     </nav>
-    <p className="mx-auto mt-10 max-w-6xl text-micro text-muted-foreground">problems.science serves an exact projection of signed scientific State. Hosted coordination is non-authoritative.</p>
+    <p className="mx-auto mt-10 max-w-6xl text-micro text-muted-foreground">problems.science publishes a read-only view of source-owned Problems and Repository-local scientific state. <Link href="/about" className="underline underline-offset-4 hover:text-foreground">How this view works</Link>.</p>
   </footer>;
 }

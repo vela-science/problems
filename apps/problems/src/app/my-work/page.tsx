@@ -13,7 +13,7 @@ import { currentActivityAccount } from "@/lib/hosted-account";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "My work",
-  description: "Your retained work on scientific Problems.",
+  description: "Your private workspaces and saved work on scientific Problems.",
   robots: { index: false, follow: false },
 };
 
@@ -37,7 +37,7 @@ export default async function MyWorkPage() {
   return <PageShell archetype="default" layout="reading" className="flex flex-col gap-8">
     <PageIntro
       title="My work"
-      description="Return to the Problems where you are comparing approaches, recording results, or preparing a Contribution. This private coordination never changes public scientific State."
+      description="Return to the Problems where you are comparing approaches, recording results, or preparing a Contribution. This private coordination never changes published scientific state."
       signals={[
         { label: "Account", value: account.hosted.displayName, tone: "neutral" },
         { label: "Authority", value: "None", detail: "Coordination only", tone: "neutral" },
@@ -51,7 +51,7 @@ export default async function MyWorkPage() {
     </section> : result.workspaces.length ? <section aria-labelledby="retained-work-heading">
       <div className="flex flex-wrap items-end justify-between gap-3 border-b pb-4">
         <div>
-          <h2 id="retained-work-heading" className="text-title">Retained workspaces</h2>
+          <h2 id="retained-work-heading" className="text-title">Your workspaces</h2>
           <p className="mt-1 text-meta text-muted-foreground">Open a Problem&apos;s Work section to continue its approaches, Attempts, and handoff.</p>
         </div>
         <Button variant="outline" nativeButton={false} render={<Link href="/problems" />}>Find a Problem</Button>
@@ -60,14 +60,14 @@ export default async function MyWorkPage() {
         {result.workspaces.map((workspace) => <Item key={workspace.id} className="px-0" variant="default">
           <ItemContent>
             <ItemTitle>{workspace.name}<Badge variant="secondary">{workspace.role}</Badge></ItemTitle>
-            <ItemDescription>Updated {formatDate(workspace.updatedAt)} · exact workspace {workspace.slug}</ItemDescription>
+            <ItemDescription>Updated {formatDate(workspace.updatedAt)} · workspace {workspace.slug}</ItemDescription>
           </ItemContent>
         </Item>)}
       </ItemGroup>
     </section> : <section aria-labelledby="empty-work-heading" className="border-y py-10">
-      <p className="text-eyebrow uppercase text-muted-foreground">Nothing retained yet</p>
+      <p className="text-eyebrow uppercase text-muted-foreground">No saved work yet</p>
       <h2 id="empty-work-heading" className="mt-2 text-title">Start from a Problem</h2>
-      <p className="mt-2 max-w-2xl text-body text-muted-foreground">Read what is known, check prior work, then open Work when you have a bounded approach or result to retain.</p>
+      <p className="mt-2 max-w-2xl text-body text-muted-foreground">Read what is known, check prior work, then open Work when you have an approach or result to share.</p>
       <Button className="mt-5" nativeButton={false} render={<Link href="/problems" />}>Browse Problems</Button>
     </section>}
   </PageShell>;

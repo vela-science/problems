@@ -70,7 +70,7 @@ afterEach(() => {
 describe("the Repositories page orients the reader from projected facts", () => {
   test("uses one concise product description instead of restating a changing count", async () => {
     const html = await render([repository("math", 12)]);
-    expect(html).toContain("Exact Git repositories and their current scientific Standing.");
+    expect(html).toContain("Source repositories and the scientific state each one currently publishes.");
     expect(html).not.toContain("Four exact Git");
   });
 

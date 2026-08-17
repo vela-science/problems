@@ -87,6 +87,13 @@ describe("AppHeader trail", () => {
     expect(screen.getByText("Updates")).toHaveAttribute("aria-current", "page");
   });
 
+  it("names public trust routes without a Repository switcher", () => {
+    navigation.pathname = "/privacy";
+    render(<Shell />);
+    expect(screen.getByText("Privacy")).toHaveAttribute("aria-current", "page");
+    expect(screen.queryByRole("button", { name: /Switch Repository/ })).not.toBeInTheDocument();
+  });
+
   it("names a Repository overview without a section", () => {
     navigation.pathname = "/repositories/quantum-codes";
     render(<Shell />);
@@ -136,7 +143,7 @@ describe("AppHeader trail", () => {
   it("keeps global search, notifications, appearance, and account access in the header", () => {
     render(<Shell />);
 
-    expect(screen.getByRole("button", { name: "Search or navigate Vela" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Search or navigate problems.science" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Notifications" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Choose appearance" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Sign in" })).toHaveAttribute("href", "/sign-in");

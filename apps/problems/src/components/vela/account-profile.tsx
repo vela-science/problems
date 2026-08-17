@@ -80,9 +80,9 @@ function SectionHeading({ id, title, description, action }: {
 
 function EmptyWork() {
   return <div className="border-b py-8">
-    <p className="text-eyebrow uppercase text-muted-foreground">Nothing retained yet</p>
+    <p className="text-eyebrow uppercase text-muted-foreground">No saved work yet</p>
     <h3 className="mt-2 text-subtitle font-medium">Start from a Problem</h3>
-    <p className="mt-2 max-w-xl text-body text-muted-foreground">Choose a question, review what is known, then retain an approach or result when you are ready.</p>
+    <p className="mt-2 max-w-xl text-body text-muted-foreground">Choose a question, review what is known, then save an approach or result when you are ready.</p>
     <Button className="mt-5 min-h-11 sm:min-h-8" nativeButton={false} render={<Link href="/problems" />}>Browse Problems</Button>
   </div>;
 }
@@ -98,7 +98,7 @@ function Workspaces({ result }: { result: AccountProfileData["workspaces"] }) {
       <ItemMedia variant="icon" className="mt-0.5 size-9 rounded-md bg-muted/60"><HugeiconsIcon icon={WorkIcon} aria-hidden /></ItemMedia>
       <ItemContent>
         <ItemTitle className="line-clamp-none flex-wrap">{workspace.name}<Badge variant="secondary">{workspace.role}</Badge></ItemTitle>
-        <ItemDescription>Updated {formatDate(workspace.updatedAt)} · retained workspace {workspace.slug}</ItemDescription>
+        <ItemDescription>Updated {formatDate(workspace.updatedAt)} · workspace {workspace.slug}</ItemDescription>
       </ItemContent>
     </Item>)}
   </ItemGroup>;
@@ -210,6 +210,7 @@ export function AccountProfile({ account, workspaces, connections }: AccountProf
             <div className="min-w-0 flex-1">
               <h2 id="session-heading" className="text-label font-medium">Current session</h2>
               <p className="mt-1 text-meta text-muted-foreground">Active in this browser. Name and email come from your connected sign-in provider.</p>
+              <p className="mt-2 text-meta text-muted-foreground"><Link href="/privacy" className="font-medium text-foreground underline underline-offset-4">How account data is handled</Link></p>
               <form action={signOutAccount} className="mt-4">
                 <Button className="min-h-11 sm:min-h-7" type="submit" size="sm" variant="outline"><HugeiconsIcon icon={Logout01Icon} aria-hidden />Sign out</Button>
               </form>

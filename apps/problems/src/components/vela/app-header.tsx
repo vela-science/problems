@@ -44,6 +44,11 @@ const globalTitles: Record<string, string> = {
   "/graph": "Graph",
   "/account": "Account",
   "/my-work": "My work",
+  "/about": "About",
+  "/privacy": "Privacy",
+  "/terms": "Terms",
+  "/accessibility": "Accessibility",
+  "/contact": "Contact",
 };
 
 /* A record's own identity, for the end of the trail.
@@ -231,7 +236,7 @@ export function AppHeader({
             size="sm"
             className="h-11 min-w-11 gap-2 bg-background px-2.5 text-meta text-muted-foreground shadow-none md:h-8 md:min-w-0"
             onClick={() => setOpen(true)}
-            aria-label="Search or navigate Vela"
+            aria-label="Search or navigate problems.science"
           >
             <HugeiconsIcon icon={Search} aria-hidden className="size-3.5" />
             <span className="hidden sm:inline">Search or jump</span>

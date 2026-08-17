@@ -27,6 +27,7 @@ instruments. Shared controls and semantics stay in `@vela/ui`.
 | My work | resume groups | active drafts, imports, workspaces, next step |
 | Contribute and import | staged form and preview | stepper, scope preview, upload and retry feedback |
 | Account | identity header plus grouped settings | connections, real activity, security, next actions |
+| About and policies | calm reading surface in the product shell | source-to-published-view-to-Repository-state explanation, concise local navigation |
 | Repository and source | browse and inspect | file tree, code preview, releases, import status |
 | Relationship graph | searchable synchronized canvas and list | selected-node detail, reset, filter, accessible summary |
 
@@ -85,6 +86,12 @@ Work shows prior approaches and unresolved gaps before the browser workspace.
 The contribution stepper is Choose Problem, Attach work, Review, Submit. File,
 code, and artifact previews sit beside the relevant step. Import states keep
 user input and expose retry or local recovery.
+
+The browser Workspace is visibly shared coordination. Local handoff controls
+are disclosures or explicit actions labelled “Continue locally” or “Open
+source”; they do not resemble an embedded terminal, filesystem, IDE, agent
+runtime, or signing surface. A handoff preview names the exact public references
+and selected artifacts that will leave the browser.
 
 History uses one chronological spine. Corrections and supersession show the
 old and new presentation or scientific object, actor, reason, and retained

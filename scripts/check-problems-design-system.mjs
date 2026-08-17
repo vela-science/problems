@@ -80,6 +80,10 @@ const sharedProblemPage = readFileSync(join(problems, "src/components/vela/probl
 if (!sharedProblemPage.includes('@vela/ui/vela/page-shell') || !sharedProblemPage.includes("<PageShell")) {
   failures.push("shared Problem page must compose the canonical PageShell");
 }
+const publicInformationPage = readFileSync(join(problems, "src/components/vela/public-information-page.tsx"), "utf8");
+if (!publicInformationPage.includes('@vela/ui/vela/page-shell') || !publicInformationPage.includes("<PageShell")) {
+  failures.push("shared public information page must compose the canonical PageShell");
+}
 const rawRouteFrame = /className=["'][^"']*\bmx-auto\b[^"']*\bmax-w-(?:\[[^\]]+\]|\S+)[^"']*\bpx-(?:\d|\[)/u;
 const competingOuterFrame = /className=["'][^"']*\bw-full\b[^"']*\bmax-w-(?:\[[^\]]+\]|\S+)[^"']*\b(?:p|px)-\d[^"']*["']/u;
 for (const file of problemsRoutes) {
@@ -90,12 +94,13 @@ for (const file of problemsRoutes) {
   if (/className=["']vela-page["']/u.test(source)) failures.push(`${label}: literal vela-page bypasses the PageShell component contract`);
   if (/className=["'][^"']*\bvela-page-(?:hero|section|section-head)\b/u.test(source)) failures.push(`${label}: literal PageShell hook bypasses the canonical component contract`);
   const canonicalProblemPageDelegate = source.includes('@/components/vela/problem-page') && source.includes("<ProblemPageView");
+  const publicInformationPageDelegate = source.includes('@/components/vela/public-information-page') && source.includes("<PublicInformationPage");
   /* A page that only forwards renders nothing, so it has no frame to compose.
      The retired `/p/{repository}/{problem}` path is the one of these: it
      redirects permanently to the canonical address and returns no markup at
      all. Requiring a PageShell there would mean giving a redirect a body. */
   const redirectOnlyPage = source.includes("permanentRedirect(") && !source.includes("return <");
-  if (/\/page\.tsx$/u.test(file) && !canonicalProblemPageDelegate && !redirectOnlyPage && (!source.includes('@vela/ui/vela/page-shell') || !source.includes("<PageShell"))) {
+  if (/\/page\.tsx$/u.test(file) && !canonicalProblemPageDelegate && !publicInformationPageDelegate && !redirectOnlyPage && (!source.includes('@vela/ui/vela/page-shell') || !source.includes("<PageShell"))) {
     failures.push(`${label}: every app page must compose the canonical PageShell`);
   }
 }
@@ -132,7 +137,7 @@ for (const file of [
   join(problems, "src/components/vela/proposal-ledger-rows.tsx"),
   join(problems, "src/components/vela/stat-row.tsx"),
   join(problems, "src/components/vela/hub-membership-map.tsx"),
-  join(problems, "src/components/vela/workbench.tsx"),
+  join(problems, "src/components/vela/problem-workspace.tsx"),
   join(problems, "src/components/vela/source-registry/shared.tsx"),
   join(problems, "src/components/vela/source-registry/registry-view.tsx"),
   join(problems, "src/components/vela/source-registry/record-view.tsx"),
@@ -140,8 +145,8 @@ for (const file of [
   const source = readFileSync(file, "utf8");
   if (/\b(?:border-y|divide-y|border-t)\b/u.test(source)) failures.push(`${relative(root, file)}: list-strip separators bypass the authored surface/spacing contract`);
 }
-const workbenchSource = readFileSync(join(problems, "src/components/vela/workbench.tsx"), "utf8");
-if (/\b(?:border-y|divide-y|border-t|border-b|border-l|border-dashed)\b/u.test(workbenchSource)) failures.push("Work mode restores a wireframe separator or perimeter ladder");
+const workspaceSource = readFileSync(join(problems, "src/components/vela/problem-workspace.tsx"), "utf8");
+if (/\b(?:border-y|divide-y|border-t|border-b|border-l|border-dashed)\b/u.test(workspaceSource)) failures.push("Work mode restores a wireframe separator or perimeter ladder");
 
 if (existsSync(join(problems, "src/components/vela/vela-mark.tsx"))) failures.push("an app-local Vela mark remains beside @vela/ui");
 

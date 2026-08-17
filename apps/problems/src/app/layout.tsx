@@ -11,10 +11,10 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://problems.science"),
   title: {
-    default: "Vela",
-    template: "%s · Vela",
+    default: "problems.science",
+    template: "%s · problems.science",
   },
-  description: "Read exact scientific State and coordinate non-authoritative Work.",
+  description: "Find scientific problems, understand the current evidence, and contribute work.",
   alternates: { canonical: "/" },
   icons: { icon: "/favicon.svg" },
   robots: { index: true, follow: true },

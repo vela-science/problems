@@ -19,6 +19,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/decisions",
     "/search",
     "/sources",
+    "/about",
+    "/privacy",
+    "/terms",
+    "/accessibility",
+    "/contact",
     ...repositories.flatMap((repository) => {
       const root = `/repositories/${repository.slug}`;
       return [

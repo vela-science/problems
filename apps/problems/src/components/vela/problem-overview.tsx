@@ -64,17 +64,17 @@ export function ProblemOverview({ state, basePath }: { state: State; basePath: s
         </li>
         <li className="grid gap-3 py-5 sm:grid-cols-[2rem_minmax(0,1fr)_auto] sm:items-start">
           <span className="font-mono text-meta text-muted-foreground">02</span>
-          <div><h3 className="text-label">Check prior work</h3><p className="mt-1 max-w-[70ch] text-compact text-muted-foreground">Compare retained approaches, negative results, and exact artifacts before starting. Similarity is advisory; exact IDs and roots decide identity.</p></div>
+          <div><h3 className="text-label">Check prior work</h3><p className="mt-1 max-w-[70ch] text-compact text-muted-foreground">Compare earlier approaches, negative results, and attached artifacts before starting. Exact matches identify prior work; similarity only suggests possible overlap.</p></div>
           <Button nativeButton={false} size="sm" variant="outline" render={<Link href={`${basePath}?view=work#prior-work`} />}>Review prior work</Button>
         </li>
         <li className="grid gap-3 py-5 sm:grid-cols-[2rem_minmax(0,1fr)_auto] sm:items-start">
           <span className="font-mono text-meta text-muted-foreground">03</span>
-          <div><h3 className="text-label">Add a contribution</h3><p className="mt-1 max-w-[70ch] text-compact text-muted-foreground">Start from this exact Problem, work in its native codebase, and retain bounded evidence with its assumptions, environment, outcome, and retry boundary.</p></div>
+          <div><h3 className="text-label">Add a contribution</h3><p className="mt-1 max-w-[70ch] text-compact text-muted-foreground">Start from this Problem, work in its codebase, and attach the assumptions, environment, outcome, and conditions for trying again.</p></div>
           <Button nativeButton={false} size="sm" render={<Link href={`${basePath}?view=work#add-contribution`} />}>Start from this Problem</Button>
         </li>
       </ol>
-      <p className="mt-4 max-w-[70ch] text-meta text-muted-foreground">The browser coordinates shared work; execution and signing stay local. <Link href="/contribute" className="underline underline-offset-4">Contribution handoff details</Link></p>
-      <code className="mt-3 block w-fit max-w-full rounded bg-command px-2 py-1 font-mono text-micro break-all text-command-foreground">{state.repository.status.actions.work.command}</code>
+      <p className="mt-4 max-w-[70ch] text-meta text-muted-foreground">The browser helps you prepare and share work; execution and signing stay local. <Link href="/contribute" className="underline underline-offset-4">Contribution handoff details</Link></p>
+      <details className="mt-3 max-w-[70ch] rounded-lg border px-4 py-3 text-meta"><summary className="cursor-pointer font-medium text-foreground">Continue locally</summary><code className="mt-3 block w-fit max-w-full rounded bg-command px-2 py-1 font-mono text-micro break-all text-command-foreground">{state.repository.status.actions.work.command}</code></details>
     </section>
   </>;
 }

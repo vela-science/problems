@@ -176,7 +176,7 @@ export default async function HomePage() {
           <Link href={COLLECTION_PATH} className="shrink-0 text-meta font-medium underline-offset-4 hover:underline">All problems</Link>
         </div>
         <p className="mt-2 max-w-2xl text-meta text-muted-foreground">
-          These Problems have an assessed contribution. That does not by itself mean the whole question is resolved.
+          These Problems have a reviewed Contribution. That does not by itself mean the whole question is resolved.
         </p>
 
         {assessed.length ? <ItemGroup className="mt-4 gap-0 divide-y">
@@ -205,7 +205,7 @@ export default async function HomePage() {
           </div>
           <Link href="/activity" className="shrink-0 text-meta font-medium underline-offset-4 hover:underline">All updates</Link>
         </div>
-        <p className="mt-2 text-meta text-muted-foreground">Changes retained by the published scientific sources.</p>
+        <p className="mt-2 text-meta text-muted-foreground">Changes published by the named scientific sources.</p>
         {activity.length
           ? <ScientificChangeFeed changes={activity} compact plainLanguage />
           : <p className="mt-5 border-y py-6 text-body text-muted-foreground">No recent source updates are available.</p>}
