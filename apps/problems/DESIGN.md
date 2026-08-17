@@ -106,63 +106,61 @@ nothing behind it carries no chip.
 ## What a Problem paints
 
 A Problem is one record with four sibling surfaces, each a complete HTML page
-at its own URL — **Overview** (the bare address), **Sources**
-(`?view=sources`), **Record** (`?view=record`), and **Workspace**
-(`?view=workspace`) — behind one link-addressed tab bar. A sibling surface is
+at its own URL — **Overview** (the bare address), **Evidence**
+(`?view=evidence`), **Work** (`?view=work`), and **History**
+(`?view=history`) — behind one link-addressed tab bar. The sections are the
+reader's model: the two public nouns are Problem and Contribution, and
+review, decision, source, repository, provenance, and protocol records
+appear in context rather than as peer destinations. A sibling surface is
 not progressive disclosure: nothing is DOM-hidden behind a closed control, so
 the rule that a closed disclosure is deletion is satisfied by address.
 `Collapsible` remains forbidden for record content — Base UI keeps closed
 content out of the DOM.
 
-**Overview** answers the reader's questions, in the reader's order:
+The hero carries a compact strip on every public surface, readable before
+learning the protocol: **Problem state** (Open, Partial, Resolved, or
+Contested, with its derivation basis beside it), **Current understanding**
+(one plain line), **Evidence** (a verification-strength summary), and
+**Updated**. Repository-local Standing never appears in this strip — it
+governs exact Contributions and renders on them, under Evidence.
 
-1. **Question** — the retained prose statement, or the honest sentence naming
-   what is not retained, with the upstream locator. Formal notation never
-   opens the page; it keeps its own face under Sources.
-2. **Current State** — Source status and Local Standing as separate axes, then
-   the Repository's Assertions or a sentence naming what is absent.
-3. **What was checked** — a one-line summary of the contribution supporting
-   current Standing, linking to the Record surface.
-4. **What remains** and **Next contribution**. The hero strip's unresolved
-   cell carries the record's own first limit — never a badge or a colour —
-   and the full list keeps its place on Record; where nothing is retained the
-   strip says a fact about the record, because "nothing is uncertain" is a
-   claim this product must not make.
+**Overview** answers the reader's questions, in the reader's order: the
+**Question** (retained prose, or the formalizers' own docstring attributed
+as their wording, or the honest absence sentence with the upstream locator;
+formal notation renders as a file panel, never as the opening paragraph),
+**What was checked** (one line, full record one link away), and
+**Contribute** (the primary next action). Record-tier material — roots,
+record ids, verification record detail, occurrence tables, audit bodies,
+correction relations — never renders on Overview; Overview may summarize it
+in one line with a link. That sentence is what keeps the provenance wall
+from regrowing.
 
-The hero carries a compact answer strip on every public surface — the two
-state axes, what was checked, what remains — each cell a one-line summary of
-material whose detail lives at its own address.
+**Evidence** is everything that supports what the Problem currently holds:
 
-**Record-tier material — roots, record ids, verification record detail,
-occurrence tables, audit bodies, correction relations — never renders on
-Overview. Overview may summarize it in one line with a link.** This sentence
-is what keeps the provenance wall from regrowing.
-
-**Sources** is what the sources themselves publish:
-
-- **Source-declared facts** — status, formalization, prize, subjects, OEIS,
-  bound sources, upstream statement, and the source's own commentary.
-- **Source coverage** and the **retained statement text**, in the flow. These
-  are the record, not progressive detail.
-- **Source review**, where a source publishes one. It keeps its own heading and
-  never sits under one named "Checks": a source audit's own
-  `does_not_establish` denies being a Vela Verification, and merging the two
-  collapses two state axes. Placement enforces this: source-published facts
-  live on Sources, Vela checks live on Record.
-
-**Record** is the disclosure tier, in the flow with nothing collapsed:
-
+- **Contributions** — each with its own Standing badge and the scope
+  sentence that stops a reference-scoped acceptance from reading as a
+  solved conjecture.
 - **Latest contribution and reviews** — produced by, checked by, not
   established by those checks, decided by. One block, in the protocol's
   order: reading it as a sequence is what shows a producer, a verifier and
-  a Decision performer to be three different actors, which is the thing a
-  disclaimer sentence about verification not being acceptance can only
-  assert. The contribution shown is the one supporting current Standing, not
-  the newest — a withdrawn or pending Proposal keeps its own status word
-  instead of taking the heading, and where nothing supports the current Claim
-  the block says so rather than promoting an unrelated Proposal into it.
-- **Correction history** — exact relations, with the predecessor retained.
-- **Exact provenance** — roots, record types, and raw exports.
+  a Decision performer to be three different actors. The contribution shown
+  is the one supporting current Standing, not the newest; where nothing
+  supports the current Claim the block says so rather than promoting an
+  unrelated Proposal into it. Human, agent, model, and tool performers
+  render as peers; weight comes from method and independence, not actor
+  class.
+- **Source-declared facts**, **source coverage**, the **retained
+  statements** as file panels grouped by the module their library declares,
+  and the **source's own review**, which keeps its own heading and never
+  sits under one named "Checks".
+
+**Work** is the account-aware coordination surface (the Workspace), reached
+as a section of the Problem rather than as a separate product concept.
+
+**History** is how the record changed, in the flow with nothing collapsed:
+every proposed change under its own status word, **correction history**
+with predecessors retained, and **exact provenance** — roots, record types,
+and raw exports.
 
 No heading repeats the record's type word, and none carries an eyebrow naming
 the category it already names.

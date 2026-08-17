@@ -38,9 +38,48 @@ hosted work inventories are not part of the current product.
 - Center each claim record on “Why this stands”: retained evidence, scoped
   verification, Decisions, Events, corrections, and the resulting Standing.
 
+## Product model
+
+The public product has two prominent nouns:
+
+- **Problem** — the canonical scientific question and current understanding.
+- **Contribution** — a proof, computation, dataset, review, negative result,
+  correction, or other bounded evidence.
+
+Everything else is contextual to those two: a Review or Check evaluates a
+Contribution; a Decision changes whether a Contribution is included in
+current state; a Source supports a statement or Contribution; a Repository
+contains relevant code or formal material; human, agent, model, tool,
+method, and environment are provenance; exact records, hashes, signatures,
+and protocol objects are technical details. All of these remain real and
+linkable, but they do not compete for global navigation.
+
+Global navigation is Problems, Updates, My work (signed in), and Search.
+The logo is Home. "Add contribution" is a contextual action, not a
+permanent information category. Repositories, Sources, Records, Decisions,
+Proposals, Hubs, and Graph keep their durable routes, reached through
+contextual links, search, the footer map, and technical-detail disclosures.
+
+A Problem page has four sections: **Overview** (the question, its state,
+plain-language current understanding, what remains unknown, the primary
+next action), **Evidence** (contributions, verification strength,
+human/agent/tool attribution as peers, sources and artifacts, inclusion in
+current state), **Work** (open next steps, approaches, negative results,
+start or continue work, submit a contribution), and **History**
+(corrections, reviews, included and rejected contributions, supersession,
+exact technical provenance on expansion).
+
+Repository-local Standing appears on the exact Contribution it governs; it
+never reads as the status of the whole Problem. The Problem's own state is
+the four-word public axis: Open, Partial, Resolved, or Contested, each
+derived from declared source status and accepted Contributions, with its
+basis stated beside it.
+
 ## Anti-references
 
 - Generic admin dashboards dominated by metric cards.
 - Bespoke ledgers, page frames, filter bars, and disclosure widgets.
 - Dark-neon AI tooling, decorative graphs, or marketing chrome.
 - Repeated authority explanations and dense introductory prose.
+- Navigation that mirrors the internal data model instead of the two
+  public nouns.

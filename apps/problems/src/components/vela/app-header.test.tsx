@@ -83,7 +83,7 @@ describe("AppHeader trail", () => {
 
     navigation.pathname = "/activity";
     rerender(<Shell />);
-    expect(screen.getByText("State history")).toHaveAttribute("aria-current", "page");
+    expect(screen.getByText("Updates")).toHaveAttribute("aria-current", "page");
   });
 
   it("names a Repository overview without a section", () => {

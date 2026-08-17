@@ -3,7 +3,6 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import type { ProblemDiscovery } from "@/lib/scientific-state";
 import { HubMembershipMap } from "./hub-membership-map";
 import { ProblemDiscoveryFacts } from "./problem-facts";
-import { ProblemAnswerStrip } from "./problem-summary";
 import { ScientificChangeFeed, type ScientificChange } from "./scientific-change-feed";
 
 vi.mock("server-only", () => ({}));
@@ -53,57 +52,6 @@ describe("product compositions", () => {
     expect(container).toHaveTextContent("State change");
     expect(screen.getByText("Repository commit")).toBeVisible();
     expect(screen.getByText("machine-authored")).toBeVisible();
-  });
-
-  /* Erdős 321 shipped "Accepted locally" over a Claim that denies proving the
-     Problem, and Erdős 94's accepted Claim is narrower still — a bounded
-     counting identity whose own Decision reason says it "accepts only the
-     bounded sum_multiplicity identity, not the cubic Erdős 94 theorem". The
-     badge has to carry its subject and the scope has to be on screen, or
-     binding a Claim to a Problem publishes a solved conjecture. */
-  it("scopes an accepted Claim to the occurrences it covers", () => {
-    const scoped = {
-      problem: { declared_status: "solved" },
-      reviews: [],
-      claims: [{
-        standing: "accepted",
-        source_bindings: [
-          { binding_id: "a", relation_kind: "formal_statement_reference" },
-          { binding_id: "b", relation_kind: "formal_statement_reference" },
-        ],
-      }],
-    } as unknown as Parameters<typeof ProblemAnswerStrip>[0]["state"];
-    render(<ProblemAnswerStrip state={scoped} />);
-    expect(screen.getByText("Claim accepted locally")).toBeVisible();
-    expect(screen.getByText("Scoped to 2 formal statement references, not to this Problem's own statement.")).toBeVisible();
-    expect(screen.queryByText("Accepted locally")).toBeNull();
-  });
-
-  it("states no scope when no Claim names the Problem", () => {
-    const unbound = {
-      problem: { declared_status: "open" },
-      reviews: [],
-      claims: [],
-    } as unknown as Parameters<typeof ProblemAnswerStrip>[0]["state"];
-    const { container } = render(<ProblemAnswerStrip state={unbound} />);
-    expect(screen.getByText("Not assessed locally")).toBeVisible();
-    expect(container).not.toHaveTextContent("Scoped to");
-  });
-
-  it("keeps mixed local Standing neutral rather than implying acceptance", () => {
-    const mixed = {
-      problem: { declared_status: "open" },
-      reviews: [],
-      claims: [{ standing: "accepted" }, { standing: "pending" }],
-    } as unknown as Parameters<typeof ProblemAnswerStrip>[0]["state"];
-    const { container } = render(<ProblemAnswerStrip state={mixed} />);
-    const facts = screen.getByText("Mixed local Standing").closest("dl");
-    expect(screen.getByText("Mixed local Standing")).toBeVisible();
-    expect(screen.getByText("Mixed local Standing").closest("[data-axis]"))
-      .toHaveAttribute("data-state", "unassessed");
-    expect(facts).toHaveClass("border-y");
-    expect(facts).not.toHaveClass("rounded-lg", "bg-border");
-    expect(container.querySelector("[data-state='accepted']")).toBeNull();
   });
 
   it("does not paint a removal-only State transition as progress", () => {

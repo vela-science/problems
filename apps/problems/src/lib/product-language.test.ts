@@ -69,12 +69,15 @@ describe("current product language", () => {
 
   it("separates the user-intent product navigation from contextual scientific records", () => {
     const sidebar = source("components/vela/app-sidebar.tsx");
-    for (const label of ["Home", "Problems", "Contribute", "State history", "Repositories", "Sources", "Assertions", "Contribution handoff", "Proposed changes"]) {
+    for (const label of ["Home", "Problems", "Updates", "Search", "Assertions", "Contribution handoff", "Proposed changes"]) {
       expect(sidebar).toContain(`label: "${label}"`);
     }
     expect(sidebar).not.toContain('label: "Hubs"');
     expect(sidebar).not.toContain('label: "Review"');
-    expect(sidebar).toContain('label: "Provenance"');
+    /* The spine carries the two public nouns and their pulse; record routes
+       reach the reader contextually rather than from here. */
+    expect(sidebar).not.toContain('label: "Repositories"');
+    expect(sidebar).not.toContain('label: "Sources"');
     expect(sidebar).not.toContain("function problemSections");
     expect(source("components/vela/problem-page.tsx")).toContain("<LinkTabs");
     expect(source("components/vela/link-tabs.tsx")).toContain("aria-label={label}");

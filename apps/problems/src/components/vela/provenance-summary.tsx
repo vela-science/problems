@@ -8,16 +8,16 @@ type State = NonNullable<ScientificProblemState>;
 /* The Overview's one-line answer to "what has been checked?", with the full
  * record one link away. This summarizes and never details: performer counts
  * and a date, not method roots, record ids, or disclosure text — those are
- * record-tier and live at ?view=record.
+ * record-tier and live at ?view=history.
  *
  * The empties stay distinct because they are different facts: a Problem
  * nothing has been checked against, and a Claim whose Verification Record is
  * simply not retained, must not collapse into one sentence. */
 export function ProvenanceSummary({ state, basePath }: { state: State; basePath: string }) {
   const current = currentReview(state);
-  const recordHref = `${basePath}?view=record`;
+  const recordHref = `${basePath}?view=history`;
   const audit = state.sourceAudits.length
-    ? <>{" "}The source publishes <Link href={`${basePath}?view=sources`} className="underline underline-offset-4">its own audit</Link>.</>
+    ? <>{" "}The source publishes <Link href={`${basePath}?view=evidence`} className="underline underline-offset-4">its own audit</Link>.</>
     : null;
   if (current) {
     const producer = current.producer_package?.producer_actor ?? null;

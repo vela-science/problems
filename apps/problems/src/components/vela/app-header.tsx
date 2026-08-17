@@ -34,7 +34,7 @@ const globalTitles: Record<string, string> = {
   "/problems": "Problems",
   "/contribute": "Contribute",
   "/hubs": "Hubs",
-  "/activity": "State history",
+  "/activity": "Updates",
   "/repositories": "Repositories",
   "/decisions": "Decisions",
   "/proposals": "Proposed changes",

@@ -220,7 +220,7 @@ export function CommandPaletteProvider({
                     <CommandItem onSelect={() => navigate("/")}><HugeiconsIcon icon={Home01Icon} aria-hidden />Home</CommandItem>
                     <CommandItem onSelect={() => navigate("/problems")}><HugeiconsIcon icon={PuzzleIcon} aria-hidden />Problems</CommandItem>
                     <CommandItem onSelect={() => navigate("/contribute")}><HugeiconsIcon icon={WorkIcon} aria-hidden />Contribute</CommandItem>
-                    <CommandItem onSelect={() => navigate("/activity")}><HugeiconsIcon icon={Activity01Icon} aria-hidden />State history</CommandItem>
+                    <CommandItem onSelect={() => navigate("/activity")}><HugeiconsIcon icon={Activity01Icon} aria-hidden />Updates</CommandItem>
                   </CommandGroup>
                   <CommandSeparator />
                   <CommandGroup heading="Provenance">

@@ -16,15 +16,15 @@ describe("safeReturnTo", () => {
   });
 
   it("round-trips a Problem Workspace address", () => {
-    expect(safeReturnTo("/problems/erdos-problems/94?view=workspace")).toBe("/problems/erdos-problems/94?view=workspace");
-    expect(safeReturnTo("/problems/erdos-problems/94?view=workspace&workspace=ws_1")).toBe("/problems/erdos-problems/94?view=workspace&workspace=ws_1");
+    expect(safeReturnTo("/problems/erdos-problems/94?view=work")).toBe("/problems/erdos-problems/94?view=work");
+    expect(safeReturnTo("/problems/erdos-problems/94?view=work&workspace=ws_1")).toBe("/problems/erdos-problems/94?view=work&workspace=ws_1");
     expect(safeReturnTo("/problems/erdos-problems/94")).toBe("/problems/erdos-problems/94");
     expect(safeReturnTo("/repositories/math/problems/321")).toBe("/repositories/math/problems/321");
     expect(safeReturnTo("/repositories/math")).toBe("/repositories/math");
   });
 
   it("rebuilds the query rather than echoing it", () => {
-    expect(safeReturnTo("/problems/erdos-problems/94?view=workspace&evil=1&redirect=https://evil.test")).toBe("/problems/erdos-problems/94?view=workspace");
+    expect(safeReturnTo("/problems/erdos-problems/94?view=work&evil=1&redirect=https://evil.test")).toBe("/problems/erdos-problems/94?view=work");
     expect(safeReturnTo("/problems/erdos-problems/94?view=poem")).toBe("/problems/erdos-problems/94");
     expect(safeReturnTo("/problems/erdos-problems/94?workspace=<script>")).toBe("/problems/erdos-problems/94");
   });

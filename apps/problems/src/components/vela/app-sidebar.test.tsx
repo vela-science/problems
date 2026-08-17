@@ -6,7 +6,7 @@ import {
 } from "@vela/ui/components/sidebar";
 import { TooltipProvider } from "@vela/ui/components/tooltip";
 
-const navigation = vi.hoisted(() => ({ pathname: "/repositories", search: new URLSearchParams() }));
+const navigation = vi.hoisted(() => ({ pathname: "/problems", search: new URLSearchParams() }));
 
 vi.mock("next/navigation", () => ({
   usePathname: () => navigation.pathname,
@@ -63,7 +63,7 @@ function renderSidebar(confirmedAt?: string | null) {
 }
 
 beforeEach(() => {
-  navigation.pathname = "/repositories";
+  navigation.pathname = "/problems";
   navigation.search = new URLSearchParams();
   Object.defineProperty(window, "innerWidth", {
     configurable: true,
@@ -96,7 +96,7 @@ describe("AppSidebar mobile navigation", () => {
     renderSidebar();
     fireEvent.click(screen.getByRole("button", { name: "Open test navigation" }));
 
-    expect(await screen.findByRole("link", { name: "Repositories" })).toHaveAttribute("aria-current", "page");
+    expect(await screen.findByRole("link", { name: "Problems" })).toHaveAttribute("aria-current", "page");
     expect(screen.getByRole("link", { name: "Home" })).not.toHaveAttribute("aria-current");
   });
 
@@ -138,7 +138,7 @@ describe("AppSidebar mobile navigation", () => {
     fireEvent.click(screen.getByRole("button", { name: "Open test navigation" }));
     expect(screen.getByLabelText("Mobile navigation state")).toHaveTextContent("open");
 
-    fireEvent.click(await screen.findByRole("link", { name: "State history" }));
+    fireEvent.click(await screen.findByRole("link", { name: "Updates" }));
 
     await waitFor(() => {
       expect(screen.getByLabelText("Mobile navigation state")).toHaveTextContent("closed");
@@ -153,18 +153,21 @@ describe("AppSidebar mobile navigation", () => {
     renderSidebar();
     fireEvent.click(screen.getByRole("button", { name: "Open test navigation" }));
 
-    expect(await screen.findByRole("link", { name: "Repositories" })).toHaveAttribute("href", "/repositories");
     for (const [label, href] of [
       ["Home", "/"],
       ["Problems", "/problems"],
-      ["Contribute", "/contribute"],
-      ["State history", "/activity"],
-      ["Sources", "/sources"],
+      ["Updates", "/activity"],
+      ["Search", "/search"],
     ]) {
-      expect(screen.getByRole("link", { name: label })).toHaveAttribute("href", href);
+      expect(await screen.findByRole("link", { name: label })).toHaveAttribute("href", href);
     }
     expect(screen.getByText("Explore")).toBeInTheDocument();
-    expect(screen.getByText("Provenance")).toBeInTheDocument();
+    /* Repositories, Sources, and the other record routes keep their pages
+       but reach the reader through contextual links, search, and the footer
+       map rather than the spine. */
+    expect(screen.queryByRole("link", { name: "Repositories" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Sources" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Contribute" })).not.toBeInTheDocument();
   });
 
   /* A Repository's own sections stay out. "Claims" here would have meant
@@ -174,8 +177,8 @@ describe("AppSidebar mobile navigation", () => {
     renderSidebar();
     fireEvent.click(screen.getByRole("button", { name: "Open test navigation" }));
 
-    await screen.findByRole("link", { name: "Repositories" });
-    for (const section of ["Assertions", "Reproduce", "Overview", "Graph", "Search", "Proposed changes"]) {
+    await screen.findByRole("link", { name: "Problems" });
+    for (const section of ["Assertions", "Reproduce", "Overview", "Graph", "Proposed changes"]) {
       expect(screen.queryByRole("link", { name: section })).not.toBeInTheDocument();
     }
   });
@@ -211,9 +214,8 @@ describe("AppSidebar mobile navigation", () => {
     fireEvent.click(screen.getByRole("button", { name: "Open test navigation" }));
 
     expect(await screen.findByRole("link", { name: "Problems" })).toHaveAttribute("href", "/problems");
-    expect(screen.getByRole("link", { name: "Contribute" })).toHaveAttribute("href", "/contribute");
-    expect(screen.getByRole("link", { name: "State history" })).toHaveAttribute("href", "/activity");
-    expect(screen.getByRole("link", { name: "Sources" })).toHaveAttribute("href", "/sources");
+    expect(screen.getByRole("link", { name: "Updates" })).toHaveAttribute("href", "/activity");
+    expect(screen.getByRole("link", { name: "Search" })).toHaveAttribute("href", "/search");
     expect(screen.queryByRole("link", { name: "Current State" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Workspace" })).not.toBeInTheDocument();
   });
@@ -225,8 +227,8 @@ describe("AppSidebar mobile navigation", () => {
     fireEvent.click(screen.getByRole("button", { name: "Open test navigation" }));
 
     expect(await screen.findByRole("link", { name: "Problems" })).toHaveAttribute("href", "/problems");
-    expect(screen.getByRole("link", { name: "Contribute" })).toHaveAttribute("href", "/contribute");
-    expect(screen.getByRole("link", { name: "Repositories" })).toHaveAttribute("href", "/repositories");
+    expect(screen.getByRole("link", { name: "Updates" })).toHaveAttribute("href", "/activity");
+    expect(screen.queryByRole("link", { name: "Repositories" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Current State" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Workspace" })).not.toBeInTheDocument();
   });

@@ -247,7 +247,7 @@ async function main() {
      with sibling views, and a state that reads correctly on the Overview can
      still be wrong on Record — the empty-review sentence lives there — so
      coverage means the cross product, not the default view. */
-  const views = ["overview", "sources", "record"];
+  const views = ["overview", "evidence", "history"];
   for (const scenario of SCENARIOS) {
     for (const view of views) {
       const markup = renderToStaticMarkup(

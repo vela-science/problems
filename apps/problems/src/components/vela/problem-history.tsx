@@ -1,8 +1,9 @@
 import { Button } from "@vela/ui/components/button";
 import { Item, ItemContent, ItemDescription, ItemGroup, ItemTitle } from "@vela/ui/components/item";
+import { StatusBadge } from "@vela/ui/vela/status-badge";
 import { RootFact } from "@/components/vela/root-fact";
 import { RecordId } from "@/components/vela/record-id";
-import { ProblemProvenance } from "@/components/vela/problem-provenance";
+import { formatDate } from "@/lib/format";
 import type { ScientificProblemState } from "@/lib/scientific-state";
 
 type State = NonNullable<ScientificProblemState>;
@@ -21,14 +22,24 @@ function correctionRelations(claim: State["claims"][number]) {
     : [];
 }
 
-/* The record tier: full verification and Decision provenance, correction
- * relations, and exact roots. This view IS the disclosure layer, so nothing
- * here sits behind a Collapsible — the tab replaced it, and every fact below
- * is complete HTML at this address. */
-export function ProblemRecord({ state }: { state: State }) {
+/* How this Problem's record changed: every proposed change under its own
+ * status word, correction and supersession relations with predecessors
+ * retained, and the exact technical provenance. This is the disclosure
+ * layer, so nothing sits behind a Collapsible — the address is the
+ * disclosure, and every fact below is complete HTML here. */
+export function ProblemHistory({ state }: { state: State }) {
   const corrections = state.claims.flatMap((claim) => correctionRelations(claim).map((relation) => ({ claim, relation })));
   return <>
-    <ProblemProvenance state={state} />
+    <section aria-labelledby="proposed-changes-heading">
+      <div className="flex flex-wrap items-end justify-between gap-3"><h2 id="proposed-changes-heading" className="text-title">Proposed changes</h2>{state.reviews.length ? <span className="text-meta text-muted-foreground">{state.reviews.length} {state.reviews.length === 1 ? "record" : "records"}</span> : null}</div>
+      {state.reviews.length ? <ul className="mt-5 space-y-2 text-compact">
+        {state.reviews.map((review) => <li key={review.proposal_id} className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <StatusBadge axis="proposal" state={review.status}>{review.status.replaceAll("_", " ")}</StatusBadge>
+          <a href={`/repositories/${state.repositorySlug}/proposals/${review.proposal_id}`} className="min-w-0 underline underline-offset-4"><RecordId value={review.proposal_id} copy={false} /></a>
+          <span className="text-micro text-muted-foreground">{formatDate(review.reviewed_at ?? review.created_at)}</span>
+        </li>)}
+      </ul> : <p className="mt-4 max-w-2xl py-3 text-body text-muted-foreground">No proposed change is retained for this Problem.</p>}
+    </section>
 
     <section aria-labelledby="correction-heading">
       <div className="flex flex-wrap items-end justify-between gap-3"><h2 id="correction-heading" className="text-title">Correction history</h2>{corrections.length ? <span className="text-meta text-muted-foreground">{corrections.length} exact {corrections.length === 1 ? "relation" : "relations"}</span> : null}</div>

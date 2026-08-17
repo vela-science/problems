@@ -85,20 +85,29 @@ describe("Problem view addressing", () => {
     expect(screen.getByText("Public view: overview")).toBeInTheDocument();
   });
 
-  it.each(["sources", "record"] as const)("serves %s as its own address", async (view) => {
+  it.each(["evidence", "history"] as const)("serves %s as its own address", async (view) => {
     render(await page({ view }));
     expect(screen.getByText(`Public view: ${view}`)).toBeInTheDocument();
   });
 
-  it("serves the Workspace as the fourth view", async () => {
-    render(await page({ view: "workspace" }));
+  it("serves Work as the fourth view", async () => {
+    render(await page({ view: "work" }));
     expect(screen.getByText("Workspace surface")).toBeInTheDocument();
   });
 
-  /* Published links keep meaning what they meant: the retired mode param
-     resolves to the same surfaces rather than 404ing or falling silently to
-     the default. */
-  it("resolves the legacy mode=work address to the Workspace view", async () => {
+  /* Published links keep meaning what they meant: every retired address
+     resolves to the section that absorbed it rather than 404ing or falling
+     silently to the default. */
+  it.each([
+    ["sources", "Public view: evidence"],
+    ["record", "Public view: history"],
+    ["workspace", "Workspace surface"],
+  ] as const)("resolves the retired view=%s address", async (view, expected) => {
+    render(await page({ view }));
+    expect(screen.getByText(expected)).toBeInTheDocument();
+  });
+
+  it("resolves the legacy mode=work address to the Work view", async () => {
     render(await page({ mode: "work" }));
     expect(screen.getByText("Workspace surface")).toBeInTheDocument();
   });

@@ -18,14 +18,18 @@ export type ExpectedProblemSource = {
   contentRoot: string;
 };
 
-export type ProblemView = ProblemStateView | "workspace";
+export type ProblemView = ProblemStateView | "work";
 
-/* One bar, four addresses. Overview is the default and owns the bare URL, so
- * every published Problem link keeps meaning what it meant; the legacy
- * `?mode=work` links resolve to the Workspace tab rather than breaking. */
+/* One bar, four addresses, named after the reader's model rather than the
+ * data model: Overview, Evidence, Work, History. Overview owns the bare URL
+ * so every published link keeps meaning what it meant, and each retired
+ * address resolves to the section that absorbed it rather than breaking:
+ * sources → Evidence, record → History, workspace and mode=work → Work. */
 function resolveView(query: ProblemPageQuery): ProblemView {
-  if (query.view === "sources" || query.view === "record" || query.view === "workspace") return query.view;
-  if (query.mode === "work") return "workspace";
+  if (query.view === "evidence" || query.view === "work" || query.view === "history") return query.view;
+  if (query.view === "sources") return "evidence";
+  if (query.view === "record") return "history";
+  if (query.view === "workspace" || query.mode === "work") return "work";
   return "overview";
 }
 
@@ -48,7 +52,7 @@ export async function ProblemPageView({ repository, problem, route, query, expec
   /* The three public views never read the session — that is what keeps them
      cheap, cacheable, and honest about being the public record. Only the
      Workspace tab is account-aware. */
-  const account = view === "workspace" ? await currentAccount() : null;
+  const account = view === "work" ? await currentAccount() : null;
   /* A deployment without the four WorkOS variables serves `/sign-in` as a 503.
      The Workspace needs to know that, because otherwise the only control it
      offers is one that cannot work. */
@@ -57,7 +61,7 @@ export async function ProblemPageView({ repository, problem, route, query, expec
   /* The archetype holds still across the tabs — switching surface must not
      repaint the page's ground or move the hero. The Workspace widens through
      `layout` alone, which touches the content region and not the frame. */
-  return <PageShell as="article" archetype="problem" layout={view === "workspace" ? "canvas" : "reading"}>
+  return <PageShell as="article" archetype="problem" layout={view === "work" ? "canvas" : "reading"}>
     <PageHero density="compact" className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
       <div>
         <div className="flex flex-wrap items-center gap-2"><span className="text-eyebrow uppercase text-muted-foreground">Problem · {state.repositoryName}</span><span aria-hidden>·</span><Badge variant="outline">#{problem}</Badge></div>
@@ -72,16 +76,16 @@ export async function ProblemPageView({ repository, problem, route, query, expec
       </div>
       <LinkTabs label="Problem views" layoutId="problem-view" current={view} tabs={[
         { key: "overview", href: route, label: "Overview" },
-        { key: "sources", href: `${route}?view=sources`, label: "Sources" },
-        { key: "record", href: `${route}?view=record`, label: "Record" },
-        { key: "workspace", href: `${route}?view=workspace`, label: "Workspace" },
+        { key: "evidence", href: `${route}?view=evidence`, label: "Evidence" },
+        { key: "work", href: `${route}?view=work`, label: "Work" },
+        { key: "history", href: `${route}?view=history`, label: "History" },
       ]} />
       {/* The thirty-second answer rides with the hero on every public view,
-          so switching to Sources or Record never loses the state axes. The
-          Workspace keeps its own toolbar instead. */}
-      {view !== "workspace" ? <div className="lg:col-span-2"><ProblemAnswerStrip state={state} /></div> : null}
+          so switching sections never loses the Problem's state. The Work
+          surface keeps its own toolbar instead. */}
+      {view !== "work" ? <div className="lg:col-span-2"><ProblemAnswerStrip state={state} /></div> : null}
     </PageHero>
-    {view === "workspace"
+    {view === "work"
       ? <Workbench state={state} hostedAccount={account} accountsEnabled={accountsEnabled} selectedWorkspace={query.workspace} selectedObject={query.object} selectedInspector={query.inspector} mutationError={query.workError} basePath={route} />
       : <ProblemState state={state} basePath={route} view={view} />}
   </PageShell>;

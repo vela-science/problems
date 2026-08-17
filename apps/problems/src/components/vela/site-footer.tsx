@@ -13,7 +13,7 @@ const GROUPS: ReadonlyArray<{ label: string; links: ReadonlyArray<{ href: string
       { href: "/", label: "Home" },
       { href: "/problems", label: "Problems" },
       { href: "/contribute", label: "Contribute" },
-      { href: "/activity", label: "State history" },
+      { href: "/activity", label: "Updates" },
     ],
   },
   {

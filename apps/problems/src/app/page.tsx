@@ -124,7 +124,7 @@ export default async function HomePage() {
     <PageSection as="nav" aria-label="Explore the network" className="grid rounded-xl bg-muted/30 px-4 md:grid-cols-2">
       {[
         { href: "/contribute", icon: WorkIcon, title: "Contribute", detail: "prepare a bounded direct Submission" },
-        { href: "/activity", icon: Activity01Icon, title: "State history", detail: `${activity.length} recent retained records` },
+        { href: "/activity", icon: Activity01Icon, title: "Updates", detail: `${activity.length} recent retained records` },
       ].map((item) => <Link key={item.href} href={item.href} className="group flex items-center gap-4 border-b px-2 py-6 transition-colors last:border-b-0 hover:bg-muted/30 focus-visible:outline-2 focus-visible:outline-offset-2 md:border-b-0 md:border-r md:px-6 md:first:pl-0 md:last:border-r-0 md:last:pr-0"><HugeiconsIcon icon={item.icon} aria-hidden className="size-5" /><span><span className="block text-subtitle">{item.title}</span><span className="mt-1 block text-meta text-muted-foreground">{item.detail}</span></span><HugeiconsIcon icon={ArrowRight} aria-hidden className="ml-auto size-4 transition-transform duration-200 group-hover:translate-x-1" /></Link>)}
     </PageSection>
   </PageShell>;

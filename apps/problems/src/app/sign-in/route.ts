@@ -25,7 +25,9 @@ export function safeReturnTo(requested: string | null): string {
   if (url.origin !== "https://relative.invalid" || !PROBLEM_RETURN_PATH.test(url.pathname)) return "/account";
   const params = new URLSearchParams();
   const view = url.searchParams.get("view");
-  if (view === "sources" || view === "record" || view === "workspace") params.set("view", view);
+  /* Current section names plus the retired ones, which the Problem page
+     still resolves to their successors. */
+  if (view && ["evidence", "work", "history", "sources", "record", "workspace"].includes(view)) params.set("view", view);
   const workspace = url.searchParams.get("workspace");
   if (workspace && /^[A-Za-z0-9_-]{1,64}$/u.test(workspace)) params.set("workspace", workspace);
   const query = params.toString();

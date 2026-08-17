@@ -12,11 +12,10 @@ import {
   GitCommitIcon,
   Home01Icon,
   InboxUploadIcon,
-  LibraryIcon,
+  Search01Icon,
   Note04Icon,
   PuzzleIcon,
   Refresh01Icon,
-  Telescope01Icon,
   WorkIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -53,8 +52,12 @@ type SidebarDestination = {
 };
 type SidebarDestinationGroup = { label?: string; items: SidebarDestination[] };
 
-/* One contextual navigation system: release-wide destinations at the top
- * level, and Repository-owned sections inside a Repository. */
+/* One contextual navigation system: the public product spine at the top
+ * level, and Repository-owned sections inside a Repository. The spine
+ * carries the two public nouns and their pulse — Problems, Updates, Search —
+ * per PRODUCT.md's model. Repositories, Sources, Decisions, Proposals,
+ * Hubs, and Graph keep their durable routes, reached through contextual
+ * links, search, and the footer map rather than competing here. */
 const releaseDestinations: SidebarDestinationGroup[] = [
   {
     label: "Home",
@@ -66,15 +69,8 @@ const releaseDestinations: SidebarDestinationGroup[] = [
     label: "Explore",
     items: [
       { href: "/problems", label: "Problems", icon: PuzzleIcon },
-      { href: "/contribute", label: "Contribute", icon: WorkIcon },
-      { href: "/activity", label: "State history", icon: Activity01Icon },
-    ],
-  },
-  {
-    label: "Provenance",
-    items: [
-      { href: "/repositories", label: "Repositories", icon: Telescope01Icon },
-      { href: "/sources", label: "Sources", icon: LibraryIcon },
+      { href: "/activity", label: "Updates", icon: Activity01Icon },
+      { href: "/search", label: "Search", icon: Search01Icon },
     ],
   },
 ];
