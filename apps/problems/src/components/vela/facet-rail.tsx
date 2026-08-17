@@ -116,7 +116,11 @@ export function FacetRail({
             <ul className="mt-2">{(folded.length ? group.values.slice(0, shownValues) : group.values).map(row)}</ul>
             {folded.length ? (
               <details>
-                <summary className="cursor-pointer rounded px-1 py-1 text-micro text-muted-foreground hover:text-foreground">
+                {/* `py-1.5`, which is what carries this disclosure from 22px
+                    to a target that clears 24. It is the control that reveals
+                    the other 33 subjects, so it is the last one that should be
+                    hard to hit. */}
+                <summary className="flex cursor-pointer items-center rounded px-1 py-1.5 text-micro text-muted-foreground hover:text-foreground">
                   {folded.length.toLocaleString()} more {group.moreLabel}
                 </summary>
                 <ul>{folded.map(row)}</ul>

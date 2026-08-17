@@ -47,8 +47,15 @@ export function ProblemList({
           key: `tag:${tag}`,
           /* Above the overlay, so a subject narrows the ledger instead of
              opening the problem underneath it. */
+          /* Fourteen pixels tall, sitting on top of a link that covers the
+             whole row: a thumb that missed the subject opened the Problem
+             instead of narrowing to the subject, which is the one place on
+             this page where a near miss does something other than nothing.
+             `min-h-6` is the target, not the text — the type size, the colour
+             and the "·" runs between them are unchanged, and the tags are
+             already far wider than they are tall. */
           node: (
-            <Link className="relative z-10 underline-offset-2 hover:text-foreground hover:underline" href={tagHref(tag)}>
+            <Link className="relative z-10 inline-flex min-h-6 items-center underline-offset-2 hover:text-foreground hover:underline" href={tagHref(tag)}>
               {tag}
             </Link>
           ),
@@ -91,8 +98,11 @@ export function ProblemList({
                   <ScientificText text={rowTitle(problem)} />
                 </Link>
               </ItemTitle>
+              {/* `gap-y-1`: seventeen of fifty of these lines wrap, and with no
+                  row gap at all the wrapped lines sat on a 14px pitch — two
+                  rows of targets touching. */}
               {facts.length ? (
-                <div className="mt-1 flex flex-wrap items-center text-micro text-muted-foreground">
+                <div className="mt-1 flex flex-wrap items-center gap-y-1 text-micro text-muted-foreground">
                   {facts.map((fact, index) => (
                     <span key={fact.key} className="flex items-center">
                       {index ? <span aria-hidden className="mx-2 text-border">·</span> : null}
