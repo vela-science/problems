@@ -68,6 +68,12 @@ The Problems navigation is three levels, not one flattened catalog:
   directory;
 - `/problems/erdos-problems/{number}` is the canonical Problem page.
 
+Home is the fast front door to that hierarchy. Its first viewport explains the
+product in plain language, offers Problem search and the two primary actions,
+and states the current one-collection, 1,217-Problem coverage without presenting
+evidence sources as collections. Activity and reviewed starting points follow
+orientation; exact record context stays progressive.
+
 Problem numbers are collection-local. Breadcrumbs, search results, recent-item
 surfaces, metadata, and structured data therefore retain **Erdős Problems** as
 part of the identity. Evidence sources do not become new collections by

@@ -54,6 +54,22 @@ describe("product compositions", () => {
     expect(screen.getByText("machine-authored")).toBeVisible();
   });
 
+  it("translates update labels for newcomer-facing surfaces without changing the exact feed", () => {
+    const changes = [
+      { repository: { slug: "math", name: "Math" }, commit: { sha: "a".repeat(40), subject: "vela: review review_accept", committed_at: "2026-08-11T20:00:00Z", author_name: "A", machine: true, transition: { accepted_added: ["one"], accepted_removed: [], pending_added: [] } } },
+      { repository: { slug: "math", name: "Math" }, commit: { sha: "b".repeat(40), subject: "Clarify documentation", committed_at: "2026-08-11T19:00:00Z", author_name: "B", machine: false, transition: null } },
+    ] as unknown as ScientificChange[];
+    const { container } = render(<ScientificChangeFeed changes={changes} compact plainLanguage />);
+
+    expect(screen.getByText("Evidence update")).toBeVisible();
+    expect(screen.getByText("Source update")).toBeVisible();
+    expect(screen.getByText("Automated update")).toBeVisible();
+    expect(screen.getByRole("link", { name: "Reviewed evidence was updated" })).toBeVisible();
+    expect(container).toHaveTextContent("1 accepted item added");
+    expect(container).not.toHaveTextContent("0 removed");
+    expect(container).not.toHaveTextContent(/State change|Repository commit|machine-authored|assertions/iu);
+  });
+
   it("does not paint a removal-only State transition as progress", () => {
     const removal = [{
       repository: { slug: "math", name: "Math" },

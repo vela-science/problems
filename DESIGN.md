@@ -292,6 +292,13 @@ a time. Its object collections do not define the primary Problems navigation.
 A page picks one archetype and does not blend two. Three pages that look alike
 teach a reader nothing about what is on them.
 
+- **Home.** A fast front door, not a state console or metrics dashboard. The
+  first viewport has one descriptive headline, a useful Problem search, the
+  Browse Problems and Add a Contribution actions, and one honest availability
+  sentence. Below it, an open three-step path leads to one published collection
+  row, a small list of Problems with reviewed evidence, and a plain-language
+  activity timeline. Exact provenance remains linked through contextual routes;
+  it does not become onboarding copy.
 - **Collection.** Opens quiet and horizontal and gets to its rows. The count and
   the controls sit in the content's own toolbar, beside the thing they count or
   control, not in a band above it. A paragraph explaining what a Claim is

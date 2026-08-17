@@ -21,12 +21,13 @@ function problem(number: string, overrides: Partial<ProblemDiscovery["record"]> 
     collection: { key: "erdos-problems", name: "Erdős Problems" },
     domain: { key: "mathematics", name: "Mathematics" },
     field: null,
-    topics: [{ key: "number theory", name: "Number Theory" }],
+    topics: [{ key: "number-theory", name: "Number Theory" }],
     hubs: [],
     theme: "Number Theory",
     record: {
       problem: number,
       statement: `Statement for ${number}`,
+      statement_kind: "prose",
       declared_status: "open",
       local_standing: null,
       local_assessed_at: null,
@@ -38,9 +39,6 @@ function problem(number: string, overrides: Partial<ProblemDiscovery["record"]> 
   } as unknown as ProblemDiscovery;
 }
 
-/* The catalogue is sorted by problem number, so a fixture that is only the
-   low-numbered head is exactly the shape that made the old page wrong: it
-   counted over twelve rows and reported zero assessed while two were. */
 function catalogue(): ProblemDiscovery[] {
   const filler = Array.from({ length: 12 }, (_, index) => problem(String(index + 1)));
   return [
@@ -51,52 +49,64 @@ function catalogue(): ProblemDiscovery[] {
 }
 
 describe("Home", () => {
-  it("counts the whole catalogue, not the first page of it", async () => {
-    reads.catalog.mockResolvedValue(catalogue());
-    reads.changes.mockResolvedValue([]);
-    render(await HomePage());
-
-    /* 14 rows, of which 2 carry a standing. The defect this pins returned 12
-       and 0 for exactly this shape. */
-    const published = screen.getByText("Erdős problems published").closest("div")!;
-    expect(within(published).getByText("14")).toBeVisible();
-    const assessed = screen.getByText("Assessed by a Repository").closest("div")!;
-    expect(within(assessed).getByText("2")).toBeVisible();
-  });
-
-  it("leads with the most recently assessed Problem, not the lowest numbered", async () => {
-    reads.catalog.mockResolvedValue(catalogue());
-    reads.changes.mockResolvedValue([]);
-    render(await HomePage());
-
-    /* 94 is assessed later than 321 and sorts after every filler row, so any
-       page that leads with 1 or with a hardcoded 321 fails here. The lead is
-       the only link carrying an h3. */
-    const lead = screen.getByRole("heading", { level: 3 }).closest("a");
-    expect(lead).toHaveAttribute("href", "/problems/erdos-problems/94");
-    expect(lead).toHaveTextContent("Statement for 94");
-    /* 321 is still present, below the lead, not displaced by it. */
-    expect(screen.getByRole("link", { name: /Statement for 321/u })).toHaveAttribute("href", "/problems/erdos-problems/321");
-  });
-
-  it("says so plainly when no Repository has assessed anything", async () => {
-    reads.catalog.mockResolvedValue([problem("1"), problem("2")]);
-    reads.changes.mockResolvedValue([]);
-    render(await HomePage());
-
-    expect(screen.getByText("No Repository has assessed a Problem in this release.")).toBeVisible();
-    const assessed = screen.getByText("Assessed by a Repository").closest("div")!;
-    expect(within(assessed).getByText("0")).toBeVisible();
-  });
-
-  it("keeps open Problems as a source-declared list rather than a queue", async () => {
+  it("gives a newcomer the product, next actions, and honest current coverage", async () => {
     reads.catalog.mockResolvedValue(catalogue());
     reads.changes.mockResolvedValue([]);
     const { container } = render(await HomePage());
 
-    expect(screen.getByRole("heading", { name: "Open Problems" })).toBeVisible();
-    /* 12 fillers are `open`; 94 and 321 are not. */
-    expect(screen.getByRole("link", { name: "12 open" })).toBeVisible();
-    expect(container).not.toHaveTextContent(/priority|ranked|most important/iu);
+    expect(screen.getByRole("heading", { level: 1, name: "Find a problem. See what is known. Add evidence." })).toBeVisible();
+    expect(screen.getByText(/find scientific questions, understand the evidence around them/iu)).toBeVisible();
+    expect(screen.getByRole("link", { name: /browse problems/iu })).toHaveAttribute("href", "/problems");
+    expect(screen.getAllByRole("link", { name: "Add a contribution" })[0]).toHaveAttribute("href", "/contribute");
+
+    const availability = screen.getByText("Available today").parentElement!;
+    expect(availability).toHaveTextContent("One published collection with 14 questions: Erdős Problems.");
+    expect(within(availability).getByRole("link", { name: "Erdős Problems" })).toHaveAttribute("href", "/problems/erdos-problems");
+
+    const hero = container.querySelector(".vela-page-hero")!;
+    expect(hero).not.toHaveTextContent(/Repository|Standing|authority|roots|records/iu);
+  });
+
+  it("uses one prominent problem search that lands in the published collection", async () => {
+    reads.catalog.mockResolvedValue(catalogue());
+    reads.changes.mockResolvedValue([]);
+    render(await HomePage());
+
+    const search = screen.getByRole("form", { name: "Find a problem" });
+    expect(search).toHaveAttribute("action", "/problems/erdos-problems");
+    expect(search).toHaveAttribute("method", "get");
+    expect(within(search).getByRole("searchbox", { name: "Find a problem" })).toHaveAttribute("name", "q");
+    expect(within(search).getByRole("button", { name: "Search" })).toHaveAttribute("type", "submit");
+  });
+
+  it("keeps the three-step path compact and action-led", async () => {
+    reads.catalog.mockResolvedValue(catalogue());
+    reads.changes.mockResolvedValue([]);
+    render(await HomePage());
+
+    expect(screen.getByRole("link", { name: /Choose a question/iu })).toHaveAttribute("href", "/problems/erdos-problems");
+    expect(screen.getByRole("link", { name: /Read what is known/iu })).toHaveAttribute("href", "/problems/erdos-problems/94?view=evidence");
+    expect(screen.getAllByRole("link", { name: /Add a contribution/iu })[1]).toHaveAttribute("href", "/contribute");
+  });
+
+  it("labels coverage and source status without turning them into ranking claims", async () => {
+    reads.catalog.mockResolvedValue(catalogue());
+    reads.changes.mockResolvedValue([]);
+    const { container } = render(await HomePage());
+
+    expect(screen.getByText("Listed as open by source")).toBeVisible();
+    expect(screen.getByText("With reviewed evidence")).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Problems with reviewed evidence" })).toBeVisible();
+    expect(screen.getByRole("link", { name: /Statement for 94/iu })).toHaveAttribute("href", "/problems/erdos-problems/94?view=evidence");
+    expect(container).not.toHaveTextContent(/priority|ranked|most important|central queue/iu);
+  });
+
+  it("states empty reviewed evidence and activity as ordinary absence", async () => {
+    reads.catalog.mockResolvedValue([problem("1"), problem("2")]);
+    reads.changes.mockResolvedValue([]);
+    render(await HomePage());
+
+    expect(screen.getByText("No Problem has reviewed evidence in this release yet.")).toBeVisible();
+    expect(screen.getByText("No recent source updates are available.")).toBeVisible();
   });
 });

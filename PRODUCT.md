@@ -190,6 +190,12 @@ Normative documentation is owned and published by Vela Core.
 
 This is the sole canonical origin for the Vela product application. Home is its
 front door and Problems is its conceptual center.
+Home gives a first-time reader a usable thirty-second path: find or browse a
+Problem, read what is known, or add a Contribution. Its opening names what the
+product does and what is actually published today before showing activity or
+technical context. The current release therefore says plainly that one
+collection contains 1,217 Erdős Problems; it does not advertise evidence
+sources or conditional future inputs as Problem collections.
 The same application preserves durable record routes, search, graph,
 reproduction, and release-wide ledgers as an advanced Records layer. Protocol
 collections do not compete with Problems in primary navigation.

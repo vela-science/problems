@@ -18,6 +18,12 @@ shape or icon, and color.
 
 ## Composition
 
+- **Home:** one newcomer-facing headline, a prominent Problem search, primary
+  Browse Problems and secondary Add a Contribution actions, and one honest
+  availability line in the first viewport. A connected three-step action row,
+  one collection ledger row, reviewed-evidence starting points, and a compact
+  human-readable update timeline follow. It never opens with protocol nouns,
+  aggregate KPI cards, or speculative collections.
 - **Collections:** heading, filter toolbar, an Item ledger on hairlines,
   pagination, and a record route per row. A row is a thing a reader sends to a
   colleague, so its destination is a URL and not a selection query. Nothing in
