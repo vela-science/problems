@@ -8,7 +8,7 @@ import {
 } from "@vela/projection-data";
 import { Badge } from "@vela/ui/components/badge";
 import { Button } from "@vela/ui/components/button";
-import { publicProblemPathFromContext } from "@vela/projection-data/problem-public-route-context";
+import { publicProblemPathFromContext, repositoryForCanonicalProblemNamespace } from "@vela/projection-data/problem-public-route-context";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@vela/ui/components/collapsible";
 import { RootFact } from "@/components/vela/root-fact";
 
@@ -24,8 +24,14 @@ function outcomeVariant(outcome: FormalConjecturesAuditRecord["checks"][number][
 
 function AuditRecord({ record }: { record: FormalConjecturesAuditRecord }) {
   const state = record.observed_pull_request_state;
-  const problemPath = record.problem_ref
-    ? publicProblemPathFromContext("math", String(record.problem_ref.problem_number))
+  /* The record names its Problem by source namespace; the registry says which
+     Repository serves that namespace. A slug literal here served every audit
+     row of the first repository to the second one's problems. */
+  const repository = record.problem_ref
+    ? repositoryForCanonicalProblemNamespace(record.problem_ref.namespace)
+    : undefined;
+  const problemPath = record.problem_ref && repository
+    ? publicProblemPathFromContext(repository, String(record.problem_ref.problem_number))
     : null;
   return <article className="min-w-0 border-t border-border/65 py-7 first:border-t-0 first:pt-0 last:pb-0" aria-labelledby={`audit-${record.fixture_id}`}>
     <div className="flex flex-wrap items-start justify-between gap-4">

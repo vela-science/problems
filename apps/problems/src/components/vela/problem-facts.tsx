@@ -66,28 +66,12 @@ export function standingScopeSentence(state: State): string | null {
   return `Scoped to this Problem's own retained statement and ${references.join(" and ")}.`;
 }
 
-export function ProblemFacts({ state, className }: { state: State; className?: string }) {
-  const values = [...new Set(state.claims.map((claim) => claim.standing.replaceAll("_", " ")))];
-  const localStanding = localStandingLabel(state.claims.map((claim) => claim.standing), state.repositoryName);
-  const standingState = values.length === 1 ? state.claims[0]!.standing : "unassessed";
-  const scope = standingScopeSentence(state);
-  return <dl className={cn("grid border-y sm:grid-cols-3 sm:divide-x", className)}>
-    <div className="min-w-0 py-4 sm:pr-5">
-      <dt className="text-eyebrow uppercase text-muted-foreground">Source status</dt>
-      <dd className="mt-2 text-label capitalize">{state.problem.declared_status}</dd>
-    </div>
-    <div className="min-w-0 border-t py-4 sm:border-t-0 sm:px-5">
-      <dt className="text-eyebrow uppercase text-muted-foreground">Local Standing</dt>
-      <dd className="mt-2"><StatusBadge state={standingState} axis="standing">{localStanding}</StatusBadge>
-        {scope ? <span className="mt-2 block text-micro text-muted-foreground">{scope}</span> : null}</dd>
-    </div>
-    <div className="min-w-0 border-t py-4 sm:border-t-0 sm:pl-5">
-      <dt className="text-eyebrow uppercase text-muted-foreground">Contribution path</dt>
-      <dd className="mt-2 text-label">Direct Submission</dd>
-    </div>
-  </dl>;
-}
-
+/* The Problem page's facts moved into the hero answer strip
+   (`problem-summary.tsx`); this file keeps the label derivations both it and
+   the Workspace prelude share, plus the discovery-row variant below. The
+   "Contribution path" cell is gone from both surfaces for the reason the
+   directory dropped it: a hard-coded literal that never varied between rows
+   is not a fact about the row. */
 export function ProblemDiscoveryFacts({ problem, className }: { problem: ProblemDiscovery; className?: string }) {
   const standing = problem.record.local_standing ?? "unassessed";
   return <dl className={cn("flex min-w-0 flex-wrap items-center gap-x-5 gap-y-2 text-meta", className)}>
@@ -98,10 +82,6 @@ export function ProblemDiscoveryFacts({ problem, className }: { problem: Problem
     <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5">
       <dt className="text-eyebrow uppercase text-muted-foreground">Local Standing</dt>
       <dd><StatusBadge state={standing} axis="standing">{localStandingLabel(problem.record.local_standing ? [problem.record.local_standing] : [])}</StatusBadge></dd>
-    </div>
-    <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5">
-      <dt className="text-eyebrow uppercase text-muted-foreground">Contribution path</dt>
-      <dd className="text-label">Direct Submission</dd>
     </div>
   </dl>;
 }

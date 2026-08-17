@@ -13,3 +13,8 @@ import { canonicalProblemPath } from "./registry";
 export function publicProblemPathFromContext(repository: string, problem: string): string | null {
   return canonicalProblemPath(repository, problem);
 }
+
+/* A record that names a Problem by its source namespace resolves the owning
+ * Repository from the registry instead of hardcoding a slug. The namespace
+ * belongs to the source; which Repository serves it is the registry's fact. */
+export { repositoryForCanonicalProblemNamespace } from "./registry";

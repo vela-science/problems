@@ -2,7 +2,8 @@ import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { ProblemDiscovery } from "@/lib/scientific-state";
 import { HubMembershipMap } from "./hub-membership-map";
-import { ProblemDiscoveryFacts, ProblemFacts } from "./problem-facts";
+import { ProblemDiscoveryFacts } from "./problem-facts";
+import { ProblemAnswerStrip } from "./problem-summary";
 import { ScientificChangeFeed, type ScientificChange } from "./scientific-change-feed";
 
 vi.mock("server-only", () => ({}));
@@ -31,14 +32,16 @@ const problem = {
 } as unknown as ProblemDiscovery;
 
 describe("product compositions", () => {
-  it("keeps Source status, Local Standing, and the contribution path on separate axes", () => {
+  it("keeps Source status and Local Standing on separate axes", () => {
     render(<ProblemDiscoveryFacts problem={problem} />);
     expect(screen.getByText("Source status")).toBeVisible();
     expect(screen.getByText("solved")).toBeVisible();
     expect(screen.getByText("Local Standing")).toBeVisible();
     expect(screen.getByText("Claim accepted locally").closest("[data-axis]")).toHaveAttribute("data-axis", "standing");
-    expect(screen.getByText("Contribution path")).toBeVisible();
-    expect(screen.getByText("Direct Submission")).toBeVisible();
+    /* The contribution-path cell was a hard-coded literal that never varied
+       between rows; the path a contribution takes is the Repository's fact
+       and renders where the Repository states it. */
+    expect(screen.queryByText("Direct Submission")).not.toBeInTheDocument();
   });
 
   it("labels State changes separately from ordinary Repository commits", () => {
@@ -61,6 +64,7 @@ describe("product compositions", () => {
   it("scopes an accepted Claim to the occurrences it covers", () => {
     const scoped = {
       problem: { declared_status: "solved" },
+      reviews: [],
       claims: [{
         standing: "accepted",
         source_bindings: [
@@ -68,8 +72,8 @@ describe("product compositions", () => {
           { binding_id: "b", relation_kind: "formal_statement_reference" },
         ],
       }],
-    } as unknown as Parameters<typeof ProblemFacts>[0]["state"];
-    render(<ProblemFacts state={scoped} />);
+    } as unknown as Parameters<typeof ProblemAnswerStrip>[0]["state"];
+    render(<ProblemAnswerStrip state={scoped} />);
     expect(screen.getByText("Claim accepted locally")).toBeVisible();
     expect(screen.getByText("Scoped to 2 formal statement references, not to this Problem's own statement.")).toBeVisible();
     expect(screen.queryByText("Accepted locally")).toBeNull();
@@ -78,9 +82,10 @@ describe("product compositions", () => {
   it("states no scope when no Claim names the Problem", () => {
     const unbound = {
       problem: { declared_status: "open" },
+      reviews: [],
       claims: [],
-    } as unknown as Parameters<typeof ProblemFacts>[0]["state"];
-    const { container } = render(<ProblemFacts state={unbound} />);
+    } as unknown as Parameters<typeof ProblemAnswerStrip>[0]["state"];
+    const { container } = render(<ProblemAnswerStrip state={unbound} />);
     expect(screen.getByText("Not assessed locally")).toBeVisible();
     expect(container).not.toHaveTextContent("Scoped to");
   });
@@ -88,9 +93,10 @@ describe("product compositions", () => {
   it("keeps mixed local Standing neutral rather than implying acceptance", () => {
     const mixed = {
       problem: { declared_status: "open" },
+      reviews: [],
       claims: [{ standing: "accepted" }, { standing: "pending" }],
-    } as unknown as Parameters<typeof ProblemFacts>[0]["state"];
-    const { container } = render(<ProblemFacts state={mixed} />);
+    } as unknown as Parameters<typeof ProblemAnswerStrip>[0]["state"];
+    const { container } = render(<ProblemAnswerStrip state={mixed} />);
     const facts = screen.getByText("Mixed local Standing").closest("dl");
     expect(screen.getByText("Mixed local Standing")).toBeVisible();
     expect(screen.getByText("Mixed local Standing").closest("[data-axis]"))
