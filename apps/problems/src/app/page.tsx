@@ -104,7 +104,7 @@ export default async function HomePage() {
         <p className="text-eyebrow uppercase text-muted-foreground">Start here</p>
         <h2 id="start-here-heading" className="mt-1 text-title">From question to contribution</h2>
       </div>
-      <ol className="mt-5 divide-y border-y md:grid md:grid-cols-3 md:divide-x md:divide-y-0">
+      <ol className="mt-5 divide-y md:grid md:grid-cols-3 md:divide-x md:divide-y-0">
         {[
           {
             href: COLLECTION_PATH,
@@ -179,7 +179,7 @@ export default async function HomePage() {
           These Problems have an assessed contribution. That does not by itself mean the whole question is resolved.
         </p>
 
-        {assessed.length ? <ItemGroup className="mt-4 gap-0 divide-y border-y">
+        {assessed.length ? <ItemGroup className="mt-4 gap-0 divide-y">
           {assessed.slice(0, 4).map((problem) => <Item
             key={`${problem.repository}/${problem.problem}`}
             render={<Link href={`${problem.canonicalPath ?? COLLECTION_PATH}?view=evidence`} />}
