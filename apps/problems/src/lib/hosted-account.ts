@@ -1,6 +1,6 @@
 import "server-only";
 
-import { ensureCurrentAccount } from "@vela/activity-data";
+import { ensureCurrentAccount, listGitHubConnections, listWorkspaces } from "@vela/activity-data";
 import { currentAccount } from "./auth";
 
 export async function currentActivityAccount() {
@@ -8,4 +8,12 @@ export async function currentActivityAccount() {
   if (!hosted) return null;
   const activity = await ensureCurrentAccount({ workosUserId: hosted.id, displayName: hosted.displayName, email: hosted.email });
   return { hosted, activity };
+}
+
+export async function accountWorkspaces(accountId: string) {
+  return listWorkspaces(accountId);
+}
+
+export async function accountGitHubConnections(accountId: string) {
+  return listGitHubConnections(accountId);
 }

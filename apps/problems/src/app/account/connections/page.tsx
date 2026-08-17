@@ -1,12 +1,21 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import {
+  ArrowLeft01Icon as ArrowLeft,
+  ArrowRight01Icon as ArrowRight,
+  Github01Icon,
+  LinkSquare02Icon,
+  SecurityCheckIcon,
+  SourceCodeIcon,
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { listGitHubConnections } from "@vela/activity-data";
+import { Alert, AlertDescription, AlertTitle } from "@vela/ui/components/alert";
 import { Badge } from "@vela/ui/components/badge";
 import { Button } from "@vela/ui/components/button";
-import { Item, ItemContent, ItemDescription, ItemGroup, ItemTitle } from "@vela/ui/components/item";
+import { Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemTitle } from "@vela/ui/components/item";
 import { PageShell } from "@vela/ui/vela/page-shell";
-import { PageIntro } from "@/components/vela/page-intro";
 import { currentActivityAccount } from "@/lib/hosted-account";
 import { githubIdentityForUser } from "@/lib/workos-identities";
 import { githubAppConfiguration } from "@/lib/github-app";
@@ -14,7 +23,17 @@ import { completeGitHubInstallation } from "@/lib/github-installation";
 import { accessibleGitHubRepositoryCount } from "@/lib/github-connections";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Connections", robots: { index: false, follow: false } };
+export const metadata: Metadata = {
+  title: "Connections",
+  description: "Manage private sign-in and selected GitHub repository access.",
+  robots: { index: false, follow: false },
+};
+
+function feedback(parameters: Record<string, string | string[] | undefined>) {
+  if (parameters.github_install === "connected") return { title: "GitHub access updated", description: "The selected installation is connected. Repository access remains read only." };
+  if (parameters.github_identity === "required") return { title: "GitHub identity required", description: "Sign in with GitHub before connecting selected repository access." };
+  return null;
+}
 
 export default async function ConnectionsPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const account = await currentActivityAccount();
@@ -33,27 +52,102 @@ export default async function ConnectionsPage({ searchParams }: { searchParams: 
   const connections = await listGitHubConnections(account.activity.id);
   const accessibleRepositories = accessibleGitHubRepositoryCount(connections);
   const app = githubAppConfiguration();
-  return <PageShell archetype="default" layout="reading" className="flex flex-col gap-6">
-    <PageIntro title="Connections" description="Identity and read access for connected scientific codebases. None of these grant Vela authority."
-      signals={[{ label: "WorkOS", value: "Signed in", tone: "evidence" }, { label: "Authority", value: "None", tone: "neutral" }]} />
-    <ItemGroup className="max-w-3xl">
-      <Item variant="outline"><ItemContent><ItemTitle>{account.hosted.displayName}<Badge variant="secondary">WorkOS account</Badge></ItemTitle>
-        <ItemDescription>{account.hosted.email}. Hosted identity only; not a Vela actor or authority principal.</ItemDescription></ItemContent></Item>
-      <Item variant="outline"><ItemContent><ItemTitle>GitHub identity {identity ? <Badge>Connected</Badge> : <Badge variant="secondary">Not linked</Badge>}</ItemTitle>
-        <ItemDescription>{identity ? "Verified by WorkOS and kept separate from repository installation access." : "Use Continue with GitHub on sign-in to link a verified GitHub identity to this account."}</ItemDescription>
-        {!identity && <Button nativeButton={false} render={<Link href="/sign-in?returnTo=/account/connections" />} variant="outline" className="mt-3">Continue with GitHub</Button>}
-      </ItemContent></Item>
-      <Item variant="outline"><ItemContent><ItemTitle>Selected repository access</ItemTitle>
-        <ItemDescription>{connections.installations.length ? `${connections.installations.length} installation${connections.installations.length === 1 ? "" : "s"}; ${accessibleRepositories} accessible codebase${accessibleRepositories === 1 ? "" : "s"}.` : "No GitHub App installation is connected."}</ItemDescription>
-        {identity && app.enabled && <Button nativeButton={false} render={<Link href="/api/github/install" />} className="mt-3">Install or update GitHub access</Button>}
-        {!app.enabled && <p className="mt-3 text-body text-muted-foreground">Repository connection is not configured in this deployment.</p>}
-      </ItemContent></Item>
-      {connections.installations.map((installation) => <Item key={installation.installationId} variant="outline"><ItemContent>
-        <ItemTitle>{installation.accountLogin}<Badge variant="secondary">{installation.accountType}</Badge></ItemTitle>
-        <ItemDescription>{installation.suspended ? "Access suspended" : "Metadata and Contents: read only"}. Manage repository selection in GitHub.</ItemDescription>
-        {app.enabled && <Button nativeButton={false} render={<a href={`https://github.com/settings/installations/${installation.installationId}`} />} variant="ghost" className="mt-2">Manage on GitHub</Button>}
-      </ItemContent></Item>)}
-    </ItemGroup>
-    <div><Button nativeButton={false} render={<Link href="/import" />} variant="outline">Import a codebase</Button></div>
+  const notice = feedback(parameters);
+
+  return <PageShell archetype="default" layout="reading" className="flex flex-col gap-10">
+    <header className="border-b pb-7">
+      <Link href="/account" className="inline-flex min-h-11 items-center gap-2 text-meta text-muted-foreground underline-offset-4 hover:text-foreground hover:underline sm:min-h-9"><HugeiconsIcon icon={ArrowLeft} aria-hidden className="size-4" />Account</Link>
+      <p className="mt-5 text-eyebrow uppercase text-muted-foreground">Private account</p>
+      <h1 className="mt-2 text-display">Connections</h1>
+      <p className="mt-3 max-w-2xl text-body text-muted-foreground">Manage how you sign in and which GitHub repositories problems.science may inspect. Connections never grant scientific authority.</p>
+    </header>
+
+    {notice ? <Alert className="max-w-3xl">
+      <AlertTitle>{notice.title}</AlertTitle>
+      <AlertDescription>{notice.description}</AlertDescription>
+    </Alert> : null}
+
+    <section aria-labelledby="identity-connections-heading" className="max-w-3xl">
+      <div className="border-b pb-4">
+        <h2 id="identity-connections-heading" className="text-title">Sign-in identities</h2>
+        <p className="mt-1 text-meta text-muted-foreground">Identity providers establish this private account session. They do not establish authorship or truth.</p>
+      </div>
+      <ItemGroup className="divide-y gap-0">
+        <Item className="rounded-none border-0 px-0 py-5">
+          <ItemMedia variant="icon" className="size-10 rounded-md bg-muted/60"><HugeiconsIcon icon={SecurityCheckIcon} aria-hidden /></ItemMedia>
+          <ItemContent>
+            <ItemTitle className="line-clamp-none flex-wrap">WorkOS account <Badge>Connected</Badge></ItemTitle>
+            <ItemDescription className="line-clamp-none">{account.hosted.displayName} · {account.hosted.email}</ItemDescription>
+          </ItemContent>
+          <ItemActions><Badge variant="outline">Primary sign-in</Badge></ItemActions>
+        </Item>
+        <Item className="rounded-none border-0 px-0 py-5">
+          <ItemMedia variant="icon" className="size-10 rounded-md bg-muted/60"><HugeiconsIcon icon={Github01Icon} aria-hidden /></ItemMedia>
+          <ItemContent>
+            <ItemTitle className="line-clamp-none flex-wrap">GitHub identity <Badge variant={identity ? "default" : "secondary"}>{identity ? "Connected" : "Not linked"}</Badge></ItemTitle>
+            <ItemDescription className="line-clamp-none">{identity ? "Verified by the sign-in provider and kept separate from repository installation access." : "Use Continue with GitHub to link a verified GitHub identity."}</ItemDescription>
+          </ItemContent>
+          {!identity ? <ItemActions><Button className="min-h-11 sm:min-h-7" size="sm" variant="outline" nativeButton={false} render={<Link href="/sign-in?returnTo=/account/connections" />}>Continue with GitHub</Button></ItemActions> : null}
+        </Item>
+      </ItemGroup>
+    </section>
+
+    <section aria-labelledby="repository-access-heading" className="max-w-3xl">
+      <div className="flex flex-wrap items-end justify-between gap-4 border-b pb-4">
+        <div>
+          <h2 id="repository-access-heading" className="text-title">Selected repository access</h2>
+          <p className="mt-1 text-meta text-muted-foreground">Metadata and Contents read access for repositories selected in GitHub.</p>
+        </div>
+        {identity && app.enabled ? <Button className="min-h-11 sm:min-h-8" nativeButton={false} render={<Link href="/api/github/install" />}>{connections.installations.length ? "Update GitHub access" : "Connect GitHub access"}</Button> : null}
+      </div>
+
+      <div className="grid gap-4 border-b py-6 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+        <div className="flex items-start gap-3">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-md bg-muted/60"><HugeiconsIcon icon={LinkSquare02Icon} aria-hidden className="size-4" /></div>
+          <div>
+            <p className="text-label font-medium">{connections.installations.length ? `${connections.installations.length} connected installation${connections.installations.length === 1 ? "" : "s"}` : "No GitHub App installation connected"}</p>
+            <p className="mt-1 text-meta text-muted-foreground">{accessibleRepositories ? `${accessibleRepositories} selected ${accessibleRepositories === 1 ? "repository is" : "repositories are"} currently accessible.` : "No selected repositories are currently accessible."}</p>
+          </div>
+        </div>
+        {!app.enabled ? <Badge variant="secondary">Unavailable in this environment</Badge> : null}
+      </div>
+
+      {connections.installations.length ? <ItemGroup className="divide-y gap-0">
+        {connections.installations.map((installation) => <Item key={installation.installationId} className="rounded-none border-0 px-0 py-4">
+          <ItemMedia variant="icon" className="size-9 rounded-md bg-muted/60"><HugeiconsIcon icon={Github01Icon} aria-hidden /></ItemMedia>
+          <ItemContent>
+            <ItemTitle className="line-clamp-none flex-wrap">{installation.accountLogin}<Badge variant="outline">{installation.accountType}</Badge>{installation.suspended ? <Badge variant="secondary">Suspended</Badge> : null}</ItemTitle>
+            <ItemDescription>{installation.suspended ? "GitHub has suspended this installation." : "Metadata and Contents: read only."}</ItemDescription>
+          </ItemContent>
+          {app.enabled ? <ItemActions><Button className="min-h-11 sm:min-h-7" size="sm" variant="ghost" nativeButton={false} render={<a href={`https://github.com/settings/installations/${installation.installationId}`} />}>Manage on GitHub</Button></ItemActions> : null}
+        </Item>)}
+      </ItemGroup> : <div className="border-b py-8">
+        <p className="text-eyebrow uppercase text-muted-foreground">No selected access</p>
+        <p className="mt-2 max-w-xl text-body text-muted-foreground">Public GitHub URLs can still be inspected without an installation. Connect selected access only when you need a private or explicitly chosen repository.</p>
+      </div>}
+    </section>
+
+    <section aria-labelledby="connected-codebases-heading" className="max-w-3xl">
+      <div className="flex flex-wrap items-end justify-between gap-4 border-b pb-4">
+        <div>
+          <h2 id="connected-codebases-heading" className="text-title">Connected codebases</h2>
+          <p className="mt-1 text-meta text-muted-foreground">Exact revisions retained after inspection.</p>
+        </div>
+        <Button className="min-h-11 sm:min-h-8" variant="outline" nativeButton={false} render={<Link href="/import" />}>Import a codebase</Button>
+      </div>
+      {connections.codebases.length ? <ItemGroup className="divide-y gap-0">
+        {connections.codebases.map((codebase) => <Item key={codebase.id} className="group rounded-none border-0 px-0 py-4" render={<Link href={`/codebases/${codebase.id}`} />}>
+          <ItemMedia variant="icon" className="size-9 rounded-md bg-muted/60"><HugeiconsIcon icon={SourceCodeIcon} aria-hidden /></ItemMedia>
+          <ItemContent>
+            <ItemTitle className="line-clamp-none flex-wrap">{codebase.fullName}<Badge variant="outline">{codebase.visibility}</Badge></ItemTitle>
+            <ItemDescription>{codebase.inspectionStatus.replaceAll("_", " ")} · {codebase.syncState.replaceAll("_", " ")}</ItemDescription>
+          </ItemContent>
+          <ItemActions><HugeiconsIcon icon={ArrowRight} aria-hidden className="size-4 transition-transform duration-150 group-hover:translate-x-0.5" /></ItemActions>
+        </Item>)}
+      </ItemGroup> : <div className="border-b py-8">
+        <p className="text-eyebrow uppercase text-muted-foreground">No codebases retained</p>
+        <p className="mt-2 text-body text-muted-foreground">Import a GitHub URL when you want to inspect and retain one exact revision.</p>
+      </div>}
+    </section>
   </PageShell>;
 }
