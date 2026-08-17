@@ -19,7 +19,7 @@ describe("Problem views", () => {
     expect(navigation).not.toHaveClass("rounded-lg", "bg-muted");
     expect(current).toHaveAttribute("aria-current", "page");
     expect(current).toHaveAttribute("href", "/problems/erdos-problems/321");
-    expect(current).toHaveClass("min-h-11", "items-center", "justify-center");
+    expect(current).toHaveClass("min-h-11", "items-center", "justify-center", "px-2.5", "sm:px-4");
     expect(current.querySelector("[aria-hidden='true']")).toHaveClass("h-0.5", "bg-foreground");
     /* The default view owns the bare URL; every other view carries its own
        address, so each panel is complete HTML somewhere linkable. */

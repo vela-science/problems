@@ -23,7 +23,7 @@ export function LinkTabs({ label, layoutId, tabs, current }: {
       key={tab.key}
       href={tab.href}
       aria-current={current === tab.key ? "page" : undefined}
-      className={`relative flex min-h-11 shrink-0 items-center justify-center px-4 text-center text-label transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 ${current === tab.key ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+      className={`relative flex min-h-11 shrink-0 items-center justify-center px-2.5 text-center text-label transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 sm:px-4 ${current === tab.key ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`}
     >
       {current === tab.key ? <motion.span
         layoutId={layoutId}
