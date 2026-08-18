@@ -98,8 +98,10 @@ describe("Workspace implementation permission matrix", () => {
 
   test("does not load hosted locators or activity for a signed-out reader", () => {
     const workspace = read("apps/problems/src/components/vela/problem-workspace.tsx");
-    const signedOutReturn = workspace.indexOf("if (!hostedAccount) return");
+    const signedOutBranch = workspace.indexOf("if (!hostedAccount) {");
+    const signedOutReturn = workspace.indexOf("return <section", signedOutBranch);
     const activityLoad = workspace.indexOf("const loaded = await loadWorkspace");
+    expect(signedOutBranch).toBeGreaterThan(-1);
     expect(signedOutReturn).toBeGreaterThan(-1);
     expect(activityLoad).toBeGreaterThan(signedOutReturn);
     expect(workspace.match(/getProblemActivity\(/gu)).toHaveLength(1);

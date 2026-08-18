@@ -87,21 +87,22 @@ real filters, status and evidence distribution, and a scannable directory.
 
 ### Read a Problem
 
-A Problem feels like a scientific working document. The question comes first,
-followed by a compact fact rail and six reading areas:
+A Problem is an active scientific document, not an illustrated protocol memo.
+The question is the title. A compact inline summary keeps Problem state and
+source status distinct. One flat tab row opens **Contributions**, **Files**,
+**Workspace**, and **History**. Contributions uses the familiar anatomy of a
+reviewed change: result, performer, checks, linked sources, Decision, and exact
+detail. The relationship map is a secondary contextual action, not a fifth tab
+or the page's organizing metaphor.
+There is no Overview tab that merely summarizes or links to the other tools,
+and no Research tab that opens a second tab row.
 
-1. **Question**: statement, collection, source, and useful visual explanation.
-2. **What is known**: current understanding, uncertainty, competing results,
-   dependencies, and unresolved gaps.
-3. **Evidence**: papers, proofs, computations, datasets, checks, and
-   reproduction status.
-4. **Contributions**: attributed human and agent work with typed provenance.
-5. **Work**: prior approaches, open gaps, workspace entry, and local handoff.
-6. **History**: corrections, supersession, decisions, and exact provenance.
-
-The route can group these areas into stable tabs or sections without losing
-their order. The fact rail keeps identity, field, collection, source, current
-state, contributors, and one useful handoff action in view.
+Structure comes from working components. Contributions is the canonical Problem
+landing view; Map is a secondary action. Maps show relationships; file trees
+show source material; rows show Contributions; timelines show change; diffs
+show corrections; canvases show shared work. Headings and prose label those
+instruments but do not substitute for them. Remove any paragraph that only
+restates a visible label, state, edge, or action.
 
 Current or curated evidence stays distinct from newer Contributions. A recent
 Contribution row names contributor, kind, scope, evidence or assessment,

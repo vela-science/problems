@@ -16,9 +16,10 @@ non-runnable editorial source, and four shared packages:
   search, graph, scientific projection, and deployment-manifest implementation;
 - `packages/activity-data`: the only mutable product-data implementation.
 
-Hosted Vela is non-authoritative. The Problems workbench may mutate account,
-workspace, follow, approach, attempt, discussion, assignment, artifact-metadata,
-provider-neutral session-reference, and unsigned Submission-draft records through
+Hosted Vela is non-authoritative. The Problems application may mutate account,
+shared-workspace, follow, approach, attempt, discussion, assignment,
+artifact-metadata, provider-neutral session-reference, and unsigned
+Submission-draft records through
 `@vela/activity-data`. It cannot issue a Vela Event or Decision, change
 Standing, sign on a user's behalf, or hold a repository authority key.
 
@@ -60,6 +61,24 @@ when their authors wrote them. Do not rewrite them to match the current system.
 - Vela's visual thesis is **direction through evidence**. Sails express
   movement from state to direction; constellation lines express real
   relationships. Decorative star fields do not substitute for information.
+- A Problem is an active scientific surface. Use maps for relationships, file
+  trees and previews for source material, typed rows for Contributions,
+  timelines and diffs for change, and canvases for shared work. Do not satisfy
+  a route with a succession of question headings, prose sections, disclaimer
+  paragraphs, or numbered explanations.
+- Problem navigation is one flat four-tab row: Contributions, Files,
+  Workspace, History. Contributions is the canonical landing view and uses a
+  familiar contribution/check/source detail surface; the exact map is a
+  secondary contextual action. Do not add an Overview tab, a Map tab,
+  nested Research tabs, or an action strip that only links to those tools.
+- Treat redundancy as a product defect. A fact shown in a state rail, node,
+  badge, row, edge, or control is not restated beside it unless the second
+  presentation changes interpretation or is the accessible fallback.
+- Use shadcn.io MCP metadata and previews while shaping substantial
+  interactions. Fetch source only for patterns actually chosen, then adapt
+  behavior into existing `@vela/ui` and app-local compositions. GitHub, Entire,
+  Hugging Face, TheoremDB, Linear, Ramp, and Tailwind Plus are task-pattern
+  references, not brand or ontology templates.
 
 ## Editing workflow
 

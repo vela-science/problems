@@ -17,8 +17,8 @@
   max-width: none;
 }
 
-.page:has(> .hero:first-child) {
-  padding-block-start: min(var(--vela-page-gutter), 1.5rem);
+.page:has(> .hero) {
+  padding-block-start: min(var(--vela-page-gutter), 0.5rem);
 }
 
 .page[data-archetype="problem"] {

@@ -64,6 +64,7 @@ function releaseDestinations(signedIn: boolean): SidebarDestinationGroup[] { ret
     label: "Explore",
     items: [
       { href: "/problems", label: "Problems", icon: PuzzleIcon },
+      { href: "/graph", label: "Research map", icon: GitCommitIcon },
       { href: "/activity", label: "Updates", icon: Activity01Icon },
       ...(signedIn ? [{ href: "/my-work", label: "My work", icon: WorkIcon }] : []),
       { href: "/search", label: "Search", icon: Search01Icon },

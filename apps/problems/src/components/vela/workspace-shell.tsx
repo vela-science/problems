@@ -87,7 +87,8 @@ export function WorkspaceShell({
   const [surface, setSurface] = useState<"canvas" | "object">(initialSurface);
   const hrefWith = (updates: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams);
-    params.set("mode", "work");
+    params.set("view", "workspace");
+    params.delete("mode");
     for (const [key, value] of Object.entries(updates)) {
       if (value === null) params.delete(key);
       else params.set(key, value);
@@ -127,7 +128,7 @@ export function WorkspaceShell({
   );
   const surfaceTabs = (className?: string) => <Tabs value={surface} onValueChange={(value) => setSurface(value as "canvas" | "object")} className={className}>
     <div className="flex flex-wrap items-center justify-between gap-3 border-b px-4 py-3">
-      <p className="text-meta text-muted-foreground">Shared coordination is collaborative activity. It does not change scientific State.</p>
+      <p className="text-meta text-muted-foreground">Canvas, files, Research Blocks, and notes</p>
       <TabsList aria-label="Workspace surface">
         <TabsTrigger value="canvas">Canvas</TabsTrigger>
         <TabsTrigger value="object">Selected object</TabsTrigger>

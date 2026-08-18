@@ -16,12 +16,12 @@ instruments. Shared controls and semantics stay in `@vela/ui`.
 | Home | focused search hero plus task-oriented workspace | connected three-step start, one collection row, grouped recent activity |
 | Global Problems | collection entry and useful starting points | editorial collection tile, exact availability note, compact state cues |
 | Erdős collection | toolbar plus dense directory | source-status distribution, evidence coverage, URL-backed filters |
-| Problem | scientific reading column plus fact rail | visual state summary and source-to-state provenance flow |
-| What is known | current packet plus unresolved gaps | competing-result summary, dependency or family view when supported |
-| Evidence | evidence groups and selected detail | provenance map with synchronized list |
-| Contributions | typed attributed rows | contributor identity, assessment, expandable artifact preview |
-| Work | prior approaches plus workspace entry | contribution stepper, files, code, agent handoff |
-| History | chronological scientific changes | event spine, correction and supersession paths, before/after diff |
+| Problem | question title, inline state summary, four flat tabs | Contributions is default; Map is a secondary action |
+| Problem: Contributions map | exact relationship canvas plus synchronized detail | source, Problem, Contributions, checks, current state |
+| Problem: Contributions | typed attributed rows | assessment, performer, artifact and progressive exact detail |
+| Problem: Files | file tree plus selected preview | exact path, revision, declaration and rights fallback |
+| Problem: Timeline | chronological scientific changes | event spine, correction paths and before/after diff |
+| Problem Workspace | shared canvas plus file/context rail and inspector | Research Blocks, notes, contribution stepper, local handoff |
 | Updates | grouped activity stream | avatar or source glyph, event preview, contextual action |
 | Search | command results plus filter summary | collection cues, state glyphs, unavailable and stale states |
 | My work | resume groups | active drafts, imports, workspaces, next step |
@@ -58,31 +58,28 @@ degraded states distinguish stale projection, rate limit, and reader failure.
 
 ## Problem reading composition
 
-On wide screens, use a reading column and a 280 to 320px fact rail. The rail can
-stick within the viewport after the question but cannot obscure the footer or
-become a wall of badges. It carries identity, collection, field, source and last
-check, source status, current state, evidence strength, contributors, and one
-handoff action.
-
-The Question section uses statement typography. A visual state summary below it
-keeps source status, current Repository-local state, review strength,
-publication state, and uncertainty distinct. The provenance flow shows source,
-scientific record, checks or reviews, and current state. Exact roots open in a
-technical-details disclosure.
+The question is the page title; do not repeat it as a Question section. Below
+it, a compact inline summary and the Contribution surface keep Problem state, source status, current
+Repository-local Contribution state, and checks distinct. Four flat tabs open
+Contributions, Files, Workspace, and History. Contributions is the default and
+uses a reviewed-change layout with status, result, checks, linked sources, and a
+compact fact rail. The exact map stays one secondary action. Do not add an Overview or Map tab, a direct-action
+row duplicating the tabs, or nested Research navigation. Workspace opens on the canvas. Headings name instruments;
+paragraphs do not create the page hierarchy.
 
 What is known separates curated current evidence from newer Contributions. If
 exact relations describe a parameter family, render a labelled matrix of
 known, open, unknown, and computation-readiness cells with a linear-list
 fallback. Never infer family membership from similar titles alone.
 
-## Evidence, work, and history
+## Research and workspace
 
-Evidence uses a structured map on wide screens and grouped flow rows on narrow
+Map uses a structured flow on wide screens and grouped flow rows on narrow
 screens. Selecting a node updates the detail panel and synchronized list.
 Source, artifact, reviewer or method, outcome, and current relevance remain
 visible without exposing every hash.
 
-Work shows prior approaches and unresolved gaps before the browser workspace.
+Workspace shows prior approaches and unresolved gaps beside the browser canvas.
 The contribution stepper is Choose Problem, Attach work, Review, Submit. File,
 code, and artifact previews sit beside the relevant step. Import states keep
 user input and expose retry or local recovery.
@@ -93,7 +90,7 @@ source”; they do not resemble an embedded terminal, filesystem, IDE, agent
 runtime, or signing surface. A handoff preview names the exact public references
 and selected artifacts that will leave the browser.
 
-History uses one chronological spine. Corrections and supersession show the
+Timeline uses one chronological spine. Corrections and supersession show the
 old and new presentation or scientific object, actor, reason, and retained
 identity. Expandable diffs use added, removed, and changed labels. Compact
 technical provenance follows the event instead of becoming a peer route.

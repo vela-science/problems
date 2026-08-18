@@ -8,14 +8,15 @@ vi.mock("@/lib/auth", () => ({
   authConfiguration: () => ({ enabled: true }),
 }));
 vi.mock("next/navigation", () => ({ notFound: () => { mocks.notFound(); throw new Error("NOT_FOUND"); } }));
-vi.mock("@/components/vela/link-tabs", () => ({ LinkTabs: () => <nav>Problem views</nav> }));
+vi.mock("@/components/vela/link-tabs", () => ({ LinkTabs: ({ tabs }: { tabs: Array<{ key: string; label: string }> }) => <nav>{tabs.map((tab) => <span key={tab.key}>{tab.label}</span>)}</nav> }));
 vi.mock("@/components/vela/problem-summary", () => ({ ProblemAnswerStrip: () => <dl>Answer strip</dl> }));
 vi.mock("@/components/vela/problem-state", () => ({
-  ProblemState: ({ view }: { view: string }) => <section>Public view: {view}</section>,
+  ProblemState: ({ researchView }: { researchView: string }) => <section>Public tool: {researchView}</section>,
 }));
 vi.mock("@/components/vela/problem-workspace", () => ({ ProblemWorkspace: () => <section>Workspace surface</section> }));
 
 import { ProblemPageView } from "./problem-page";
+import { ProjectionReadError } from "@vela/projection-data/refusal";
 
 const exactState = {
   repositoryName: "Vela Math",
@@ -67,6 +68,23 @@ describe("canonical Problem source binding", () => {
     })).rejects.toThrow("NOT_FOUND");
     expect(mocks.notFound).toHaveBeenCalledOnce();
   });
+
+  it("renders unsupported local projection drift as configuration guidance", async () => {
+    mocks.state.mockRejectedValueOnce(new ProjectionReadError(
+      "foreign_manifest",
+      "Unsupported Problems projection",
+    ));
+    render(await ProblemPageView({
+      repository: "math",
+      problem: "321",
+      collectionName: "Erdős Problems",
+      route: "/problems/erdos-problems/321",
+      query: {},
+    }));
+    expect(screen.getByRole("heading", { name: "Projection configuration needs attention" })).toBeInTheDocument();
+    expect(screen.getByText(/VELA_PROJECTION_DATABASE_URL/u)).toBeInTheDocument();
+    expect(screen.getByText(/will not reinterpret an older release/u)).toBeInTheDocument();
+  });
 });
 
 describe("Problem view addressing", () => {
@@ -83,17 +101,27 @@ describe("Problem view addressing", () => {
     query,
   });
 
-  it("defaults the bare URL to the Overview", async () => {
+  it("defaults the bare URL to Contributions", async () => {
     render(await page({}));
-    expect(screen.getByText("Public view: overview")).toBeInTheDocument();
+    expect(screen.getByText("Public tool: contributions")).toBeInTheDocument();
+    expect(screen.getByText("Contributions")).toBeInTheDocument();
+    expect(screen.queryByText("Overview")).toBeNull();
+    expect(screen.queryByText("Research")).toBeNull();
+    expect(screen.queryByText("Erdős Problems")).toBeNull();
+    expect(screen.queryByText("#321")).toBeNull();
   });
 
-  it.each(["evidence", "history"] as const)("serves %s as its own address", async (view) => {
+  it.each(["contributions", "files", "timeline"] as const)("serves the flat %s tool", async (view) => {
     render(await page({ view }));
-    expect(screen.getByText(`Public view: ${view}`)).toBeInTheDocument();
+    expect(screen.getByText(`Public tool: ${view}`)).toBeInTheDocument();
   });
 
-  it("serves Work as the fourth view", async () => {
+  it("folds the retired Map address into Contributions", async () => {
+    render(await page({ view: "map" }));
+    expect(screen.getByText("Public tool: contributions")).toBeInTheDocument();
+  });
+
+  it("maps the retired Work address to Workspace", async () => {
     render(await page({ view: "work" }));
     expect(screen.getByText("Workspace surface")).toBeInTheDocument();
   });
@@ -102,8 +130,10 @@ describe("Problem view addressing", () => {
      resolves to the section that absorbed it rather than 404ing or falling
      silently to the default. */
   it.each([
-    ["sources", "Public view: evidence"],
-    ["record", "Public view: history"],
+    ["evidence", "Public tool: contributions"],
+    ["sources", "Public tool: files"],
+    ["history", "Public tool: timeline"],
+    ["record", "Public tool: timeline"],
     ["workspace", "Workspace surface"],
   ] as const)("resolves the retired view=%s address", async (view, expected) => {
     render(await page({ view }));
@@ -115,9 +145,9 @@ describe("Problem view addressing", () => {
     expect(screen.getByText("Workspace surface")).toBeInTheDocument();
   });
 
-  it("resolves an unknown view to the Overview rather than an empty page", async () => {
+  it("resolves an unknown view to Contributions rather than an empty page", async () => {
     render(await page({ view: "poem" }));
-    expect(screen.getByText("Public view: overview")).toBeInTheDocument();
+    expect(screen.getByText("Public tool: contributions")).toBeInTheDocument();
   });
 
   /* The frame holds still across the tabs: one archetype for all four views,

@@ -112,7 +112,7 @@ export default async function HomePage() {
             detail: "Search by number, topic, or wording.",
           },
           {
-            href: assessed[0]?.canonicalPath ? `${assessed[0].canonicalPath}?view=evidence` : COLLECTION_PATH,
+            href: assessed[0]?.canonicalPath ? `${assessed[0].canonicalPath}?view=contributions` : COLLECTION_PATH,
             title: "Read what is known",
             detail: "Review evidence, prior work, and what remains open.",
           },
@@ -182,7 +182,7 @@ export default async function HomePage() {
         {assessed.length ? <ItemGroup className="mt-4 gap-0 divide-y">
           {assessed.slice(0, 4).map((problem) => <Item
             key={`${problem.repository}/${problem.problem}`}
-            render={<Link href={`${problem.canonicalPath ?? COLLECTION_PATH}?view=evidence`} />}
+            render={<Link href={`${problem.canonicalPath ?? COLLECTION_PATH}?view=contributions`} />}
             className="group rounded-none border-0 px-0 py-5"
           >
             <ItemMedia className="w-16 self-start font-mono text-meta tabular-nums text-muted-foreground">#{problem.problem}</ItemMedia>

@@ -833,7 +833,26 @@ export type ProjectionManifest = z.infer<
 export function normalizeProjectionManifest(
   value: unknown,
 ): ProjectionManifest {
-  return currentProjectionManifestSchema.parse(value);
+  const result = currentProjectionManifestSchema.safeParse(value);
+  if (result.success) return result.data;
+
+  /* A reader connected to a retired projection is a deployment/configuration
+     mismatch, not a scientific-data ambiguity. Keep the refusal exact and
+     actionable without leaking driver or connection details into a browser
+     overlay. The hard cut remains one version and one checked generator set. */
+  const record = value && typeof value === "object" ? value as Record<string, unknown> : {};
+  const actualVersion = typeof record.vela_version === "string" ? record.vela_version : null;
+  if (actualVersion && !(velaReadableVersions as readonly string[]).includes(actualVersion)) {
+    throw new ProjectionReadError(
+      "foreign_manifest",
+      `Unsupported Problems projection: this build requires ${velaReadableVersions[0]} from a checked release, but the configured database serves ${actualVersion}. Set VELA_PROJECTION_DATABASE_URL to a SELECT-only exact supported projection and restart the app.`,
+    );
+  }
+  /* A current-version manifest with malformed roots, counts, schema, or binary
+     identity is not a local version mismatch. Preserve the exact Zod failure
+     so release and reconstruction gates name the broken field instead of
+     misdiagnosing it as an environment problem. */
+  throw result.error;
 }
 
 export const projectionManifestSchema = z.unknown().transform((value, context) => {

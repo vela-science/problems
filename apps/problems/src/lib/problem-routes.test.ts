@@ -23,7 +23,7 @@ describe("public Problem paths", () => {
     expect(publicProblemPath("math", "321")).toBe("/problems/erdos-problems/321");
     expect(publicProblemPath("math", "999")).toBe("/problems/erdos-problems/999");
     expect(publicProblemWorkspacePath("math", "321", "workspace one"))
-      .toBe("/problems/erdos-problems/321?view=work&workspace=workspace+one");
+      .toBe("/problems/erdos-problems/321?view=workspace&workspace=workspace+one");
   });
 
   /* Null so the caller refuses. Returning a path here would emit a link that

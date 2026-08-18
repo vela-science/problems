@@ -224,6 +224,7 @@ export function CommandPaletteProvider({
                   <CommandGroup heading="Go to">
                     <CommandItem onSelect={() => navigate("/")}><HugeiconsIcon icon={Home01Icon} aria-hidden />Home</CommandItem>
                     <CommandItem onSelect={() => navigate("/problems")}><HugeiconsIcon icon={PuzzleIcon} aria-hidden />Problems</CommandItem>
+                    <CommandItem onSelect={() => navigate("/graph")}><HugeiconsIcon icon={GitFork} aria-hidden />Research map</CommandItem>
                     {problemCollections.map((collection) => <CommandItem key={collection.namespace} onSelect={() => navigate(`/problems/${collection.namespace}`)}><HugeiconsIcon icon={PuzzleIcon} aria-hidden />{collection.name}</CommandItem>)}
                     <CommandItem onSelect={() => navigate("/contribute")}><HugeiconsIcon icon={WorkIcon} aria-hidden />Contribute</CommandItem>
                     <CommandItem onSelect={() => navigate("/activity")}><HugeiconsIcon icon={Activity01Icon} aria-hidden />Updates</CommandItem>

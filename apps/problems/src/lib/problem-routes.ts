@@ -18,7 +18,7 @@ export function publicProblemPath(repository: string, problem: string): string |
 export function publicProblemWorkspacePath(repository: string, problem: string, workspaceId?: string): string | null {
   const path = publicProblemPath(repository, problem);
   if (!path) return null;
-  const query = new URLSearchParams({ view: "work" });
+  const query = new URLSearchParams({ view: "workspace" });
   if (workspaceId) query.set("workspace", workspaceId);
   return `${path}?${query.toString()}`;
 }

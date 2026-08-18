@@ -85,7 +85,7 @@ describe("Home", () => {
     render(await HomePage());
 
     expect(screen.getByRole("link", { name: /Choose a question/iu })).toHaveAttribute("href", "/problems/erdos-problems");
-    expect(screen.getByRole("link", { name: /Read what is known/iu })).toHaveAttribute("href", "/problems/erdos-problems/94?view=evidence");
+    expect(screen.getByRole("link", { name: /Read what is known/iu })).toHaveAttribute("href", "/problems/erdos-problems/94?view=contributions");
     expect(screen.getAllByRole("link", { name: /Add a contribution/iu })[1]).toHaveAttribute("href", "/contribute");
   });
 
@@ -97,7 +97,7 @@ describe("Home", () => {
     expect(screen.getByText("Listed as open by source")).toBeVisible();
     expect(screen.getByText("With reviewed evidence")).toBeVisible();
     expect(screen.getByRole("heading", { name: "Problems with reviewed evidence" })).toBeVisible();
-    expect(screen.getByRole("link", { name: /Statement for 94/iu })).toHaveAttribute("href", "/problems/erdos-problems/94?view=evidence");
+    expect(screen.getByRole("link", { name: /Statement for 94/iu })).toHaveAttribute("href", "/problems/erdos-problems/94?view=contributions");
     expect(container).not.toHaveTextContent(/priority|ranked|most important|central queue/iu);
   });
 

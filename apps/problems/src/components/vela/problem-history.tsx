@@ -1,5 +1,4 @@
 import { Button } from "@vela/ui/components/button";
-import { Item, ItemContent, ItemDescription, ItemGroup, ItemTitle } from "@vela/ui/components/item";
 import { StatusBadge } from "@vela/ui/vela/status-badge";
 import { RootFact } from "@/components/vela/root-fact";
 import { RecordId } from "@/components/vela/record-id";
@@ -38,7 +37,8 @@ export function ProblemHistory({ state }: { state: State }) {
           <span aria-hidden className="relative z-10 mt-1.5 size-3.5 rounded-full border-4 border-background bg-status-evidence ring-1 ring-border forced-colors:border-2" />
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2"><StatusBadge axis="proposal" state={review.status}>{review.status.replaceAll("_", " ")}</StatusBadge><span className="text-meta text-muted-foreground">{formatDate(review.reviewed_at ?? review.created_at)}</span></div>
-            <p className="mt-2 text-compact">{review.status === "accepted" ? "A proposed Contribution was accepted by a retained Decision." : `A proposed Contribution is ${review.status.replaceAll("_", " ")}.`}</p>
+            <p className="mt-2 text-label font-medium">{review.status === "accepted" ? "Change accepted" : `Change ${review.status.replaceAll("_", " ")}`}</p>
+            {review.claim_retirement ? <p className="mt-1 text-micro text-muted-foreground">Its claim was later {review.claim_retirement}.</p> : null}
             {review.producer_package?.producer_actor ? <p className="mt-1 text-micro text-muted-foreground">Produced by {review.producer_package.producer_actor}</p> : null}
             <a href={`/repositories/${state.repositorySlug}/proposals/${review.proposal_id}`} className="mt-2 inline-block text-meta font-medium underline underline-offset-4">Open event <span className="sr-only"><RecordId value={review.proposal_id} copy={false} /></span></a>
           </div>
@@ -48,10 +48,11 @@ export function ProblemHistory({ state }: { state: State }) {
 
     <section aria-labelledby="correction-heading">
       <div className="flex flex-wrap items-end justify-between gap-3"><h2 id="correction-heading" className="text-title">Correction history</h2>{corrections.length ? <span className="text-meta text-muted-foreground">{corrections.length} exact {corrections.length === 1 ? "relation" : "relations"}</span> : null}</div>
-      {corrections.length ? <ItemGroup className="mt-5 divide-y">{corrections.map(({ claim, relation }) => {
+      {corrections.length ? <div className="mt-5 space-y-4">{corrections.map(({ claim, relation }) => {
         const predecessor = state.claims.find((candidate) => candidate.id === relation.target_claim_id);
-        return <Item key={`${claim.id}:${relation.kind}:${relation.target_claim_id}`} className="items-start rounded-none px-0 py-4"><ItemContent className="gap-2"><ItemTitle className="line-clamp-none text-body font-normal">Contribution {relation.kind === "corrects" ? "correction" : "supersession"}</ItemTitle><ItemDescription className="line-clamp-none flex flex-wrap items-center gap-x-2 gap-y-1"><RecordId value={claim.id} /><span>{relation.kind}</span><RecordId value={relation.target_claim_id} /></ItemDescription><p className="text-meta text-muted-foreground">The predecessor remains retained. This relation does not transport source equivalence or another Repository&apos;s Standing.</p>{predecessor ? <CorrectionComparison kind={relation.kind as "corrects" | "supersedes"} before={predecessor.assertion} after={claim.assertion} /> : <p className="mt-2 text-meta text-muted-foreground">The predecessor statement is not present in this Problem projection, so no textual comparison is shown.</p>}</ItemContent></Item>;
-      })}</ItemGroup> : <div className="mt-5 rounded-lg border border-dashed p-5"><p className="text-label font-medium">No correction history</p><p className="mt-1 text-meta text-muted-foreground">No correction or supersession relation is retained for the joined Contribution.</p></div>}
+        const isCurrent = claim.id === state.currentClaimId;
+        return <article key={`${claim.id}:${relation.kind}:${relation.target_claim_id}`} className="overflow-hidden rounded-xl border bg-background"><div className="grid items-stretch sm:grid-cols-[minmax(0,1fr)_5rem_minmax(0,1fr)]"><div className="p-4"><p className="text-eyebrow uppercase text-muted-foreground">Previous</p>{predecessor ? <p className="mt-2 line-clamp-3 text-compact">{predecessor.assertion}</p> : <p className="mt-2 text-compact text-muted-foreground">Statement not retained here</p>}</div><div className="grid place-items-center border-y bg-muted/20 px-2 py-3 text-center sm:border-x sm:border-y-0"><StatusBadge tone="caution">{relation.kind}</StatusBadge><span aria-hidden className="mt-1 text-muted-foreground">→</span></div><div className="p-4"><p className="text-eyebrow uppercase text-muted-foreground">{isCurrent ? "Current" : "Later version"}</p><p className="mt-2 line-clamp-3 text-compact">{claim.assertion}</p></div></div>{predecessor ? <div className="border-t p-4"><CorrectionComparison kind={relation.kind as "corrects" | "supersedes"} before={predecessor.assertion} after={claim.assertion} /></div> : null}<details className="border-t px-4 py-3 text-meta"><summary className="cursor-pointer font-medium">Exact identities</summary><div className="mt-3 flex flex-wrap items-center gap-2"><RecordId value={relation.target_claim_id} /><span aria-hidden>→</span><RecordId value={claim.id} /></div></details></article>;
+      })}</div> : <div className="mt-5 rounded-lg border border-dashed p-5"><p className="text-label font-medium">No correction history</p></div>}
     </section>
 
     <details className="group border-y py-1">

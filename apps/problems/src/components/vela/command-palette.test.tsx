@@ -33,6 +33,7 @@ function OpenPalette() {
 }
 
 beforeEach(() => {
+  navigation.pathname = "/repositories/formal-conjectures";
   navigation.push.mockReset();
   search.load.mockReset();
 });
@@ -70,6 +71,14 @@ describe("CommandPaletteProvider exact record search", () => {
     expect(screen.queryByText("Inspect")).not.toBeInTheDocument();
     fireEvent.click(targets[0]!);
     expect(navigation.push).toHaveBeenCalledWith("/repositories/formal-conjectures/contribute");
+  });
+
+  it("makes the exact research map directly discoverable", () => {
+    navigation.pathname = "/";
+    render(<CommandPaletteProvider repositories={repositories} problemCollections={problemCollections} projectionRoot={projectionRoot}><OpenPalette /></CommandPaletteProvider>);
+    fireEvent.click(screen.getByRole("button", { name: "Open palette" }));
+    fireEvent.click(screen.getByRole("button", { name: "Research map" }));
+    expect(navigation.push).toHaveBeenCalledWith("/graph");
   });
 
   it("queries the root-bound endpoint and opens an exact proposal result", async () => {

@@ -17,9 +17,8 @@ import { Input } from "@vela/ui/components/input";
 import { Label } from "@vela/ui/components/label";
 import { Textarea } from "@vela/ui/components/textarea";
 import { RootedArtifactFrame } from "@vela/ui/vela/rooted-artifact-frame";
-import { StatusBadge } from "@vela/ui/vela/status-badge";
 import { IdempotencyField } from "@/components/vela/idempotency-field";
-import { localStandingLabel } from "@/components/vela/problem-facts";
+import { currentReview } from "@/components/vela/problem-provenance";
 import type { AccountIdentity } from "@/lib/auth";
 import type { ScientificProblemState } from "@/lib/scientific-state";
 import { FormSelect } from "@/components/vela/form-select";
@@ -74,17 +73,15 @@ function StaleActivityNotice() {
 }
 
 function EmptyWorkspace({ state, accountId }: { state: State; accountId: string }) {
-  return <section className="mt-10">
-    <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem]">
-    <div><p className="text-eyebrow uppercase text-muted-foreground">Workspace</p><h2 className="mt-2 text-title">Start a workspace for this Problem</h2><p className="mt-2 max-w-prose text-body text-muted-foreground">A Workspace holds approaches, attempts, discussion, rooted Research Blocks, and unsigned drafts outside scientific State.</p>
-      <form action={createWorkspaceAction} className="mt-6 grid gap-4 sm:max-w-xl">
-        <input type="hidden" name="repository" value={state.repositorySlug} /><input type="hidden" name="problem" value={state.problem.problem} /><IdempotencyField />
-        <FormField label="Workspace name" name="name" placeholder="Problem working group" />
-        <FormField label="URL slug" name="slug" placeholder="problem-working-group" />
-        <Button className="w-fit" type="submit">Create workspace</Button>
-      </form>
-    </div>
-    <aside className="max-w-sm text-meta text-muted-foreground lg:pt-7"><p className="font-medium text-foreground">Hosted identity</p><p className="mt-2"><code>{accountId}</code> identifies membership only. It is not a Vela signer or Repository authority.</p></aside>
+  void accountId;
+  const sourceTitle = state.source?.title ?? `Problem ${state.problem.problem}`;
+  const sourceCount = state.sources?.occurrences?.length ?? 0;
+  return <section aria-labelledby="empty-workspace-heading" className="mt-6 min-w-0">
+    <header className="flex flex-wrap items-center justify-between gap-3"><h2 id="empty-workspace-heading" className="text-title">Workspace</h2><Badge variant="outline">signed in</Badge></header>
+    <div className="mt-5 overflow-hidden rounded-xl border bg-background lg:grid lg:min-h-[34rem] lg:grid-cols-[15rem_minmax(0,1fr)_16rem]">
+      <nav aria-label="Problem files" className="border-b bg-muted/15 p-4 lg:border-b-0 lg:border-r"><p className="text-eyebrow uppercase text-muted-foreground">Files</p><Link href={`?view=files`} className="mt-3 block rounded-lg border bg-background p-3 hover:bg-muted/30"><span className="block truncate text-label font-medium">{sourceTitle}</span><span className="mt-1 block text-micro text-muted-foreground">{sourceCount} retained source records</span></Link></nav>
+      <div className="min-w-0 border-b p-4 lg:border-b-0 lg:p-6"><p className="text-eyebrow uppercase text-muted-foreground">Canvas</p><div className="mt-5 rounded-xl border border-dashed bg-muted/10 p-5 sm:p-7"><h3 className="text-subtitle">Start a workspace</h3><p className="mt-1 text-compact text-muted-foreground">Keep notes, Research Blocks, and a contribution draft with this Problem.</p><form action={createWorkspaceAction} className="mt-6 grid gap-4 sm:max-w-lg"><input type="hidden" name="repository" value={state.repositorySlug} /><input type="hidden" name="problem" value={state.problem.problem} /><IdempotencyField /><FormField label="Workspace name" name="name" placeholder="Problem working group" /><FormField label="URL slug" name="slug" placeholder="problem-working-group" /><Button className="w-fit" type="submit">Create workspace</Button></form></div></div>
+      <aside aria-label="Workspace tools" className="p-4 lg:border-l"><p className="text-eyebrow uppercase text-muted-foreground">Workspace tools</p><ul className="mt-3 divide-y border-y text-compact"><li className="py-3"><span className="font-medium">Research Blocks</span><span className="block text-micro text-muted-foreground">No items</span></li><li className="py-3"><span className="font-medium">Notes</span><span className="block text-micro text-muted-foreground">No notes</span></li><li className="py-3"><span className="font-medium">Contribution draft</span><span className="block text-micro text-muted-foreground">Not started</span></li></ul><p className="mt-4 text-micro text-muted-foreground">Account access manages workspace membership only.</p></aside>
     </div>
   </section>;
 }
@@ -115,25 +112,6 @@ function MutationError({ code }: { code?: string }) {
    links out of it. The boundary it described is still stated where it binds —
    on the canvas note, on the draft export, and in the documentation — rather
    than restated above work that is already underway. */
-function WorkspacePrelude({ state }: { state: State }) {
-  return <section id="prior-work" aria-labelledby="workspace-surface-heading" className="mt-8 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3 scroll-mt-16">
-    <div className="min-w-0">
-      <h2 id="workspace-surface-heading" className="text-title">Check prior work</h2>
-      {/* The State boundary is stated where it binds — on the shell above the
-          canvas — not restated in this band. */}
-      <p className="mt-1 max-w-[76ch] text-meta text-muted-foreground">Review retained approaches, Attempts, negative results, and exact artifacts before starting. A possible overlap is advisory; exact identities remain authoritative.</p>
-      {/* What the work here is anchored against, without leaving the surface:
-          the same Standing the Overview's strip shows. Stale-anchor handling
-          stays with the per-object notices below. */}
-      <p className="mt-2.5"><StatusBadge state={new Set((state.claims ?? []).map((claim) => claim.standing)).size === 1 ? state.claims[0]!.standing : "unassessed"} axis="standing">{localStandingLabel((state.claims ?? []).map((claim) => claim.standing), state.repositoryName)}</StatusBadge></p>
-    </div>
-    <div className="flex flex-wrap gap-3">
-      <Button nativeButton={false} size="sm" variant="outline" render={<Link href={`/repositories/${state.repositorySlug}`} />}>Open codebase record</Button>
-      {state.locator ? <Button nativeButton={false} size="sm" variant="ghost" render={<a href={state.locator} />}>Upstream source</Button> : null}
-    </div>
-  </section>;
-}
-
 function NewApproachForm({ scope }: { scope: Scope }) {
   return <form action={createApproachAction} className="space-y-4"><ScopeFields scope={scope} /><FormField label="Title" name="title" placeholder="Reduce to a finite obstruction" /><div className="grid gap-1.5"><Label htmlFor="approach-summary">Summary</Label><Textarea id="approach-summary" name="summary" required placeholder="What will this direction test, and what would falsify it?" /></div><Button type="submit">Create approach</Button></form>;
 }
@@ -161,11 +139,12 @@ function DraftForm({ scope, state, artifacts, drafts }: { scope: Scope; state: S
 }
 
 export function EmptyHostedWorkspace({ state, accountId }: { state: State; accountId: string }) {
-  return <><WorkspacePrelude state={state} /><EmptyWorkspace state={state} accountId={accountId} /></>;
+  return <EmptyWorkspace state={state} accountId={accountId} />;
 }
 
 function UnavailableHostedWorkspace({ state, code }: { state: State; code: ActivityDataError["code"] | "unknown" }) {
-  return <><WorkspacePrelude state={state} /><ActivityUnavailable code={code} /></>;
+  void state;
+  return <ActivityUnavailable code={code} />;
 }
 
 export function workspaceObjects({ state, activity, workspace, scope, currentAnchorRoot }: { state: State; activity: ProblemActivity; workspace: Workspace; scope: Scope; currentAnchorRoot: string }): WorkspaceObject[] {
@@ -266,8 +245,23 @@ export async function ProblemWorkspace({ state, hostedAccount, accountsEnabled =
   /* Offering sign-in on a deployment that has no identity provider is a dead
      control: `/sign-in` answers 503, and it is the only thing on the surface.
      Say what the deployment does instead. */
-  if (!hostedAccount && !accountsEnabled) return <><WorkspacePrelude state={state} /><section aria-labelledby="hosted-workspace-heading" className="mt-8"><h2 id="hosted-workspace-heading" className="mt-2 text-title">Hosted coordination is not enabled here</h2><p className="mt-3 max-w-2xl text-body text-muted-foreground">This deployment carries no account provider, so no Workspace can be opened on it. Current State remains fully readable.</p></section></>;
-  if (!hostedAccount) return <><WorkspacePrelude state={state} /><section id="add-contribution" aria-labelledby="hosted-workspace-heading" className="mt-8 grid gap-6 scroll-mt-16 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end"><div><h2 id="hosted-workspace-heading" className="mt-2 text-title">Add a contribution</h2><p className="mt-3 max-w-2xl text-body text-muted-foreground">Sign in to compare retained work and coordinate a bounded Contribution for this exact Problem. Public State remains readable, and a hosted account creates neither scientific authorship nor repository authority.</p></div><Button className="w-fit" nativeButton={false} render={<Link href={`/sign-in?returnTo=${encodeURIComponent(`${basePath}?view=work`)}`} prefetch={false} />}>Sign in to continue</Button></section></>;
+  if (!hostedAccount) {
+    const claims = state.claims ?? [];
+    const claim = claims.find((candidate) => candidate.id === state.currentClaimId) ?? null;
+    const review = currentReview(state);
+    const checkCount = review?.verification_records?.length ?? 0;
+    const sourceTitle = state.source?.title ?? `Problem ${state.problem.problem}`;
+    const sourceCount = state.sources?.occurrences?.length ?? 0;
+    const signInHref = `/sign-in?returnTo=${encodeURIComponent(`${basePath}?view=workspace`)}`;
+    return <section id="add-contribution" aria-labelledby="hosted-workspace-heading" className="mt-6 min-w-0 scroll-mt-16">
+      <header className="flex flex-wrap items-center justify-between gap-3"><h2 id="hosted-workspace-heading" className="text-title">Workspace</h2><div className="flex flex-wrap gap-2">{state.locator ? <Button nativeButton={false} size="sm" variant="outline" render={<a href={state.locator} />}>Open source</Button> : null}{accountsEnabled ? <Button nativeButton={false} size="sm" render={<Link href={signInHref} prefetch={false} />}>Sign in to contribute</Button> : <Badge variant="outline">sign-in unavailable</Badge>}</div></header>
+      <div className="mt-5 overflow-hidden rounded-xl border bg-background lg:grid lg:min-h-[34rem] lg:grid-cols-[15rem_minmax(0,1fr)_16rem]">
+        <nav aria-label="Public Problem files" className="border-b bg-muted/15 p-4 lg:border-b-0 lg:border-r"><p className="text-eyebrow uppercase text-muted-foreground">Files</p><Link href={`${basePath}?view=files`} className="mt-3 block rounded-lg border bg-background p-3 hover:bg-muted/30"><span className="block truncate text-label font-medium">{sourceTitle}</span><span className="mt-1 block text-micro text-muted-foreground">{sourceCount} retained source records</span></Link></nav>
+        <div className="min-w-0 border-b p-4 lg:border-b-0 lg:p-6"><div className="flex items-center justify-between gap-3"><p className="text-eyebrow uppercase text-muted-foreground">Canvas</p><Badge variant="outline">public preview</Badge></div><ol className="mt-8 grid items-stretch sm:grid-cols-[minmax(7rem,1fr)_2rem_minmax(7rem,1fr)_2rem_minmax(7rem,1fr)]" aria-label="Public workspace context"><li className="rounded-lg border border-status-evidence/35 bg-status-evidence/5 p-4"><span className="text-eyebrow uppercase text-muted-foreground">Source</span><strong className="mt-2 block text-label">#{state.problem.problem}</strong></li><li aria-hidden className="grid place-items-center text-muted-foreground">→</li><li className="rounded-lg border border-status-caution/35 bg-status-caution/5 p-4"><span className="text-eyebrow uppercase text-muted-foreground">Contribution</span><strong className="mt-2 block text-label">{claim ? claim.standing.replaceAll("_", " ") : "None"}</strong></li><li aria-hidden className="grid place-items-center text-muted-foreground">→</li><li className="rounded-lg border border-status-progress/35 bg-status-progress/5 p-4"><span className="text-eyebrow uppercase text-muted-foreground">Checks</span><strong className="mt-2 block text-label">{checkCount}</strong></li></ol><div className="mt-8 flex justify-center"><Button nativeButton={false} size="sm" variant="outline" render={<Link href={`/graph?repository=${state.repositorySlug}&lens=research${claim ? `&node=${encodeURIComponent(claim.id)}` : ""}`} />}>Open research map</Button></div></div>
+        <aside aria-label="Workspace tools" className="p-4 lg:border-l"><p className="text-eyebrow uppercase text-muted-foreground">Workspace tools</p><ul className="mt-3 divide-y border-y text-compact"><li className="py-3"><span className="font-medium">Research Blocks</span><span className="block text-micro text-muted-foreground">Sign in to view</span></li><li className="py-3"><span className="font-medium">Notes</span><span className="block text-micro text-muted-foreground">Sign in to view</span></li><li className="py-3"><span className="font-medium">Contribution draft</span><span className="block text-micro text-muted-foreground">Sign in to start</span></li></ul></aside>
+      </div>
+    </section>;
+  }
   const loaded = await loadWorkspace(state, hostedAccount, selectedWorkspace);
   if (loaded.status === "error") return <UnavailableHostedWorkspace state={state} code={loaded.code} />;
   if (loaded.status === "empty") return <EmptyHostedWorkspace state={state} accountId={loaded.accountId} />;
@@ -289,7 +283,7 @@ export async function ProblemWorkspace({ state, hostedAccount, accountsEnabled =
   if (!anchors.some((anchor) => anchor.root === currentAnchorRoot)) anchors.unshift({ root: currentAnchorRoot, state: "current", fields: [] });
   const audit: WorkspaceAuditEntry[] = activity.audit.map((entry) => ({ sequence: String(entry.sequence), operation: entry.operation, requestRoot: entry.requestRoot, anchorRoot: entry.anchorRoot, subjectKind: entry.subjectKind, subjectId: entry.subjectId }));
   const discussion: WorkspaceDiscussionEntry[] = activity.discussion.map((entry) => ({ id: entry.id, body: entry.body, kind: entry.kind, visibility: entry.visibility, anchorRoot: entry.anchorRoot, approachId: entry.approachId, attemptId: entry.attemptId }));
-  const toolbar = <div><MutationError code={mutationError} /><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-eyebrow uppercase text-muted-foreground">Workspace</p><h2 id="workspace-heading" className="mt-1 text-title">{workspace.name}</h2><div className="mt-2 flex flex-wrap gap-2"><Badge variant="outline">{workspace.role}</Badge><Badge variant="secondary">activity only</Badge><Badge variant="secondary">authority none</Badge>{activity.following ? <Badge variant="outline">following current State</Badge> : null}</div></div><div className="flex flex-wrap items-center justify-end gap-2">{workspaces.map((entry) => <Button key={entry.id} nativeButton={false} size="sm" variant={entry.id === workspace.id ? "default" : "outline"} render={<Link href={`${basePath}?view=work&workspace=${entry.id}`} />}>{entry.name}</Button>)}<form action={followProblemAction}><ScopeFields scope={scope} /><input type="hidden" name="following" value={activity.following ? "false" : "true"} /><Button type="submit" size="sm" variant="outline">{activity.following ? "Unfollow current State" : "Follow current State"}</Button></form></div></div></div>;
+  const toolbar = <div><MutationError code={mutationError} /><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-eyebrow uppercase text-muted-foreground">Workspace</p><h2 id="workspace-heading" className="mt-1 text-title">{workspace.name}</h2><div className="mt-2 flex flex-wrap gap-2"><Badge variant="outline">{workspace.role}</Badge>{activity.following ? <Badge variant="outline">following current state</Badge> : null}</div></div><div className="flex flex-wrap items-center justify-end gap-2">{workspaces.map((entry) => <Button key={entry.id} nativeButton={false} size="sm" variant={entry.id === workspace.id ? "default" : "outline"} render={<Link href={`${basePath}?view=workspace&workspace=${entry.id}`} />}>{entry.name}</Button>)}<form action={followProblemAction}><ScopeFields scope={scope} /><input type="hidden" name="following" value={activity.following ? "false" : "true"} /><Button type="submit" size="sm" variant="outline">{activity.following ? "Unfollow current state" : "Follow current state"}</Button></form></div></div></div>;
   const canvasNote = <WorkspaceCrdtNote updates={activity.crdtUpdates} scope={scope} action={appendWorkspaceCrdtUpdateAction} />;
-  return <><WorkspacePrelude state={state} /><WorkspaceShell objects={objects} selectedObject={object} inspectorTab={inspector} anchors={anchors} audit={audit} discussion={discussion} toolbar={toolbar} canvasNote={canvasNote} initialSurface={selectedObject ? "object" : "canvas"} /></>;
+  return <WorkspaceShell objects={objects} selectedObject={object} inspectorTab={inspector} anchors={anchors} audit={audit} discussion={discussion} toolbar={toolbar} canvasNote={canvasNote} initialSurface={selectedObject ? "object" : "canvas"} />;
 }

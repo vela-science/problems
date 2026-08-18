@@ -155,6 +155,7 @@ describe("AppSidebar mobile navigation", () => {
 
     for (const [label, href] of [
       ["Problems", "/problems"],
+      ["Research map", "/graph"],
       ["Updates", "/activity"],
       ["Search", "/search"],
     ]) {

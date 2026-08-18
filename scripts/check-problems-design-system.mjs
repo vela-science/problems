@@ -137,7 +137,6 @@ for (const file of [
   join(problems, "src/components/vela/proposal-ledger-rows.tsx"),
   join(problems, "src/components/vela/stat-row.tsx"),
   join(problems, "src/components/vela/hub-membership-map.tsx"),
-  join(problems, "src/components/vela/problem-workspace.tsx"),
   join(problems, "src/components/vela/source-registry/shared.tsx"),
   join(problems, "src/components/vela/source-registry/registry-view.tsx"),
   join(problems, "src/components/vela/source-registry/record-view.tsx"),
@@ -146,7 +145,13 @@ for (const file of [
   if (/\b(?:border-y|divide-y|border-t)\b/u.test(source)) failures.push(`${relative(root, file)}: list-strip separators bypass the authored surface/spacing contract`);
 }
 const workspaceSource = readFileSync(join(problems, "src/components/vela/problem-workspace.tsx"), "utf8");
-if (/\b(?:border-y|divide-y|border-t|border-b|border-l|border-dashed)\b/u.test(workspaceSource)) failures.push("Work mode restores a wireframe separator or perimeter ladder");
+/* Workspace is an instrument, not a prose page. Containment and pane borders
+   are useful here: they make the file rail, canvas, and tool rail recognizable.
+   The former blanket border ban forced all three back into an undifferentiated
+   text stack, so the contract now protects the positive composition instead. */
+for (const required of ['aria-label="Public Problem files"', ">Canvas<", 'aria-label="Workspace tools"']) {
+  if (!workspaceSource.includes(required)) failures.push(`Problem Workspace is missing its recognizable ${required} instrument`);
+}
 
 if (existsSync(join(problems, "src/components/vela/vela-mark.tsx"))) failures.push("an app-local Vela mark remains beside @vela/ui");
 

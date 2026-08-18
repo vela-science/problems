@@ -21,22 +21,31 @@ describe("Problem Workspace", () => {
 
   it("keeps signed-out coordination separate from scientific State", async () => {
     render(await ProblemWorkspace({ basePath: "/problems/erdos-problems/321", state, hostedAccount: null }));
-    expect(screen.getByRole("heading", { name: "Add a contribution" })).toBeVisible();
-    expect(screen.getByRole("heading", { name: "Check prior work" })).toBeVisible();
-    expect(screen.getByRole("link", { name: "Open codebase record" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Workspace" })).toBeVisible();
+    expect(screen.getByLabelText("Public workspace context")).toBeVisible();
+    expect(screen.getByRole("link", { name: "Open research map" })).toHaveAttribute(
+      "href",
+      "/graph?repository=math&lens=research",
+    );
+    expect(screen.getByRole("link", { name: "Sign in to contribute" })).toBeVisible();
+    expect(screen.getByText("Research Blocks")).toBeVisible();
+    expect(screen.getByText("Notes")).toBeVisible();
   });
 
   it("offers no dead sign-in when accounts are unavailable", async () => {
     render(await ProblemWorkspace({ basePath: "/problems/erdos-problems/321", state, hostedAccount: null, accountsEnabled: false }));
-    expect(screen.getByRole("heading", { name: "Hosted coordination is not enabled here" })).toBeVisible();
-    expect(screen.queryByRole("link", { name: "Sign in" })).not.toBeInTheDocument();
-    expect(screen.getByText(/Current State remains fully readable/u)).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Workspace" })).toBeVisible();
+    expect(screen.queryByRole("link", { name: "Sign in to contribute" })).not.toBeInTheDocument();
+    expect(screen.getByText("sign-in unavailable")).toBeVisible();
+    expect(screen.getByLabelText("Public workspace context")).toBeVisible();
   });
 
   it("starts one Problem-scoped Workspace", () => {
     render(<EmptyHostedWorkspace state={state} accountId="account-1" />);
-    expect(screen.getByRole("heading", { name: "Start a workspace for this Problem" })).toBeVisible();
-    expect(screen.getByText("Hosted identity")).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Start a workspace" })).toBeVisible();
+    expect(screen.getByLabelText("Problem files")).toBeVisible();
+    expect(screen.getByLabelText("Workspace tools")).toBeVisible();
+    expect(screen.queryByText("account-1")).toBeNull();
   });
 
   it("builds current Problem-scoped activity and exact contribution handoffs", () => {

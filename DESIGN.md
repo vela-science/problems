@@ -334,13 +334,23 @@ Related or parameter-family views are derived only from exact source
 relationships. They preserve each Problem identity and label unknown or
 expensive cells honestly.
 
-The Problem header uses statement typography, a compact visual state summary,
-and a persistent fact rail. It distinguishes source status, current
-Repository-local state, review strength, publication state, and staleness.
+The Problem header uses statement typography followed by a compact inline state
+summary and four flat tabs: Contributions, Files, Workspace, and History. The state display separates
+Problem state, source status, current Repository-local Contribution state, and
+checks without explanatory paragraphs or a dashboard slab.
+
+Contributions is the landing surface. It uses a familiar reviewed-change
+composition: a bounded result preview, status header, checks, linked sources,
+compact fact rail, and progressive technical detail. Its exact relationship map
+is a secondary action, not another tab or a custom flow standing between the
+reader and the Contribution. Do not insert an
+Overview tab that repeats state or links to the tools, and do not nest research
+tools under a second tab row.
 
 ### Evidence and provenance
 
-Evidence maps show source to artifact to check or review to current state.
+The Problem tools share one stable header. Evidence maps show source to
+artifact to check or review to current state.
 Nodes use typed glyphs, short labels, and semantic colour. Edges use direction,
 relation labels, and a synchronized list. Exact roots and provider details live
 in progressive disclosure.
@@ -416,6 +426,9 @@ never delay a task for animation.
 - Design loading, empty, error, stale, retry, offline, and narrow states with
   the primary composition.
 - Use panels and cards when containment or comparison improves the task.
+- Make every major Problem surface operable: selectable nodes, browseable
+  files, linked Contribution rows, expandable timeline events, and a real
+  canvas. Text may annotate an instrument; it may not impersonate one.
 - Test at 1280px, 390px, 320px, 200% zoom, forced colours, reduced motion,
   keyboard, touch, and print.
 
@@ -430,3 +443,6 @@ never delay a task for animation.
 - Do not use tiny dense type, ambiguous counts, orphan routes, or false success.
 - Do not copy a reference product's ontology, branding, reputation system, or
   centralized review semantics.
+- Do not organize a screen as a sequence of questions, explanatory headings,
+  disclaimer paragraphs, or numbered prose when the same information can be
+  shown as state, relationship, chronology, comparison, or an action.

@@ -41,6 +41,7 @@ describe("RepositoryGraph ledger", () => {
   });
 
   test("heads the mixed state column for what its values have in common, not one axis", async () => {
+    navigation.params = new URLSearchParams("view=records");
     const view = render(<RepositoryGraph root="sha256:test" initialRepository="erdos" repositories={["erdos"]} />);
 
     await waitFor(() => expect(screen.getByRole("columnheader", { name: "State" })).toBeVisible());
@@ -56,7 +57,25 @@ describe("RepositoryGraph ledger", () => {
     view.unmount();
   });
 
+  test("opens as a human-labelled map instead of a protocol ledger", async () => {
+    const longAssertion = "At a retained exact commit, this very long internal assertion explains every binding and resolver detail before a reader knows what object it is.";
+    vi.mocked(loadGraph).mockResolvedValueOnce({
+      schema: "vela.projection-graph.v1", root: "sha256:test", repository: "erdos", view: "ledger",
+      lens: "research", total: 1, next_cursor: null,
+      nodes: [node({ id: "claim:1", kind: "claim", label: longAssertion, standing: "accepted" })], edges: [],
+      selected: null, neighbor_total: 0, neighbors: [], object_context: null,
+    } satisfies GraphResponse);
+
+    render(<RepositoryGraph root="sha256:test" initialRepository="erdos" repositories={["erdos"]} />);
+
+    expect(await screen.findByRole("tab", { name: "Map", selected: true })).toBeVisible();
+    expect(screen.getByText("Accepted Contribution")).toBeVisible();
+    expect(screen.getByText(longAssertion)).toHaveClass("line-clamp-2");
+    expect(screen.queryByRole("table")).toBeNull();
+  });
+
   test("names the axis each row's state belongs to", async () => {
+    navigation.params = new URLSearchParams("view=records");
     const view = render(<RepositoryGraph root="sha256:test" initialRepository="erdos" repositories={["erdos"]} />);
 
     const table = await screen.findByRole("table");

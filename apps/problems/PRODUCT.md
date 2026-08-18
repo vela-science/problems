@@ -58,22 +58,21 @@ Problem identities or changing Standing.
 
 ## Problem contract
 
-Every Problem answers, above the fold:
+Every Problem has one question title, a compact inline state summary, and four
+flat tabs: **Contributions**, **Files**, **Workspace**, **History**.
+Contributions is the canonical landing view and reads like a familiar reviewed
+change: result, performer, checks, sources, Decision, and exact detail. The
+relationship map is a secondary action. There is no
+Overview summary tab, Map tab, or nested Research tab.
 
-- What is the question?
-- What is its current state, and whose state is it?
-- What is the strongest evidence?
-- What remains uncertain or open?
-- What can I do next?
+Legacy `view=evidence`, `view=history`, and `view=work` links map to the matching
+flat tool without rendering duplicate content. Contributions, files, exact
+relationships, and corrections must be reachable from the Problem itself.
 
-The stable reading model is Question, What is known, Evidence, Contributions,
-Work, and History. Existing route tabs may group these areas, but Contributions,
-evidence, and corrections cannot be reachable only through secret deep links.
-
-The fact rail names collection identity, source status and last check, current
-Repository-local state, evidence strength, contributors, staleness, and one
-handoff action. Source status, current state, verification strength, performer
-provenance, and publication state remain separate axes.
+The inline summary and Contribution surface keep Problem state, source status, current Repository-local
+Contribution state, and checks as distinct axes. The interface does not repeat
+those facts in adjacent prose. Exact roots and record vocabulary remain in
+technical details or exact record routes.
 
 ## Contributions and prior work
 
@@ -102,7 +101,7 @@ Every public object exposed through search or agent context has a durable UI
 route or an explicit unavailable or private state. Route-contract tests enforce
 that parity.
 
-The Work view is a shared Workspace, not a local development environment. It
+The Workspace view is shared coordination, not a local development environment. It
 does not claim repository checkout, filesystem access, terminals, native
 method execution, secret management, agent orchestration, generic session
 storage, artifact harvesting, or signing. “Continue locally” passes exact
