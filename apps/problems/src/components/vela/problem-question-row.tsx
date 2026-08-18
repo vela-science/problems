@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { ScientificText } from "@vela/ui/vela/scientific-text";
 import { formalCoverage, problemLabel, resolveProblemStatement, statementParagraphs, statementPlainText } from "@/lib/problem-statement";
 import type { ScientificProblemState } from "@/lib/scientific-state";
@@ -26,7 +28,7 @@ export function ProblemQuestionRow({ state, href, number, collectionLabel = "Pro
   const name = question ? `${collectionLabel} ${number}: ${statementPlainText(question)}` : `${collectionLabel} ${number}`;
 
   return <li className="min-w-0">
-    <Link href={href} aria-label={name} className="group flex min-w-0 gap-4 py-4 focus-visible:outline-2 focus-visible:outline-offset-2">
+    <Link href={href} aria-label={name} className="vela-object-row group -mx-2 flex min-w-0 gap-4 rounded-md px-2 py-4 focus-visible:outline-2 focus-visible:outline-offset-2">
       <span aria-hidden className="mt-0.5 w-12 shrink-0 font-mono text-meta tabular-nums text-muted-foreground">{`#${number}`}</span>
       <span className="min-w-0 flex-1">
         <span className="block max-w-[76ch] text-compact leading-6 group-hover:underline group-hover:decoration-border group-hover:underline-offset-4">
@@ -42,6 +44,7 @@ export function ProblemQuestionRow({ state, href, number, collectionLabel = "Pro
           {statement ? <span className="truncate">via {statement.sourceLabel}</span> : null}
         </span>
       </span>
+      <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden className="mt-1 size-4 shrink-0 text-muted-foreground opacity-0 transition-[opacity,transform] duration-150 group-hover:translate-x-0.5 group-hover:opacity-100 group-focus-visible:opacity-100" />
     </Link>
   </li>;
 }

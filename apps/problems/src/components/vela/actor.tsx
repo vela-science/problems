@@ -12,35 +12,67 @@ import { cn } from "@vela/ui/lib/utils";
  * product has no image for them, will not fetch one from a third party (the CSP
  * is `connect-src 'self'`), and must not invent one.
  *
- * A machine actor gets no avatar. `vela`, `Canopus Agent` and
- * `github-actions[bot]` are not people, and drawing them as people is the kind
- * of small false claim this product exists not to make. */
-const MACHINE = /^(vela|canopus|github-actions|agent[:@]|local:|.*\[bot\])/iu;
+ * Machine performers use a squared fallback only when retained provenance says
+ * they are a machine. A display name is never evidence of actor kind. */
+export type ActorKind = "human" | "agent" | "ai_model" | "organization" | "deterministic_tool" | "unknown";
 
-export function Actor({
-  name,
-  className,
-}: {
-  name: string | null | undefined;
-  className?: string;
-}) {
-  if (!name) return null;
-  const machine = MACHINE.test(name);
-  const initials = name
+function isMachine(kind: ActorKind | null | undefined) {
+  return kind === "agent" || kind === "ai_model" || kind === "deterministic_tool";
+}
+
+function actorInitials(name: string, machine: boolean) {
+  if (machine) return "AI";
+  return name
     .split(/[\s._-]+/u)
     .filter(Boolean)
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase() ?? "")
     .join("");
+}
+
+export function Actor({
+  name,
+  kind = "unknown",
+  className,
+}: {
+  name: string | null | undefined;
+  kind?: ActorKind | null;
+  className?: string;
+}) {
+  if (!name) return null;
+  const machine = isMachine(kind);
+  const initials = actorInitials(name, machine);
 
   return (
     <span className={cn("inline-flex min-w-0 items-center gap-1.5", className)} title={name}>
-      {machine ? null : (
-        <Avatar className="size-4">
-          <AvatarFallback className="text-[0.5rem]">{initials}</AvatarFallback>
-        </Avatar>
-      )}
-      <span className={cn("min-w-0 truncate", machine && "font-mono")}>{name}</span>
+      <Avatar className={cn("size-4", machine && "rounded-md bg-primary/10 text-primary")}>
+        <AvatarFallback className={cn("text-[0.5rem]", machine && "rounded-md bg-primary/10 font-semibold text-primary")}>{initials}</AvatarFallback>
+      </Avatar>
+      <span className="min-w-0 truncate">{name}</span>
     </span>
   );
+}
+
+export function Performer({
+  name,
+  kind = "unknown",
+  detail,
+  className,
+}: {
+  name: string | null | undefined;
+  kind?: ActorKind | null;
+  detail?: string | null;
+  className?: string;
+}) {
+  if (!name) return null;
+  const machine = isMachine(kind);
+  return <span className={cn("inline-flex min-w-0 items-center gap-2.5", className)}>
+    <Avatar className={cn("size-8 shrink-0", machine && "rounded-md bg-primary/10 text-primary")}>
+      <AvatarFallback className={cn("text-[0.65rem] font-semibold", machine && "rounded-md bg-primary/10 text-primary")}>{actorInitials(name, machine)}</AvatarFallback>
+    </Avatar>
+    <span className="min-w-0">
+      <span className="block truncate text-compact font-semibold">{name}</span>
+      {detail ? <span className="block truncate text-micro text-muted-foreground">{detail}</span> : null}
+    </span>
+  </span>;
 }

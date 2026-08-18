@@ -15,6 +15,8 @@ import {
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "@vela/ui/components/button";
+import { Badge } from "@vela/ui/components/badge";
+import { Performer } from "@/components/vela/actor";
 import { AssertionText } from "@/components/vela/assertion-text";
 import { currentReview } from "@/components/vela/problem-provenance";
 import { ScientificText } from "@vela/ui/vela/scientific-text";
@@ -129,41 +131,37 @@ export function ProblemReferenceHeader({ state, route, problemNumber, collection
 
   return <div className={styles.reference}>
     <header className={styles.hero}>
-      <div className={styles.heroMain}>
-        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-          <p className="flex items-center gap-2 text-eyebrow font-semibold uppercase tracking-[0.14em] text-[color:var(--ref-hero-muted)]">
-            <Link href={collectionHref} className="rounded-sm underline-offset-4 hover:text-[color:var(--ref-hero-fg)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[color:var(--ref-hero-fg)]">{collectionName}</Link>
-            <span aria-hidden className="text-[color:var(--ref-hero-faint)]">/</span>
-            <span className="font-mono normal-case tracking-normal text-[color:var(--ref-hero-fg)]">#{problemNumber}</span>
-          </p>
-          <div className="flex flex-wrap items-center gap-2">
-            <Button nativeButton={false} size="sm" className="bg-[color:var(--ref-hero-fg)] text-[color:var(--ref-hero-bg)] hover:opacity-90" render={<Link href={`${route}?view=work`} />}>Start work</Button>
-            {statement?.locatorUrl ? <Button nativeButton={false} size="sm" variant="outline" className="border-[color:var(--ref-hero-line)] bg-transparent text-[color:var(--ref-hero-fg)] hover:bg-[color:var(--ref-hero-hover)] hover:text-[color:var(--ref-hero-fg)]" render={<a href={statement.locatorUrl} />}>
-              Source <HugeiconsIcon icon={ArrowUpRight01Icon} aria-hidden className="size-3.5" />
-            </Button> : null}
-          </div>
-        </div>
-        <h1 className={styles.question}>{statement?.form === "prose" && question ? <ScientificText text={question} /> : state.problem.label}</h1>
-        <p className="mt-4 max-w-2xl text-compact leading-6 text-[color:var(--ref-hero-muted)]">
-          {statement ? <>Question retained from <span className="font-medium text-[color:var(--ref-hero-fg)]">{statement.sourceLabel}</span></> : "No written source statement is retained."}
+      <div className={styles.heroTopline}>
+        <p className={styles.identity}>
+          <Link href={collectionHref}>{collectionName}</Link>
+          <span aria-hidden>/</span>
+          <span className="font-mono">#{problemNumber}</span>
         </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button nativeButton={false} size="sm" render={<Link href={`${route}?view=work`} />}>Start work</Button>
+          {statement?.locatorUrl ? <Button nativeButton={false} size="sm" variant="outline" render={<a href={statement.locatorUrl} />}>
+            Open source <HugeiconsIcon icon={ArrowUpRight01Icon} aria-hidden className="size-3.5" />
+          </Button> : null}
+        </div>
       </div>
+      <h1 className={styles.question}>{statement?.form === "prose" && question ? <ScientificText text={question} /> : state.problem.label}</h1>
+      <p className={styles.sourceLine}>{statement ? <>Retained from <span>{statement.sourceLabel}</span></> : "No written source statement is retained."}</p>
       <dl className={styles.heroRail}>
         <div className={styles.heroFact}>
-          <dt className="text-micro font-semibold uppercase tracking-[0.12em] text-[color:var(--ref-hero-faint)]">Formal targets</dt>
-          <dd className={styles.factValue}><span className={styles.statusDot} data-tone="coral" aria-hidden /><span className="truncate capitalize">{formalTargets}</span></dd>
+          <dt>Formal targets</dt>
+          <dd><span className={styles.statusDot} data-tone="warning" aria-hidden /><span className="capitalize">{formalTargets}</span></dd>
         </div>
         <div className={styles.heroFact}>
-          <dt className="text-micro font-semibold uppercase tracking-[0.12em] text-[color:var(--ref-hero-faint)]">Source status</dt>
-          <dd className={styles.factValue}><span className={styles.statusDot} data-tone="mint" aria-hidden /><span className="min-w-0 truncate"><span className="font-normal text-[color:var(--ref-hero-muted)]">{collectionName}:</span> <span className="capitalize">{sourceStatus}</span></span></dd>
+          <dt>Source status</dt>
+          <dd><span className={styles.statusDot} data-tone="source" aria-hidden /><span><span className={styles.factQualifier}>{collectionName}:</span> <span className="capitalize">{sourceStatus}</span></span></dd>
         </div>
         <div className={styles.heroFact}>
-          <dt className="text-micro font-semibold uppercase tracking-[0.12em] text-[color:var(--ref-hero-faint)]">Repository decision</dt>
-          <dd className={styles.factValue}><span className={styles.statusDot} data-tone="cobalt" aria-hidden /><span className="truncate capitalize">{current ? `${humanize(current.standing)} contribution` : "No current contribution"}</span></dd>
+          <dt>Repository decision</dt>
+          <dd><span className={styles.statusDot} data-tone="primary" aria-hidden /><span className="capitalize">{current ? `${humanize(current.standing)} contribution` : "No current contribution"}</span></dd>
         </div>
         <div className={styles.heroFact}>
-          <dt className="text-micro font-semibold uppercase tracking-[0.12em] text-[color:var(--ref-hero-faint)]">Evidence here</dt>
-          <dd className={styles.factValue}><span className={styles.statusDot} aria-hidden /><span className="truncate">{checks.length} {checks.length === 1 ? "check" : "checks"} · {coverage.declarations} formal</span></dd>
+          <dt>Checks and sources</dt>
+          <dd><span className={styles.statusDot} data-tone="evidence" aria-hidden /><span>{checks.length} {checks.length === 1 ? "check" : "checks"} · {coverage.declarations} formal</span></dd>
         </div>
       </dl>
     </header>
@@ -201,92 +199,86 @@ export function ProblemOverviewReference({ state, route }: { state: State; route
   const activity = state.attributedRecords ?? [];
   const checkSummary = summarizeCheckOutcomes(checks);
   const resultCheckPresentation = checkPresentation(checks);
+  const producer = review?.producer_package?.producer_actor ?? null;
+  const sourceBindings = current?.source_bindings ?? [];
 
-  return <div className={`${styles.reference} mt-5`}>
+  return <div className={`${styles.reference} mt-6`}>
     <div className={styles.overviewGrid}>
       <div className={styles.contentStack}>
         <section aria-labelledby="current-state-heading" className={styles.statePanel}>
-          <div className={styles.stateLead}>
-            <div className={styles.stateAccent} aria-hidden />
-            <div className={styles.stateBody}>
-              <p className="text-micro font-bold uppercase tracking-[0.14em] text-[color:var(--ref-cobalt)]">Current state</p>
-              <h2 id="current-state-heading" className={`${styles.stateHeadline} mt-3`}>
-                {headline ?? (current ? <AssertionText text={current.assertion} /> : "No durable Result is current in this Repository.")}
-              </h2>
-              {unresolved ? <div className="mt-4 grid grid-cols-[auto_minmax(0,1fr)] items-start gap-2.5 rounded-lg bg-[color:var(--ref-paper-translucent)] px-3 py-3 text-compact leading-5">
-                <HugeiconsIcon icon={GitForkIcon} aria-hidden className="mt-0.5 size-4 text-[color:var(--ref-coral)]" />
-                <p><span className="font-semibold">Unresolved by this result:</span> <AssertionText text={unresolved} /></p>
-              </div> : null}
-              {current ? <details className={`${styles.technical} mt-3 rounded-lg border border-[color:var(--ref-line)] bg-[color:var(--ref-paper-translucent)]`}>
-                <summary>Read the exact result and limitations</summary>
-                <div className="border-t border-[color:var(--ref-line)] px-4 py-4 text-compact leading-6">
-                  <p><AssertionText text={current.assertion} /></p>
-                  {current.conditions.length ? <ul className="mt-3 list-disc space-y-1 pl-5 text-[color:var(--ref-muted)]">{current.conditions.map((condition) => <li key={condition}>{condition}</li>)}</ul> : null}
-                </div>
-              </details> : null}
+          <div className={styles.stateBody}>
+            <div className={styles.resultObjectHeader}>
+              <div className="flex min-w-0 items-center gap-3">
+                <span data-check-outcome={dominantCheckOutcome(checks) ?? "none"} className={`${styles.resultGlyph} ${resultCheckPresentation.className}`}><HugeiconsIcon icon={resultCheckPresentation.icon} aria-hidden className="size-5" /></span>
+                {producer ? <Performer name={producer} detail={`Result performer · ${humanize(current?.assertion_type, "research result")}`} /> : <div><p className={styles.sectionKicker}>Current Result</p><p className="mt-0.5 text-meta text-[color:var(--ref-muted)]">Durable output in {state.repositoryName}</p></div>}
+              </div>
+              <div className="flex flex-wrap items-center gap-2"><Badge>Current Result</Badge>{current ? <Badge variant="outline" className="capitalize">{humanize(current.standing)}</Badge> : null}</div>
             </div>
+            <h2 id="current-state-heading" className={`${styles.stateHeadline} mt-4`}>
+                {headline ?? (current ? <AssertionText text={current.assertion} /> : "No durable Result is current in this Repository.")}
+            </h2>
+            {unresolved ? <div className={styles.unresolved}>
+              <HugeiconsIcon icon={GitForkIcon} aria-hidden className="mt-0.5 size-4 text-status-caution" />
+              <p><span className="font-semibold">Still unresolved:</span> <AssertionText text={unresolved} /></p>
+            </div> : null}
+            {current ? <details className={`${styles.technical} mt-4`}>
+              <summary>Exact result and limitations</summary>
+              <div className={styles.technicalBody}>
+                <p><AssertionText text={current.assertion} /></p>
+                {current.conditions.length ? <ul className="mt-3 list-disc space-y-1 pl-5 text-[color:var(--ref-muted)]">{current.conditions.map((condition) => <li key={condition}>{condition}</li>)}</ul> : null}
+              </div>
+            </details> : null}
+            {current ? <div className={styles.relationshipStrip}>
+              <Link href={`${route}?view=results`} className="vela-object-row">
+                <span className={`${styles.relationshipIcon} ${resultCheckPresentation.className}`}><HugeiconsIcon icon={resultCheckPresentation.icon} aria-hidden className="size-4" /></span>
+                <span><strong className="capitalize">{checkSummary}</strong><small>{checks.length ? "Open scoped check output" : "No retained check output"}</small></span>
+                <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden className="size-4 text-muted-foreground" />
+              </Link>
+              <Link href={`${route}?view=sources`} className="vela-object-row">
+                <span className={`${styles.relationshipIcon} bg-status-evidence/10 text-status-evidence`}><HugeiconsIcon icon={SourceCodeIcon} aria-hidden className="size-4" /></span>
+                <span><strong>{sourceBindings.length} exact {sourceBindings.length === 1 ? "source link" : "source links"}</strong><small>Browse declarations and retained excerpts</small></span>
+                <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden className="size-4 text-muted-foreground" />
+              </Link>
+            </div> : null}
           </div>
           <dl className={styles.stateMeta}>
-            <div><dt className="text-micro font-semibold uppercase tracking-wide text-[color:var(--ref-muted)]">Type</dt><dd className="mt-1 text-compact font-semibold capitalize">{current ? humanize(current.assertion_type) : "—"}</dd></div>
-            <div><dt className="text-micro font-semibold uppercase tracking-wide text-[color:var(--ref-muted)]">Evidence</dt><dd className="mt-1 text-compact font-semibold">{current?.evidence_count ?? 0} {current?.evidence_count === 1 ? "artifact" : "artifacts"}</dd></div>
-            <div><dt className="text-micro font-semibold uppercase tracking-wide text-[color:var(--ref-muted)]">Reviewed</dt><dd className="mt-1 text-compact font-semibold">{formatSourceDate(review?.reviewed_at ?? null)}</dd></div>
+            <div><dt>Type</dt><dd className="capitalize">{current ? humanize(current.assertion_type) : "—"}</dd></div>
+            <div><dt>Evidence</dt><dd>{current?.evidence_count ?? 0} {current?.evidence_count === 1 ? "artifact" : "artifacts"}</dd></div>
+            <div><dt>Decision</dt><dd className="capitalize">{review ? humanize(review.status) : "None"}</dd></div>
+            <div><dt>Reviewed</dt><dd>{formatSourceDate(review?.reviewed_at ?? null)}</dd></div>
           </dl>
         </section>
 
         <section aria-labelledby="known-heading" className={styles.section}>
           <div className={styles.sectionHead}>
-            <div><h2 id="known-heading" className={styles.sectionTitle}>Known landmarks</h2><p className="mt-1 text-compact text-[color:var(--ref-muted)]">Exact retained formal statements, not inferred scientific claims.</p></div>
+            <div><h2 id="known-heading" className={styles.sectionTitle}>Known landmarks</h2><p className="mt-1 text-compact text-[color:var(--ref-muted)]">Retained formal statements from exact sources.</p></div>
             <Link href={`${route}?view=sources`} className="inline-flex items-center gap-1 text-compact font-semibold text-[color:var(--ref-cobalt)] underline-offset-4 hover:underline">All sources <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden className="size-3.5" /></Link>
           </div>
           {landmarks.length ? <figure className={styles.boundFigure}>
             {landmarks.map((occurrence, index) => <div key={occurrence.occurrence_key} className={styles.boundRow} data-bound={index === 0 ? "first" : "second"}>
-              <div><p className="text-micro font-bold uppercase tracking-[0.12em] text-[color:var(--ref-muted)]">{humanize(occurrence.native_id.split(".").at(-1), "Formal statement")}</p><p className="mt-1 text-micro text-[color:var(--ref-muted)]">{humanize(occurrence.formal?.category_label, "Retained")}</p></div>
-              <div className="min-w-0"><div className={styles.boundBar} aria-hidden /><p className="mt-2 overflow-x-auto font-mono text-meta leading-5"><ScientificText text={occurrence.summary ?? ""} /></p></div>
+              <div><p className="text-compact font-semibold">{humanize(occurrence.native_id.split(".").at(-1), "Formal statement")}</p><p className="mt-1 text-meta capitalize text-[color:var(--ref-muted)]">{humanize(occurrence.formal?.category_label, "Retained")}</p></div>
+              <div className="min-w-0"><p className="overflow-x-auto font-mono text-meta leading-5"><ScientificText text={occurrence.summary ?? ""} /></p></div>
               {occurrence.locators.find((locator) => locator.url)?.url ? <a href={occurrence.locators.find((locator) => locator.url)?.url ?? "#"} className="text-meta font-semibold text-[color:var(--ref-cobalt)] underline-offset-4 hover:underline">Source</a> : null}
             </div>)}
-            <figcaption className="border-t border-[color:var(--ref-line)] px-4 py-2.5 text-meta text-[color:var(--ref-muted)]">Shown from retained source material. Open each Source for its exact declaration, path and revision.</figcaption>
+            <figcaption className="border-t border-[color:var(--ref-line)] px-4 py-2.5 text-meta text-[color:var(--ref-muted)]">Open Sources for exact declarations, paths, and revisions.</figcaption>
           </figure> : <p className="mt-3 rounded-lg border border-dashed border-[color:var(--ref-line)] p-4 text-compact text-[color:var(--ref-muted)]">No formal landmark is retained for this Problem.</p>}
-        </section>
-
-        <section aria-labelledby="latest-result-heading" className={styles.section}>
-          <div className={styles.sectionHead}>
-            <div><h2 id="latest-result-heading" className={styles.sectionTitle}>Latest result</h2><p className="mt-1 text-compact text-[color:var(--ref-muted)]">Durable output; active drafts and attempts live in Work.</p></div>
-            <Link href={`${route}?view=results`} className="inline-flex items-center gap-1 text-compact font-semibold text-[color:var(--ref-cobalt)] underline-offset-4 hover:underline">All results <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden className="size-3.5" /></Link>
-          </div>
-          {current ? <div className={styles.resultRow}>
-            <span data-check-outcome={dominantCheckOutcome(checks) ?? "none"} className={`${styles.resultGlyph} ${resultCheckPresentation.className}`}><HugeiconsIcon icon={resultCheckPresentation.icon} aria-hidden className="size-5" /></span>
-            <div className="min-w-0">
-              <p className="font-semibold">{headline ?? humanize(current.assertion_type, "Research result")}</p>
-              <p className="mt-1 text-compact text-[color:var(--ref-muted)]">{review?.reviewed_by ?? "Reviewer not retained"} · {formatSourceDate(review?.reviewed_at ?? current.created)}</p>
-              <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-meta text-[color:var(--ref-muted)]"><span>{current.evidence_count} evidence artifact</span><span className="capitalize">{checkSummary}</span><span>{current.source_bindings.length} exact source bindings</span></div>
-            </div>
-            <Button nativeButton={false} variant="outline" size="sm" render={<Link href={`/repositories/${state.repositorySlug}/claims/${encodeURIComponent(current.id)}`} />}>Open result</Button>
-          </div> : <p className="mt-3 rounded-lg border border-dashed border-[color:var(--ref-line)] p-4 text-compact text-[color:var(--ref-muted)]">No current Result is retained for this Problem.</p>}
         </section>
 
         <section aria-labelledby="work-heading" className={styles.section}>
           <div className={styles.sectionHead}>
-            <div><h2 id="work-heading" className={styles.sectionTitle}>Work and open formal targets</h2><p className="mt-1 text-compact text-[color:var(--ref-muted)]">What is active or still unproved in the retained material.</p></div>
+            <div><h2 id="work-heading" className={styles.sectionTitle}>Open work</h2><p className="mt-1 text-compact text-[color:var(--ref-muted)]">Formal targets and recorded activity.</p></div>
             <Button nativeButton={false} size="sm" render={<Link href={`${route}?view=work`} />}>Open Work</Button>
           </div>
-          <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-xl bg-foreground p-4 text-background">
-              <p className="text-micro font-bold uppercase tracking-[0.12em] text-background/75">Formal targets</p>
-              <p className="mt-2 text-title font-medium tracking-tight">{openFormal.length}</p>
-              <p className="mt-1 text-compact leading-5 text-background/75">retained declarations labelled open; proofs are not present in the retained file.</p>
-            </div>
-            <div className="rounded-xl bg-[color:var(--ref-cobalt-soft)] p-4">
-              <p className="text-micro font-bold uppercase tracking-[0.12em] text-[color:var(--ref-cobalt)]">Source-reported activity</p>
-              <p className="mt-2 text-title font-medium tracking-tight">{activity.length}</p>
-              <p className="mt-1 text-compact leading-5 text-[color:var(--ref-muted)]">exact activity record{activity.length === 1 ? "" : "s"}; attribution is shown without implying review quality.</p>
-            </div>
+          <div className={styles.workList}>
+            <div><span className="font-mono text-title tabular-nums">{openFormal.length}</span><span><strong>Open formal {openFormal.length === 1 ? "target" : "targets"}</strong><small>Retained declarations labelled open</small></span></div>
+            <div><span className="font-mono text-title tabular-nums">{activity.length}</span><span><strong>Recorded {activity.length === 1 ? "activity item" : "activity items"}</strong><small>Attributed work retained for this Problem</small></span></div>
           </div>
         </section>
       </div>
 
       <aside aria-label="Problem facts" className={styles.rail}>
         <section className={styles.railSection}>
-          <h2 className="text-compact font-bold">At a glance</h2>
+          <h2 className="text-compact font-semibold">About this Problem</h2>
           <dl className="mt-3 space-y-3 text-compact">
             <div><dt className="text-meta text-[color:var(--ref-muted)]">Last source update</dt><dd className="mt-0.5 font-semibold">{formatSourceDate(lastChecked)}</dd></div>
             <div><dt className="text-meta text-[color:var(--ref-muted)]">Current in</dt><dd className="mt-0.5 font-semibold">{state.repositoryName}</dd></div>
@@ -295,7 +287,7 @@ export function ProblemOverviewReference({ state, route }: { state: State; route
         </section>
 
         <section className={styles.railSection}>
-          <h2 className="text-compact font-bold">Representations</h2>
+          <h2 className="text-compact font-semibold">Representations</h2>
           <div className={styles.representation}><span className={styles.representationIcon}><HugeiconsIcon icon={BookOpen01Icon} aria-hidden className="size-4" /></span><span className="min-w-0 text-compact font-medium">Source question</span><span className="text-meta text-[color:var(--ref-muted)]">1</span></div>
           <div className={styles.representation}><span className={styles.representationIcon}><HugeiconsIcon icon={SourceCodeIcon} aria-hidden className="size-4" /></span><span className="min-w-0 text-compact font-medium">Lean declarations</span><span className="text-meta text-[color:var(--ref-muted)]">{formal.length}</span></div>
           <div className={styles.representation}><span className={styles.representationIcon}><HugeiconsIcon icon={GitForkIcon} aria-hidden className="size-4" /></span><span className="min-w-0 text-compact font-medium">Source records</span><span className="text-meta text-[color:var(--ref-muted)]">{sourceCount}</span></div>
@@ -303,7 +295,7 @@ export function ProblemOverviewReference({ state, route }: { state: State; route
         </section>
 
         <section className={styles.railSection}>
-          <h2 className="text-compact font-bold">Related problems</h2>
+          <h2 className="text-compact font-semibold">Related problems</h2>
           <p className="mt-2 text-compact leading-5 text-[color:var(--ref-muted)]">No exact related-Problem relationship is retained for this release.</p>
           <Link href={`/graph?repository=${state.repositorySlug}&lens=research${current ? `&node=${encodeURIComponent(current.id)}` : ""}`} className="mt-3 inline-flex items-center gap-1 text-compact font-semibold text-[color:var(--ref-cobalt)] underline-offset-4 hover:underline">Open exact map <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden className="size-3.5" /></Link>
         </section>

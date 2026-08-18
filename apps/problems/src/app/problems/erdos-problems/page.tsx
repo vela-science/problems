@@ -56,6 +56,7 @@ type Query = {
   formalized?: string;
   exact_id?: string;
   coverage?: string;
+  sort?: string;
   page?: string;
 };
 
@@ -89,7 +90,11 @@ function ProblemRows({ problems, statements }: {
   if (!problems.length) {
     return <p className="py-10 text-body text-muted-foreground">No Problems match this view.</p>;
   }
-  return <ul className="mt-2">
+  return <div className="vela-object-surface mt-3 overflow-hidden">
+    <div className="hidden grid-cols-[3.5rem_minmax(0,1fr)_7rem_7rem_8rem_1.5rem] gap-x-3 border-b bg-muted/30 px-3 py-2 text-micro font-medium text-muted-foreground sm:grid">
+      <span>Number</span><span>Question</span><span>Source status</span><span>Formal</span><span>Repository Result</span><span className="sr-only">Open</span>
+    </div>
+    <ul>
     {problems.map((problem) => {
       const record = problem.record;
       const kind = record.statement_kind;
@@ -97,30 +102,29 @@ function ProblemRows({ problems, statements }: {
       const key = problemStatementKey(problem);
       const written = key ? statements[key] : undefined;
       const question = written ? paragraphsOf(written.text)[0] ?? "" : "";
-      const facts = [
-        record.declared_status,
-        record.formalized ? "formalized" : null,
-        record.source_count > 1 ? `${record.source_count} sources` : null,
-        record.prize,
-        record.local_standing ? `Result ${record.local_standing.replaceAll("_", " ")}` : null,
-      ].filter(Boolean);
-      return <li key={`${problem.repository}/${problem.problem}`} className="grid grid-cols-[2.75rem_minmax(0,1fr)] gap-x-4 border-t py-4 first:border-t-0">
-        <span className="pt-0.5 font-mono text-meta tabular-nums text-muted-foreground">{problem.problem}</span>
-        <div className="min-w-0">
-          <Link href={problem.canonicalPath ?? "/problems"} className="block max-w-[74ch] text-body leading-snug underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4">
+      const rowName = question || readableLabel;
+      return <li key={`${problem.repository}/${problem.problem}`} className="border-t first:border-t-0">
+        <Link aria-label={rowName} href={problem.canonicalPath ?? "/problems"} className="vela-object-row group grid min-h-16 grid-cols-[3rem_minmax(0,1fr)_1.5rem] gap-x-3 px-3 py-3 focus-visible:outline-2 focus-visible:outline-offset-[-2px] sm:grid-cols-[3.5rem_minmax(0,1fr)_7rem_7rem_8rem_1.5rem] sm:items-center">
+          <span className="font-mono text-meta tabular-nums text-muted-foreground">#{problem.problem}</span>
+          <span className="min-w-0">
+            <span className="block max-w-[74ch] text-label leading-snug group-hover:text-primary">
             {question
               ? <span className="block text-label"><ScientificText text={question} /></span>
               : <StatementText statement={kind === "formal" ? readableLabel : record.statement || readableLabel} kind={kind === "formal" ? "label" : kind} className="text-label" />}
-          </Link>
-          <p className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-meta text-muted-foreground">
-            {kind === "formal" ? <span className="text-foreground/70">exact formal statement available</span> : null}
-            {kind === "label" ? <span className="text-foreground/70">question text available at source</span> : null}
-            {facts.map((fact) => <span key={String(fact)}>{fact}</span>)}
-          </p>
-        </div>
+            </span>
+            <span className="mt-1.5 flex flex-wrap gap-x-2 text-meta text-muted-foreground sm:hidden">
+              <span className="capitalize">{record.declared_status}</span><span>{record.formalized ? "Formalized" : "No formal declaration"}</span>{record.local_standing ? <span>Result {record.local_standing.replaceAll("_", " ")}</span> : null}
+            </span>
+          </span>
+          <span className="hidden items-center gap-1.5 text-meta capitalize sm:flex"><span aria-hidden className={`size-1.5 rounded-full ${["solved", "proved", "disproved"].includes(record.declared_status) ? "bg-status-progress" : "bg-status-caution"}`} />{record.declared_status}</span>
+          <span className="hidden text-meta text-muted-foreground sm:block">{record.formalized ? "Available" : "—"}</span>
+          <span className="hidden text-meta text-muted-foreground sm:block">{record.local_standing ? record.local_standing.replaceAll("_", " ") : "Not reviewed"}</span>
+          <HugeiconsIcon icon={ArrowRight} aria-hidden className="size-4 text-muted-foreground transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-primary" />
+        </Link>
       </li>;
     })}
-  </ul>;
+    </ul>
+  </div>;
 }
 
 const COLLECTION_PATH = "/problems/erdos-problems";
@@ -229,6 +233,7 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
   const formalized = query.formalized === "yes" || query.formalized === "no" ? query.formalized : "all";
   const exactId = query.exact_id?.trim().slice(0, 256) ?? "";
   const coverage = requestedCoverage;
+  const sort = ["number", "status", "sources", "reviewed"].includes(query.sort ?? "") ? query.sort! : "number";
   const sourceCoverageByRoute = sourceCorpora ? problemSourceObservationCoverage(sourceCorpora, catalog) : null;
   const requestedPage = Number.parseInt(query.page ?? "1", 10);
   const problems = scopedCatalog.filter((problem) => {
@@ -249,30 +254,36 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
       problem.canonicalPath,
     ].includes(exactId)) return false;
     return true;
+  }).sort((left, right) => {
+    if (sort === "status") return left.record.declared_status.localeCompare(right.record.declared_status) || left.problem.localeCompare(right.problem, undefined, { numeric: true });
+    if (sort === "sources") return right.record.source_count - left.record.source_count || left.problem.localeCompare(right.problem, undefined, { numeric: true });
+    if (sort === "reviewed") return Number(Boolean(right.record.local_standing)) - Number(Boolean(left.record.local_standing)) || (right.record.local_assessed_at ?? "").localeCompare(left.record.local_assessed_at ?? "") || left.problem.localeCompare(right.problem, undefined, { numeric: true });
+    return left.problem.localeCompare(right.problem, undefined, { numeric: true });
   });
   const pageCount = Math.max(1, Math.ceil(problems.length / PAGE_SIZE));
   const page = Number.isFinite(requestedPage) ? Math.min(Math.max(requestedPage, 1), pageCount) : 1;
   const visibleProblems = problems.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   const assessedCount = problems.filter(({ record }) => record.local_standing).length;
-  const retainedQuery = { ...(query.q ? { q: query.q.slice(0, 200) } : {}), ...scopeQuery(), ...(status !== "all" ? { status } : {}), ...(standing !== "all" ? { standing } : {}), ...(source !== "all" ? { source } : {}), ...(repository !== "all" ? { repository } : {}), ...(formalized !== "all" ? { formalized } : {}), ...(coverage !== "all" ? { coverage } : {}), ...(exactId ? { exact_id: exactId } : {}) };
+  const retainedQuery = { ...(query.q ? { q: query.q.slice(0, 200) } : {}), ...scopeQuery(), ...(status !== "all" ? { status } : {}), ...(standing !== "all" ? { standing } : {}), ...(source !== "all" ? { source } : {}), ...(repository !== "all" ? { repository } : {}), ...(formalized !== "all" ? { formalized } : {}), ...(coverage !== "all" ? { coverage } : {}), ...(exactId ? { exact_id: exactId } : {}), ...(sort !== "number" ? { sort } : {}) };
   const advancedActive = selectedHub !== "all" || selectedField !== "all" || selectedTopic !== "all" || standing !== "all" || source !== "all" || repository !== "all" || formalized !== "all" || coverage !== "all" || Boolean(exactId);
 
   return <PageShell archetype="problem">
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionStructuredData) }} />
-    <PageHero density="compact" className="vela-collection-hero grid gap-6 lg:grid-cols-[minmax(0,.72fr)_minmax(24rem,1.28fr)] lg:items-start">
+    <PageHero density="compact" className="vela-collection-hero grid gap-7 lg:grid-cols-[minmax(18rem,.7fr)_minmax(28rem,1.3fr)] lg:items-center lg:gap-12">
       <div>
-        <p className="text-eyebrow uppercase text-muted-foreground">One published collection</p>
-        <h1 className="mt-2 text-display">Erdős Problems</h1>
-        <p className="mt-3 max-w-[54ch] text-compact text-muted-foreground">Browse {catalog.length.toLocaleString()} source-owned questions. Status below is the source declaration; reviewed evidence and current Repository state remain separate.</p>
-        <div className="mt-4 flex flex-wrap gap-3 text-meta"><Link href="/contribute" className="font-medium underline underline-offset-4">Add a contribution</Link><Link href={{ pathname: COLLECTION_PATH, query: { view: "overview" } }} className="font-medium underline underline-offset-4">Explore Topics and sources</Link></div>
+        <p className="text-label font-medium text-muted-foreground">Published collection</p>
+        <h1 className="mt-1.5 text-[clamp(1.75rem,3vw,2.25rem)] font-semibold leading-tight tracking-[-0.025em]">Erdős Problems</h1>
+        <p className="mt-2 max-w-[52ch] text-compact text-muted-foreground">{catalog.length.toLocaleString()} source-owned questions, searchable by statement, number, topic, and source status.</p>
+        <div className="mt-4 flex flex-wrap gap-4 text-meta"><Link href="/contribute" className="font-semibold text-primary underline-offset-4 hover:underline">Add a contribution</Link><Link href={{ pathname: COLLECTION_PATH, query: { view: "overview" } }} className="font-semibold text-primary underline-offset-4 hover:underline">Collection details</Link></div>
       </div>
       <CollectionDistribution problems={catalog} compact />
     </PageHero>
     <form action={COLLECTION_PATH} className="mt-6" aria-label="Filter Erdős Problems">
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(15rem,1fr)_repeat(2,minmax(10rem,.4fr))_auto]">
+      <div className="vela-object-surface grid gap-3 p-3 sm:grid-cols-2 xl:grid-cols-[minmax(15rem,1fr)_repeat(3,minmax(9rem,.35fr))_auto]">
         <label className="relative block"><span className="sr-only">Search Problems</span><HugeiconsIcon icon={Search01Icon} aria-hidden className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /><Input className="h-11 pl-9" name="q" maxLength={200} defaultValue={query.q?.slice(0, 200)} placeholder="Number, Topic, or statement" /></label>
         <label><span className="sr-only">Scientific area</span><Select name="domain" defaultValue={selectedDomain} items={selectItems("All scientific areas", domains)}><SelectTrigger className="h-11 w-full"><SelectValue /></SelectTrigger><SelectContent align="start"><SelectItem value="all">All scientific areas</SelectItem>{domains.map(([key, label]) => <SelectItem key={key} value={key}>{label}</SelectItem>)}</SelectContent></Select></label>
         <label><span className="sr-only">Source status</span><Select name="status" defaultValue={status} items={selectItems("All source statuses", statuses.map((value) => [value, optionLabel(value)]))}><SelectTrigger className="h-11 w-full"><SelectValue /></SelectTrigger><SelectContent align="start"><SelectItem value="all">All source statuses</SelectItem>{statuses.map((value) => <SelectItem key={value} value={value}>{optionLabel(value)}</SelectItem>)}</SelectContent></Select></label>
+        <label><span className="sr-only">Sort Problems</span><Select name="sort" defaultValue={sort} items={{ number: "Problem number", reviewed: "Reviewed Results first", sources: "Most sources", status: "Source status" }}><SelectTrigger className="h-11 w-full"><SelectValue /></SelectTrigger><SelectContent align="start"><SelectItem value="number">Problem number</SelectItem><SelectItem value="reviewed">Reviewed Results first</SelectItem><SelectItem value="sources">Most sources</SelectItem><SelectItem value="status">Source status</SelectItem></SelectContent></Select></label>
         <Button type="submit" className="h-11 sm:col-span-2 xl:col-span-1">Filter</Button>
       </div>
       <details className="group mt-3" open={advancedActive}>

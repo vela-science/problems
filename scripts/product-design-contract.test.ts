@@ -23,18 +23,19 @@ describe("active product and design contracts", () => {
     expect(active).toContain("1,217 Erdős Problems");
   });
 
-  test("keeps the Google DESIGN.md section order and machine tokens", () => {
+  test("keeps machine-readable tokens and the approved workspace grammar", () => {
     const design = docs["DESIGN.md"];
-    expect(design.startsWith("---\nversion: alpha\n")).toBe(true);
+    expect(design.startsWith("---\nversion: beta\n")).toBe(true);
     const headings = [
       "## Overview",
-      "## Colors",
-      "## Typography",
-      "## Layout",
-      "## Elevation & Depth",
-      "## Shapes",
-      "## Components",
-      "## Do's and Don'ts",
+      "## Visual identity",
+      "## Shell and navigation",
+      "## Page grammar",
+      "## Component recipes",
+      "## Interaction states",
+      "## Accessibility and rendering",
+      "## Do",
+      "## Do not",
     ];
     let cursor = -1;
     for (const heading of headings) {
@@ -44,11 +45,13 @@ describe("active product and design contracts", () => {
     }
   });
 
-  test("protects a positive visual system instead of blanket bans", () => {
+  test("protects the approved familiar research-product direction", () => {
     const active = paths.map((path) => docs[path]).join("\n");
     expect(active).not.toMatch(/ships no Card/iu);
     expect(active).not.toMatch(/(?:never|must not|do not) use (?:a )?(?:card|chart)s?\b/iu);
-    expect(active).toContain("Cards, panels, tiles, rows, canvases, tables, and charts are all valid.");
-    expect(active).toContain("Every chart has a visible title");
+    expect(active).toContain("Entire is the primary product reference");
+    expect(active).toContain("Every route has one visually dominant object");
+    expect(active).toContain("Charts and maps require a text or table equivalent");
+    expect(active).toContain("Overview, Work, Results, Sources, and History");
   });
 });

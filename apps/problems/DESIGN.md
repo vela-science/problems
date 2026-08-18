@@ -6,125 +6,102 @@ application: problems
 
 # Problems composition guide
 
-## Route-to-composition map
+## Route map
 
-| Surface | Dominant composition | Real supporting data |
+| Surface | Dominant composition | Supporting data |
 | --- | --- | --- |
-| Home | ink search hero + question rows | one-collection truth, coverage, recent changes |
-| Global Problems | ink collection entry | published collection and current starting points |
-| Erdős collection | collection hero + filterable directory | source distribution, formal/review coverage, exact questions |
-| Problem Overview | question folio + synthesis/rail | current Result, limits, landmarks, targets, representations |
-| Work | workspace instrument | object tree, Canvas, Research Blocks, Notes, attempts |
-| Results | reviewed-change surface | assertion, producer, checks, sources, decision, revision |
-| Sources | file explorer | retained paths, declarations, excerpts, revision, source links |
-| History | chronology + correction diff | semantic events, actors, before/after, technical disclosure |
-| Research map | chooser/list + exact canvas + detail sheet | retained nodes and edges only |
-| Updates | grouped timeline | source or state event, actor, time, context |
-| Search | command surface + labelled filters | question-led rows and collection identity |
-| Contribute | warm task lead + stepper | selected Problem, scope, evidence, handoff |
-| Import | warm lead + public/private split | exact GitHub revision and access state |
-| My work | warm continuity lead + workspace rows | real private workspace data |
-| Account | avatar identity field + grouped rows | WorkOS, GitHub, codebases, workspaces, session |
+| Home | search + discovery list | one-collection truth, questions, activity |
+| Global Problems | collection directory | published collections only |
+| Erdős collection | filters + Problem rows | exact count, source status, formal/review coverage |
+| Problem Overview | question + current Result | scope, checks, landmarks, representations |
+| Work | object tree + canvas + inspector | files, Research Blocks, notes, attempts |
+| Results | Result reader + checks | assertion, performer, evidence, sources, decision |
+| Sources | file tree + preview | paths, declarations, excerpts, revision, source link |
+| History | compact timeline + diff | actors, semantic change, before/after |
+| Research map | canvas + synchronized list | exact retained nodes and edges |
+| Updates | grouped activity | actor, event, object, time, context |
+| Search | command results + filters | human labels, collection identity, exact detail |
+| Contribute | task form + stepper | Problem, scope, evidence, preview, handoff |
+| Import | repository identity + status | GitHub access and exact revision |
+| My work | workspace rows | real private work and state |
+| Account | profile + grouped settings | WorkOS, GitHub, workspaces, session |
 
-## Approved Problem example
+## Calibration surfaces
 
-`ProblemReferenceHeader` and `ProblemOverviewReference` on Erdős Problem 321
-define the visual calibration:
+Home, the Erdős collection directory, and Erdős Problem 321 are the initial
+system checkpoint. They establish the neutral canvas, marine navigation,
+cobalt interaction, normal product headers, directory density, question-first
+Problem identity, border-bottom tabs, current Result composition, and compact
+metadata rail. They are not demo-specific implementations.
 
-- complete question wraps within 44rem;
-- the collection-qualified identity is quiet;
-- Start work is primary and exact source secondary;
-- Formal target is prominent;
-- Erdős source status is explicitly attributed;
-- Repository decision says it governs a contribution;
-- evidence/check coverage is separate;
-- current state shows the exact Result and the part it does not establish;
-- formal landmarks use a compact comparison figure;
-- the reading rail contains representations and related-Problem truth;
-- roots remain behind Technical identity.
+The same components must render Problems 4, 94, and 887, including mixed formal
+targets, no current Result, partial sources, and corrected history.
 
-This is a reusable composition, not Problem-321-specific markup.
+## Responsive behavior
 
-## Responsive recipes
+- Desktop: 200px sidebar; wide working canvas; Overview about 3:1 with a compact
+  metadata rail.
+- 1024px: split views may narrow or stack without changing task order.
+- 768px: Results, Sources, Work, and History preserve their main instrument
+  before supporting detail.
+- 390px and 320px: all five tabs remain discoverable; rows wrap metadata; code
+  and formal material scroll within their panes.
+- 200% zoom: no document overflow; controls and tabs remain reachable.
+- Print: remove shell, expand technical details, render list equivalents.
 
-- Desktop: 200px sidebar; Problem header main/rail split; Overview about 2:1.
-- 1024px: fact and detail rails may stack; canvas controls remain visible.
-- 768px: Results and Sources split views stack without changing reading order.
-- 390px and 320px: all five Problem tabs remain discoverable in one row;
-  question, formal target, and primary action precede secondary metadata.
-- 200% zoom: no document overflow; internal code/formal panes may scroll.
-- Print: remove shell, expand details, use list versions of graphs and canvases.
+## Screen recipes
 
-## Component recipes
+### Home
 
-### Question rows
+Use one concise heading, one sentence, a prominent search field, and two actions.
+Place the exact availability statement close to search. Follow with question
+rows and a compact collection/activity composition. Remove marketing banners,
+repeated onboarding labels, and duplicated coverage explanations.
 
-Use collection-local number in a fixed mono column, question text as the link,
-then compact source status, formal declaration count, reviewed Result count, and
-source label. Do not repeat the collection badge on every row inside one
-collection.
+### Collection
+
+Use a normal identity header. Put the compact source-status distribution beside
+or below the identity, then place filters directly above rows. The directory is
+the dominant object. More filters remain disclosed until needed.
+
+### Problem
+
+Use collection-qualified identity, the complete question, Start work, and Open
+source in one header. A compact state strip separates formal targets,
+source-attributed status, Repository decision on a contribution, and checks.
+Tabs use a border-bottom row with no enclosing card.
+
+Overview leads with the current Result or an honest absence. Show its unresolved
+limit, check summary, evidence, and source binding without repeating the state
+strip. Exact landmarks are compact rows. The side rail owns topics,
+representations, last source update, exact map, and technical identity.
 
 ### Results
 
-Use a Result header, assertion, performer/time, check rows with distinct glyphs,
-linked source rows, and a fact rail. `Open result`, `Review and decision`, and
-`Browse sources` are contextual actions. Exact Contribution IDs appear only in
-Technical details.
+Use outcome-specific check glyphs and labels. Present performer, method, time,
+evidence, sources, and decision in a compact hierarchy. Exact IDs and roots are
+progressive detail.
 
 ### Sources
 
-Use a tree/list on wide screens and preview-first stacking on narrow screens.
-Selected paths use cobalt-soft selection plus `aria-current`. Proof facts use
-shape and label as well as colour. Rights or retention gaps render Preview
-unavailable with Open exact source.
+Use the selected source as a file-browser object. Wide screens use tree/list and
+preview; narrow screens stack. Label excerpts and declarations truthfully when
+full file bytes are unavailable. Preserve exact source, path, and revision.
 
-### Work
+### Work, History, and map
 
-Signed out: recognizable Files, Canvas, Research Blocks, and Notes preview plus
-sign-in and source actions. Signed in: resizable object tree, Canvas or selected
-object, and inspector. The canvas contains only explicit Problem, source, Work,
-and Result relationships.
+Work exposes Files, Canvas, Research Blocks, Notes, and attempts with familiar
+names. History uses one grouped spine and expandable semantic diffs. The map
+uses only exact relationships and always has a synchronized list or clear
+choose-a-Problem state.
 
-### History and map
+## Shared component use
 
-History uses one spine and expandable correction comparisons. Map defaults to
-an item chooser when no node is selected, then loads the exact neighbourhood.
-The List view is the accessible and narrow fallback.
+Use `@vela/ui` Base UI primitives and Hugeicons. Adapt the already inspected
+shadcn.io command-menu, file-tree, and compact-timeline behaviors; do not copy
+their demo styling or dependencies. Route compositions remain app-local until
+two maintained consumers justify promotion.
 
-### Empty and degraded states
-
-An empty state names the absent object and provides one next action. A degraded
-state distinguishes unavailable private activity from intact public Problems.
-Foreign projection configuration fails closed with a concise repair message,
-not a runtime overlay or silently reinterpreted data.
-
-## Reference pattern use
-
-Use shadcn.io MCP metadata and previews while shaping. Fetch source only for a
-pattern selected for implementation. Adapt behavior through existing
-`@vela/ui` Base UI/Hugeicons primitives; do not paste a block or add Framer
-Motion/Lucide.
-
-Relevant pattern families:
-
-- `search-global` for command/search geometry;
-- `timeline-condensed` and activity feeds for chronology;
-- `tables-file-tree` for source browsing;
-- `ai-code-diff-viewer` for correction comparison;
-- architecture/network graph patterns for synchronized map geometry;
-- horizontal stepper patterns for contribution flow;
-- profile author/settings patterns for Account hierarchy.
-
-Entire informs attributed activity and progressive provenance; GitHub informs
-files, diffs, checks, and durable collaboration; Hugging Face informs collection
-and resource discovery; Linear informs hierarchy and keyboard speed; Epoch
-informs compact problem/status discovery. None supplies Vela's ontology or
-brand.
-
-## Verification
-
-Visual review checks comprehension, not only overflow. A reviewer should be
-able to identify the object, its current readable state, the primary action,
-and the exact-data instrument within five seconds. Capture desktop and 390px
-screenshots of the main route families and Problem 321; exercise Problem 4, 94,
-and 887 for data diversity.
+Every route implements hover, focus, selected, loading, empty, error, disabled,
+forced-color, reduced-motion, dark, narrow, zoom, and print states according to
+the root design system.

@@ -70,10 +70,10 @@ describe("Problem Workspace", () => {
 
     const overview = objects.find(({ id }) => id === "workspace")!;
     render(<>{overview.content}</>);
-    fireEvent.click(screen.getByRole("button", { name: /Attach contribution evidence/iu }));
+    fireEvent.click(screen.getByRole("button", { name: /Attach evidence/iu }));
     expect(screen.getByRole("combobox", { name: "Producing Attempt" })).toBeRequired();
     expect(screen.getByRole("combobox", { name: "Evidence type" })).toBeRequired();
-    fireEvent.click(screen.getByRole("button", { name: /Prepare repository handoff/iu }));
+    fireEvent.click(screen.getByRole("button", { name: /Prepare local handoff/iu }));
     expect(screen.getByRole("combobox", { name: "Research Block" })).toBeRequired();
   });
 

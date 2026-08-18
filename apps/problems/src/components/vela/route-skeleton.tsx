@@ -55,7 +55,7 @@ export function ToolbarSkeleton({ controls = 3 }: { controls?: number }) {
 
 export function LedgerSkeleton({ rows = 6 }: { rows?: number }) {
   return (
-    <div className="divide-y overflow-hidden rounded-lg border">
+    <div className="vela-object-surface divide-y overflow-hidden">
       {Array.from({ length: rows }, (_, index) => (
         <div key={index} className="flex items-start gap-4 px-4 py-4">
           <Skeleton className="h-4 w-7 shrink-0" />
@@ -72,7 +72,7 @@ export function LedgerSkeleton({ rows = 6 }: { rows?: number }) {
 
 export function CanvasSkeleton({ className = "h-[34rem]" }: { className?: string }) {
   return (
-    <div className="overflow-hidden rounded-lg border">
+    <div className="vela-object-surface overflow-hidden">
       <div className="border-b p-4">
         <ToolbarSkeleton controls={4} />
       </div>

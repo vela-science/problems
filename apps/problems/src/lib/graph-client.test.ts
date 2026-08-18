@@ -53,4 +53,15 @@ describe("root-bound graph projection", () => {
     }), { headers: { "X-Vela-Projection-Root": `sha256:${"b".repeat(64)}` } }))));
     await expect(loadGraph({ root, repository: "erdos", view: "canvas", lens: "all" })).rejects.toThrow("projection header is invalid");
   });
+
+  test("refuses inferred relationships in the exact research lens", async () => {
+    vi.stubGlobal("fetch", vi.fn(() => Promise.resolve(new Response(JSON.stringify({
+      schema: "vela.projection-graph.v1", root, repository: "erdos", view: "canvas", lens: "research",
+      total: 2, next_cursor: null, nodes: [], selected: null, neighbor_total: 0, neighbors: [],
+      edges: [{ id: "edge:1", source: "problem:1", target: "claim:1", relation: "similar", trust: null, inferred: true }],
+    }), { headers: { "X-Vela-Projection-Root": root } }))));
+
+    await expect(loadGraph({ root, repository: "erdos", view: "canvas", lens: "research" }))
+      .rejects.toThrow("research map returned an inferred relationship");
+  });
 });

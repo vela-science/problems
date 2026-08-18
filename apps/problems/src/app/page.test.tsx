@@ -1,5 +1,5 @@
-import { render, screen, within } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { cleanup, render, screen, within } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import type { ProblemDiscovery } from "@/lib/scientific-state";
 
 vi.mock("server-only", () => ({}));
@@ -12,6 +12,8 @@ vi.mock("@/lib/scientific-state", () => ({
 }));
 
 import HomePage from "./page";
+
+afterEach(cleanup);
 
 function problem(number: string, overrides: Partial<ProblemDiscovery["record"]> = {}): ProblemDiscovery {
   return {
@@ -94,13 +96,13 @@ describe("Home", () => {
     reads.previews.mockResolvedValue(previews());
     const { container } = render(await HomePage());
 
-    expect(screen.getByRole("heading", { level: 1, name: "Find a problem. See what is known. Add evidence." })).toBeVisible();
+    expect(screen.getByRole("heading", { level: 1, name: "Find scientific problems" })).toBeVisible();
     expect(screen.getByText(/find scientific questions, understand the evidence around them/iu)).toBeVisible();
     expect(screen.getByRole("link", { name: /browse problems/iu })).toHaveAttribute("href", "/problems");
     expect(screen.getAllByRole("link", { name: "Add a contribution" })[0]).toHaveAttribute("href", "/contribute");
 
     const availability = screen.getByText("Available today").parentElement!;
-    expect(availability).toHaveTextContent("One published collection with 14 questions: Erdős Problems.");
+    expect(availability).toHaveTextContent("One published collection with 14 questions.");
     expect(within(availability).getByRole("link", { name: "Erdős Problems" })).toHaveAttribute("href", "/problems/erdos-problems");
 
     const hero = container.querySelector(".vela-page-hero")!;
@@ -129,7 +131,7 @@ describe("Home", () => {
     reads.previews.mockResolvedValue(previews());
     render(await HomePage());
 
-    expect(screen.getByRole("heading", { name: "Open a question" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Problems to explore" })).toBeVisible();
     expect(screen.getByRole("link", { name: "Erdős problem 94: Suppose n points determine a convex polygon." }))
       .toHaveAttribute("href", "/problems/erdos-problems/94");
     expect(screen.getByRole("link", { name: /What is the largest A with distinct subset sums\?/iu }))
@@ -144,9 +146,9 @@ describe("Home", () => {
     reads.previews.mockResolvedValue(previews());
     const { container } = render(await HomePage());
 
-    expect(screen.getByText("Listed as open by source")).toBeVisible();
-    expect(screen.getByText("With reviewed evidence")).toBeVisible();
-    expect(screen.getByText(/have a Result this Repository has reviewed/iu)).toBeVisible();
+    expect(screen.getAllByText("Open per source")).toHaveLength(2);
+    expect(screen.getByText("Reviewed Results")).toBeVisible();
+    expect(screen.getByText("With Repository-reviewed evidence")).toBeVisible();
     expect(container).not.toHaveTextContent(/priority|ranked|most important|central queue/iu);
   });
 

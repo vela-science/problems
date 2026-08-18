@@ -49,5 +49,10 @@ export async function loadGraph(input: {
   if (response.headers.get("X-Vela-Projection-Root") !== input.root) throw new Error("graph response projection header is invalid");
   const value = await response.json() as Partial<GraphResponse>;
   if (value.schema !== "vela.projection-graph.v1" || value.root !== input.root || !Array.isArray(value.nodes) || !Array.isArray(value.edges)) throw new Error("graph response identity is invalid");
-  return value as GraphResponse;
+  const graph = value as GraphResponse;
+  if (input.lens === "research" && (
+    graph.edges.some((edge) => edge.inferred)
+    || (Array.isArray(graph.neighbors) && graph.neighbors.some((neighbor) => neighbor.inferred))
+  )) throw new Error("research map returned an inferred relationship");
+  return graph;
 }

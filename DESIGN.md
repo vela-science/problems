@@ -1,42 +1,32 @@
 ---
-version: alpha
-name: problems.science Ink and Evidence
-description: Question-first scientific product UI with ink, cobalt, warm paper, and exact data instruments.
+version: beta
+name: problems.science Modern Research Workspace
+description: Familiar, precise research-product UI built from neutral workspace surfaces, marine navigation, cobalt interaction, and exact scientific data.
 colors:
-  primary: "oklch(0.21 0.045 258)"
-  ink: "oklch(0.21 0.045 258)"
-  ink-soft: "oklch(0.31 0.035 258)"
-  secondary: "oklch(0.50 0.20 260)"
-  cobalt: "oklch(0.50 0.20 260)"
-  cobalt-soft: "oklch(0.925 0.035 260)"
-  neutral: "oklch(0.982 0.012 78)"
-  paper: "oklch(0.982 0.012 78)"
-  paper-strong: "oklch(0.996 0.006 78)"
-  tertiary: "oklch(0.67 0.16 38)"
-  coral: "oklch(0.67 0.16 38)"
-  amber: "oklch(0.80 0.13 78)"
-  mint: "oklch(0.72 0.12 155)"
-  border: "oklch(0.858 0.025 78)"
-  success: "oklch(0.57 0.13 155)"
-  warning: "oklch(0.68 0.15 78)"
+  background: "oklch(0.985 0.003 255)"
+  surface: "oklch(1 0 0)"
+  surface-subtle: "oklch(0.965 0.006 255)"
+  foreground: "oklch(0.205 0.025 255)"
+  muted-foreground: "oklch(0.46 0.018 255)"
+  navigation: "oklch(0.19 0.045 255)"
+  primary: "oklch(0.53 0.20 258)"
+  primary-subtle: "oklch(0.94 0.035 258)"
+  border: "oklch(0.885 0.009 255)"
+  success: "oklch(0.57 0.14 152)"
+  warning: "oklch(0.70 0.14 78)"
   error: "oklch(0.58 0.20 28)"
+  evidence: "oklch(0.59 0.15 214)"
 typography:
   display:
     fontFamily: Geist
-    fontSize: 4.5rem
-    fontWeight: 600
-    lineHeight: 1.02
-    letterSpacing: -0.035em
-  problem-question:
-    fontFamily: Geist
     fontSize: 2.25rem
-    fontWeight: 560
-    lineHeight: 1.14
-    letterSpacing: -0.02em
+    fontWeight: 650
+    lineHeight: 1.15
+    letterSpacing: -0.025em
   title:
     fontFamily: Geist
-    fontSize: 1.125rem
-    fontWeight: 600
+    fontSize: 1.25rem
+    fontWeight: 650
     lineHeight: 1.35
   body:
     fontFamily: Geist
@@ -54,306 +44,312 @@ typography:
     fontWeight: 400
     lineHeight: 1.5
 rounded:
-  sm: "0.5rem"
-  md: "0.75rem"
-  lg: "1rem"
-  full: "999px"
+  control: "0.375rem"
+  panel: "0.5rem"
+  pill: "999px"
 spacing:
   xs: "0.25rem"
   sm: "0.5rem"
   md: "1rem"
-  lg: "2rem"
-  xl: "3rem"
-  section: "4.5rem"
+  lg: "1.5rem"
+  xl: "2rem"
+  section: "3rem"
   sidebar: "12.5rem"
-  reading-measure: "44rem"
+  reading-measure: "48rem"
 components:
-  product-hero:
-    backgroundColor: "{colors.primary}"
-    textColor: "{colors.paper-strong}"
-    rounded: "{rounded.lg}"
-    padding: "{spacing.xl}"
-  data-hero:
-    backgroundColor: "{colors.cobalt-soft}"
-    textColor: "{colors.primary}"
-    rounded: "{rounded.lg}"
-    padding: "{spacing.lg}"
-  problem-question:
-    backgroundColor: "{colors.primary}"
-    textColor: "{colors.paper-strong}"
-    typography: "{typography.problem-question}"
-    padding: "{spacing.xl}"
   button-primary:
-    backgroundColor: "{colors.secondary}"
-    textColor: "{colors.paper-strong}"
-    typography: "{typography.compact}"
-    rounded: "{rounded.sm}"
-    height: "2.75rem"
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.surface}"
+    rounded: "{rounded.control}"
+    height: "2.5rem"
+  input:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.foreground}"
+    rounded: "{rounded.control}"
+    height: "2.5rem"
   panel:
-    backgroundColor: "{colors.paper-strong}"
-    textColor: "{colors.primary}"
-    rounded: "{rounded.md}"
-    padding: "{spacing.lg}"
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.foreground}"
+    rounded: "{rounded.panel}"
+  selected-row:
+    backgroundColor: "{colors.primary-subtle}"
+    textColor: "{colors.foreground}"
   exact-detail:
-    backgroundColor: "{colors.paper}"
-    textColor: "{colors.ink-soft}"
+    backgroundColor: "{colors.surface-subtle}"
+    textColor: "{colors.foreground}"
     typography: "{typography.exact}"
-    rounded: "{rounded.sm}"
-    padding: "{spacing.md}"
+    rounded: "{rounded.control}"
+  navigation:
+    backgroundColor: "{colors.navigation}"
+    textColor: "{colors.surface}"
+  metadata:
+    textColor: "{colors.muted-foreground}"
+    typography: "{typography.compact}"
+  status-success:
+    textColor: "{colors.success}"
+    typography: "{typography.compact}"
+  status-warning:
+    textColor: "{colors.warning}"
+    typography: "{typography.compact}"
+  status-error:
+    textColor: "{colors.error}"
+    typography: "{typography.compact}"
+  evidence-label:
+    textColor: "{colors.evidence}"
+    typography: "{typography.compact}"
+  divider:
+    backgroundColor: "{colors.border}"
+    height: "1px"
 ---
 
 # problems.science design system
 
 ## Overview
 
-The visual direction is **ink and evidence**: confident navy establishes the
-scientific object, electric cobalt marks interaction, warm paper supports long
-reading, and coral or amber adds authored emphasis. Standard success, warning,
-and error colours are reserved for real state.
+The visual system is a **modern research workspace played straight**. It uses a
+clear neutral canvas, deep marine navigation, cobalt interaction, semantic state
+colors, excellent sans typography, and recognizable research-product
+instruments. Brand expression is confident but quiet: the mark, type rhythm,
+navigation color, focus color, and exact-data craft do the work.
 
-The product should feel like a modern collaborative research environment: the
-recognizable files and diffs of GitHub, the attributed chronology of Entire,
-the browsable resources of Hugging Face, the hierarchy and speed of Linear,
-and the task clarity of strong scientific working-document products. Shadcn and
-Base UI provide behavior, not visual identity.
+Entire is the primary product reference: dominant-object hierarchy, compact
+attributed human and agent activity, selected checkpoint/change rows, readable
+tool output, and progressive technical context. GitHub and Hugging Face are
+secondary references for files, diffs, checks, history, collection discovery,
+filters, tags, and approachable technical identity pages. Base UI supplies
+accessible behavior. None supplies Vela's ontology or visual brand.
 
-The approved reference is Erdős Problem 321 at
-`/problems/erdos-problems/321`. It is the calibration surface, not a demo-only
-special case. The same components must render Problems 4, 94, 887, empty
-Results, partial source coverage, and contested or corrected state truthfully.
+This system explicitly replaces the former ink-folio, warm-paper, metaphor-led
+world. Do not blend the two.
 
-### Physical scene
+## Visual identity
 
-The shell is a compact 200px research navigation rail beside a wide warm-paper
-workspace. A Problem opens as a dark ink folio: collection identity and actions
-are quiet; the complete question is dominant but controlled to a 44rem reading
-measure; four facts sit in a compact rail. Below it, five familiar modes occupy
-one flat row. Content becomes a working instrument: synthesis, file explorer,
-timeline, relationship map, or canvas.
+### Canvas and color
 
-Light mode uses warm paper and ink. Dark mode uses deep navy surfaces and warm
-light text while retaining cobalt interaction. High contrast replaces authored
-colour with system colours. Print removes shell chrome and renders linear
-content, expanded disclosures, and list fallbacks.
+Light mode is a cool near-white application canvas with white working surfaces.
+The sidebar is deep marine. Cobalt means interaction, selection, and focus.
+Success, warning, error, and evidence colors encode real state only.
 
-## Colors
+Dark mode derives the same hierarchy: deep neutral canvas, slightly raised
+neutral surfaces, lighter cobalt, and the same semantic meanings. It is not a
+space theme. Avoid gradients, atmospheric glows, transparent glass, decorative
+star fields, parchment, coral-as-decoration, and color applied merely to make a
+screen feel less empty.
 
-Ink is the dominant object and high-confidence reading colour. Cobalt is
-interaction, selection, focus, and data navigation. Warm paper is the
-application ground. Coral marks authored direction, open targets, or a semantic
-transition when it does not imply success or failure. Amber provides restrained
-emphasis for Work. Mint may identify evidence presence, never a truth verdict.
+Use color in three ways:
 
-Success, caution, conflict, evidence, and progress tokens retain their exact
-semantics. Do not use them to decorate a route hero. Source-reported status,
-formal target, Repository decision, check outcome, and publication state always
-have their own labels in addition to colour and shape.
+1. establish navigation and the selected location;
+2. distinguish an actual state or relationship;
+3. focus attention on the primary action.
 
-Data visualizations use the smallest palette that preserves the comparison. A
-collection distribution may use neutral open, progress resolved, caution other,
-and border unknown because those are labelled source-status categories.
-Relationship maps use node kind plus edge label; colour alone never names a
-relation.
+Everything else relies on typography, spacing, alignment, and fine rules.
 
-## Typography
+### Typography
 
-Geist carries product and scientific reading. IBM Plex Mono is limited to
-paths, revisions, code, exact identifiers, and compact numeric alignment.
+Use Geist for the product and IBM Plex Mono for hashes, paths, revisions, code,
+and tabular numerals. Typography is sentence case. Avoid repeated uppercase
+micro-labels, wide tracking, decorative serif treatments, and display type used
+as a substitute for hierarchy.
 
-Problem questions use the `problem-question` recipe and wrap naturally. Never
-clip a question, force it onto one line, or allow a narrow fact rail to squeeze
-it below a readable measure. Route display type is for Home, collection, Search,
-Map, Updates, Account, and Work leads; it is not repeated in every section.
+- Page title or Problem question: 1.75–2.25rem, controlled measure, weight 650.
+- Section title: 1–1.25rem, weight 600–650.
+- Body: 0.875rem at 1.5–1.6 line height.
+- Dense rows and metadata: 0.75–0.8125rem.
+- Exact material: mono 0.75–0.8125rem with horizontal scrolling where needed.
 
-Use sentence case. Eyebrows name a stable axis or collection, not a paragraph's
-topic. If a heading only asks “What can I do?” or repeats the tab label, delete
-it and expose the actions or instrument directly.
+Labels should normally be ordinary sentence case text. Use a small badge only
+when the enclosed value varies and helps scanning.
 
-## Layout
+### Shape, borders, and elevation
 
-- Desktop sidebar: 200px expanded; icon rail when collapsed.
-- Page gutter: `clamp(1rem, 2.5vw, 2rem)`.
-- Page block padding: `clamp(1.75rem, 4vw, 3rem)`.
-- Standard section rhythm: `clamp(2.5rem, 6vw, 4.5rem)`.
-- Problem question measure: 44rem.
-- Dense prose measure: 65–72ch.
-- Canvas routes use all available content width.
+Controls use a 6px radius; contained working surfaces use 8px. Pills are for
+tags, statuses, and avatars, not general layout. Prefer a border, inset neutral
+background, or whitespace over a shadow. Menus and floating inspectors may use
+one restrained shadow. Do not nest framed panels unless the inner boundary is a
+real interactive object such as a code viewer or diff.
 
-The top app header remains compact. Breadcrumbs own route hierarchy; page
-content does not print the same hierarchy again unless it is citable identity
-inside the dominant Problem object.
+### Layout and density
 
-At 1280px, the Problem header is a question field plus compact fact rail.
-Overview is a 2:1 synthesis/reading rail. Results use a main result with a 19rem
-fact panel. Sources use an 18rem tree and preview. Workspace uses resizable
-object tree, canvas, and inspector. History uses one chronology spine and wide
-correction comparisons.
+The desktop shell uses a 200px sidebar and a wide content canvas. Standard pages
+use a maximum working width around 88rem. Reading measures stay between 44rem
+and 52rem. Dense directories and file browsers may use the full canvas.
 
-At 768px, split views stack. At 390px and 320px, all five Problem tabs remain
-visible in an equal-width row; labels may become compact, but no tab is hidden
-without an explicit accessible overflow control. The question and primary
-action precede metadata. Code and formal text get explicit horizontal scroll.
+Page rhythm:
 
-## Elevation & Depth
+- 20–32px from shell header to page identity;
+- 20–24px between identity and primary instrument;
+- 32–48px between major sections;
+- 12–16px row padding for readable density;
+- 8px within compact metadata groups.
 
-Depth comes from surface contrast and containment, not stacked shadows:
+A page may contain panels, but the page itself is not a grid of equal cards.
+Every route has one visually dominant object.
 
-1. warm-paper workspace ground;
-2. paper-strong reading surface;
-3. ink or cobalt-soft dominant object;
-4. popover, command menu, sheet, or dialog.
+## Shell and navigation
 
-Use one border and at most a restrained shadow for a file explorer, map,
-command menu, profile header, or selected Result. Avoid nested cards. Panels,
-tiles, and cards are allowed when containment or comparison materially helps.
-Cards, panels, tiles, rows, canvases, tables, and charts are all valid.
+The sidebar owns global navigation. Use the mark, a short product label, familiar
+icons, clear selected state, and the minimum necessary account controls. The
+main header owns collection-aware breadcrumbs, command search, notifications,
+theme, and account entry. Do not repeat the breadcrumb identity inside a large
+route banner.
 
-## Shapes
+On mobile, global navigation collapses predictably. Problem tabs remain one
+flat row. If the row scrolls, show a visible continuation cue and preserve arrow
+key, focus, and active-tab visibility. Do not hide later modes with no cue.
 
-Controls use an 8px radius. Working instruments use 12px. Dominant authored
-objects may use 16px. Pills are for short state or filter tokens only. Do not
-turn paragraphs into pills or use excessive rounded containers to soften every
-boundary.
+## Page grammar
 
-## Components
+### One dominant object
 
-### Route leads
+- Home: search and discovery.
+- Global Problems: published collections.
+- Collection: filterable Problem directory.
+- Problem: the question and current Result or state.
+- Work: canvas, files, and research objects.
+- Results: a durable output with checks and evidence.
+- Sources: file browser and exact preview.
+- History: semantic chronology and diffs.
+- Graph: exact relationship canvas with synchronized list fallback.
+- Account: person, connections, work continuity, and security actions.
 
-- `vela-product-hero`: Home and global Problems. Ink, paper text, cobalt plane.
-- `vela-collection-hero`: source-owned collection identity and real coverage.
-- `vela-data-hero`: Search, Research map, and profile identity.
-- `vela-work-hero`: Contribute, import, and My work.
-- `vela-history-hero`: Updates and semantic chronology.
+Supporting content should not compete with that object. If a section merely
+restates a tab, badge, or status row, remove it.
 
-These are route families, not a requirement to make every route identical.
+### Page identity
 
-### Problem header and tabs
+Use a normal product header: concise collection-qualified identity, one title or
+question, optional one-sentence context, and up to two actions. Do not use a
+dark hero slab on application routes. Do not lead with a marketing eyebrow.
 
-`ProblemReferenceHeader` renders collection-qualified identity, the complete
-retained question, Start work and exact source actions, Formal target,
-source-attributed collection status, Repository decision on the current
-contribution, and evidence/check coverage.
+### Tabs
 
-`ProblemReferenceTabs` renders exactly Overview, Work, Results, Sources, and
-History. The selected mode uses icon, label, contrast, and `aria-current`.
-Legacy query names are accepted by the router but never emitted by current UI.
+Use a familiar border-bottom tab row with a cobalt active indicator. Labels are
+Overview, Work, Results, Sources, and History. Icons may support recognition but
+must not dominate or replace labels. Tabs are not enclosed in a pill container
+and do not become cards on mobile.
 
-### Overview reference
+### Rows and lists
 
-`ProblemOverviewReference` is the reference screen. Its data-backed sequence is:
+Rows are the default comparison structure for Problems, Results, activity,
+files, checks, and connections. Lead with the differentiating object, then one
+compact metadata line. Use dividers sparingly and consistent row heights. Avoid
+duplicating a collection badge on every row inside one collection.
 
-1. Current state synthesis and explicit unresolved limit;
-2. retained formal landmarks as a compact comparison figure;
-3. latest Result row with producer, evidence, checks, and source binding counts;
-4. open formal targets and source-reported activity;
-5. a compact fact and representation rail;
-6. exact related-Problem state or an honest empty relation state;
-7. technical identity disclosure.
+## Component recipes
 
-Do not add navigation cards, a numbered action list, or repeated state prose.
+### Search and command navigation
 
-### Results
+Adapt the shadcn.io command-menu behavior already inspected: breadcrumb-aware
+groups, immediate filtering, keyboard selection, and human labels before exact
+identifiers. Home uses a prominent search field; other routes use compact search
+and filters. Search results always qualify numeric Problem identity by
+collection.
 
-Use a reviewed-change geometry: Result header, exact assertion, performer and
-date, check rows with outcome-specific glyphs, linked source rows, and a compact
-fact rail. A Repository decision badge must say it governs a contribution. It
-must never read as the Problem's solution state.
+### Problem header and Overview
+
+The complete question is the title. A compact metadata line qualifies the
+collection, source, and number. Put Start work and Open source at the right when
+space permits. Below the question, use a single readable status strip for
+formal target, source-attributed status, Repository decision on a contribution,
+and check coverage. Do not repeat these axes in Overview.
+
+Overview is not navigation. Its dominant object is the current Result or honest
+current-state absence, including scope and limitations. Supporting content may
+show two or three exact landmarks and a compact side rail for topics,
+representations, source update, and exact-map entry. Technical roots stay in a
+disclosure.
+
+### Collection directory
+
+The directory header contains collection identity, one-sentence scope, exact
+count, and a compact truthful distribution. Filters sit directly above rows.
+Each row leads with number and question, followed by source status, exact formal
+availability, reviewed Result count, and source. This follows Hugging Face's
+approachable density and GitHub's list conventions without copying either
+visual skin.
+
+### Results and checks
+
+Use a Result identity header, readable assertion, performer and time, outcome-
+specific check rows, evidence and source links, and progressive provenance.
+Passing, failing, error, and inconclusive checks use distinct glyphs and labels,
+not color alone. Repository decision and check outcome remain separate.
 
 ### Sources and files
 
-Use `ProblemFiles`: a recognizable tree or grouped retained-source list beside
-one selected preview. Show exact path, revision, declaration/excerpt kind,
-proof facts where retained, and Open exact source. Never present a single
-declaration as if it were the whole file. If full bytes are unavailable, the
-preview says so without inventing content.
+Adapt the inspected shadcn file-tree behavior with existing Base UI: expandable
+hierarchy, selected-row state, compact file metadata, keyboard operation, and a
+synchronized preview. Wide screens use tree/list plus preview; narrow screens
+stack preview after selection. If file bytes are unavailable, label the retained
+declaration or excerpt honestly and offer Open exact source. Never present a
+declaration as a whole file.
 
-### Work and workspace
+### History, activity, and diffs
 
-The contribution stepper is Choose Problem → Attach work and evidence → Review
-scope and checks → Submit handoff. The signed-out Work view previews Files,
-Canvas, Research Blocks, Notes, and current exact public nodes. The signed-in
-view uses an object tree, Canvas or selected-object surface, and inspector.
-It never imitates a terminal, local filesystem, agent runtime, or signer.
+Adapt the inspected compact timeline behavior: date or semantic grouping,
+actor/avatar, event verb, affected object, time, and expandable detail. Entire's
+checkpoint/change density is the reference. Corrections show semantic before
+and after first; exact roots and commits are disclosed. Do not publish a long
+ungrouped feed or a row dominated by an opaque ID.
 
-### History and Updates
+### Work and canvas
 
-Use one chronological spine. Each event names its semantic change, actor or
-producer, date, and contextual action. Corrections use Previous → transition →
-Later/Current plus an expandable line-level comparison. Roots, commits, and
-record IDs live in Technical details.
+Work uses recognizable Files, Canvas, Research Blocks, Notes, and attempts.
+Signed-out users see a truthful read-only structure and a concise sign-in or
+Continue locally action. Signed-in users get object tree, canvas/selected object,
+and inspector. The canvas shows only explicit retained relationships and always
+has a list fallback.
 
-### Search and command menu
+### Empty, loading, error, and degraded states
 
-Adapt the shadcn.io `search-global` pattern through existing `@vela/ui`
-Command primitives: one dominant query, labelled compact filters, human-first
-rows, collection-qualified Problem identity, state glyph, and exact navigation.
-Do not lead rows with hashes or internal kind names.
+Name the missing or unavailable object, preserve the surrounding page context,
+and offer one useful next action. Loading skeletons match the final row or split
+pane geometry. Private and unavailable are different. An incompatible
+projection fails closed with a concise configuration message, not a raw overlay.
 
-### Research map
+## Interaction states
 
-The default map frame combines a labelled search/filter toolbar, a Problem- or
-Result-led chooser, a canvas for exact relationships, a synchronized List
-fallback, and a detail sheet. No similarity or inferred edge enters this map.
-Use network-graph patterns only for behavior inspiration; Sigma remains the
-existing maintained renderer.
+- Hover: subtle neutral or primary-subtle background; never layout movement.
+- Focus: 2px high-contrast focus ring with offset.
+- Active: pressed control contrast, not scale animation.
+- Selected: primary-subtle background, cobalt edge or indicator, and
+  `aria-current` or selected semantics.
+- Loading: stable skeleton geometry and retained page title.
+- Empty: concise cause plus one next action.
+- Error: plain-language failure, retained user input, retry or recovery.
+- Disabled: lower contrast plus disabled semantics; never color alone.
 
-### Collection distribution
+Motion is limited to menu appearance, disclosure, selection, and synchronized
+pane feedback. Default duration is 120–180ms. Respect reduced motion and remove
+nonessential transforms.
 
-`CollectionDistribution` answers two real questions: what status the source
-declares across the corpus, and how much exact formal/reviewed material is
-available. It includes a segmented rail, legend, exact totals, and labelled
-coverage rails. It is not a KPI dashboard.
+## Accessibility and rendering
 
-### Account and My work
+Meet WCAG 2.2 AA. Preserve landmarks, heading order, visible focus, touch
+targets, scrollable code, 320px layouts, 200% zoom, forced colors, reduced
+motion, and meaningful print. Charts and maps require a text or table equivalent.
+Status uses label and shape as well as color. Long questions, paths, hashes, and
+formal statements must wrap or scroll within their own instrument, never the
+document.
 
-Account leads with avatar, name, private email treatment, next actions, saved
-work, connected codebases, provider status, session, and sign-out. Use grouped
-rows and a split rail. Do not invent public reputation, streaks, quotas,
-authority badges, or activity heatmaps.
+## Do
 
-### Interaction states
+- Make the Problem or working object immediately obvious.
+- Prefer familiar rows, tabs, files, diffs, checks, timelines, and side rails.
+- Use compact attributed activity like Entire.
+- Use GitHub-like task clarity for source and contribution work.
+- Use Hugging Face-like discovery density for collections and resources.
+- Keep exact scientific data reachable without making it the headline.
+- Let empty space support hierarchy, not compensate for missing structure.
 
-- Hover changes local contrast; it does not move layout except a subtle action arrow.
-- Focus uses a visible 2px or 3px cobalt/system ring with offset.
-- Active acknowledges press by colour or one-pixel depth.
-- Selected persists through background, glyph, text, and ARIA state.
-- Loading preserves the final geometry with labelled skeletons.
-- Empty states name what is absent and offer one valid next action.
-- Error states name what failed, what remains intact, and whether retry is safe.
-- Degraded and stale states never display old data as current.
-- Disabled controls remain legible and explain the unmet requirement when useful.
+## Do not
 
-Motion is 140–240ms for controls and layout. Longer motion is allowed only when
-it explains a real traversal or progress state. Reduced motion removes
-transforms and animated map movement.
-
-### Accessibility
-
-Every visualization has a title, exact values, legend where needed, keyboard
-path, and useful text/list/table equivalent. Forced colours add borders and
-system colours. Touch targets are 44px on coarse pointers. At 200% zoom and
-320px there is no document-level horizontal overflow. Print removes app chrome,
-expands disclosures, and uses linear fallbacks.
-
-Every chart has a visible title, exact values, and a useful non-visual fallback.
-
-## Do's and Don'ts
-
-### Do
-
-- Lead with the Problem question and real data.
-- Use files, canvases, timelines, diffs, maps, rows, and previews as working controls.
-- Keep source status, formal target, Repository decision, and checks orthogonal.
-- Use one dominant composition per route and progressive exact detail.
-- Adapt interaction geometry from GitHub, Entire, Hugging Face, Linear, Epoch,
-  shadcn.io, and Tailwind Plus only when it simplifies a Vela task.
-- Verify Problems 4, 94, 321, and 887 plus empty and degraded states.
-
-### Don't
-
-- Do not use a wall of prose, question headings, disclaimer paragraphs, or numbered explanations.
-- Do not use generic KPI grids, identical card walls, decorative charts, glass, or star fields.
-- Do not hide Files, Canvas, Results, Sources, or History behind abstract nested navigation.
-- Do not display raw hashes or protocol nouns as primary content.
-- Do not infer a scientific summary, relationship, family, or status.
-- Do not copy another product's branding, ontology, reputation, or centralized review model.
+- Do not use a visual metaphor as the product shell.
+- Do not add stars, sails, polar plots, parchment, glass, neon, or gradients as
+  brand decoration.
+- Do not create card soup, KPI slabs, bento dashboards, nested panels, or a
+  repeated banner on every route.
+- Do not repeat uppercase micro-labels or use tracking as decoration.
+- Do not invent relationships, summaries, scores, or collection availability.
+- Do not copy Entire sessions, GitHub repositories, or Hugging Face resource
+  ontologies into Vela's public model.

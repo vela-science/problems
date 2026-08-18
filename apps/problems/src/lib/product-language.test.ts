@@ -56,16 +56,17 @@ function destinationsAndHeadings(contents: string): string[] {
 describe("current product language", () => {
   it("classifies the five public product nouns without promoting them to protocol authority", () => {
     const contract = productContract();
-    expect(contract).toContain("The Problem is the primary object.");
-    expect(contract).toContain("The canonical Problem tabs are:");
+    expect(contract).toContain("The Problem is the primary public object.");
+    expect(contract).toContain("The canonical Problem modes are:");
     for (const label of ["Overview", "Work", "Results", "Sources", "History"]) {
       expect(contract).toContain(`**${label}**`);
     }
     expect(contract).toContain("The user-facing durable output is a **Result**.");
-    expect(contract).toContain("Use **contribution** for the action of adding work");
-    expect(contract).toContain("WorkOS identity, scientific attribution, and Vela");
-    expect(contract).toContain("The application cannot sign, issue a scientific Decision,");
-    expect(contract).toContain("The browser may host shared, authority-free coordination");
+    expect(contract).toContain("Use **contribution** for the act of adding work");
+    expect(contract).toContain("WorkOS identity, GitHub access, connected codebases");
+    expect(contract).toContain("Login identity, scientific attribution, and Repository");
+    expect(contract).toContain("Hosted Problems cannot sign for a user, issue a Vela Event or Decision");
+    expect(contract).toContain("Hosted Problems may mutate account, shared workspace");
     expect(contract).not.toMatch(/local Workbench/iu);
   });
 

@@ -20,7 +20,7 @@ export default async function ActivityPage({ searchParams }: { searchParams: Pro
   const commits = activity.length - transitions;
 
   return <PageShell archetype="history">
-    <PageHero className="vela-history-hero grid gap-7 lg:grid-cols-[minmax(0,1fr)_23rem] lg:items-end"><div><div className="flex items-center gap-2"><HugeiconsIcon icon={Activity01Icon} aria-hidden className="size-5" /><p className="text-eyebrow uppercase text-muted-foreground">Published changes</p></div><h1 className="mt-3 text-display">Updates</h1><p className="typeset typeset-compact mt-4 max-w-2xl text-muted-foreground">Follow scientific changes and the repository updates that produced them.</p></div><p className="text-meta text-muted-foreground">Drafts and workspace notes remain in My work until they become a published Result.</p></PageHero>
+    <PageHero className="vela-history-hero grid gap-7 lg:grid-cols-[minmax(0,1fr)_23rem] lg:items-end"><div><div className="flex items-center gap-3"><span className="grid size-9 place-items-center rounded-md bg-accent text-primary"><HugeiconsIcon icon={Activity01Icon} aria-hidden className="size-5" /></span><h1 className="text-display">Updates</h1></div><p className="mt-3 max-w-2xl text-body text-muted-foreground">Scientific changes and the repository updates that produced them.</p></div><p className="text-meta text-muted-foreground">Drafts and workspace notes remain in My work until they become a published Result.</p></PageHero>
     <figure className="mt-6 border-y py-5" aria-labelledby="updates-composition-heading">
       <figcaption id="updates-composition-heading" className="text-label font-medium">What changed in this published history</figcaption>
       <div className="mt-3 flex h-2 overflow-hidden rounded-full bg-muted forced-colors:border" aria-hidden>
@@ -34,6 +34,6 @@ export default async function ActivityPage({ searchParams }: { searchParams: Pro
       </dl>
     </figure>
     <nav aria-label="Updates views" className="mt-8 flex flex-wrap gap-2">{([ ["all", "All history"], ["transitions", "State changes"], ["commits", "Repository commits"] ] as const).map(([value, label]) => <Button key={value} size="sm" variant={view === value ? "default" : "outline"} nativeButton={false} render={<Link href={value === "all" ? "/activity" : `/activity?view=${value}`} />}>{label}</Button>)}</nav>
-    <PageSection aria-labelledby="activity-feed"><PageSectionHeader><h2 id="activity-feed" className="text-title">Recent updates</h2><span className="font-mono text-meta text-muted-foreground">{filtered.length} updates</span></PageSectionHeader><ScientificChangeFeed changes={filtered} /></PageSection>
+    <PageSection aria-labelledby="activity-feed" className="vela-object-surface p-5"><PageSectionHeader><h2 id="activity-feed" className="text-title">Recent updates</h2><span className="font-mono text-meta text-muted-foreground">{filtered.length} updates</span></PageSectionHeader><ScientificChangeFeed changes={filtered} /></PageSection>
   </PageShell>;
 }

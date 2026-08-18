@@ -111,7 +111,7 @@ describe("Problem tools", () => {
      reader can see what they are looking at without tracing the tree. */
   it("uses a file tree and one selected retained declaration", () => {
     render(<ProblemState state={state} basePath="/problems/erdos-problems/321" researchView="files" />);
-    expect(screen.getByRole("heading", { name: "Files" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Sources" })).toBeVisible();
 
     const tree = screen.getByRole("navigation", { name: "Problem source paths" });
     expect(within(tree).getByRole("link", { name: /321\.lean/u })).toHaveAttribute(
@@ -119,23 +119,24 @@ describe("Problem tools", () => {
       expect.stringContaining("view=sources&file="),
     );
     expect(within(tree).getByRole("link", { name: /erdos_321/u }).getAttribute("href")).not.toContain("%00");
-    expect(within(tree).getAllByText(/Retained excerpts/u).length).toBeGreaterThan(0);
+    expect(within(tree).getByRole("heading", { name: "Source providers" })).toBeVisible();
+    expect(within(tree).getByRole("heading", { name: "Referenced paths" })).toBeVisible();
 
-    expect(screen.getByText("retained formal statement")).toBeVisible();
+    expect(screen.getByText(/retained formal statement/iu)).toBeVisible();
     expect(screen.getByRole("link", { name: "Open selected source" })).toHaveAttribute("href", "https://example.test/blob/321.lean");
     expect(screen.getByText("1 of 1")).toBeVisible();
   });
 
   it("fails closed to retained source text when no file bytes or declaration exist", () => {
     render(<ProblemState state={{ ...state, sources: { occurrences: [], statements: state.sources.statements } } as never} basePath="/problems/erdos-problems/321" researchView="files" />);
-    expect(screen.getByText("retained source excerpt")).toBeVisible();
+    expect(screen.getByText(/retained source excerpt/iu)).toBeVisible();
     expect(screen.getByText("How quickly does the extremal quantity grow?")).toBeVisible();
     expect(screen.getByRole("link", { name: "Open exact source location" })).toHaveAttribute("href", "https://example.test/problem-321");
   });
 
   it("does not preview a declaration whose text was not retained", () => {
     render(<ProblemState state={{ ...state, sources: { occurrences: [occurrence], statements: [] } } as never} basePath="/problems/erdos-problems/321" researchView="files" />);
-    expect(screen.getByText("formal occurrence")).toBeVisible();
+    expect(screen.getByText(/formal occurrence/iu)).toBeVisible();
     expect(screen.getByText("Preview unavailable")).toBeVisible();
     expect(screen.getByText(/not retained for display/iu)).toBeVisible();
     expect(screen.queryByText(occurrence.summary)).toBeNull();
@@ -144,7 +145,7 @@ describe("Problem tools", () => {
   it("does not send a selected occurrence to the collection fallback", () => {
     const occurrenceWithoutLocator = { ...occurrence, locators: [] };
     render(<ProblemState state={{ ...state, sources: { occurrences: [occurrenceWithoutLocator], statements: [] } } as never} basePath="/problems/erdos-problems/321" researchView="files" />);
-    expect(screen.getByText("formal occurrence")).toBeVisible();
+    expect(screen.getByText(/formal occurrence/iu)).toBeVisible();
     expect(screen.queryByRole("link", { name: "Open selected source" })).toBeNull();
   });
 
@@ -190,5 +191,12 @@ describe("Problem tools", () => {
     render(<ProblemState state={{ ...state, currentClaimId: null } as never} basePath="/problems/erdos-problems/321" researchView="timeline" />);
     expect(screen.getByText("Later version")).toBeVisible();
     expect(screen.queryByText("Current")).toBeNull();
+  });
+
+  it("does not substitute the Decision performer for a missing Result performer", () => {
+    const reviews = [{ ...state.reviews![0]!, producer_package: null }];
+    render(<ProblemState state={{ ...state, reviews } as never} basePath="/problems/erdos-problems/321" researchView="timeline" />);
+    expect(screen.getByText("Result performer not retained")).toBeVisible();
+    expect(screen.getAllByText("agent:decision")).toHaveLength(1);
   });
 });

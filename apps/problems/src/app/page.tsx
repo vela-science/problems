@@ -48,25 +48,24 @@ export default async function HomePage() {
   const previews = await problemStatePreviews(featured);
 
   return <PageShell archetype="default">
-    <PageHero density="compact" className="vela-product-hero">
-      <div className="max-w-4xl">
-        <p className="text-eyebrow uppercase text-muted-foreground">Problems.science</p>
-        <h1 className="mt-3 text-display text-balance">Find a problem. See what is known. Add evidence.</h1>
-        <p className="mt-4 max-w-2xl text-body text-pretty text-muted-foreground">
+    <PageHero density="compact" className="vela-product-hero grid gap-7 lg:grid-cols-[minmax(0,44rem)_minmax(17rem,1fr)] lg:items-end lg:gap-12">
+      <div>
+        <h1 className="text-[clamp(1.9rem,3.5vw,2.75rem)] font-semibold leading-[1.08] tracking-[-0.03em] text-balance">Find scientific problems</h1>
+        <p className="mt-3 max-w-2xl text-body text-pretty text-muted-foreground">
           Find scientific questions, understand the evidence around them, and contribute proofs,
           computations, datasets, reviews, corrections, and other results.
         </p>
 
         <form action={COLLECTION_PATH} method="get" aria-label="Find a problem" className="mt-7 max-w-2xl">
-          <label htmlFor="home-problem-search" className="mb-2 block text-label font-medium">Find a problem</label>
-          <InputGroup className="h-12 bg-background shadow-xs">
+          <label htmlFor="home-problem-search" className="sr-only">Find a problem</label>
+          <InputGroup className="h-12 border-input bg-[var(--vela-surface-raised)] shadow-[var(--vela-shadow-raised)] focus-within:border-primary">
             <InputGroupAddon><HugeiconsIcon icon={Search} aria-hidden /></InputGroupAddon>
             <InputGroupInput
               id="home-problem-search"
               name="q"
               type="search"
               maxLength={200}
-              placeholder="Number or topic"
+              placeholder="Search by question, number, or topic"
             />
             <InputGroupAddon align="inline-end">
               <InputGroupButton type="submit" variant="secondary" className="h-9 px-4">Search</InputGroupButton>
@@ -74,7 +73,7 @@ export default async function HomePage() {
           </InputGroup>
         </form>
 
-        <div className="mt-5 flex flex-wrap gap-3">
+        <div className="mt-4 flex flex-wrap gap-3">
           <Button size="lg" nativeButton={false} render={<Link href="/problems" />}>
             Browse problems <HugeiconsIcon icon={ArrowRight} aria-hidden data-icon="inline-end" />
           </Button>
@@ -90,90 +89,64 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <div className="mt-10 flex flex-col gap-2 border-t pt-5 text-meta sm:flex-row sm:items-baseline sm:gap-3">
-        <span className="font-medium text-foreground">Available today</span>
-        <span className="text-muted-foreground">
-          One published collection with {publishedCount} questions:
-          {" "}<Link href={COLLECTION_PATH} className="font-medium text-foreground underline decoration-border underline-offset-4 hover:decoration-current">Erdős Problems</Link>.
-        </span>
+      <div className="vela-object-surface p-5">
+        <p className="text-label font-semibold text-foreground">Available today</p>
+        <p className="mt-1.5 text-compact leading-5 text-muted-foreground">
+          One published collection with {publishedCount} questions.
+        </p>
+        <Link href={COLLECTION_PATH} className="vela-object-row mt-3 -mx-2 flex items-center gap-2 rounded-md px-2 py-2 text-compact font-semibold text-primary">
+          Erdős Problems <HugeiconsIcon icon={ArrowRight} aria-hidden className="size-3.5" />
+        </Link>
       </div>
     </PageHero>
 
-    <PageSection aria-labelledby="open-a-question-heading" className="mt-12">
-      <div className="flex flex-wrap items-end justify-between gap-4 border-b pb-3">
-        <div className="max-w-2xl">
-          <p className="text-eyebrow uppercase text-muted-foreground">Start here</p>
-          <h2 id="open-a-question-heading" className="mt-1 text-title">Open a question</h2>
-        </div>
-        <Link href={COLLECTION_PATH} className="shrink-0 text-meta font-medium underline-offset-4 hover:underline">All {publishedCount} problems</Link>
-      </div>
-      {previews.length ? <ul className="divide-y">
-        {previews.map(({ discovery, state }) => <ProblemQuestionRow
-          key={`${discovery.repository}/${discovery.problem}`}
-          state={state}
-          number={discovery.problem} collectionLabel="Erdős problem"
-          href={discovery.canonicalPath ?? COLLECTION_PATH}
-        />)}
-      </ul> : <p className="mt-4 border-y py-6 text-body text-muted-foreground">No Problem in this release has a retained question to preview.</p>}
-    </PageSection>
-
-    <PageSection aria-label="Collection coverage">
-      <CollectionDistribution problems={catalog} />
-    </PageSection>
-
-    <PageSection className="grid gap-12 xl:grid-cols-[minmax(0,1.3fr)_minmax(20rem,.7fr)] xl:gap-16">
+    <PageSection className="grid gap-10 xl:grid-cols-[minmax(0,1.35fr)_minmax(18rem,.65fr)] xl:gap-14">
       <div className="min-w-0">
-        <div>
-          <p className="text-eyebrow uppercase text-muted-foreground">Published collection</p>
-          <h2 className="mt-1 text-title">Browse what is available</h2>
+        <div className="flex flex-wrap items-end justify-between gap-4 border-b pb-3">
+          <h2 id="open-a-question-heading" className="text-title">Problems to explore</h2>
+          <Link href={COLLECTION_PATH} className="shrink-0 text-meta font-medium text-primary underline-offset-4 hover:underline">All {publishedCount} problems</Link>
         </div>
-
-        <article className="mt-5 border-y py-6">
-          <div className="grid gap-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
-            <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <h3 className="text-subtitle">Erdős Problems</h3>
-                <Badge variant="secondary">Published</Badge>
-              </div>
-              <p className="mt-2 max-w-[68ch] text-body text-muted-foreground">
-                A source-owned collection of questions posed and curated by Paul Erdős and collaborators.
-                Problem numbers are local to this collection.
-              </p>
-              <dl className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-meta">
-                <div className="flex gap-1.5"><dt className="text-muted-foreground">Questions</dt><dd className="font-mono tabular-nums">{publishedCount}</dd></div>
-                <div className="flex gap-1.5"><dt className="text-muted-foreground">Listed as open by source</dt><dd className="font-mono tabular-nums">{openCount.toLocaleString()}</dd></div>
-                <div className="flex gap-1.5"><dt className="text-muted-foreground">With reviewed evidence</dt><dd className="font-mono tabular-nums">{assessed.length.toLocaleString()}</dd></div>
-              </dl>
-            </div>
-            <Button nativeButton={false} variant="outline" render={<Link href={COLLECTION_PATH} />}>
-              Browse collection <HugeiconsIcon icon={ArrowRight} aria-hidden data-icon="inline-end" />
-            </Button>
-          </div>
-        </article>
-
-        <p className="mt-6 max-w-[68ch] text-meta text-muted-foreground">
-          {assessed.length
-            ? `${assessed.length} of these Problems have a Result this Repository has reviewed. A reviewed Result is scoped; it does not by itself resolve the question.`
-            : "No Problem in this release has a reviewed Result yet."}
-        </p>
+        {previews.length ? <ul className="mt-2 divide-y" aria-labelledby="open-a-question-heading">
+          {previews.map(({ discovery, state }) => <ProblemQuestionRow
+            key={`${discovery.repository}/${discovery.problem}`}
+            state={state}
+            number={discovery.problem} collectionLabel="Erdős problem"
+            href={discovery.canonicalPath ?? COLLECTION_PATH}
+          />)}
+        </ul> : <p className="border-b py-6 text-body text-muted-foreground">No Problem in this release has a retained question to preview.</p>}
       </div>
 
-      <aside className="min-w-0" aria-labelledby="recently-updated-heading">
+      <aside className="vela-object-surface min-w-0 p-4" aria-labelledby="recently-updated-heading">
         <div className="flex items-end justify-between gap-4">
-          <div>
-            <p className="text-eyebrow uppercase text-muted-foreground">Activity</p>
-            <h2 id="recently-updated-heading" className="mt-1 text-title">Recently updated</h2>
-          </div>
-          <Link href="/activity" className="shrink-0 text-meta font-medium underline-offset-4 hover:underline">All updates</Link>
+          <h2 id="recently-updated-heading" className="text-title">Recently updated</h2>
+          <Link href="/activity" className="shrink-0 text-meta font-medium text-primary underline-offset-4 hover:underline">All updates</Link>
         </div>
-        <p className="mt-2 text-meta text-muted-foreground">Changes published by the named scientific sources.</p>
         {activity.length
           ? <ScientificChangeFeed changes={activity} compact plainLanguage />
           : <p className="mt-5 border-y py-6 text-body text-muted-foreground">No recent source updates are available.</p>}
       </aside>
     </PageSection>
 
-    <PageSection as="nav" aria-label="Contribute work" className="border-y py-0">
+    <PageSection aria-labelledby="published-collection-heading" className="border-y py-6">
+      <div className="grid gap-7 xl:grid-cols-[minmax(18rem,.75fr)_minmax(0,1.25fr)] xl:items-center">
+        <div>
+          <div className="flex flex-wrap items-center gap-2">
+            <h2 id="published-collection-heading" className="text-title">Erdős Problems</h2>
+            <Badge variant="secondary">Published</Badge>
+          </div>
+          <p className="mt-2 max-w-xl text-compact text-muted-foreground">{publishedCount} source-owned questions. Problem numbers are local to this collection.</p>
+          <dl className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-meta">
+            <div className="flex gap-1.5"><dt className="text-muted-foreground">Open per source</dt><dd className="font-mono tabular-nums">{openCount.toLocaleString()}</dd></div>
+            <div className="flex gap-1.5"><dt className="text-muted-foreground">Reviewed Results</dt><dd className="font-mono tabular-nums">{assessed.length.toLocaleString()}</dd></div>
+          </dl>
+          {!assessed.length ? <p className="mt-3 text-meta text-muted-foreground">No Problem in this release has a reviewed Result yet.</p> : null}
+          <Button className="mt-5" nativeButton={false} variant="outline" render={<Link href={COLLECTION_PATH} />}>Browse collection <HugeiconsIcon icon={ArrowRight} aria-hidden data-icon="inline-end" /></Button>
+        </div>
+        <CollectionDistribution problems={catalog} compact />
+      </div>
+    </PageSection>
+
+    <PageSection as="nav" aria-label="Contribute work" className="border-b border-t py-0">
       <div className="grid md:grid-cols-[minmax(0,1fr)_auto_auto] md:items-center md:divide-x">
         <div className="py-6 md:pr-8">
           <p className="text-subtitle">Have evidence to add?</p>

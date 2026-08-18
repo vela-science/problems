@@ -28,7 +28,7 @@ describe("CollectionDistribution", () => {
 
   it("explains the corpus without presenting overlapping coverage as a single status", () => {
     render(<CollectionDistribution problems={[problem("open", true, "accepted"), problem("solved")]} />);
-    expect(screen.getByText("Source status reports what the collection declares. Formalization and reviewed evidence are separate, overlapping signals.")).toBeInTheDocument();
+    expect(screen.getByText("Source status, exact formal material, and reviewed Results are separate signals.")).toBeInTheDocument();
     expect(screen.getByText("Exact formal statement available")).toBeInTheDocument();
     expect(screen.getByText("With Repository-reviewed evidence")).toBeInTheDocument();
     expect(screen.queryByText(/locally assessed/i)).not.toBeInTheDocument();

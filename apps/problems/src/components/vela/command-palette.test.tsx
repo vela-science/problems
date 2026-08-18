@@ -101,7 +101,7 @@ describe("CommandPaletteProvider exact record search", () => {
     fireEvent.change(screen.getByPlaceholderText("Search Problems, Results, and sources…"), { target: { value: proposalId } });
 
     await waitFor(() => expect(search.load).toHaveBeenCalledWith(projectionRoot, { q: proposalId }));
-    const resultLabel = await screen.findByText(`${proposalId} · Retain the exact foreign-reference package.`);
+    const resultLabel = await screen.findByText("Proposed change · Retain the exact foreign-reference package.");
     const result = resultLabel.closest("button");
     expect(result).not.toBeNull();
     fireEvent.click(result!);

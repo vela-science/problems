@@ -12,6 +12,33 @@
   body { @apply min-h-svh bg-background text-sm text-foreground; }
 
   code, pre, kbd, samp { @apply font-mono; }
+  ::selection { background: color-mix(in oklab, var(--primary) 24%, transparent); color: var(--foreground); }
+  :focus-visible { outline-color: var(--focus-ring); }
+  * { scrollbar-color: color-mix(in oklab, var(--muted-foreground) 42%, transparent) transparent; }
+  a, button { text-underline-offset: 0.2em; }
+}
+
+@layer components {
+  .vela-object-surface {
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) + 0.25rem);
+    background: var(--vela-surface-raised);
+    box-shadow: var(--vela-shadow-raised);
+  }
+
+  .vela-object-row {
+    transition: background-color 140ms ease-out, color 140ms ease-out, box-shadow 140ms ease-out;
+  }
+
+  .vela-object-row:hover { background: var(--vela-surface-hover); }
+  .vela-object-row[aria-selected="true"], .vela-object-row[data-selected="true"] {
+    background: var(--vela-surface-selected);
+    box-shadow: inset 3px 0 0 var(--primary);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vela-object-row { transition: none; }
 }
 
 @media (pointer: coarse) {
@@ -19,87 +46,26 @@
   [data-slot="input"], [data-slot="select-trigger"] { min-height: 2.75rem; }
 }
 
-/* Route leads use one memorable product palette without turning state colors
-   into decoration. Ink establishes the object; cobalt marks interaction; warm
-   paper keeps the reading surface calm. */
+/* Route leads are ordinary product headers. The sidebar carries the deep marine
+   brand colour; route content stays on the neutral working canvas. */
 .vela-product-hero,
 .vela-collection-hero,
 .vela-data-hero,
 .vela-work-hero,
 .vela-history-hero {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  border: 1px solid color-mix(in oklab, var(--foreground) 10%, transparent);
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  background: transparent;
 }
 
 .vela-product-hero,
 .vela-collection-hero {
-  background: var(--vela-ink);
-  color: var(--vela-paper-strong);
+  color: var(--foreground);
 }
 
-.vela-product-hero::after,
-.vela-collection-hero::after {
-  position: absolute;
-  z-index: -1;
-  right: clamp(-5rem, -4vw, -2rem);
-  bottom: clamp(-6rem, -7vw, -3rem);
-  width: clamp(12rem, 28vw, 24rem);
-  aspect-ratio: 1.45;
-  border-radius: 2.5rem 0 0;
-  background: color-mix(in oklab, var(--vela-cobalt) 76%, var(--vela-ink));
-  content: "";
-  transform: rotate(-8deg);
-}
-
-.vela-product-hero .text-muted-foreground,
-.vela-collection-hero .text-muted-foreground {
-  color: color-mix(in oklab, var(--vela-paper-strong) 68%, transparent);
-}
-
-.vela-product-hero .text-foreground,
-.vela-collection-hero .text-foreground {
-  color: var(--vela-paper-strong);
-}
-
-.vela-product-hero .border-border,
-.vela-collection-hero .border-border,
-.vela-product-hero .border-t,
-.vela-collection-hero .border-t {
-  border-color: color-mix(in oklab, var(--vela-paper-strong) 22%, transparent);
-}
-
-.vela-product-hero a:not([data-slot="button"]),
-.vela-collection-hero a:not([data-slot="button"]) {
-  color: var(--vela-paper-strong);
-}
-
-.vela-product-hero .vela-hero-secondary-action {
-  border-color: color-mix(in oklab, var(--vela-paper-strong) 40%, transparent);
-  background: transparent;
-  color: var(--vela-paper-strong);
-}
-
-.vela-product-hero .vela-hero-secondary-action:hover {
-  background: color-mix(in oklab, var(--vela-paper-strong) 12%, transparent);
-  color: var(--vela-paper-strong);
-}
-
-.vela-data-hero {
-  border-left: 0.3rem solid var(--vela-cobalt);
-  background: color-mix(in oklab, var(--vela-cobalt-soft) 72%, var(--background));
-}
-
-.vela-work-hero {
-  border-left: 0.3rem solid var(--vela-coral);
-  background: color-mix(in oklab, var(--vela-amber) 18%, var(--background));
-}
-
-.vela-history-hero {
-  border-left: 0.3rem solid var(--vela-coral);
-  background: color-mix(in oklab, var(--vela-coral) 9%, var(--background));
-}
+.vela-data-hero,
+.vela-work-hero,
+.vela-history-hero { color: var(--foreground); }
 
 @media (forced-colors: active) {
   .vela-product-hero,
@@ -107,8 +73,6 @@
   .vela-data-hero,
   .vela-work-hero,
   .vela-history-hero { border: 2px solid CanvasText; background: Canvas; color: CanvasText; }
-  .vela-product-hero::after,
-  .vela-collection-hero::after { display: none; }
   .vela-product-hero .text-muted-foreground,
   .vela-collection-hero .text-muted-foreground { color: CanvasText; }
 }
@@ -122,6 +86,4 @@
   .vela-data-hero,
   .vela-work-hero,
   .vela-history-hero { border: 1px solid CanvasText !important; background: Canvas !important; color: CanvasText !important; }
-  .vela-product-hero::after,
-  .vela-collection-hero::after { display: none !important; }
 }

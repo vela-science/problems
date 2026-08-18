@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { ArrowRight01Icon, GitForkIcon, SourceCodeIcon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { Alert, AlertDescription, AlertTitle } from "@vela/ui/components/alert";
 import { Button } from "@vela/ui/components/button";
 import { FormalStatementCard } from "@/components/vela/formal-statement-card";
@@ -74,8 +76,9 @@ function TreeBranch({ nodes, depth, basePath, selectedPath, activeKey }: {
             href={`${basePath}?view=sources&file=${encodeURIComponent(node.entry.path)}`}
             aria-current={open ? "page" : undefined}
             style={{ paddingInlineStart: `${0.5 + depth * 0.75}rem` }}
-            className={`flex min-h-9 items-center gap-2 rounded-sm py-1.5 pe-2 text-compact focus-visible:outline-2 focus-visible:outline-offset-2 ${open ? "bg-accent text-accent-foreground" : "hover:bg-muted"}`}
+            className={`vela-object-row flex min-h-9 items-center gap-2 rounded-md py-1.5 pe-2 text-compact focus-visible:outline-2 focus-visible:outline-offset-2 ${open ? "bg-accent font-medium text-accent-foreground shadow-sm" : "hover:bg-muted"}`}
           >
+            <HugeiconsIcon icon={SourceCodeIcon} aria-hidden className="size-3.5 shrink-0 text-muted-foreground" />
             <span className="min-w-0 flex-1 truncate font-mono text-meta">{node.name}</span>
             <span className="shrink-0 font-mono text-micro text-muted-foreground">{node.entry.records.length}</span>
           </Link>
@@ -97,7 +100,7 @@ function TreeBranch({ nodes, depth, basePath, selectedPath, activeKey }: {
                 href={`${basePath}?view=sources&file=${encodeURIComponent(node.entry!.path)}&symbol=${encodeURIComponent(key)}`}
                 aria-current={active ? "location" : undefined}
                 style={{ paddingInlineStart: `${0.75 + (depth + 1) * 0.75}rem` }}
-                className={`flex min-h-8 items-center gap-2 rounded-sm py-1 pe-2 focus-visible:outline-2 focus-visible:outline-offset-2 ${active ? "bg-background font-medium text-foreground" : "text-muted-foreground hover:bg-muted"}`}
+                className={`vela-object-row flex min-h-8 items-center gap-2 rounded-md py-1 pe-2 focus-visible:outline-2 focus-visible:outline-offset-2 ${active ? "bg-[var(--vela-surface-selected)] font-medium text-foreground shadow-[inset_3px_0_0_var(--primary)]" : "text-muted-foreground hover:bg-muted"}`}
               >
                 {mark ? <span aria-hidden className={`size-1.5 shrink-0 rounded-full ${mark.className}`} /> : null}
                 <span className="min-w-0 flex-1 truncate font-mono text-micro">{label}</span>
@@ -143,22 +146,22 @@ export function ProblemFiles({ state, basePath, entries, selected, activeRecord,
 
   return <section aria-labelledby="research-files-heading" className="min-w-0">
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <h2 id="research-files-heading" className="text-title">Files</h2>
+      <div><h2 id="research-files-heading" className="text-title">Sources</h2><p className="mt-1 text-meta text-muted-foreground">Browse retained paths and inspect the exact material available for this Problem.</p></div>
       <div className="flex flex-wrap items-center gap-3">
         <p className="text-meta text-muted-foreground">
           {state.sources.statements.length} retained {state.sources.statements.length === 1 ? "statement" : "statements"}
           <span aria-hidden> · </span>
           <span className="font-mono">{state.anchor.sourceCommit.slice(0, 12)}</span>
         </p>
-        {openSource ? <Button nativeButton={false} size="sm" variant="outline" render={<a href={openSource} />}>{selected ? "Open selected source" : "Open source"}</Button> : null}
+        {openSource ? <Button nativeButton={false} size="sm" variant="outline" render={<a href={openSource} />}>{selected ? "Open selected source" : "Open source"}<HugeiconsIcon icon={ArrowRight01Icon} aria-hidden className="size-3.5" /></Button> : null}
       </div>
     </div>
 
     {/* Preview first on narrow screens: a reader on a phone came for the
         declaration, not for a list of the paths it might be under. */}
-    <div className="mt-4 min-w-0 rounded-lg border lg:grid lg:min-h-[34rem] lg:grid-cols-[18rem_minmax(0,1fr)]">
+    <div className="vela-object-surface mt-4 min-w-0 overflow-hidden lg:grid lg:min-h-[34rem] lg:grid-cols-[19rem_minmax(0,1fr)]">
       <div className="order-2 min-w-0 lg:order-none lg:col-start-2 lg:row-start-1">
-        <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-b px-4 py-2.5">
+        <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-b bg-muted/20 px-4 py-2.5">
           <div className="min-w-0">
             {directory ? <p className="truncate font-mono text-micro text-muted-foreground">{`${directory}/`}</p> : null}
             <p className="truncate font-mono text-compact text-foreground">{filename ?? state.source.title}</p>
@@ -167,8 +170,8 @@ export function ProblemFiles({ state, basePath, entries, selected, activeRecord,
             {/* What kind of thing the panel is showing. Retained source is
                 quoted material, and saying so on the panel keeps it from
                 reading as something this Repository asserts. */}
-            {declaration ? <span className="text-micro uppercase tracking-wide text-muted-foreground">{retained ? "retained formal statement" : "formal occurrence"}</span>
-              : excerpt ? <span className="text-micro uppercase tracking-wide text-muted-foreground">retained source excerpt</span>
+            {declaration ? <span className="text-micro font-medium text-muted-foreground">{retained ? "Retained formal statement" : "Formal occurrence"}</span>
+              : excerpt ? <span className="text-micro font-medium text-muted-foreground">Retained source excerpt</span>
                 : null}
             {index >= 0 && selected ? <span className="text-meta text-muted-foreground">{index + 1} of {selected.records.length}</span> : null}
           </div>
@@ -192,15 +195,15 @@ export function ProblemFiles({ state, basePath, entries, selected, activeRecord,
         </div>
       </div>
 
-      <nav aria-label="Problem source paths" className="order-1 border-b p-3 lg:order-none lg:col-start-1 lg:row-start-1 lg:border-b-0 lg:border-e">
-        <h3 className="px-2 pb-1 text-eyebrow uppercase text-muted-foreground">Sources</h3>
+      <nav aria-label="Problem source paths" className="order-1 border-b bg-[var(--vela-surface-sunken)] p-3 lg:order-none lg:col-start-1 lg:row-start-1 lg:border-b-0 lg:border-e">
+        <h3 className="flex items-center gap-2 px-2 pb-1 text-meta font-semibold"><HugeiconsIcon icon={GitForkIcon} aria-hidden className="size-3.5 text-primary" />Source providers</h3>
         <ul className="px-2">
           {sources.map(([id, source]) => <li key={id} className="flex items-center justify-between gap-2 py-1 text-meta">
             <span className="min-w-0 truncate">{source.label}</span>
             <span className="shrink-0 font-mono text-micro text-muted-foreground">{source.count}</span>
           </li>)}
         </ul>
-        <h3 className="mt-4 px-2 pb-1 text-eyebrow uppercase text-muted-foreground">Referenced source paths</h3>
+        <h3 className="mt-4 px-2 pb-1 text-meta font-semibold">Referenced paths</h3>
         {entries.length
           ? <TreeBranch nodes={tree} depth={0} basePath={basePath} selectedPath={path} activeKey={activeKey} />
           : <p className="px-2 py-3 text-compact text-muted-foreground">No retained file path.</p>}

@@ -58,9 +58,17 @@ when their authors wrote them. Do not rewrite them to match the current system.
 - Keep global styles to Tailwind imports, token/profile bridges, base
   typography, accessibility, print, and cross-route requirements. Route
   presentation belongs with the route or component.
-- Vela's visual thesis is **direction through evidence**. Sails express
-  movement from state to direction; constellation lines express real
-  relationships. Decorative star fields do not substitute for information.
+- The standing visual direction is **Modern research workspace / Play it
+  straight**. Entire is the primary reference for dominant objects,
+  attributed activity, selected checkpoints, readable tool output, and
+  progressive technical detail. GitHub and Hugging Face are secondary
+  references for files, diffs, checks, history, tabs, breadcrumbs, and
+  collection discovery. Borrow task conventions, not brand skins or
+  ontologies.
+- Use a neutral application canvas, deep marine navigation, cobalt interaction,
+  and semantic colors for real state. Do not use starscapes, nautical props,
+  instrument cosplay, parchment, glass, neon, gradients-as-brand, route hero
+  slabs, card soup, or decorative charts.
 - A Problem is an active scientific surface. Use maps for relationships, file
   trees and previews for source material, typed rows for Contributions,
   timelines and diffs for change, and canvases for shared work. Do not satisfy

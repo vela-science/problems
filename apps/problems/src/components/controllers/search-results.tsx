@@ -72,8 +72,8 @@ export function SearchResults({ projectionRoot, repositories, problemCollections
 
   if (hasIntent && error) return <Alert variant="destructive"><HugeiconsIcon icon={Search} aria-hidden /><AlertTitle>Search integrity check failed</AlertTitle><AlertDescription>{error}. Published records remain available from Repositories.</AlertDescription></Alert>;
 
-  return <Command shouldFilter={false} className="rounded-lg border bg-card p-0">
-    <div className="border-b p-3 sm:p-4">
+  return <Command shouldFilter={false} className="vela-object-surface p-0">
+    <div className="border-b bg-muted/15 p-3 sm:p-4">
       <CommandInput value={query} onValueChange={(value) => replace({ q: value || null })} placeholder="Problem, question, result, or source…" aria-label="Search Problems and Results" />
       {/* Labelled, not bare. Three `bar` triggers side by side all read `All
           repositories`/`All kinds`/`All states` truncated to `all`, so the page
@@ -108,7 +108,7 @@ export function SearchResults({ projectionRoot, repositories, problemCollections
         exists because rank on a scientific record is the one place a reader
         might read position as standing, and that stays true whichever order
         produced it. */}
-    <div className="flex items-center justify-between gap-3 border-b px-4 py-2 text-meta text-muted-foreground"><span aria-live="polite">{!hasIntent ? "Ready for a query" : records ? `${records.length.toLocaleString()} results` : "Verifying search projection…"}</span><span>Relevance order, not authority</span></div>
+    <div className="border-b px-4 py-2 text-meta text-muted-foreground"><span aria-live="polite">{!hasIntent ? "Ready for a query" : records ? `${records.length.toLocaleString()} results` : "Verifying search projection…"}</span></div>
     <CommandList className="max-h-[62vh] p-1">
       {!records ? <div className="p-2"><LedgerSkeleton rows={5} /></div> : null}
       {!hasIntent ? <Empty className="min-h-56 border-0"><EmptyHeader><EmptyMedia variant="icon"><HugeiconsIcon icon={Search}  /></EmptyMedia><EmptyTitle>Find a scientific Problem or Result</EmptyTitle><EmptyDescription>Search by question, collection-local number, result, or source. Exact record filters remain available when you need them.</EmptyDescription></EmptyHeader></Empty> : null}
@@ -116,7 +116,7 @@ export function SearchResults({ projectionRoot, repositories, problemCollections
       {hasIntent && records?.length ? <CommandGroup heading="Published records">{records.map((record) => {
         const heading = recordHeading(record);
         const problem = record.kind === "problem" ? problemCollectionForPath(record.href, problemCollections) : null;
-        return <CommandItem key={`${record.repository}:${record.id}`} value={`${record.id} ${record.assertion}`} onSelect={() => router.push(record.href)} className="min-h-16 items-start px-3 py-2.5">
+        return <CommandItem key={`${record.repository}:${record.id}`} value={`${record.id} ${record.assertion}`} onSelect={() => router.push(record.href)} className="vela-object-row min-h-16 items-start rounded-md px-3 py-2.5">
           <div className="min-w-0 flex-1">
             {/* The assertion leads, rendered as mathematics. The heading used to
                 be `record.id` — 76 characters of hex, the widest and least

@@ -1,63 +1,63 @@
-/* Product ground: warm scientific paper held by deep ink, with cobalt reserved
- * for interaction. Semantic result colors remain independent of this brand
- * ladder and never inherit meaning merely from a surface tint. */
+/* Modern research workspace: a cool neutral canvas, white working surfaces,
+ * deep marine navigation, and cobalt interaction. Semantic colours remain
+ * independent and are used only for real state. */
 :root {
-  --vela-ink: oklch(0.21 0.045 258);
-  --vela-ink-soft: oklch(0.31 0.035 258);
-  --vela-cobalt: oklch(0.5 0.2 260);
-  --vela-cobalt-soft: oklch(0.925 0.035 260);
-  --vela-paper: oklch(0.982 0.012 78);
-  --vela-paper-strong: oklch(0.996 0.006 78);
-  --vela-coral: oklch(0.67 0.16 38);
-  --vela-amber: oklch(0.8 0.13 78);
-  --vela-mint: oklch(0.72 0.12 155);
+  --vela-ink: oklch(0.205 0.025 255); --vela-ink-soft: oklch(0.34 0.022 255);
+  --vela-cobalt: oklch(0.53 0.2 258); --vela-cobalt-soft: oklch(0.94 0.035 258);
+  --vela-paper: oklch(0.985 0.003 255); --vela-paper-strong: oklch(1 0 0);
+  --vela-surface-raised: oklch(0.998 0.002 255); --vela-surface-sunken: oklch(0.962 0.008 255);
+  --vela-surface-hover: oklch(0.95 0.022 258); --vela-surface-selected: oklch(0.925 0.045 258); --vela-shadow-raised: 0 1px 2px oklch(0.18 0.03 255 / 0.07), 0 10px 28px oklch(0.18 0.03 255 / 0.05);
+  --vela-coral: oklch(0.58 0.2 28); --vela-amber: oklch(0.7 0.14 78);
+  --vela-mint: oklch(0.57 0.14 152);
   --vela-page-gutter: clamp(1rem, 2.5vw, 2rem);
-  --vela-page-block: clamp(1.75rem, 4vw, 3rem);
-  --vela-page-section: clamp(2.5rem, 6vw, 4.5rem);
-  --vela-layer-problem: oklch(0.976 0.014 78);
-  --vela-layer-work: oklch(0.962 0.022 260);
-  --vela-layer-reading: oklch(0.992 0.008 78);
-  --vela-layer-history: oklch(0.954 0.014 68);
-  --radius: 0.5rem;
-  --background: oklch(0.982 0.012 78); --foreground: oklch(0.21 0.045 258);
-  --card: oklch(0.996 0.006 78); --card-foreground: var(--foreground);
-  --popover: oklch(0.998 0.004 78); --popover-foreground: var(--foreground);
-  --primary: oklch(0.5 0.2 260); --primary-foreground: oklch(0.99 0.004 78);
-  --secondary: oklch(0.946 0.022 78); --secondary-foreground: var(--foreground);
-  --muted: oklch(0.95 0.016 78); --muted-foreground: oklch(0.48 0.026 258);
-  --accent: oklch(0.925 0.035 260); --accent-foreground: oklch(0.25 0.075 258);
+  --vela-page-block: clamp(1.25rem, 3vw, 2rem);
+  --vela-page-section: clamp(2rem, 4vw, 3rem);
+  --vela-layer-problem: oklch(0.985 0.003 255);
+  --vela-layer-work: oklch(0.972 0.009 258);
+  --vela-layer-reading: oklch(1 0 0);
+  --vela-layer-history: oklch(0.972 0.006 255);
+  --radius: 0.375rem;
+  --background: oklch(0.985 0.003 255); --foreground: oklch(0.205 0.025 255);
+  --card: oklch(1 0 0); --card-foreground: var(--foreground);
+  --popover: oklch(1 0 0); --popover-foreground: var(--foreground);
+  --primary: oklch(0.53 0.2 258); --primary-foreground: oklch(0.99 0.002 255);
+  --secondary: oklch(0.955 0.007 255); --secondary-foreground: var(--foreground);
+  --muted: oklch(0.958 0.006 255); --muted-foreground: oklch(0.46 0.018 255);
+  --accent: oklch(0.94 0.035 258); --accent-foreground: oklch(0.24 0.07 258);
   --destructive: oklch(0.496 0.124 16); --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.858 0.025 78);
-  --input: oklch(0.58 0.035 258);
-  --focus-ring: oklch(0.27 0.15 260); --ring: var(--focus-ring);
-  --sidebar: oklch(0.962 0.012 78); --sidebar-foreground: var(--foreground);
+  --border: oklch(0.885 0.009 255);
+  --input: oklch(0.64 0.018 255);
+  --focus-ring: oklch(0.23 0.14 258); --ring: var(--focus-ring);
+  --sidebar: oklch(0.19 0.045 255); --sidebar-foreground: oklch(0.94 0.008 255);
   --sidebar-primary: var(--primary); --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: oklch(0.91 0.038 260); --sidebar-accent-foreground: var(--foreground);
-  --sidebar-border: var(--border); --sidebar-ring: var(--ring);
+  --sidebar-accent: oklch(0.285 0.065 258); --sidebar-accent-foreground: oklch(0.99 0.002 255);
+  --sidebar-border: oklch(0.31 0.035 255); --sidebar-ring: oklch(0.74 0.14 258);
   --status-evidence: var(--vela-color-light-evidence); --status-progress: var(--vela-color-light-progress);
   --status-caution: var(--vela-color-light-caution); --status-conflict: var(--vela-color-light-conflict);
   --direction: var(--vela-color-light-direction);
-  --command: oklch(0.21 0.045 258); --command-foreground: oklch(0.99 0.004 78);
+  --command: oklch(0.19 0.045 255); --command-foreground: oklch(0.99 0.002 255);
 }
 
 .dark {
-  --background: oklch(0.17 0.04 258); --foreground: oklch(0.94 0.012 78);
-  --card: oklch(0.205 0.038 258); --card-foreground: var(--foreground);
-  --popover: oklch(0.205 0.038 258); --popover-foreground: var(--foreground);
+  --background: oklch(0.16 0.018 255); --foreground: oklch(0.94 0.008 255);
+  --card: oklch(0.205 0.02 255); --card-foreground: var(--foreground);
+  --popover: oklch(0.205 0.02 255); --popover-foreground: var(--foreground);
   --primary: oklch(0.7 0.16 255); --primary-foreground: oklch(0.15 0.04 258);
-  --secondary: oklch(0.25 0.035 258); --secondary-foreground: var(--foreground);
-  --muted: oklch(0.235 0.03 258); --muted-foreground: oklch(0.72 0.02 78);
+  --secondary: oklch(0.25 0.022 255); --secondary-foreground: var(--foreground);
+  --muted: oklch(0.235 0.018 255); --muted-foreground: oklch(0.72 0.014 255);
   --accent: oklch(0.31 0.07 258); --accent-foreground: var(--foreground);
   --destructive: oklch(0.682 0.122 13); --destructive-foreground: oklch(0.178 0.004 260);
-  --border: oklch(0.34 0.035 258);
-  --input: oklch(0.56 0.03 258);
+  --border: oklch(0.34 0.024 255);
+  --input: oklch(0.56 0.022 255);
   --focus-ring: oklch(0.96 0.03 259);
-  --sidebar: oklch(0.155 0.036 258); --sidebar-foreground: var(--foreground);
+  --sidebar: oklch(0.13 0.03 255); --sidebar-foreground: var(--foreground);
   --sidebar-accent: oklch(0.275 0.065 258); --sidebar-accent-foreground: var(--foreground);
   --status-evidence: var(--vela-color-evidence); --status-progress: var(--vela-color-progress);
   --status-caution: var(--vela-color-caution); --status-conflict: var(--vela-color-dark-conflict);
-  --direction: var(--vela-color-stardust);
+  --direction: var(--primary);
   --command: oklch(0.298 0.006 260);
+  --vela-surface-raised: oklch(0.225 0.022 255); --vela-surface-sunken: oklch(0.145 0.018 255);
+  --vela-surface-hover: oklch(0.275 0.05 258); --vela-surface-selected: oklch(0.32 0.075 258); --vela-shadow-raised: 0 1px 2px oklch(0.04 0.01 255 / 0.35), 0 12px 32px oklch(0.04 0.01 255 / 0.22);
   color-scheme: dark;
 }
 

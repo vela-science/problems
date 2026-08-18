@@ -206,7 +206,7 @@ export default async function CommitsPage({
                         <span aria-hidden className="text-muted-foreground/50">·</span>
                       </>
                     ) : null}
-                    <Actor name={commit.author_name} />
+                    <Actor name={commit.author_name} kind={commit.machine ? "agent" : "human"} />
                     <span aria-hidden className="text-muted-foreground/50">·</span>
                     <RecordId value={commit.sha} prefix={12} copy={false} />
                     <span aria-hidden className="text-muted-foreground/50">·</span>

@@ -93,6 +93,26 @@ describe("RepositoryGraph ledger", () => {
     expect(rows.queryByText("standing · recorded")).toBeNull();
     expect(rows.getByText("recorded").closest("[data-axis]")).toBeNull();
     expect(rows.getByText("proposal · withdrawn").closest("[data-axis]")).toHaveAttribute("data-axis", "proposal");
+    expect(rows.queryByText("vcl_1")).toBeNull();
     view.unmount();
+  });
+
+  test("keeps rooted artifact identifiers behind technical detail", async () => {
+    navigation.params = new URLSearchParams("view=records&node=claim%3A1");
+    const artifactRoot = "2db17099b421ef43d4892ddedcdd7b1bfecfbcb6cca0134f7f561bcd8df7b0c1";
+    vi.mocked(loadGraph).mockResolvedValueOnce({
+      schema: "vela.projection-graph.v1", root: "sha256:test", repository: "erdos", view: "canvas",
+      lens: "research", total: 2, next_cursor: null,
+      nodes: [node({ id: "claim:1" }), node({ id: "artifact:1", kind: "artifact", label: artifactRoot, standing: "recorded" })],
+      edges: [], selected: node({ id: "claim:1" }), neighbor_total: 1,
+      neighbors: [{ ...node({ id: "artifact:1", kind: "artifact", label: artifactRoot, standing: "recorded" }), edge_id: "edge:1", source: "claim:1", target: "artifact:1", direction: "outgoing", relation: "supports", outgoing: true, edge_trust: null, inferred: false, source_root: null, evidence: null }],
+      object_context: null,
+    } satisfies GraphResponse);
+
+    render(<RepositoryGraph root="sha256:test" initialRepository="erdos" repositories={["erdos"]} />);
+
+    expect(await screen.findByRole("heading", { name: "Direct relationships" })).toBeVisible();
+    expect(screen.getAllByText("Research artifact").length).toBeGreaterThan(0);
+    expect(screen.queryByText(artifactRoot)).toBeNull();
   });
 });

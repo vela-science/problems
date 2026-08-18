@@ -20,8 +20,7 @@ export default async function SearchPage() {
   return (
     <PageShell archetype="data" layout="canvas" className="flex flex-col gap-6">
       <PageHero density="compact" className="vela-data-hero">
-        <div className="flex items-center gap-2"><HugeiconsIcon icon={Search01Icon} aria-hidden className="size-5 text-primary" /><p className="text-eyebrow uppercase text-muted-foreground">Global discovery</p></div>
-        <h1 className="mt-2 text-display">Search</h1>
+        <div className="flex items-center gap-3"><span className="grid size-9 place-items-center rounded-md bg-accent text-primary"><HugeiconsIcon icon={Search01Icon} aria-hidden className="size-5" /></span><h1 className="text-display">Search</h1></div>
         <p className="mt-2 max-w-2xl text-body text-muted-foreground">Find a Problem by its question, collection number, Result, or source.</p>
       </PageHero>
       <Suspense fallback={<div role="status" aria-label="Loading search controls" className="flex flex-col gap-6"><ToolbarSkeleton controls={4} /><LedgerSkeleton rows={6} /></div>}><SearchResults projectionRoot={release.release_root} repositories={repositories.map((repository) => repository.slug)} problemCollections={publishedProblemCollections} /></Suspense>

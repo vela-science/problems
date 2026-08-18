@@ -320,9 +320,10 @@ export async function graphRead(input: GraphQuery) {
       AND ($9 = '' OR EXISTS (
         SELECT 1 FROM projection.graph_edges e WHERE e.release_root=graph_nodes.release_root
           AND e.repository_id=graph_nodes.repository_id AND e.relation=$9
+          AND ($12 <> 'research' OR e.inferred = false)
           AND (e.source_id=graph_nodes.node_id OR e.target_id=graph_nodes.node_id)
       ))
-    ORDER BY node_id LIMIT $10`, [root, repositoryKey(input.repository), lensKinds, input.kind ?? "", input.trust ?? "", input.standing ?? "", q, cursor, input.relation ?? "", limit, input.view]);
+    ORDER BY node_id LIMIT $10`, [root, repositoryKey(input.repository), lensKinds, input.kind ?? "", input.trust ?? "", input.standing ?? "", q, cursor, input.relation ?? "", limit, input.view, input.lens ?? "all"]);
   const selected = input.node
     ? await client.query(`SELECT node_id AS id, kind, label, plane, trust, standing, href, x, y, content
         FROM projection.graph_nodes WHERE release_root=$1 AND repository_id=$2 AND node_id=$3 LIMIT 1`, [root, repositoryKey(input.repository), input.node])
@@ -338,7 +339,8 @@ export async function graphRead(input: GraphQuery) {
           ON n.release_root=e.release_root AND n.repository_id=e.repository_id
           AND n.node_id=CASE WHEN e.source_id=$3 THEN e.target_id ELSE e.source_id END
         WHERE e.release_root=$1 AND e.repository_id=$2 AND (e.source_id=$3 OR e.target_id=$3)
-        ORDER BY e.relation, n.node_id LIMIT 250`, [root, repositoryKey(input.repository), input.node])
+          AND ($4 <> 'research' OR e.inferred = false)
+        ORDER BY e.relation, n.node_id LIMIT 250`, [root, repositoryKey(input.repository), input.node, input.lens ?? "all"])
     : [];
   const nodeTotal = anchored ? 0 : windowTotal(nodes, "graph node");
   const neighborTotal = windowTotal(neighbors, "graph neighbor");
@@ -356,9 +358,17 @@ export async function graphRead(input: GraphQuery) {
         relation, trust, inferred
         FROM projection.graph_edges WHERE release_root=$1 AND repository_id=$2
           AND source_id = ANY($3::text[]) AND target_id = ANY($3::text[])
-          AND ($4 = '' OR relation = $4) ORDER BY edge_id`, [root, repositoryKey(input.repository), nodeIds, input.relation ?? ""])
+          AND ($4 = '' OR relation = $4)
+          AND ($5 <> 'research' OR inferred = false)
+          ORDER BY edge_id`, [root, repositoryKey(input.repository), nodeIds, input.relation ?? "", input.lens ?? "all"])
     : [];
   const edgeRecords = edges.map(parseGraphCanvasEdgeRecord);
+  if (input.lens === "research" && (
+    neighborRecords.some((neighbor) => neighbor.inferred)
+    || edgeRecords.some((edge) => edge.inferred)
+  )) {
+    throw new Error("research map contains an inferred relationship");
+  }
   const objectContext: SiteObjectContext | null = selectedRecord
     ? buildSiteObjectContext({
         root,

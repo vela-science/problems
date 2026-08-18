@@ -152,7 +152,7 @@ export function RepositoryContext({
             <p className="mt-1 flex min-w-0 flex-wrap items-center gap-x-1.5 text-micro text-muted-foreground">
               {latestHref ? <a href={latestHref} className="min-w-0 break-words hover:underline">{latestCommit.subject}</a> : <span className="min-w-0 break-words">{latestCommit.subject}</span>}
               <span aria-hidden>·</span>
-              <Actor name={latestCommit.author_name} />
+              <Actor name={latestCommit.author_name} kind={latestCommit.machine ? "agent" : "human"} />
               <span aria-hidden>·</span>
               <RelativeTime value={latestCommit.committed_at} />
             </p>

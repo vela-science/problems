@@ -79,9 +79,8 @@ function SectionHeading({ id, title, description, action }: {
 }
 
 function EmptyWork() {
-  return <div className="border-b py-8">
-    <p className="text-eyebrow uppercase text-muted-foreground">No saved work yet</p>
-    <h3 className="mt-2 text-subtitle font-medium">Start from a Problem</h3>
+  return <div className="rounded-lg border border-dashed bg-muted/10 p-5">
+    <h3 className="text-subtitle font-medium">Start from a Problem</h3>
     <p className="mt-2 max-w-xl text-body text-muted-foreground">Choose a question, review what is known, then save an approach or result when you are ready.</p>
     <Button className="mt-5 min-h-11 sm:min-h-8" nativeButton={false} render={<Link href="/problems" />}>Browse Problems</Button>
   </div>;
@@ -90,7 +89,7 @@ function EmptyWork() {
 function Workspaces({ result }: { result: AccountProfileData["workspaces"] }) {
   if (result.status === "unavailable") return <Alert className="my-5">
     <AlertTitle>Your work could not be loaded</AlertTitle>
-    <AlertDescription>Your session is still active. Public Problems and Contributions remain available.</AlertDescription>
+    <AlertDescription>Your session is still active. Public Problems and Results remain available.</AlertDescription>
   </Alert>;
   if (!result.value.length) return <EmptyWork />;
   return <ItemGroup className="divide-y gap-0">
@@ -109,9 +108,8 @@ function Codebases({ result }: { result: AccountProfileData["connections"] }) {
     <AlertTitle>Codebase connections are unavailable</AlertTitle>
     <AlertDescription>Your account remains signed in. Try Connections again before importing private repository work.</AlertDescription>
   </Alert>;
-  if (!result.value.data.codebases.length) return <div className="border-b py-8">
-    <p className="text-eyebrow uppercase text-muted-foreground">No connected codebases</p>
-    <h3 className="mt-2 text-subtitle font-medium">Bring in an exact Git revision</h3>
+  if (!result.value.data.codebases.length) return <div className="rounded-lg border border-dashed bg-muted/10 p-5">
+    <h3 className="text-subtitle font-medium">Bring in an exact Git revision</h3>
     <p className="mt-2 max-w-xl text-body text-muted-foreground">Inspect a public GitHub URL now, or connect selected repository access first.</p>
     <Button className="mt-5 min-h-11 sm:min-h-8" variant="outline" nativeButton={false} render={<Link href="/import" />}>Import a codebase</Button>
   </div>;
@@ -153,9 +151,8 @@ export function AccountProfile({ account, workspaces, connections }: AccountProf
   ).length ?? 0;
 
   return <>
-    <header className="vela-data-hero rounded-xl p-5 sm:p-7">
-      <p className="text-eyebrow uppercase text-muted-foreground">Private account</p>
-      <div className="mt-4 flex flex-col gap-5 sm:flex-row sm:items-center">
+    <header className="vela-object-surface p-5 sm:p-7">
+      <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
         <Avatar className="size-16 bg-primary/8 sm:size-20">
           <AvatarFallback className="text-title font-medium text-foreground">{account.initials}</AvatarFallback>
         </Avatar>
@@ -177,23 +174,22 @@ export function AccountProfile({ account, workspaces, connections }: AccountProf
 
     <div className="grid gap-10 xl:grid-cols-[minmax(0,1fr)_21rem] xl:items-start">
       <div className="space-y-10">
-        <section aria-labelledby="account-work-heading">
+        <section aria-labelledby="account-work-heading" className="vela-object-surface p-5">
           <SectionHeading id="account-work-heading" title="Continue your work" description="Private workspaces retained for questions you are exploring." action={workspaces.status === "ready" && workspaces.value.length ? <Button className="min-h-11 sm:min-h-7" size="sm" variant="ghost" nativeButton={false} render={<Link href="/my-work" />}>View all</Button> : undefined} />
           <Workspaces result={workspaces} />
         </section>
 
-        <section aria-labelledby="account-codebases-heading">
+        <section aria-labelledby="account-codebases-heading" className="vela-object-surface p-5">
           <SectionHeading id="account-codebases-heading" title="Connected codebases" description="Exact revisions you inspected or retained from GitHub." action={<Button className="min-h-11 sm:min-h-7" size="sm" variant="ghost" nativeButton={false} render={<Link href="/import" />}>Import</Button>} />
           <Codebases result={connections} />
         </section>
       </div>
 
       <aside className="space-y-8" aria-label="Account status and security">
-        <section aria-labelledby="connections-heading">
+        <section aria-labelledby="connections-heading" className="vela-object-surface p-4">
           <div className="flex items-end justify-between gap-3 border-b pb-3">
             <div>
-              <p className="text-eyebrow uppercase text-muted-foreground">Access</p>
-              <h2 id="connections-heading" className="mt-1 text-subtitle font-medium">Connections</h2>
+              <h2 id="connections-heading" className="text-subtitle font-medium">Connections</h2>
             </div>
             <Link href="/account/connections" className="text-meta font-medium underline-offset-4 hover:underline">Manage</Link>
           </div>
@@ -204,7 +200,7 @@ export function AccountProfile({ account, workspaces, connections }: AccountProf
           </> : <Alert className="mt-4"><AlertTitle>Connections unavailable</AlertTitle><AlertDescription>Try the detailed Connections page again.</AlertDescription></Alert>}
         </section>
 
-        <section aria-labelledby="session-heading" className="border-y py-5">
+        <section aria-labelledby="session-heading" className="vela-object-surface p-4">
           <div className="flex items-start gap-3">
             <div className="flex size-9 shrink-0 items-center justify-center rounded-md bg-muted/60 text-muted-foreground"><HugeiconsIcon icon={SecurityCheckIcon} aria-hidden className="size-4" /></div>
             <div className="min-w-0 flex-1">

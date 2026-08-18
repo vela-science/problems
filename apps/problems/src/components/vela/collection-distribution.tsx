@@ -60,11 +60,8 @@ export function CollectionDistribution({ problems, compact = false }: { problems
   const distribution = collectionDistribution(problems);
   return <figure className={compact ? "" : "vela-evidence-surface rounded-xl p-5 sm:p-6"} aria-labelledby="collection-distribution-title">
     <figcaption>
-      <p className="text-eyebrow uppercase text-muted-foreground">Collection coverage</p>
-      <h2 id="collection-distribution-title" className="mt-1 text-subtitle">What the published corpus contains</h2>
-      <p className="mt-2 max-w-[72ch] text-meta text-muted-foreground">
-        Source status reports what the collection declares. Formalization and reviewed evidence are separate, overlapping signals.
-      </p>
+      <h2 id="collection-distribution-title" className="text-subtitle">Collection coverage</h2>
+      <p className="mt-1 max-w-[72ch] text-meta text-muted-foreground">Source status, exact formal material, and reviewed Results are separate signals.</p>
     </figcaption>
 
     <div className="mt-5" aria-label={`Source status across ${distribution.total.toLocaleString()} Problems`}>

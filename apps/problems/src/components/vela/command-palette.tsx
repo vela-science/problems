@@ -26,6 +26,15 @@ const CommandContext = createContext<CommandContextValue | null>(null);
 export const COMMAND_PALETTE_TRIGGER_ID = "vela-command-palette-trigger";
 export const PRODUCT_DOCS_URL = "https://github.com/vela-science/vela/tree/main/docs";
 
+const SEARCH_KIND_LABEL: Record<string, string> = {
+  claim: "Result",
+  decision: "Review decision",
+  problem: "Problem",
+  proposal: "Proposed change",
+  source: "Source",
+  verification: "Check",
+};
+
 export function useCommandPalette() {
   const value = useContext(CommandContext);
   if (!value) throw new Error("useCommandPalette must be used inside CommandPaletteProvider");
@@ -175,10 +184,13 @@ export function CommandPaletteProvider({
                 <CommandGroup heading="Published results">
                   {records.map((record) => {
                     const problem = record.kind === "problem" ? problemCollectionForPath(record.href, problemCollections) : null;
+                    const label = problem?.problem
+                      ? `${problem.name} · #${problem.problem}`
+                      : SEARCH_KIND_LABEL[record.kind] ?? record.source_title ?? "Published record";
                     return (
                     <CommandItem key={`${record.repository}:${record.id}`} value={`${record.id} ${record.assertion}`} onSelect={() => navigate(record.href)}>
                       <HugeiconsIcon icon={FileSearch} aria-hidden />
-                      <span className="truncate">{problem?.problem ? `${problem.name} · #${problem.problem} · ${record.assertion}` : `${record.id} · ${record.assertion}`}</span>
+                      <span className="truncate">{label} · {record.assertion}</span>
                       <CommandShortcut>{problem?.name ?? record.repository}</CommandShortcut>
                     </CommandItem>
                   );})}

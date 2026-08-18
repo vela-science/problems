@@ -173,7 +173,7 @@ export function WorkspaceShell({
       </div> : /* Print gets the selected object's full flow, not a 72vh clip:
           the fixed viewport height exists for the resizable screen layout and
           would truncate everything below the fold on paper. */
-      <div className="mt-4 h-[min(72vh,56rem)] min-h-[42rem] overflow-hidden rounded-xl border bg-background max-lg:hidden print:h-auto print:min-h-0 print:overflow-visible print:rounded-none print:border-0">
+      <div className="vela-object-surface mt-4 h-[min(72vh,56rem)] min-h-[42rem] overflow-hidden max-lg:hidden print:h-auto print:min-h-0 print:overflow-visible print:rounded-none print:border-0">
           <ResizablePanelGroup
             id="scientific-workspace"
             orientation="horizontal"

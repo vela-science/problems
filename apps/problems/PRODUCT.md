@@ -8,81 +8,82 @@ product: problems.science application
 
 ## Route jobs
 
-| Route | Job | First action |
+| Route | Dominant object | First action |
 | --- | --- | --- |
-| `/` | Understand the product and start | Search or Browse problems |
-| `/problems` | See the collections actually published | Open Erdős Problems |
-| `/problems/erdos-problems` | Search and filter 1,217 source-owned questions | Open a Problem |
-| `/problems/erdos-problems/{number}` | Understand one Problem | Read Overview |
-| `?view=work` | Continue mutable work | Open Canvas or start a workspace |
-| `?view=results` | Inspect durable outputs and checks | Open a Result |
-| `?view=sources` | Inspect exact retained source material | Select a file or excerpt |
-| `?view=history` | Understand semantic change | Open an event or correction diff |
-| `/graph` | Explore exact scientific relationships | Choose a Problem or Result |
-| `/activity` | Follow meaningful published changes | Open the affected context |
-| `/search` | Find Problems, Results, and sources | Open the exact result |
-| `/contribute` | Start a contribution | Choose a Problem |
-| `/import` | Connect an exact GitHub revision | Inspect public code or connect GitHub |
-| `/my-work` | Resume private workspaces | Open saved work |
-| `/account` | Manage identity, connections, and session | Continue work or manage a connection |
+| `/` | Problem search and discovery | Search or browse |
+| `/problems` | Published collections | Open a collection |
+| `/problems/erdos-problems` | Filterable Problem directory | Open a Problem |
+| `/problems/erdos-problems/{number}` | Question and current state | Read Overview |
+| `?view=work` | Canvas, files, and research objects | Continue work |
+| `?view=results` | Durable outputs and checks | Open a Result |
+| `?view=sources` | File browser and exact preview | Select a source |
+| `?view=history` | Chronology and correction diffs | Open an event |
+| `/graph` | Exact relationship canvas | Choose a Problem or Result |
+| `/activity` | Meaningful published changes | Open affected context |
+| `/search` | Cross-product results | Open the named object |
+| `/contribute` | Contribution workflow | Choose a Problem |
+| `/import` | Exact GitHub revision | Inspect or connect code |
+| `/my-work` | Private work continuity | Open saved work |
+| `/account` | Identity, connections, and session | Manage or continue |
 
-Trust pages remain compact institutional surfaces. Repository and exact-record
-routes remain durable contextual destinations, not the primary product IA.
+Trust pages remain compact institutional surfaces. Exact-record and Repository
+routes are durable contextual destinations, not primary navigation.
 
-## Home and discovery
+## Home
 
-Home is the activation screen. Its first viewport contains the product promise,
-problem search, Browse problems, Add a contribution, and the honest statement
-that one collection with 1,217 Erdős Problems is available today.
+Home is the product activation screen, not a marketing hero. Search is the
+dominant object. The first viewport also provides Browse problems, Add a
+contribution, and the exact one-collection truth. Below it, use real question
+rows, one compact collection row, and meaningful recent activity. Do not repeat
+the same availability or coverage facts in several sections.
 
-Global Problems never silently aliases the Erdős catalog. The collection
-directory leads rows with retained question text, uses bounded pagination, and
-keeps source status separate from reviewed Result state. Numeric identity is
-always collection-qualified outside the directory.
+## Collection
 
-## Problem contract
+The collection route uses a concise collection identity, exact count, truthful
+source-status distribution, search and filters, then the Problem directory.
+Rows lead with the collection-local number and retained question. Source status,
+formal material, reviewed Results, and source stay distinct.
 
-The canonical tab row is **Overview · Work · Results · Sources · History**.
+## Problem
 
-Overview is substantive. For Problem 321 it shows the exact question, formal
-target, source-attributed collection status, Repository decision on the current
-contribution, evidence/check coverage, current Result and its unresolved limit,
-formal landmarks, open targets, latest Result, representations, and related
-Problem state. Other Problems use the same data rules and honest empty states.
+The canonical tabs are **Overview · Work · Results · Sources · History**.
+
+Overview is substantive: complete question, compact orthogonal state, current
+Result or honest absence, unresolved scope, exact landmarks, and a small fact
+rail. It must not repeat navigation or every fact from the header.
 
 Work owns mutable shared coordination. Results owns durable outputs. Sources
-owns file/declaration/excerpt browsing. History owns semantic chronology.
+owns files, declarations, and excerpts. History owns semantic chronology.
+Legacy query values resolve to the relevant current tab; internal links emit
+current names only.
 
-Old `view=workspace`, `files`, `contributions`, `evidence`, `timeline`, `record`,
-and `map` values resolve to the appropriate current tab. New internal links emit
-only `work`, `sources`, `results`, and `history`.
+## Data and wording
 
-## Data and wording rules
-
-- Visible durable outputs are Results; underlying Claim/Contribution records remain unchanged.
+- Visible durable outputs are Results; protocol types remain unchanged.
 - Collection status is always source-attributed.
 - Repository acceptance is labelled as a decision on a contribution.
-- Formal target, checks, and publication state remain separate.
-- Exact roots and IDs live in disclosures or exact-record routes.
-- Every map edge, related Problem, count, and scientific sentence comes from retained data.
-- Empty states do not speculate or repeat policy.
+- Formal target, checks, source status, and publication remain separate.
+- Exact roots and identifiers live in disclosures or exact routes.
+- Every relationship, count, scientific sentence, and activity item comes from
+  retained data.
+- Missing data gets a compact missing state, not speculative prose.
 
 ## Work and account boundary
 
-Hosted Work may create account-scoped workspaces, approaches, attempts, notes,
+Hosted Work may manage account-scoped workspaces, approaches, attempts, notes,
 Research Blocks, follows, artifact references, and unsigned Submission v3
 drafts through `@vela/activity-data`. It cannot access local files, execute
 research code, control agent sessions, sign, issue a Decision, or change
 scientific state.
 
-Account remains private unless durable public contributor data supports a
-separate public route. WorkOS identity, GitHub access, scientific attribution,
-and Repository authority are distinct.
+Account is private unless durable public contributor data supports a separate
+route. WorkOS identity, GitHub access, scientific attribution, and Repository
+authority are distinct.
 
 ## Acceptance matrix
 
-Verify Home, Problems, collection, Problems 4/94/321/887 across all five tabs,
-Research map, Updates, Search, Contribute, Import, My work, Account, 404, loading,
-empty, error, and degraded states. Use the real local production build in the
-in-app Browser at desktop, 390px, 320px, 200% zoom, keyboard, touch, forced
-colours, reduced motion, and print.
+Verify Home, Problems, collection, Problems 4/94/321/887 across all five modes,
+Research map, Updates, Search, Contribute, Import, My work, Account, 404,
+loading, empty, error, and degraded states. Use the real local production build
+in the in-app Browser at desktop, 390px, 320px, 200% zoom, keyboard, touch,
+forced colors, reduced motion, and print.

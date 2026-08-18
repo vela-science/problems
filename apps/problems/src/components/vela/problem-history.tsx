@@ -3,6 +3,7 @@ import { StatusBadge } from "@vela/ui/vela/status-badge";
 import { RootFact } from "@/components/vela/root-fact";
 import { RecordId } from "@/components/vela/record-id";
 import { CorrectionComparison } from "@/components/vela/correction-comparison";
+import { Actor, Performer } from "@/components/vela/actor";
 import { formatDate } from "@/lib/format";
 import type { ScientificProblemState } from "@/lib/scientific-state";
 
@@ -31,17 +32,25 @@ export function ProblemHistory({ state }: { state: State }) {
   const corrections = state.claims.flatMap((claim) => correctionRelations(claim).map((relation) => ({ claim, relation })));
   return <>
     <section aria-labelledby="proposed-changes-heading">
-      <div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-eyebrow uppercase text-muted-foreground">Chronology</p><h2 id="proposed-changes-heading" className="mt-1 text-title">Result history</h2></div>{state.reviews.length ? <span className="text-meta text-muted-foreground">{state.reviews.length} {state.reviews.length === 1 ? "event" : "events"}</span> : null}</div>
-      {state.reviews.length ? <ol className="relative mt-6 space-y-0 before:absolute before:bottom-5 before:left-[.4375rem] before:top-5 before:w-px before:bg-border">
-        {state.reviews.map((review) => <li key={review.proposal_id} className="relative grid grid-cols-[1rem_minmax(0,1fr)] gap-4 pb-7 last:pb-0">
-          <span aria-hidden className="relative z-10 mt-1.5 size-3.5 rounded-full border-4 border-background bg-status-evidence ring-1 ring-border forced-colors:border-2" />
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2"><StatusBadge axis="proposal" state={review.status}>{review.status.replaceAll("_", " ")}</StatusBadge><span className="text-meta text-muted-foreground">{formatDate(review.reviewed_at ?? review.created_at)}</span></div>
-            <p className="mt-2 text-label font-medium">{review.status === "accepted" ? "Change accepted" : `Change ${review.status.replaceAll("_", " ")}`}</p>
-            {review.claim_retirement ? <p className="mt-1 text-micro text-muted-foreground">Its claim was later {review.claim_retirement}.</p> : null}
-            {review.producer_package?.producer_actor ? <p className="mt-1 text-micro text-muted-foreground">Produced by {review.producer_package.producer_actor}</p> : null}
-            <a href={`/repositories/${state.repositorySlug}/proposals/${review.proposal_id}`} className="mt-2 inline-block text-meta font-medium underline underline-offset-4">Open event <span className="sr-only"><RecordId value={review.proposal_id} copy={false} /></span></a>
-          </div>
+      <div className="flex flex-wrap items-end justify-between gap-3"><div><h2 id="proposed-changes-heading" className="text-title">Result history</h2><p className="mt-1 text-meta text-muted-foreground">Published changes, performers, checks, and later corrections.</p></div>{state.reviews.length ? <span className="text-meta text-muted-foreground">{state.reviews.length} {state.reviews.length === 1 ? "event" : "events"}</span> : null}</div>
+      {state.reviews.length ? <ol className="relative mt-6 space-y-0 before:absolute before:bottom-5 before:left-[.9375rem] before:top-5 before:w-px before:bg-border">
+        {state.reviews.map((review) => <li key={review.proposal_id} className="relative grid grid-cols-[2rem_minmax(0,1fr)] gap-3 pb-5 last:pb-0">
+          <span aria-hidden className="relative z-10 mt-4 size-8 rounded-full border-8 border-background bg-status-evidence ring-1 ring-border forced-colors:border-2" />
+          <article className="vela-object-surface vela-object-row min-w-0 overflow-hidden">
+            <header className="flex flex-wrap items-center justify-between gap-3 border-b bg-muted/20 px-4 py-3">
+              {review.producer_package?.producer_actor
+                ? <Performer name={review.producer_package.producer_actor} detail="Result performer" />
+                : <p className="text-meta text-muted-foreground">Result performer not retained</p>}
+              <time dateTime={review.reviewed_at ?? review.created_at ?? undefined} className="text-meta text-muted-foreground">{formatDate(review.reviewed_at ?? review.created_at)}</time>
+            </header>
+            <div className="p-4">
+              <div className="flex flex-wrap items-center gap-2"><StatusBadge axis="proposal" state={review.status}>{review.status.replaceAll("_", " ")}</StatusBadge>{review.verification_record_count ? <span className="text-meta text-muted-foreground">{review.verification_record_count} {review.verification_record_count === 1 ? "check" : "checks"}</span> : null}</div>
+              <p className="mt-3 text-label font-semibold">{review.status === "accepted" ? "Repository accepted this Result" : `Repository change ${review.status.replaceAll("_", " ")}`}</p>
+              {review.claim_retirement ? <p className="mt-1 text-meta text-muted-foreground">The Result was later {review.claim_retirement}.</p> : null}
+              {review.reviewed_by ? <div className="mt-3 text-meta text-muted-foreground">Decision recorded by <Actor name={review.reviewed_by} kind={review.decision_actor_class} className="ms-1 align-middle" /></div> : null}
+              <a href={`/repositories/${state.repositorySlug}/proposals/${review.proposal_id}`} className="mt-3 inline-block text-meta font-semibold text-primary underline-offset-4 hover:underline">Open change details <span className="sr-only"><RecordId value={review.proposal_id} copy={false} /></span></a>
+            </div>
+          </article>
         </li>)}
       </ol> : <div className="mt-5 rounded-lg border border-dashed p-5"><p className="text-label font-medium">No Result history yet</p><p className="mt-1 text-meta text-muted-foreground">No proposed change is retained for this Problem.</p></div>}
     </section>
@@ -51,7 +60,7 @@ export function ProblemHistory({ state }: { state: State }) {
       {corrections.length ? <div className="mt-5 space-y-4">{corrections.map(({ claim, relation }) => {
         const predecessor = state.claims.find((candidate) => candidate.id === relation.target_claim_id);
         const isCurrent = claim.id === state.currentClaimId;
-        return <article key={`${claim.id}:${relation.kind}:${relation.target_claim_id}`} className="overflow-hidden rounded-xl border bg-background"><div className="grid items-stretch sm:grid-cols-[minmax(0,1fr)_5rem_minmax(0,1fr)]"><div className="p-4"><p className="text-eyebrow uppercase text-muted-foreground">Previous</p>{predecessor ? <p className="mt-2 line-clamp-3 text-compact">{predecessor.assertion}</p> : <p className="mt-2 text-compact text-muted-foreground">Statement not retained here</p>}</div><div className="grid place-items-center border-y bg-muted/20 px-2 py-3 text-center sm:border-x sm:border-y-0"><StatusBadge tone="caution">{relation.kind}</StatusBadge><span aria-hidden className="mt-1 text-muted-foreground">→</span></div><div className="p-4"><p className="text-eyebrow uppercase text-muted-foreground">{isCurrent ? "Current" : "Later version"}</p><p className="mt-2 line-clamp-3 text-compact">{claim.assertion}</p></div></div>{predecessor ? <div className="border-t p-4"><CorrectionComparison kind={relation.kind as "corrects" | "supersedes"} before={predecessor.assertion} after={claim.assertion} /></div> : null}<details className="border-t px-4 py-3 text-meta"><summary className="cursor-pointer font-medium">Exact identities</summary><div className="mt-3 flex flex-wrap items-center gap-2"><RecordId value={relation.target_claim_id} /><span aria-hidden>→</span><RecordId value={claim.id} /></div></details></article>;
+        return <article key={`${claim.id}:${relation.kind}:${relation.target_claim_id}`} className="vela-object-surface overflow-hidden"><div className="grid items-stretch sm:grid-cols-[minmax(0,1fr)_5rem_minmax(0,1fr)]"><div className="p-4"><p className="text-meta font-medium text-muted-foreground">Previous Result</p>{predecessor ? <p className="mt-2 line-clamp-3 text-compact">{predecessor.assertion}</p> : <p className="mt-2 text-compact text-muted-foreground">Statement not retained here</p>}</div><div className="grid place-items-center border-y bg-muted/20 px-2 py-3 text-center sm:border-x sm:border-y-0"><StatusBadge tone="caution">{relation.kind}</StatusBadge><span aria-hidden className="mt-1 text-muted-foreground">→</span></div><div className="p-4"><p className="text-meta font-medium text-muted-foreground">{isCurrent ? "Current Result" : "Later version"}</p><p className="mt-2 line-clamp-3 text-compact">{claim.assertion}</p></div></div>{predecessor ? <div className="border-t p-4"><CorrectionComparison kind={relation.kind as "corrects" | "supersedes"} before={predecessor.assertion} after={claim.assertion} /></div> : null}<details className="border-t px-4 py-3 text-meta"><summary className="cursor-pointer font-medium">Exact identities</summary><div className="mt-3 flex flex-wrap items-center gap-2"><RecordId value={relation.target_claim_id} /><span aria-hidden>→</span><RecordId value={claim.id} /></div></details></article>;
       })}</div> : <div className="mt-5 rounded-lg border border-dashed p-5"><p className="text-label font-medium">No correction history</p></div>}
     </section>
 

@@ -20,6 +20,7 @@ import {
   ItemTitle,
 } from "@vela/ui/components/item";
 import { AssertionText } from "@/components/vela/assertion-text";
+import { Performer } from "@/components/vela/actor";
 import { FormalConjecturesAudit } from "@/components/vela/formal-conjectures-audit";
 import { formalFilePath } from "@/components/vela/formal-statement-card";
 import { ProblemFiles, type FileEntry } from "@/components/vela/problem-files";
@@ -73,20 +74,20 @@ function CurrentResult({ state, basePath }: { state: State; basePath: string }) 
       </Button>
     </div>
 
-    <div className="mt-5 overflow-hidden rounded-xl border bg-background">
-      <header className="flex flex-wrap items-center gap-2 border-b bg-muted/20 px-4 py-3 sm:px-5">
-        <Badge className="capitalize" variant={claim.standing === "accepted" ? "default" : "secondary"}>{humanize(claim.standing)}</Badge>
-        <span className="text-compact font-medium">Result</span>
-        <span className="text-meta text-muted-foreground">{claim.created ? formatAgo(claim.created) : "date not recorded"}</span>
+    <div className="vela-object-surface mt-5 overflow-hidden">
+      <header className="flex flex-wrap items-center justify-between gap-3 border-b bg-muted/20 px-4 py-3 sm:px-5">
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge className="capitalize" variant={claim.standing === "accepted" ? "default" : "secondary"}>{humanize(claim.standing)}</Badge>
+          <span className="text-compact font-medium">Result</span>
+          <span className="text-meta text-muted-foreground">{claim.created ? formatAgo(claim.created) : "date not recorded"}</span>
+        </div>
+        {producer ? <Performer className="max-w-full" name={producer} detail={[review?.producer_package?.replayability, review?.producer_package?.requested_change_kind].filter(Boolean).map((value) => humanize(value)).join(" · ") || "Result performer"} /> : null}
       </header>
 
       <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_19rem]">
         <div className="min-w-0 p-5 sm:p-7">
           <p className="line-clamp-4 max-w-[78ch] text-[clamp(1.05rem,1.5vw,1.25rem)] leading-8"><AssertionText text={claim.assertion} /></p>
-          <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-meta text-muted-foreground">
-            {producer ? <span>Submitted by <strong className="font-medium text-foreground">{producer}</strong></span> : null}
-            {review?.producer_package?.submitted_at ? <time dateTime={review.producer_package.submitted_at}>{formatDate(review.producer_package.submitted_at)}</time> : null}
-          </div>
+          {review?.producer_package?.submitted_at ? <p className="mt-5 text-meta text-muted-foreground">Submitted <time dateTime={review.producer_package.submitted_at}>{formatDate(review.producer_package.submitted_at)}</time></p> : null}
 
           <section aria-labelledby="checks-heading" className="mt-8">
             <div className="flex items-center justify-between gap-3 border-b pb-2">
@@ -97,7 +98,7 @@ function CurrentResult({ state, basePath }: { state: State; basePath: string }) 
               const reviewer = check.reviewer_display_name || check.verifier_actor;
               const method = [check.reviewer_provider, check.reviewer_version].filter(Boolean).join(" · ");
               const presentation = checkPresentation(check.outcome);
-              return <Item key={check.verification_record_id} className="items-start rounded-none border-0 px-0 py-4">
+              return <Item key={check.verification_record_id} className="vela-object-row items-start rounded-md border-0 px-2 py-4">
                 <ItemMedia variant="icon" data-check-outcome={check.outcome} className={`mt-0.5 size-8 rounded-full ${presentation.className}`}><HugeiconsIcon icon={presentation.icon} aria-hidden /></ItemMedia>
                 <ItemContent>
                   <ItemTitle className="line-clamp-none">{humanize(check.property, "Scoped check")}</ItemTitle>
@@ -116,7 +117,7 @@ function CurrentResult({ state, basePath }: { state: State; basePath: string }) 
             </div>
             {sourceBindings.length ? <ItemGroup className="gap-0 divide-y">{sourceBindings.map((binding) => {
               const occurrence = state.sources.occurrences.find((candidate) => candidate.source_id === binding.source_id && candidate.native_id === binding.native_id);
-              return <Item key={binding.binding_id} className="items-start rounded-none border-0 px-0 py-4">
+              return <Item key={binding.binding_id} className="vela-object-row items-start rounded-md border-0 px-2 py-4">
                 <ItemMedia variant="icon" className="mt-0.5 size-8 rounded-md bg-status-evidence/10 text-status-evidence"><HugeiconsIcon icon={SourceCodeIcon} aria-hidden /></ItemMedia>
                 <ItemContent>
                   <ItemTitle className="line-clamp-none">{occurrence?.source_label ?? binding.source_id}</ItemTitle>
