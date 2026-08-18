@@ -123,10 +123,9 @@ describe("current product language", () => {
   });
 
   it("does not expose historical graph kinds as current object names", () => {
-    /* `kindLabel` used to translate `finding` into `claim`, because the
-       projection wrote the retired word. It writes `claim` now, so the label is
-       the stored word and there is no translation left to assert. */
-    expect(kindLabel("claim")).toBe("assertion");
+    /* Protocol kinds remain exact underneath, while product lists use the
+       public object language a reader is choosing between. */
+    expect(kindLabel("claim")).toBe("Result");
     expect(kindLabel("verifier_attachment")).toBe("historical check attachment");
     expect(kindLabel("proposal")).toBe("proposed change");
     /* The mapping had two byte-identical homes and could drift; the controllers

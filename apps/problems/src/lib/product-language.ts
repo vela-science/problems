@@ -3,11 +3,10 @@ import { stateAxesByWord, type StateAxis } from "@vela/ui/vela/status-badge";
 /**
  * The reader-facing word for a projection kind.
  *
- * This used to translate the graph node kind `finding` into `claim`, because
- * the projection builder wrote the retired word and the product prints the
- * protocol's. The builder now writes `claim`, so there is nothing to translate
- * and the row reads as it is stored. What remains is the one kind whose stored
- * word is an identifier rather than a phrase.
+ * Protocol kinds remain exact in the projection and technical details. Product
+ * lists translate only the kinds whose stored words do not describe the object
+ * a reader is choosing: a Claim is a durable Result here, while a Proposal is a
+ * proposed change.
  *
  * Both controllers that print a kind held their own copy of this mapping, so
  * the rename had two homes and could drift; that is why it still lives here
@@ -15,7 +14,7 @@ import { stateAxesByWord, type StateAxis } from "@vela/ui/vela/status-badge";
  */
 export function kindLabel(kind: string): string {
   const labels: Record<string, string> = {
-    claim: "assertion",
+    claim: "Result",
     proposal: "proposed change",
     verifier_attachment: "historical check attachment",
   };

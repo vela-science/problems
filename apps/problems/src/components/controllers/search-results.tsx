@@ -13,7 +13,6 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@v
 import { ScientificText } from "@vela/ui/vela/scientific-text";
 import { StatusBadge } from "@vela/ui/vela/status-badge";
 import { RecordFilter } from "@/components/vela/record-filter";
-import { RecordId } from "@/components/vela/record-id";
 import { LedgerSkeleton } from "@/components/vela/route-skeleton";
 import { kindLabel, recordHeading, stateBadge } from "@/lib/product-language";
 import { loadSearchIndex } from "@/lib/search-index";
@@ -131,7 +130,6 @@ export function SearchResults({ projectionRoot, repositories, problemCollections
               <span>{problem?.problem ? `${problem.name} · #${problem.problem}` : record.repository}</span>
               <span aria-hidden>·</span>
               <span>{kindLabel(record.kind)}</span>
-              {heading ? <><span aria-hidden>·</span><RecordId value={record.id} prefix={10} copy={false} /></> : null}
             </div>
           </div>
           <StatusBadge {...stateBadge(record.standing, record.kind)} />

@@ -75,6 +75,20 @@ describe("SearchResults", () => {
     view.unmount();
   });
 
+  test("keeps protocol identity behind the selected Result destination", async () => {
+    navigation.params = new URLSearchParams("q=readable");
+    vi.mocked(loadSearchIndex).mockResolvedValue({ records: [record({
+      id: "vcl_1234567890abcdef",
+      assertion: "A readable scientific result",
+    })] } as never);
+
+    const view = render(<SearchResults projectionRoot="sha256:test" repositories={["erdos"]} problemCollections={problemCollections} />);
+    expect(await screen.findByText("A readable scientific result")).toBeVisible();
+    expect(screen.getByText("Result")).toBeVisible();
+    expect(screen.queryByText(/vcl_1234567890abcdef/u)).toBeNull();
+    view.unmount();
+  });
+
   test("does not offer one filter named for a single axis", async () => {
     const view = render(<SearchResults projectionRoot="sha256:test" repositories={["erdos"]} problemCollections={problemCollections} />);
 
