@@ -42,3 +42,4 @@ apps/problems/public/data/
 # command uses a private disposable directory instead; committing either would
 # embed another repository in this one.
 /sources/
+.scratch/

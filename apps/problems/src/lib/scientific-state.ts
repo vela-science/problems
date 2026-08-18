@@ -8,6 +8,7 @@ import {
   commitsForRepository,
   formalConjecturesAuditRecordsForProblem,
   nativeProblemSourceRead,
+  nativeSourceRecordByIdentity,
   projectionManifest,
   projectionManifestAtRoot,
   problemRepositorySlugs,
@@ -424,6 +425,24 @@ async function scientificProblemStateAtRoot(repositorySlug: string, problemNumbe
     problem_number: sources.problem_number,
   });
 
+  /* Who did the work, as the sources themselves report it. The occurrence
+     reader carries identity and formal facts but not a record's metadata, and
+     the attribution — which AI systems, which people, which section of the
+     collection — lives only there. These are a handful of rows per Problem. */
+  const attributedRecords = (await Promise.all(
+    sources.occurrences
+      .filter((occurrence) => ["attributed_activity_catalog", "attributed_classification_catalog"].includes(occurrence.source_role))
+      .map(async (occurrence) => {
+        const record = await nativeSourceRecordByIdentity({
+          root: manifest.release_root,
+          sourceId: occurrence.source_id,
+          nativeId: occurrence.native_id,
+          nativeKind: occurrence.native_kind,
+        });
+        return record ? { occurrence, record } : null;
+      }),
+  )).filter((entry) => entry !== null);
+
   return {
     repositorySlug,
     repositoryName: repository.status.repository.name,
@@ -435,6 +454,7 @@ async function scientificProblemStateAtRoot(repositorySlug: string, problemNumbe
     source,
     sources,
     sourceAudits,
+    attributedRecords,
     locator,
     anchor: {
       repositoryId: repository.status.repository.id,

@@ -3,7 +3,6 @@ import {
   AlertCircleIcon,
   CancelCircleIcon,
   CheckmarkCircle01Icon,
-  GitCommitHorizontalIcon,
   GitForkIcon,
   MinusSignCircleIcon,
   SourceCodeIcon,
@@ -22,6 +21,7 @@ import {
   ItemTitle,
 } from "@vela/ui/components/item";
 import { AssertionText } from "@/components/vela/assertion-text";
+import { WhatIsKnown } from "@/components/vela/problem-known";
 import { FormalStatementCard, formalFilePath } from "@/components/vela/formal-statement-card";
 import { ProblemEvidence } from "@/components/vela/problem-evidence";
 import { ProblemHistory } from "@/components/vela/problem-history";
@@ -64,19 +64,7 @@ function CurrentContribution({ state, basePath }: { state: State; basePath: stri
   const producer = review?.producer_package?.producer_actor ?? null;
   const reviewedAt = review?.reviewed_at ?? null;
 
-  if (!claim) return <section aria-labelledby="current-contribution-heading">
-    <div className="flex flex-wrap items-center justify-between gap-3">
-      <h2 id="current-contribution-heading" className="text-title">Contributions</h2>
-      <Badge variant="outline">0 current</Badge>
-    </div>
-    <div className="mt-5 grid min-h-64 place-items-center rounded-xl border bg-muted/10 p-6 text-center">
-      <div>
-        <HugeiconsIcon icon={GitCommitHorizontalIcon} aria-hidden className="mx-auto size-8 text-muted-foreground" />
-        <h3 className="mt-4 text-subtitle">No current contribution</h3>
-        <Button className="mt-5" nativeButton={false} size="sm" render={<Link href={`${basePath}?view=workspace`} />}>Start a contribution</Button>
-      </div>
-    </div>
-  </section>;
+  if (!claim) return <WhatIsKnown state={state} basePath={basePath} />;
 
   const sourceBindings = claim.source_bindings ?? [];
   return <section aria-labelledby="current-contribution-heading">

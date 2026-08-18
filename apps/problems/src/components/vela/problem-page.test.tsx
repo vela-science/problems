@@ -107,8 +107,16 @@ describe("Problem view addressing", () => {
     expect(screen.getByText("Contributions")).toBeInTheDocument();
     expect(screen.queryByText("Overview")).toBeNull();
     expect(screen.queryByText("Research")).toBeNull();
-    expect(screen.queryByText("Erdős Problems")).toBeNull();
-    expect(screen.queryByText("#321")).toBeNull();
+  });
+
+  /* The heading is now the question, so the page has to say which Problem the
+     question belongs to. The breadcrumb is chrome: it scrolls away, it is
+     absent from print, and a reader who lands deep needs the citable identity
+     beside the statement, not only above it. */
+  it("states its collection-qualified identity beside the question", async () => {
+    render(await page({}));
+    expect(screen.getByText("Erdős Problems")).toBeVisible();
+    expect(screen.getByText("#321")).toBeVisible();
   });
 
   it.each(["contributions", "files", "timeline"] as const)("serves the flat %s tool", async (view) => {

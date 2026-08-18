@@ -139,11 +139,18 @@ describe("Problem tools", () => {
     expect(screen.getByText("Technical details")).toBeVisible();
   });
 
-  it("renders useful empty Contributions without inventing state", () => {
+  /* The ordinary case: 1,215 of 1,217 Problems have no Claim at all. An empty
+     panel was true and useless — the release still holds retained declarations
+     for this exact Problem, and that is what a reader came for. What it must
+     not do is dress source material up as a reviewed result. */
+  it("answers an empty Contributions view with retained source material", () => {
     render(<ProblemState state={{ ...state, claims: [], reviews: [], currentClaimId: null } as never} basePath="/problems/erdos-problems/321" />);
-    expect(screen.getByRole("heading", { name: "Contributions" })).toBeVisible();
-    expect(screen.getByRole("heading", { name: "No current contribution" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "What is known" })).toBeVisible();
+    expect(screen.getByText(/has not reviewed a Contribution/iu)).toBeVisible();
+    expect(screen.getByText(/Nothing below is a Vela Verification or Decision/iu)).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Retained declaration" })).toBeVisible();
     expect(screen.getByRole("link", { name: "Start a contribution" })).toHaveAttribute("href", "/problems/erdos-problems/321?view=workspace");
+    expect(screen.getByRole("link", { name: "Browse the source files" })).toHaveAttribute("href", "/problems/erdos-problems/321?view=files");
     expect(screen.queryByRole("heading", { name: "Other contributions" })).toBeNull();
   });
 

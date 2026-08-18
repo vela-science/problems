@@ -2,15 +2,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { projectionRefusal } from "@vela/projection-data/refusal";
 import { Alert, AlertDescription, AlertTitle } from "@vela/ui/components/alert";
-import { Badge } from "@vela/ui/components/badge";
 import { Button } from "@vela/ui/components/button";
-import { ScientificText } from "@vela/ui/vela/scientific-text";
 import { PageHero, PageShell } from "@vela/ui/vela/page-shell";
-import { decodeHtmlEntities } from "@vela/ui/lib/html-entities";
 import { LinkTabs } from "@/components/vela/link-tabs";
+import { ProblemHeader } from "@/components/vela/problem-header";
 import { ProblemState, type ProblemResearchView } from "@/components/vela/problem-state";
-import { ProblemAnswerStrip } from "@/components/vela/problem-summary";
 import { ProblemWorkspace } from "@/components/vela/problem-workspace";
+import { problemLabel, resolveProblemStatement, statementParagraphs } from "@/lib/problem-statement";
 import { authConfiguration, currentAccount } from "@/lib/auth";
 import { scientificProblemState } from "@/lib/scientific-state";
 
@@ -90,12 +88,12 @@ export async function ProblemPageView({ repository, problem, collectionName, rou
      The Workspace needs to know that, because otherwise the only control it
      offers is one that cannot work. */
   const accountsEnabled = authConfiguration().enabled;
-  const question = decodeHtmlEntities(
-    (state.problem.statement_kind === "prose" ? state.problem.statement?.trim() : "")
-    || state.source.summary?.trim() || state.problem.label || state.source.title,
-  );
-  const sourceOccurrences = state.sources?.occurrences ?? [];
-  const sourceCount = state.problem.source_count ?? new Set(sourceOccurrences.map((occurrence) => occurrence.source_id)).size;
+  /* The catalogue's label is a number, not a question. Where a source wrote
+     the question down, that text is what a search result and a shared link
+     should carry. */
+  const statement = resolveProblemStatement(state);
+  const question = statementParagraphs(statement).question || problemLabel(state);
+  const collectionHref = route.slice(0, route.lastIndexOf("/"));
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Question",
@@ -111,21 +109,7 @@ export async function ProblemPageView({ repository, problem, collectionName, rou
   return <PageShell as="article" archetype="problem" layout="canvas">
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
     <PageHero density="compact">
-      <div>
-        {/* The display serif carries language, not notation. A resolved formal
-            statement stays in the Question section in its own face; here the
-            catalogue's retained label stands, which is also what the `label`
-            kind already resolves to. */}
-        <h1 className="max-w-5xl text-display leading-tight"><ScientificText text={question} /></h1>
-        <div className="mt-5 flex flex-wrap items-center gap-2" aria-label="Problem metadata">
-          <ProblemAnswerStrip state={state} />
-          <span aria-hidden className="mx-1 hidden h-4 w-px bg-border sm:block" />
-          {(state.problem.tags ?? []).map((tag) => <Badge key={tag} variant="secondary">{tag}</Badge>)}
-          {(state.problem.oeis ?? []).filter((id) => /^A\d+$/u.test(id)).map((id) => <Button key={id} nativeButton={false} variant="link" size="sm" className="h-auto min-h-0 px-1" render={<a href={`https://oeis.org/${id}`} />}>{id}</Button>)}
-          {sourceCount ? <span className="text-meta text-muted-foreground">{sourceCount} {sourceCount === 1 ? "source" : "sources"}</span> : null}
-          {sourceOccurrences.some((occurrence) => occurrence.formal) ? <Badge variant="outline">formal declarations available</Badge> : null}
-        </div>
-      </div>
+      <ProblemHeader state={state} route={route} problemNumber={problem} collectionName={collectionName} collectionHref={collectionHref} />
     </PageHero>
     <div className="mt-3"><LinkTabs label="Problem tools" layoutId="problem-view" current={view} tabs={[
       { key: "contributions", href: route, label: "Contributions" },
