@@ -195,7 +195,13 @@ function ResearchFiles({ state, basePath, selectedFile, selectedDeclaration }: {
 
 export function ProblemResearch({ state, basePath, view, selectedFile, selectedDeclaration }: { state: State; basePath: string; view: ProblemResearchView; selectedFile?: string; selectedDeclaration?: string }) {
   return <>
-    <div className={`min-w-0 ${view === "contributions" || view === "timeline" ? "max-w-5xl space-y-12" : ""}`}>
+    {/* Every tool gets the page. Contributions and History were capped at
+        `max-w-5xl` inside a canvas shell, so they stranded a third of the
+        viewport while Files beside them ran full width — the same Problem
+        appeared to change page size when a reader switched tools. Reading
+        measure belongs to the prose that needs it, and the assertion, the
+        checks and the spine each already carry their own. */}
+    <div className={`min-w-0 ${view === "contributions" || view === "timeline" ? "space-y-12" : ""}`}>
       {view === "map" ? <CurrentContribution state={state} basePath={basePath} /> : null}
       {view === "contributions" ? <><CurrentContribution state={state} basePath={basePath} /><ProblemEvidence state={state} /></> : null}
       {view === "files" ? <ResearchFiles state={state} basePath={basePath} selectedFile={selectedFile} selectedDeclaration={selectedDeclaration} /> : null}
