@@ -386,6 +386,23 @@ export async function featuredProblemStates() {
   })));
 }
 
+/* Full state for a named handful of Problems.
+ *
+ * Discovery rows carry a catalogue record, and for most Problems that record's
+ * statement is Lean — accurate, and unreadable in a list. The written question
+ * lives on the source occurrences, which is a per-Problem read, so a surface
+ * that wants to show real questions asks for a few by name rather than
+ * resolving the whole catalogue. */
+export async function problemStatePreviews(
+  discoveries: ProblemDiscovery[],
+): Promise<{ discovery: ProblemDiscovery; state: NonNullable<ScientificProblemState> }[]> {
+  const resolved = await Promise.all(discoveries.map(async (discovery) => ({
+    discovery,
+    state: await scientificProblemState(discovery.repository, discovery.problem, discovery.releaseRoot),
+  })));
+  return resolved.filter((entry): entry is { discovery: ProblemDiscovery; state: NonNullable<ScientificProblemState> } => entry.state != null);
+}
+
 
 export async function recentScientificChanges(limit = 8) {
   const repositories = await allRepositories();

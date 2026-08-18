@@ -40,11 +40,19 @@ export const STATEMENT_BASIS_NOTE: Record<StatementBasis, string> = {
 
 /* Prefer the fullest thing a source actually wrote. A curated prose statement
  * outranks a library docstring, and a docstring outranks the Lean text, which
- * says the same thing in a language most readers cannot skim. Within one tier
- * the canonical occurrence wins, then a reviewed reference, then a bare number
- * match — and among equals, the longest docstring, which is the one that
- * states the problem rather than a variant of it. */
+ * says the same thing in a language most readers cannot skim. */
 const TIER: Record<StatementBasis, number> = { curated: 0, reviewed: 1, candidate: 2 };
+
+/* A formal library files the problem and its variants in one module:
+ * `Erdos1.erdos_1` states the question, `Erdos1.erdos_1.variants.real_valued`
+ * restates it for the reals, and `…variants.parts.i` narrows it further. Their
+ * docstrings are all real prose, and the variant's is often the longer one —
+ * ranking by length picked "A generalisation of the problem to sets A ⊆ (0,N]
+ * is proposed in [Er73]" as the statement of Erdős 1. Depth in the declaration
+ * path is what separates the question from a note about it. */
+function declarationDepth(occurrence: Occurrence): number {
+  return (occurrence.formal ? occurrence.native_id : "").split(".").length;
+}
 
 function docstringOf(occurrence: Occurrence): string | null {
   const text = occurrence.formal?.docstring?.trim();
@@ -73,7 +81,10 @@ export function resolveProblemStatement(state: State): ProblemStatement | null {
     .filter((occurrence) => docstringOf(occurrence) !== null)
     .sort((left, right) => {
       const tier = TIER[BASIS_BY_STATUS[left.occurrence_status]] - TIER[BASIS_BY_STATUS[right.occurrence_status]];
-      return tier !== 0 ? tier : (docstringOf(right)?.length ?? 0) - (docstringOf(left)?.length ?? 0);
+      if (tier !== 0) return tier;
+      const depth = declarationDepth(left) - declarationDepth(right);
+      if (depth !== 0) return depth;
+      return (docstringOf(right)?.length ?? 0) - (docstringOf(left)?.length ?? 0);
     });
 
   const best = documented[0];
@@ -131,4 +142,18 @@ export function statementParagraphs(statement: ProblemStatement | null): { quest
     .map((paragraph) => paragraph.replaceAll("\n", " ").trim())
     .filter(Boolean);
   return { question: paragraphs[0] ?? "", context: paragraphs.slice(1) };
+}
+
+/* A plain-text reading of a question, for places that need a string rather
+ * than typeset notation: a link's accessible name, a document title, a share
+ * preview. Screen readers announce a link by its name, and a list of Problems
+ * whose names are read as raw formulae is a list nobody can navigate. The
+ * typeset mathematics stays on the page for anyone reading it. */
+export function statementPlainText(text: string): string {
+  return text
+    .replaceAll(/\$\$([\s\S]+?)\$\$/gu, " $1 ")
+    .replaceAll(/(?<!\\)\$([^$\n]+?)\$/gu, " $1 ")
+    .replaceAll(/\\cite\{([^}]+)\}/gu, " [$1] ")
+    .replaceAll(/\s+/gu, " ")
+    .trim();
 }

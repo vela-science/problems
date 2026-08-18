@@ -4,10 +4,11 @@ import type { ProblemDiscovery } from "@/lib/scientific-state";
 
 vi.mock("server-only", () => ({}));
 
-const reads = vi.hoisted(() => ({ catalog: vi.fn(), changes: vi.fn() }));
+const reads = vi.hoisted(() => ({ catalog: vi.fn(), changes: vi.fn(), previews: vi.fn() }));
 vi.mock("@/lib/scientific-state", () => ({
   discoveredProblems: reads.catalog,
   recentScientificChanges: reads.changes,
+  problemStatePreviews: reads.previews,
 }));
 
 import HomePage from "./page";
@@ -48,10 +49,49 @@ function catalogue(): ProblemDiscovery[] {
   ];
 }
 
+/* Home shows real questions, so it needs the per-Problem state that carries
+   them — a discovery row's own statement is the collection's label for most of
+   the corpus. */
+function preview(number: string, question: string, status = "open") {
+  return {
+    discovery: problem(number),
+    state: {
+      repositoryName: "Vela Mathematics Program",
+      problem: { declared_status: status, label: `Erdős problem ${number}`, statement: null, statement_kind: "label", tags: [], oeis: [], source_count: 1 },
+      source: { title: `Erdős problem ${number}` },
+      claims: [],
+      locator: null,
+      sources: {
+        occurrences: [{
+          occurrence_key: `formal:${number}`,
+          source_id: "source:formal-conjectures",
+          source_label: "Formal Conjectures",
+          source_role: "formal_statement_library",
+          native_id: `Erdos${number}.erdos_${number}`,
+          native_kind: "formal_conjecture",
+          occurrence_status: "candidate_number_link",
+          locators: [],
+          summary: "True",
+          formal: { docstring: question, module: `FormalConjectures.ErdosProblems.${number}`, proof_present: false, proof_sorry_free: false },
+        }],
+        statements: [],
+      },
+    },
+  } as never;
+}
+
+function previews() {
+  return [
+    preview("94", "Suppose $n$ points determine a convex polygon.", "proved (Lean)"),
+    preview("321", "What is the largest $A$ with distinct subset sums?", "solved"),
+  ];
+}
+
 describe("Home", () => {
   it("gives a newcomer the product, next actions, and honest current coverage", async () => {
     reads.catalog.mockResolvedValue(catalogue());
     reads.changes.mockResolvedValue([]);
+    reads.previews.mockResolvedValue(previews());
     const { container } = render(await HomePage());
 
     expect(screen.getByRole("heading", { level: 1, name: "Find a problem. See what is known. Add evidence." })).toBeVisible();
@@ -70,6 +110,7 @@ describe("Home", () => {
   it("uses one prominent problem search that lands in the published collection", async () => {
     reads.catalog.mockResolvedValue(catalogue());
     reads.changes.mockResolvedValue([]);
+    reads.previews.mockResolvedValue(previews());
     render(await HomePage());
 
     const search = screen.getByRole("form", { name: "Find a problem" });
@@ -79,34 +120,44 @@ describe("Home", () => {
     expect(within(search).getByRole("button", { name: "Search" })).toHaveAttribute("type", "submit");
   });
 
-  it("keeps the three-step path compact and action-led", async () => {
+  /* Three steps of prose described the product; six real questions are the
+     product. A newcomer learns more from one Erdős statement than from being
+     told that they may search by number, topic or wording. */
+  it("opens with real questions rather than a description of the path", async () => {
     reads.catalog.mockResolvedValue(catalogue());
     reads.changes.mockResolvedValue([]);
+    reads.previews.mockResolvedValue(previews());
     render(await HomePage());
 
-    expect(screen.getByRole("link", { name: /Choose a question/iu })).toHaveAttribute("href", "/problems/erdos-problems");
-    expect(screen.getByRole("link", { name: /Read what is known/iu })).toHaveAttribute("href", "/problems/erdos-problems/94?view=contributions");
-    expect(screen.getAllByRole("link", { name: /Add a contribution/iu })[1]).toHaveAttribute("href", "/contribute");
+    expect(screen.getByRole("heading", { name: "Open a question" })).toBeVisible();
+    expect(screen.getByRole("link", { name: "Erdős problem 94: Suppose n points determine a convex polygon." }))
+      .toHaveAttribute("href", "/problems/erdos-problems/94");
+    expect(screen.getByRole("link", { name: /What is the largest A with distinct subset sums\?/iu }))
+      .toHaveAttribute("href", "/problems/erdos-problems/321");
+    expect(screen.queryByText("Choose a question")).toBeNull();
+    expect(screen.queryByText("From question to contribution")).toBeNull();
   });
 
   it("labels coverage and source status without turning them into ranking claims", async () => {
     reads.catalog.mockResolvedValue(catalogue());
     reads.changes.mockResolvedValue([]);
+    reads.previews.mockResolvedValue(previews());
     const { container } = render(await HomePage());
 
     expect(screen.getByText("Listed as open by source")).toBeVisible();
     expect(screen.getByText("With reviewed evidence")).toBeVisible();
-    expect(screen.getByRole("heading", { name: "Problems with reviewed evidence" })).toBeVisible();
-    expect(screen.getByRole("link", { name: /Statement for 94/iu })).toHaveAttribute("href", "/problems/erdos-problems/94?view=contributions");
+    expect(screen.getByText(/carry a Contribution this Repository has reviewed/iu)).toBeVisible();
     expect(container).not.toHaveTextContent(/priority|ranked|most important|central queue/iu);
   });
 
   it("states empty reviewed evidence and activity as ordinary absence", async () => {
     reads.catalog.mockResolvedValue([problem("1"), problem("2")]);
     reads.changes.mockResolvedValue([]);
+    reads.previews.mockResolvedValue([]);
     render(await HomePage());
 
-    expect(screen.getByText("No Problem has reviewed evidence in this release yet.")).toBeVisible();
+    expect(screen.getByText("No Problem in this release carries a reviewed Contribution yet.")).toBeVisible();
+    expect(screen.getByText("No Problem in this release has a retained question to preview.")).toBeVisible();
     expect(screen.getByText("No recent source updates are available.")).toBeVisible();
   });
 });

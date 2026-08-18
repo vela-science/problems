@@ -49,7 +49,29 @@ export function plainTextSegment(segment: string): string {
     .replaceAll("\\$", "$");
 }
 
+/* Retained source is quoted, not authored here, and some of it is malformed:
+   Formal Conjectures states Erdos 3 as "If $A \subset \mathbb{N} has $\sum
+   ... = \infty$, then must $A$ contain ..." — five dollar signs, one of them
+   missing its partner upstream.
+
+   Splitting on delimiters that do not pair makes the tokenizer open maths at
+   the wrong dollar and close it at the next one, so "has" is typeset as a
+   product of three variables and the rest of the sentence loses its notation.
+   A reader is then looking at a formula the source never wrote. Verbatim text
+   is the honest reading of a broken delimiter — the mistake stays visible and
+   stays the source's. */
+function delimitersPair(text: string): boolean {
+  const dollars = text.replaceAll("\\$", "").match(/\$/gu)?.length ?? 0;
+  if (dollars % 2 !== 0) return false;
+  const opens = text.match(/\\\[|\\\(/gu)?.length ?? 0;
+  const closes = text.match(/\\\]|\\\)/gu)?.length ?? 0;
+  return opens === closes;
+}
+
 export function ScientificText({ text }: { text: string }) {
+  if (!delimitersPair(text)) {
+    return <span className={styles.root}>{plainTextSegment(text)}</span>;
+  }
   const segments = text.split(tokenPattern).filter(Boolean);
   return (
     <span className={styles.root}>
