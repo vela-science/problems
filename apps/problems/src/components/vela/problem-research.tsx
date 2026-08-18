@@ -20,6 +20,7 @@ import {
   ItemTitle,
 } from "@vela/ui/components/item";
 import { AssertionText } from "@/components/vela/assertion-text";
+import { FormalConjecturesAudit } from "@/components/vela/formal-conjectures-audit";
 import { formalFilePath } from "@/components/vela/formal-statement-card";
 import { ProblemFiles, type FileEntry } from "@/components/vela/problem-files";
 import { WhatIsKnown } from "@/components/vela/problem-known";
@@ -198,7 +199,14 @@ export function ProblemResearch({ state, basePath, view, selectedFile, selectedD
       {view === "map" ? <CurrentContribution state={state} basePath={basePath} /> : null}
       {view === "contributions" ? <><CurrentContribution state={state} basePath={basePath} /><ProblemEvidence state={state} /></> : null}
       {view === "files" ? <ResearchFiles state={state} basePath={basePath} selectedFile={selectedFile} selectedDeclaration={selectedDeclaration} /> : null}
-      {view === "timeline" ? <ProblemHistory state={state} /> : null}
+      {view === "timeline" ? <>
+        <ProblemHistory state={state} />
+        {/* Upstream review of the source material itself. For a Problem with
+            no Contribution, this is the only change record that exists — and
+            it is where a semantic defect in a merged, approved pull request
+            becomes visible. It is source-reported, never a Vela Decision. */}
+        <FormalConjecturesAudit records={state.sourceAudits} />
+      </> : null}
     </div>
   </>;
 }
