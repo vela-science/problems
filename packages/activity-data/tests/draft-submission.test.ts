@@ -50,9 +50,9 @@ describe("vela.submission.v3 drafts", () => {
       .toBe("sha256:c931f3a454c2a6544ac08e40adb2e0eb77f71131b7593957de8ff88f748d7318");
     expect(provenance.files[0].sha256).toBe(schemaRoot);
     expect(provenance).toMatchObject({
-      vela_version: "0.977.0",
-      vela_tag: "v0.977.0",
-      vela_commit: "00d567c879138733ba22949efc985b54578c148b",
+      vela_version: "0.977.2",
+      vela_tag: "v0.977.2",
+      vela_commit: "c1a34373c2cdd937ed34fd128174a66fa12be71a",
     });
     const exported = createSubmissionDraftExport(fixture());
     expect(exported.payload.schema).toBe("vela.submission.v3");

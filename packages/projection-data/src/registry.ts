@@ -80,7 +80,10 @@ export const repositoryRegistry = registrySchema.parse({
          history, not a second readable protocol generation. */
       repository_id: "3d012325-3768-4b95-a385-c94e9f2a57a6",
       directory: "math",
-      branch: "submission-v3",
+      /* Submission v3 is now the source repository's canonical main branch.
+         The migration branch was removed after activation; retaining it here
+         makes clean acquisition fail before any bytes are read. */
+      branch: "main",
       canonical_problem_namespace: "erdos-problems",
       access: "public",
       remotes: ["https://github.com/vela-science/math.git"],

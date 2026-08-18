@@ -379,6 +379,7 @@ describe("Math source projection", () => {
       limitations: ["Occurrence grouping does not establish statement identity or semantic equivalence."],
     };
     expect(reviewedClaimSubjectOccurrences(corrected, packet)).toEqual([formal, theta]);
+    expect(reviewedClaimSubjectOccurrences({ ...corrected, standing: "superseded" }, packet)).toEqual([formal, theta]);
 
     expect(() => reviewedClaimSubjectOccurrences(corrected, { ...packet, authority_effect: "standing" }))
       .toThrow(/authority effect/u);
@@ -397,7 +398,7 @@ describe("Math source projection", () => {
       occurrence_resolution: { ...packet.occurrence_resolution, semantic_equivalence: "preserved" },
     })).toThrow(/collapses unresolved semantics/u);
     expect(() => reviewedClaimSubjectOccurrences({ ...corrected, standing: "unassessed" }, packet))
-      .toThrow(/only an accepted corrected Claim/u);
+      .toThrow(/only an accepted or superseded corrected Claim/u);
   });
 
   /* A pin says "these are the occurrences I reviewed". Rooting it in the whole

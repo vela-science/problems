@@ -105,7 +105,10 @@ const REVIEWED_WHOLE_CONFIG_ROOTS = new Map([
 export function reviewedClaimSubjectOccurrences(claim, packet) {
   assert(OCCURRENCE_PACKET_SCHEMAS.has(packet?.schema), `${claim.claim_id}: unsupported current Claim subject packet`);
   assert(packet.authority_effect === "none", `${claim.claim_id}: Claim occurrence packet has authority effect`);
-  assert(claim.standing === "accepted", `${claim.claim_id}: only an accepted corrected Claim may bind a canonical Problem`);
+  assert(
+    claim.standing === "accepted" || claim.standing === "superseded",
+    `${claim.claim_id}: only an accepted or superseded corrected Claim may bind a canonical Problem`,
+  );
   const correctionRelations = (claim.record?.relations ?? []).filter(({ kind }) => kind === "corrects" || kind === "supersedes");
   assert(correctionRelations.length === 1 && correctionRelations[0].kind === "corrects", `${claim.claim_id}: Claim occurrence packet requires one exact corrects relation`);
   assert(packet.successor?.relation === "corrects" && packet.successor?.assertion === claim.assertion, `${claim.claim_id}: current correction packet successor drift`);
