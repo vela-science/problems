@@ -49,16 +49,28 @@ function metadataString(state: State, key: string) {
   return typeof value === "string" && value.trim() ? value.trim() : null;
 }
 
-function exactResultHeadline(assertion: string) {
+export function exactResultHeadline(assertion: string) {
   const match = assertion.match(/\bestablishes\s+([^,]+),\s+which/u);
-  if (!match?.[1]) return null;
-  return `${match[1].charAt(0).toUpperCase()}${match[1].slice(1)}`;
+  const proved = assertion.match(/\bproves that\s+(.+?),\s+matching\b/u);
+  const headline = match?.[1] ?? proved?.[1];
+  if (!headline) return null;
+  return `${headline.charAt(0).toUpperCase()}${headline.slice(1)}`;
 }
 
-function exactUnresolvedSentence(assertion: string) {
+export function exactResultLimitation(assertion: string) {
   return assertion
     .split(/(?<=[.!?])\s+/u)
     .find((sentence) => /does not establish|not a proof/u.test(sentence)) ?? null;
+}
+
+export function compactResultLimitation(assertion: string) {
+  const sentence = exactResultLimitation(assertion);
+  if (!sentence) return null;
+  const candidate = sentence.match(/\b((?:supplies|this is) a candidate answer)[^,]*,\s+(not a proof[^.]*\.)/iu);
+  if (candidate) return `${candidate[1].charAt(0).toUpperCase()}${candidate[1].slice(1)}, ${candidate[2]}`;
+  const scoped = sentence.match(/\b(this (?:identity|result|contribution) does not establish[^.]*\.)/iu);
+  if (scoped) return `${scoped[1].charAt(0).toUpperCase()}${scoped[1].slice(1)}`;
+  return sentence;
 }
 
 function formatSourceDate(value: string | null) {
@@ -188,7 +200,7 @@ export function ProblemOverviewReference({ state, route }: { state: State; route
   const review = currentReview(state);
   const checks = review?.verification_records ?? [];
   const headline = current ? exactResultHeadline(current.assertion) : null;
-  const unresolved = current ? exactUnresolvedSentence(current.assertion) : null;
+  const unresolved = current ? exactResultLimitation(current.assertion) : null;
   const formal = state.sources.occurrences.filter((occurrence) => occurrence.formal && occurrence.summary?.trim());
   const reviewedFormal = formal.filter((occurrence) => occurrence.formal?.category_label?.toLowerCase() !== "open");
   const landmarks = (reviewedFormal.length ? reviewedFormal : formal).slice(0, 2);

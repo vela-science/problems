@@ -32,10 +32,16 @@ routes are durable contextual destinations, not primary navigation.
 ## Home
 
 Home is the product activation screen, not a marketing hero. Search is the
-dominant object. The first viewport also provides Browse problems, Add a
-contribution, and the exact one-collection truth. Below it, use real question
-rows, one compact collection row, and meaningful recent activity. Do not repeat
-the same availability or coverage facts in several sections.
+dominant object. The first viewport also provides Browse problems, Add
+contribution, and one compact row stating the exact one-collection truth.
+Below it, use three or four real question rows and the two durable reviewed
+Results. Link once to all Updates. Do not repeat collection analytics, raw
+source activity, availability, or contribution onboarding on Home.
+
+The global sidebar is Home, Problems, signed-in My work, Updates, and a
+separate Add contribution action. Header command search owns Search. Research
+map, exact records, and release details remain reachable contextually rather
+than competing in the global spine.
 
 ## Collection
 

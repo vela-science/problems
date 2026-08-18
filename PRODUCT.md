@@ -83,12 +83,15 @@ collections without accepted source-owned identities and a collection profile.
 
 Primary navigation:
 
+- Home
 - Problems
-- Research map
-- Updates
 - My work when signed in
-- Search
-- the product mark for Home
+- Updates
+- Add contribution as a visually separate action
+
+The product mark also returns Home. Search belongs to the header command
+control. Research map is contextual and command-searchable. Release details
+belong under About and the exact well-known manifest, not in task navigation.
 
 The canonical Problem modes are:
 
@@ -131,8 +134,10 @@ does not accept a contribution. A signed object proves attribution, not truth.
 ### Discover
 
 Home is the activation front door. Search is the dominant object, followed by
-real Problems worth opening, the one published collection, and meaningful
-recent changes. It is not a manifesto, protocol guide, or KPI dashboard.
+one compact published-collection row, three or four real Problems worth
+opening, and the latest durable reviewed Results. A single link reaches all
+Updates. Home does not host the raw source-update feed, collection analytics,
+or a second contribution-onboarding footer.
 
 Collection pages are familiar directories: concise identity, truthful coverage,
 useful filters, bounded pagination, and question-led rows. Numeric identity is

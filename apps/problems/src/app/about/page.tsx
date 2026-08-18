@@ -53,6 +53,11 @@ export default function AboutPage() {
           <li>Discovery and overlap suggestions help readers choose what to inspect; they are not acceptance decisions.</li>
         </InformationList>
         <p>Vela is the underlying system for exact scientific state and inheritance. problems.science is its public, task-focused reading and contribution product.</p>
+        <details className="mt-5 rounded-lg border px-4 py-3 text-meta">
+          <summary className="cursor-pointer font-medium text-foreground">Technical release details</summary>
+          <p className="mt-3">The current source revisions, generator version, and projection roots are published in the exact site manifest.</p>
+          <a href="/.well-known/vela-site.json" className="mt-2 inline-block font-medium text-primary underline underline-offset-4">Open exact release manifest</a>
+        </details>
       </InformationSection>
     </PublicInformationPage>
   );

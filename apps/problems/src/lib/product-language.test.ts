@@ -72,33 +72,24 @@ describe("current product language", () => {
 
   it("separates the user-intent product navigation from contextual scientific records", () => {
     const sidebar = source("components/vela/app-sidebar.tsx");
-    for (const label of ["Problems", "Updates", "My work", "Search", "Assertions", "Contribution handoff", "Proposed changes"]) {
+    for (const label of ["Home", "Problems", "Updates", "My work"]) {
       expect(sidebar).toContain(`label: "${label}"`);
     }
+    expect(sidebar).toContain("Add contribution");
+    expect(sidebar).toContain("Erdős Problems");
     expect(sidebar).not.toContain('label: "Hubs"');
     expect(sidebar).not.toContain('label: "Review"');
-    /* The spine carries the two public nouns and their pulse; record routes
-       reach the reader contextually rather than from here. */
-    expect(sidebar).not.toContain('label: "Repositories"');
-    expect(sidebar).not.toContain('label: "Sources"');
+    /* Search stays in the command control; scientific records and maps are
+       contextual destinations rather than permanent global navigation. */
+    for (const label of ["Search", "Research map", "Release details", "Repositories", "Sources", "Assertions", "Proposed changes"]) {
+      expect(sidebar).not.toContain(`label: "${label}"`);
+    }
     expect(sidebar).not.toContain("function problemSections");
     expect(source("components/vela/problem-page.tsx")).toContain("<ProblemReferenceTabs");
     expect(source("components/vela/problem-overview-reference.tsx")).toContain('aria-label="Problem sections"');
-    /* Group headings are named after the protocol's own axes, so a heading can
-       never be mistaken for a destination that is missing its page. */
-    for (const axis of ["Exact State records", "Contribution", "Repository provenance"]) {
-      expect(sidebar).toContain(`label: "${axis}"`);
-    }
-    /* One navigation system: the sidebar shows release destinations OR one
-       Repository's sections, never both, so no label means two scopes at once. */
-    expect(sidebar).toContain("function releaseDestinations");
-    expect(sidebar).toContain("function repositorySections");
     /* The repository tab bar owns section naming; the header carries only the
        ancestor it does not provide. */
     expect(source("components/vela/app-header.tsx")).not.toContain('repositoryCollectionTitles');
-    /* Section navigation lives in the contextual sidebar now; the repository tab
-       bar is gone, so no label appears at two scopes on one screen. */
-    expect(source("components/vela/app-sidebar.tsx")).toContain('label: "Reproduce"');
     expect(source("app/repositories/[slug]/claims/page.tsx")).toContain(
       'RouteTitle title="Assertions"',
     );

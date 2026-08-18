@@ -29,7 +29,9 @@ describe("AppShell accessibility boundary", () => {
     expect(sidebar).not.toContain("<Suspense");
     expect(sidebar).not.toContain("useSearchParams()");
     expect(sidebar).not.toContain("ProblemDestinationGroups");
-    expect(sidebar).toContain("<DestinationGroups");
+    expect(sidebar).toContain('label: "Home"');
+    expect(sidebar).toContain('label: "Problems"');
+    expect(sidebar).toContain('label: "Updates"');
   });
 
   it("gives the skip-link target a proven programmatic focus destination", () => {
@@ -38,8 +40,6 @@ describe("AppShell accessibility boundary", () => {
         publishedRepositories={[]}
         problemCollections={[{ namespace: "erdos-problems", name: "Erdős Problems" }]}
         projectionRoot={`sha256:${"a".repeat(64)}`}
-        activationTime="2026-08-10T12:00:00.000Z"
-        confirmedAt="2026-08-10T13:00:00.000Z"
         authEnabled={false}
       >
         <p>Published state</p>

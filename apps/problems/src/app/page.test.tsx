@@ -4,10 +4,9 @@ import type { ProblemDiscovery } from "@/lib/scientific-state";
 
 vi.mock("server-only", () => ({}));
 
-const reads = vi.hoisted(() => ({ catalog: vi.fn(), changes: vi.fn(), previews: vi.fn() }));
+const reads = vi.hoisted(() => ({ catalog: vi.fn(), previews: vi.fn() }));
 vi.mock("@/lib/scientific-state", () => ({
   discoveredProblems: reads.catalog,
-  recentScientificChanges: reads.changes,
   problemStatePreviews: reads.previews,
 }));
 
@@ -34,7 +33,7 @@ function problem(number: string, overrides: Partial<ProblemDiscovery["record"]> 
       declared_status: "open",
       local_standing: null,
       local_assessed_at: null,
-      formalized: false,
+      formalized: true,
       source_count: 1,
       tags: [],
       ...overrides,
@@ -51,30 +50,53 @@ function catalogue(): ProblemDiscovery[] {
   ];
 }
 
-/* Home shows real questions, so it needs the per-Problem state that carries
-   them — a discovery row's own statement is the collection's label for most of
-   the corpus. */
-function preview(number: string, question: string, status = "open") {
+function preview(discovery: ProblemDiscovery, question: string, reviewedAt?: string) {
+  const reviewed = Boolean(reviewedAt);
+  const claimId = reviewed ? `vcl_${discovery.problem.padStart(64, "0")}` : null;
+  const assertion = discovery.problem === "321"
+    ? "Commit abc proves that the candidate has the retained asymptotic bound, matching the scoped target. This is a candidate answer, not a proof of the full Problem."
+    : "The reviewed package establishes a sharp upper bound, which matches the scoped formal target. It does not establish the full Problem.";
   return {
-    discovery: problem(number),
+    discovery,
     state: {
+      repositorySlug: "math",
       repositoryName: "Vela Mathematics Program",
-      problem: { declared_status: status, label: `Erdős problem ${number}`, statement: null, statement_kind: "label", tags: [], oeis: [], source_count: 1 },
-      source: { title: `Erdős problem ${number}` },
-      claims: [],
+      problem: { declared_status: discovery.record.declared_status, label: `Erdős problem ${discovery.problem}`, statement: null, statement_kind: "label", tags: [], oeis: [], source_count: 1 },
+      source: { title: `Erdős problem ${discovery.problem}` },
+      currentClaimId: claimId,
+      claims: reviewed ? [{
+        id: claimId,
+        assertion,
+        assertion_type: "formalization_result",
+        standing: "accepted",
+        evidence_count: 2,
+        created: "2026-08-14T20:00:00.000Z",
+        source_bindings: [],
+        conditions: [],
+      }] : [],
+      reviews: reviewed ? [{
+        proposal_id: `vpr_${discovery.problem}`,
+        status: "accepted",
+        claim: assertion,
+        reviewed_at: reviewedAt,
+        reviewed_by: "agent:decision",
+        decision_actor_class: "agent",
+        producer_package: { producer_actor: "agent:research", submitted_at: "2026-08-15T15:00:00.000Z" },
+        verification_records: [{ outcome: "pass", property: "scope_fidelity" }],
+      }] : [],
       locator: null,
       sources: {
         occurrences: [{
-          occurrence_key: `formal:${number}`,
+          occurrence_key: `formal:${discovery.problem}`,
           source_id: "source:formal-conjectures",
           source_label: "Formal Conjectures",
           source_role: "formal_statement_library",
-          native_id: `Erdos${number}.erdos_${number}`,
+          native_id: `Erdos${discovery.problem}.erdos_${discovery.problem}`,
           native_kind: "formal_conjecture",
           occurrence_status: "candidate_number_link",
           locators: [],
           summary: "True",
-          formal: { docstring: question, module: `FormalConjectures.ErdosProblems.${number}`, proof_present: false, proof_sorry_free: false },
+          formal: { docstring: question, module: `FormalConjectures.ErdosProblems.${discovery.problem}`, proof_present: false, proof_sorry_free: false },
         }],
         statements: [],
       },
@@ -83,83 +105,77 @@ function preview(number: string, question: string, status = "open") {
 }
 
 function previews() {
+  const catalog = catalogue();
   return [
-    preview("94", "Suppose $n$ points determine a convex polygon.", "proved (Lean)"),
-    preview("321", "What is the largest $A$ with distinct subset sums?", "solved"),
+    preview(catalog.find((item) => item.problem === "94")!, "Suppose n points determine a convex polygon.", "2026-08-14T16:04:07.000Z"),
+    preview(catalog.find((item) => item.problem === "321")!, "What is the largest A with distinct subset sums?", "2026-08-16T16:04:07.000Z"),
+    preview(catalog.find((item) => item.problem === "1")!, "How large must N be for distinct subset sums?"),
+    preview(catalog.find((item) => item.problem === "2")!, "Can the lower bound be improved?"),
   ];
 }
 
 describe("Home", () => {
-  it("gives a newcomer the product, next actions, and honest current coverage", async () => {
+  it("makes discovery the dominant first task and states the one-collection truth once", async () => {
     reads.catalog.mockResolvedValue(catalogue());
-    reads.changes.mockResolvedValue([]);
     reads.previews.mockResolvedValue(previews());
     const { container } = render(await HomePage());
 
-    expect(screen.getByRole("heading", { level: 1, name: "Find scientific problems" })).toBeVisible();
-    expect(screen.getByText(/find scientific questions, understand the evidence around them/iu)).toBeVisible();
+    expect(screen.getByRole("heading", { level: 1, name: "Open problems and the evidence around them" })).toBeVisible();
+    expect(screen.getByText("Find a scientific question, read what is known, and add a result.")).toBeVisible();
     expect(screen.getByRole("link", { name: /browse problems/iu })).toHaveAttribute("href", "/problems");
-    expect(screen.getAllByRole("link", { name: "Add a contribution" })[0]).toHaveAttribute("href", "/contribute");
+    expect(screen.getByRole("link", { name: "Add contribution" })).toHaveAttribute("href", "/contribute");
 
-    const availability = screen.getByText("Available today").parentElement!;
-    expect(availability).toHaveTextContent("One published collection with 14 questions.");
-    expect(within(availability).getByRole("link", { name: "Erdős Problems" })).toHaveAttribute("href", "/problems/erdos-problems");
-
-    const hero = container.querySelector(".vela-page-hero")!;
-    expect(hero).not.toHaveTextContent(/Repository|Standing|authority|roots|records/iu);
+    expect(screen.getAllByText("Erdős Problems")).toHaveLength(1);
+    expect(screen.getByText("14 published Problems")).toBeVisible();
+    expect(container.querySelector(".vela-page-hero")).not.toHaveTextContent(/Repository|Standing|authority|roots|records/iu);
   });
 
-  it("uses one prominent problem search that lands in the published collection", async () => {
+  it("uses one prominent global Problem search", async () => {
     reads.catalog.mockResolvedValue(catalogue());
-    reads.changes.mockResolvedValue([]);
     reads.previews.mockResolvedValue(previews());
     render(await HomePage());
 
     const search = screen.getByRole("form", { name: "Find a problem" });
-    expect(search).toHaveAttribute("action", "/problems/erdos-problems");
+    expect(search).toHaveAttribute("action", "/search");
     expect(search).toHaveAttribute("method", "get");
     expect(within(search).getByRole("searchbox", { name: "Find a problem" })).toHaveAttribute("name", "q");
     expect(within(search).getByRole("button", { name: "Search" })).toHaveAttribute("type", "submit");
   });
 
-  /* Three steps of prose described the product; six real questions are the
-     product. A newcomer learns more from one Erdős statement than from being
-     told that they may search by number, topic or wording. */
-  it("opens with real questions rather than a description of the path", async () => {
+  it("shows four useful Problems and the two durable reviewed Results", async () => {
     reads.catalog.mockResolvedValue(catalogue());
-    reads.changes.mockResolvedValue([]);
     reads.previews.mockResolvedValue(previews());
     render(await HomePage());
 
     expect(screen.getByRole("heading", { name: "Problems to explore" })).toBeVisible();
-    expect(screen.getByRole("link", { name: "Erdős problem 94: Suppose n points determine a convex polygon." }))
-      .toHaveAttribute("href", "/problems/erdos-problems/94");
-    expect(screen.getByRole("link", { name: /What is the largest A with distinct subset sums\?/iu }))
-      .toHaveAttribute("href", "/problems/erdos-problems/321");
-    expect(screen.queryByText("Choose a question")).toBeNull();
-    expect(screen.queryByText("From question to contribution")).toBeNull();
+    expect(screen.getAllByRole("link", { name: /^Erdős problem .*:/u })).toHaveLength(4);
+    expect(screen.getByRole("heading", { name: "Reviewed Results" })).toBeVisible();
+    expect(screen.getByRole("link", { name: "Open reviewed Result for Erdős problem 94" })).toHaveAttribute("href", "/problems/erdos-problems/94?view=results");
+    expect(screen.getByRole("link", { name: "Open reviewed Result for Erdős problem 321" })).toHaveAttribute("href", "/problems/erdos-problems/321?view=results");
+    expect(screen.getAllByText("Accepted by Vela Mathematics Program")).toHaveLength(2);
+    expect(screen.getByText("It does not establish the full Problem.")).toBeVisible();
+    expect(screen.getByText("This is a candidate answer, not a proof of the full Problem.")).toBeVisible();
+    expect(screen.getAllByRole("link", { name: /^Open reviewed Result/u }).map((link) => link.getAttribute("aria-label"))).toEqual([
+      "Open reviewed Result for Erdős problem 321",
+      "Open reviewed Result for Erdős problem 94",
+    ]);
+    expect(screen.getByRole("link", { name: "All updates" })).toHaveAttribute("href", "/activity");
   });
 
-  it("labels coverage and source status without turning them into ranking claims", async () => {
+  it("does not repeat collection analytics, raw updates, or contribution onboarding", async () => {
     reads.catalog.mockResolvedValue(catalogue());
-    reads.changes.mockResolvedValue([]);
     reads.previews.mockResolvedValue(previews());
     const { container } = render(await HomePage());
 
-    expect(screen.getAllByText("Open per source")).toHaveLength(2);
-    expect(screen.getByText("Reviewed Results")).toBeVisible();
-    expect(screen.getByText("With Repository-reviewed evidence")).toBeVisible();
-    expect(container).not.toHaveTextContent(/priority|ranked|most important|central queue/iu);
+    expect(container).not.toHaveTextContent(/Recently updated|Collection coverage|Open per source|Import from GitHub|Have evidence to add|Available today/iu);
   });
 
-  it("states empty reviewed evidence and activity as ordinary absence", async () => {
+  it("renders compact honest absences", async () => {
     reads.catalog.mockResolvedValue([problem("1"), problem("2")]);
-    reads.changes.mockResolvedValue([]);
     reads.previews.mockResolvedValue([]);
     render(await HomePage());
 
-    expect(screen.getByText("No Problem in this release has a reviewed Result yet.")).toBeVisible();
     expect(screen.getByText("No Problem in this release has a retained question to preview.")).toBeVisible();
-    expect(screen.getByText("No recent source updates are available.")).toBeVisible();
+    expect(screen.getByText("No reviewed Result is published in this release.")).toBeVisible();
   });
 });

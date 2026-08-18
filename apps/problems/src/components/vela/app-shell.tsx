@@ -18,16 +18,12 @@ export function AppShell({
   publishedRepositories,
   problemCollections,
   projectionRoot,
-  activationTime,
-  confirmedAt,
   authEnabled,
 }: {
   children: React.ReactNode;
   publishedRepositories: PublishedRepository[];
   problemCollections: PublishedProblemCollection[];
   projectionRoot: string;
-  activationTime: string;
-  confirmedAt?: string | null;
   authEnabled: boolean;
 }) {
   return (
@@ -40,12 +36,7 @@ export function AppShell({
             className="h-svh min-w-0 overflow-y-hidden print:block print:h-auto print:overflow-visible print:bg-background"
             style={{ "--sidebar-width": "12.5rem", "--sidebar-width-icon": "3rem" } as CSSProperties}
           >
-            <AppSidebar
-              repositories={publishedRepositories}
-              projectionRoot={projectionRoot}
-              activationTime={activationTime}
-              confirmedAt={confirmedAt}
-            />
+            <AppSidebar />
             <SidebarInset
               id="main-content"
               tabIndex={-1}

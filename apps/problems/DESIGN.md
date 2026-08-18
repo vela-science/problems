@@ -10,7 +10,7 @@ application: problems
 
 | Surface | Dominant composition | Supporting data |
 | --- | --- | --- |
-| Home | search + discovery list | one-collection truth, questions, activity |
+| Home | search + discovery list | one collection row, questions, reviewed Results |
 | Global Problems | collection directory | published collections only |
 | Erdős collection | filters + Problem rows | exact count, source status, formal/review coverage |
 | Problem Overview | question + current Result | scope, checks, landmarks, representations |
@@ -54,9 +54,10 @@ targets, no current Result, partial sources, and corrected history.
 ### Home
 
 Use one concise heading, one sentence, a prominent search field, and two actions.
-Place the exact availability statement close to search. Follow with question
-rows and a compact collection/activity composition. Remove marketing banners,
-repeated onboarding labels, and duplicated coverage explanations.
+Place one compact published-collection row close to search. Follow with three
+or four question rows and the two durable reviewed Results. Keep one small link
+to all Updates. Remove raw update feeds, Home collection charts, marketing
+banners, repeated onboarding labels, and duplicated coverage explanations.
 
 ### Collection
 

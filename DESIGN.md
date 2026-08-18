@@ -187,8 +187,12 @@ Every route has one visually dominant object.
 
 ## Shell and navigation
 
-The sidebar owns global navigation. Use the mark, a short product label, familiar
-icons, clear selected state, and the minimum necessary account controls. The
+The sidebar owns Home, Problems, signed-in My work, Updates, and one visually
+separate Add contribution action. Show the current published collection as a
+compact child of Problems only where that branch is relevant. Search belongs
+to the header command control; maps, exact records, and release details stay
+contextual. Use the mark, familiar icons, clear selected state, and the
+minimum necessary account controls. The
 main header owns collection-aware breadcrumbs, command search, notifications,
 theme, and account entry. Do not repeat the breadcrumb identity inside a large
 route banner.

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
 import Script from "next/script";
-import { allRepositories, projectionManifest, projectionConfirmedAt } from "@vela/projection-data";
+import { allRepositories, projectionManifest } from "@vela/projection-data";
 import { AppShell } from "@/components/vela/app-shell";
 import { authConfiguration } from "@/lib/auth";
 import { publishedProblemCollections } from "@/lib/published-problem-collections";
@@ -46,9 +46,6 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     allRepositories(),
     projectionManifest(),
   ]);
-  /* Scoped to the root this page serves, so a pointer that moved under the build
-     cannot date a different release. */
-  const confirmedAt = await projectionConfirmedAt(manifest.release_root);
   const authEnabled = authConfiguration().enabled;
   const publishedRepositories = repositories.map((repository) => ({
     slug: repository.slug,
@@ -74,8 +71,6 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
           publishedRepositories={publishedRepositories}
           problemCollections={publishedProblemCollections}
           projectionRoot={manifest.release_root}
-          activationTime={manifest.activation_time}
-          confirmedAt={confirmedAt}
           authEnabled={authEnabled}
         >
           {children}

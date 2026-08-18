@@ -80,6 +80,10 @@
 @media print {
   [data-slot="sidebar"], [data-slot="sidebar-trigger"] { display: none !important; }
   body, [data-slot="sidebar-inset"], pre { background: Canvas !important; color: CanvasText !important; }
+  /* Interactive rows borrow a small negative margin for full-width hover
+     affordance. Printed pages have no hover state, and that margin otherwise
+     creates an 8px horizontal overflow at the page edge. */
+  .vela-object-row { margin-inline: 0 !important; }
   details::details-content { display: block !important; content-visibility: visible !important; }
   .vela-product-hero,
   .vela-collection-hero,
