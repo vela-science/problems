@@ -9,6 +9,33 @@ vi.mock("@/lib/scientific-state", () => ({
   problemDiscoveryCollections: (catalog: Array<Record<string, unknown>>) => [{
     key: "erdos-problems", name: "Erdős Problems", problemCount: catalog.length,
   }],
+  /* Starting points lead with the question, which is a per-Problem read. */
+  problemStatePreviews: async (discoveries: Array<{ problem: string; canonicalPath: string; repository: string }>) =>
+    discoveries.map((discovery) => ({
+      discovery,
+      state: {
+        repositoryName: "Vela Mathematics Program",
+        problem: { declared_status: "open", label: `Erdős problem ${discovery.problem}`, statement: null, statement_kind: "label" },
+        source: { title: `Erdős problem ${discovery.problem}` },
+        claims: [],
+        locator: null,
+        sources: {
+          occurrences: [{
+            occurrence_key: `formal:${discovery.problem}`,
+            source_id: "source:formal-conjectures",
+            source_label: "Formal Conjectures",
+            source_role: "formal_statement_library",
+            native_id: `Erdos${discovery.problem}.erdos_${discovery.problem}`,
+            native_kind: "formal_conjecture",
+            occurrence_status: "candidate_number_link",
+            locators: [],
+            summary: "True",
+            formal: { docstring: `Question for ${discovery.problem}`, module: "M", proof_present: false, proof_sorry_free: false },
+          }],
+          statements: [],
+        },
+      },
+    })),
 }));
 
 import ProblemsPage, { metadata } from "./page";
@@ -38,7 +65,8 @@ describe("global Problems entry", () => {
     expect(screen.getByRole("heading", { level: 1, name: "Problems" })).toBeInTheDocument();
     expect(screen.getByText(/current release contains one collection/u)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /Browse Erdős Problems/u })).toHaveAttribute("href", "/problems/erdos-problems");
-    expect(screen.getByText("Erdős Problems · #321")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Erdős problem 321: Question for 321" }))
+      .toHaveAttribute("href", "/problems/erdos-problems/321");
   });
 
   it("preserves old directory query links at the collection address", async () => {
