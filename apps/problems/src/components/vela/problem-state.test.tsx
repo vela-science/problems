@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import type { ScientificProblemState } from "@/lib/scientific-state";
 import { ProblemState } from "./problem-state";
@@ -104,17 +104,26 @@ describe("Problem tools", () => {
     expect(screen.queryByText(/similar|possible duplicate/iu)).toBeNull();
   });
 
+  /* The tree is built from the module paths inside the declarations, because
+     the projection retains no directory listing. Directory segments are
+     structure, not links: only a file that actually holds a declaration can be
+     selected, and the selected file is named again over the preview so the
+     reader can see what they are looking at without tracing the tree. */
   it("uses a file tree and one selected retained declaration", () => {
     render(<ProblemState state={state} basePath="/problems/erdos-problems/321" researchView="files" />);
     expect(screen.getByRole("heading", { name: "Files" })).toBeVisible();
-    expect(screen.getByText("321.lean")).toBeVisible();
-    expect(screen.getByText("erdos_321")).toBeVisible();
+
+    const tree = screen.getByRole("navigation", { name: "Public Problem files" });
+    expect(within(tree).getByRole("link", { name: /321\.lean/u })).toHaveAttribute(
+      "href",
+      expect.stringContaining("view=files&file="),
+    );
+    expect(within(tree).getByRole("link", { name: /erdos_321/u }).getAttribute("href")).not.toContain("%00");
+    expect(within(tree).getAllByText(/Retained excerpts/u).length).toBeGreaterThan(0);
+
     expect(screen.getByText("retained declaration")).toBeVisible();
     expect(screen.getByRole("link", { name: "Open exact source" })).toHaveAttribute("href", "https://example.test/blob/321.lean");
     expect(screen.getByText("1 of 1")).toBeVisible();
-    expect(screen.getAllByText(/Retained excerpts/u).length).toBeGreaterThan(0);
-    expect(screen.getByText("erdos-problems")).toBeVisible();
-    expect(screen.getByRole("link", { name: "erdos_321" }).getAttribute("href")).not.toContain("%00");
   });
 
   it("fails closed to retained source text when no file bytes or declaration exist", () => {

@@ -8,7 +8,6 @@ import {
   SourceCodeIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Alert, AlertDescription, AlertTitle } from "@vela/ui/components/alert";
 import { Badge } from "@vela/ui/components/badge";
 import { Button } from "@vela/ui/components/button";
 import {
@@ -21,8 +20,9 @@ import {
   ItemTitle,
 } from "@vela/ui/components/item";
 import { AssertionText } from "@/components/vela/assertion-text";
+import { formalFilePath } from "@/components/vela/formal-statement-card";
+import { ProblemFiles, type FileEntry } from "@/components/vela/problem-files";
 import { WhatIsKnown } from "@/components/vela/problem-known";
-import { FormalStatementCard, formalFilePath } from "@/components/vela/formal-statement-card";
 import { ProblemEvidence } from "@/components/vela/problem-evidence";
 import { ProblemHistory } from "@/components/vela/problem-history";
 import { currentReview } from "@/components/vela/problem-provenance";
@@ -33,9 +33,6 @@ import type { ScientificProblemState } from "@/lib/scientific-state";
 type State = NonNullable<ScientificProblemState>;
 type SourceOccurrence = State["sources"]["occurrences"][number];
 type SourceStatement = State["sources"]["statements"][number];
-type FileEntry =
-  | { kind: "formal"; path: string; records: SourceOccurrence[] }
-  | { kind: "statements"; path: string; records: SourceStatement[] };
 
 function humanize(value: string | null | undefined, fallback = "Not recorded") {
   return value?.replaceAll("_", " ") || fallback;
@@ -180,52 +177,19 @@ function ResearchFiles({ state, basePath, selectedFile, selectedDeclaration }: {
       )))
     : null;
   const selected = selectedByRecord ?? entries.find((entry) => entry.path === selectedFile) ?? entries[0] ?? null;
-  const selectedPath = selected?.path ?? null;
   const activeRecord = selected?.records.find((record) => (
     recordSelector(selected, record) === selectedDeclaration
     || ("occurrence_key" in record && record.occurrence_key === selectedDeclaration)
   )) ?? selected?.records[0] ?? null;
-  const activeDeclaration = selected?.kind === "formal" ? activeRecord as SourceOccurrence | null : null;
-  const activeStatement = selected?.kind === "statements" ? activeRecord as SourceStatement | null : null;
-  const retainedDeclaration = activeDeclaration
-    ? state.sources.statements.find((statement) => statement.occurrence_key === activeDeclaration.occurrence_key && statement.statement_form === "formal")
-    : null;
-  const declarationIndex = selected?.kind === "formal" && activeDeclaration ? selected.records.indexOf(activeDeclaration) : -1;
-  const exactFile = activeDeclaration?.locators.find(({ url }) => url?.includes("/blob/"))?.url ?? activeStatement?.locator_url ?? state.locator;
-  const sourceGroups = [...state.sources.occurrences.reduce((groups, occurrence) => {
-    const current = groups.get(occurrence.source_id);
-    groups.set(occurrence.source_id, { label: occurrence.source_label, count: (current?.count ?? 0) + 1 });
-    return groups;
-  }, new Map<string, { label: string; count: number }>()).entries()];
 
-  return <section aria-labelledby="research-files-heading">
-    <div className="flex flex-wrap items-center justify-between gap-3"><h2 id="research-files-heading" className="text-title">Files</h2>{exactFile ? <Button nativeButton={false} size="sm" variant="outline" render={<a href={exactFile} />}>Open exact source</Button> : null}</div>
-    <div className="mt-5 overflow-hidden rounded-xl border bg-background lg:grid lg:min-h-[38rem] lg:grid-cols-[17rem_minmax(0,1fr)]">
-      <nav aria-label="Source files" className="border-b bg-muted/15 p-3 lg:border-b-0 lg:border-r">
-        <p className="px-2 py-1 text-eyebrow uppercase text-muted-foreground">Sources</p>
-        <ul className="mt-1 px-2">{sourceGroups.map(([id, source]) => <li key={id} className="flex items-center justify-between gap-2 py-1.5 text-compact"><span className="truncate">{source.label}</span><Badge variant="outline" className="font-mono text-micro">{source.count}</Badge></li>)}</ul>
-        <p className="mt-4 px-2 py-1 text-eyebrow uppercase text-muted-foreground">Files</p>
-        {entries.length ? <ul className="mt-2 space-y-1">{entries.map((entry) => {
-          const active = entry.path === selectedPath;
-          const parts = entry.path.split("/");
-          const name = parts.pop() ?? entry.path;
-          return <li key={entry.path}><Link href={`${basePath}?view=files&file=${encodeURIComponent(entry.path)}`} aria-current={active ? "page" : undefined} className={`block min-h-11 rounded-md px-2.5 py-2 text-compact focus-visible:outline-2 focus-visible:outline-offset-2 ${active ? "bg-accent text-accent-foreground" : "hover:bg-muted"}`}><span className="block truncate font-mono text-micro text-muted-foreground">{parts.join("/") || "source"}/</span><span className="mt-0.5 flex items-center justify-between gap-2"><span className="truncate font-medium">{name}</span><span className="font-mono text-micro text-muted-foreground">{entry.records.length}</span></span></Link>{active ? <ul className="mt-1 border-l pl-2">{entry.records.map((record, index) => {
-            const selector = recordSelector(entry, record);
-            const selectedRecord = record === activeRecord;
-            const label = entry.kind === "formal" ? (record as SourceOccurrence).native_id.split(".").pop() : `Excerpt ${index + 1}`;
-            return <li key={selector}><Link href={`${basePath}?view=files&file=${encodeURIComponent(entry.path)}&symbol=${encodeURIComponent(selector)}`} aria-current={selectedRecord ? "location" : undefined} className={`block truncate rounded px-2 py-1.5 font-mono text-micro ${selectedRecord ? "bg-background font-medium text-foreground" : "text-muted-foreground hover:bg-muted"}`}>{label}</Link></li>;
-          })}</ul> : null}</li>;
-        })}</ul> : <p className="px-2 py-3 text-compact text-muted-foreground">No retained file path.</p>}
-        <div className="mt-5 border-t px-2 pt-4 text-micro text-muted-foreground"><p>{state.sources.statements.length} retained source {state.sources.statements.length === 1 ? "statement" : "statements"}</p><p className="mt-1">Commit {state.anchor.sourceCommit.slice(0, 12)}</p></div>
-      </nav>
-      <div className="min-w-0">
-        <header className="border-b px-4 py-3 sm:px-5"><p className="text-micro text-muted-foreground">Selected retained source</p><code className="mt-1 block truncate font-mono text-compact">{selectedPath ?? state.source.title}</code></header>
-        <div className="min-w-0 p-4 sm:p-6">
-          {activeDeclaration && retainedDeclaration ? <><div className="mb-5 flex flex-wrap items-center justify-between gap-2"><Badge variant="outline">retained declaration</Badge><span className="text-meta text-muted-foreground">{declarationIndex + 1} of {selected?.records.length ?? 0}</span></div><FormalStatementCard occurrence={activeDeclaration} /></> : activeDeclaration ? <Alert className="bg-muted/25"><AlertTitle>Preview unavailable</AlertTitle><AlertDescription>The exact declaration is discoverable, but its text is not retained for display. Open the source to inspect it under the provider&apos;s terms.</AlertDescription></Alert> : activeStatement ? <><div className="mb-5"><Badge variant="outline">retained source excerpt</Badge></div><p className="text-body leading-7">{activeStatement.text}</p>{activeStatement.locator_url ? <a className="mt-4 inline-block text-meta font-medium underline underline-offset-4" href={activeStatement.locator_url}>Open exact source location</a> : null}</> : <div className="grid min-h-72 place-items-center text-center"><div><h3 className="text-subtitle">No previewable source material</h3>{state.locator ? <Button className="mt-4" nativeButton={false} variant="outline" render={<a href={state.locator} />}>Open exact source</Button> : null}</div></div>}
-        </div>
-      </div>
-    </div>
-  </section>;
+  return <ProblemFiles
+    state={state}
+    basePath={basePath}
+    entries={entries}
+    selected={selected}
+    activeRecord={activeRecord}
+    activeKey={activeRecord && selected ? recordSelector(selected, activeRecord) : null}
+  />;
 }
 
 export function ProblemResearch({ state, basePath, view, selectedFile, selectedDeclaration }: { state: State; basePath: string; view: ProblemResearchView; selectedFile?: string; selectedDeclaration?: string }) {
