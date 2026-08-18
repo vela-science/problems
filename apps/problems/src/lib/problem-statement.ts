@@ -134,13 +134,17 @@ export function formalCoverage(state: State) {
 /* A docstring often states the question and then adds the collection's own
  * commentary — a reference, a partial result, an attribution. Splitting them
  * lets the question be the heading and the commentary read as commentary. */
-export function statementParagraphs(statement: ProblemStatement | null): { question: string; context: string[] } {
-  if (!statement || statement.form !== "prose") return { question: "", context: [] };
-  const paragraphs = statement.text
+export function paragraphsOf(text: string): string[] {
+  return text
     .trim()
     .split(/\n{2,}/u)
     .map((paragraph) => paragraph.replaceAll("\n", " ").trim())
     .filter(Boolean);
+}
+
+export function statementParagraphs(statement: ProblemStatement | null): { question: string; context: string[] } {
+  if (!statement || statement.form !== "prose") return { question: "", context: [] };
+  const paragraphs = paragraphsOf(statement.text);
   return { question: paragraphs[0] ?? "", context: paragraphs.slice(1) };
 }
 

@@ -12,7 +12,9 @@ import { Button } from "@vela/ui/components/button";
 import { Input } from "@vela/ui/components/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@vela/ui/components/select";
 import { PageHero, PageSection, PageSectionHeader, PageShell } from "@vela/ui/vela/page-shell";
+import { ScientificText } from "@vela/ui/vela/scientific-text";
 import { StatementText } from "@/components/vela/statement-text";
+import { paragraphsOf } from "@/lib/problem-statement";
 import { CollectionDistribution } from "@/components/vela/collection-distribution";
 import { SourceCorpusMap } from "@/components/vela/source-corpus-map";
 import { ProblemSourceCoverage } from "@/components/vela/problem-source-coverage";
@@ -28,6 +30,9 @@ import {
   recentScientificChanges,
   reviewedProblemSourceCoverage,
   type ProblemDiscovery,
+  problemStatementIndex,
+  problemStatementKey,
+  type ProblemStatementIndex,
 } from "@/lib/scientific-state";
 
 export const dynamic = "force-dynamic";
@@ -71,11 +76,17 @@ const selectItems = (allLabel: string, entries: ReadonlyArray<readonly [string, 
  * `theme` computed identically and printed twice. What is left is the number,
  * the question, and the handful of facts that differ between two rows.
  *
- * A formal statement is exact supporting detail, not the directory heading.
- * The Source-owned label remains the scannable question handle. Formal notation
- * stays on the Problem's Evidence surface, one interaction away, so the
- * directory does not become a wall of implementation syntax. */
-function ProblemRows({ problems }: { problems: ProblemDiscovery[] }) {
+ * The heading used to be the source-owned label, on the reasoning that the
+ * alternative was Lean and a directory should not be a wall of implementation
+ * syntax. That reasoning held while the label was the only readable text
+ * available. It is not: the retaining sources publish the question in prose,
+ * and a directory of 1,217 rows reading "Erdős problem 412" is not scannable
+ * either — it is 1,217 rows a reader cannot choose between. The written
+ * question leads, and the label stands only where no source wrote one. */
+function ProblemRows({ problems, statements }: {
+  problems: ProblemDiscovery[];
+  statements: ProblemStatementIndex;
+}) {
   if (!problems.length) {
     return <p className="py-10 text-body text-muted-foreground">No Problems match this view.</p>;
   }
@@ -84,6 +95,9 @@ function ProblemRows({ problems }: { problems: ProblemDiscovery[] }) {
       const record = problem.record;
       const kind = record.statement_kind;
       const readableLabel = record.label?.trim() || (kind === "formal" ? `Problem ${problem.problem}` : record.statement) || `Problem ${problem.problem}`;
+      const key = problemStatementKey(problem);
+      const written = key ? statements[key] : undefined;
+      const question = written ? paragraphsOf(written.text)[0] ?? "" : "";
       const facts = [
         record.declared_status,
         record.formalized ? "formalized" : null,
@@ -95,7 +109,9 @@ function ProblemRows({ problems }: { problems: ProblemDiscovery[] }) {
         <span className="pt-0.5 font-mono text-meta tabular-nums text-muted-foreground">{problem.problem}</span>
         <div className="min-w-0">
           <Link href={problem.canonicalPath ?? "/problems"} className="block max-w-[74ch] text-body leading-snug underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4">
-            <StatementText statement={kind === "formal" ? readableLabel : record.statement || readableLabel} kind={kind === "formal" ? "label" : kind} className="text-label" />
+            {question
+              ? <span className="block text-label"><ScientificText text={question} /></span>
+              : <StatementText statement={kind === "formal" ? readableLabel : record.statement || readableLabel} kind={kind === "formal" ? "label" : kind} className="text-label" />}
           </Link>
           <p className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-meta text-muted-foreground">
             {kind === "formal" ? <span className="text-foreground/70">exact formal statement available</span> : null}
@@ -115,8 +131,9 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
   const view = query.view === "overview" ? "overview" : "all";
   const requestedCoverage = query.coverage === "complete" || query.coverage === "partial" || query.coverage === "unobserved" ? query.coverage : "all";
   const catalogPromise = discoveredProblems();
-  const [catalog, activity, sourceCoverage, sourceCorpora] = await Promise.all([
+  const [catalog, statements, activity, sourceCoverage, sourceCorpora] = await Promise.all([
     catalogPromise,
+    catalogPromise.then((entries) => problemStatementIndex(entries[0]?.releaseRoot ?? "")),
     view === "overview" ? recentScientificChanges(5) : Promise.resolve([]),
     view === "overview" ? reviewedProblemSourceCoverage(catalogPromise) : Promise.resolve(null),
     view === "overview" || requestedCoverage !== "all" ? observedSourceCorpusMap(catalogPromise) : Promise.resolve(null),
@@ -194,7 +211,7 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
 
       <PageSection className="grid gap-8 xl:grid-cols-[minmax(0,1.15fr)_minmax(20rem,.85fr)]">
         <section className="vela-direction-surface rounded-xl px-5 py-6 sm:px-7" aria-labelledby="source-owned-contribution"><p className="text-eyebrow uppercase text-muted-foreground">Choose what to do next</p><h2 id="source-owned-contribution" className="mt-2 text-title">Contributions stay with their source</h2><p className="mt-4 max-w-[65ch] text-body text-muted-foreground">Choose a Problem, review its source repository, and continue in your preferred local tool when you need to run code or edit files. The site publishes no central scientific priority queue.</p><Button className="mt-5" nativeButton={false} variant="outline" render={<Link href="/contribute" />}>Add a contribution</Button></section>
-        <section className="vela-evidence-surface rounded-xl px-5 py-6 sm:px-7" aria-labelledby="reviewed-evidence"><div className="flex items-center gap-2"><HugeiconsIcon icon={Compass01Icon} aria-hidden className="size-5 text-[var(--status-evidence)]" /><p className="text-eyebrow uppercase text-muted-foreground">Reviewed evidence</p></div><h2 id="reviewed-evidence" className="mt-2 text-title">Problems with reviewed Contributions</h2>{stateProblems.length ? <ProblemRows problems={stateProblems.slice(0, 3)} /> : <div className="py-8"><p className="text-subtitle">No reviewed Contribution in this scope.</p><p className="mt-2 text-meta text-muted-foreground">Source questions remain discoverable without implying that they were reviewed here.</p></div>}</section>
+        <section className="vela-evidence-surface rounded-xl px-5 py-6 sm:px-7" aria-labelledby="reviewed-evidence"><div className="flex items-center gap-2"><HugeiconsIcon icon={Compass01Icon} aria-hidden className="size-5 text-[var(--status-evidence)]" /><p className="text-eyebrow uppercase text-muted-foreground">Reviewed evidence</p></div><h2 id="reviewed-evidence" className="mt-2 text-title">Problems with reviewed Contributions</h2>{stateProblems.length ? <ProblemRows problems={stateProblems.slice(0, 3)} statements={statements} /> : <div className="py-8"><p className="text-subtitle">No reviewed Contribution in this scope.</p><p className="mt-2 text-meta text-muted-foreground">Source questions remain discoverable without implying that they were reviewed here.</p></div>}</section>
       </PageSection>
 
       <PageSection className="vela-history-surface rounded-xl px-5 py-6 sm:px-7" aria-labelledby="state-history"><div className="flex items-end justify-between gap-4"><div><div className="flex items-center gap-2"><HugeiconsIcon icon={Activity01Icon} aria-hidden className="size-5" /><p className="text-eyebrow uppercase text-muted-foreground">Recent changes</p></div><h2 id="state-history" className="mt-2 text-title">Latest scientific history</h2></div><Link href="/activity" className="text-meta font-medium underline-offset-4 hover:underline">Full history</Link></div><ScientificChangeFeed changes={activity} compact /></PageSection>
@@ -288,7 +305,7 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
         </p>
         {pageCount > 1 ? <p className="font-mono text-meta tabular-nums text-muted-foreground">{page}/{pageCount}</p> : null}
       </div>
-      <ProblemRows problems={visibleProblems} />
+      <ProblemRows problems={visibleProblems} statements={statements} />
       <LedgerPager page={page} pages={pageCount} label="Erdős Problem pages" hrefFor={(next) => ({ pathname: COLLECTION_PATH, query: { ...retainedQuery, page: next } }) as never} />
     </section>
   </PageShell>;

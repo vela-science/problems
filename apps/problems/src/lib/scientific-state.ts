@@ -9,6 +9,7 @@ import {
   formalConjecturesAuditRecordsForProblem,
   nativeProblemSourceRead,
   nativeSourceRecordByIdentity,
+  retainedProblemStatements,
   projectionManifest,
   projectionManifestAtRoot,
   problemRepositorySlugs,
@@ -500,4 +501,40 @@ export async function scientificProblemState(repositorySlug: string, problemNumb
     ? (await projectionManifestAtRoot(requestedRoot)).release_root
     : (await projectionManifest()).release_root;
   return cachedScientificProblemStateAtRoot(repositorySlug, problemNumber, root);
+}
+
+export type IndexedProblemStatement = { text: string; source_id: string };
+export type ProblemStatementIndex = Record<string, IndexedProblemStatement>;
+
+/* Written statements for the whole collection, keyed by the identity a source
+ * record carries, cached per release.
+ *
+ * A directory row leads with the question, and resolving 1,217 Problems one at
+ * a time is not a page. The retaining sources are read once and the base
+ * declaration wins over its variants — `Erdos1.erdos_1` states the question,
+ * `Erdos1.erdos_1.variants.real_valued` comments on it. */
+async function problemStatementIndexAtRoot(root: string): Promise<ProblemStatementIndex> {
+  const read = await retainedProblemStatements({ root });
+  const index: ProblemStatementIndex = {};
+  const depths: Record<string, number> = {};
+  for (const statement of read.statements) {
+    const key = `${statement.resolution_namespace}:${statement.problem_number}`;
+    const held = depths[key];
+    if (held !== undefined && held <= statement.declaration_depth) continue;
+    depths[key] = statement.declaration_depth;
+    index[key] = { text: statement.docstring, source_id: statement.source_id };
+  }
+  return index;
+}
+
+export const problemStatementIndex = unstable_cache(
+  problemStatementIndexAtRoot,
+  ["vela", "problem-statement-index"],
+  { tags: ["projection"] },
+);
+
+/** The key a discovery row uses to find its own written statement. A Problem
+ *  whose collection is unclassified has no key, and so no statement. */
+export function problemStatementKey(problem: ProblemDiscovery): string | null {
+  return problem.collection ? `${problem.collection.key}:${problem.problem}` : null;
 }

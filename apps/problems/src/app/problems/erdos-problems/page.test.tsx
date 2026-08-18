@@ -10,6 +10,12 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("@/lib/scientific-state", () => ({
   discoveredProblems: mocks.discovered,
+  /* Directory rows lead with the written question, read once per release. */
+  problemStatementIndex: async () => ({
+    "erdos-problems:321": { text: "Are the subset sums of a finite set distinct?", source_id: "source:formal-conjectures" },
+  }),
+  problemStatementKey: (problem: { collection: { key: string } | null; problem: string }) =>
+    problem.collection ? `${problem.collection.key}:${problem.problem}` : null,
   recentScientificChanges: mocks.recent,
   reviewedProblemSourceCoverage: mocks.coverage,
   observedSourceCorpusMap: mocks.corpora,
@@ -75,6 +81,15 @@ describe("Erdős Problems directory", () => {
     });
   });
 
+  /* The directory used to lead with the collection's label, so 1,217 rows read
+     "Erdős problem N" and a reader could not choose between any two of them.
+     Where a source wrote the question down, the question leads; where none
+     did, the label stands and the row says the text is at the source. */
+  it("leads a row with the written question", async () => {
+    render(await ErdosProblemsPage({ searchParams: Promise.resolve({}) }));
+    expect(screen.getByText("Are the subset sums of a finite set distinct?")).toBeVisible();
+  });
+
   it("makes the searchable directory the default and keeps exact controls advanced", async () => {
     expect(metadata.alternates).toEqual({ canonical: "/problems/erdos-problems" });
     render(await ErdosProblemsPage({ searchParams: Promise.resolve({}) }));
@@ -86,7 +101,8 @@ describe("Erdős Problems directory", () => {
     }
     expect(screen.getByRole("textbox", { name: "Exact Problem identifier" })).toHaveAttribute("maxlength", "256");
     expect(screen.getByRole("link", { name: "Inspect coverage" })).toHaveAttribute("href", "/problems/erdos-problems?view=overview");
-    expect(screen.getByRole("link", { name: /source-native Problem statement/u })).toHaveAttribute("href", "/problems/erdos-problems/321");
+    /* The row is named by what it asks, not by the collection's label. */
+    expect(screen.getByRole("link", { name: "Are the subset sums of a finite set distinct?" })).toHaveAttribute("href", "/problems/erdos-problems/321");
     expect(mocks.recent).not.toHaveBeenCalled();
     expect(mocks.coverage).not.toHaveBeenCalled();
     expect(mocks.corpora).not.toHaveBeenCalled();

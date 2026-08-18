@@ -1453,6 +1453,83 @@ export async function nativeSourceRecordByIdentity(input: {
   return rows[0] ? nativeSourceRecordFromRow(rows[0]) : null;
 }
 
+/** One source's written statement of a Problem, read in bulk. */
+export type RetainedProblemStatement = {
+  resolution_namespace: string;
+  problem_number: number;
+  source_id: string;
+  native_id: string;
+  native_kind: string;
+  /** The source's own prose. Never Vela's assertion about the Problem. */
+  docstring: string;
+  /** Dots in the declaration path: `Erdos1.erdos_1` states the question,
+   *  `Erdos1.erdos_1.variants.real_valued` comments on it. */
+  declaration_depth: number;
+};
+
+export const MAX_RETAINED_PROBLEM_STATEMENTS = 5_000;
+
+/* Written statements for a whole collection, in one read.
+ *
+ * A directory of 1,217 Problems that leads with each question cannot resolve
+ * them one at a time — `nativeProblemSourceRead` is a per-Problem read, and
+ * forty-eight of them is a page nobody waits for. Statement retention is a
+ * property of the source, so the sources that retain prose can be read once
+ * per release and indexed by the number their own records carry.
+ *
+ * Bounded, and the bound is reported rather than silently truncating: a caller
+ * that hits it is reading a corpus this reader was not sized for. */
+export async function retainedProblemStatements(input: {
+  root?: string;
+  limit?: number;
+} = {}): Promise<{
+  release_root: HashRoot;
+  statements: RetainedProblemStatement[];
+  complete: boolean;
+}> {
+  const manifest = input.root
+    ? await projectionManifestAtRoot(input.root)
+    : await projectionManifest();
+  const limit = Math.min(input.limit ?? MAX_RETAINED_PROBLEM_STATEMENTS, MAX_RETAINED_PROBLEM_STATEMENTS);
+  const retaining = problemResolutionConfig.candidate_sources
+    .filter((source) => source.statement_retention === "summary")
+    .map((source) => source.source_id);
+  if (!retaining.length) return { release_root: manifest.release_root, statements: [], complete: true };
+
+  const rows = await neon(projectionDatabaseUrl()).query(
+    `SELECT native_record.*
+     FROM projection.release_sources release_source
+     JOIN projection.native_records native_record
+       USING (observation_root, source_id)
+     WHERE release_source.release_root = $1
+       AND native_record.source_id = ANY($2::text[])
+       AND native_record.metadata ? 'docstring'
+       AND length(trim(native_record.metadata->>'docstring')) > 0
+     ORDER BY native_record.source_id, native_record.native_id
+     LIMIT $3`,
+    [manifest.release_root, retaining, limit + 1],
+  );
+
+  const statements: RetainedProblemStatement[] = [];
+  for (const row of rows.slice(0, limit)) {
+    const record = nativeSourceRecordFromRow(row);
+    const identity = candidateProblemIdentity(record);
+    if (!identity) continue;
+    const docstring = String(record.metadata.docstring ?? "").trim();
+    if (!docstring) continue;
+    statements.push({
+      resolution_namespace: identity.resolution_namespace,
+      problem_number: identity.problem_number,
+      source_id: record.source_id,
+      native_id: record.native_id,
+      native_kind: record.native_kind,
+      docstring,
+      declaration_depth: record.native_id.split(".").length,
+    });
+  }
+  return { release_root: manifest.release_root, statements, complete: rows.length <= limit };
+}
+
 export type ProblemSourceCoverage = {
   source_id: string;
   resolution_namespace: string;
