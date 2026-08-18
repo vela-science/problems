@@ -4,8 +4,12 @@ import { projectionRefusal } from "@vela/projection-data/refusal";
 import { Alert, AlertDescription, AlertTitle } from "@vela/ui/components/alert";
 import { Button } from "@vela/ui/components/button";
 import { PageHero, PageShell } from "@vela/ui/vela/page-shell";
-import { LinkTabs } from "@/components/vela/link-tabs";
-import { ProblemHeader } from "@/components/vela/problem-header";
+import {
+  ProblemOverviewReference,
+  ProblemReferenceHeader,
+  ProblemReferenceTabs,
+  type ProblemReferenceView,
+} from "@/components/vela/problem-overview-reference";
 import { ProblemState, type ProblemResearchView } from "@/components/vela/problem-state";
 import { ProblemWorkspace } from "@/components/vela/problem-workspace";
 import { problemLabel, resolveProblemStatement, statementParagraphs } from "@/lib/problem-statement";
@@ -20,20 +24,12 @@ export type ExpectedProblemSource = {
   contentRoot: string;
 };
 
-export type ProblemView = ProblemResearchView | "workspace";
-
-/* One Problem, four familiar tools. Older links map deterministically to the
- * closest current tool without rendering a duplicate legacy page. */
-function resolveView(query: ProblemPageQuery): ProblemView {
-  if (["workspace", "work"].includes(query.view ?? "") || query.mode === "work") return "workspace";
-  if (query.view === "map") return "contributions";
-  if (["contributions", "files", "timeline"].includes(query.view ?? "")) return query.view as ProblemResearchView;
-  if (query.view === "evidence") return "contributions";
-  if (query.view === "history" || query.view === "record") return "timeline";
-  if (query.view === "sources") return "files";
-  if (query.research === "map") return "contributions";
-  if (["contributions", "files", "timeline"].includes(query.research ?? "")) return query.research as ProblemResearchView;
-  return "contributions";
+function resolveReferenceView(query: ProblemPageQuery): ProblemReferenceView {
+  if (["workspace", "work"].includes(query.view ?? "") || query.mode === "work") return "work";
+  if (["results", "contributions", "evidence", "map"].includes(query.view ?? "") || ["map", "contributions"].includes(query.research ?? "")) return "results";
+  if (["sources", "files"].includes(query.view ?? "") || query.research === "files") return "sources";
+  if (["history", "timeline", "record"].includes(query.view ?? "") || query.research === "timeline") return "history";
+  return "overview";
 }
 
 export async function ProblemPageView({ repository, problem, collectionName, route, query, expectedSource }: {
@@ -79,7 +75,14 @@ export async function ProblemPageView({ repository, problem, collectionName, rou
     || state.problem.native_kind !== expectedSource.nativeKind
     || state.source.content_root !== expectedSource.contentRoot
   )) notFound();
-  const view = resolveView(query);
+  const referenceView = resolveReferenceView(query);
+  const view = referenceView === "work"
+    ? "workspace"
+    : referenceView === "sources"
+      ? "files"
+      : referenceView === "history"
+        ? "timeline"
+        : "contributions";
   /* The three read-only tools never read the session — that is what keeps them
      cheap, cacheable, and honest about being the public record. Only the
      Workspace tab is account-aware. */
@@ -106,19 +109,15 @@ export async function ProblemPageView({ repository, problem, collectionName, rou
   /* The archetype holds still across the tabs — switching surface must not
      repaint the page's ground or move the hero. The Workspace widens through
      `layout` alone, which touches the content region and not the frame. */
-  return <PageShell as="article" archetype="problem" layout="canvas">
+  return <PageShell as="article" archetype="problem" layout="canvas" className="!pt-2">
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
-    <PageHero density="compact">
-      <ProblemHeader state={state} route={route} problemNumber={problem} collectionName={collectionName} collectionHref={collectionHref} />
-    </PageHero>
-    <div className="mt-3"><LinkTabs label="Problem tools" layoutId="problem-view" current={view} tabs={[
-      { key: "contributions", href: route, label: "Contributions" },
-      { key: "files", href: `${route}?view=files`, label: "Files" },
-      { key: "workspace", href: `${route}?view=workspace`, label: "Workspace" },
-      { key: "timeline", href: `${route}?view=timeline`, label: "History" },
-    ]} /></div>
-    {view === "workspace"
-      ? <ProblemWorkspace state={state} hostedAccount={account} accountsEnabled={accountsEnabled} selectedWorkspace={query.workspace} selectedObject={query.object} selectedInspector={query.inspector} mutationError={query.workError} basePath={route} />
-      : <ProblemState state={state} basePath={route} researchView={view} selectedFile={query.file} selectedDeclaration={query.symbol} />}
+    <div className="mt-2">
+      <ProblemReferenceHeader state={state} route={route} problemNumber={problem} collectionName={collectionName} collectionHref={collectionHref} />
+    </div>
+    <div className="mt-3"><ProblemReferenceTabs route={route} current={referenceView} /></div>
+    {referenceView === "overview" ? <ProblemOverviewReference state={state} route={route} />
+      : view === "workspace"
+        ? <ProblemWorkspace state={state} hostedAccount={account} accountsEnabled={accountsEnabled} selectedWorkspace={query.workspace} selectedObject={query.object} selectedInspector={query.inspector} mutationError={query.workError} basePath={route} />
+        : <ProblemState state={state} basePath={route} researchView={view as ProblemResearchView} selectedFile={query.file} selectedDeclaration={query.symbol} />}
   </PageShell>;
 }

@@ -14,6 +14,11 @@ vi.mock("@/components/vela/problem-state", () => ({
   ProblemState: ({ researchView }: { researchView: string }) => <section>Public tool: {researchView}</section>,
 }));
 vi.mock("@/components/vela/problem-workspace", () => ({ ProblemWorkspace: () => <section>Workspace surface</section> }));
+vi.mock("@/components/vela/problem-overview-reference", () => ({
+  ProblemReferenceHeader: ({ problemNumber, collectionName }: { problemNumber: string; collectionName: string }) => <header><h1>Exact Problem</h1><span>{collectionName}</span><span>#{problemNumber}</span></header>,
+  ProblemReferenceTabs: ({ current }: { current: string }) => <nav aria-label="Problem sections">{["Overview", "Work", "Results", "Sources", "History"].map((label) => <span key={label} aria-current={current === label.toLowerCase() ? "page" : undefined}>{label}</span>)}</nav>,
+  ProblemOverviewReference: () => <section>Overview surface</section>,
+}));
 
 import { ProblemPageView } from "./problem-page";
 import { ProjectionReadError } from "@vela/projection-data/refusal";
@@ -101,12 +106,13 @@ describe("Problem view addressing", () => {
     query,
   });
 
-  it("defaults the bare URL to Contributions", async () => {
+  it("defaults the bare URL to the reference Overview", async () => {
     render(await page({}));
-    expect(screen.getByText("Public tool: contributions")).toBeInTheDocument();
-    expect(screen.getByText("Contributions")).toBeInTheDocument();
-    expect(screen.queryByText("Overview")).toBeNull();
+    expect(screen.getByText("Overview surface")).toBeInTheDocument();
+    expect(screen.getByText("Overview")).toBeInTheDocument();
+    expect(screen.getByText("Results")).toBeInTheDocument();
     expect(screen.queryByText("Research")).toBeNull();
+    expect(screen.queryByText("Contributions")).toBeNull();
   });
 
   /* The heading is now the question, so the page has to say which Problem the
@@ -119,14 +125,19 @@ describe("Problem view addressing", () => {
     expect(screen.getByText("#321")).toBeVisible();
   });
 
-  it.each(["contributions", "files", "timeline"] as const)("serves the flat %s tool", async (view) => {
+  it.each([
+    ["results", "contributions"],
+    ["sources", "files"],
+    ["history", "timeline"],
+  ] as const)("serves the reference %s tab with the existing %s surface", async (view, surface) => {
     render(await page({ view }));
-    expect(screen.getByText(`Public tool: ${view}`)).toBeInTheDocument();
+    expect(screen.getByText(`Public tool: ${surface}`)).toBeInTheDocument();
   });
 
-  it("folds the retired Map address into Contributions", async () => {
+  it("folds the retired Map address into Results", async () => {
     render(await page({ view: "map" }));
     expect(screen.getByText("Public tool: contributions")).toBeInTheDocument();
+    expect(screen.getByText("Results")).toHaveAttribute("aria-current", "page");
   });
 
   it("maps the retired Work address to Workspace", async () => {
@@ -139,6 +150,8 @@ describe("Problem view addressing", () => {
      silently to the default. */
   it.each([
     ["evidence", "Public tool: contributions"],
+    ["contributions", "Public tool: contributions"],
+    ["files", "Public tool: files"],
     ["sources", "Public tool: files"],
     ["history", "Public tool: timeline"],
     ["record", "Public tool: timeline"],
@@ -153,12 +166,12 @@ describe("Problem view addressing", () => {
     expect(screen.getByText("Workspace surface")).toBeInTheDocument();
   });
 
-  it("resolves an unknown view to Contributions rather than an empty page", async () => {
+  it("resolves an unknown view to Overview rather than an empty page", async () => {
     render(await page({ view: "poem" }));
-    expect(screen.getByText("Public tool: contributions")).toBeInTheDocument();
+    expect(screen.getByText("Overview surface")).toBeInTheDocument();
   });
 
-  /* The frame holds still across the tabs: one archetype for all four views,
+  /* The frame holds still across the tabs: one archetype for all five views,
      with only the layout widening for the Workspace. A tab switch must not
      repaint the page's ground or move the hero. */
   it("keeps one archetype across public and Workspace views", async () => {

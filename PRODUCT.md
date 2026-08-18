@@ -1,229 +1,217 @@
 ---
 register: product
+product: problems.science
+version: 2026-08-18
 ---
 
-# Vela Web product brief
+# problems.science product brief
 
-Vela Web helps researchers find scientific problems, understand the evidence,
-and contribute work that others can inspect and reuse. `problems.science` is
-the public product. Local repositories and tools hold the machine context and
-authority needed to change scientific state.
+## Product in one sentence
 
-## Users and jobs
+problems.science is a place to find scientific problems, understand what is
+currently known, see work and durable results, and contribute evidence.
 
-Vela serves researchers, reviewers, tool builders, and technical readers. Human
-and AI performers are peer provenance kinds. Method, evidence, independence,
-environment, and limitations determine how a contribution reads.
+The Problem is the primary object. The public product should feel like a
+scientific working document, not a protocol explorer, an internal state console,
+or a marketing site.
 
-Users come to Vela to:
+## People and jobs
 
-- find a question worth reading or working on;
-- learn what is known, what supports it, and what remains uncertain;
-- check whether an approach has already been tried;
-- inspect proofs, computations, datasets, files, checks, and corrections;
-- contribute, connect repository work, or continue in a local agent;
-- trace who or what produced, checked, changed, or superseded a result.
+Researchers, reviewers, maintainers, and tool-using agents come here to:
 
-## First-run outcome
+- find a question by wording, number, field, or collection;
+- understand the current scientific picture without reading raw records;
+- inspect durable Results, their evidence, checks, sources, and limitations;
+- see active Work without confusing it with published Results;
+- understand how corrections and decisions changed Repository-local state;
+- start a contribution, connect code, or continue in a local tool;
+- resume private workspaces and manage account connections.
 
-A new reader should understand the product in five seconds:
+Human and AI performers use the same provenance hierarchy. Performer kind is
+not a quality score; method, evidence, environment, independence, and limits are
+what make work interpretable.
 
-1. This is a place to find scientific problems, read current evidence, and
-   contribute work.
-2. Today Vela publishes one collection: 1,217 Erdős Problems.
-3. The next action is search, browse, read what is known, or add a contribution.
+## Ten-second Problem test
 
-Activation happens when a reader opens a Problem and uses one of three actions:
-**Read what is known**, **Check prior work**, or **Add a contribution**.
+Every Problem page must answer these questions within ten seconds:
 
-Signed-in Home shifts from orientation to continuity. It shows work to resume,
-followed Problems, meaningful recent changes, and useful starting points backed
-by current data. Signed-out Home remains the fast front door.
+1. What is the problem?
+2. What is currently known?
+3. What is being tried?
+4. What results exist?
+5. How did the state get here?
+
+If the data does not answer one of them, show a compact honest missing state.
+Do not replace missing scientific data with explanatory prose.
+
+## Current release truth
+
+Today there is one published Problem collection: **1,217 Erdős Problems**.
+`/problems` is the global entry and states this plainly.
+`/problems/erdos-problems` is the collection directory. A number such as `321`
+is meaningful only inside the collection.
+
+Formal Conjectures, Lean libraries, VibeMathed, TheoremDB, papers, datasets,
+and code repositories may appear as sources or evidence. They are not Problem
+collections unless they publish stable source-owned Problem identities through
+an accepted collection profile.
 
 ## Visible information architecture
 
-The Problem is the canonical frame. A Contribution is the public unit of work:
-a proof, computation, dataset, review, negative result, correction, or other
-scoped evidence.
+Primary navigation:
 
-Primary navigation is:
+- Problems
+- Research map
+- Updates
+- My work when signed in
+- Search
+- the product mark for Home
 
-- **Problems** for discovery;
-- **Updates** for meaningful changes;
-- **My work** when signed in;
-- **Search** for keyboard-first find and jump;
-- the Vela sail for Home.
+The canonical Problem tabs are:
 
-Add a contribution appears in Problem and work contexts. Repository, Source,
-Check, Decision, exact record type, hash, performer, model, tool, and environment
-appear where they explain a Contribution. They do not compete with Problems in
-primary navigation.
+- **Overview** — question, orthogonal state, current synthesis, landmarks,
+  open targets, latest Results, representations, and exact related Problems;
+- **Work** — mutable shared workspace, approaches, attempts, canvas, Research
+  Blocks, notes, and local handoff;
+- **Results** — durable outputs, checks, decisions, evidence, and limitations;
+- **Sources** — collection entry, retained excerpts, declarations, paths,
+  revisions, and source links;
+- **History** — semantic chronology, corrections, supersession, and diffs.
 
-About, Privacy, Terms, Accessibility, and Contact are concise trust surfaces in
-the product shell. They explain current behavior and user choices; they are not
-a marketing site, protocol manual, or substitute for source-owned reference
-documentation.
+Files are a recognizable instrument inside Sources, Work, or an individual
+Result. They are not a primary conceptual mode. A relationship map is a
+contextual action and a global Explore destination, not a sixth Problem tab.
 
-The Problems hierarchy is durable:
+Durable old `view=` links map into the five current views. Internal navigation
+generates only the current names.
 
-- `/problems` is the global collection entry;
-- `/problems/erdos-problems` is the current collection directory;
-- `/problems/erdos-problems/{number}` is the canonical detail route.
+## Public language
 
-Problem numbers are collection-local. Breadcrumbs, search, activity, metadata,
-and shared links preserve the collection name. Evidence sources such as Formal
-Conjectures, Lean libraries, VibeMathed, and TheoremDB do not become Problem
-collections. A collection needs source-owned stable identities and an explicit
-resolver/profile.
+The user-facing durable output is a **Result**. It may be a proof, computation,
+dataset, review, negative result, correction, or other bounded evidence.
+Underlying Vela records and types remain unchanged and may be named in
+technical disclosure.
+
+Use **contribution** for the action of adding work and for exact technical
+identity where necessary. Use **Work** for mutable approaches and attempts.
+Use **Result** for durable outputs a reader can inspect.
+
+Keep these axes separate:
+
+- formal target, such as open or proved in retained formal material;
+- source-reported status, visibly attributed to its collection;
+- Repository decision on an exact contribution;
+- evidence and check outcomes;
+- publication or workspace state.
+
+An accepted contribution does not mean the Problem is solved. A passing check
+does not accept a contribution. A signature proves attribution, not truth.
 
 ## Core workflows
 
 ### Discover
 
-Search accepts number, wording, field, collection, status, and evidence cues.
-Results name the collection and show compact state and evidence signals. Global
-Problems presents published collections honestly. Collection pages provide
-real filters, status and evidence distribution, and a scannable directory.
+Home is the activation front door: search, Browse problems, Add a contribution,
+one-collection truth, useful questions, coverage, and recent changes. It is not
+a manifesto or a signed-in analytics dashboard.
 
-### Read a Problem
+Problems and collection pages use question-led rows, useful filters, exact
+counts, and honest coverage views. Search leads with human labels and always
+qualifies numeric Problem identities by collection.
 
-A Problem is an active scientific document, not an illustrated protocol memo.
-The question is the title. A compact inline summary keeps Problem state and
-source status distinct. One flat tab row opens **Contributions**, **Files**,
-**Workspace**, and **History**. Contributions uses the familiar anatomy of a
-reviewed change: result, performer, checks, linked sources, Decision, and exact
-detail. The relationship map is a secondary contextual action, not a fifth tab
-or the page's organizing metaphor.
-There is no Overview tab that merely summarizes or links to the other tools,
-and no Research tab that opens a second tab row.
+### Read
 
-Structure comes from working components. Contributions is the canonical Problem
-landing view; Map is a secondary action. Maps show relationships; file trees
-show source material; rows show Contributions; timelines show change; diffs
-show corrections; canvases show shared work. Headings and prose label those
-instruments but do not substitute for them. Remove any paragraph that only
-restates a visible label, state, edge, or action.
+The Problem question leads. Overview synthesizes the strongest exact data into
+one reference screen. It does not repeat the tab labels as explanatory
+sections. A compact fact rail carries stable identity and representation facts.
+Technical roots live behind disclosure.
 
-Current or curated evidence stays distinct from newer Contributions. A recent
-Contribution row names contributor, kind, scope, evidence or assessment,
-publication status, and expandable detail. Repository-local Standing appears
-on the exact Contribution or Claim it governs, never as a verdict on the whole
-Problem.
+### Inspect Results and Sources
 
-### Check prior work
+Results show the claim, Result type, producer, evidence, checks, Repository
+decision, revision, and linked sources. Checks use outcome-appropriate glyphs.
+Sources use a familiar tree/list plus selected preview. When full bytes are not
+retained or rights prevent display, show the exact retained excerpt or
+declaration and an Open exact source action.
 
-Exact identity is authoritative. Similarity is advisory. Overlap results state
-possible duplicate, intentional replication, no confident match, or stale
-index. A partial or negative result names its target, approach, assumptions,
-environment, evidence, outcome, and retry boundary.
+### Work and contribute
 
-### Contribute
+The browser may host shared, authority-free coordination: workspaces, follows,
+approaches, attempts, notes, Research Blocks, selected artifact references, and
+unsigned Submission v3 drafts.
 
-The browser path stays short:
+The contribution path is:
 
 1. choose a Problem;
-2. attach work or evidence;
-3. review scope and provenance;
-4. submit an unsigned contribution draft.
+2. attach work and evidence;
+3. review scope and checks;
+4. submit an unsigned handoff.
 
-The browser owns public discovery and shared, authority-free coordination. It
-may save workspaces, notes, Research Blocks, comments, selected artifact
-references, and unsigned drafts. Repository checkout, filesystem and terminal
-access, proof or experiment execution, environment secrets, generic agent
-sessions, artifact harvesting, signing, and key custody stay in user-selected
-local tools. Handoffs pass explicit HTTPS references and user-selected
-artifacts; they never imply local access or upload local state automatically.
+Repository checkout, local files, terminals, proof or experiment execution,
+secrets, generic agent sessions, signing, and key custody stay in local tools.
+The browser offers explicit Open source or Continue locally handoffs; it does
+not simulate an IDE or upload local state implicitly.
 
-Users can import a GitHub repository, attach rooted artifacts, or continue in
-Codex, Claude, Entire, or another local tool. Vela links exact external session
-or checkpoint references when available. It does not recreate raw Git or agent
-session history.
+### Follow change
 
-Scope derives from the selected Problem and Contribution target. Forms use
-constrained choices, plain-language previews, and fail-closed validation.
-Display metadata can be corrected without changing immutable evidence identity.
+Updates and History use semantic chronology. They show what changed, who or
+what acted, and the affected Problem or Result. Exact hashes and roots appear
+only after expansion. Corrections retain before/after comparison.
 
-### Continue work
+### Account and continuity
 
-My work groups followed Problems, workspaces, approaches, imports, drafts, and
-recent activity. A user can resume in the browser or hand off to a repository
-and local agent with the Problem, task, and exact references intact.
-
-### Profile and account
-
-Account is a private profile hub backed by current data. It shows identity,
-connections, repositories, workspaces, contributions, reviews, imports,
-security, and next actions. WorkOS account identity, public scientific
-attribution, and Vela authority remain separate. Vela does not invent public
-reputation, authority badges, quotas, or leaderboards.
+Account is a private hub for sign-in identity, connected GitHub access, saved
+work, exact codebase revisions, session controls, and next actions. My work is
+for resuming workspaces. WorkOS identity, scientific attribution, and Vela
+authority remain explicitly separate.
 
 ## Product principles
 
-- Put the question and the next action before system vocabulary.
-- Explain state, chronology, comparison, and relationships with visuals when a
-  visual is faster to read than prose.
-- Use familiar repository, search, diff, file, timeline, and settings patterns.
-- Keep dense information readable through hierarchy, grouping, and progressive
-  disclosure.
-- Keep exact roots, source versions, queries, and records reachable without
-  turning them into onboarding copy.
-- Treat human and AI work as peer contributions with explicit provenance.
-- Use real data for counts, diagrams, charts, previews, and empty states.
-- Preserve durable URLs and URL-backed filters or section state.
-- Make loading, empty, error, disconnected, stale, and expired-session states
-  part of the product.
-- Separate interactive reads from bulk acquisition. Bound pagination, expose
-  rate or backpressure states, and never turn degraded service into false data.
+- Start with the object and the action, not system vocabulary.
+- Prefer a working visual instrument over a prose explanation of the instrument.
+- Use familiar search, file, diff, timeline, canvas, settings, and repository patterns.
+- Use real data for every count, node, edge, chart, preview, and status.
+- Exact identity is authoritative; similarity and orientation are advisory.
+- Treat empty, loading, degraded, stale, disconnected, and error states as product states.
+- Preserve durable links and URL-backed selection, filters, and tabs.
+- Keep primary screens concise; disclose provenance where it changes interpretation.
+- Do not infer scientific summaries, open targets, family membership, or relationships.
 
-## Scientific and data boundary
+## Authority boundary
 
-Canonical Repository Git history owns scientific state. The hosted projection
-is read-only and rebuildable. Hosted activity can hold accounts, workspaces,
-follows, approaches, attempts, discussion, artifact metadata, and unsigned
-Submission v3 drafts. It cannot sign, issue a Decision, or change Standing.
-
-A Check records scoped evidence. A Decision accepts or rejects a proposed
-change under Repository authority. A signature proves attribution, not truth.
-Current state is Repository-local. Discovery and overlap help users choose what
-to inspect or do next.
+Canonical scientific state remains in Repository Git history. The hosted
+scientific projection is SELECT-only and reconstructable. Hosted activity is
+non-authoritative. The application cannot sign, issue a scientific Decision,
+change Standing, or hold a Repository authority key.
 
 ## Success criteria
 
-- New readers can state what Vela is, what exists today, and where to begin.
-- Readers can find a Problem and its strongest evidence without knowing a URL.
-- Contribution, review, correction, and provenance paths are discoverable from
-  the Problem.
-- Collection, Problem, and search identities remain unambiguous at 320px and
-  200% zoom.
-- Keyboard, touch, forced colours, reduced motion, print, loading, and error
-  paths preserve the same task order.
-- Server-first routes stay fast; heavy visualizations load below the fold and
-  retain a text or table equivalent.
-- No hosted action crosses the scientific authority boundary.
+- A newcomer can say what the product is, what exists today, and where to begin.
+- A Problem answers the ten-second test on desktop, mobile, and 200% zoom.
+- Results, Sources, Work, History, and exact relationships are discoverable
+  without knowing a hidden URL.
+- Question and collection identity remain legible at 320px.
+- Keyboard, touch, forced colours, reduced motion, print, and screen readers
+  preserve the same task order.
+- Heavy maps and canvases load below a useful server-rendered frame and retain
+  a list or text equivalent.
+- No hosted action crosses the authority boundary.
 
-## Copy principles
+## Copy failures
 
-Use concrete verbs: find, read, check, compare, add, import, continue. Name the
-object and the axis: “Contribution accepted locally,” “Check passed,” “Source
-lists this as open.” Avoid protocol shorthand, vague network language,
-unqualified “verified,” and repeated boundary prose.
+Remove copy that only repeats a visible badge, label, row, edge, tab, or action.
+Avoid vague words such as platform, network, coordination, bounded, authority,
+record, root, and standing in first-use copy. Use those terms only where they
+change a decision or in technical detail.
 
-## Product failures
-
-- A protocol explorer as the primary experience
-- A metrics dashboard without user decisions attached
-- Walls of prose or repeated disclaimer copy
-- Numeric Problem identities without their collection
-- Evidence sources presented as Problem collections
-- Actor kind presented as a quality score
-- Hidden prior work, deep-link-only Contributions, or orphan history
-- Decorative charts, graphs, scientific imagery, or fake activity
-- A browser clone of tool sessions or Git history, or a reputation leaderboard
+Never ship a screen as a sequence of questions, numbered explanations,
+disclaimer paragraphs, or identical cards. Never present a source status as a
+global scientific verdict, a Repository decision as Problem resolution, or an
+AI/human label as evidence quality.
 
 ## Related contracts
 
-[`DESIGN.md`](DESIGN.md) defines the visual system. App-specific jobs and
-compositions live in [`apps/problems/PRODUCT.md`](apps/problems/PRODUCT.md) and
-[`apps/problems/DESIGN.md`](apps/problems/DESIGN.md). Implementation and release
-details live in [`docs/WEB.md`](docs/WEB.md) and
-[`docs/design-system.md`](docs/design-system.md).
+[`DESIGN.md`](DESIGN.md) defines the visual and interaction system.
+[`apps/problems/PRODUCT.md`](apps/problems/PRODUCT.md) maps routes to jobs.
+[`apps/problems/DESIGN.md`](apps/problems/DESIGN.md) maps routes to compositions.
+Implementation and release mechanics live in [`docs/WEB.md`](docs/WEB.md).

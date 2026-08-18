@@ -56,15 +56,16 @@ function destinationsAndHeadings(contents: string): string[] {
 describe("current product language", () => {
   it("classifies the five public product nouns without promoting them to protocol authority", () => {
     const contract = productContract();
-    expect(contract).toContain("The Problem is the canonical frame. A Contribution is the public unit of work");
-    expect(contract).toContain("My work groups followed Problems, workspaces, approaches, imports, drafts, and");
-    expect(contract).toContain("### Profile and account");
-    expect(contract).toContain("Current or curated evidence stays distinct from newer Contributions.");
-    expect(contract).toContain("WorkOS account identity, public scientific");
-    expect(contract).toContain("It cannot sign, issue a Decision, or change Standing.");
-    expect(contract).toContain("A Check records scoped evidence. A Decision accepts or rejects a proposed");
-    expect(contract).not.toContain("Profile` and `Organization` remain deferred");
-    expect(contract).toContain("The browser owns public discovery and shared, authority-free coordination.");
+    expect(contract).toContain("The Problem is the primary object.");
+    expect(contract).toContain("The canonical Problem tabs are:");
+    for (const label of ["Overview", "Work", "Results", "Sources", "History"]) {
+      expect(contract).toContain(`**${label}**`);
+    }
+    expect(contract).toContain("The user-facing durable output is a **Result**.");
+    expect(contract).toContain("Use **contribution** for the action of adding work");
+    expect(contract).toContain("WorkOS identity, scientific attribution, and Vela");
+    expect(contract).toContain("The application cannot sign, issue a scientific Decision,");
+    expect(contract).toContain("The browser may host shared, authority-free coordination");
     expect(contract).not.toMatch(/local Workbench/iu);
   });
 
@@ -80,8 +81,8 @@ describe("current product language", () => {
     expect(sidebar).not.toContain('label: "Repositories"');
     expect(sidebar).not.toContain('label: "Sources"');
     expect(sidebar).not.toContain("function problemSections");
-    expect(source("components/vela/problem-page.tsx")).toContain("<LinkTabs");
-    expect(source("components/vela/link-tabs.tsx")).toContain("aria-label={label}");
+    expect(source("components/vela/problem-page.tsx")).toContain("<ProblemReferenceTabs");
+    expect(source("components/vela/problem-overview-reference.tsx")).toContain('aria-label="Problem sections"');
     /* Group headings are named after the protocol's own axes, so a heading can
        never be mistaken for a destination that is missing its page. */
     for (const axis of ["Exact State records", "Contribution", "Repository provenance"]) {

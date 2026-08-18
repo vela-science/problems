@@ -97,7 +97,7 @@ describe("AppSidebar mobile navigation", () => {
     fireEvent.click(screen.getByRole("button", { name: "Open test navigation" }));
 
     expect(await screen.findByRole("link", { name: "Problems" })).toHaveAttribute("aria-current", "page");
-    expect(screen.getByRole("link", { name: "Vela" })).not.toHaveAttribute("aria-current");
+    expect(screen.getByRole("link", { name: "problems.science home" })).not.toHaveAttribute("aria-current");
   });
 
   it("provides an explicit close control", async () => {
@@ -114,22 +114,22 @@ describe("AppSidebar mobile navigation", () => {
     });
   });
 
-  it("keeps the desktop collapse control beside the Vela home affordance", async () => {
+  it("keeps the desktop collapse control beside the product home affordance", async () => {
     Object.defineProperty(window, "innerWidth", { configurable: true, value: 1024 });
     renderSidebar();
 
-    const home = await screen.findByRole("link", { name: "Vela" });
+    const home = await screen.findByRole("link", { name: "problems.science home" });
     const trigger = screen.getByRole("button", { name: "Collapse navigation" });
     expect(home.parentElement).toBe(trigger.parentElement);
-    expect(screen.queryByText("Vela")).not.toBeInTheDocument();
+    expect(screen.queryByText("problems.science")).not.toBeInTheDocument();
     expect(home.querySelector("svg")).toHaveStyle({ width: "22px", height: "22px" });
 
     fireEvent.click(trigger);
-    expect(screen.queryByRole("link", { name: "Vela" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "problems.science home" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Collapse navigation" })).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Expand navigation" }));
-    expect(screen.getByRole("link", { name: "Vela" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "problems.science home" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Collapse navigation" })).toBeInTheDocument();
   });
 
@@ -161,7 +161,7 @@ describe("AppSidebar mobile navigation", () => {
     ]) {
       expect(await screen.findByRole("link", { name: label })).toHaveAttribute("href", href);
     }
-    expect(screen.getByRole("link", { name: "Vela" })).toHaveAttribute("href", "/");
+    expect(screen.getByRole("link", { name: "problems.science home" })).toHaveAttribute("href", "/");
     expect(screen.getByText("Explore")).toBeInTheDocument();
     /* Repositories, Sources, and the other record routes keep their pages
        but reach the reader through contextual links, search, shortcuts, and
@@ -241,7 +241,7 @@ describe("AppSidebar mobile navigation", () => {
     /* The footer draws the root through RecordId, which carries the handle and
        the full value, so the link is found by the exact root it names rather
        than by a truncated fragment of it. */
-    expect(await screen.findByRole("link", { name: /sha256:test-release-root/u })).toHaveAttribute(
+    expect(await screen.findByRole("link", { name: /Release details/iu })).toHaveAttribute(
       "href",
       "/.well-known/vela-site.json",
     );

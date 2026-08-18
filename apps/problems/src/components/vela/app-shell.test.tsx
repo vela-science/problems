@@ -85,7 +85,7 @@ describe("AppShell accessibility boundary", () => {
   it("uses the shared compact hero for collection, record, and Repository openers", () => {
     for (const path of ["page-intro.tsx", "record-header.tsx", "repository-context.tsx"]) {
       const source = readFileSync(`src/components/vela/${path}`, "utf8");
-      expect(source).toContain('<PageHero density="compact">');
+      expect(source).toMatch(/<PageHero density="compact"(?:\s|>)/u);
       expect(source).not.toContain('<header className="border-b');
     }
     /* One, since `RecordSkeleton` was deleted with no consumer. The count is

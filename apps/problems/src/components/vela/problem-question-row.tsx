@@ -38,7 +38,7 @@ export function ProblemQuestionRow({ state, href, number, collectionLabel = "Pro
             {status}
           </span>
           {coverage.declarations ? <span>{coverage.declarations} formal {coverage.declarations === 1 ? "declaration" : "declarations"}</span> : null}
-          {reviewed ? <span className="text-status-evidence">{reviewed} reviewed {reviewed === 1 ? "Contribution" : "Contributions"}</span> : null}
+          {reviewed ? <span className="text-status-evidence">{reviewed} reviewed {reviewed === 1 ? "Result" : "Results"}</span> : null}
           {statement ? <span className="truncate">via {statement.sourceLabel}</span> : null}
         </span>
       </span>

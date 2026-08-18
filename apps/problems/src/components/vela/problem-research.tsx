@@ -55,7 +55,7 @@ function checkPresentation(outcome: string) {
   return { icon: MinusSignCircleIcon, className: "bg-muted text-muted-foreground" };
 }
 
-function CurrentContribution({ state, basePath }: { state: State; basePath: string }) {
+function CurrentResult({ state, basePath }: { state: State; basePath: string }) {
   const claim = state.claims.find((candidate) => candidate.id === state.currentClaimId) ?? null;
   const review = currentReview(state);
   const checks = review?.verification_records ?? [];
@@ -65,9 +65,9 @@ function CurrentContribution({ state, basePath }: { state: State; basePath: stri
   if (!claim) return <WhatIsKnown state={state} basePath={basePath} />;
 
   const sourceBindings = claim.source_bindings ?? [];
-  return <section aria-labelledby="current-contribution-heading">
+  return <section aria-labelledby="current-result-heading">
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <h2 id="current-contribution-heading" className="text-title">Current contribution</h2>
+      <h2 id="current-result-heading" className="text-title">Current result</h2>
       <Button nativeButton={false} size="sm" variant="outline" render={<Link href={`/graph?repository=${state.repositorySlug}&lens=research&node=${encodeURIComponent(claim.id)}`} />}>
         <HugeiconsIcon icon={GitForkIcon} aria-hidden /> Open map
       </Button>
@@ -76,7 +76,7 @@ function CurrentContribution({ state, basePath }: { state: State; basePath: stri
     <div className="mt-5 overflow-hidden rounded-xl border bg-background">
       <header className="flex flex-wrap items-center gap-2 border-b bg-muted/20 px-4 py-3 sm:px-5">
         <Badge className="capitalize" variant={claim.standing === "accepted" ? "default" : "secondary"}>{humanize(claim.standing)}</Badge>
-        <span className="text-compact font-medium">Contribution</span>
+        <span className="text-compact font-medium">Result</span>
         <span className="text-meta text-muted-foreground">{claim.created ? formatAgo(claim.created) : "date not recorded"}</span>
       </header>
 
@@ -106,7 +106,7 @@ function CurrentContribution({ state, basePath }: { state: State; basePath: stri
                 </ItemContent>
                 <ItemActions><Badge variant={check.outcome === "pass" ? "default" : "outline"}>{outcomeLabel(check.outcome)}</Badge></ItemActions>
               </Item>;
-            })}</ItemGroup> : <p className="py-5 text-compact text-muted-foreground">No check is retained for this contribution.</p>}
+            })}</ItemGroup> : <p className="py-5 text-compact text-muted-foreground">No check is retained for this result.</p>}
           </section>
 
           <section aria-labelledby="source-bindings-heading" className="mt-7">
@@ -128,7 +128,7 @@ function CurrentContribution({ state, basePath }: { state: State; basePath: stri
           </section>
         </div>
 
-        <aside aria-label="Contribution details" className="border-t bg-muted/10 xl:border-l xl:border-t-0">
+        <aside aria-label="Result details" className="border-t bg-muted/10 xl:border-l xl:border-t-0">
           <dl className="divide-y">
             <div className="px-5 py-4"><dt className="text-micro text-muted-foreground">Result type</dt><dd className="mt-1 text-compact font-medium">{humanize(claim.assertion_type, "Research result")}</dd></div>
             <div className="px-5 py-4"><dt className="text-micro text-muted-foreground">Evidence</dt><dd className="mt-1 text-compact font-medium">{claim.evidence_count ?? 0} {(claim.evidence_count ?? 0) === 1 ? "item" : "items"}</dd></div>
@@ -137,9 +137,9 @@ function CurrentContribution({ state, basePath }: { state: State; basePath: stri
             <div className="px-5 py-4"><dt className="text-micro text-muted-foreground">Current in</dt><dd className="mt-1 text-compact font-medium">{state.repositoryName}</dd></div>
           </dl>
           <div className="space-y-2 border-t p-4">
-            <Button className="w-full" nativeButton={false} size="sm" render={<Link href={`/repositories/${state.repositorySlug}/claims/${encodeURIComponent(claim.id)}`} />}>Open contribution</Button>
+            <Button className="w-full" nativeButton={false} size="sm" render={<Link href={`/repositories/${state.repositorySlug}/claims/${encodeURIComponent(claim.id)}`} />}>Open result</Button>
             {review ? <Button className="w-full" nativeButton={false} size="sm" variant="outline" render={<Link href={`/repositories/${state.repositorySlug}/proposals/${review.proposal_id}`} />}>Review and decision</Button> : null}
-            <Button className="w-full" nativeButton={false} size="sm" variant="ghost" render={<Link href={`${basePath}?view=files`} />}>Browse files</Button>
+            <Button className="w-full" nativeButton={false} size="sm" variant="ghost" render={<Link href={`${basePath}?view=sources`} />}>Browse sources</Button>
           </div>
         </aside>
       </div>
@@ -202,8 +202,8 @@ export function ProblemResearch({ state, basePath, view, selectedFile, selectedD
         measure belongs to the prose that needs it, and the assertion, the
         checks and the spine each already carry their own. */}
     <div className={`min-w-0 ${view === "contributions" || view === "timeline" ? "space-y-12" : ""}`}>
-      {view === "map" ? <CurrentContribution state={state} basePath={basePath} /> : null}
-      {view === "contributions" ? <><CurrentContribution state={state} basePath={basePath} /><ProblemEvidence state={state} /></> : null}
+      {view === "map" ? <CurrentResult state={state} basePath={basePath} /> : null}
+      {view === "contributions" ? <><CurrentResult state={state} basePath={basePath} /><ProblemEvidence state={state} /></> : null}
       {view === "files" ? <ResearchFiles state={state} basePath={basePath} selectedFile={selectedFile} selectedDeclaration={selectedDeclaration} /> : null}
       {view === "timeline" ? <>
         <ProblemHistory state={state} />

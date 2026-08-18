@@ -19,7 +19,6 @@ import { CollectionDistribution } from "@/components/vela/collection-distributio
 import { SourceCorpusMap } from "@/components/vela/source-corpus-map";
 import { ProblemSourceCoverage } from "@/components/vela/problem-source-coverage";
 import { LedgerPager } from "@/components/vela/ledger-pager";
-import { RouteTitle } from "@/components/vela/route-title";
 import { ScientificChangeFeed } from "@/components/vela/scientific-change-feed";
 import {
   discoveredProblems,
@@ -103,7 +102,7 @@ function ProblemRows({ problems, statements }: {
         record.formalized ? "formalized" : null,
         record.source_count > 1 ? `${record.source_count} sources` : null,
         record.prize,
-        record.local_standing ? `Claim ${record.local_standing.replaceAll("_", " ")}` : null,
+        record.local_standing ? `Result ${record.local_standing.replaceAll("_", " ")}` : null,
       ].filter(Boolean);
       return <li key={`${problem.repository}/${problem.problem}`} className="grid grid-cols-[2.75rem_minmax(0,1fr)] gap-x-4 border-t py-4 first:border-t-0">
         <span className="pt-0.5 font-mono text-meta tabular-nums text-muted-foreground">{problem.problem}</span>
@@ -184,7 +183,7 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
 
     return <PageShell archetype="problem">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionStructuredData) }} />
-      <PageHero className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,.42fr)] lg:items-end">
+      <PageHero className="vela-collection-hero grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,.42fr)] lg:items-end">
         <div><p className="text-eyebrow uppercase text-muted-foreground">{corpusLabel}</p><h1 className="mt-3 text-display">Erdős Problems</h1><p className="typeset typeset-compact mt-4 max-w-2xl text-muted-foreground">Browse this source-owned collection by topic, then inspect each question, its evidence, prior work, and current Repository state.</p><div className="mt-6 flex flex-wrap gap-3"><Button nativeButton={false} render={<Link href={{ pathname: COLLECTION_PATH, query: { view: "all", ...scopeQuery() } }} />}>Open collection directory <HugeiconsIcon icon={ArrowRight} aria-hidden data-icon="inline-end" /></Button><Button nativeButton={false} variant="outline" render={<Link href="/contribute" />}>Add a contribution</Button></div></div>
         <div className="vela-evidence-surface rounded-xl px-5 py-5"><p className="text-eyebrow uppercase text-muted-foreground">Collection scope</p><p className="mt-2 text-title">{catalog.length.toLocaleString()} Erdős problems</p><p className="mt-2 text-meta text-muted-foreground">One explicit Problem collection with {new Set(catalog.flatMap(({ topics }) => topics.map(({ key }) => key))).size} source-owned Topics. Other sources appear as evidence, not as additional Problem collections.</p><div className="mt-4 flex flex-wrap gap-2">{domains.map(([key, name]) => <Link key={key} href={{ pathname: COLLECTION_PATH, query: { domain: key } }} className="rounded-full bg-background/70 px-3 py-1.5 text-meta font-medium hover:bg-background">Area · {name}</Link>)}</div></div>
       </PageHero>
@@ -211,7 +210,7 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
 
       <PageSection className="grid gap-8 xl:grid-cols-[minmax(0,1.15fr)_minmax(20rem,.85fr)]">
         <section className="vela-direction-surface rounded-xl px-5 py-6 sm:px-7" aria-labelledby="source-owned-contribution"><p className="text-eyebrow uppercase text-muted-foreground">Choose what to do next</p><h2 id="source-owned-contribution" className="mt-2 text-title">Contributions stay with their source</h2><p className="mt-4 max-w-[65ch] text-body text-muted-foreground">Choose a Problem, review its source repository, and continue in your preferred local tool when you need to run code or edit files. The site publishes no central scientific priority queue.</p><Button className="mt-5" nativeButton={false} variant="outline" render={<Link href="/contribute" />}>Add a contribution</Button></section>
-        <section className="vela-evidence-surface rounded-xl px-5 py-6 sm:px-7" aria-labelledby="reviewed-evidence"><div className="flex items-center gap-2"><HugeiconsIcon icon={Compass01Icon} aria-hidden className="size-5 text-[var(--status-evidence)]" /><p className="text-eyebrow uppercase text-muted-foreground">Reviewed evidence</p></div><h2 id="reviewed-evidence" className="mt-2 text-title">Problems with reviewed Contributions</h2>{stateProblems.length ? <ProblemRows problems={stateProblems.slice(0, 3)} statements={statements} /> : <div className="py-8"><p className="text-subtitle">No reviewed Contribution in this scope.</p><p className="mt-2 text-meta text-muted-foreground">Source questions remain discoverable without implying that they were reviewed here.</p></div>}</section>
+        <section className="vela-evidence-surface rounded-xl px-5 py-6 sm:px-7" aria-labelledby="reviewed-evidence"><div className="flex items-center gap-2"><HugeiconsIcon icon={Compass01Icon} aria-hidden className="size-5 text-[var(--status-evidence)]" /><p className="text-eyebrow uppercase text-muted-foreground">Reviewed evidence</p></div><h2 id="reviewed-evidence" className="mt-2 text-title">Problems with reviewed Results</h2>{stateProblems.length ? <ProblemRows problems={stateProblems.slice(0, 3)} statements={statements} /> : <div className="py-8"><p className="text-subtitle">No reviewed Result in this scope.</p><p className="mt-2 text-meta text-muted-foreground">Source questions remain discoverable without implying that they were reviewed here.</p></div>}</section>
       </PageSection>
 
       <PageSection className="vela-history-surface rounded-xl px-5 py-6 sm:px-7" aria-labelledby="state-history"><div className="flex items-end justify-between gap-4"><div><div className="flex items-center gap-2"><HugeiconsIcon icon={Activity01Icon} aria-hidden className="size-5" /><p className="text-eyebrow uppercase text-muted-foreground">Recent changes</p></div><h2 id="state-history" className="mt-2 text-title">Latest scientific history</h2></div><Link href="/activity" className="text-meta font-medium underline-offset-4 hover:underline">Full history</Link></div><ScientificChangeFeed changes={activity} compact /></PageSection>
@@ -260,16 +259,15 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
 
   return <PageShell archetype="problem">
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionStructuredData) }} />
-    <RouteTitle title="Erdős Problems" scope={`${catalog.length.toLocaleString()} source-owned questions`} />
-    <div className="mt-4 grid gap-6 border-y py-6 lg:grid-cols-[minmax(0,.72fr)_minmax(24rem,1.28fr)] lg:items-start">
+    <PageHero density="compact" className="vela-collection-hero grid gap-6 lg:grid-cols-[minmax(0,.72fr)_minmax(24rem,1.28fr)] lg:items-start">
       <div>
         <p className="text-eyebrow uppercase text-muted-foreground">One published collection</p>
-        <h2 className="mt-2 text-title">Browse this collection</h2>
+        <h1 className="mt-2 text-display">Erdős Problems</h1>
         <p className="mt-3 max-w-[54ch] text-compact text-muted-foreground">Browse {catalog.length.toLocaleString()} source-owned questions. Status below is the source declaration; reviewed evidence and current Repository state remain separate.</p>
         <div className="mt-4 flex flex-wrap gap-3 text-meta"><Link href="/contribute" className="font-medium underline underline-offset-4">Add a contribution</Link><Link href={{ pathname: COLLECTION_PATH, query: { view: "overview" } }} className="font-medium underline underline-offset-4">Explore Topics and sources</Link></div>
       </div>
       <CollectionDistribution problems={catalog} compact />
-    </div>
+    </PageHero>
     <form action={COLLECTION_PATH} className="mt-6" aria-label="Filter Erdős Problems">
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(15rem,1fr)_repeat(2,minmax(10rem,.4fr))_auto]">
         <label className="relative block"><span className="sr-only">Search Problems</span><HugeiconsIcon icon={Search01Icon} aria-hidden className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /><Input className="h-11 pl-9" name="q" maxLength={200} defaultValue={query.q?.slice(0, 200)} placeholder="Number, Topic, or statement" /></label>
@@ -287,7 +285,7 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
           <label><span className="sr-only">Current Repository</span><Select name="repository" defaultValue={repository} items={selectItems("Any current Repository", repositories.map((value) => [value, value]))}><SelectTrigger className="h-11 w-full"><SelectValue /></SelectTrigger><SelectContent align="start"><SelectItem value="all">Any current Repository</SelectItem>{repositories.map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select></label>
           <label><span className="sr-only">Formalization</span><Select name="formalized" defaultValue={formalized} items={selectItems("Any formalization state", [["yes", "Formalized"], ["no", "Not formalized"]])}><SelectTrigger className="h-11 w-full"><SelectValue /></SelectTrigger><SelectContent align="start"><SelectItem value="all">Any formalization state</SelectItem><SelectItem value="yes">Formalized</SelectItem><SelectItem value="no">Not formalized</SelectItem></SelectContent></Select></label>
           <label><span className="sr-only">Source observation coverage</span><Select name="coverage" defaultValue={coverage} items={selectItems("Any source observation coverage", [["complete", "Complete source observation"], ["partial", "Partial source observation"], ["unobserved", "Source unobserved"]])}><SelectTrigger className="h-11 w-full"><SelectValue /></SelectTrigger><SelectContent align="start"><SelectItem value="all">Any source observation coverage</SelectItem><SelectItem value="complete">Complete source observation</SelectItem><SelectItem value="partial">Partial source observation</SelectItem><SelectItem value="unobserved">Source unobserved</SelectItem></SelectContent></Select></label>
-          <label><span className="sr-only">Contribution decision</span><Select name="standing" defaultValue={standing} items={selectItems("Any Contribution decision", standings.map((value) => [value, value === "none" ? "Not reviewed here" : optionLabel(value)]))}><SelectTrigger className="h-11 w-full"><SelectValue /></SelectTrigger><SelectContent align="start"><SelectItem value="all">Any Contribution decision</SelectItem>{standings.map((value) => <SelectItem key={value} value={value}>{value === "none" ? "Not reviewed here" : optionLabel(value)}</SelectItem>)}</SelectContent></Select></label>
+          <label><span className="sr-only">Result decision</span><Select name="standing" defaultValue={standing} items={selectItems("Any Result decision", standings.map((value) => [value, value === "none" ? "Not reviewed here" : optionLabel(value)]))}><SelectTrigger className="h-11 w-full"><SelectValue /></SelectTrigger><SelectContent align="start"><SelectItem value="all">Any Result decision</SelectItem>{standings.map((value) => <SelectItem key={value} value={value}>{value === "none" ? "Not reviewed here" : optionLabel(value)}</SelectItem>)}</SelectContent></Select></label>
           <label className="sm:col-span-2"><span className="sr-only">Exact Problem identifier</span><Input className="h-11" name="exact_id" maxLength={256} defaultValue={exactId} placeholder="Exact number, native ID, Claim ID, entity ID, or canonical path" /></label>
         </div>
         <p className="pb-2 text-meta text-muted-foreground">Coverage is source-observation coverage, not Problem completeness. <Link href={{ pathname: COLLECTION_PATH, query: { view: "overview" } }} className="font-medium text-foreground underline-offset-4 hover:underline">Inspect coverage</Link></p>

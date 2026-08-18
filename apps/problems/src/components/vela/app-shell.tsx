@@ -38,7 +38,7 @@ export function AppShell({
           <SidebarProvider
             defaultOpen
             className="h-svh min-w-0 overflow-y-hidden print:block print:h-auto print:overflow-visible print:bg-background"
-            style={{ "--sidebar-width": "14rem", "--sidebar-width-icon": "3rem" } as CSSProperties}
+            style={{ "--sidebar-width": "12.5rem", "--sidebar-width-icon": "3rem" } as CSSProperties}
           >
             <AppSidebar
               repositories={publishedRepositories}

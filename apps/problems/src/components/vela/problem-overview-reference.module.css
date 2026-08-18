@@ -1,0 +1,378 @@
+.reference {
+  --ref-ink: var(--foreground);
+  --ref-ink-soft: color-mix(in oklab, var(--foreground) 72%, var(--background));
+  --ref-cobalt: var(--primary);
+  --ref-cobalt-soft: var(--accent);
+  --ref-paper: var(--muted);
+  --ref-paper-strong: var(--card);
+  --ref-coral: var(--vela-coral);
+  --ref-amber: var(--vela-amber);
+  --ref-mint: var(--vela-mint);
+  --ref-line: var(--border);
+  --ref-muted: var(--muted-foreground);
+  --ref-hero-bg: var(--vela-ink);
+  --ref-hero-fg: var(--vela-paper-strong);
+  --ref-hero-muted: color-mix(in oklab, var(--vela-paper-strong) 76%, transparent);
+  --ref-hero-faint: color-mix(in oklab, var(--vela-paper-strong) 72%, transparent);
+  --ref-hero-line: color-mix(in oklab, var(--vela-paper-strong) 32%, transparent);
+  --ref-hero-hover: color-mix(in oklab, var(--vela-paper-strong) 12%, transparent);
+  --ref-paper-translucent: color-mix(in oklab, var(--card) 68%, transparent);
+  color: var(--ref-ink);
+}
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--ref-hero-bg) 88%, var(--ref-hero-fg));
+  border-radius: 1rem;
+  background:
+    linear-gradient(118deg, color-mix(in oklab, var(--ref-cobalt) 18%, transparent), transparent 44%),
+    var(--ref-hero-bg);
+  color: var(--ref-hero-fg);
+}
+
+.hero::after {
+  position: absolute;
+  right: -5rem;
+  bottom: -8rem;
+  width: 20rem;
+  height: 20rem;
+  border: 1px solid color-mix(in oklab, var(--ref-hero-fg) 14%, transparent);
+  border-radius: 9999px;
+  box-shadow:
+    0 0 0 3rem color-mix(in oklab, var(--ref-hero-fg) 3%, transparent),
+    0 0 0 6rem color-mix(in oklab, var(--ref-hero-fg) 2%, transparent);
+  content: "";
+  pointer-events: none;
+}
+
+.heroMain {
+  position: relative;
+  z-index: 1;
+  padding: clamp(1.25rem, 3vw, 2.25rem);
+}
+
+.question {
+  max-width: min(44rem, 100%);
+  overflow: visible;
+  font-size: clamp(1.5rem, 2.55vw, 2.25rem);
+  font-weight: 500;
+  line-height: 1.17;
+  letter-spacing: -0.028em;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.heroRail {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid color-mix(in oklab, var(--ref-hero-fg) 16%, transparent);
+  background: color-mix(in oklab, var(--ref-hero-fg) 5%, transparent);
+}
+
+.heroFact {
+  min-width: 0;
+  padding: 0.85rem 1rem 0.95rem;
+  border-right: 1px solid color-mix(in oklab, var(--ref-hero-fg) 12%, transparent);
+}
+
+.heroFact:last-child {
+  border-right: 0;
+}
+
+.factValue {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.statusDot {
+  width: 0.5rem;
+  height: 0.5rem;
+  flex: none;
+  border-radius: 9999px;
+  background: var(--ref-amber);
+}
+
+.statusDot[data-tone="cobalt"] { background: var(--primary); }
+.statusDot[data-tone="mint"] { background: var(--ref-mint); }
+.statusDot[data-tone="coral"] { background: var(--ref-coral); }
+
+.tabs {
+  display: flex;
+  gap: 0.25rem;
+  overflow-x: auto;
+  padding: 0.45rem;
+  border: 1px solid var(--ref-line);
+  border-radius: 0.75rem;
+  background: var(--ref-paper-strong);
+  scrollbar-width: none;
+}
+
+.tabs::-webkit-scrollbar { display: none; }
+
+.tab {
+  display: inline-flex;
+  min-height: 2.5rem;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 0.5rem;
+  color: var(--ref-muted);
+  font-size: 0.875rem;
+  font-weight: 550;
+  text-decoration: none;
+}
+
+.tab:hover { background: var(--ref-paper); color: var(--ref-ink); }
+.tab:focus-visible { outline: 2px solid var(--ref-cobalt); outline-offset: 2px; }
+.tab[data-active="true"] { background: var(--ref-ink); color: var(--background); }
+
+.overviewGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(15rem, 18rem);
+  align-items: start;
+  gap: 1.25rem;
+}
+
+.contentStack { min-width: 0; }
+
+.statePanel {
+  overflow: hidden;
+  border: 1px solid var(--ref-line);
+  border-radius: 1rem;
+  background: var(--ref-paper);
+}
+
+.stateLead {
+  display: grid;
+  grid-template-columns: 0.35rem minmax(0, 1fr);
+}
+
+.stateAccent {
+  background: linear-gradient(var(--ref-cobalt), var(--ref-coral));
+}
+
+.stateBody {
+  padding: clamp(1.1rem, 2.5vw, 1.75rem);
+}
+
+.stateHeadline {
+  max-width: 46rem;
+  font-size: clamp(1.2rem, 2vw, 1.55rem);
+  font-weight: 560;
+  line-height: 1.35;
+  letter-spacing: -0.018em;
+  text-wrap: pretty;
+}
+
+.stateMeta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--ref-line);
+  background: color-mix(in oklab, var(--card) 72%, transparent);
+}
+
+.stateMeta > div {
+  min-width: 0;
+  padding: 0.8rem 1rem;
+  border-right: 1px solid var(--ref-line);
+}
+
+.stateMeta > div:last-child { border-right: 0; }
+
+.section {
+  margin-top: 1.5rem;
+  border-top: 1px solid var(--ref-line);
+  padding-top: 1.35rem;
+}
+
+.sectionHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+}
+
+.sectionTitle {
+  font-size: 1rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.boundFigure {
+  margin-top: 0.9rem;
+  overflow: hidden;
+  border: 1px solid var(--ref-line);
+  border-radius: 0.8rem;
+  background: var(--ref-paper-strong);
+}
+
+.boundRow {
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+  min-height: 5rem;
+  padding: 0.9rem 1rem;
+  border-top: 1px solid var(--ref-line);
+}
+
+.boundRow:first-child { border-top: 0; }
+
+.boundBar {
+  height: 0.45rem;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--ref-cobalt), color-mix(in oklab, var(--ref-cobalt) 30%, white));
+}
+
+.boundRow[data-bound="second"] .boundBar {
+  background: linear-gradient(90deg, var(--ref-coral), var(--ref-amber));
+}
+
+.resultRow {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 0.85rem;
+  margin-top: 0.9rem;
+  padding: 1rem 0;
+  border-block: 1px solid var(--ref-line);
+}
+
+.resultGlyph {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border-radius: 0.6rem;
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+
+.rail {
+  overflow: hidden;
+  border: 1px solid var(--ref-line);
+  border-radius: 0.9rem;
+  background: var(--ref-paper-strong);
+}
+
+.railSection {
+  padding: 1rem;
+  border-top: 1px solid var(--ref-line);
+}
+
+.railSection:first-child { border-top: 0; }
+
+.representation {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.65rem 0;
+  border-top: 1px solid color-mix(in oklab, var(--ref-line) 72%, transparent);
+}
+
+.representation:first-of-type { margin-top: 0.55rem; border-top: 0; }
+
+.representationIcon {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border-radius: 0.5rem;
+  background: var(--ref-paper);
+  color: var(--ref-ink-soft);
+}
+
+.technical summary {
+  min-height: 2.5rem;
+  cursor: pointer;
+  list-style: none;
+  padding: 0.75rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.technical summary::-webkit-details-marker { display: none; }
+
+@media (max-width: 880px) {
+  .heroRail { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .heroFact:nth-child(2) { border-right: 0; }
+  .heroFact:nth-child(n + 3) { border-top: 1px solid color-mix(in oklab, var(--ref-hero-fg) 12%, transparent); }
+  .overviewGrid { grid-template-columns: 1fr; }
+  .rail { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .railSection { border-top: 0; border-left: 1px solid var(--ref-line); }
+  .railSection:nth-child(odd) { border-left: 0; }
+  .railSection:nth-child(n + 3) { border-top: 1px solid var(--ref-line); }
+}
+
+@media (max-width: 560px) {
+  .hero { border-radius: 0.8rem; }
+  .heroMain { padding: 1.1rem; }
+  .heroRail { grid-template-columns: 1fr; }
+  .heroFact { border-right: 0; border-top: 1px solid color-mix(in oklab, var(--ref-hero-fg) 12%, transparent); }
+  .heroFact:first-child { border-top: 0; }
+  .tabs {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.15rem;
+    overflow: visible;
+    padding: 0.3rem;
+  }
+  .tab {
+    min-width: 0;
+    min-height: 3rem;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.35rem 0.1rem;
+    font-size: 0.67rem;
+    line-height: 1.05;
+  }
+  .stateMeta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stateMeta > div:nth-child(2) { border-right: 0; }
+  .stateMeta > div:nth-child(n + 3) { border-top: 1px solid var(--ref-line); }
+  .boundRow { grid-template-columns: 5rem minmax(0, 1fr); gap: 0.7rem; }
+  .boundRow > :last-child { grid-column: 2; }
+  .resultRow { grid-template-columns: auto minmax(0, 1fr); }
+  .resultRow > :last-child { grid-column: 2; }
+  .rail { display: block; }
+  .railSection { border-top: 1px solid var(--ref-line); border-left: 0; }
+  .railSection:first-child { border-top: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reference *, .reference *::before, .reference *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .reference { --ref-hero-fg: CanvasText; --ref-hero-muted: CanvasText; --ref-hero-faint: CanvasText; --ref-hero-line: CanvasText; }
+  .hero, .statePanel, .boundFigure, .rail, .tabs { border: 1px solid CanvasText; }
+  .hero { background: Canvas; color: CanvasText; }
+  .hero::after, .stateAccent, .boundBar { display: none; }
+  .tab[data-active="true"] { background: Highlight; color: HighlightText; }
+  .statusDot, .statusDot[data-tone] { background: CanvasText; }
+}
+
+@media print {
+  .reference { --ref-hero-bg: white; --ref-hero-fg: black; --ref-hero-muted: black; --ref-hero-faint: black; --ref-hero-line: #777; }
+  .hero { background: white !important; color: black !important; border-color: #777; }
+  .hero::after, .tabs { display: none; }
+  .heroRail { border-color: #999; background: transparent; }
+  .overviewGrid { grid-template-columns: 1fr; }
+  .rail { break-inside: avoid; }
+}

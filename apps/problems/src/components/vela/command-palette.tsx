@@ -165,11 +165,11 @@ export function CommandPaletteProvider({
           onOpenChange={setOpen}
           onOpenChangeComplete={handleOpenChangeComplete}
           title="Search problems.science"
-          description="Find a Problem, Contribution, source, or page"
+          description="Find a Problem, Result, source, or page"
           className="border-border bg-popover sm:max-w-xl"
         >
           <Command shouldFilter={false}>
-            <CommandInput placeholder="Search Problems, Contributions, and sources…" autoFocus value={query} onValueChange={setQuery} />
+            <CommandInput placeholder="Search Problems, Results, and sources…" autoFocus value={query} onValueChange={setQuery} />
             <CommandList>
               {hasQuery && records.length ? (
                 <CommandGroup heading="Published results">

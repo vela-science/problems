@@ -61,7 +61,7 @@ export function ProblemHeader({ state, route, problemNumber, collectionName, col
         <span className="font-mono normal-case tracking-normal text-foreground">{`#${problemNumber}`}</span>
       </p>
       <div className="flex flex-wrap items-center gap-2">
-        <Button nativeButton={false} size="sm" render={<Link href={`${route}?view=workspace`} />}>Add a contribution</Button>
+        <Button nativeButton={false} size="sm" render={<Link href={`${route}?view=work`} />}>Add a contribution</Button>
         {statement?.locatorUrl
           ? <Button nativeButton={false} size="sm" variant="outline" render={<a href={statement.locatorUrl} />}>
             Open exact source<HugeiconsIcon icon={ArrowUpRight01Icon} strokeWidth={1.8} aria-hidden className="size-3.5" />

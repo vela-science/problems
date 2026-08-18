@@ -41,7 +41,7 @@ describe("AccountProfile", () => {
     expect(screen.getByRole("heading", { level: 1, name: "Ada Lovelace" })).toBeVisible();
     expect(screen.getByText("ada@example.org")).toBeVisible();
     expect(screen.getByText("Visible only to you")).toBeVisible();
-    expect(screen.getByText(/Scientific attribution stays with each Contribution/iu)).toBeVisible();
+    expect(screen.getByText(/each Result keeps its own scientific attribution/iu)).toBeVisible();
     expect(screen.getByRole("link", { name: "My work" })).toHaveAttribute("href", "/my-work");
     expect(screen.getByRole("link", { name: "Manage connections" })).toHaveAttribute("href", "/account/connections");
     expect(screen.getByText("Prime gaps")).toBeVisible();

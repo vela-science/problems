@@ -48,7 +48,7 @@ export default async function HomePage() {
   const previews = await problemStatePreviews(featured);
 
   return <PageShell archetype="default">
-    <PageHero density="compact" className="isolate">
+    <PageHero density="compact" className="vela-product-hero">
       <div className="max-w-4xl">
         <p className="text-eyebrow uppercase text-muted-foreground">Problems.science</p>
         <h1 className="mt-3 text-display text-balance">Find a problem. See what is known. Add evidence.</h1>
@@ -78,7 +78,13 @@ export default async function HomePage() {
           <Button size="lg" nativeButton={false} render={<Link href="/problems" />}>
             Browse problems <HugeiconsIcon icon={ArrowRight} aria-hidden data-icon="inline-end" />
           </Button>
-          <Button size="lg" nativeButton={false} variant="outline" render={<Link href="/contribute" />}>
+          <Button
+            size="lg"
+            nativeButton={false}
+            variant="outline"
+            className="vela-hero-secondary-action"
+            render={<Link href="/contribute" />}
+          >
             Add a contribution
           </Button>
         </div>
@@ -147,8 +153,8 @@ export default async function HomePage() {
 
         <p className="mt-6 max-w-[68ch] text-meta text-muted-foreground">
           {assessed.length
-            ? `${assessed.length} of these Problems carry a Contribution this Repository has reviewed. A reviewed Contribution is a scoped result; it does not by itself resolve the question.`
-            : "No Problem in this release carries a reviewed Contribution yet."}
+            ? `${assessed.length} of these Problems have a Result this Repository has reviewed. A reviewed Result is scoped; it does not by itself resolve the question.`
+            : "No Problem in this release has a reviewed Result yet."}
         </p>
       </div>
 

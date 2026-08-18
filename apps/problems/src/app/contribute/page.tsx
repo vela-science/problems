@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 export default function WorkPage() {
   return (
     <PageShell archetype="work">
-      <PageHero density="compact">
+      <PageHero density="compact" className="vela-work-hero">
         <div className="flex items-center gap-2">
           <HugeiconsIcon icon={WorkIcon} aria-hidden className="size-5" />
           <p className="text-eyebrow uppercase text-muted-foreground">Start from a Problem</p>

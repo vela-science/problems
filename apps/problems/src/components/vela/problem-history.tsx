@@ -31,7 +31,7 @@ export function ProblemHistory({ state }: { state: State }) {
   const corrections = state.claims.flatMap((claim) => correctionRelations(claim).map((relation) => ({ claim, relation })));
   return <>
     <section aria-labelledby="proposed-changes-heading">
-      <div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-eyebrow uppercase text-muted-foreground">Chronology</p><h2 id="proposed-changes-heading" className="mt-1 text-title">Contribution history</h2></div>{state.reviews.length ? <span className="text-meta text-muted-foreground">{state.reviews.length} {state.reviews.length === 1 ? "event" : "events"}</span> : null}</div>
+      <div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-eyebrow uppercase text-muted-foreground">Chronology</p><h2 id="proposed-changes-heading" className="mt-1 text-title">Result history</h2></div>{state.reviews.length ? <span className="text-meta text-muted-foreground">{state.reviews.length} {state.reviews.length === 1 ? "event" : "events"}</span> : null}</div>
       {state.reviews.length ? <ol className="relative mt-6 space-y-0 before:absolute before:bottom-5 before:left-[.4375rem] before:top-5 before:w-px before:bg-border">
         {state.reviews.map((review) => <li key={review.proposal_id} className="relative grid grid-cols-[1rem_minmax(0,1fr)] gap-4 pb-7 last:pb-0">
           <span aria-hidden className="relative z-10 mt-1.5 size-3.5 rounded-full border-4 border-background bg-status-evidence ring-1 ring-border forced-colors:border-2" />
@@ -43,7 +43,7 @@ export function ProblemHistory({ state }: { state: State }) {
             <a href={`/repositories/${state.repositorySlug}/proposals/${review.proposal_id}`} className="mt-2 inline-block text-meta font-medium underline underline-offset-4">Open event <span className="sr-only"><RecordId value={review.proposal_id} copy={false} /></span></a>
           </div>
         </li>)}
-      </ol> : <div className="mt-5 rounded-lg border border-dashed p-5"><p className="text-label font-medium">No Contribution history yet</p><p className="mt-1 text-meta text-muted-foreground">No proposed change is retained for this Problem.</p></div>}
+      </ol> : <div className="mt-5 rounded-lg border border-dashed p-5"><p className="text-label font-medium">No Result history yet</p><p className="mt-1 text-meta text-muted-foreground">No proposed change is retained for this Problem.</p></div>}
     </section>
 
     <section aria-labelledby="correction-heading">

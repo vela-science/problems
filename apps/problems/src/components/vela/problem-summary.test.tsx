@@ -79,13 +79,13 @@ describe("Provenance summary", () => {
     render(<ProvenanceSummary basePath="/problems/erdos-problems/321" state={{ ...base, currentClaimId: claim.id, claims: [claim], reviews: [review] } as never} />);
     expect(screen.getByRole("heading", { name: "What was checked" })).toBeInTheDocument();
     expect(screen.getByText(/agent:producer/u)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Full verification record" })).toHaveAttribute("href", "/problems/erdos-problems/321?view=timeline");
+    expect(screen.getByRole("link", { name: "Full verification record" })).toHaveAttribute("href", "/problems/erdos-problems/321?view=history");
     expect(screen.queryByText(/vvr_/u)).toBeNull();
   });
 
   it("points at the source's own audit as a source-published fact", () => {
     render(<ProvenanceSummary basePath="/problems/erdos-problems/321" state={{ ...base, sourceAudits: [{ fixture_id: "f" }] } as never} />);
     expect(screen.getByText("No contribution to this Problem has been checked by this Repository.")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "its own audit" })).toHaveAttribute("href", "/problems/erdos-problems/321?view=contributions");
+    expect(screen.getByRole("link", { name: "its own audit" })).toHaveAttribute("href", "/problems/erdos-problems/321?view=results");
   });
 });

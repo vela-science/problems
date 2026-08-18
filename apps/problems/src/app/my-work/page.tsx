@@ -36,17 +36,18 @@ export default async function MyWorkPage() {
 
   return <PageShell archetype="default" layout="reading" className="flex flex-col gap-8">
     <PageIntro
+      className="vela-work-hero"
       title="My work"
-      description="Return to the Problems where you are comparing approaches, recording results, or preparing a Contribution. This private coordination never changes published scientific state."
+      description="Return to the Problems where you are comparing approaches, recording results, or preparing a contribution."
       signals={[
         { label: "Account", value: account.hosted.displayName, tone: "neutral" },
-        { label: "Authority", value: "None", detail: "Coordination only", tone: "neutral" },
+        { label: "Surface", value: "Private work", detail: "Shared coordination", tone: "neutral" },
       ]}
     />
 
     {result.status === "unavailable" ? <section aria-labelledby="work-unavailable-heading" className="border-y py-8">
       <h2 id="work-unavailable-heading" className="text-title">Your work could not be loaded</h2>
-      <p className="mt-2 max-w-2xl text-body text-muted-foreground">Your sign-in is intact, but the coordination store did not answer. Public Problems and Contributions are still available.</p>
+      <p className="mt-2 max-w-2xl text-body text-muted-foreground">Your sign-in is intact, but saved work is temporarily unavailable. Public Problems and Results are still available.</p>
       <Button className="mt-5" variant="outline" nativeButton={false} render={<Link href="/problems" />}>Browse Problems</Button>
     </section> : result.workspaces.length ? <section aria-labelledby="retained-work-heading">
       <div className="flex flex-wrap items-end justify-between gap-3 border-b pb-4">

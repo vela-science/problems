@@ -74,7 +74,7 @@ export function SearchResults({ projectionRoot, repositories, problemCollections
 
   return <Command shouldFilter={false} className="rounded-lg border bg-card p-0">
     <div className="border-b p-3 sm:p-4">
-      <CommandInput value={query} onValueChange={(value) => replace({ q: value || null })} placeholder="Problem, question, contribution, or source…" aria-label="Search problems and contributions" />
+      <CommandInput value={query} onValueChange={(value) => replace({ q: value || null })} placeholder="Problem, question, result, or source…" aria-label="Search Problems and Results" />
       {/* Labelled, not bare. Three `bar` triggers side by side all read `All
           repositories`/`All kinds`/`All states` truncated to `all`, so the page
           offered three identical controls and nothing said what any of them
@@ -111,7 +111,7 @@ export function SearchResults({ projectionRoot, repositories, problemCollections
     <div className="flex items-center justify-between gap-3 border-b px-4 py-2 text-meta text-muted-foreground"><span aria-live="polite">{!hasIntent ? "Ready for a query" : records ? `${records.length.toLocaleString()} results` : "Verifying search projection…"}</span><span>Relevance order, not authority</span></div>
     <CommandList className="max-h-[62vh] p-1">
       {!records ? <div className="p-2"><LedgerSkeleton rows={5} /></div> : null}
-      {!hasIntent ? <Empty className="min-h-56 border-0"><EmptyHeader><EmptyMedia variant="icon"><HugeiconsIcon icon={Search}  /></EmptyMedia><EmptyTitle>Find a scientific Problem or Contribution</EmptyTitle><EmptyDescription>Search by question, collection-local number, contribution, source, or exact ID. Technical record filters remain available when you need them.</EmptyDescription></EmptyHeader></Empty> : null}
+      {!hasIntent ? <Empty className="min-h-56 border-0"><EmptyHeader><EmptyMedia variant="icon"><HugeiconsIcon icon={Search}  /></EmptyMedia><EmptyTitle>Find a scientific Problem or Result</EmptyTitle><EmptyDescription>Search by question, collection-local number, result, or source. Exact record filters remain available when you need them.</EmptyDescription></EmptyHeader></Empty> : null}
       {hasIntent && records ? <CommandEmpty><Empty className="border-0"><EmptyHeader><EmptyMedia variant="icon"><HugeiconsIcon icon={Search}  /></EmptyMedia><EmptyTitle>No matching records</EmptyTitle><EmptyDescription>Try a broader query or remove a filter.</EmptyDescription></EmptyHeader></Empty></CommandEmpty> : null}
       {hasIntent && records?.length ? <CommandGroup heading="Published records">{records.map((record) => {
         const heading = recordHeading(record);

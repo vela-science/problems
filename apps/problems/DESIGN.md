@@ -1,134 +1,130 @@
 ---
 register: design
 extends: ../../DESIGN.md
+application: problems
 ---
 
 # Problems composition guide
 
-This file maps the shared Vela design system to Problems routes. It owns page
-composition, responsive priority, data-state presentation, and app-local visual
-instruments. Shared controls and semantics stay in `@vela/ui`.
+## Route-to-composition map
 
-## Route to composition map
-
-| Surface | Primary composition | Supporting visual system |
+| Surface | Dominant composition | Real supporting data |
 | --- | --- | --- |
-| Home | focused search hero plus task-oriented workspace | connected three-step start, one collection row, grouped recent activity |
-| Global Problems | collection entry and useful starting points | editorial collection tile, exact availability note, compact state cues |
-| Erdős collection | toolbar plus dense directory | source-status distribution, evidence coverage, URL-backed filters |
-| Problem | question title, inline state summary, four flat tabs | Contributions is default; Map is a secondary action |
-| Problem: Contributions map | exact relationship canvas plus synchronized detail | source, Problem, Contributions, checks, current state |
-| Problem: Contributions | typed attributed rows | assessment, performer, artifact and progressive exact detail |
-| Problem: Files | file tree plus selected preview | exact path, revision, declaration and rights fallback |
-| Problem: Timeline | chronological scientific changes | event spine, correction paths and before/after diff |
-| Problem Workspace | shared canvas plus file/context rail and inspector | Research Blocks, notes, contribution stepper, local handoff |
-| Updates | grouped activity stream | avatar or source glyph, event preview, contextual action |
-| Search | command results plus filter summary | collection cues, state glyphs, unavailable and stale states |
-| My work | resume groups | active drafts, imports, workspaces, next step |
-| Contribute and import | staged form and preview | stepper, scope preview, upload and retry feedback |
-| Account | identity header plus grouped settings | connections, real activity, security, next actions |
-| About and policies | calm reading surface in the product shell | source-to-published-view-to-Repository-state explanation, concise local navigation |
-| Repository and source | browse and inspect | file tree, code preview, releases, import status |
-| Relationship graph | searchable synchronized canvas and list | selected-node detail, reset, filter, accessible summary |
+| Home | ink search hero + question rows | one-collection truth, coverage, recent changes |
+| Global Problems | ink collection entry | published collection and current starting points |
+| Erdős collection | collection hero + filterable directory | source distribution, formal/review coverage, exact questions |
+| Problem Overview | question folio + synthesis/rail | current Result, limits, landmarks, targets, representations |
+| Work | workspace instrument | object tree, Canvas, Research Blocks, Notes, attempts |
+| Results | reviewed-change surface | assertion, producer, checks, sources, decision, revision |
+| Sources | file explorer | retained paths, declarations, excerpts, revision, source links |
+| History | chronology + correction diff | semantic events, actors, before/after, technical disclosure |
+| Research map | chooser/list + exact canvas + detail sheet | retained nodes and edges only |
+| Updates | grouped timeline | source or state event, actor, time, context |
+| Search | command surface + labelled filters | question-led rows and collection identity |
+| Contribute | warm task lead + stepper | selected Problem, scope, evidence, handoff |
+| Import | warm lead + public/private split | exact GitHub revision and access state |
+| My work | warm continuity lead + workspace rows | real private workspace data |
+| Account | avatar identity field + grouped rows | WorkOS, GitHub, codebases, workspaces, session |
 
-## Home
+## Approved Problem example
 
-Keep the first viewport direct: product sentence, useful search, current
-availability, Browse problems, and Add a contribution. The three-step path is a
-connected sequence or action list, not three marketing cards. Below it, use one
-Erdős collection row, recently updated work, Problems with reviewed evidence,
-and a contribution handoff. Do not turn counts into generic KPI tiles.
+`ProblemReferenceHeader` and `ProblemOverviewReference` on Erdős Problem 321
+define the visual calibration:
 
-## Discovery
+- complete question wraps within 44rem;
+- the collection-qualified identity is quiet;
+- Start work is primary and exact source secondary;
+- Formal target is prominent;
+- Erdős source status is explicitly attributed;
+- Repository decision says it governs a contribution;
+- evidence/check coverage is separate;
+- current state shows the exact Result and the part it does not establish;
+- formal landmarks use a compact comparison figure;
+- the reading rail contains representations and related-Problem truth;
+- roots remain behind Technical identity.
 
-Collection discovery leaves room for future source-owned collections while
-showing only the one that exists. The current collection tile can use a
-data-derived editorial figure, but its text states the source and exact count.
+This is a reusable composition, not Problem-321-specific markup.
 
-The Erdős directory pairs a compact segmented distribution with a dense result
-list. The distribution answers how the corpus is described by its source and
-how much reviewed evidence is available. It includes exact totals and a table
-fallback. Filters show collection, source status, evidence state, and last
-check as separate controls.
+## Responsive recipes
 
-Problem rows lead with a concise question or collection-qualified number. Keep
-state glyphs, evidence summary, last update, and the primary action aligned.
-Loading rows preserve those columns; empty states explain active filters;
-degraded states distinguish stale projection, rate limit, and reader failure.
+- Desktop: 200px sidebar; Problem header main/rail split; Overview about 2:1.
+- 1024px: fact and detail rails may stack; canvas controls remain visible.
+- 768px: Results and Sources split views stack without changing reading order.
+- 390px and 320px: all five Problem tabs remain discoverable in one row;
+  question, formal target, and primary action precede secondary metadata.
+- 200% zoom: no document overflow; internal code/formal panes may scroll.
+- Print: remove shell, expand details, use list versions of graphs and canvases.
 
-## Problem reading composition
+## Component recipes
 
-The question is the page title; do not repeat it as a Question section. Below
-it, a compact inline summary and the Contribution surface keep Problem state, source status, current
-Repository-local Contribution state, and checks distinct. Four flat tabs open
-Contributions, Files, Workspace, and History. Contributions is the default and
-uses a reviewed-change layout with status, result, checks, linked sources, and a
-compact fact rail. The exact map stays one secondary action. Do not add an Overview or Map tab, a direct-action
-row duplicating the tabs, or nested Research navigation. Workspace opens on the canvas. Headings name instruments;
-paragraphs do not create the page hierarchy.
+### Question rows
 
-What is known separates curated current evidence from newer Contributions. If
-exact relations describe a parameter family, render a labelled matrix of
-known, open, unknown, and computation-readiness cells with a linear-list
-fallback. Never infer family membership from similar titles alone.
+Use collection-local number in a fixed mono column, question text as the link,
+then compact source status, formal declaration count, reviewed Result count, and
+source label. Do not repeat the collection badge on every row inside one
+collection.
 
-## Research and workspace
+### Results
 
-Map uses a structured flow on wide screens and grouped flow rows on narrow
-screens. Selecting a node updates the detail panel and synchronized list.
-Source, artifact, reviewer or method, outcome, and current relevance remain
-visible without exposing every hash.
+Use a Result header, assertion, performer/time, check rows with distinct glyphs,
+linked source rows, and a fact rail. `Open result`, `Review and decision`, and
+`Browse sources` are contextual actions. Exact Contribution IDs appear only in
+Technical details.
 
-Workspace shows prior approaches and unresolved gaps beside the browser canvas.
-The contribution stepper is Choose Problem, Attach work, Review, Submit. File,
-code, and artifact previews sit beside the relevant step. Import states keep
-user input and expose retry or local recovery.
+### Sources
 
-The browser Workspace is visibly shared coordination. Local handoff controls
-are disclosures or explicit actions labelled “Continue locally” or “Open
-source”; they do not resemble an embedded terminal, filesystem, IDE, agent
-runtime, or signing surface. A handoff preview names the exact public references
-and selected artifacts that will leave the browser.
+Use a tree/list on wide screens and preview-first stacking on narrow screens.
+Selected paths use cobalt-soft selection plus `aria-current`. Proof facts use
+shape and label as well as colour. Rights or retention gaps render Preview
+unavailable with Open exact source.
 
-Timeline uses one chronological spine. Corrections and supersession show the
-old and new presentation or scientific object, actor, reason, and retained
-identity. Expandable diffs use added, removed, and changed labels. Compact
-technical provenance follows the event instead of becoming a peer route.
+### Work
 
-## Updates, search, account, and work
+Signed out: recognizable Files, Canvas, Research Blocks, and Notes preview plus
+sign-in and source actions. Signed in: resizable object tree, Canvas or selected
+object, and inspector. The canvas contains only explicit Problem, source, Work,
+and Result relationships.
 
-Updates groups repeated low-signal events and expands material changes.
-Avatars and source glyphs identify actors or systems without ranking them.
+### History and map
 
-Search uses the shared command pattern and a full-page result mode. Results
-always name the collection for Problems and distinguish exact identity from
-advisory similarity. An agent-visible object that lacks public access renders a
-clear unavailable or private result rather than a broken link.
+History uses one spine and expandable correction comparisons. Map defaults to
+an item chooser when no node is selected, then loads the exact neighbourhood.
+The List view is the accessible and narrow fallback.
 
-My work and Account use grouped rows and split sections, not metric slabs.
-Account leads with avatar, display name, private email treatment, connected
-providers, and a meaningful next action. Activity visualization appears only
-when real contributions or reviews support it.
+### Empty and degraded states
 
-## Responsive and interaction behavior
+An empty state names the absent object and provides one next action. A degraded
+state distinguishes unavailable private activity from intact public Problems.
+Foreign projection configuration fails closed with a concise repair message,
+not a runtime overlay or silently reinterpreted data.
 
-At 1024px, the Problem fact rail can move below the state summary or into a
-sheet. At 768px, split views stack, timelines retain their spine, and directory
-toolbars wrap. At 390px and 320px, the question, state, strongest evidence, and
-primary action stay before secondary metadata. Code and diagrams get explicit
-scroll regions plus a list or summary fallback.
+## Reference pattern use
 
-Keyboard order follows the visual task order. Tabs, segmented controls,
-diagrams, timelines, command results, and disclosures expose visible focus and
-screen-reader labels. Charts and maps provide exact text equivalents. Forced
-colours preserve nodes and edges; reduced motion removes traversal and layout
-animation; print selects the linear fallback.
+Use shadcn.io MCP metadata and previews while shaping. Fetch source only for a
+pattern selected for implementation. Adapt behavior through existing
+`@vela/ui` Base UI/Hugeicons primitives; do not paste a block or add Framer
+Motion/Lucide.
 
-## Component ownership and reference use
+Relevant pattern families:
 
-Use existing `@vela/ui` primitives before adding a shared primitive. App-local
-code owns page compositions, route controllers, editorial collection figures,
-and the relationship instrument. Adapt interaction patterns from shadcn.io and
-licensed Tailwind Plus examples only when they simplify a real task. Record any
-licensed source. Move a composition into `@vela/ui` only after two maintained
-consumers share a stable need.
+- `search-global` for command/search geometry;
+- `timeline-condensed` and activity feeds for chronology;
+- `tables-file-tree` for source browsing;
+- `ai-code-diff-viewer` for correction comparison;
+- architecture/network graph patterns for synchronized map geometry;
+- horizontal stepper patterns for contribution flow;
+- profile author/settings patterns for Account hierarchy.
+
+Entire informs attributed activity and progressive provenance; GitHub informs
+files, diffs, checks, and durable collaboration; Hugging Face informs collection
+and resource discovery; Linear informs hierarchy and keyboard speed; Epoch
+informs compact problem/status discovery. None supplies Vela's ontology or
+brand.
+
+## Verification
+
+Visual review checks comprehension, not only overflow. A reviewer should be
+able to identify the object, its current readable state, the primary action,
+and the exact-data instrument within five seconds. Capture desktop and 390px
+screenshots of the main route families and Problem 321; exercise Problem 4, 94,
+and 887 for data diversity.

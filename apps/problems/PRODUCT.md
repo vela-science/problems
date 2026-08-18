@@ -1,122 +1,88 @@
 ---
 register: product
 extends: ../../PRODUCT.md
+product: problems.science application
 ---
 
-# Problems product contract
-
-Problems is the unified application at `problems.science`. It turns an exact,
-read-only scientific projection into a useful public reading experience and
-connects that experience to non-authoritative hosted work.
-
-## Release truth
-
-The current release contains one published collection: 1,217 Erdős Problems.
-The global architecture supports future source-owned collections without
-pretending that evidence providers or formal libraries are collections.
+# Problems application contract
 
 ## Route jobs
 
-| Route | User job | First useful action |
+| Route | Job | First action |
 | --- | --- | --- |
-| `/` | Understand Vela and resume meaningful work | Search or browse Problems |
-| `/problems` | See what collections actually exist | Open Erdős Problems |
-| `/problems/erdos-problems` | Scan and filter the collection | Open a Problem |
-| `/problems/erdos-problems/{number}` | Read the question and current evidence | Read what is known |
-| `/activity` | Review meaningful recent changes | Open the affected Problem |
-| `/search` | Find Problems, Contributions, and public artifacts | Open an exact result |
-| `/my-work` | Resume followed Problems, drafts, imports, and workspaces | Continue work |
-| `/contribute` | Add a scoped Contribution | Choose a Problem |
-| `/import` | Connect repository work | Select and inspect a repository |
-| `/codebases` | Browse connected code context | Open files or continue locally |
-| `/account` | Manage private identity, connections, security, and activity | Continue work or manage a connection |
-| `/about` | Understand the product and its scientific-state boundaries | Browse Problems |
-| `/privacy`, `/terms`, `/accessibility`, `/contact` | Understand current policies and get help | Use the relevant account, contribution, or private-support path |
+| `/` | Understand the product and start | Search or Browse problems |
+| `/problems` | See the collections actually published | Open Erdős Problems |
+| `/problems/erdos-problems` | Search and filter 1,217 source-owned questions | Open a Problem |
+| `/problems/erdos-problems/{number}` | Understand one Problem | Read Overview |
+| `?view=work` | Continue mutable work | Open Canvas or start a workspace |
+| `?view=results` | Inspect durable outputs and checks | Open a Result |
+| `?view=sources` | Inspect exact retained source material | Select a file or excerpt |
+| `?view=history` | Understand semantic change | Open an event or correction diff |
+| `/graph` | Explore exact scientific relationships | Choose a Problem or Result |
+| `/activity` | Follow meaningful published changes | Open the affected context |
+| `/search` | Find Problems, Results, and sources | Open the exact result |
+| `/contribute` | Start a contribution | Choose a Problem |
+| `/import` | Connect an exact GitHub revision | Inspect public code or connect GitHub |
+| `/my-work` | Resume private workspaces | Open saved work |
+| `/account` | Manage identity, connections, and session | Continue work or manage a connection |
 
-Repository, source, record, and graph routes remain durable contextual
-destinations. They do not become primary navigation sections.
+Trust pages remain compact institutional surfaces. Repository and exact-record
+routes remain durable contextual destinations, not the primary product IA.
 
-## Home
+## Home and discovery
 
-Home is the fast front door. The first viewport states what the product does,
-what exists today, and where to begin. Signed-out readers get search, Browse
-problems, and Add a contribution. Signed-in readers also get work to resume,
-followed Problems, and meaningful changes. Exact roots stay below progressive
-disclosure.
+Home is the activation screen. Its first viewport contains the product promise,
+problem search, Browse problems, Add a contribution, and the honest statement
+that one collection with 1,217 Erdős Problems is available today.
 
-## Global Problems and collection discovery
-
-`/problems` is a true global collection entry, not an alias for the Erdős
-catalog. It names the single current collection and may show useful recent or
-reviewed Problems without implying a multi-domain inventory.
-
-The Erdős directory provides search, filters, bounded pagination, exact counts,
-source-state distribution, evidence coverage, last-check information, and
-honest unknowns. Parameter-family views appear only when exact source relations
-support them. They group navigation and comparison without merging distinct
-Problem identities or changing Standing.
+Global Problems never silently aliases the Erdős catalog. The collection
+directory leads rows with retained question text, uses bounded pagination, and
+keeps source status separate from reviewed Result state. Numeric identity is
+always collection-qualified outside the directory.
 
 ## Problem contract
 
-Every Problem has one question title, a compact inline state summary, and four
-flat tabs: **Contributions**, **Files**, **Workspace**, **History**.
-Contributions is the canonical landing view and reads like a familiar reviewed
-change: result, performer, checks, sources, Decision, and exact detail. The
-relationship map is a secondary action. There is no
-Overview summary tab, Map tab, or nested Research tab.
+The canonical tab row is **Overview · Work · Results · Sources · History**.
 
-Legacy `view=evidence`, `view=history`, and `view=work` links map to the matching
-flat tool without rendering duplicate content. Contributions, files, exact
-relationships, and corrections must be reachable from the Problem itself.
+Overview is substantive. For Problem 321 it shows the exact question, formal
+target, source-attributed collection status, Repository decision on the current
+contribution, evidence/check coverage, current Result and its unresolved limit,
+formal landmarks, open targets, latest Result, representations, and related
+Problem state. Other Problems use the same data rules and honest empty states.
 
-The inline summary and Contribution surface keep Problem state, source status, current Repository-local
-Contribution state, and checks as distinct axes. The interface does not repeat
-those facts in adjacent prose. Exact roots and record vocabulary remain in
-technical details or exact record routes.
+Work owns mutable shared coordination. Results owns durable outputs. Sources
+owns file/declaration/excerpt browsing. History owns semantic chronology.
 
-## Contributions and prior work
+Old `view=workspace`, `files`, `contributions`, `evidence`, `timeline`, `record`,
+and `map` values resolve to the appropriate current tab. New internal links emit
+only `work`, `sources`, `results`, and `history`.
 
-Contributions are typed as proof, computation, dataset, review, negative result,
-correction, or other evidence. Rows show contributor, kind, target, assessment,
-publication state, and expandable provenance. Human and AI performers use the
-same presentation hierarchy.
+## Data and wording rules
 
-Prior-work matching is advisory. Results distinguish possible duplicate,
-intentional replication, no confident match, and stale index. Partial and
-negative results show target, approach, assumptions, environment, outcome, and
-retry boundary.
+- Visible durable outputs are Results; underlying Claim/Contribution records remain unchanged.
+- Collection status is always source-attributed.
+- Repository acceptance is labelled as a decision on a contribution.
+- Formal target, checks, and publication state remain separate.
+- Exact roots and IDs live in disclosures or exact-record routes.
+- Every map edge, related Problem, count, and scientific sentence comes from retained data.
+- Empty states do not speculate or repeat policy.
 
-## Contribution and import reliability
+## Work and account boundary
 
-The contribution flow derives scope from the selected Problem and target. It
-uses constrained choices, a plain-language preview, and fail-closed validation.
-Titles are presentation metadata, not prompts or immutable evidence identity.
+Hosted Work may create account-scoped workspaces, approaches, attempts, notes,
+Research Blocks, follows, artifact references, and unsigned Submission v3
+drafts through `@vela/activity-data`. It cannot access local files, execute
+research code, control agent sessions, sign, issue a Decision, or change
+scientific state.
 
-Hosted metadata handoffs are idempotent and show pending, saved, failed,
-rate-limited, stale, and retry states. Large bytes stay in repositories or
-external stores. A failed handoff keeps the user's input and gives recovery
-instructions. No interface reports success before durable references exist.
+Account remains private unless durable public contributor data supports a
+separate public route. WorkOS identity, GitHub access, scientific attribution,
+and Repository authority are distinct.
 
-Every public object exposed through search or agent context has a durable UI
-route or an explicit unavailable or private state. Route-contract tests enforce
-that parity.
+## Acceptance matrix
 
-The Workspace view is shared coordination, not a local development environment. It
-does not claim repository checkout, filesystem access, terminals, native
-method execution, secret management, agent orchestration, generic session
-storage, artifact harvesting, or signing. “Continue locally” passes exact
-public references and user-selected artifacts to a tool the user controls.
-
-## Account and authority
-
-Account is a private profile hub unless durable public contributor data justifies
-a separate public route. WorkOS identity, scientific attribution, and Vela
-authority remain distinct. Hosted code creates unsigned Submission v3 drafts
-only; local repositories retain signing and scientific authority.
-
-## Acceptance
-
-Representative empty, partial, resolved, contested, stale, failed, and degraded
-states must work across diverse Problems. Verify desktop, 390px, 320px, 200%
-zoom, keyboard, touch, forced colours, reduced motion, print, signed-out and
-signed-in paths against a local production build in the in-app Browser.
+Verify Home, Problems, collection, Problems 4/94/321/887 across all five tabs,
+Research map, Updates, Search, Contribute, Import, My work, Account, 404, loading,
+empty, error, and degraded states. Use the real local production build in the
+in-app Browser at desktop, 390px, 320px, 200% zoom, keyboard, touch, forced
+colours, reduced motion, and print.

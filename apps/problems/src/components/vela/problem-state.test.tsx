@@ -79,24 +79,24 @@ const state = {
 describe("Problem tools", () => {
   afterEach(cleanup);
 
-  it("lands on a familiar current-Contribution detail surface", () => {
+  it("lands on a familiar current-Result detail surface", () => {
     render(<ProblemState state={state} basePath="/problems/erdos-problems/321" />);
-    expect(screen.getByRole("heading", { name: "Current contribution" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Current result" })).toBeVisible();
     expect(screen.getByText("The current bounded result.")).toBeVisible();
     expect(screen.getByText("agent:producer")).toBeVisible();
     expect(screen.getByRole("heading", { name: "Checks" })).toBeVisible();
     expect(screen.getByText("claim chain fidelity")).toBeVisible();
     expect(screen.getByRole("heading", { name: "Linked sources" })).toBeVisible();
-    expect(screen.getByRole("complementary", { name: "Contribution details" })).toBeVisible();
+    expect(screen.getByRole("complementary", { name: "Result details" })).toBeVisible();
     expect(screen.queryByRole("heading", { name: "Provenance" })).toBeNull();
-    expect(screen.queryByRole("heading", { name: "Other contributions" })).toBeNull();
+    expect(screen.queryByRole("heading", { name: "Other results" })).toBeNull();
     expect(screen.queryByRole("heading", { name: /What can I do/u })).toBeNull();
     expect(screen.queryByText(/Repository-local Standing, scoped/u)).toBeNull();
   });
 
-  it("keeps the retired map query on the familiar Contribution surface", () => {
+  it("keeps the retired map query on the familiar Result surface", () => {
     render(<ProblemState state={state} basePath="/problems/erdos-problems/321" researchView="map" />);
-    expect(screen.getByRole("heading", { name: "Current contribution" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Current result" })).toBeVisible();
     expect(screen.getByRole("link", { name: "Open map" })).toHaveAttribute("href", expect.stringContaining("/graph?repository=math&lens=research&node="));
     expect(screen.getByText("Technical details")).toBeVisible();
     expect(screen.queryByText("exact relationships")).toBeNull();
@@ -113,16 +113,16 @@ describe("Problem tools", () => {
     render(<ProblemState state={state} basePath="/problems/erdos-problems/321" researchView="files" />);
     expect(screen.getByRole("heading", { name: "Files" })).toBeVisible();
 
-    const tree = screen.getByRole("navigation", { name: "Public Problem files" });
+    const tree = screen.getByRole("navigation", { name: "Problem source paths" });
     expect(within(tree).getByRole("link", { name: /321\.lean/u })).toHaveAttribute(
       "href",
-      expect.stringContaining("view=files&file="),
+      expect.stringContaining("view=sources&file="),
     );
     expect(within(tree).getByRole("link", { name: /erdos_321/u }).getAttribute("href")).not.toContain("%00");
     expect(within(tree).getAllByText(/Retained excerpts/u).length).toBeGreaterThan(0);
 
-    expect(screen.getByText("retained declaration")).toBeVisible();
-    expect(screen.getByRole("link", { name: "Open exact source" })).toHaveAttribute("href", "https://example.test/blob/321.lean");
+    expect(screen.getByText("retained formal statement")).toBeVisible();
+    expect(screen.getByRole("link", { name: "Open selected source" })).toHaveAttribute("href", "https://example.test/blob/321.lean");
     expect(screen.getByText("1 of 1")).toBeVisible();
   });
 
@@ -135,14 +135,22 @@ describe("Problem tools", () => {
 
   it("does not preview a declaration whose text was not retained", () => {
     render(<ProblemState state={{ ...state, sources: { occurrences: [occurrence], statements: [] } } as never} basePath="/problems/erdos-problems/321" researchView="files" />);
+    expect(screen.getByText("formal occurrence")).toBeVisible();
     expect(screen.getByText("Preview unavailable")).toBeVisible();
     expect(screen.getByText(/not retained for display/iu)).toBeVisible();
     expect(screen.queryByText(occurrence.summary)).toBeNull();
   });
 
+  it("does not send a selected occurrence to the collection fallback", () => {
+    const occurrenceWithoutLocator = { ...occurrence, locators: [] };
+    render(<ProblemState state={{ ...state, sources: { occurrences: [occurrenceWithoutLocator], statements: [] } } as never} basePath="/problems/erdos-problems/321" researchView="files" />);
+    expect(screen.getByText("formal occurrence")).toBeVisible();
+    expect(screen.queryByRole("link", { name: "Open selected source" })).toBeNull();
+  });
+
   it("keeps chronology and correction identity in the Timeline", () => {
     render(<ProblemState state={state} basePath="/problems/erdos-problems/321" researchView="timeline" />);
-    expect(screen.getByRole("heading", { name: "Contribution history" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Result history" })).toBeVisible();
     expect(screen.getByRole("heading", { name: "Correction history" })).toBeVisible();
     expect(screen.getByText("corrects")).toBeVisible();
     expect(screen.getByText("Technical details")).toBeVisible();
@@ -152,22 +160,21 @@ describe("Problem tools", () => {
      panel was true and useless — the release still holds retained declarations
      for this exact Problem, and that is what a reader came for. What it must
      not do is dress source material up as a reviewed result. */
-  it("answers an empty Contributions view with retained source material", () => {
+  it("answers an empty Results view with retained source material", () => {
     render(<ProblemState state={{ ...state, claims: [], reviews: [], currentClaimId: null } as never} basePath="/problems/erdos-problems/321" />);
-    expect(screen.getByRole("heading", { name: "What is known" })).toBeVisible();
-    expect(screen.getByText(/has not reviewed a Contribution/iu)).toBeVisible();
-    expect(screen.getByText(/Nothing below is a Vela Verification or Decision/iu)).toBeVisible();
+    expect(screen.getByRole("heading", { name: "No current result" })).toBeVisible();
+    expect(screen.getByText(/No reviewed Result is current/iu)).toBeVisible();
     expect(screen.getByRole("heading", { name: "Retained declaration" })).toBeVisible();
-    expect(screen.getByRole("link", { name: "Start a contribution" })).toHaveAttribute("href", "/problems/erdos-problems/321?view=workspace");
-    expect(screen.getByRole("link", { name: "Browse the source files" })).toHaveAttribute("href", "/problems/erdos-problems/321?view=files");
-    expect(screen.queryByRole("heading", { name: "Other contributions" })).toBeNull();
+    expect(screen.getByRole("link", { name: "Start a contribution" })).toHaveAttribute("href", "/problems/erdos-problems/321?view=work");
+    expect(screen.getByRole("link", { name: "Browse the source files" })).toHaveAttribute("href", "/problems/erdos-problems/321?view=sources");
+    expect(screen.queryByRole("heading", { name: "Other results" })).toBeNull();
   });
 
   it("never promotes a retired Contribution when no current identity exists", () => {
     render(<ProblemState state={{ ...state, currentClaimId: null } as never} basePath="/problems/erdos-problems/321" />);
-    expect(screen.getByRole("heading", { name: "No current contribution" })).toBeVisible();
-    expect(screen.getByRole("heading", { name: "Other contributions" })).toBeVisible();
-    expect(screen.queryByText("Current contribution")).toBeNull();
+    expect(screen.getByRole("heading", { name: "No current result" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Other results" })).toBeVisible();
+    expect(screen.queryByText("Current result")).toBeNull();
   });
 
   it("uses a failure presentation for a failed check", () => {

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { cn } from "@vela/ui/lib/utils";
 import { toneFills, type StatusTone } from "@vela/ui/vela/status-badge";
 import { PageHero } from "@vela/ui/vela/page-shell";
 
@@ -17,14 +18,16 @@ export function PageIntro({
   description,
   actions,
   signals = [],
+  className,
 }: {
   title: string;
   description: ReactNode;
   actions?: ReactNode;
   signals?: PageSignal[];
+  className?: string;
 }) {
   return (
-    <PageHero density="compact">
+    <PageHero density="compact" className={cn(className)}>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
         <div className="min-w-0">
           <h1 className="min-w-0 text-display [overflow-wrap:anywhere]">

@@ -9,7 +9,7 @@ export type ScientificChange = Awaited<ReturnType<typeof recentScientificChanges
 
 function plainChangeTitle(subject: string) {
   if (subject === "vela: review review_accept") return "Reviewed evidence was updated";
-  if (subject === "vela: verification import") return "A contribution check was recorded";
+  if (subject === "vela: verification import") return "A result check was recorded";
   return subject;
 }
 

@@ -69,7 +69,7 @@ describe("RepositoryGraph ledger", () => {
     render(<RepositoryGraph root="sha256:test" initialRepository="erdos" repositories={["erdos"]} />);
 
     expect(await screen.findByRole("tab", { name: "Map", selected: true })).toBeVisible();
-    expect(screen.getByText("Accepted Contribution")).toBeVisible();
+    expect(screen.getByText("Accepted Result")).toBeVisible();
     expect(screen.getByText(longAssertion)).toHaveClass("line-clamp-2");
     expect(screen.queryByRole("table")).toBeNull();
   });

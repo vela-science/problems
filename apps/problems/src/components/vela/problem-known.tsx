@@ -25,13 +25,11 @@ export function WhatIsKnown({ state, basePath }: { state: State; basePath: strin
 
   return <div className="mt-6 space-y-8">
     <section aria-labelledby="known-heading" className="min-w-0">
-      <h2 id="known-heading" className="text-title">{retired ? "No current contribution" : "What is known"}</h2>
+      <h2 id="known-heading" className="text-title">No current result</h2>
       <p className="mt-2 max-w-[68ch] text-compact text-muted-foreground">
         {retired
-          ? `No Contribution is current for this Problem in ${state.repositoryName}. Earlier Contributions and their standing are listed below.`
-          : `${state.repositoryName} has not reviewed a Contribution about this Problem.`}
-        {" "}Nothing below is a Vela Verification or Decision — each item is what a named source
-        published, retained exactly.
+          ? `Earlier Results and their Repository decisions appear below.`
+          : `No reviewed Result is current in ${state.repositoryName}. Retained source material is shown below.`}
       </p>
 
       {lead ? <div className="mt-6 min-w-0 rounded-lg border">
@@ -46,7 +44,7 @@ export function WhatIsKnown({ state, basePath }: { state: State; basePath: strin
           <FormalStatementCard occurrence={lead} showDocstring={false} />
         </div>
         {declarations.length > 1 ? <footer className="border-t px-4 py-2.5">
-          <Button nativeButton={false} size="sm" variant="ghost" render={<Link href={`${basePath}?view=files`} />}>
+          <Button nativeButton={false} size="sm" variant="ghost" render={<Link href={`${basePath}?view=sources`} />}>
             Browse all {declarations.length} declarations
           </Button>
         </footer> : null}
@@ -70,10 +68,10 @@ export function WhatIsKnown({ state, basePath }: { state: State; basePath: strin
     <ProblemActivityRecords state={state} />
 
     <section aria-labelledby="next-heading">
-      <h2 id="next-heading" className="text-title">What you can do next</h2>
+      <h2 id="next-heading" className="text-title">Continue</h2>
       <div className="mt-4 flex flex-wrap gap-3">
-        <Button nativeButton={false} render={<Link href={`${basePath}?view=workspace`} />}>Start a contribution</Button>
-        <Button nativeButton={false} variant="outline" render={<Link href={`${basePath}?view=files`} />}>Browse the source files</Button>
+        <Button nativeButton={false} render={<Link href={`${basePath}?view=work`} />}>Start a contribution</Button>
+        <Button nativeButton={false} variant="outline" render={<Link href={`${basePath}?view=sources`} />}>Browse the source files</Button>
         {state.locator ? <Button nativeButton={false} variant="outline" render={<a href={state.locator} />}>Open the collection entry</Button> : null}
       </div>
     </section>

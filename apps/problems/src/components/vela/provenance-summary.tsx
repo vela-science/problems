@@ -15,9 +15,9 @@ type State = NonNullable<ScientificProblemState>;
  * simply not retained, must not collapse into one sentence. */
 export function ProvenanceSummary({ state, basePath }: { state: State; basePath: string }) {
   const current = currentReview(state);
-  const recordHref = `${basePath}?view=timeline`;
+  const recordHref = `${basePath}?view=history`;
   const audit = state.sourceAudits.length
-    ? <>{" "}The source publishes <Link href={`${basePath}?view=contributions`} className="underline underline-offset-4">its own audit</Link>.</>
+    ? <>{" "}The source publishes <Link href={`${basePath}?view=results`} className="underline underline-offset-4">its own audit</Link>.</>
     : null;
   if (current) {
     const producer = current.producer_package?.producer_actor ?? null;

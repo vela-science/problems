@@ -153,7 +153,7 @@ export function AccountProfile({ account, workspaces, connections }: AccountProf
   ).length ?? 0;
 
   return <>
-    <header className="border-b pb-8">
+    <header className="vela-data-hero rounded-xl p-5 sm:p-7">
       <p className="text-eyebrow uppercase text-muted-foreground">Private account</p>
       <div className="mt-4 flex flex-col gap-5 sm:flex-row sm:items-center">
         <Avatar className="size-16 bg-primary/8 sm:size-20">
@@ -166,7 +166,7 @@ export function AccountProfile({ account, workspaces, connections }: AccountProf
             <span className="truncate">{account.email}</span>
             <Badge variant="outline">Visible only to you</Badge>
           </div>
-          <p className="mt-3 max-w-2xl text-body text-muted-foreground">Use this account for personal work and imports. Scientific attribution stays with each Contribution; repository authority stays in its Repository.</p>
+          <p className="mt-3 max-w-2xl text-body text-muted-foreground">Continue saved work, manage code access, and review the identity used to sign in.</p>
         </div>
         <div className="flex flex-wrap gap-2 sm:self-end">
           <Button className="min-h-11 sm:min-h-8" nativeButton={false} render={<Link href="/my-work" />}>My work</Button>
@@ -210,6 +210,7 @@ export function AccountProfile({ account, workspaces, connections }: AccountProf
             <div className="min-w-0 flex-1">
               <h2 id="session-heading" className="text-label font-medium">Current session</h2>
               <p className="mt-1 text-meta text-muted-foreground">Active in this browser. Name and email come from your connected sign-in provider.</p>
+              <p className="mt-2 text-meta text-muted-foreground">Sign-in controls this account; each Result keeps its own scientific attribution.</p>
               <p className="mt-2 text-meta text-muted-foreground"><Link href="/privacy" className="font-medium text-foreground underline underline-offset-4">How account data is handled</Link></p>
               <form action={signOutAccount} className="mt-4">
                 <Button className="min-h-11 sm:min-h-7" type="submit" size="sm" variant="outline"><HugeiconsIcon icon={Logout01Icon} aria-hidden />Sign out</Button>

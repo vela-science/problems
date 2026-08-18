@@ -71,7 +71,7 @@ function TreeBranch({ nodes, depth, basePath, selectedPath, activeKey }: {
       return <li key={node.path} role="treeitem" aria-expanded={node.children.length ? true : undefined} aria-selected={open || undefined}>
         {node.entry
           ? <Link
-            href={`${basePath}?view=files&file=${encodeURIComponent(node.entry.path)}`}
+            href={`${basePath}?view=sources&file=${encodeURIComponent(node.entry.path)}`}
             aria-current={open ? "page" : undefined}
             style={{ paddingInlineStart: `${0.5 + depth * 0.75}rem` }}
             className={`flex min-h-9 items-center gap-2 rounded-sm py-1.5 pe-2 text-compact focus-visible:outline-2 focus-visible:outline-offset-2 ${open ? "bg-accent text-accent-foreground" : "hover:bg-muted"}`}
@@ -94,7 +94,7 @@ function TreeBranch({ nodes, depth, basePath, selectedPath, activeKey }: {
             const mark = node.entry?.kind === "formal" ? proofMark(record as Occurrence) : null;
             return <li key={key} role="treeitem" aria-selected={active || undefined}>
               <Link
-                href={`${basePath}?view=files&file=${encodeURIComponent(node.entry!.path)}&symbol=${encodeURIComponent(key)}`}
+                href={`${basePath}?view=sources&file=${encodeURIComponent(node.entry!.path)}&symbol=${encodeURIComponent(key)}`}
                 aria-current={active ? "location" : undefined}
                 style={{ paddingInlineStart: `${0.75 + (depth + 1) * 0.75}rem` }}
                 className={`flex min-h-8 items-center gap-2 rounded-sm py-1 pe-2 focus-visible:outline-2 focus-visible:outline-offset-2 ${active ? "bg-background font-medium text-foreground" : "text-muted-foreground hover:bg-muted"}`}
@@ -128,7 +128,8 @@ export function ProblemFiles({ state, basePath, entries, selected, activeRecord,
   const retained = declaration
     ? state.sources.statements.find((statement) => statement.occurrence_key === declaration.occurrence_key && statement.statement_form === "formal")
     : null;
-  const exactFile = declaration?.locators.find(({ url }) => url?.includes("/blob/"))?.url ?? excerpt?.locator_url ?? state.locator;
+  const selectedSource = declaration?.locators.find(({ url }) => Boolean(url))?.url ?? excerpt?.locator_url ?? null;
+  const openSource = selected ? selectedSource : state.locator;
   const index = selected && activeRecord ? (selected.records as (Occurrence | Statement)[]).indexOf(activeRecord) : -1;
   const sources = [...state.sources.occurrences.reduce((groups, occurrence) => {
     const current = groups.get(occurrence.source_id);
@@ -149,7 +150,7 @@ export function ProblemFiles({ state, basePath, entries, selected, activeRecord,
           <span aria-hidden> · </span>
           <span className="font-mono">{state.anchor.sourceCommit.slice(0, 12)}</span>
         </p>
-        {exactFile ? <Button nativeButton={false} size="sm" variant="outline" render={<a href={exactFile} />}>Open exact source</Button> : null}
+        {openSource ? <Button nativeButton={false} size="sm" variant="outline" render={<a href={openSource} />}>{selected ? "Open selected source" : "Open source"}</Button> : null}
       </div>
     </div>
 
@@ -166,7 +167,7 @@ export function ProblemFiles({ state, basePath, entries, selected, activeRecord,
             {/* What kind of thing the panel is showing. Retained source is
                 quoted material, and saying so on the panel keeps it from
                 reading as something this Repository asserts. */}
-            {declaration ? <span className="text-micro uppercase tracking-wide text-muted-foreground">retained declaration</span>
+            {declaration ? <span className="text-micro uppercase tracking-wide text-muted-foreground">{retained ? "retained formal statement" : "formal occurrence"}</span>
               : excerpt ? <span className="text-micro uppercase tracking-wide text-muted-foreground">retained source excerpt</span>
                 : null}
             {index >= 0 && selected ? <span className="text-meta text-muted-foreground">{index + 1} of {selected.records.length}</span> : null}
@@ -191,7 +192,7 @@ export function ProblemFiles({ state, basePath, entries, selected, activeRecord,
         </div>
       </div>
 
-      <nav aria-label="Public Problem files" className="order-1 border-b p-3 lg:order-none lg:col-start-1 lg:row-start-1 lg:border-b-0 lg:border-e">
+      <nav aria-label="Problem source paths" className="order-1 border-b p-3 lg:order-none lg:col-start-1 lg:row-start-1 lg:border-b-0 lg:border-e">
         <h3 className="px-2 pb-1 text-eyebrow uppercase text-muted-foreground">Sources</h3>
         <ul className="px-2">
           {sources.map(([id, source]) => <li key={id} className="flex items-center justify-between gap-2 py-1 text-meta">
@@ -199,7 +200,7 @@ export function ProblemFiles({ state, basePath, entries, selected, activeRecord,
             <span className="shrink-0 font-mono text-micro text-muted-foreground">{source.count}</span>
           </li>)}
         </ul>
-        <h3 className="mt-4 px-2 pb-1 text-eyebrow uppercase text-muted-foreground">Retained files</h3>
+        <h3 className="mt-4 px-2 pb-1 text-eyebrow uppercase text-muted-foreground">Referenced source paths</h3>
         {entries.length
           ? <TreeBranch nodes={tree} depth={0} basePath={basePath} selectedPath={path} activeKey={activeKey} />
           : <p className="px-2 py-3 text-compact text-muted-foreground">No retained file path.</p>}

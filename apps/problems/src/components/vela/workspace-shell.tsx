@@ -87,7 +87,7 @@ export function WorkspaceShell({
   const [surface, setSurface] = useState<"canvas" | "object">(initialSurface);
   const hrefWith = (updates: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams);
-    params.set("view", "workspace");
+    params.set("view", "work");
     params.delete("mode");
     for (const [key, value] of Object.entries(updates)) {
       if (value === null) params.delete(key);

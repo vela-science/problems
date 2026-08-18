@@ -70,7 +70,7 @@ export default async function ProblemsPage({
 
   return <PageShell archetype="problem">
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
-    <PageHero>
+    <PageHero className="vela-product-hero">
       <p className="text-eyebrow uppercase text-muted-foreground">1 published Problem collection</p>
       <h1 className="mt-3 text-display">Problems</h1>
       <p className="mt-4 max-w-[68ch] text-body text-muted-foreground">

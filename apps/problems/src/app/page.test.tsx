@@ -146,7 +146,7 @@ describe("Home", () => {
 
     expect(screen.getByText("Listed as open by source")).toBeVisible();
     expect(screen.getByText("With reviewed evidence")).toBeVisible();
-    expect(screen.getByText(/carry a Contribution this Repository has reviewed/iu)).toBeVisible();
+    expect(screen.getByText(/have a Result this Repository has reviewed/iu)).toBeVisible();
     expect(container).not.toHaveTextContent(/priority|ranked|most important|central queue/iu);
   });
 
@@ -156,7 +156,7 @@ describe("Home", () => {
     reads.previews.mockResolvedValue([]);
     render(await HomePage());
 
-    expect(screen.getByText("No Problem in this release carries a reviewed Contribution yet.")).toBeVisible();
+    expect(screen.getByText("No Problem in this release has a reviewed Result yet.")).toBeVisible();
     expect(screen.getByText("No Problem in this release has a retained question to preview.")).toBeVisible();
     expect(screen.getByText("No recent source updates are available.")).toBeVisible();
   });

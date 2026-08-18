@@ -33,7 +33,6 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@vela/ui/components/sidebar";
-import { RecordId } from "@/components/vela/record-id";
 import { BrandMark as VelaMark } from "@vela/ui/vela/brand-mark";
 import { useAccountState } from "@/components/vela/account-state";
 
@@ -214,7 +213,7 @@ export function AppSidebar({
           ) : (
             <Link
               href="/"
-              aria-label="Vela"
+              aria-label="problems.science home"
               onClick={closeMobileNavigation}
               /* Same box as a menu button, so the glyph sits on the icon
                  column every row below it uses. */
@@ -269,9 +268,7 @@ export function AppSidebar({
               `sha256:` and dropped the handle — ROOTS.md rule 2 is that the
               handle is what says which kind of root you are looking at, and
               ten hex characters without it say nothing. */}
-          <span className="min-w-0 truncate">
-            <RecordId value={projectionRoot} prefix={10} copy={false} />
-          </span>
+          <span className="min-w-0 truncate font-medium text-foreground">Release details</span>
           {confirmedLabel ? (
             <time dateTime={confirmedAt ?? undefined} className="tabular-nums">
               Confirmed {confirmedLabel}
