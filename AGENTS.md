@@ -158,6 +158,26 @@ git diff --check
 `check:public-output` runs only inside `bun run build`, so a skipped build
 skips the secret scan.
 
+The projection integration suites under `packages/projection-data/integration/`
+self-skip without `VELA_PROJECTION_DATABASE_URL`, and a skipped suite reads as
+a green gate. Their database-free assertions live in
+`packages/projection-data/tests/` and run everywhere; the live-catalogue half
+still needs the database. Before merging a change that touches the projection
+write path — `schema.sql`, `migrations/`, `scripts/projection-store.mjs`, or
+`scripts/projection-builder.mjs` — run the strict form with the SELECT-only
+reader URL so a skip is an error rather than a pass:
+
+```bash
+VELA_REQUIRE_PROJECTION_TESTS=1 \
+VELA_PROJECTION_DATABASE_URL=<reader url> \
+  bun run --filter @vela/projection-data test
+```
+
+A brand-new table fails its live-catalogue lookup until its migration reaches
+the database; that one named failure is the expected reading for a
+table-adding change, and anything else must pass. The v0.440.0 release halted
+mid-transaction on exactly the assertion this step now surfaces before merge.
+
 Two of these are ordering rules, both learned by breaking them:
 
 - **`rm -rf apps/problems/.next` before any production build that follows an
