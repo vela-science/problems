@@ -92,20 +92,21 @@ describeProjection("the projection writer and its schema name the same columns",
     const { fake, planned } = collect();
     await insertCandidate(fake, emptyCandidate);
 
-    /* The eleven tables written with a fixed statement, plus `releases`. The
+    /* The twelve tables written with a fixed statement, plus `releases`. The
        five registry tables are chunked, so a rowless candidate plans none of
        them — and four of those five write through
        `jsonb_populate_recordset(NULL::projection.<table>, …)`, which matches by
        column name and cannot transpose at all. `native_records` is the fifth and
        already names its columns.
 
-       Twelve: retired derived work tables remain removed, while the
-       exact Repository revision table has its own fixed statement.
+       Thirteen: retired derived work tables remain removed, the exact
+       Repository revision table has its own fixed statement, and
+       `frontier_edges` joined as the twelfth fixed statement.
 
        An equality because the number is the point: a statement that silently
        stops being checked is the failure this test exists to catch, one step
        removed. */
-    expect(planned.length).toBe(12);
+    expect(planned.length).toBe(13);
 
     const statements = planned.map((text) => ({ text, parsed: parse(text) }));
     expect(statements.filter((entry) => entry.parsed === null).map((entry) => entry.text)).toEqual([]);
