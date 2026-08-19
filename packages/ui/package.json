@@ -29,20 +29,20 @@
     "react-dom": "19.2.8"
   },
   "dependencies": {
-    "@base-ui/react": "^1.6.0",
+    "@base-ui/react": "^1.7.0",
     "@hugeicons/core-free-icons": "4.2.3",
     "@hugeicons/react": "1.1.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
-    "katex": "0.18.1",
+    "katex": "0.18.4",
     "react-resizable-panels": "^4.12.2",
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "shadcn": "4.16.1",
+    "shadcn": "4.17.0",
     "tailwindcss": "4.3.3",
     "typescript": "^5"
   }
