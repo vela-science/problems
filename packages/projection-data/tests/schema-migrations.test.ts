@@ -19,10 +19,12 @@ describe("current projection schema", () => {
     const schema = await Bun.file(new URL("schema.sql", packageRoot)).text();
     const migrations = [...new Bun.Glob("*.sql").scanSync({
       cwd: new URL("migrations/", packageRoot).pathname,
-    })];
+    })].sort();
     const runner = await Bun.file(new URL("scripts/schema.mjs", packageRoot)).text();
 
-    expect(migrations).toEqual([]);
+    /* The immutable ledger. Every entry must also state its final shape in
+       schema.sql, because reconstruction starts from the clean baseline. */
+    expect(migrations).toEqual(["0001_frontier_edges.sql"]);
     expect(schema).toContain("CREATE SCHEMA IF NOT EXISTS projection");
     expect(schema).toContain("CREATE TABLE IF NOT EXISTS projection.schema_migrations");
     expect(schema).toContain("CREATE TABLE IF NOT EXISTS projection.repositories");

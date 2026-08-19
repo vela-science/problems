@@ -400,6 +400,337 @@ export async function graphRead(input: GraphQuery) {
   };
 }
 
+export const frontierObjectKinds = [
+  "problem", "occurrence", "claim", "proposal", "submission",
+  "verification", "transition", "artifact", "external_reference",
+] as const;
+export type FrontierObjectKind = typeof frontierObjectKinds[number];
+
+export const frontierRelations = [
+  "occurrence_of", "formalizes", "evidence_for", "verified_by", "proposed_by",
+  "decided_by", "corrects", "supersedes", "state_change",
+  "external_dependency", "grouped_with",
+] as const;
+export type FrontierRelation = typeof frontierRelations[number];
+
+export const frontierBases = [
+  "source_asserted", "mechanically_verified", "authority_decided",
+  "exact_derivation", "heuristic_advisory",
+] as const;
+export type FrontierBasis = typeof frontierBases[number];
+
+export interface FrontierEdgeRecord {
+  edge_id: string;
+  problem_entity_id: string | null;
+  repository_id: string | null;
+  source_kind: FrontierObjectKind;
+  source_ref: string;
+  source_root: HashRoot | null;
+  target_kind: FrontierObjectKind;
+  target_ref: string;
+  target_root: HashRoot | null;
+  relation: FrontierRelation;
+  basis: FrontierBasis;
+  basis_ref: Record<string, unknown>;
+  nonclaims: string[];
+  row_root: HashRoot;
+}
+
+function enumerated<Value extends string>(
+  row: Record<string, unknown>,
+  field: string,
+  values: readonly Value[],
+  label: string,
+): Value {
+  const value = requiredString(row, field, label);
+  if (!(values as readonly string[]).includes(value)) {
+    throw new Error(`${label} ${field} carries unknown value ${value}`);
+  }
+  return value as Value;
+}
+
+function requiredRoot(row: Record<string, unknown>, field: string, label: string): HashRoot {
+  const value = requiredString(row, field, label);
+  if (!sha256Root.test(value)) {
+    throw new Error(`${label} ${field} must be a full lowercase sha256 root`);
+  }
+  return value as HashRoot;
+}
+
+export function parseFrontierEdgeRecord(input: unknown): FrontierEdgeRecord {
+  const label = "frontier edge";
+  const row = rowRecord(input, label);
+  const nonclaims = row.nonclaims;
+  if (!Array.isArray(nonclaims) || nonclaims.some((entry) => typeof entry !== "string")) {
+    throw new Error(`${label} nonclaims must be an array of strings`);
+  }
+  return {
+    edge_id: requiredString(row, "edge_id", label),
+    problem_entity_id: nullableString(row, "problem_entity_id", label),
+    repository_id: nullableString(row, "repository_id", label),
+    source_kind: enumerated(row, "source_kind", frontierObjectKinds, label),
+    source_ref: requiredString(row, "source_ref", label),
+    source_root: nullableRoot(row, "source_root", label),
+    target_kind: enumerated(row, "target_kind", frontierObjectKinds, label),
+    target_ref: requiredString(row, "target_ref", label),
+    target_root: nullableRoot(row, "target_root", label),
+    relation: enumerated(row, "relation", frontierRelations, label),
+    basis: enumerated(row, "basis", frontierBases, label),
+    basis_ref: rowRecord(row.basis_ref, `${label} basis_ref`),
+    nonclaims: nonclaims as string[],
+    row_root: requiredRoot(row, "row_root", label),
+  };
+}
+
+/**
+ * A gap is a derived reading of the bounded edge window, never a stored row:
+ * what the frontier is missing is a function of what it currently holds, so
+ * storing it would only let the two drift.
+ */
+export type ProblemFrontierGap =
+  | {
+      kind: "occurrence_without_accepted_claim";
+      problem_entity_id: string;
+      occurrence_ref: string;
+    }
+  | {
+      kind: "unresolved_equivalence";
+      problem_entity_id: string;
+      occurrence_ref: string;
+      nonclaims: string[];
+    }
+  | {
+      kind: "verification_nonclaim";
+      problem_entity_id: string | null;
+      verification_ref: string;
+      nonclaims: string[];
+    };
+
+const occurrenceRelations: readonly FrontierRelation[] = ["occurrence_of", "grouped_with", "formalizes"];
+
+export function deriveProblemFrontierGaps(edges: FrontierEdgeRecord[]): ProblemFrontierGap[] {
+  /* An entity counts as carrying an accepted Claim when a Decision-based edge
+     says so: accepted evidence, or an exact transition that added the Claim to
+     the accepted set. */
+  const acceptedEntities = new Set<string>();
+  for (const edge of edges) {
+    if (edge.problem_entity_id === null) continue;
+    if (edge.relation === "evidence_for" && edge.basis === "authority_decided") {
+      acceptedEntities.add(edge.problem_entity_id);
+    }
+    if (edge.relation === "state_change" && edge.basis_ref.change === "accepted_added") {
+      acceptedEntities.add(edge.problem_entity_id);
+    }
+  }
+  const gaps: ProblemFrontierGap[] = [];
+  const occurrencesSeen = new Set<string>();
+  for (const edge of edges) {
+    if (
+      occurrenceRelations.includes(edge.relation)
+      && edge.problem_entity_id !== null
+      && !acceptedEntities.has(edge.problem_entity_id)
+    ) {
+      const key = `${edge.problem_entity_id} ${edge.source_ref}`;
+      if (!occurrencesSeen.has(key)) {
+        occurrencesSeen.add(key);
+        gaps.push({
+          kind: "occurrence_without_accepted_claim",
+          problem_entity_id: edge.problem_entity_id,
+          occurrence_ref: edge.source_ref,
+        });
+      }
+    }
+    if (
+      edge.relation === "grouped_with"
+      && edge.basis === "heuristic_advisory"
+      && edge.problem_entity_id !== null
+    ) {
+      gaps.push({
+        kind: "unresolved_equivalence",
+        problem_entity_id: edge.problem_entity_id,
+        occurrence_ref: edge.source_ref,
+        nonclaims: edge.nonclaims,
+      });
+    }
+    if (edge.relation === "verified_by" && edge.nonclaims.length > 0) {
+      gaps.push({
+        kind: "verification_nonclaim",
+        problem_entity_id: edge.problem_entity_id,
+        verification_ref: edge.target_ref,
+        nonclaims: edge.nonclaims,
+      });
+    }
+  }
+  return gaps;
+}
+
+export interface ProblemFrontierQuery {
+  root: string;
+  problemEntityId?: string;
+  repositorySlug?: string;
+  cursor?: string;
+  limit?: number;
+}
+
+export async function problemFrontier(input: ProblemFrontierQuery) {
+  const root = await assertReadableRelease(input.root);
+  const byEntity = typeof input.problemEntityId === "string";
+  const bySlug = typeof input.repositorySlug === "string";
+  /* A caller error, not a projection refusal: no refusal code exists for a
+     read that was never well-formed, and the short refusal list stays short. */
+  if (byEntity === bySlug) {
+    throw new Error("problem frontier reads take exactly one of problemEntityId or repositorySlug");
+  }
+  const limit = boundedLimit(input.limit, 200, 500);
+  const scope = byEntity
+    ? { column: "problem_entity_id", value: input.problemEntityId as string }
+    : { column: "repository_id", value: repositoryKey(input.repositorySlug as string) };
+  if (bySlug) {
+    const repository = await sql().query(
+      "SELECT 1 FROM projection.repositories WHERE release_root=$1 AND repository_id=$2 LIMIT 1",
+      [root, scope.value],
+    );
+    if (!repository[0]) throw new ProjectionReadError("unknown_repository", "unknown repository");
+  }
+  const rows = await sql().query(`SELECT edge_id, problem_entity_id, repository_id,
+      source_kind, source_ref, source_root, target_kind, target_ref, target_root,
+      relation, basis, basis_ref, nonclaims, row_root,
+      count(*) OVER()::integer AS total
+    FROM projection.frontier_edges
+    WHERE release_root=$1 AND ${scope.column}=$2 AND ($3='' OR edge_id > $3)
+    ORDER BY edge_id LIMIT $4`, [root, scope.value, input.cursor ?? "", limit]);
+  const total = windowTotal(rows, "frontier edge");
+  const edges = rows.map(({ total: _total, ...row }: Record<string, unknown>) => parseFrontierEdgeRecord(row));
+  const edgesByBasis = Object.fromEntries(
+    frontierBases.map((basis) => [basis, edges.filter((edge) => edge.basis === basis)]),
+  ) as Record<FrontierBasis, FrontierEdgeRecord[]>;
+  return {
+    schema: "site.problem-frontier.v1" as const,
+    root,
+    scope: byEntity
+      ? { problem_entity_id: scope.value }
+      : { repository: input.repositorySlug as string },
+    total,
+    next_cursor: edges.length === limit ? edges.at(-1)?.edge_id ?? null : null,
+    edges_by_basis: edgesByBasis,
+    /* Derived from this bounded window, never stored. */
+    gaps: deriveProblemFrontierGaps(edges),
+  };
+}
+
+export interface ProblemFrontierTState {
+  commit_sha: string;
+  committed_at: string | null;
+  repository_root_before: HashRoot | null;
+  repository_root_after: HashRoot;
+  before_revision_root: HashRoot | null;
+  after_revision_root: HashRoot | null;
+  accepted_added: string[];
+  accepted_removed: string[];
+  semantic_delta: Record<string, unknown> | null;
+}
+
+/**
+ * Orders the exact state-change edges of one Problem into t-states. The edge
+ * carries which Claim moved for this Problem; the joined transition carries the
+ * two Repository-root anchors and the semantic delta the movement was derived
+ * from. Only comparison-verified transitions produce edges, so every t-state
+ * here is anchored on both sides.
+ */
+export function assembleProblemFrontierTimeline(
+  rows: Array<Record<string, unknown>>,
+): ProblemFrontierTState[] {
+  const label = "frontier t-state";
+  const states = new Map<string, ProblemFrontierTState>();
+  for (const input of rows) {
+    const row = rowRecord(input, label);
+    const edge = parseFrontierEdgeRecord({
+      edge_id: row.edge_id,
+      problem_entity_id: row.problem_entity_id,
+      repository_id: row.repository_id,
+      source_kind: row.source_kind,
+      source_ref: row.source_ref,
+      source_root: row.source_root,
+      target_kind: row.target_kind,
+      target_ref: row.target_ref,
+      target_root: row.target_root,
+      relation: row.relation,
+      basis: row.basis,
+      basis_ref: row.basis_ref,
+      nonclaims: row.nonclaims,
+      row_root: row.row_root,
+    });
+    if (edge.relation !== "state_change" || edge.basis !== "exact_derivation") {
+      throw new Error(`${label} rows must be exact state_change edges`);
+    }
+    const commit = edge.source_ref;
+    const state = states.get(commit) ?? {
+      commit_sha: commit,
+      committed_at: nullableString(row, "committed_at", label),
+      repository_root_before: nullableRoot(row, "repository_root_before", label),
+      repository_root_after: requiredRoot(row, "repository_root_after", label),
+      before_revision_root: nullableRoot(row, "before_revision_root", label),
+      after_revision_root: nullableRoot(row, "after_revision_root", label),
+      accepted_added: [],
+      accepted_removed: [],
+      semantic_delta: row.semantic_delta === null || row.semantic_delta === undefined
+        ? null
+        : rowRecord(row.semantic_delta, `${label} semantic_delta`),
+    };
+    const change = edge.basis_ref.change;
+    if (change !== "accepted_added" && change !== "accepted_removed") {
+      throw new Error(`${label} edge ${edge.edge_id} names no accepted-set change`);
+    }
+    state[change].push(edge.target_ref);
+    states.set(commit, state);
+  }
+  return [...states.values()]
+    .map((state) => ({
+      ...state,
+      accepted_added: [...state.accepted_added].sort(),
+      accepted_removed: [...state.accepted_removed].sort(),
+    }))
+    .sort((left, right) => (
+      (left.committed_at ?? "").localeCompare(right.committed_at ?? "")
+      || left.commit_sha.localeCompare(right.commit_sha)
+    ));
+}
+
+export async function problemFrontierTimeline(input: { root: string; problemEntityId: string }) {
+  const root = await assertReadableRelease(input.root);
+  if (typeof input.problemEntityId !== "string" || input.problemEntityId.length === 0) {
+    throw new Error("problem frontier timelines require a problem entity id");
+  }
+  const rows = await sql().query(`SELECT
+      edge.edge_id, edge.problem_entity_id, edge.repository_id,
+      edge.source_kind, edge.source_ref, edge.source_root,
+      edge.target_kind, edge.target_ref, edge.target_root,
+      edge.relation, edge.basis, edge.basis_ref, edge.nonclaims, edge.row_root,
+      transition.repository_root_before, transition.repository_root_after,
+      transition.before_revision_root, transition.after_revision_root,
+      transition.semantic_delta,
+      commit.committed_at
+    FROM projection.frontier_edges edge
+    JOIN projection.repository_transitions transition
+      ON transition.release_root = edge.release_root
+      AND transition.repository_id = edge.repository_id
+      AND transition.commit_sha = edge.source_ref
+    LEFT JOIN projection.commits commit
+      ON commit.release_root = transition.release_root
+      AND commit.repository_id = transition.repository_id
+      AND commit.sha = transition.commit_sha
+    WHERE edge.release_root=$1 AND edge.problem_entity_id=$2
+      AND edge.relation='state_change'
+    ORDER BY commit.committed_at, edge.source_ref, edge.edge_id
+    LIMIT 500`, [root, input.problemEntityId]);
+  return {
+    schema: "site.problem-frontier-timeline.v1" as const,
+    root,
+    problem_entity_id: input.problemEntityId,
+    t_states: assembleProblemFrontierTimeline(rows as Array<Record<string, unknown>>),
+  };
+}
+
 export interface SearchReadQuery {
   root: string; q?: string; repository?: string; kind?: string; standing?: string; cursor?: string; limit?: number;
 }

@@ -37,6 +37,35 @@ describe("current projection compatibility", () => {
     expect(normalizeProjectionManifest(manifest()).vela_version).toBe("vela 0.977.3");
   });
 
+  test("keeps the frontier projection block additive and self-consistent", () => {
+    /* A release from before the frontier projection carries no block. */
+    expect(normalizeProjectionManifest(manifest()).frontier_projection).toBeUndefined();
+
+    const block = {
+      schema: "site.frontier-projection.v1" as const,
+      edge_count: 3,
+      basis_counts: {
+        source_asserted: 1,
+        mechanically_verified: 0,
+        authority_decided: 1,
+        exact_derivation: 1,
+        heuristic_advisory: 0,
+      },
+    };
+    expect(
+      normalizeProjectionManifest(manifest({ frontier_projection: block })).frontier_projection,
+    ).toEqual(block);
+    expect(() => normalizeProjectionManifest(manifest({
+      frontier_projection: { ...block, edge_count: 4 },
+    }))).toThrow(/basis counts do not partition/u);
+    expect(() => normalizeProjectionManifest(manifest({
+      frontier_projection: {
+        ...block,
+        basis_counts: { ...block.basis_counts, palomar_importance: 1 },
+      },
+    }))).toThrow();
+  });
+
   test("refuses an older local projection with safe repair guidance", () => {
     try {
       normalizeProjectionManifest(manifest({ vela_version: "vela 0.976.1" }));

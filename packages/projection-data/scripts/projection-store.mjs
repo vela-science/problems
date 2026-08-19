@@ -131,6 +131,7 @@ export const publicTableOrder = [
   "commits",
   "repository_revisions",
   "repository_transitions",
+  "frontier_edges",
   ...registryTableOrder,
 ];
 
@@ -399,6 +400,16 @@ export async function insertCandidate(sql, candidate) {
       counts jsonb, comparison_state text, before_revision_root text, after_revision_root text,
       semantic_delta jsonb, semantic_delta_root text, row_root text
     )`, [root, json(tables.repository_transitions)]),
+    query(tx, `INSERT INTO projection.frontier_edges
+      (release_root, edge_id, problem_entity_id, repository_id,
+       source_kind, source_ref, source_root, target_kind, target_ref, target_root,
+       relation, basis, basis_ref, nonclaims, row_root)
+      SELECT $1, x.* FROM jsonb_to_recordset($2::text::jsonb) AS x(
+      edge_id text, problem_entity_id text, repository_id text,
+      source_kind text, source_ref text, source_root text,
+      target_kind text, target_ref text, target_root text,
+      relation text, basis text, basis_ref jsonb, nonclaims jsonb, row_root text
+    )`, [root, json(tables.frontier_edges)]),
     /* `search_text` is generated, so it cannot be written at all and does not
        appear here — the one column list above that is shorter than its table. */
     query(tx, `INSERT INTO projection.search_documents
