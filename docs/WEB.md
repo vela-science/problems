@@ -400,14 +400,51 @@ duration, and refusals name the failing path without echoing the received
 value.
 
 The store is `activity.pilot_telemetry`, which references no other activity
-table and carries no account, workspace, Problem, repository, file, prompt,
-credential, or signature. Rows older than 90 days are deleted by the write
-path itself, so the retention statement on `/privacy` is true by construction.
-Workbench sends these records only after the user's explicit opt-in and stops
-when the user opts out; the hosted route cannot distinguish consent beyond
-that contract, which is why the schema is closed rather than trusted. There is
-no third-party analytics SDK, and this route must never grow content-bearing
-fields.
+table and carries no account, workspace, Problem, repository, file,
+instruction text, credential, or signature. Workbench sends these records only
+after the user's explicit opt-in and stops when the user opts out; the hosted
+route cannot verify consent, which is why the schema is closed rather than
+trusted. There is no third-party analytics SDK, and this route must never grow
+content-bearing fields.
+
+Two admission bounds sit in front of the insert. The per-install budget of
+5,000 records bounds an honest client only: `install_id` is minted by the
+client, so an attacker rotates it and lands in a fresh bucket every time. The
+global ceiling — 50,000 rows received in the trailing hour — is the bound that
+holds, and it exists because this database shares Neon compute with the
+SELECT-only projection reader behind every public Problem page, making
+unbounded ingestion an availability risk rather than only a cost one. Neither
+replaces an operator rate rule at the edge.
+
+**Retention is traffic-driven, not automatic.** The 90-day delete runs inside
+the write path, so it only advances while records keep arriving. When the pilot
+ends and ingestion stops, the last window of rows persists indefinitely and the
+90-day claim on `/privacy` silently stops being true. Ending the pilot
+therefore includes an explicit operator step, run with the migrator credential:
+
+```sql
+DROP TABLE activity.pilot_telemetry;
+DROP FUNCTION activity_api.record_pilot_telemetry(text, text, text, timestamptz, bigint);
+```
+
+Note also that retention runs on `received_at` while the accepted `occurred_at`
+window reaches 30 days back, so an event can remain visible up to roughly 120
+days after it happened. Quote the retention promise against the event, not
+against the row.
+
+One honesty note about "content-free": the two identifiers are 256 bits per row
+of opaque client-chosen hex. The closed schema enforces content-freedom against
+accident and against an ordinary client, not against a hostile one, which could
+encode arbitrary data in identifiers that are indistinguishable from random.
+That is accepted for a consented pilot and is another reason the table is
+dropped at its end rather than retained.
+
+`pilot_telemetry` is additive but **forward-only**, because `schema.mjs` checks
+an exact table inventory rather than a minimum one. Once the migration has run,
+rolling application code back to a commit that predates this table fails
+`activity:db:check` on the extra table. Carry the release note into any
+rollback plan: revert the code and the inventory together, or drop the table
+first.
 
 An exported draft must validate against the public `vela.submission.v3` schema
 vendored from the exact Vela release pin. The hosted service exports canonical,

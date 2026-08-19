@@ -14,7 +14,25 @@ export const runtime = "nodejs";
 
 const MAX_BODY_BYTES = 4096;
 
+/*
+  `application/json` is required before the body is read, and the requirement
+  is a security control rather than a courtesy. A cross-origin `fetch` with the
+  default `text/plain` body is a CORS *simple* request: the browser sends it
+  with no preflight and the write lands before any response header is read.
+  Demanding the JSON content type forces a preflight this route never answers,
+  so a third-party page cannot conscript its visitors into writing rows.
+*/
+function isJsonRequest(request: NextRequest): boolean {
+  const header = request.headers.get("content-type");
+  if (!header) return false;
+  const mediaType = header.split(";", 1)[0]!.trim().toLowerCase();
+  return mediaType === "application/json";
+}
+
 export async function POST(request: NextRequest) {
+  if (!isJsonRequest(request)) {
+    return NextResponse.json({ error: "content-type must be application/json" }, { status: 415 });
+  }
   const contentLength = Number(request.headers.get("content-length") ?? "0");
   if (!Number.isSafeInteger(contentLength) || contentLength < 0 || contentLength > MAX_BODY_BYTES) {
     return NextResponse.json({ error: "invalid payload size" }, { status: 413 });

@@ -85,6 +85,12 @@ describe("pilot telemetry wire contract", () => {
     expect(sql).toContain("UNIQUE (install_id, client_record_id)");
     expect(sql).toContain("authority_effect text NOT NULL DEFAULT 'none' CHECK (authority_effect = 'none')");
     expect(sql).toContain("DELETE FROM activity.pilot_telemetry WHERE received_at < now() - interval '90 days'");
+    /* install_id is client-minted, so the per-install budget bounds only an
+       honest client. The global ceiling is the bound that survives rotation,
+       and it reads the received_at index. */
+    expect(sql).toContain("WHERE received_at > now() - interval '1 hour') >= 50000");
+    expect(sql).toContain("pilot telemetry ingestion ceiling is reached");
+    expect(sql).toContain("CREATE INDEX IF NOT EXISTS activity_pilot_telemetry_received_idx");
     expect(sql).not.toMatch(/REFERENCES activity\./u);
     expect(sql).not.toMatch(/\b(?:account_id|workspace_id|email|payload|body|prompt|bytea|jsonb_typeof)\b/u);
     expect(sql).not.toMatch(/\b(?:Decision|Verification|Standing)\b/u);
@@ -92,7 +98,7 @@ describe("pilot telemetry wire contract", () => {
 });
 
 describe("pilot telemetry activity schema", () => {
-  test("applies from the clean schema and enforces vocabulary, dedupe, window, and retention", async () => {
+  test("applies from the clean schema and enforces vocabulary, dedupe, window, retention, and both admission bounds", async () => {
     const pgBin = process.env.PG_BIN_DIR ?? command("pg_config", ["--bindir"]).trim();
     const port = await availablePort();
     const tempRoot = mkdtempSync(join(tmpdir(), "vela-pilot-telemetry-"));
@@ -155,6 +161,37 @@ describe("pilot telemetry activity schema", () => {
         'activity_api.record_pilot_telemetry(text,text,text,timestamptz,bigint)', 'EXECUTE')`)).toBe("t");
       expect(psql(database, `SELECT has_table_privilege('vela_activity_app',
         'activity.pilot_telemetry', 'SELECT,INSERT,UPDATE,DELETE')`)).toBe("f");
+
+      /* The per-install budget bounds an honest client that keeps one
+         install_id. Rows are seeded directly so the branch is reached without
+         5,000 round trips. */
+      psql(database, "DELETE FROM activity.pilot_telemetry");
+      psql(database, `INSERT INTO activity.pilot_telemetry
+        (install_id, client_record_id, signal, occurred_at)
+        SELECT '${INSTALL_ID}', md5(i::text), 'problem_opened', now()
+        FROM generate_series(1, 5000) AS i`);
+      expect(() => call("7".repeat(32), "problem_opened", now, "NULL"))
+        .toThrow(/budget for this install is exhausted/iu);
+      /* A different install_id is unaffected, which is exactly why the
+         per-install budget is not a global bound: install_id is client-minted
+         and an attacker rotates it. */
+      expect(JSON.parse(psql(database, `SELECT activity_api.record_pilot_telemetry(
+        '${"c".repeat(32)}', '${"8".repeat(32)}', 'problem_opened', now(), NULL)::text`)).stored).toBe(true);
+
+      /* The global ceiling is the bound that holds against rotation. */
+      psql(database, "DELETE FROM activity.pilot_telemetry");
+      psql(database, `INSERT INTO activity.pilot_telemetry
+        (install_id, client_record_id, signal, occurred_at, received_at)
+        SELECT md5(i::text), md5(('r' || i)::text), 'problem_opened', now(), now()
+        FROM generate_series(1, 50000) AS i`);
+      expect(() => psql(database, `SELECT activity_api.record_pilot_telemetry(
+        '${"d".repeat(32)}', '${"9".repeat(32)}', 'problem_opened', now(), NULL)`))
+        .toThrow(/ingestion ceiling is reached/iu);
+      /* The ceiling reads the trailing hour, so it releases as rows age out of
+         the window rather than latching permanently. */
+      psql(database, "UPDATE activity.pilot_telemetry SET received_at = now() - interval '2 hours'");
+      expect(JSON.parse(psql(database, `SELECT activity_api.record_pilot_telemetry(
+        '${"d".repeat(32)}', '${"9".repeat(32)}', 'problem_opened', now(), NULL)::text`)).stored).toBe(true);
     } finally {
       command(join(pgBin, "pg_ctl"), ["--pgdata", data, "--wait", "stop"]);
     }

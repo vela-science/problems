@@ -94,6 +94,32 @@ describe("pilot telemetry ingestion boundary", () => {
     expect(text).not.toContain("SECRET-TOKEN-VALUE");
   });
 
+  /* A cross-origin fetch with the default text/plain body would be a CORS
+     simple request — no preflight, the write lands before any response header
+     is read. Requiring the JSON content type forces a preflight this route
+     never answers, so a third-party page cannot conscript its visitors. */
+  it("refuses every content type that would make this a CORS simple request", async () => {
+    for (const contentType of [
+      "text/plain",
+      "text/plain;charset=UTF-8",
+      "application/x-www-form-urlencoded",
+      "multipart/form-data; boundary=x",
+      "",
+    ]) {
+      const response = await POST(request(JSON.stringify(payload()), { "content-type": contentType }));
+      expect(response.status).toBe(415);
+    }
+    expect(boundary.record).not.toHaveBeenCalled();
+  });
+
+  it("accepts application/json with parameters and mixed case", async () => {
+    for (const contentType of ["application/json", "application/json; charset=utf-8", "Application/JSON"]) {
+      const response = await POST(request(JSON.stringify(payload()), { "content-type": contentType }));
+      expect(response.status).toBe(202);
+    }
+    expect(boundary.record).toHaveBeenCalledTimes(3);
+  });
+
   it("refuses oversized bytes before parsing or persistence", async () => {
     const response = await POST(request("{}", { "content-length": String(4097) }));
     expect(response.status).toBe(413);

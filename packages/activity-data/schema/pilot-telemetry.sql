@@ -41,7 +41,7 @@ CREATE OR REPLACE FUNCTION activity_api.record_pilot_telemetry(
 RETURNS jsonb
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = pg_catalog, activity
+SET search_path = pg_catalog, activity, pg_temp
 AS $function$
 DECLARE
   inserted_count integer;
@@ -66,6 +66,21 @@ BEGIN
   END IF;
 
   DELETE FROM activity.pilot_telemetry WHERE received_at < now() - interval '90 days';
+
+  /*
+    The per-install budget bounds an honest client. It bounds nothing globally,
+    because install_id is minted by the client: an attacker rotates it freely
+    and every request lands in a fresh bucket. The ceiling below is the bound
+    that actually holds. It reads the received_at index, sits far above any
+    plausible pilot volume and far below a flood, and protects the Neon compute
+    this database shares with the SELECT-only projection reader that serves
+    every public Problem page. It is admission control, not a quota: an
+    operator rate rule at the edge remains the first line.
+  */
+  IF (SELECT count(*) FROM activity.pilot_telemetry
+      WHERE received_at > now() - interval '1 hour') >= 50000 THEN
+    RAISE EXCEPTION 'pilot telemetry ingestion ceiling is reached' USING ERRCODE = '22023';
+  END IF;
 
   IF (SELECT count(*) FROM activity.pilot_telemetry WHERE install_id = p_install_id) >= 5000 THEN
     RAISE EXCEPTION 'pilot telemetry budget for this install is exhausted' USING ERRCODE = '22023';

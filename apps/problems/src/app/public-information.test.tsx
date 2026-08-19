@@ -27,8 +27,12 @@ describe("public trust surfaces", () => {
     const { rerender } = render(<PrivacyPage />);
     expect(screen.getByText(/read-only contents and metadata access/iu)).toBeVisible();
     expect(screen.getByText(/does not store a Repository authority key/iu)).toBeVisible();
-    expect(screen.getByText(/only from a Vela Workbench install whose user opted in/iu)).toBeVisible();
-    expect(screen.getByText(/never receives scientific contents, repository files, prompts, credentials, or signatures/iu)).toBeVisible();
+    /* The pilot-telemetry item must describe what the endpoint accepts, not
+       assert a client property the server cannot verify, and must enumerate
+       every stored field including the per-record deduplication identifier. */
+    expect(screen.getByText(/The endpoint accepts only these five fields and rejects anything else/iu)).toBeVisible();
+    expect(screen.getByText(/random per-record identifier used to discard duplicate sends/iu)).toBeVisible();
+    expect(screen.getByText(/accepts no scientific contents, repository files, prompts, credentials, or signatures/iu)).toBeVisible();
     expect(screen.getByText(/deleted after 90 days/iu)).toBeVisible();
 
     rerender(<TermsPage />);
