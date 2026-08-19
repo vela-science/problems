@@ -14,6 +14,7 @@ import { ProblemState, type ProblemResearchView } from "@/components/vela/proble
 import { ProblemWorkspace } from "@/components/vela/problem-workspace";
 import { problemLabel, resolveProblemStatement, statementParagraphs } from "@/lib/problem-statement";
 import { authConfiguration, currentAccount } from "@/lib/auth";
+import { problemFrontierMovement } from "@/lib/frontier-timeline";
 import { scientificProblemState } from "@/lib/scientific-state";
 
 export type ProblemPageQuery = { view?: string; research?: string; file?: string; symbol?: string; mode?: string; workspace?: string; object?: string; inspector?: string; workError?: string };
@@ -87,6 +88,10 @@ export async function ProblemPageView({ repository, problem, collectionName, rou
      cheap, cacheable, and honest about being the public record. Only the
      Workspace tab is account-aware. */
   const account = view === "workspace" ? await currentAccount() : null;
+  /* Frontier movement exists only for a Problem whose reviewed entity has at
+     least one verified state-change edge. Everywhere else the value is
+     undefined and History renders exactly what it rendered before. */
+  const frontier = view === "timeline" ? await problemFrontierMovement(state) : undefined;
   /* A deployment without the four WorkOS variables serves `/sign-in` as a 503.
      The Workspace needs to know that, because otherwise the only control it
      offers is one that cannot work. */
@@ -118,6 +123,6 @@ export async function ProblemPageView({ repository, problem, collectionName, rou
     {referenceView === "overview" ? <ProblemOverviewReference state={state} route={route} />
       : view === "workspace"
         ? <ProblemWorkspace state={state} hostedAccount={account} accountsEnabled={accountsEnabled} selectedWorkspace={query.workspace} selectedObject={query.object} selectedInspector={query.inspector} mutationError={query.workError} basePath={route} />
-        : <ProblemState state={state} basePath={route} researchView={view as ProblemResearchView} selectedFile={query.file} selectedDeclaration={query.symbol} />}
+        : <ProblemState state={state} basePath={route} researchView={view as ProblemResearchView} selectedFile={query.file} selectedDeclaration={query.symbol} frontier={frontier} />}
   </PageShell>;
 }

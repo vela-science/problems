@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 
 const mocks = vi.hoisted(() => ({ state: vi.fn(), notFound: vi.fn() }));
 vi.mock("@/lib/scientific-state", () => ({ scientificProblemState: mocks.state }));
+vi.mock("@/lib/frontier-timeline", () => ({ problemFrontierMovement: () => Promise.resolve(undefined) }));
 vi.mock("@/lib/auth", () => ({
   currentAccount: () => Promise.resolve(null),
   authConfiguration: () => ({ enabled: true }),

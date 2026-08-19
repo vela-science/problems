@@ -27,6 +27,7 @@ import { formalFilePath } from "@/components/vela/formal-statement-card";
 import { ProblemFiles, type FileEntry } from "@/components/vela/problem-files";
 import { WhatIsKnown } from "@/components/vela/problem-known";
 import { ProblemEvidence } from "@/components/vela/problem-evidence";
+import type { FrontierTimelineData } from "@/components/vela/frontier-timeline";
 import { ProblemHistory } from "@/components/vela/problem-history";
 import { currentReview } from "@/components/vela/problem-provenance";
 import type { ProblemResearchView } from "@/components/vela/problem-state";
@@ -194,7 +195,7 @@ function ResearchFiles({ state, basePath, selectedFile, selectedDeclaration }: {
   />;
 }
 
-export function ProblemResearch({ state, basePath, view, selectedFile, selectedDeclaration }: { state: State; basePath: string; view: ProblemResearchView; selectedFile?: string; selectedDeclaration?: string }) {
+export function ProblemResearch({ state, basePath, view, selectedFile, selectedDeclaration, frontier }: { state: State; basePath: string; view: ProblemResearchView; selectedFile?: string; selectedDeclaration?: string; frontier?: FrontierTimelineData }) {
   return <>
     {/* Every tool gets the page. Contributions and History were capped at
         `max-w-5xl` inside a canvas shell, so they stranded a third of the
@@ -207,7 +208,7 @@ export function ProblemResearch({ state, basePath, view, selectedFile, selectedD
       {view === "contributions" ? <><CurrentResult state={state} basePath={basePath} /><ProblemEvidence state={state} /></> : null}
       {view === "files" ? <ResearchFiles state={state} basePath={basePath} selectedFile={selectedFile} selectedDeclaration={selectedDeclaration} /> : null}
       {view === "timeline" ? <>
-        <ProblemHistory state={state} />
+        <ProblemHistory state={state} frontier={frontier} />
         {/* Upstream review of the source material itself. For a Problem with
             no Contribution, this is the only change record that exists — and
             it is where a semantic defect in a merged, approved pull request
