@@ -10,8 +10,10 @@ Earlier design and migration plans live under `docs/history/`.
   readers across current
   change, direct contribution, communities, and the exact scientific record. Advanced
   records remain available in the same runtime.
-- `content/editorial` retains only the landing and *Endless Frontiers* authored
-  sources. It is not a package, renderer, route, or deployment.
+- `content/editorial` retains the landing and *Endless Frontiers* authored
+  sources. It is not a package or deployment; Problems selectively consumes
+  reviewed paintings and current passages for Home, About, and the living
+  essay route without restoring the retired shell.
 - Hosted Vela is non-authoritative. The Problems reads a bounded SELECT-only
   projection from Neon. Work mode writes hosted research activity through
   `@vela/activity-data`. Canonical custody remains in Repository Git
@@ -32,7 +34,7 @@ one non-runnable content area:
 
 ```text
 apps/problems        unified Vela application: Problem State, Work, and Records
-content/editorial       retained landing and essay source; no runtime
+content/editorial       retained editorial source selectively compiled by Problems
 packages/brand          governed identity, tokens, fonts, and delivery assets
 packages/ui             shared shadcn/Base UI source and Vela presentation semantics
 packages/projection-data  Git-to-Neon projection, validation, search, and manifests

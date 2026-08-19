@@ -1,10 +1,10 @@
 ---
-version: beta
-name: problems.science Modern Research Workspace
-description: Familiar, precise research-product UI built from neutral workspace surfaces, marine navigation, cobalt interaction, and exact scientific data.
+version: beta-brand-01
+name: problems.science Two-Register Research Product
+description: Familiar scientific work surfaces with a living Vela editorial register built from retained watercolor, horizon light, and the canonical sail.
 colors:
   background: "oklch(0.985 0.003 255)"
-  surface: "oklch(1 0 0)"
+  surface: "oklch(0.992 0.004 86)"
   surface-subtle: "oklch(0.965 0.006 255)"
   foreground: "oklch(0.205 0.025 255)"
   muted-foreground: "oklch(0.46 0.018 255)"
@@ -16,6 +16,11 @@ colors:
   warning: "oklch(0.70 0.14 78)"
   error: "oklch(0.58 0.20 28)"
   evidence: "oklch(0.59 0.15 214)"
+  editorial-paper: "oklch(0.968 0.018 84)"
+  water: "oklch(0.53 0.075 244)"
+  horizon: "oklch(0.86 0.075 86)"
+  borrowed-light: "oklch(0.72 0.10 78)"
+  cinnabar: "oklch(0.53 0.15 35)"
 typography:
   display:
     fontFamily: Geist
@@ -43,6 +48,17 @@ typography:
     fontSize: 0.75rem
     fontWeight: 400
     lineHeight: 1.5
+  editorial-display:
+    fontFamily: Zodiak
+    fontSize: 3.5rem
+    fontWeight: 500
+    lineHeight: 1.02
+    letterSpacing: -0.035em
+  editorial-body:
+    fontFamily: Gambetta
+    fontSize: 1.125rem
+    fontWeight: 400
+    lineHeight: 1.72
 rounded:
   control: "0.375rem"
   panel: "0.5rem"
@@ -100,17 +116,39 @@ components:
   divider:
     backgroundColor: "{colors.border}"
     height: "1px"
+  editorial-plate:
+    backgroundColor: "{colors.editorial-paper}"
+    textColor: "{colors.foreground}"
+    rounded: "{rounded.panel}"
+  water-orientation:
+    backgroundColor: "{colors.water}"
+    textColor: "{colors.surface}"
+  horizon-rule:
+    backgroundColor: "{colors.horizon}"
+    height: "1px"
+  borrowed-light-rule:
+    backgroundColor: "{colors.borrowed-light}"
+    height: "1px"
+  correction-mark:
+    textColor: "{colors.cinnabar}"
+    typography: "{typography.compact}"
 ---
 
 # problems.science design system
 
 ## Overview
 
-The visual system is a **modern research workspace played straight**. It uses a
-clear neutral canvas, deep marine navigation, cobalt interaction, semantic state
-colors, excellent sans typography, and recognizable research-product
-instruments. Brand expression is confident but quiet: the mark, type rhythm,
-navigation color, focus color, and exact-data craft do the work.
+The visual system is one product with two registers. Its workspaces play a
+modern research product straight: neutral canvas, deep marine navigation,
+cobalt interaction, semantic state colors, sans typography, and recognizable
+instruments. Its editorial moments are unmistakably Vela: retained watercolor,
+open horizon, the canonical sail, paper light, and the long handoff from one
+researcher to the next.
+
+Physical scene: a researcher works in a bright reading room, moving between a
+precise digital workspace and a field notebook opened beside it. Product
+controls feel immediate and quiet. Home and the essay feel like the moment of
+looking up from the instrument to reorient at the horizon.
 
 Entire is the primary product reference: dominant-object hierarchy, compact
 attributed human and agent activity, selected checkpoint/change rows, readable
@@ -119,26 +157,42 @@ secondary references for files, diffs, checks, history, collection discovery,
 filters, tags, and approachable technical identity pages. Base UI supplies
 accessible behavior. None supplies Vela's ontology or visual brand.
 
-The system has two coordinated registers. Product workspaces play familiar
-research software straight. Editorial and identity moments may draw on Vela's
-first-party watercolor, sail, horizon, constellation, borrowed-light, and
-long-handoff language. Use the canonical sail and retained artwork; do not
-redraw the mark or generate substitutes.
+The registers are coordinated, not blended. Product workspaces use Entire-like
+dominant objects, GitHub-like files and diffs, and Hugging Face-like discovery.
+Home, About, the living essay, collection cover moments, meaningful empty
+states, graph orientation, and profile accents may use first-party paintings
+and editorial type. Use the canonical sail and retained artwork; do not redraw
+the mark or generate substitutes.
+
+### Functional motif grammar
+
+- **Horizon:** entry, progress boundary, or a handoff to the next action.
+- **Sail or vessel:** current position, orientation, and continue-locally or
+  source handoff.
+- **Borrowed light and gold line:** evidence or continuity inherited from
+  named prior work. Gold is never a quality score.
+- **Cinnabar:** correction or supersession in editorial explanation. Product
+  error states continue to use the semantic error token.
+- **Constellation:** exact retained relationships or lineage only. Atmospheric
+  marks inside a painting stay outside the data layer and accessibility tree.
+- **Paper and watercolor:** authored story, covers, and selected transitions,
+  never a background texture behind dense tables, code, or forms.
 
 ## Visual identity
 
 ### Canvas and color
 
-Light mode is a cool near-white application canvas with white working surfaces.
+Light mode is a cool near-white application canvas with warm-tinted working surfaces.
 The sidebar is deep marine. Cobalt means interaction, selection, and focus.
 Success, warning, error, and evidence colors encode real state only.
 
 Dark mode derives the same hierarchy: deep neutral canvas, slightly raised
 neutral surfaces, lighter cobalt, and the same semantic meanings. It is not a
 space theme. Product workspaces avoid atmospheric effects and decoration that
-competes with data. Brand surfaces may use retained watercolor and open-sky
-imagery with deliberate contrast, responsive crops, stable layout, and useful
-fallbacks.
+competes with data. Brand surfaces use retained watercolor and open-sky imagery
+with deliberate contrast, responsive crops, stable layout, and useful
+fallbacks. Paintings are removed in forced colors and print when they are
+atmospheric.
 
 Use color in three ways:
 
@@ -151,9 +205,10 @@ Everything else relies on typography, spacing, alignment, and fine rules.
 ### Typography
 
 Use Geist for the product and IBM Plex Mono for hashes, paths, revisions, code,
-and tabular numerals. Typography is sentence case. Avoid repeated uppercase
-micro-labels, wide tracking, decorative serif treatments, and display type used
-as a substitute for hierarchy.
+and tabular numerals. Use Zodiak for earned brand display and Gambetta for
+authored long-form reading. Typography is sentence case. Avoid repeated
+uppercase micro-labels, wide tracking, ornamental type on task controls, and
+display type used as a substitute for hierarchy.
 
 - Page title or Problem question: 1.75–2.25rem, controlled measure, weight 650.
 - Section title: 1–1.25rem, weight 600–650.
@@ -219,6 +274,8 @@ key, focus, and active-tab visibility. Do not hide later modes with no cue.
 - History: semantic chronology and diffs.
 - Graph: exact relationship canvas with synchronized list fallback.
 - Account: person, connections, work continuity, and security actions.
+- About and essay: authored argument, orientation, and a direct route back to
+  Problems.
 
 Supporting content should not compete with that object. If a section merely
 restates a tab, badge, or status row, remove it.
@@ -252,6 +309,18 @@ groups, immediate filtering, keyboard selection, and human labels before exact
 identifiers. Home uses a prominent search field; other routes use compact search
 and filters. Search results always qualify numeric Problem identity by
 collection.
+
+### Editorial plate and brand opening
+
+Adapt the selected shadcn.io split-image geometry, not its demo styling: one
+dominant copy/action column and one decisive image field. Home keeps search in
+the copy column and places the retained painting beside it on wide screens,
+after it on narrow screens. The painting is not a card, metric, or data figure.
+
+Long-form pages adapt the selected editorial-layout reading measure and aside
+rhythm without drop-cap theatre, KPI cards, or copied dependencies. Zodiak owns
+display moments; Gambetta owns authored long-form prose; Switzer or Geist owns
+navigation and metadata.
 
 ### Problem header and Overview
 
@@ -352,13 +421,14 @@ document.
 - Use the canonical sail, retained paintings, horizon, and borrowed-light
   language at earned Home, About, collection-cover, graph-orientation, and
   meaningful transition moments.
-- Let constellation lines represent exact retained relationships only.
+- Let constellation lines represent exact retained relationships only; let
+  authored paintings remain clearly atmospheric.
 
 ## Do not
 
-- Do not turn dense product workspaces into fantasy or editorial scenes.
-- Do not use literal galaxy wallpaper, stars everywhere, purple-neon sci-fi,
-  glass, faux nautical controls, or decorative constellations that imply data.
+- Do not pull dense product workspaces into the editorial register.
+- Reject motif misuse: galaxy wallpaper behind tools, purple-neon sci-fi,
+  glass, faux-nautical controls, or decorative lines presented as data.
 - Do not create card soup, KPI slabs, bento dashboards, nested panels, or a
   repeated banner on every route.
 - Do not repeat uppercase micro-labels or use tracking as decoration.

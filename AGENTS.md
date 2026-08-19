@@ -3,7 +3,8 @@
 ## Product boundary
 
 This private Bun workspace contains one deployed Next.js application, retained
-non-runnable editorial source, and four shared packages:
+editorial source selectively consumed by that application, and four shared
+packages:
 
 - `apps/problems`: the unified Vela product application at canonical
   `problems.science`,
@@ -29,7 +30,8 @@ accounts remain separate from Vela actor identities.
 
 ## Sources of truth
 
-- Retained landing and essay source: `content/editorial`
+- Retained paintings and authored essay source: `content/editorial`; only
+  explicitly reviewed assets and copy enter the Problems build
 - Vela product routes and compositions: `apps/problems/src/app`,
   `apps/problems/src/components`
 - Brand contract: `packages/brand/vela.tokens.json` and its generated outputs

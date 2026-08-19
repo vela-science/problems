@@ -32,6 +32,9 @@ test("locked brand values survive DTCG generation", () => {
   assert.match(css, /--vela-color-midnight: #081224;/u);
   assert.match(css, /--vela-color-stardust: #C9A664;/u);
   assert.match(css, /--vela-color-light: #F7F6F2;/u);
+  assert.match(css, /--vela-color-water: #4E7499;/u);
+  assert.match(css, /--vela-color-horizon: #E6D39A;/u);
+  assert.match(css, /--vela-color-cinnabar: #A24739;/u);
   assert.equal(tokens.font.display.$value.split(",")[0], "Zodiak");
   assert.equal(tokens.font.body.$value.split(",")[0], "Gambetta");
   assert.equal(tokens.font.editorialDisplay.$value, '"Iowan Old Style", Baskerville, "Times New Roman", serif');
@@ -58,9 +61,9 @@ test("primary foreground pairs pass WCAG AA", () => {
   assert.match(editorialFonts, /font-family: "Zodiak";[\s\S]*?zodiak-100-900-latin\.woff2/u);
   assert.match(editorialFonts, /font-family: "Zodiak";[\s\S]*?zodiak-italic-100-900-latin\.woff2/u);
   assert.match(editorialFonts, /font-family: "Switzer";[\s\S]*?switzer-100-900-latin\.woff2/u);
-  assert.doesNotMatch(productFonts, /Zodiak/u);
-  assert.doesNotMatch(productFonts, /Gambetta/u);
-  assert.doesNotMatch(productFonts, /Switzer/u);
+  assert.match(productFonts, /font-family: "Zodiak";[\s\S]*?zodiak-100-900-latin\.woff2/u);
+  assert.match(productFonts, /font-family: "Gambetta";[\s\S]*?gambetta-300-700-latin\.woff2/u);
+  assert.match(productFonts, /font-family: "Switzer";[\s\S]*?switzer-100-900-latin\.woff2/u);
   // No rejected face may appear in either profile. This named two of the six,
   // Newsreader and Inter, which made it a third partial copy of a list that
   // already existed twice; the list is `../src/fonts.ts`'s to declare.

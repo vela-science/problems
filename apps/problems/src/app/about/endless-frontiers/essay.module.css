@@ -1,0 +1,151 @@
+.page {
+  --essay-rule: color-mix(in oklab, var(--vela-color-stardust) 42%, var(--border));
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 0.88fr) minmax(22rem, 1.12fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: center;
+  padding: clamp(1rem, 2vw, 2rem) 0 clamp(3rem, 7vw, 6rem);
+  border-bottom: 1px solid var(--essay-rule);
+}
+
+.title {
+  max-width: 10ch;
+  font-family: var(--vela-font-display);
+  font-size: clamp(4rem, 8.5vw, 8.5rem);
+  font-weight: 480;
+  line-height: 0.88;
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+}
+
+.subtitle {
+  max-width: 32rem;
+  margin-top: 1.5rem;
+  font-family: var(--vela-font-body);
+  font-size: clamp(1.25rem, 2vw, 1.625rem);
+  line-height: 1.48;
+  color: var(--muted-foreground);
+}
+
+.article {
+  display: grid;
+  grid-template-columns: minmax(0, 44rem) minmax(12rem, 16rem);
+  justify-content: center;
+  gap: clamp(3rem, 7vw, 7rem);
+  margin-top: clamp(3.5rem, 8vw, 7rem);
+}
+
+.prose {
+  min-width: 0;
+  font-family: var(--vela-font-body);
+  font-size: clamp(1.0625rem, 1.5vw, 1.1875rem);
+  line-height: 1.76;
+  color: color-mix(in oklab, var(--foreground) 76%, var(--muted-foreground));
+}
+
+.prose p + p { margin-top: 1.35em; }
+.prose a { color: var(--primary); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
+.prose a:hover { text-decoration-thickness: 2px; }
+
+.section {
+  margin-top: clamp(4.5rem, 10vw, 8rem);
+  scroll-margin-top: 5rem;
+}
+
+.section:first-child { margin-top: 0; }
+
+.section h2 {
+  max-width: 16ch;
+  margin-bottom: 1.75rem;
+  font-family: var(--vela-font-display);
+  font-size: clamp(2.4rem, 5vw, 4.75rem);
+  font-weight: 500;
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+  color: var(--foreground);
+  text-wrap: balance;
+}
+
+.hinge {
+  margin-block: clamp(2.5rem, 6vw, 4.5rem);
+  padding-block: clamp(1.5rem, 3vw, 2.25rem);
+  border-block: 1px solid var(--essay-rule);
+  font-family: var(--vela-font-display);
+  font-size: clamp(2rem, 4.5vw, 4rem);
+  font-weight: 500;
+  line-height: 1.08;
+  color: var(--foreground);
+  text-wrap: balance;
+}
+
+.note {
+  margin-block: 2rem;
+  padding: 1.25rem 0 0;
+  border-top: 1px solid var(--essay-rule);
+  font-family: var(--vela-font-sans);
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: var(--muted-foreground);
+}
+
+.note strong { color: var(--foreground); }
+
+.plate { margin-block: clamp(2.5rem, 6vw, 4.5rem); }
+
+.contents {
+  position: sticky;
+  top: 2rem;
+  align-self: start;
+  padding-top: 0.25rem;
+  font-family: var(--vela-font-sans);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.contents p { font-weight: 650; color: var(--foreground); }
+.contents ol { margin-top: 0.85rem; border-left: 1px solid var(--essay-rule); }
+.contents li a { display: block; padding: 0.4rem 0 0.4rem 1rem; color: var(--muted-foreground); }
+.contents li a:hover { color: var(--foreground); }
+
+.closing {
+  max-width: 78rem;
+  margin: clamp(5rem, 10vw, 9rem) auto 0;
+  padding-top: clamp(2rem, 5vw, 4rem);
+  border-top: 1px solid var(--essay-rule);
+}
+
+@media (max-width: 900px) {
+  .hero, .article { grid-template-columns: minmax(0, 1fr); }
+  .hero { gap: 2rem; }
+  .article { margin-top: 3rem; }
+  .contents { position: static; order: -1; }
+  .contents ol { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; border-left: 0; }
+  .contents li a { padding: 0.25rem 0; text-decoration: underline; text-underline-offset: 0.2em; }
+}
+
+@media (max-width: 520px) {
+  .title { font-size: clamp(3.5rem, 19vw, 5rem); }
+  .prose { font-size: 1.0625rem; line-height: 1.7; }
+}
+
+@media (forced-colors: active) {
+  .hero, .hinge, .note, .closing, .contents ol { border-color: CanvasText; }
+}
+
+@media print {
+  .hero, .article { display: block; }
+  .hero { padding-block: 0 2rem; }
+  .title { font-size: 48pt; line-height: 0.94; }
+  .subtitle { font-size: 16pt; }
+  .article { margin-top: 2rem; }
+  .contents { display: none; }
+  .prose { max-width: none; color: CanvasText; font-size: 11pt; }
+  .section h2 { font-size: 28pt; }
+  .hinge { font-size: 22pt; }
+  .section { break-before: page; }
+  .section:first-child { break-before: auto; }
+  .closing { margin-top: 3rem; }
+}

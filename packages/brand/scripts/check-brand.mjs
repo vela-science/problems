@@ -91,7 +91,9 @@ for (const family of editorialFontFamilies) {
   assert(editorialFonts.includes(`font-family: "${family}"`), `missing editorial ${family} face`);
 }
 assert(productFonts.includes('font-family: "IBM Plex Mono"'), "missing product IBM Plex Mono face");
-for (const family of ["Gambetta", "Zodiak", "Switzer"]) assert(!productFonts.includes(family), `editorial font ${family} entered product profile`);
+for (const family of ["Gambetta", "Zodiak", "Switzer"]) {
+  assert(productFonts.includes(`font-family: "${family}"`), `two-register product profile is missing ${family}`);
+}
 /* The rejected list is `packages/brand/src/fonts.ts`'s to declare. It used to
    be written out here and again, in filename spellings, in
    `scripts/check-budgets.mjs`, and the two had already drifted apart. */

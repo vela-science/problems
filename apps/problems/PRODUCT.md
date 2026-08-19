@@ -27,15 +27,22 @@ product: problems.science application
 | `/import` | Exact GitHub revision | Inspect or connect code |
 | `/my-work` | Private work continuity | Open saved work |
 | `/account` | Identity, connections, and session | Manage or continue |
+| `/about` | Current product explanation and vision | Understand the boundary or open the essay |
+| `/about/endless-frontiers` | Living Vela vision essay | Read or return to Problems |
 
-Trust pages remain compact institutional surfaces. Exact-record and Repository
-routes are durable contextual destinations, not primary navigation.
+About is the living bridge between product and editorial registers. The vision
+essay is source-backed and current to the product boundary. Privacy, Terms,
+Accessibility, and Contact remain compact institutional surfaces. Exact-record
+and Repository routes are durable contextual destinations, not primary
+navigation.
 
 ## Home
 
-Home is the product activation screen, not a marketing hero. Search is the
-dominant object. The first viewport also provides Browse problems, Add
-contribution, and one compact list stating the exact two-collection truth.
+Home is the product activation screen, not a marketing site. Search is the
+dominant object. A single retained Vela watercolor provides a decisive horizon
+moment and links to the vision without delaying the task. The first viewport
+also provides Browse problems, Add contribution, and one compact list stating
+the exact two-collection truth.
 Below it, use three or four real question rows and the two durable reviewed
 Results. Link once to all Updates. Do not repeat collection analytics, raw
 source activity, availability, or contribution onboarding on Home.

@@ -21,6 +21,21 @@
         "$value": "#F7F6F2",
         "$type": "color",
         "$description": "Warm primary light surface"
+      },
+      "water": {
+        "$value": "#4E7499",
+        "$type": "color",
+        "$description": "Watercolour blue for editorial orientation and non-semantic brand material"
+      },
+      "horizon": {
+        "$value": "#E6D39A",
+        "$type": "color",
+        "$description": "Borrowed-light horizon used for continuity and handoff, never status"
+      },
+      "cinnabar": {
+        "$value": "#A24739",
+        "$type": "color",
+        "$description": "Editorial correction accent; product errors continue to use semantic conflict"
       }
     },
     "neutral": {

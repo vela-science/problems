@@ -33,6 +33,8 @@ search, rows, files, results, or controls.
 | Import | repository identity + status | GitHub access and exact revision |
 | My work | workspace rows | real private work and state |
 | Account | profile + grouped settings | WorkOS, GitHub, workspaces, session |
+| About | watercolor opening + concise product boundary | vision essay, public loop, exact release detail |
+| Endless Frontiers | continuous long-form folio | retained paintings, citations, route back to Problems |
 
 ## Calibration surfaces
 
@@ -61,11 +63,22 @@ targets, no current Result, partial sources, and corrected history.
 
 ### Home
 
-Use one concise heading, one sentence, a prominent search field, and two actions.
-Place one compact published-collections list close to search. Follow with three
+Use one concise heading, one sentence, a prominent search field, and two
+actions. Use the retained opening watercolor as the only first-viewport image,
+beside the task column on wide screens and after it on narrow screens. Place
+one compact published-collections list close to search. Follow with three
 or four question rows and the two durable reviewed Results. Keep one small link
 to all Updates. Remove raw update feeds, Home collection charts, marketing
 banners, repeated onboarding labels, and duplicated coverage explanations.
+
+### About and essay
+
+About may leave the standard policy-page composition. It uses one strong
+watercolor opening, a concise explanation of Problem, Result, source, and
+Repository-local state, and a visible route to *Endless Frontiers*. The essay
+keeps the application shell but uses editorial display and body type, a 65–72ch
+measure, authored paintings, inline citations, and calm section pacing. It does
+not restore the retired site masthead or footer.
 
 ### Collection
 

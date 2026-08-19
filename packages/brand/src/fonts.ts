@@ -16,7 +16,20 @@
 
 /** Which faces each site profile mirrors into `public/assets/fonts`. */
 export const webFontProfiles = {
-  product: ["ibm-plex-mono-400-latin.woff2", "ibm-plex-mono-500-latin.woff2"],
+  /* problems.science now carries both deliberate registers in one runtime.
+   * Geist remains the product interface face, loaded by the application;
+   * these governed files make the Vela-authored editorial register available
+   * only where a route explicitly opts into it. */
+  product: [
+    "gambetta-300-700-latin.woff2",
+    "gambetta-italic-300-700-latin.woff2",
+    "ibm-plex-mono-400-latin.woff2",
+    "ibm-plex-mono-500-latin.woff2",
+    "switzer-100-900-latin.woff2",
+    "switzer-italic-100-900-latin.woff2",
+    "zodiak-100-900-latin.woff2",
+    "zodiak-italic-100-900-latin.woff2",
+  ],
   editorial: [
     "gambetta-300-700-latin.woff2",
     "gambetta-italic-300-700-latin.woff2",

@@ -45,6 +45,7 @@ const globalTitles: Record<string, string> = {
   "/account": "Account",
   "/my-work": "My work",
   "/about": "About",
+  "/about/endless-frontiers": "Endless Frontiers",
   "/privacy": "Privacy",
   "/terms": "Terms",
   "/accessibility": "Accessibility",

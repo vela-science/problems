@@ -132,6 +132,7 @@ describe("Home", () => {
     expect(screen.getAllByText("Formal Conjectures")).toHaveLength(1);
     expect(screen.getByText("14 published Problems")).toBeVisible();
     expect(screen.getByText("7 rights-reviewed formalizations")).toBeVisible();
+    expect(screen.getByRole("link", { name: /Read the vision/iu })).toHaveAttribute("href", "/about/endless-frontiers");
     expect(container.querySelector(".vela-page-hero")).not.toHaveTextContent(/Repository|Standing|authority|roots|records/iu);
   });
 

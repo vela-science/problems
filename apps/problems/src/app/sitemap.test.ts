@@ -34,5 +34,6 @@ describe("public sitemap", () => {
     for (const route of ["about", "privacy", "terms", "accessibility", "contact"]) {
       expect(urls).toContain(`https://problems.science/${route}`);
     }
+    expect(urls).toContain("https://problems.science/about/endless-frontiers");
   });
 });

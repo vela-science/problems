@@ -1,7 +1,7 @@
 ---
 register: product
 product: problems.science
-version: 2026-08-18
+version: 2026-08-18-brand-01
 ---
 
 # problems.science product brief
@@ -32,10 +32,28 @@ one coherent research product, not a collage of those products.
 
 The product uses two deliberate registers. Dense task surfaces use the familiar
 Entire, GitHub, and Hugging Face product grammar. Editorial and identity moments
-may use Vela's first-party watercolor, sail, horizon, constellation, borrowed
-light, and long-handoff language. Those motifs must clarify orientation,
-lineage, evidence, or transition; they never replace ordinary controls or imply
-relationships the data does not contain.
+use Vela's first-party watercolor, canonical sail, horizon, borrowed light, and
+long-handoff language. This is part of the product identity, not an optional
+campaign skin. Motifs clarify orientation, lineage, evidence, or transition;
+they never replace ordinary controls or imply relationships the data does not
+contain.
+
+### Two-register surface contract
+
+**Product register:** Problems, directories, Work, Results, Sources, History,
+search, contribution flows, account, and settings. These pages prioritize the
+working object, compact attributed rows, files, diffs, checks, and familiar
+controls.
+
+**Editorial and brand register:** the decisive Home art moment, About, the
+living *Endless Frontiers* essay, collection cover moments, meaningful empty or
+degraded states, graph orientation, and restrained profile accents. These
+surfaces may use the retained paintings and editorial type. They remain inside
+the same problems.science shell and keep the next useful action obvious.
+
+The canonical source assets live under `content/editorial/source`. Home and
+About reuse those exact authored paintings; the application does not generate
+replacement art, redraw the sail, or restore the retired standalone site.
 
 ## People and jobs
 
@@ -103,6 +121,8 @@ Primary navigation:
 The product mark also returns Home. Search belongs to the header command
 control. Research map is contextual and command-searchable. Release details
 belong under About and the exact well-known manifest, not in task navigation.
+About owns the current product explanation and links to the living vision
+essay. Privacy, Terms, Accessibility, and Contact remain compact trust routes.
 
 The canonical Problem modes are:
 
@@ -144,11 +164,13 @@ does not accept a contribution. A signed object proves attribution, not truth.
 
 ### Discover
 
-Home is the activation front door. Search is the dominant object, followed by
-one compact published-collections list, three or four real Problems worth
-opening, and the latest durable reviewed Results. A single link reaches all
-Updates. Home does not host the raw source-update feed, collection analytics,
-or a second contribution-onboarding footer.
+Home is the activation front door. Search is the dominant object. One retained
+Vela watercolor establishes the horizon and links to the product vision without
+delaying search or browse. The same opening contains one compact published-
+collections list; below it are three or four real Problems worth opening and
+the latest durable reviewed Results. A single link reaches all Updates. Home
+does not host the raw source-update feed, collection analytics, a manifesto, or
+a second contribution-onboarding footer.
 
 Collection pages are familiar directories: concise identity, truthful coverage,
 useful filters, bounded pagination, and question-led rows. Numeric identity is
@@ -201,6 +223,8 @@ an exact SELECT-only projection and fail closed on incompatible manifests.
 - Human and agent activity use the same visual hierarchy.
 - Empty, loading, error, private, stale, and degraded states are complete
   product states, not afterthoughts.
+- Brand art is authored atmosphere. Exact graphs and constellations are data.
+  The two may sit near one another, but their roles are never ambiguous.
 
 ## Copy principles
 

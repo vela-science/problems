@@ -10,6 +10,9 @@ const primitives = {
   "color-deep-space": tokens.color.neutral.deepSpace.$value,
   "color-stardust": tokens.color.brand.stardust.$value,
   "color-light": tokens.color.brand.light.$value,
+  "color-water": tokens.color.brand.water.$value,
+  "color-horizon": tokens.color.brand.horizon.$value,
+  "color-cinnabar": tokens.color.brand.cinnabar.$value,
   "color-slate": tokens.color.neutral.slate.$value,
   "color-mist": tokens.color.neutral.mist.$value,
   "color-fog": tokens.color.neutral.fog.$value,
@@ -164,9 +167,7 @@ const monoFaces = `@font-face {
 }
 `;
 
-const productFonts = `${profileBanner("product")}${monoFaces}`;
-
-const editorialFonts = `${profileBanner("editorial")}${monoFaces.trimEnd()}
+const registerFaces = `${monoFaces.trimEnd()}
 @font-face {
   font-family: "Switzer";
   font-style: normal;
@@ -210,6 +211,9 @@ const editorialFonts = `${profileBanner("editorial")}${monoFaces.trimEnd()}
   src: url("/assets/fonts/zodiak-italic-100-900-latin.woff2") format("woff2");
 }
 `;
+
+const productFonts = `${profileBanner("product")}${registerFaces}`;
+const editorialFonts = `${profileBanner("editorial")}${registerFaces}`;
 
 const outputs = new Map([
   [resolve(root, "generated/tokens.css"), css],

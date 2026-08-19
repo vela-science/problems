@@ -2,13 +2,28 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { PageHero, PageSection, PageShell } from "@vela/ui/vela/page-shell";
 
-const INFORMATION_ROUTES = [
+export const INFORMATION_ROUTES = [
   { href: "/about", label: "About" },
+  { href: "/about/endless-frontiers", label: "Essay" },
   { href: "/privacy", label: "Privacy" },
   { href: "/terms", label: "Terms" },
   { href: "/accessibility", label: "Accessibility" },
   { href: "/contact", label: "Contact" },
 ] as const;
+
+export function PublicInformationNav({ current }: { current: (typeof INFORMATION_ROUTES)[number]["href"] }) {
+  return (
+    <nav aria-label="About and policies" className="flex flex-wrap gap-x-5 gap-y-2 text-meta">
+      {INFORMATION_ROUTES.map((route) => route.href === current ? (
+        <span key={route.href} aria-current="page" className="font-medium text-foreground">{route.label}</span>
+      ) : (
+        <Link key={route.href} href={route.href} className="text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
+          {route.label}
+        </Link>
+      ))}
+    </nav>
+  );
+}
 
 export function PublicInformationPage({
   current,
@@ -31,15 +46,7 @@ export function PublicInformationPage({
         <p className="text-eyebrow uppercase text-primary">{eyebrow}</p>
         <h1 className="mt-3 max-w-4xl text-display text-balance">{title}</h1>
         <p className="mt-3 max-w-[68ch] text-body leading-7 text-muted-foreground">{description}</p>
-        <nav aria-label="About and policies" className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-meta">
-          {INFORMATION_ROUTES.map((route) => route.href === current ? (
-            <span key={route.href} aria-current="page" className="font-medium text-foreground">{route.label}</span>
-          ) : (
-            <Link key={route.href} href={route.href} className="text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
-              {route.label}
-            </Link>
-          ))}
-        </nav>
+        <div className="mt-6"><PublicInformationNav current={current} /></div>
       </PageHero>
 
       <div className={aside ? "grid gap-10 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-start" : "max-w-3xl"}>

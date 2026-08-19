@@ -257,8 +257,9 @@ publication compositions stay app-local CSS modules. Shared controls, focus,
 tokens, motion limits, and type sources still come from `@vela/ui` and
 `@vela/brand`.
 
-The landing and essay sources remain under `content/editorial` with provenance,
-but they are not runtime consumers or a second design-system target.
+The landing and essay sources remain under `content/editorial` with provenance.
+Problems selectively consumes reviewed paintings and current passages in its
+brand register; the source does not become a second design system or runtime.
 
 ### Problems
 
@@ -295,8 +296,8 @@ local-signing handoff rather than a hosted success state.
 - A sail or route line communicates direction.
 - A constellation line connects real records.
 - A star or node represents a real object.
-- Decorative stars, random orbital lines, generic planets, and atmospheric
-  space backgrounds are not part of the system.
+- Atmospheric marks may live inside retained authored paintings. Outside those
+  paintings, nodes and lines appear only when they encode exact retained data.
 
 ## Verification
 

@@ -1,0 +1,97 @@
+.plate {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--vela-color-horizon) 52%, var(--border));
+  border-radius: var(--vela-radius-lg);
+  background: var(--vela-color-light);
+  box-shadow: 0 18px 52px color-mix(in oklab, var(--vela-color-midnight) 10%, transparent);
+}
+
+.media {
+  position: relative;
+  min-height: 18rem;
+  aspect-ratio: 4 / 3;
+}
+
+.image {
+  object-fit: cover;
+}
+
+.caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-top: 1px solid color-mix(in oklab, var(--vela-color-horizon) 44%, var(--border));
+  padding: 0.75rem 1rem;
+  background: color-mix(in oklab, var(--vela-color-light) 92%, var(--vela-color-horizon));
+  color: var(--vela-color-midnight);
+  font-family: var(--vela-font-sans);
+  font-size: 0.8125rem;
+  line-height: 1.35;
+}
+
+.captionLink {
+  flex: none;
+  font-weight: 600;
+  color: var(--vela-color-midnight);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, var(--vela-color-stardust) 68%, transparent);
+  text-underline-offset: 0.24em;
+}
+
+.captionLink:hover {
+  text-decoration-color: currentColor;
+}
+
+:global(.dark) .plate {
+  border-color: color-mix(in oklab, var(--vela-color-stardust) 34%, var(--border));
+  background: var(--vela-color-midnight);
+}
+
+:global(.dark) .caption {
+  border-top-color: color-mix(in oklab, var(--vela-color-stardust) 30%, var(--border));
+  background: color-mix(in oklab, var(--vela-color-midnight) 90%, var(--vela-color-water));
+  color: var(--vela-color-light);
+}
+
+:global(.dark) .captionLink {
+  color: var(--vela-color-light);
+}
+
+@media (max-width: 640px) {
+  .media {
+    min-height: 12rem;
+    aspect-ratio: 16 / 10;
+  }
+
+  .caption {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .plate {
+    animation: editorial-plate-enter 520ms var(--vela-ease-enter) both;
+  }
+}
+
+@keyframes editorial-plate-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (forced-colors: active) {
+  .plate {
+    display: none;
+  }
+}
+
+@media print {
+  .plate {
+    display: none !important;
+  }
+}

@@ -19,7 +19,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@editorial/*": ["../../content/editorial/source/src/*"]
     }
   },
   "include": [

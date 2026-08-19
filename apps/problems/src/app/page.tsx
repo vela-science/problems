@@ -22,6 +22,9 @@ import { ProblemQuestionRow } from "@/components/vela/problem-question-row";
 import { discoveredProblems, problemStatePreviews } from "@/lib/scientific-state";
 import { formalConjecturesCollection } from "@vela/projection-data";
 import { ScientificText } from "@vela/ui/vela/scientific-text";
+import { EditorialPlate } from "@/components/vela/editorial-plate";
+import openingPlate from "@editorial/assets/paintings/endless-folio-opening.webp";
+import styles from "./home-brand.module.css";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -64,10 +67,11 @@ export default async function HomePage() {
   )).slice(0, 2);
 
   return <PageShell archetype="default">
-    <PageHero density="compact" className="vela-product-hero">
-      <div className="max-w-[58rem]">
-        <h1 className="max-w-[18ch] text-[clamp(2rem,4.5vw,3.75rem)] font-semibold leading-[1.02] tracking-[-0.035em] text-balance">Open problems and the evidence around them</h1>
-        <p className="mt-4 max-w-2xl text-[clamp(1rem,1.5vw,1.125rem)] leading-7 text-pretty text-muted-foreground">
+    <PageHero density="compact" className={styles.hero}>
+      <div className={styles.grid}>
+        <div className={styles.task}>
+        <h1 className={styles.title}>Open problems and the evidence around them</h1>
+        <p className={styles.lead}>
           Find a scientific question, read what is known, and add a result.
         </p>
 
@@ -80,7 +84,7 @@ export default async function HomePage() {
               name="q"
               type="search"
               maxLength={200}
-              placeholder="Search Problems across published collections"
+              placeholder="Find a problem"
             />
             <InputGroupAddon align="inline-end">
               <InputGroupButton type="submit" variant="secondary" className="h-10 px-4">Search</InputGroupButton>
@@ -103,7 +107,19 @@ export default async function HomePage() {
           </Button>
         </div>
 
-        <div className="mt-9 max-w-3xl divide-y overflow-hidden rounded-lg border border-border">
+        </div>
+
+        <EditorialPlate
+          image={openingPlate}
+          caption="A public record should help the next researcher find their bearing."
+          href="/about/endless-frontiers"
+          linkLabel="Read the vision"
+          priority
+          className={styles.art}
+        />
+
+        <div className={styles.collections}>
+        <div className={styles.collectionList}>
           <Link href={COLLECTION_PATH} className="vela-object-row group flex min-w-0 items-center gap-3 px-1 py-3.5 focus-visible:outline-2 focus-visible:outline-offset-2">
             <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary"><HugeiconsIcon icon={BookOpen01Icon} aria-hidden className="size-4" /></span>
             <span className="min-w-0 flex-1">
@@ -119,6 +135,7 @@ export default async function HomePage() {
             <Badge variant="secondary" className="hidden sm:inline-flex">Published subset</Badge>
             <HugeiconsIcon icon={ArrowRight} aria-hidden className="size-4 shrink-0 text-muted-foreground transition-transform duration-150 group-hover:translate-x-0.5" />
           </Link>
+        </div>
         </div>
       </div>
     </PageHero>

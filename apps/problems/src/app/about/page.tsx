@@ -1,64 +1,80 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { InformationList, InformationSection, PublicInformationPage } from "@/components/vela/public-information-page";
+import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Button } from "@vela/ui/components/button";
+import { PageShell } from "@vela/ui/vela/page-shell";
+import { EditorialPlate } from "@/components/vela/editorial-plate";
+import { PublicInformationNav } from "@/components/vela/public-information-page";
+import atlasPlate from "@editorial/assets/paintings/hero.webp";
+import styles from "./about-brand.module.css";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "How problems.science presents scientific problems, evidence, contributions, and Repository-local current state.",
+  description: "Why problems.science exists, how it presents scientific problems and evidence, and what Vela does and does not claim.",
   alternates: { canonical: "/about" },
 };
 
 export default function AboutPage() {
   return (
-    <PublicInformationPage
-      current="/about"
-      eyebrow="About problems.science"
-      title="A clearer way to read what is known—and add what comes next."
-      description="problems.science brings a scientific question, its evidence, and attributed contributions into one readable place. It helps people and agents inspect prior work before contributing more."
-      aside={<><p className="font-medium text-foreground">The public loop</p><ol className="mt-3 space-y-3"><li><span className="font-mono text-primary">01</span> Read what is known</li><li><span className="font-mono text-primary">02</span> Check prior work</li><li><span className="font-mono text-primary">03</span> Add a contribution</li></ol><Link href="/problems" className="mt-5 inline-block font-medium text-foreground underline underline-offset-4">Browse Problems</Link></>}
-    >
-      <InformationSection title="The Problem is the place to start">
-        <p>Each Problem page begins with the question. It then separates what is currently known, the evidence behind it, newer work, and the history of corrections or changes.</p>
-        <p>A <strong>Contribution</strong> is one defined piece of scientific work: for example a proof, computation, dataset, review, negative result, or correction. Contributions remain attributable to their human or AI performers and link back to their sources and methods.</p>
-      </InformationSection>
+    <PageShell as="article" archetype="reading" layout="reading" className={styles.page}>
+      <header className={styles.hero}>
+        <div>
+          <div className="mb-8"><PublicInformationNav current="/about" /></div>
+          <h1 className={styles.title}>Science should remember the route, not only the arrival.</h1>
+          <p className={styles.lead}>problems.science brings a question, its sources, durable Results, active Work, and the history between them into one readable place.</p>
+          <div className="mt-7 flex flex-wrap gap-3">
+            <Button nativeButton={false} render={<Link href="/problems" />}>Browse Problems <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden data-icon="inline-end" /></Button>
+            <Button nativeButton={false} variant="outline" render={<Link href="/about/endless-frontiers" />}>Read Endless Frontiers</Button>
+          </div>
+        </div>
+        <EditorialPlate
+          image={atlasPlate}
+          caption="The sail is orientation; exact relationships live in the research map."
+          href="/graph"
+          linkLabel="Open research map"
+          priority
+        />
+      </header>
 
-      <InformationSection title="How a scientific result reaches this site">
-        <ol className="grid gap-3 sm:grid-cols-3">
-          <li className="rounded-lg border bg-card p-4"><strong className="block">Source-owned question</strong><span className="mt-1 block text-meta">A collection or repository defines the durable identity and source wording.</span></li>
-          <li className="rounded-lg border bg-card p-4"><strong className="block">Published view</strong><span className="mt-1 block text-meta">problems.science organizes source material, evidence, and relationships for reading and discovery.</span></li>
-          <li className="rounded-lg border bg-card p-4"><strong className="block">Repository-local state</strong><span className="mt-1 block text-meta">A Repository records its own accepted state through explicit decisions. Other repositories may differ.</span></li>
-        </ol>
-        <p>Exact identifiers, source revisions, records, and hashes remain available in technical details. They support reproducibility without taking over the reading experience.</p>
-      </InformationSection>
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Start with the Problem.</h2>
+        <div className={styles.copy}>
+          <p>Every public page begins with a scientific question. Results are durable outputs attached to that question: a proof, computation, dataset, review, negative result, or correction. Work stays visibly separate because an active approach is not yet a result.</p>
+          <p>Source wording and status remain attributed to the collection that published them. A Vela Repository may record its own current state, but problems.science does not turn that local decision into universal truth.</p>
+        </div>
+      </section>
 
-      <InformationSection title="Evidence, checks, and decisions are different">
-        <InformationList>
-          <li>A source says what material was published and where it came from.</li>
-          <li>A check or review records a scoped observation about a Contribution. It does not accept the Contribution by itself.</li>
-          <li>A Decision records what one Repository accepts, rejects, or supersedes.</li>
-          <li>Search and similarity can suggest related work. Exact identity remains authoritative.</li>
-        </InformationList>
-      </InformationSection>
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Keep each handoff visible.</h2>
+        <div>
+          <p className={styles.copy}>A useful scientific record preserves the boundaries between what was published, what someone added, what was checked, and what one Repository decided to inherit.</p>
+          <ol className={styles.passage} aria-label="How source material becomes readable current state">
+            <li><strong>Source</strong><span>The collection owns the question, wording, revision, and source status.</span></li>
+            <li><strong>Result</strong><span>A human or agent contributes one attributable, bounded output.</span></li>
+            <li><strong>Check</strong><span>A scoped review records what it observed, with method and limitations.</span></li>
+            <li><strong>Repository state</strong><span>An explicit local decision determines what that Repository carries forward.</span></li>
+          </ol>
+        </div>
+      </section>
 
-      <InformationSection title="People and agents are peers in provenance">
-        <p>Human and AI contributors or reviewers appear as different performer kinds, not as a quality ranking. The useful questions are who or what performed the work, with which provider, model, method, tools, environment, independence, and limitations—and what evidence supports the outcome.</p>
-        <p>Generic code history stays in GitHub or another repository host. Generic agent sessions and checkpoints stay in their native tools. problems.science keeps contextual references when they help explain a scientific Contribution.</p>
-      </InformationSection>
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Human and agent work shares one provenance grammar.</h2>
+        <div className={styles.copy}>
+          <p>Performer kind is not a quality score. The useful context is the named performer, provider or affiliation, model and version where relevant, method, environment, independence, limitations, and evidence.</p>
+          <p>GitHub remains the home of source contributions and maintainer decisions. Entire and native tools remain the home of generic agent sessions and checkpoints. Problems keeps exact references when they help a reader understand the scientific work.</p>
+        </div>
+      </section>
 
-      <InformationSection title="What problems.science does not claim">
-        <InformationList>
-          <li>It does not declare one universal scientific truth or make every source agree.</li>
-          <li>A signature proves attribution and integrity, not that a scientific claim is true.</li>
-          <li>Hosted accounts do not grant scientific authority, and the site does not sign on a user&apos;s behalf.</li>
-          <li>Discovery and overlap suggestions help readers choose what to inspect; they are not acceptance decisions.</li>
-        </InformationList>
-        <p>Vela is the underlying system for exact scientific state and inheritance. problems.science is its public, task-focused reading and contribution product.</p>
-        <details className="mt-5 rounded-lg border px-4 py-3 text-meta">
+      <aside className={styles.boundary} aria-labelledby="about-boundary-title">
+        <h2 id="about-boundary-title" className="text-title">What this site does not claim</h2>
+        <p className="mt-3 max-w-[72ch] text-body leading-7 text-muted-foreground">A signature proves attribution and integrity, not truth. A passing check does not accept a Result. An account does not grant scientific authority. Discovery helps a reader choose what to inspect next; exact identity and Repository-local decisions remain explicit.</p>
+        <details className="mt-5 border-t border-border pt-4 text-meta">
           <summary className="cursor-pointer font-medium text-foreground">Technical release details</summary>
-          <p className="mt-3">The current source revisions, generator version, and projection roots are published in the exact site manifest.</p>
+          <p className="mt-3 max-w-[68ch] text-muted-foreground">The current source revisions, generator version, collection roots, and projection root are published in the exact site manifest.</p>
           <a href="/.well-known/vela-site.json" className="mt-2 inline-block font-medium text-primary underline underline-offset-4">Open exact release manifest</a>
         </details>
-      </InformationSection>
-    </PublicInformationPage>
+      </aside>
+    </PageShell>
   );
 }

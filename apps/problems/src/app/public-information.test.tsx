@@ -1,6 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import AboutPage from "./about/page";
+import EndlessFrontiersPage from "./about/endless-frontiers/page";
 import AccessibilityPage from "./accessibility/page";
 import ContactPage from "./contact/page";
 import PrivacyPage from "./privacy/page";
@@ -14,10 +15,20 @@ afterEach(() => {
 describe("public trust surfaces", () => {
   it("explains the product without granting checks or signatures scientific authority", () => {
     render(<AboutPage />);
-    expect(screen.getByRole("heading", { level: 1, name: /A clearer way to read what is known/ })).toBeVisible();
-    expect(screen.getByText(/check or review records a scoped observation/iu)).toBeVisible();
-    expect(screen.getByText(/signature proves attribution and integrity, not that a scientific claim is true/iu)).toBeVisible();
+    expect(screen.getByRole("heading", { level: 1, name: /Science should remember the route/ })).toBeVisible();
+    expect(screen.getByText(/scoped review records what it observed/iu)).toBeVisible();
+    expect(screen.getByText(/signature proves attribution and integrity, not truth/iu)).toBeVisible();
     expect(screen.getByRole("link", { name: "Browse Problems" })).toHaveAttribute("href", "/problems");
+    expect(screen.getByRole("link", { name: "Read Endless Frontiers" })).toHaveAttribute("href", "/about/endless-frontiers");
+  });
+
+  it("publishes the current living vision essay without restoring a second shell", () => {
+    render(<EndlessFrontiersPage />);
+    expect(screen.getByRole("heading", { level: 1, name: "Endless Frontiers" })).toBeVisible();
+    expect(screen.getByText(/Produce\. Preserve\. Check\. Decide\. Reuse\./u)).toBeVisible();
+    expect(screen.getByText(/Vela keeps current state Repository-local/iu)).toBeVisible();
+    expect(screen.getByRole("navigation", { name: "Essay sections" })).toBeVisible();
+    expect(screen.getByRole("link", { name: /Browse Problems/iu })).toHaveAttribute("href", "/problems");
   });
 
   it("states current privacy, terms, and accessibility boundaries", () => {
