@@ -216,7 +216,7 @@ export async function accountPublicProfile(accountId: string): Promise<PublicPro
 export async function publicProfileByHandle(handle: string, viewerAccountId?: string | null): Promise<PublicProfile | null> {
   try {
     const rows = await activitySql().query(
-      "SELECT activity_api.get_public_profile($1, $2::uuid) AS result",
+      "SELECT activity_api.get_public_profile($1::text, $2::uuid) AS result",
       [handle.trim().toLowerCase(), viewerAccountId ?? null],
     );
     return rows[0]?.result ? publicProfileFrom(rows[0].result) : null;
@@ -228,7 +228,7 @@ export async function publicProfileByHandle(handle: string, viewerAccountId?: st
 export async function publicProfileForPerformer(performerId: string): Promise<PublicProfile | null> {
   try {
     const rows = await activitySql().query(
-      "SELECT activity_api.get_profile_for_performer($1) AS result",
+      "SELECT activity_api.get_profile_for_performer($1::text) AS result",
       [performerId],
     );
     return rows[0]?.result ? publicProfileFrom(rows[0].result) : null;

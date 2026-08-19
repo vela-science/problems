@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { describe, expect, test } from "bun:test";
 
 const sql = readFileSync(resolve(import.meta.dir, "../schema/public-profiles.sql"), "utf8");
+const activitySource = readFileSync(resolve(import.meta.dir, "../src/activity.ts"), "utf8");
 
 describe("public profile storage boundary", () => {
   test("is private by default and never exposes account identity through public reads", () => {
@@ -25,5 +26,10 @@ describe("public profile storage boundary", () => {
     expect(sql).toContain("profile.visibility='public'");
     expect(sql).not.toMatch(/get_profile_for_performer[\s\S]*profile\.visibility IN \('public', 'unlisted'\)/u);
     expect(sql).not.toMatch(/save_public_profile[\s\S]*INSERT INTO activity\.public_profile_performers/u);
+  });
+
+  test("binds text parameters explicitly for PostgreSQL function resolution", () => {
+    expect(activitySource).toContain("get_public_profile($1::text, $2::uuid)");
+    expect(activitySource).toContain("get_profile_for_performer($1::text)");
   });
 });
