@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { insertCandidate, publicTableOrder } from "../scripts/projection-store.mjs";
+import { parse, plannedStatements, type Planned } from "../tests/writer-statements";
 import { neon } from "../src/neon-client";
 
 /*
@@ -22,6 +22,11 @@ import { neon } from "../src/neon-client";
   `information_schema.columns`. Nothing is written and nothing is planned — the
   projection role is SELECT-only, which is why this reads the catalogue rather
   than asking the planner.
+
+  The statement count and each statement's internal agreement moved to
+  `tests/projection-writer-statements.test.ts`, which needs no database and
+  runs in every plain gate. This suite keeps the half only the live catalogue
+  can answer.
 */
 
 const url = process.env.VELA_PROJECTION_DATABASE_URL;
@@ -30,84 +35,9 @@ if (process.env.VELA_REQUIRE_PROJECTION_TESTS === "1" && !url) {
 }
 const describeProjection = url ? describe : describe.skip;
 
-interface Planned {
-  table: string;
-  named: string[];
-  fromRecordset: string[];
-}
-
-const names = (list: string) => list
-  .split(",")
-  .map((entry) => entry.trim().split(/\s+/u)[0])
-  .filter(Boolean);
-
-/* Our own statements in a fixed shape, not SQL in general: `INSERT INTO
-   projection.<table> (<columns>)`, optionally followed somewhere by
-   `AS x(<columns with types>)`. A statement this does not recognise is
-   reported rather than skipped. */
-function parse(text: string): Planned | null {
-  const head = /INSERT INTO projection\.(\w+)\s*\(([^)]*)\)/u.exec(text);
-  if (!head) return null;
-  const recordset = /AS x\(([\s\S]*?)\)\s*(?:ON CONFLICT|$)/u.exec(text);
-  return {
-    table: head[1] as string,
-    named: names(head[2] as string),
-    fromRecordset: recordset ? names(recordset[1] as string) : [],
-  };
-}
-
-/* `insertCandidate` builds its statements inside `sql.transaction`, so the only
-   way to read them is to be the transaction. The stub is a tagged template (the
-   `releases` insert) that also carries `.query` (every other one) — the whole
-   surface `query()` in projection-store reaches for. */
-function collect() {
-  const planned: string[] = [];
-  const tx = (strings: TemplateStringsArray, ...values: unknown[]) => {
-    planned.push(strings.raw.join("?"));
-    return values.length >= 0 ? null : null;
-  };
-  tx.query = (text: string) => {
-    planned.push(text);
-    return null;
-  };
-  return {
-    fake: { transaction: async (build: (tx: unknown) => unknown[]) => void build(tx) },
-    planned,
-  };
-}
-
-/* Every public table, empty. Listing them here would be a third copy of the
-   schema; taking the roster from the writer means a new table joins this check
-   by existing. */
-const emptyCandidate = {
-  manifest: {
-    release_root: `sha256:${"0".repeat(64)}`,
-    generated_at: "2026-01-01T00:00:00.000Z",
-  },
-  tables: Object.fromEntries((publicTableOrder as string[]).map((table) => [table, []])),
-};
-
 describeProjection("the projection writer and its schema name the same columns", () => {
-  test("every named column exists, in the order the table holds it", async () => {
-    const { fake, planned } = collect();
-    await insertCandidate(fake, emptyCandidate);
-
-    /* The twelve tables written with a fixed statement, plus `releases`. The
-       five registry tables are chunked, so a rowless candidate plans none of
-       them — and four of those five write through
-       `jsonb_populate_recordset(NULL::projection.<table>, …)`, which matches by
-       column name and cannot transpose at all. `native_records` is the fifth and
-       already names its columns.
-
-       Thirteen: retired derived work tables remain removed, the exact
-       Repository revision table has its own fixed statement, and
-       `frontier_edges` joined as the twelfth fixed statement.
-
-       An equality because the number is the point: a statement that silently
-       stops being checked is the failure this test exists to catch, one step
-       removed. */
-    expect(planned.length).toBe(13);
-
+  test("every named column exists, and recordset tables cover their table", async () => {
+    const planned = await plannedStatements();
     const statements = planned.map((text) => ({ text, parsed: parse(text) }));
     expect(statements.filter((entry) => entry.parsed === null).map((entry) => entry.text)).toEqual([]);
 
@@ -144,20 +74,16 @@ describeProjection("the projection writer and its schema name the same columns",
       ).toEqual([]);
 
       if (fromRecordset.length > 0) {
-        /* The statement agreeing with itself: whatever `AS x(…)` reads out of
-           the JSON is exactly what the column list puts away, after
-           `release_root` from the bound parameter. */
-        expect(named, `projection.${table} column list`).toEqual(["release_root", ...fromRecordset]);
-        /* And covering the table. A column added to one of these and not
+        /* Covering the table. A column added to one of these and not
            written is a NULL nobody chose, so it is worth hearing about. */
         expect(
           (writable as string[]).filter((column) => !named.includes(column)),
           `projection.${table} has columns the writer never fills`,
         ).toEqual([]);
       }
-      /* `releases` is the one exception, and takes only the first check: it is
-         written with VALUES and deliberately leaves `created_at` to the
-         database and `activated_at` to activation. */
+      /* `releases` is the one exception: it is written with VALUES and
+         deliberately leaves `created_at` to the database and `activated_at`
+         to activation. */
     }
   }, 30_000);
 });
