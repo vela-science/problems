@@ -259,6 +259,14 @@ beforeAll(async () => {
       title: "OEIS A309370",
       problemNumber: null,
     }),
+    fixtureAdapterOutput({
+      sourceId: "source:palomar-registry",
+      adapterId: "problems-data/palomar-registry",
+      nativeId: "palomar:PALOMAR-2026-08-19-000002-v1",
+      nativeKind: "registry-entry",
+      title: "PALOMAR-2026-08-19-000002 v1 · elliotglazer/erdos501",
+      problemNumber: null,
+    }),
     /* `attributed_activity`, the same kind the AI-contributions wiki emits,
        because it is the same species of claim: somebody else's judgment about
        what solved a problem. Neither is a Vela result. */
@@ -495,6 +503,77 @@ describe("Math source projection", () => {
       locator: "https://github.com/openai/ten-proofs/blob/94bc0feb6a9ff12c7d31d6de640a725c9d43d2b6/ComparatorChallenges/I_MulticolorTriangleRamsey.json",
     });
     expect(sourceIdForClaim(astra)).toBe("source:openai-ten-proofs");
+    const palomarByUrl = claim({
+      digit: "e",
+      title: "Palomar registration observation",
+      assertion: "An attributed registry-entry observation.",
+      locator: "https://data.palomar-registry.org/entries/PALOMAR-2026-08-19-000002-v1.json",
+    });
+    expect(sourceIdForClaim(palomarByUrl)).toBe("source:palomar-registry");
+    const palomarById = claim({
+      digit: "f",
+      title: "PALOMAR-2026-08-19-000002-v1 registration",
+      assertion: "An attributed registry-entry observation.",
+    });
+    expect(sourceIdForClaim(palomarById)).toBe("source:palomar-registry");
+  });
+
+  /* Steering: no authority effect. Ingesting the Palomar observation and
+     binding a Claim to it changes no Standing anywhere — the binding is a
+     reference with `local_standing_effect: "none"`, never an admission, and
+     Palomar's registered status and trust level map to no Vela standing value.
+     A Claim naming the record without its version binds to the Source alone
+     rather than to an invented identifier. */
+  test("maps Palomar registered status to external standing with no authority effect", () => {
+    const materials = fixtures();
+    const versioned = claim({
+      digit: "e",
+      title: "PALOMAR-2026-08-19-000002-v1 registration",
+      assertion: "Palomar registered elliotglazer/erdos501 for Erdős problem #501.",
+      locator: "https://data.palomar-registry.org/entries/PALOMAR-2026-08-19-000002-v1.json",
+    });
+    const unversioned = claim({
+      digit: "f",
+      title: "PALOMAR-2026-08-19-000002 registration",
+      assertion: "An attributed registry observation naming no version.",
+      locator: "https://palomar-registry.org/",
+    });
+    materials[0].claims.push(versioned, unversioned);
+
+    const projection = buildMathSourceProjection(
+      materials,
+      root("e"),
+      verifiedSourceAdapters,
+    );
+    const palomarBindings = projection.bundle.repository_bindings.filter(
+      ({ source_id }) => source_id === "source:palomar-registry",
+    );
+    expect(palomarBindings).toHaveLength(2);
+    const bound = palomarBindings.find(
+      ({ repository_object_id }) => repository_object_id === versioned.claim_id,
+    );
+    expect(bound).toMatchObject({
+      binding_kind: "reference",
+      local_standing_effect: "none",
+      native_id: "palomar:PALOMAR-2026-08-19-000002-v1",
+    });
+    const unbound = palomarBindings.find(
+      ({ repository_object_id }) => repository_object_id === unversioned.claim_id,
+    );
+    expect(unbound).toMatchObject({
+      binding_kind: "reference",
+      local_standing_effect: "none",
+      native_id: null,
+      native_record_root: null,
+    });
+    expect(projection.bundle.repository_bindings.every(
+      (binding) => binding.binding_kind !== "admission"
+        && binding.local_standing_effect === "none",
+    )).toBe(true);
+    const record = projection.bundle.native_records.find(
+      ({ source_id }) => source_id === "source:palomar-registry",
+    );
+    expect(record).toMatchObject({ availability: "reference_only" });
   });
 
   test("does not invent a source binding for an unattributed local Claim", () => {
@@ -565,7 +644,7 @@ describe("Math source projection", () => {
       source_count: mathSourceRegistry.sources.length,
       observation_count: mathSourceRegistry.sources.length,
       release_source_count: mathSourceRegistry.sources.length,
-      native_record_count: 11,
+      native_record_count: 12,
       /* Three, not eleven. The other eight were problem-kind bindings the
          builder manufactured from a graph node this fixture hand-wrote — a
          shape `projectGraph` cannot produce, because a graph node exists only

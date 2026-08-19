@@ -1,0 +1,547 @@
+{
+  "challenge": {
+    "bytes": 1636,
+    "canonical_olean_sha256": "a3acc8d1ae7c3eeb2078bf54c2ba69557146485d329927a629fe5bde55e86ace",
+    "dependencies": [
+      {
+        "provenance": "allowlisted",
+        "repository": "leanprover-community/mathlib4"
+      }
+    ],
+    "direct_imports": [
+      "Mathlib"
+    ],
+    "lines": 43,
+    "module": "Challenge",
+    "path": "Challenge.lean",
+    "sha256": "f765a9c3becf10d9ff2b52b351b79d81644b7b25caa5a9a834dc5a458ee0bab6",
+    "transitive_source_count": 2,
+    "trust_level": "high",
+    "untrusted_sources": []
+  },
+  "checked_at": "2026-08-14T07:38:18Z",
+  "classification": {
+    "arxiv": [
+      {
+        "code": "math.CO",
+        "name": "Combinatorics"
+      },
+      {
+        "code": "math.MG",
+        "name": "Metric Geometry"
+      }
+    ],
+    "msc2020": [
+      {
+        "code": "52C10",
+        "name": "Erd\u0151s problems and related topics of discrete geometry"
+      },
+      {
+        "code": "11R21",
+        "name": "Other number fields"
+      }
+    ]
+  },
+  "comparator": {
+    "challenge_module": "Challenge",
+    "definition_names": [],
+    "path": "comparator.json",
+    "permitted_axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ],
+    "sha256": "e7942d8b1d64111f0835c8aea166208effc1fdd32694d65fdc52b982b3856250",
+    "solution_module": "Solution",
+    "theorem_names": [
+      "UnitDistance.erdos_unit_distance_uniform_constant_false"
+    ]
+  },
+  "comparator_commit": "68a064109f01c08f47c8edc9f51d6a2bbffaa188",
+  "comparator_log_tail": "Building Challenge\n\u26a0 [8558/8559] Built Challenge (4.6s)\nwarning: Challenge.lean:36:8: declaration uses `sorry`\nBuild completed successfully (8559 jobs).\nExporting #[Nat, String, String.mk, Char, Char.ofNat, List, Quot, Quot.mk, Quot.lift, Quot.ind, UnitDistance.erdos_unit_distance_uniform_constant_false, propext, Quot.sound, Classical.choice, Nat.add, Nat.sub, Nat.mul, Nat.pow, Nat.gcd, Nat.div, Nat.mod, Nat.beq, Nat.ble, Nat.land, Nat.lor, Nat.xor, Nat.shiftLeft, Nat.shiftRight, String.ofList] from Challenge\nBuilding Solution\n\u2714 [8560/8575] Built Architect.Command (1.3s)\n\u2714 [8561/8576] Built Architect.Basic (2.2s)\n\u2714 [8562/8576] Built PrimeNumberTheoremAnd.Mathlib.Analysis.SpecialFunctions.Log.Basic (2.0s)\n\u2714 [8563/8576] Built Architect.Tactic (1.9s)\n\u2714 [8564/8576] Built Architect.CollectUsed (1.5s)\n\u2714 [8565/8582] Built Architect.Content (1.7s)\n\u2714 [8566/8582] Built PrimeNumberTheoremAnd.Mathlib.Analysis.Asymptotics.Asymptotics (3.6s)\n\u2714 [8567/8582] Built Architect.Output (4.3s)\n\u2714 [8568/8582] Built Architect.Attribute (3.7s)\n\u2714 [8571/8599] Built PrimeNumberTheoremAnd.Mathlib.Algebra.Notation.Support (1.8s)\n\u2714 [8580/8599] Built Architect.Load (877ms)\n\u2714 [8581/8599] Built Architect (768ms)\n\u2714 [8582/8599] Built PrimeNumberTheoremAnd.Sobolev (13s)\n\u2714 [8583/8599] Built PrimeNumberTheoremAnd.SmoothExistence (4.5s)\n\u2714 [8584/8599] Built ErdosUnitDistance.Counting (17s)\n\u2714 [8585/8599] Built PrimeNumberTheoremAnd.Fourier (3.0s)\n\u2714 [8586/8599] Built PrimeNumberTheoremAnd.Defs (5.0s)\n\u2714 [8587/8599] Built ErdosUnitDistance.GeometricCore (36s)\n\u26a0 [8588/8599] Built PrimeNumberTheoremAnd.Wiener (55s)\nwarning: PrimeNumberTheoremAnd/Wiener.lean:323:8: declaration uses `sorry`\nwarning: PrimeNumberTheoremAnd/Wiener.lean:342:8: declaration uses `sorry`\nwarning: PrimeNumberTheoremAnd/Wiener.lean:1392:37: This simp argument is unused:\n  show 2 + n - 1 = n + 1 from by omega\n\nHint: Omit it from the simp argument list.\n  simp only [cumsum_succ, show 2 + n - 1 =\u0335 \u0335n\u0335 \u0335+\u0335 \u03351\u0335 \u0335f\u0335r\u0335o\u0335m\u0335 \u0335b\u0335y\u0335 \u0335o\u0335m\u0335e\u0335g\u0335a\u0335,\u0335\n  \u0335 \u0335 \u0335 \u0335 \u0335 \u0335 \u0335s\u0335h\u0335o\u0335w\u0335 \u03352\u0335 \u0335+\u0335 \u0335n\u0335 \u0335- 1 -\u0335 \u03351\u0335 \u0335= n from by omega,\n  \u0332  \u0332 \u0332 \u0332show 2 + n = n + 2 from by omega, show 1 + n = n + 1 from by omega]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: PrimeNumberTheoremAnd/Wiener.lean:1393:6: This simp argument is unused:\n  show 2 + n - 1 - 1 = n from by omega\n\nHint: Omit it from the simp argument list.\n  simp only [cumsum_succ, show 2 + n - 1 = n + 1 from by omega,\n      show 2 + n -\u0335 \u03351\u0335 \u0335-\u0335 \u03351\u0335 \u0335= n f\u0335r\u0335o\u0335m\u0335 \u0335b\u0335y\u0335 \u0335o\u0335m\u0335e\u0335g\u0335a\u0335,\u0335 \u0335s\u0335h\u0335o\u0335w\u0335 \u03352\u0335 \u0335+ n\u0335 \u0335=\u0335 \u0335n\u0335 \u0335+\u0335 \u03352 from by omega, show 1 + n = n + 1 from by omega]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: PrimeNumberTheoremAnd/Wiener.lean:1393:44: This simp argument is unused:\n  show 2 + n = n + 2 from by omega\n\nHint: Omit it from the simp argument list.\n  simp only [cumsum_succ, show 2 + n - 1 = n + 1 from by omega,\n      show 2 + n - 1 - 1 = n from by omega, show 2\u0335 \u0335+\u0335 \u0335n\u0335 \u0335=\u0335 \u0335n\u0335 \u0335+\u0335 \u03352\u0335 \u0335f\u0335r\u0335o\u0335m\u0335 \u0335b\u0335y\u0335 \u0335o\u0335m\u0335e\u0335g\u0335a\u0335,\u0335\n  \u0335 \u0335 \u0335 \u0335 \u0335 \u0335 \u0335s\u0335h\u0335o\u0335w\u0335 \u03351 + n = n + 1 from by omega]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: PrimeNumberTheoremAnd/Wiener.lean:1394:6: This simp argument is unused:\n  show 1 + n = n + 1 from by omega\n\nHint: Omit it from the simp argument list.\n  simp only [cumsum_succ, show 2 + n - 1 = n + 1 from by omega,\n      show 2 + n - 1 - 1 = n from by omega, show 2 + n = n + 2 from by o\u0335m\u0335e\u0335g\u0335a\u0335,\u0335\n  \u0335 \u0335 \u0335 \u0335 \u0335 \u0335 \u0335s\u0335h\u0335o\u0335w\u0335 \u03351\u0335 \u0335+\u0335 \u0335n\u0335 \u0335=\u0335 \u0335n\u0335 \u0335+\u0335 \u03351\u0335 \u0335f\u0335r\u0335o\u0335m\u0335 \u0335b\u0335y\u0335 \u0335omega]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u26a0 [8589/8599] Built PrimeNumberTheoremAnd.Consequences (43s)\nwarning: PrimeNumberTheoremAnd/Consequences.lean:113:77: This simp argument is unused:\n  ge_iff_le\n\nHint: Omit it from the simp argument list.\n  simp only [ne_eq, cast_eq_zero, floor_eq_zero, not_lt, mem_atTop_sets, g\u0335e\u0335_\u0335i\u0335f\u0335f\u0335_\u0335l\u0335e\u0335,\u0335\n  \u0335 \u0335 \u0335 \u0335 \u0335 \u0335 \u0335 \u0335 \u0335Set.mem_setOf_eq]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: PrimeNumberTheoremAnd/Consequences.lean:121:69: This simp argument is unused:\n  ge_iff_le\n\nHint: Omit it from the simp argument list.\n  simp only [Pi.sub_apply, neg_sub, norm_eq_abs, eventually_atTop,\u0335 \u0335g\u0335e\u0335_\u0335i\u0335f\u0335f\u0335_\u0335l\u0335e\u0335]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: PrimeNumberTheoremAnd/Consequences.lean:180:42: This simp argument is unused:\n  ge_iff_le\n\nHint: Omit it from the simp argument list.\n  simp only [one_mul, eventually_atTop,\u0335 \u0335g\u0335e\u0335_\u0335i\u0335f\u0335f\u0335_\u0335l\u0335e\u0335]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: PrimeNumberTheoremAnd/Consequences.lean:242:71: This simp argument is unused:\n  ge_iff_le\n\nHint: Omit it from the simp argument list.\n  simp only [Pi.sub_apply, norm_eq_abs, mul_assoc, eventually_atTop, g\u0335e\u0335_\u0335i\u0335f\u0335f\u0335_\u0335l\u0335e\u0335,\u0335 \u0335norm_mul, abs_of_pos h\u03b5,\n  \u0332  \u0332 \u0332 \u0332 \u0332 \u0332f] at H \u22a2\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: PrimeNumberTheoremAnd/Consequences.lean:254:71: This simp argument is unused:\n  ge_iff_le\n\nHint: Omit it from the simp argument list.\n  simp only [isLittleO_iff, norm_eq_abs, norm_mul, eventually_atTop, g\u0335e\u0335_\u0335i\u0335f\u0335f\u0335_\u0335l\u0335e\u0335,\u0335\n  \u0335 \u0335 \u0335 \u0335 \u0335 \u0335 \u0335norm_div] at hf1 \u22a2\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: PrimeNumberTheoremAnd/Consequences.lean:912:28: 'ext x' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\nwarning: PrimeNumberTheoremAnd/Consequences.lean:912:35: 'ring' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\nwarning: PrimeNumberTheoremAnd/Consequences.lean:912:35: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\nwarning: PrimeNumberTheoremAnd/Consequences.lean:1014:49: This simp argument is unused:\n  ge_iff_le\n\nHint: Omit it from the simp argument list.\n  simp only [EventuallyEq, eventually_atTop,\u0335 \u0335g\u0335e\u0335_\u0335i\u0335f\u0335f\u0335_\u0335l\u0335e\u0335]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: PrimeNumberTheoremAnd/Consequences.lean:1131:12: This simp argument is unused:\n  ge_iff_le\n\nHint: Omit it from the simp argument list.\n  simp only [one_div, gt_iff_lt, inv_pos, ofNat_pos, div_one, norm_eq_abs, eventually_atTop,\n              g\u0335e\u0335_\u0335i\u0335ff\u0335_\u0335l\u0335e\u0335,\u0335 \u0335f\u0335orall_const] at k_o1\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: PrimeNumberTheoremAnd/Consequences.lean:1211:44: This simp argument is unused:\n  ge_iff_le\n\nHint: Omit it from the simp argument list.\n  simp only [norm_eq_abs, eventually_atTop,\u0335 \u0335g\u0335e\u0335_\u0335i\u0335f\u0335f\u0335_\u0335l\u0335e\u0335] at f_small\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: PrimeNumberTheoremAnd/Consequences.lean:1242:44: This simp argument is unused:\n  ge_iff_le\n\nHint: Omit it from the simp argument list.\n  simp only [norm_eq_abs, eventually_atTop,\u0335 \u0335g\u0335e\u0335_\u0335i\u0335f\u0335f\u0335_\u0335l\u0335e\u0335] at f_small\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: PrimeNumberTheoremAnd/Consequences.lean:1269:15: This simp argument is unused:\n  ge_iff_le\n\nHint: Omit it from the simp argument list.\n  simp only [g\u0335e\u0335_\u0335i\u0335f\u0335f\u0335_\u0335l\u0335e\u0335,\u0335 \u0335a] at hb\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: PrimeNumberTheoremAnd/Consequences.lean:1280:42: This simp argument is unused:\n  ge_iff_le\n\nHint: Omit it from the simp argument list.\n  simp only [gt_iff_lt, eventually_atTop,\u0335 \u0335g\u0335e\u0335_\u0335i\u0335f\u0335f\u0335_\u0335l\u0335e\u0335] at first_term\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: PrimeNumberTheoremAnd/Consequences.lean:1282:31: This simp argument is unused:\n  ge_iff_le\n\nHint: Omit it from the simp argument list.\n  simp only [eventually_atTop,\u0335 \u0335g\u0335e\u0335_\u0335i\u0335f\u0335f\u0335_\u0335l\u0335e\u0335]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: PrimeNumberTheoremAnd/Consequences.lean:1309:59: This simp argument is unused:\n  ge_iff_le\n\nHint: Omit it from the simp argument list.\n  simp only [_root_.add_lt_add_iff_left, eventually_atTop,\u0335 \u0335g\u0335e\u0335_\u0335i\u0335f\u0335f\u0335_\u0335l\u0335e\u0335] at first_term\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: PrimeNumberTheoremAnd/Consequences.lean:1311:42: This simp argument is unused:\n  ge_iff_le\n\nHint: Omit it from the simp argument list.\n  simp only [gt_iff_lt, eventually_atTop,\u0335 \u0335g\u0335e\u0335_\u0335i\u0335f\u0335f\u0335_\u0335l\u0335e\u0335]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: PrimeNumberTheoremAnd/Consequences.lean:1344:48: This simp argument is unused:\n  ge_iff_le\n\nHint: Omit it from the simp argument list.\n  simp only [Set.mem_Ioi, eventually_atTop,\u0335 \u0335g\u0335e\u0335_\u0335i\u0335f\u0335f\u0335_\u0335l\u0335e\u0335]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: PrimeNumberTheoremAnd/Consequences.lean:1378:33: This simp argument is unused:\n  ge_iff_le\n\nHint: Omit it from the simp argument list.\n  simp only [eventually_atTop,\u0335 \u0335g\u0335e\u0335_\u0335i\u0335f\u0335f\u0335_\u0335l\u0335e\u0335] at first_helper\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: PrimeNumberTheoremAnd/Consequences.lean:1379:44: This simp argument is unused:\n  ge_iff_le\n\nHint: Omit it from the simp argument list.\n  simp only [gt_iff_lt, eventually_atTop,\u0335 \u0335g\u0335e\u0335_\u0335i\u0335f\u0335f\u0335_\u0335l\u0335e\u0335] at second_helper\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: PrimeNumberTheoremAnd/Consequences.lean:1395:15: This simp argument is unused:\n  ge_iff_le\n\nHint: Omit it from the simp argument list.\n  simp only [g\u0335e\u0335_\u0335i\u0335f\u0335f\u0335_\u0335l\u0335e\u0335,\u0335 \u0335sup_le_iff] at hb\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: PrimeNumberTheoremAnd/Consequences.lean:1559:44: This simp argument is unused:\n  ge_iff_le\n\nHint: Omit it from the simp argument list.\n  simp only [Set.mem_Ici, eventually_atTop,\u0335 \u0335g\u0335e\u0335_\u0335i\u0335f\u0335f\u0335_\u0335l\u0335e\u0335] at squeeze\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [8590/8599] Built ErdosUnitDistance.PrimesMod4 (11s)\n\u2139 [8591/8599] Built ErdosUnitDistance.MultiquadraticField (14s)\ninfo: ErdosUnitDistance/MultiquadraticField.lean:363:29: Try this:\n  [apply] ring_nf\n  \n  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.\n    \n  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.\ninfo: ErdosUnitDistance/MultiquadraticField.lean:401:69: Try this:\n  [apply] ring_nf\n  \n  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.\n    \n  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.\ninfo: ErdosUnitDistance/MultiquadraticField.lean:402:27: Try this:\n  [apply] ring_nf\n  \n  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.\n    \n  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.\ninfo: ErdosUnitDistance/MultiquadraticField.lean:407:118: Try this:\n  [apply] ring_nf\n  \n  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.\n    \n  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.\n\u26a0 [8592/8599] Built ErdosUnitDistance.Discriminant (16s)\nwarning: ErdosUnitDistance/Discriminant.lean:43:6: `push_neg` has been deprecated. Prefer using `push Not` instead.\nIf you'd rather continue using `push_neg` in your project, you can implement it as follows:\n```\nopen Lean.Parser.Tactic in\nmacro \"push_neg\" cfg:optConfig loc:(location)? : tactic =>\n  `(tactic| push $cfg:optConfig Not $[$loc]?)\n```\nwarning: ErdosUnitDistance/Discriminant.lean:165:8: this tactic is never executed\n\nNote: This linter can be disabled with `set_option linter.unreachableTactic false`\nwarning: ErdosUnitDistance/Discriminant.lean:165:8: '(funext q; simp)' tactic does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\n\u26a0 [8593/8599] Built ErdosUnitDistance.IdealFamily (18s)\ninfo: ErdosUnitDistance/IdealFamily.lean:128:150: Try this:\n  [apply] ring_nf\n  \n  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.\n    \n  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.\nwarning: ErdosUnitDistance/IdealFamily.lean:112:90: This simp argument is unused:\n  AlgEquiv.commutes\n\nHint: Omit it from the simp argument list.\n  simp +decide \u0335[\u0335 \u0335A\u0335l\u0335g\u0335E\u0335q\u0335u\u0335i\u0335v\u0335.\u0335c\u0335o\u0335m\u0335m\u0335u\u0335t\u0335e\u0335s\u0335 \u0335]\u0335\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: ErdosUnitDistance/IdealFamily.lean:127:15: This simp argument is unused:\n  h_neg\n\nHint: Omit it from the simp argument list.\n  simp [h_\u0335n\u0335e\u0335g\u0335,\u0335 \u0335h\u0335xt]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: ErdosUnitDistance/IdealFamily.lean:138:78: This simp argument is unused:\n  Ideal.mem_span_singleton\n\nHint: Omit it from the simp argument list.\n  simp_all +decide \u0335[\u0335 \u0335I\u0335d\u0335e\u0335a\u0335l\u0335.\u0335m\u0335e\u0335m\u0335_\u0335s\u0335p\u0335a\u0335n\u0335_\u0335s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335 \u0335]\u0335\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: ErdosUnitDistance/IdealFamily.lean:179:6: `push_neg` has been deprecated. Prefer using `push Not` instead.\nIf you'd rather continue using `push_neg` in your project, you can implement it as follows:\n```\nopen Lean.Parser.Tactic in\nmacro \"push_neg\" cfg:optConfig loc:(location)? : tactic =>\n  `(tactic| push $cfg:optConfig Not $[$loc]?)\n```\n\u26a0 [8594/8599] Built ErdosUnitDistance.NormFibre (34s)\nwarning: ErdosUnitDistance/NormFibre.lean:241:49: This simp argument is unused:\n  Ideal.span_singleton_le_span_singleton\n\nHint: Omit it from the simp argument list.\n  simp +decide \u0335[\u0335 \u0335I\u0335d\u0335e\u0335a\u0335l\u0335.\u0335s\u0335p\u0335a\u0335n\u0335_\u0335s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335_\u0335l\u0335e\u0335_\u0335s\u0335p\u0335a\u0335n\u0335_\u0335s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335 \u0335]\u0335\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: ErdosUnitDistance/NormFibre.lean:317:56: Variable name `ht` is not explicitly referenced.\n\nThe binding can be removed (if unused) or named `_` (if used implicitly).\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\n\u26a0 [8595/8599] Built ErdosUnitDistance.PointCount (12s)\nwarning: ErdosUnitDistance/PointCount.lean:28:2: `Pi.ringHom` has been deprecated: Use `RingHom.pi` instead\n\nNote: The updated constant is in a different namespace. Dot notation may need to be changed (e.g., from `x.ringHom` to `RingHom.pi x`).\n\u2139 [8596/8599] Built ErdosUnitDistance.Main (18s)\ninfo: ErdosUnitDistance/Main.lean:152:88: Try this:\n  [apply] ring_nf\n  \n  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.\n    \n  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.\n\u2714 [8597/8599] Built ErdosUnitDistance (3.9s)\n\u2714 [8598/8599] Built Solution (4.1s)\nBuild completed successfully (8599 jobs).\nExporting #[Nat, String, String.mk, Char, Char.ofNat, List, Quot, Quot.mk, Quot.lift, Quot.ind, UnitDistance.erdos_unit_distance_uniform_constant_false, propext, Quot.sound, Classical.choice, Nat.add, Nat.sub, Nat.mul, Nat.pow, Nat.gcd, Nat.div, Nat.mod, Nat.beq, Nat.ble, Nat.land, Nat.lor, Nat.xor, Nat.shiftLeft, Nat.shiftRight, String.ofList] from Solution\nRunning nanoda kernel on solution\nNanoda kernel accepts the solution\nRunning Lean default kernel on solution.\nLean default kernel accepts the solution\nYour solution is okay!",
+  "errors": [],
+  "existing_id": "PALOMAR-2026-08-08-000001",
+  "formalization": {
+    "automation_method_count": 3,
+    "path": "formalization.yaml",
+    "project_name": "erdos-unit-distance-comparator",
+    "review_status": "self-assessed",
+    "sha256": "5670491847204445087e02987c20abfce5bcc312e10c9ac9f215304609bd7090",
+    "source_count": 6
+  },
+  "lake_manifest": {
+    "path": "lake-manifest.json",
+    "sha256": "b477e6c372572af57ed7f601ea5b80fc70d46cfca6e96df8354adb15810ba756"
+  },
+  "lakefile": {
+    "format": "toml",
+    "path": "lakefile.toml",
+    "sha256": "aad1d64ddd1c15422433ff2c244f899cb67d1f15ca136ceba93c49068e5f2c6b"
+  },
+  "landrun_commit": "811cfff51ceaf3d9843708aa6d22e9b84ccac8b4",
+  "lean4export_commit": "b66b1cd7b8819db6059bc3d6093b22b0a380e793",
+  "lean_toolchain": "leanprover/lean4:v4.31.0-rc2",
+  "lean_toolchain_path": "lean-toolchain",
+  "license": {
+    "declared_identifier": "Apache-2.0",
+    "detected_identifier": "Apache-2.0",
+    "path": "LICENSE",
+    "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+  },
+  "mathlib_cache": {
+    "available": false,
+    "required": true
+  },
+  "nanoda_commit": "68d5ca9db226849b41a6fff59d796ff19d0a8840",
+  "phase": "verification",
+  "project_dependencies": [
+    {
+      "name": "ErdosUnitDistance",
+      "repository": "kim-em/erdos-unit-distance",
+      "revision": "34b4587bbd0740efb9c06a519a8ee14a3eff8cd7",
+      "url": "https://github.com/kim-em/erdos-unit-distance.git"
+    },
+    {
+      "name": "mathlib",
+      "repository": "leanprover-community/mathlib4",
+      "revision": "0be66d77ba290828a5260d883ace636f56bce89a",
+      "url": "https://github.com/leanprover-community/mathlib4.git"
+    },
+    {
+      "name": "TauCeti",
+      "repository": "FormalFrontier/TauCeti",
+      "revision": "221bb56a017bb794421eac4fa543d7a5e85add75",
+      "url": "https://github.com/FormalFrontier/TauCeti"
+    },
+    {
+      "name": "PrimeNumberTheoremAnd",
+      "repository": "kim-em/PrimeNumberTheoremAnd",
+      "revision": "e025424629cafbfa6ad98eee5fb4f22e1ad6086b",
+      "url": "https://github.com/kim-em/PrimeNumberTheoremAnd.git"
+    },
+    {
+      "name": "plausible",
+      "repository": "leanprover-community/plausible",
+      "revision": "744117af710b1c0400cd297c9ce91f8d0ad3a347",
+      "url": "https://github.com/leanprover-community/plausible"
+    },
+    {
+      "name": "LeanSearchClient",
+      "repository": "leanprover-community/LeanSearchClient",
+      "revision": "c5d5b8fe6e5158def25cd28eb94e4141ad97c843",
+      "url": "https://github.com/leanprover-community/LeanSearchClient"
+    },
+    {
+      "name": "importGraph",
+      "repository": "leanprover-community/import-graph",
+      "revision": "99c763c8a96d3d44fb4994e96eaa51ca4568449d",
+      "url": "https://github.com/leanprover-community/import-graph"
+    },
+    {
+      "name": "proofwidgets",
+      "repository": "leanprover-community/ProofWidgets4",
+      "revision": "b2da7698bdf22804095ea5b5007f23c09398f687",
+      "url": "https://github.com/leanprover-community/ProofWidgets4"
+    },
+    {
+      "name": "aesop",
+      "repository": "leanprover-community/aesop",
+      "revision": "7897ea6e5cfc6522d355083bdfa798377ab35e11",
+      "url": "https://github.com/leanprover-community/aesop"
+    },
+    {
+      "name": "Qq",
+      "repository": "leanprover-community/quote4",
+      "revision": "94346b7b49c36ae871639d1434232f057c193d60",
+      "url": "https://github.com/leanprover-community/quote4"
+    },
+    {
+      "name": "batteries",
+      "repository": "leanprover-community/batteries",
+      "revision": "c6f7103faab35720af56784a9553733832f17349",
+      "url": "https://github.com/leanprover-community/batteries"
+    },
+    {
+      "name": "PrimeCert",
+      "repository": "b-mehta/PrimeCert",
+      "revision": "f699a3e5d3efb381b9ddfb61a1ca51be25f456bd",
+      "url": "https://github.com/b-mehta/PrimeCert"
+    },
+    {
+      "name": "leancert",
+      "repository": "kim-em/leancert",
+      "revision": "8f56d605831f043b7f137385bfb67224d5784416",
+      "url": "https://github.com/kim-em/leancert.git"
+    },
+    {
+      "name": "checkdecls",
+      "repository": "PatrickMassot/checkdecls",
+      "revision": "3d425859e73fcfbef85b9638c2a91708ef4a22d4",
+      "url": "https://github.com/PatrickMassot/checkdecls.git"
+    },
+    {
+      "name": "LeanArchitect",
+      "repository": "hanwenzhu/LeanArchitect",
+      "revision": "8f56f86dcec03fa46cd21b0f7bee4d724f68dcc4",
+      "url": "https://github.com/hanwenzhu/LeanArchitect.git"
+    },
+    {
+      "name": "Cli",
+      "repository": "leanprover/lean4-cli",
+      "revision": "baf3e62fbb3502305076ca077e004aea78157c63",
+      "url": "https://github.com/leanprover/lean4-cli"
+    }
+  ],
+  "provenance": {
+    "mathematical_sources": [
+      {
+        "authors": [
+          {
+            "name": "Levent Alp\u00f6ge"
+          }
+        ],
+        "identifier": "https://x.com/__alpoge__/status/2064409100562366543",
+        "relationship": "formalizes",
+        "title": "Integral points on norm-one tori and the Erd\u0151s unit-distance exponent"
+      },
+      {
+        "authors": [],
+        "identifier": "https://www-cdn.anthropic.com/files/4zrzovbb/website/ca35f196125c899a5ad11f011080202a652aef02.pdf",
+        "relationship": "background",
+        "title": "Integral points on norm-one tori and the Erd\u0151s unit-distance exponent"
+      },
+      {
+        "authors": [
+          {
+            "name": "Paul Erd\u0151s"
+          }
+        ],
+        "relationship": "background",
+        "title": "On sets of distances of n points"
+      },
+      {
+        "authors": [
+          {
+            "name": "Paul Erd\u0151s"
+          }
+        ],
+        "relationship": "background",
+        "title": "Some problems in number theory, combinatorics and combinatorial geometry"
+      },
+      {
+        "authors": [
+          {
+            "name": "Paul Erd\u0151s"
+          }
+        ],
+        "relationship": "background",
+        "title": "Some of my favourite problems which recently have been solved"
+      },
+      {
+        "authors": [
+          {
+            "name": "OpenAI"
+          }
+        ],
+        "identifier": "https://cdn.openai.com/pdf/74c24085-19b0-4534-9c90-465b8e29ad73/unit-distance-proof.pdf",
+        "relationship": "background",
+        "title": "Planar Point Sets with Many Unit Distances"
+      }
+    ],
+    "related_formalizations": [
+      {
+        "identifier": "https://github.com/plby/Erdos90",
+        "note": "Boris Alexeev's Lean formalization of OpenAI's 2026 counterexample, announced on the Lean Zulip and verified on lean-eval on 2026-06-26. He reports that Codex produced it over about a month with himself as the one person in the loop.\nIt proves the fixed-power statement, and proves it outright: the class field theory is formalized rather than assumed, the proof path carries no sorries, and the repository's three axiom declarations, which state Remark II.3.12 of Milne's \"Class Field Theory\", are in a module the proof does not import.\nHe reports 1.2 million lines in the formalization, of which roughly 800,000 are imported by the final result and 10,000 to 40,000 are the novel part of the argument.",
+        "relationship": "independent"
+      },
+      {
+        "identifier": "https://github.com/logical-intelligence/erdos-unit-distance",
+        "note": "Logical Intelligence's Lean 4 formalization of the same result, produced with Aleph Prover, announced on 2026-05-28 at roughly 33,000 lines. It also reaches the fixed-power statement, that {n : 0 < n and nu(n) >= n^(1+delta)} is infinite for some delta > 0, by way of class field towers.\nIt is conditional, deliberately and visibly: `main_theorem` takes the Golod-Shafarevich inequality and Shafarevich's relation-rank bound as hypotheses in its signature rather than formalizing them. Neither work uses the other.",
+        "relationship": "independent"
+      }
+    ],
+    "repository_role": "thin-wrapper",
+    "responsible_maintainers": [
+      {
+        "name": "Kim Morrison"
+      }
+    ],
+    "result_origin": "source-based",
+    "substantive_formalization": {
+      "commit": "34b4587bbd0740efb9c06a519a8ee14a3eff8cd7",
+      "repository": "kim-em/erdos-unit-distance",
+      "repository_url": "https://github.com/kim-em/erdos-unit-distance",
+      "tree_url": "https://github.com/kim-em/erdos-unit-distance/tree/34b4587bbd0740efb9c06a519a8ee14a3eff8cd7"
+    }
+  },
+  "resource_usage": [
+    {
+      "elapsed_seconds": 0.005,
+      "max_rss_kib": 13204,
+      "peak_tasks_observed": 1,
+      "phase": "touch",
+      "returncode": 0,
+      "system_cpu_seconds": 0.003,
+      "user_cpu_seconds": 0.002,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.008,
+      "max_rss_kib": 13332,
+      "peak_tasks_observed": 1,
+      "phase": "landrun",
+      "returncode": 0,
+      "system_cpu_seconds": 0.005,
+      "user_cpu_seconds": 0.004,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.005,
+      "max_rss_kib": 13204,
+      "peak_tasks_observed": 1,
+      "phase": "touch",
+      "returncode": 1,
+      "system_cpu_seconds": 0.005,
+      "user_cpu_seconds": 0.0,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.025,
+      "max_rss_kib": 13368,
+      "peak_tasks_observed": 1,
+      "phase": "python3.11",
+      "returncode": 0,
+      "system_cpu_seconds": 0.01,
+      "user_cpu_seconds": 0.015,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.025,
+      "max_rss_kib": 13204,
+      "peak_tasks_observed": 1,
+      "phase": "python3.11",
+      "returncode": 1,
+      "system_cpu_seconds": 0.006,
+      "user_cpu_seconds": 0.019,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.025,
+      "max_rss_kib": 13204,
+      "peak_tasks_observed": 1,
+      "phase": "python3.11",
+      "returncode": 1,
+      "system_cpu_seconds": 0.004,
+      "user_cpu_seconds": 0.022,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.023,
+      "max_rss_kib": 13368,
+      "peak_tasks_observed": 1,
+      "phase": "python3.11",
+      "returncode": 1,
+      "system_cpu_seconds": 0.009,
+      "user_cpu_seconds": 0.014,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 3.696,
+      "max_rss_kib": 895992,
+      "peak_tasks_observed": 1,
+      "phase": "lake",
+      "returncode": 0,
+      "system_cpu_seconds": 0.501,
+      "user_cpu_seconds": 3.269,
+      "workspace_disk_peak_bytes": 1540096
+    },
+    {
+      "elapsed_seconds": 45.886,
+      "max_rss_kib": 1003608,
+      "peak_tasks_observed": 1,
+      "phase": "lake",
+      "returncode": 0,
+      "system_cpu_seconds": 39.238,
+      "user_cpu_seconds": 69.229,
+      "workspace_disk_peak_bytes": 7528783872
+    },
+    {
+      "elapsed_seconds": 9.674,
+      "max_rss_kib": 3019740,
+      "peak_tasks_observed": 1,
+      "phase": "lake",
+      "returncode": 0,
+      "system_cpu_seconds": 4.274,
+      "user_cpu_seconds": 8.153,
+      "workspace_disk_peak_bytes": 3887104
+    },
+    {
+      "elapsed_seconds": 84.579,
+      "max_rss_kib": 3923980,
+      "peak_tasks_observed": 1,
+      "phase": "lake",
+      "returncode": 0,
+      "system_cpu_seconds": 51.729,
+      "user_cpu_seconds": 261.286,
+      "workspace_disk_peak_bytes": 91631616
+    },
+    {
+      "elapsed_seconds": 8.651,
+      "max_rss_kib": 6659016,
+      "peak_tasks_observed": 1,
+      "phase": "lean",
+      "returncode": 0,
+      "system_cpu_seconds": 2.168,
+      "user_cpu_seconds": 2.873,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.064,
+      "max_rss_kib": 98520,
+      "peak_tasks_observed": 1,
+      "phase": "lean",
+      "returncode": 0,
+      "system_cpu_seconds": 0.033,
+      "user_cpu_seconds": 0.043,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.004,
+      "max_rss_kib": 13188,
+      "peak_tasks_observed": 1,
+      "phase": "touch",
+      "returncode": 0,
+      "system_cpu_seconds": 0.004,
+      "user_cpu_seconds": 0.0,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.007,
+      "max_rss_kib": 13204,
+      "peak_tasks_observed": 1,
+      "phase": "landrun",
+      "returncode": 0,
+      "system_cpu_seconds": 0.007,
+      "user_cpu_seconds": 0.001,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.004,
+      "max_rss_kib": 13364,
+      "peak_tasks_observed": 1,
+      "phase": "touch",
+      "returncode": 1,
+      "system_cpu_seconds": 0.004,
+      "user_cpu_seconds": 0.0,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.025,
+      "max_rss_kib": 13368,
+      "peak_tasks_observed": 1,
+      "phase": "python3.11",
+      "returncode": 0,
+      "system_cpu_seconds": 0.007,
+      "user_cpu_seconds": 0.018,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.024,
+      "max_rss_kib": 13368,
+      "peak_tasks_observed": 1,
+      "phase": "python3.11",
+      "returncode": 0,
+      "system_cpu_seconds": 0.008,
+      "user_cpu_seconds": 0.016,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.025,
+      "max_rss_kib": 13204,
+      "peak_tasks_observed": 1,
+      "phase": "python3.11",
+      "returncode": 1,
+      "system_cpu_seconds": 0.009,
+      "user_cpu_seconds": 0.016,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.026,
+      "max_rss_kib": 13048,
+      "peak_tasks_observed": 1,
+      "phase": "python3.11",
+      "returncode": 1,
+      "system_cpu_seconds": 0.007,
+      "user_cpu_seconds": 0.019,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.022,
+      "max_rss_kib": 13368,
+      "peak_tasks_observed": 1,
+      "phase": "python3.11",
+      "returncode": 1,
+      "system_cpu_seconds": 0.01,
+      "user_cpu_seconds": 0.012,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.708,
+      "max_rss_kib": 825184,
+      "peak_tasks_observed": 1,
+      "phase": "lake",
+      "returncode": 0,
+      "system_cpu_seconds": 0.397,
+      "user_cpu_seconds": 0.339,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.676,
+      "max_rss_kib": 826228,
+      "peak_tasks_observed": 1,
+      "phase": "lake",
+      "returncode": 0,
+      "system_cpu_seconds": 0.407,
+      "user_cpu_seconds": 0.309,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 604.733,
+      "max_rss_kib": 7323796,
+      "peak_tasks_observed": 1,
+      "phase": "comparator",
+      "returncode": 0,
+      "system_cpu_seconds": 50.604,
+      "user_cpu_seconds": 1004.211,
+      "workspace_disk_peak_bytes": 116817920
+    }
+  ],
+  "schema_version": 1,
+  "solution": {
+    "module": "Solution",
+    "path": "Solution.lean",
+    "sha256": "c0f4a6beefb124f1952fcdd8e5dccf909f42a83e3820f5190f38de8f4d9df103"
+  },
+  "source": {
+    "bytes": 36464,
+    "commit": "be6c2ee4c9fb16fd6bed442b4c361fb10369beb5",
+    "repository": "kim-em/erdos-unit-distance-comparator",
+    "repository_url": "https://github.com/kim-em/erdos-unit-distance-comparator",
+    "tree_url": "https://github.com/kim-em/erdos-unit-distance-comparator/tree/be6c2ee4c9fb16fd6bed442b4c361fb10369beb5"
+  },
+  "stage": "complete",
+  "status": "pass",
+  "submission": {
+    "authorization": {
+      "relationship": "maintainer"
+    },
+    "requested_paths": {
+      "comparator_config_path": "comparator.json",
+      "formalization_metadata_path": "",
+      "project_path": ""
+    },
+    "submission_id": "gpjtlaf5uqx5"
+  },
+  "warnings": [],
+  "workflow_url": "https://github.com/PalomarRegistry/PalomarSubmission/actions/runs/31779636540"
+}

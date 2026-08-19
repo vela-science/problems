@@ -95,10 +95,15 @@ export function SourceRecordView({
   if (query) jsonParams.set("q", query);
   if (nativeKind) jsonParams.set("kind", nativeKind);
   const jsonHref = `/sources.json?${jsonParams.toString()}`;
-  /* The panel belongs to records whose publisher labels their state, not to the
-     one native kind that today's only such adapter emits. */
+  /* The panel belongs to API-map requirements. It used to key on any record
+     whose publisher labels its state, which was the same set until the Palomar
+     adapter began declaring `registered` as a source state on registry entries
+     — records this panel's requirement copy and planned/implemented filters do
+     not describe. The chip beside each record still renders every attributed
+     state; only the requirement-browsing panel is kind-gated. */
   const hasAttributedState = nativeRecords.some(
-    (record) => attributedNativeState(record) !== null,
+    (record) => record.native_kind === "api_requirement"
+      && attributedNativeState(record) !== null,
   );
 
   return (

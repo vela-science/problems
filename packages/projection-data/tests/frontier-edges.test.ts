@@ -369,6 +369,45 @@ describe("frontier edge projection", () => {
     }
   });
 
+  /* Steering: no authority effect on the edge plane. A Claim citing a Palomar
+     record reaches the graph only through the generic external-dependency
+     emitter — an `external_reference` edge whose basis is `source_asserted`
+     and whose basis_ref names the retained declaration. Palomar's registered
+     status and mechanical pass upgrade nothing: Vela ran none of the kernels,
+     so no Palomar-targeted edge may claim `mechanically_verified`. */
+  test("emits a Palomar external_reference edge as source-asserted, never mechanically verified", () => {
+    const palomarDeclarationRoot = root("9");
+    const edges = projectFrontierEdges({
+      claims: [acceptedClaim, retiredClaim, pendingClaim],
+      reviews,
+      verifications,
+      transitions,
+      nativeRecords,
+      sourceDeclarations: [
+        ...sourceDeclarations,
+        { source_id: "source:palomar-registry", declaration_root: palomarDeclarationRoot },
+      ],
+      resolutionConfig,
+      claimProblemBindings,
+      classifySourceId: (claim: { claim_id: string }) => (
+        claim.claim_id === "vcl_pending" ? "source:palomar-registry" : null
+      ),
+    }) as Array<Omit<FrontierEdgeRecord, "row_root">>;
+    expect(edge(edges, "external_dependency", "vcl_pending", "source:palomar-registry")).toMatchObject({
+      target_kind: "external_reference",
+      basis: "source_asserted",
+      target_root: palomarDeclarationRoot,
+      basis_ref: {
+        kind: "source_declaration",
+        source_id: "source:palomar-registry",
+        declaration_root: palomarDeclarationRoot,
+      },
+    });
+    for (const row of edges.filter(({ target_ref }) => target_ref === "source:palomar-registry")) {
+      expect(row.basis).toBe("source_asserted");
+    }
+  });
+
   test("summarizes the manifest block as a partition of the edges", () => {
     const edges = buildFixtureEdges();
     const block = frontierProjectionManifestBlock(edges);
