@@ -13,6 +13,7 @@ import { join, resolve } from "node:path";
 import {
   assertPublicQualification,
   githubGitEnvironment,
+  parseOperatorEnvFile,
   parsePruneResult,
   releaseChildEnvironment,
   releaseLookupState,
@@ -79,6 +80,28 @@ describe("direct Problems release", () => {
       "projection_prune",
       "qualification_retain",
     ]);
+  });
+
+  test("parses the operator .env.local shape exactly", () => {
+    expect(parseOperatorEnvFile([
+      "# Local Problems development. Ignored by Git; mode 0600.",
+      "",
+      "VELA_PROJECTION_DATABASE_URL=postgresql://reader@example.test/db?sslmode=require",
+      'VELA_ACTIVITY_DATABASE_URL="postgresql://activity@example.test/db"',
+      "COOKIE_PASSWORD='pad=with=separators'",
+      "EMPTY_QUOTED=\"\"",
+      "MISMATCHED=\"left-double-right-single'",
+      "INNER=pre\"served\"",
+      "not-an-assignment",
+      "=missing-name",
+    ].join("\n"))).toEqual({
+      VELA_PROJECTION_DATABASE_URL: "postgresql://reader@example.test/db?sslmode=require",
+      VELA_ACTIVITY_DATABASE_URL: "postgresql://activity@example.test/db",
+      COOKIE_PASSWORD: "pad=with=separators",
+      EMPTY_QUOTED: "",
+      MISMATCHED: "\"left-double-right-single'",
+      INNER: 'pre"served"',
+    });
   });
 
   test("refuses credentials and private paths in the retained public record", () => {

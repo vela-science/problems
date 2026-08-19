@@ -108,8 +108,7 @@ local plugin functions are not, and carrying them is what forced this
 application onto the webpack builder the last time it had a markdown pipeline.
 The bodies travel inside the manifest module rather than as sibling files,
 because `import.meta.dirname` is undefined in the static-export bundle and a
-path resolved at render time lands on a transient prerender chunk — the same
-trap already recorded in `packages/projection-data/src/editorial.ts`.
+path resolved at render time lands on a transient prerender chunk.
 
 **Chrome.** Structure from Tailwind Plus Protocol — grouped section rail,
 content column, on-page contents, previous and next — and nothing else.
