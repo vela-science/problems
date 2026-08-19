@@ -91,7 +91,10 @@ describe("Workspace implementation permission matrix", () => {
     expect(liveProof).toContain('"cross-tenant activity write"');
     expect(liveProof).toContain('"unsigned draft export without membership"');
     expect(liveProof).toContain('"private note crossed its author boundary"');
-    expect(liveProof).toContain("Number(catalog.table_count) !== 20");
+    /* The live proof asserts the table count against the one inventory, not a
+       literal. Pinning the literal here made adding a table fail mid-release
+       rather than in review, so this checks the binding instead of the number. */
+    expect(liveProof).toContain("Number(catalog.table_count) !== expectedTables.length");
     expect(liveProof).toContain("DELETE FROM activity.workspaces");
     expect(liveProof).toContain("cleanupProved: true");
   });

@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { neon } from "@neondatabase/serverless";
+import { expectedTables } from "./expected-tables.mjs";
 import {
   addDiscussionEntry,
   attachArtifact,
@@ -496,7 +497,7 @@ const catalogRows = catalogResults.at(-1);
 const catalog = catalogRows?.[0];
 if (!catalog) throw new Error("activity catalog probe returned no row");
 if (
-  Number(catalog.table_count) !== 20
+  Number(catalog.table_count) !== expectedTables.length
   || Number(catalog.authority_secret_columns) !== 0
   || Number(catalog.retired_columns) !== 0
   || Number(catalog.unexpected_byte_columns) !== 0
