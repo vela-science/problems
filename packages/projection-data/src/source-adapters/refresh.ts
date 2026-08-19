@@ -17,6 +17,10 @@ import {
 import { acquireFormalConjectures } from "./formal-conjectures";
 import { acquireOeisA309370 } from "./oeis";
 import {
+  acquirePalomarRegistry,
+  palomarRegistryRelease,
+} from "./palomar";
+import {
   acquireOpenAiTenProofs,
   openAiTenProofsRelease,
 } from "./openai-ten-proofs";
@@ -230,6 +234,9 @@ export interface AcquireProjectionSourceAdaptersOptions {
   formalExtractedDataset?: string;
   formalRunExtractor?: boolean;
   oeisDataset?: string;
+  palomarDataset?: string;
+  palomarMechanicalReport?: string;
+  palomarReviewReport?: string;
   vibemathedDataset?: string;
   openAiTenProofsRepository?: string;
   openAiTenProofsPublicRepository?: string;
@@ -419,6 +426,17 @@ export async function acquireProjectionSourceAdapters(
     }),
     acquireOeisA309370({
       dataset: options.oeisDataset ?? "https://oeis.org/A309370?fmt=json",
+    }),
+    /* The default is the pinned versioned entry URL, and the adapter holds
+       whatever it reads to the consumer-computed root in
+       `palomarRegistryRelease` — Palomar publishes no digest of its own — so a
+       re-rendered entry fails this refresh instead of moving downstream roots.
+       Overrides exist for exact local fixture bytes; the evidence-report
+       locators default to the live paths the entry itself declares. */
+    acquirePalomarRegistry({
+      dataset: options.palomarDataset ?? palomarRegistryRelease.entry_locator,
+      mechanicalReport: options.palomarMechanicalReport,
+      reviewReport: options.palomarReviewReport,
     }),
     /* No lock field is read here, and that is the declaration being honest
        rather than an omission. The lock's `vibemathed` entry records the digest

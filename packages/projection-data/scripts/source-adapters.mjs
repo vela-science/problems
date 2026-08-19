@@ -18,7 +18,8 @@ function usage() {
     [--formal-repository <url-or-path>] [--formal-revision <git-ref>] \\
     [--formal-published-data <url-or-path>] \\
     [--formal-extracted-data <path> | --run-extractor] \\
-    [--oeis-data <url-or-path>] [--chunk-records <count>]
+    [--oeis-data <url-or-path>] [--palomar-data <url-or-path>] \\
+    [--chunk-records <count>]
   bun scripts/source-adapters.mjs verify <artifact.json>`);
 }
 
@@ -84,6 +85,7 @@ async function refresh(options) {
     formalRunExtractor: options.get("--run-extractor") === true
       || process.env.VELA_FORMAL_CONJECTURES_RUN_EXTRACTOR === "1",
     oeisDataset: options.get("--oeis-data"),
+    palomarDataset: options.get("--palomar-data"),
     chunkRecordLimit: chunkRecordLimit(options),
   });
   const manifestPath = resolve(output, "source-adapters.json");

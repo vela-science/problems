@@ -277,6 +277,85 @@ describe("Source inventory view", () => {
     expect(html).toContain("Open source for The key data structure Time is defined.");
   });
 
+  /* Palomar-local `registered` is external standing, rendered as the source's
+     own label under progressive disclosure. The record must stay clearly
+     dated by its retained observation — a provider outage serves this same
+     release with this same date, never an implied-fresh status — and the
+     requirement-browsing panel belongs to API maps, not to registry entries. */
+  test("labels a Palomar registry entry as source state with a dated retained observation", () => {
+    const source = {
+      ...registry.sources[0],
+      declaration: {
+        ...registry.sources[0].declaration,
+        source_id: "source:palomar-registry",
+        native_namespace: "palomar-registry",
+        publisher_or_maintainer: "Palomar Registry",
+        rights: {
+          ...registry.sources[0].declaration.rights,
+          license_expression: "CC0-1.0",
+        },
+        snapshot_policy: {
+          mode: "retained_exact_bytes" as const,
+          retention: "immutable_artifact" as const,
+          reason: "Consumer-computed root over exact retained entry bytes.",
+        },
+      },
+      observation: {
+        ...registry.sources[0].observation!,
+        source_id: "source:palomar-registry",
+        observation_id: "observation:palomar-registry:306220a43c9696",
+        observed_at: "2026-08-19T12:30:00Z",
+        native_revision: {
+          kind: "observation" as const,
+          value: "sha256:306220a43c9696396c9f0cbb87ddb3d3352941a4b411988269386911c2492688",
+          content_root: root("1"),
+          tree: null,
+        },
+        snapshot_root: "sha256:306220a43c9696396c9f0cbb87ddb3d3352941a4b411988269386911c2492688" as const,
+        snapshot_state: "retained_exact_bytes" as const,
+        projected_record_count: 1,
+        omissions: [{
+          code: "palomar_status_is_external_standing",
+          description: "Palomar's registered status and trust level are Palomar-local external standing; they create no Vela Standing, Verification, acceptance, or admission.",
+        }],
+      },
+      native_record_count: 1,
+      repository_binding_count: 0,
+    };
+    const record = {
+      ...registry.native_records[0],
+      source_id: "source:palomar-registry",
+      native_id: "palomar:PALOMAR-2026-08-19-000002-v1",
+      native_kind: "registry-entry",
+      title: "PALOMAR-2026-08-19-000002 v1 · elliotglazer/erdos501",
+      summary: "A formally verified independence resolution of Erdős problem #501.",
+      metadata: {
+        source_declared_state: "registered",
+        trust_level: "high",
+      },
+    };
+    const html = renderToStaticMarkup(
+      <SourceRecordView
+        source={source}
+        releaseRoot={registry.release_root}
+        nativeRecords={[record]}
+        repositoryBindings={[]}
+      />,
+    );
+
+    expect(html).toContain("source: registered");
+    expect(html).toContain("Aug 19, 2026");
+    expect(html).toContain('dateTime="2026-08-19T12:30:00.000Z"');
+    expect(html).toContain("retained exact bytes");
+    expect(html).toContain("palomar status is external standing");
+    expect(html).toContain("they create no Vela Standing");
+    expect(html).toContain(
+      "sha256:306220a43c9696396c9f0cbb87ddb3d3352941a4b411988269386911c2492688",
+    );
+    expect(html).not.toContain("Native API map");
+    expect(html).not.toContain("Planned requirements");
+  });
+
   test("keeps source-native filters exact across JSON and pagination", () => {
     const html = renderToStaticMarkup(
       <SourceRecordView

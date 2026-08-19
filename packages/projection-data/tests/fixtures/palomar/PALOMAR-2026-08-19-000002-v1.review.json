@@ -1,0 +1,151 @@
+{
+  "checks": [
+    {
+      "codes_checked": [
+        "arxiv:math.LO",
+        "arxiv:math.CO",
+        "msc2020:03E35",
+        "msc2020:03E75",
+        "msc2020:03E40",
+        "msc2020:03E50",
+        "msc2020:05D10",
+        "msc2020:28A05"
+      ],
+      "declarations_checked": [],
+      "findings": [],
+      "outcome": "neutral",
+      "sources_checked": [
+        "formalization_metadata",
+        "challenge_source",
+        "mechanical_report"
+      ],
+      "step": "classification",
+      "summary": "All submitted subject codes are plausibly relevant to the stated results or their mathematical methods.",
+      "trust_level": null
+    },
+    {
+      "codes_checked": [],
+      "declarations_checked": [],
+      "findings": [],
+      "outcome": "neutral",
+      "sources_checked": [
+        "formalization_metadata",
+        "elliotglazer/erdos501@f406eaebc79537487955a484ba9cdc8abeaf1c9a:formalization.yaml",
+        "elliotglazer/erdos501@f406eaebc79537487955a484ba9cdc8abeaf1c9a:Challenge.lean",
+        "elliotglazer/erdos501@f406eaebc79537487955a484ba9cdc8abeaf1c9a:README.md",
+        "submission",
+        "mechanical_report",
+        "previous_findings"
+      ],
+      "step": "metadata",
+      "summary": "The structured metadata and narrative give a consistent, detailed account of scope, sources, repository role, authorship, automation, review, limitations, licence, and authorization. No material contradiction or misleading omission was identified.",
+      "trust_level": null
+    },
+    {
+      "codes_checked": [],
+      "declarations_checked": [
+        "erdos501_closed_infinite",
+        "erdos501_closed_size3",
+        "erdos501_hechler_of_CH",
+        "erdos501_not_refutable",
+        "erdos501_not_provable",
+        "erdos501_independent",
+        "erdos501_sentence_faithful"
+      ],
+      "findings": [
+        {
+          "evidence": "elliotglazer/erdos501@f406eaebc79537487955a484ba9cdc8abeaf1c9a:Challenge.lean, theorem erdos501_hechler_of_CH and its docstring; the theorem concludes only boundedness and outer measure < 1, while the docstring additionally says the sets are countable and null.",
+          "message": "The declaration-specific prose advertises the materially stronger conclusion that Hechler's family consists of countable null sets, but the compared theorem does not state countability or zero outer measure. Thus Comparator does not verify that strengthening. Either add those properties to the Lean conclusion or revise the prose to identify them as an unselected result proved elsewhere."
+        }
+      ],
+      "outcome": "warning",
+      "sources_checked": [
+        "challenge_source",
+        "project_readme",
+        "formalization_metadata",
+        "comparator_config",
+        "lakefile",
+        "lean_toolchain",
+        "previous_findings",
+        "elliotglazer/erdos501@f406eaebc79537487955a484ba9cdc8abeaf1c9a:Challenge.lean",
+        "elliotglazer/erdos501@f406eaebc79537487955a484ba9cdc8abeaf1c9a:README.md",
+        "elliotglazer/erdos501@f406eaebc79537487955a484ba9cdc8abeaf1c9a:formalization.yaml",
+        "elliotglazer/erdos501@f406eaebc79537487955a484ba9cdc8abeaf1c9a:comparator.json",
+        "elliotglazer/erdos501@f406eaebc79537487955a484ba9cdc8abeaf1c9a:lakefile.toml",
+        "elliotglazer/erdos501@f406eaebc79537487955a484ba9cdc8abeaf1c9a:lean-toolchain"
+      ],
+      "step": "statement_alignment",
+      "summary": "The seven selected theorems align with the principal narrative claims, except that the Hechler theorem's docstring advertises countability and nullity that its compared Lean statement does not express.",
+      "trust_level": "high"
+    },
+    {
+      "codes_checked": [],
+      "declarations_checked": [
+        "erdos501_closed_infinite",
+        "erdos501_closed_size3",
+        "erdos501_hechler_of_CH",
+        "erdos501_not_refutable",
+        "erdos501_not_provable",
+        "erdos501_independent",
+        "erdos501_sentence_faithful"
+      ],
+      "findings": [],
+      "outcome": "neutral",
+      "sources_checked": [
+        "challenge_source",
+        "mechanical_report",
+        "elliotglazer/erdos501@f406eaebc79537487955a484ba9cdc8abeaf1c9a:Challenge.lean",
+        "elliotglazer/erdos501@f406eaebc79537487955a484ba9cdc8abeaf1c9a:README.md",
+        "elliotglazer/erdos501@f406eaebc79537487955a484ba9cdc8abeaf1c9a:formalization.yaml",
+        "elliotglazer/erdos501@f406eaebc79537487955a484ba9cdc8abeaf1c9a:comparator.json",
+        "leanprover-community/mathlib4@355bc1e0ed1d36e49525121e1a280ca13a058a92:Mathlib/Data/Set/Card.lean",
+        "leanprover-community/mathlib4@355bc1e0ed1d36e49525121e1a280ca13a058a92:Mathlib/MeasureTheory/Measure/Lebesgue/Basic.lean",
+        "leanprover-community/mathlib4@355bc1e0ed1d36e49525121e1a280ca13a058a92:Mathlib/ModelTheory/Satisfiability.lean",
+        "leanprover-community/mathlib4@355bc1e0ed1d36e49525121e1a280ca13a058a92:Mathlib/SetTheory/Cardinal/Aleph.lean",
+        "leanprover-community/mathlib4@355bc1e0ed1d36e49525121e1a280ca13a058a92:Mathlib/SetTheory/Cardinal/Continuum.lean",
+        "leanprover-community/mathlib4@355bc1e0ed1d36e49525121e1a280ca13a058a92:Mathlib/SetTheory/ZFC/Basic.lean"
+      ],
+      "step": "definition_fidelity",
+      "summary": "No material mismatch, reachable vacuity, or manufactured conclusion was identified in the selected statements and their Mathlib-only dependency surface.",
+      "trust_level": "high"
+    },
+    {
+      "codes_checked": [],
+      "declarations_checked": [
+        "erdos501_closed_infinite",
+        "erdos501_closed_size3",
+        "erdos501_hechler_of_CH",
+        "erdos501_not_refutable",
+        "erdos501_not_provable",
+        "erdos501_independent",
+        "erdos501_sentence_faithful"
+      ],
+      "findings": [],
+      "outcome": "neutral",
+      "sources_checked": [
+        "elliotglazer/erdos501@f406eaebc79537487955a484ba9cdc8abeaf1c9a:formalization.yaml",
+        "elliotglazer/erdos501@f406eaebc79537487955a484ba9cdc8abeaf1c9a:Challenge.lean",
+        "elliotglazer/erdos501@f406eaebc79537487955a484ba9cdc8abeaf1c9a:README.md",
+        "elliotglazer/erdos501@f406eaebc79537487955a484ba9cdc8abeaf1c9a:comparator.json"
+      ],
+      "step": "literature_notability",
+      "summary": "The selected closed-case, CH-counterexample, and ZFC-independence results are plausibly paper-worthy and have identifiable audiences in set theory, infinitary combinatorics, measure theory, and formalized mathematics. The repository supplies a substantive and appropriately qualified literature account, with no material omission or unsupported priority claim established from the available evidence.",
+      "trust_level": "qualified"
+    }
+  ],
+  "mechanical_report": "https://github.com/PalomarRegistry/PalomarSubmission/actions/runs/32248810098",
+  "outcome": "neutral",
+  "policy_commit": "24494b2ffd60c3cd22d72fae0afaf1c6b2d0d679",
+  "requested_changes": [],
+  "reviewed_at": "2026-08-19T11:54:52Z",
+  "reviewer_models": [
+    "codex:gpt-5.6-sol"
+  ],
+  "schema_version": 3,
+  "source": {
+    "commit": "f406eaebc79537487955a484ba9cdc8abeaf1c9a",
+    "repository": "elliotglazer/erdos501"
+  },
+  "submission_id": "htgsebjchqg5",
+  "summary": "Mechanical verification passed, and the automated review identified no blocking problem. The Hechler theorem\u2019s docstring contains a non-blocking overstatement disclosed below."
+}

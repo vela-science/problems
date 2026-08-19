@@ -1,0 +1,638 @@
+{
+  "challenge": {
+    "bytes": 31824,
+    "canonical_olean_sha256": "4c113f656026ae41e7e45daf612c85bca78ddd33a6b8db4e38f9b48a59884f55",
+    "dependencies": [
+      {
+        "provenance": "allowlisted",
+        "repository": "leanprover-community/mathlib4"
+      }
+    ],
+    "direct_imports": [
+      "Mathlib.Data.Set.Card",
+      "Mathlib.MeasureTheory.Measure.Lebesgue.Basic",
+      "Mathlib.ModelTheory.Satisfiability",
+      "Mathlib.SetTheory.Cardinal.Aleph",
+      "Mathlib.SetTheory.Cardinal.Continuum",
+      "Mathlib.SetTheory.ZFC.Basic"
+    ],
+    "lines": 619,
+    "module": "Challenge",
+    "path": "Challenge.lean",
+    "sha256": "e92334abb7482da34acc0800bcd3b8e74234efab3ff29032417c10aea8b1b96b",
+    "transitive_source_count": 7,
+    "trust_level": "high",
+    "untrusted_sources": []
+  },
+  "checked_at": "2026-08-19T11:49:51Z",
+  "classification": {
+    "arxiv": [
+      {
+        "code": "math.LO",
+        "name": "Logic"
+      },
+      {
+        "code": "math.CO",
+        "name": "Combinatorics"
+      }
+    ],
+    "msc2020": [
+      {
+        "code": "03E35",
+        "name": "Consistency and independence results"
+      },
+      {
+        "code": "03E75",
+        "name": "Applications of set theory"
+      },
+      {
+        "code": "03E40",
+        "name": "Other aspects of forcing and Boolean-valued models"
+      },
+      {
+        "code": "03E50",
+        "name": "Continuum hypothesis and Martin's axiom"
+      },
+      {
+        "code": "05D10",
+        "name": "Ramsey theory"
+      },
+      {
+        "code": "28A05",
+        "name": "Classes of sets (Borel fields, \\(\\sigma\\)-rings, etc.), measurable sets, Suslin sets, analytic sets"
+      }
+    ]
+  },
+  "comparator": {
+    "challenge_module": "Challenge",
+    "definition_names": [],
+    "path": "comparator.json",
+    "permitted_axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ],
+    "sha256": "e3e53e6f6fc0845d09f9e4c1ceeefd09178cb59776f52f768d333d3a6c78145a",
+    "solution_module": "Solution",
+    "theorem_names": [
+      "erdos501_closed_infinite",
+      "erdos501_closed_size3",
+      "erdos501_hechler_of_CH",
+      "erdos501_not_refutable",
+      "erdos501_not_provable",
+      "erdos501_independent",
+      "erdos501_sentence_faithful"
+    ]
+  },
+  "comparator_commit": "68a064109f01c08f47c8edc9f51d6a2bbffaa188",
+  "comparator_log_tail": "ics (10s)\n\u2714 [3091/3116] Built Flypitch4.Erdos501.StdSemantics (7.3s)\n\u2714 [3092/3116] Built Flypitch4.Erdos501.OmegaClosed (2.9s)\n\u2714 [3093/3116] Built Flypitch4.Erdos501.BorelNames (5.3s)\n\u26a0 [3094/3116] Built Flypitch4.Erdos501.ZFSetCOF (6.6s)\nwarning: Flypitch4/Erdos501/ZFSetCOF.lean:147:58: `dif_neg` has been deprecated: Use `dite_eq_right` instead\nwarning: Flypitch4/Erdos501/ZFSetCOF.lean:163:8: `dif_pos` has been deprecated: Use `dite_eq_left` instead\nwarning: Flypitch4/Erdos501/ZFSetCOF.lean:384:8: `dif_pos` has been deprecated: Use `dite_eq_left` instead\nwarning: Flypitch4/Erdos501/ZFSetCOF.lean:390:6: `dif_neg` has been deprecated: Use `dite_eq_right` instead\n\u26a0 [3095/3116] Built Flypitch4.Erdos501.InternalField (7.5s)\nwarning: Flypitch4/Erdos501/InternalField.lean:566:9: Variable name `\u0393'` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _\u0393'\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nwarning: Flypitch4/Erdos501/InternalField.lean:568:8: Variable name `\u0393'` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _\u0393'\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nwarning: Flypitch4/Erdos501/InternalField.lean:573:9: Variable name `\u0393'` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _\u0393'\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nwarning: Flypitch4/Erdos501/InternalField.lean:575:8: Variable name `\u0393'` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _\u0393'\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nwarning: Flypitch4/Erdos501/InternalField.lean:580:9: Variable name `\u0393'` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _\u0393'\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nwarning: Flypitch4/Erdos501/InternalField.lean:582:8: Variable name `\u0393'` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _\u0393'\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nwarning: Flypitch4/Erdos501/InternalField.lean:605:9: Variable name `\u0393'` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _\u0393'\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nwarning: Flypitch4/Erdos501/InternalField.lean:607:8: Variable name `\u0393'` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _\u0393'\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nwarning: Flypitch4/Erdos501/InternalField.lean:944:13: Variable name `\u0393'` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _\u0393'\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nwarning: Flypitch4/Erdos501/InternalField.lean:947:12: Variable name `\u0393'` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _\u0393'\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\n\u26a0 [3096/3116] Built Flypitch4.Erdos501.RealsInZFSet (5.5s)\nwarning: Flypitch4/Erdos501/RealsInZFSet.lean:384:48: `Set.diff_empty` has been deprecated: Use `Set.sdiff_empty` instead\n\u26a0 [3097/3116] Built Flypitch4.Erdos501.ZFCCore (5.7s)\nwarning: Flypitch4/Erdos501/ZFCCore.lean:82:43: `MeasureTheory.measure_diff_null` has been deprecated: Use `MeasureTheory.measure_sdiff_null` instead\nwarning: Flypitch4/Erdos501/ZFCCore.lean:92:27: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/ZFCCore.lean:121:67: `MeasureTheory.measure_le_inter_add_diff` has been deprecated: Use `MeasureTheory.measure_le_inter_add_sdiff` instead\nwarning: Flypitch4/Erdos501/ZFCCore.lean:124:49: `Set.diff_subset_diff_left` has been deprecated: Use `Set.sdiff_subset_sdiff_left` instead\nwarning: Flypitch4/Erdos501/ZFCCore.lean:164:22: `Set.mem_diff` has been deprecated: Use `Set.mem_sdiff` instead\nwarning: Flypitch4/Erdos501/ZFCCore.lean:165:10: `MeasureTheory.measure_diff_null` has been deprecated: Use `MeasureTheory.measure_sdiff_null` instead\nwarning: Flypitch4/Erdos501/ZFCCore.lean:169:41: `MeasureTheory.le_measure_diff` has been deprecated: Use `MeasureTheory.le_measure_sdiff` instead\nwarning: Flypitch4/Erdos501/ZFCCore.lean:221:2: Try this: \n  haveI\u0335\n\nThe goal is a proposition, so `have` is preferred over `haveI`.\nThe difference between `have` and `haveI` is that `haveI` inlines the value.\nBut this is not relevant for proofs because of proof irrelevance.\n\nNote: This linter can be disabled with `set_option linter.style.haveILetI false`\nwarning: Flypitch4/Erdos501/ZFCCore.lean:305:12: `Set.diff_subset` has been deprecated: Use `Set.sdiff_subset` instead\n\u2714 [3098/3116] Built Flypitch4.Erdos501.Bridge (3.2s)\n\u2714 [3099/3116] Built Flypitch4.Erdos501.CheckReals (7.7s)\n\u26a0 [3100/3116] Built Flypitch4.Erdos501.BinaryExpansion (6.8s)\nwarning: Flypitch4/Erdos501/BinaryExpansion.lean:153:15: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/BinaryExpansion.lean:167:29: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/BinaryExpansion.lean:171:29: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\n\u26a0 [3101/3116] Built Flypitch4.Erdos501.InternalReals (9.5s)\nwarning: Flypitch4/Erdos501/InternalReals.lean:59:8: `if_neg` has been deprecated: Use `ite_eq_right` instead\nwarning: Flypitch4/Erdos501/InternalReals.lean:59:36: `if_pos` has been deprecated: Use `ite_eq_left` instead\nwarning: Flypitch4/Erdos501/InternalReals.lean:64:8: `if_pos` has been deprecated: Use `ite_eq_left` instead\nwarning: Flypitch4/Erdos501/InternalReals.lean:64:20: `if_neg` has been deprecated: Use `ite_eq_right` instead\nwarning: Flypitch4/Erdos501/InternalReals.lean:95:13: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalReals.lean:246:21: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalReals.lean:281:15: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalReals.lean:293:24: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalReals.lean:449:15: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalReals.lean:493:28: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalReals.lean:561:28: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalReals.lean:606:28: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalReals.lean:624:13: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalReals.lean:643:13: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalReals.lean:665:26: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalReals.lean:703:28: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalReals.lean:740:28: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalReals.lean:771:26: `if_pos` has been deprecated: Use `ite_eq_left` instead\nwarning: Flypitch4/Erdos501/InternalReals.lean:826:22: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalReals.lean:953:15: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalReals.lean:998:19: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalReals.lean:1009:55: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalReals.lean:1031:53: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalReals.lean:1045:53: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\n\u2714 [3102/3116] Built Erdos501.FOL.Sentence (5.8s)\n\u26a0 [3103/3116] Built Flypitch4.Erdos501.RealReading (4.3s)\nwarning: Flypitch4/Erdos501/RealReading.lean:131:15: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/RealReading.lean:158:15: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/RealReading.lean:446:15: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/RealReading.lean:593:25: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/RealReading.lean:684:44: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/RealReading.lean:727:44: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/RealReading.lean:740:42: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\n\u26a0 [3104/3116] Built Flypitch4.Erdos501.Envelopes (3.5s)\nwarning: Flypitch4/Erdos501/Envelopes.lean:174:4: `if_true` has been deprecated: Use `ite_true` instead\nwarning: Flypitch4/Erdos501/Envelopes.lean:174:26: `if_false` has been deprecated: Use `ite_false` instead\n\u26a0 [3105/3116] Built Flypitch4.Erdos501.InternalIso (5.7s)\nwarning: Flypitch4/Erdos501/InternalIso.lean:124:26: `if_pos` has been deprecated: Use `ite_eq_left` instead\nwarning: Flypitch4/Erdos501/InternalIso.lean:162:2: `push_neg` has been deprecated. Prefer using `push Not` instead.\nIf you'd rather continue using `push_neg` in your project, you can implement it as follows:\n```\nopen Lean.Parser.Tactic in\nmacro \"push_neg\" cfg:optConfig loc:(location)? : tactic =>\n  `(tactic| push $cfg:optConfig Not $[$loc]?)\n```\nwarning: Flypitch4/Erdos501/InternalIso.lean:159:5: Variable name `h2` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _h2\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nwarning: Flypitch4/Erdos501/InternalIso.lean:176:76: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalIso.lean:182:22: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalIso.lean:190:22: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalIso.lean:209:2: `push_neg` has been deprecated. Prefer using `push Not` instead.\nIf you'd rather continue using `push_neg` in your project, you can implement it as follows:\n```\nopen Lean.Parser.Tactic in\nmacro \"push_neg\" cfg:optConfig loc:(location)? : tactic =>\n  `(tactic| push $cfg:optConfig Not $[$loc]?)\n```\nwarning: Flypitch4/Erdos501/InternalIso.lean:296:29: `Set.setOf_mem_eq` has been deprecated: Use `Set.ofPred_mem_eq` instead\nwarning: Flypitch4/Erdos501/InternalIso.lean:434:26: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalIso.lean:441:26: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalIso.lean:514:28: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalIso.lean:657:30: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalIso.lean:675:30: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalIso.lean:682:30: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalIso.lean:698:30: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalIso.lean:706:30: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalIso.lean:877:70: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalIso.lean:882:4: `push_neg` has been deprecated. Prefer using `push Not` instead.\nIf you'd rather continue using `push_neg` in your project, you can implement it as follows:\n```\nopen Lean.Parser.Tactic in\nmacro \"push_neg\" cfg:optConfig loc:(location)? : tactic =>\n  `(tactic| push $cfg:optConfig Not $[$loc]?)\n```\nwarning: Flypitch4/Erdos501/InternalIso.lean:889:4: `push_neg` has been deprecated. Prefer using `push Not` instead.\nIf you'd rather continue using `push_neg` in your project, you can implement it as follows:\n```\nopen Lean.Parser.Tactic in\nmacro \"push_neg\" cfg:optConfig loc:(location)? : tactic =>\n  `(tactic| push $cfg:optConfig Not $[$loc]?)\n```\nwarning: Flypitch4/Erdos501/InternalIso.lean:921:26: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalIso.lean:930:26: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalIso.lean:937:40: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalIso.lean:987:0: automatically included section variable(s) unused in theorem `Flypitch.Erdos501.RandomForcing.cutName_ne_empty`:\n  hF\nconsider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:\n  omit hF in theorem ...\n\nNote: This linter can be disabled with `set_option linter.unusedSectionVars false`\nwarning: Flypitch4/Erdos501/InternalIso.lean:1024:30: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalIso.lean:1085:53: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalIso.lean:1099:17: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalIso.lean:1117:40: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/InternalIso.lean:1128:13: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\n\u26a0 [3106/3116] Built Flypitch4.Erdos501.Selection (3.1s)\nwarning: Flypitch4/Erdos501/Selection.lean:43:25: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/Selection.lean:52:24: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/Selection.lean:54:4: Try this: \n  haveI\u0335\n\nThe goal is a proposition, so `have` is preferred over `haveI`.\nThe difference between `have` and `haveI` is that `haveI` inlines the value.\nBut this is not relevant for proofs because of proof irrelevance.\n\nNote: This linter can be disabled with `set_option linter.style.haveILetI false`\nwarning: Flypitch4/Erdos501/Selection.lean:166:2: Try this: \n  haveI\u0335\n\nThe goal is a proposition, so `have` is preferred over `haveI`.\nThe difference between `have` and `haveI` is that `haveI` inlines the value.\nBut this is not relevant for proofs because of proof irrelevance.\n\nNote: This linter can be disabled with `set_option linter.style.haveILetI false`\nwarning: Flypitch4/Erdos501/Selection.lean:190:25: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/Selection.lean:233:25: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/Selection.lean:240:23: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\n\u26a0 [3107/3116] Built Flypitch4.Erdos501.Recursion (3.3s)\nwarning: Flypitch4/Erdos501/Recursion.lean:155:15: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/Recursion.lean:225:22: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/Recursion.lean:285:25: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/Recursion.lean:357:27: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/Recursion.lean:363:20: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/Recursion.lean:385:32: `Set.setOf_true` has been deprecated: Use `Set.ofPred_true` instead\nwarning: Flypitch4/Erdos501/Recursion.lean:498:10: `Set.diff_subset` has been deprecated: Use `Set.sdiff_subset` instead\n\u26a0 [3108/3116] Built Flypitch4.Erdos501.Assembly (3.6s)\nwarning: Flypitch4/Erdos501/Assembly.lean:174:38: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/Assembly.lean:227:23: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/Assembly.lean:377:25: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\n\u26a0 [3109/3116] Built Flypitch4.Erdos501.Transfer (4.2s)\nwarning: Flypitch4/Erdos501/Transfer.lean:233:24: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/Transfer.lean:541:28: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/Transfer.lean:574:28: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/Transfer.lean:588:28: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\nwarning: Flypitch4/Erdos501/Transfer.lean:644:28: `Set.mem_setOf_eq` has been deprecated: Use `Set.mem_ofPred_eq` instead\n\u2714 [3110/3116] Built Flypitch4.Erdos501.Main (2.1s)\n\u2714 [3111/3116] Built Flypitch4.Erdos501.Hechler (3.9s)\n\u2714 [3112/3116] Built Erdos501.Independence (2.1s)\n\u2714 [3113/3116] Built Erdos501.FOL.Independence (2.2s)\n\u2714 [3114/3116] Built Erdos501 (1.0s)\n\u2714 [3115/3116] Built Solution (2.2s)\nBuild completed successfully (3116 jobs).\nExporting #[Nat, String, String.mk, Char, Char.ofNat, List, Quot, Quot.mk, Quot.lift, Quot.ind, erdos501_closed_infinite, erdos501_closed_size3, erdos501_hechler_of_CH, erdos501_not_refutable, erdos501_not_provable, erdos501_independent, erdos501_sentence_faithful, propext, Quot.sound, Classical.choice, Nat.add, Nat.sub, Nat.mul, Nat.pow, Nat.gcd, Nat.div, Nat.mod, Nat.beq, Nat.ble, Nat.land, Nat.lor, Nat.xor, Nat.shiftLeft, Nat.shiftRight, String.ofList] from Solution\nRunning nanoda kernel on solution\nNanoda kernel accepts the solution\nRunning Lean default kernel on solution.\nLean default kernel accepts the solution\nYour solution is okay!",
+  "errors": [],
+  "existing_id": null,
+  "formalization": {
+    "automation_method_count": 3,
+    "path": "formalization.yaml",
+    "project_name": "Erd\u0151s Problem #501 in Lean 4: the closed case and the independence of the first question",
+    "review_status": "agent-reviewed",
+    "sha256": "32d66177914ab7f99eaa998ac2bed60f31c45db251db64b4abcedc7b26dc8156",
+    "source_count": 9
+  },
+  "lake_manifest": {
+    "path": "lake-manifest.json",
+    "sha256": "77f949250174e92207c50a3b0ff5ab91a1dbadc7d246e2b147ab5f4fae9a0b11"
+  },
+  "lakefile": {
+    "format": "toml",
+    "path": "lakefile.toml",
+    "sha256": "8a5fc4181c70f8f547a43e4739988f6341ea82c31076a7ed9299540bdd068b04"
+  },
+  "landrun_commit": "811cfff51ceaf3d9843708aa6d22e9b84ccac8b4",
+  "lean4export_commit": "b18d673bd29b476466a51a3be1012df2ed322b10",
+  "lean_toolchain": "leanprover/lean4:v4.34.0-rc1",
+  "lean_toolchain_path": "lean-toolchain",
+  "license": {
+    "declared_identifier": "Apache-2.0",
+    "detected_identifier": "Apache-2.0",
+    "path": "LICENSE",
+    "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+  },
+  "mathlib_cache": {
+    "available": true,
+    "required": true
+  },
+  "nanoda_commit": "68d5ca9db226849b41a6fff59d796ff19d0a8840",
+  "phase": "verification",
+  "project_dependencies": [
+    {
+      "name": "mathlib",
+      "repository": "leanprover-community/mathlib4",
+      "revision": "355bc1e0ed1d36e49525121e1a280ca13a058a92",
+      "url": "https://github.com/leanprover-community/mathlib4.git"
+    },
+    {
+      "name": "plausible",
+      "repository": "leanprover-community/plausible",
+      "revision": "38e9c3ce15cbb63c92e90bb9a92e4eb82131f669",
+      "url": "https://github.com/leanprover-community/plausible"
+    },
+    {
+      "name": "LeanSearchClient",
+      "repository": "leanprover-community/LeanSearchClient",
+      "revision": "2bc7cf064315b26bc38dac2e9612fb581be9b75f",
+      "url": "https://github.com/leanprover-community/LeanSearchClient"
+    },
+    {
+      "name": "importGraph",
+      "repository": "leanprover-community/import-graph",
+      "revision": "978b7ec9fbbf9a535114f1de8fe5b3778b358870",
+      "url": "https://github.com/leanprover-community/import-graph"
+    },
+    {
+      "name": "proofwidgets",
+      "repository": "leanprover-community/ProofWidgets4",
+      "revision": "99e8adeea3c3cd86b6b79ba01a1383bf2d31d055",
+      "url": "https://github.com/leanprover-community/ProofWidgets4"
+    },
+    {
+      "name": "aesop",
+      "repository": "leanprover-community/aesop",
+      "revision": "c1c4362a130f12e632d252180a6c2a31d8fd4726",
+      "url": "https://github.com/leanprover-community/aesop"
+    },
+    {
+      "name": "Qq",
+      "repository": "leanprover-community/quote4",
+      "revision": "3b55e9d00c6b0018e5d984eb011b6f93c09bd163",
+      "url": "https://github.com/leanprover-community/quote4"
+    },
+    {
+      "name": "batteries",
+      "repository": "leanprover-community/batteries",
+      "revision": "36cc05ca2d0e469bfbeea9437f460e19238e885e",
+      "url": "https://github.com/leanprover-community/batteries"
+    },
+    {
+      "name": "Cli",
+      "repository": "leanprover/lean4-cli",
+      "revision": "af8bc067a4cc6c6df472a68909a3f40b1c76c43e",
+      "url": "https://github.com/leanprover/lean4-cli"
+    }
+  ],
+  "provenance": {
+    "mathematical_sources": [
+      {
+        "author_endorsement": "n/a",
+        "authors": [
+          {
+            "name": "Paul Erd\u0151s"
+          }
+        ],
+        "identifier": "Magyar Tud. Akad. Mat. Kutat\u00f3 Int. K\u00f6zl. 6 (1961), 221\u2013254",
+        "location": "Problem II.9",
+        "note": "poses the problem; no result of this source is formalized",
+        "relationship": "background",
+        "title": "Some unsolved problems (Problem II.9)",
+        "type": "paper"
+      },
+      {
+        "author_endorsement": "n/a",
+        "authors": [
+          {
+            "name": "Paul Erd\u0151s"
+          },
+          {
+            "name": "Andr\u00e1s Hajnal"
+          }
+        ],
+        "identifier": "Proc. Sympos. Pure Math. XIII, Part I (Axiomatic Set Theory), AMS 1971, 17\u201348",
+        "location": "Problem 38 (B)/(C)",
+        "note": "restates the problem (both questions); no result of this source is formalized",
+        "relationship": "background",
+        "title": "Unsolved problems in set theory (Problem 38)",
+        "type": "paper"
+      },
+      {
+        "author_endorsement": "not-contacted",
+        "authors": [
+          {
+            "name": "Thomas F. Bloom (ed.)"
+          }
+        ],
+        "identifier": "https://www.erdosproblems.com/501",
+        "note": "the canonical modern statement of the problem, listed there as open; the formalization's hypotheses follow this statement (per-set boundedness, outer measure < 1) and the formal-conjectures rendering of it",
+        "relationship": "background",
+        "title": "Erd\u0151s problem #501 (erdosproblems.com)",
+        "type": "web discussion"
+      },
+      {
+        "author_endorsement": "participated",
+        "authors": [
+          {
+            "name": "Sungchul Lee"
+          },
+          {
+            "name": "Nat Sothanaphan"
+          },
+          {
+            "name": "Elliot Glazer"
+          },
+          {
+            "name": "Sol"
+          }
+        ],
+        "identifier": "https://www.erdosproblems.com/forum/thread/501",
+        "note": "the discussion thread for #501: Sungchul Lee's relative result (positive answer from a real-valued measurable cardinal, assisted by GPT-5.5 Pro), Nat Sothanaphan's observation that this gives independence, and Elliot Glazer's transfer of that consequence to the \u03c9\u2082-random-reals extension of a CH model \u2014 the argument formalized here",
+        "relationship": "background",
+        "title": "Erd\u0151s problem #501 \u2014 forum discussion (erdosproblems.com)",
+        "type": "web discussion"
+      },
+      {
+        "author_endorsement": "participated",
+        "authors": [
+          {
+            "name": "Elliot Glazer"
+          }
+        ],
+        "identifier": "https://www.erdosproblems.com/forum/user/ElliotGlazer/proof-claims",
+        "note": "Elliot Glazer's recorded full-proof claim for #501 (independence of the first question, positive resolution of the second), produced with GPT-5.6 (Sol), Claude Fable 5 and Claude Opus 4.8",
+        "relationship": "background",
+        "title": "Elliot Glazer \u2014 proof claims for #501 (erdosproblems.com)",
+        "type": "web discussion"
+      },
+      {
+        "author_endorsement": "not-contacted",
+        "authors": [
+          {
+            "name": "Ludomir Newelski"
+          },
+          {
+            "name": "Janusz Pawlikowski"
+          },
+          {
+            "name": "Wies\u0142aw Seredy\u0144ski"
+          }
+        ],
+        "identifier": "Proc. Amer. Math. Soc. 100 (1987), 335\u2013339",
+        "note": "the closed case: closed sets of Lebesgue measure < 1 admit an infinite independent (free) set \u2014 targets erdos501_closed_infinite and erdos501_closed_size3 (Erdos501/Closed.lean)",
+        "relationship": "formalizes",
+        "title": "Infinite free set for small measure set mappings",
+        "type": "paper"
+      },
+      {
+        "author_endorsement": "n/a",
+        "authors": [
+          {
+            "name": "Stephen H. Hechler"
+          }
+        ],
+        "identifier": "Israel J. Math. 11 (1972), 231\u2013248",
+        "note": "the CH counterexample: under CH a family of bounded (countable, null) sets with no infinite independent set \u2014 target erdos501_hechler_of_CH (Erdos501/Hechler.lean, from \u2135\u2081 = \ud835\udd20) and, inside the collapse extension where CH holds, the direction \u00ac (ZFC \u22a8\u1d47 Erdos501) (Flypitch4/Erdos501/Hechler.lean)",
+        "relationship": "formalizes",
+        "title": "Directed graphs over topological spaces: some set theoretical aspects",
+        "type": "paper"
+      },
+      {
+        "author_endorsement": "participated",
+        "authors": [
+          {
+            "name": "Elliot Glazer"
+          },
+          {
+            "name": "Sol"
+          }
+        ],
+        "identifier": "docs/paper/erdos501_random_profiles_rev10.pdf (unpublished draft, 2026-08-16)",
+        "note": "the positive answer after adding random reals: the ZFC core (Lemmas 2.1\u20132.2, Definition 3.1, Theorem 3.2: a \"profile certificate\" yields an infinite independent set), the \u0394-system and homogeneous-reading arguments, and the fullness of the fresh profiles (Lemma 4.5) are formalized as written; the formalized theorem uses the random algebra with \ud835\udd20\u207a coordinates over the ground universe (\u0394-system for \ud835\udd20\u207a countable sets, no CH in the ground) in place of the paper's \u03c9\u2082 random reals over a CH ground, and the sentence is transferred into the Boolean-valued model by an internal-reals argument rather than by re-running the recursion in a set model \u2014 direction \u00ac (ZFC \u22a8\u1d47 \u223cErdos501) (Flypitch4/Erdos501/*)",
+        "relationship": "adapts",
+        "title": "Erd\u0151s Problem 501 after adding \u03c9\u2082 random reals (draft, revision 10)",
+        "type": "paper"
+      },
+      {
+        "author_endorsement": "n/a",
+        "authors": [
+          {
+            "name": "Paul Erd\u0151s"
+          },
+          {
+            "name": "Andr\u00e1s Hajnal"
+          }
+        ],
+        "identifier": "Michigan Math. J. 7 (1960), 187\u2013191",
+        "note": "arbitrarily large finite independent sets exist in ZFC (context only; not formalized)",
+        "relationship": "background",
+        "title": "Some remarks on set theory VIII",
+        "type": "paper"
+      }
+    ],
+    "related_formalizations": [
+      {
+        "identifier": "https://github.com/flypitch/flypitch",
+        "note": "Han\u2013van Doorn, \"A formal proof of the independence of the continuum hypothesis\" (CPP 2020), Lean 3: first-order logic, the theory ZFC, Boolean-valued models, forcing, the completeness theorem and the collapse algebra Col(\u03c9\u2081, \ud835\udcab(\u03c9)) with independence_of_CH.  The vendored library Flypitch4/ is derived from it (see below); its axiomatization of ZFC is the one mirrored, axiom by axiom, in the Mathlib-side theory of the Challenge",
+        "relationship": "builds-on"
+      },
+      {
+        "identifier": "https://github.com/ianklatzco/flypitch",
+        "note": "Lean 4 port of Flypitch (Ian Klatzco with Claude; commit ad649f8, directory flypitch4/), vendored here as Flypitch4/ and forward-ported to the pinned Mathlib, then extended with measure algebras, the random algebra and the forcing development for #501 (Flypitch4/Erdos501/); see third_party/flypitch4/ and docs/PORTING-NOTES.md",
+        "relationship": "builds-on"
+      },
+      {
+        "identifier": "https://github.com/google-deepmind/formal-conjectures",
+        "note": "FormalConjectures/ErdosProblems/501.lean states the first question (answer(sorry)); the Mathlib-level statements here (hypotheses, independence predicate) follow it verbatim, and the faithfulness target erdos501_sentence_faithful ties the first-order sentence to that proposition.  No code is shared; the relationship is \"same statement shape\"",
+        "relationship": "other"
+      },
+      {
+        "identifier": "https://github.com/leanprover-community/mathlib4",
+        "note": "Mathlib.ModelTheory (languages, bounded formulas, structures, Theory.ModelsBoundedFormula, L\u00f6wenheim\u2013Skolem via Theory.Model.isSatisfiable) is the vocabulary of the Challenge; Mathlib measure theory, ZFSet and cardinals supply the rest of the trusted statements",
+        "relationship": "builds-on"
+      }
+    ],
+    "repository_role": "substantive-development",
+    "responsible_maintainers": [
+      {
+        "name": "Elliot Glazer"
+      }
+    ],
+    "result_origin": "source-based"
+  },
+  "resource_usage": [
+    {
+      "elapsed_seconds": 0.005,
+      "max_rss_kib": 13184,
+      "peak_tasks_observed": 1,
+      "phase": "touch",
+      "returncode": 0,
+      "system_cpu_seconds": 0.004,
+      "user_cpu_seconds": 0.001,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.007,
+      "max_rss_kib": 13364,
+      "peak_tasks_observed": 1,
+      "phase": "landrun",
+      "returncode": 0,
+      "system_cpu_seconds": 0.005,
+      "user_cpu_seconds": 0.003,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.005,
+      "max_rss_kib": 13368,
+      "peak_tasks_observed": 1,
+      "phase": "touch",
+      "returncode": 1,
+      "system_cpu_seconds": 0.002,
+      "user_cpu_seconds": 0.002,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.027,
+      "max_rss_kib": 13076,
+      "peak_tasks_observed": 1,
+      "phase": "python3.11",
+      "returncode": 0,
+      "system_cpu_seconds": 0.01,
+      "user_cpu_seconds": 0.017,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.027,
+      "max_rss_kib": 13188,
+      "peak_tasks_observed": 1,
+      "phase": "python3.11",
+      "returncode": 1,
+      "system_cpu_seconds": 0.007,
+      "user_cpu_seconds": 0.021,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.027,
+      "max_rss_kib": 13368,
+      "peak_tasks_observed": 1,
+      "phase": "python3.11",
+      "returncode": 1,
+      "system_cpu_seconds": 0.009,
+      "user_cpu_seconds": 0.019,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.024,
+      "max_rss_kib": 13368,
+      "peak_tasks_observed": 1,
+      "phase": "python3.11",
+      "returncode": 1,
+      "system_cpu_seconds": 0.007,
+      "user_cpu_seconds": 0.017,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 2.329,
+      "max_rss_kib": 895752,
+      "peak_tasks_observed": 1,
+      "phase": "lake",
+      "returncode": 0,
+      "system_cpu_seconds": 0.524,
+      "user_cpu_seconds": 1.862,
+      "workspace_disk_peak_bytes": 737280
+    },
+    {
+      "elapsed_seconds": 0.074,
+      "max_rss_kib": 113028,
+      "peak_tasks_observed": 1,
+      "phase": "lean",
+      "returncode": 0,
+      "system_cpu_seconds": 0.04,
+      "user_cpu_seconds": 0.048,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 47.984,
+      "max_rss_kib": 1014500,
+      "peak_tasks_observed": 1,
+      "phase": "lake",
+      "returncode": 0,
+      "system_cpu_seconds": 43.835,
+      "user_cpu_seconds": 70.307,
+      "workspace_disk_peak_bytes": 7801831424
+    },
+    {
+      "elapsed_seconds": 5.94,
+      "max_rss_kib": 996524,
+      "peak_tasks_observed": 1,
+      "phase": "lake",
+      "returncode": 0,
+      "system_cpu_seconds": 4.064,
+      "user_cpu_seconds": 5.191,
+      "workspace_disk_peak_bytes": 4096
+    },
+    {
+      "elapsed_seconds": 3.711,
+      "max_rss_kib": 2958748,
+      "peak_tasks_observed": 1,
+      "phase": "lean",
+      "returncode": 0,
+      "system_cpu_seconds": 1.133,
+      "user_cpu_seconds": 2.095,
+      "workspace_disk_peak_bytes": 4096
+    },
+    {
+      "elapsed_seconds": 0.064,
+      "max_rss_kib": 93000,
+      "peak_tasks_observed": 1,
+      "phase": "lean",
+      "returncode": 0,
+      "system_cpu_seconds": 0.043,
+      "user_cpu_seconds": 0.037,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.064,
+      "max_rss_kib": 93004,
+      "peak_tasks_observed": 1,
+      "phase": "lean",
+      "returncode": 0,
+      "system_cpu_seconds": 0.041,
+      "user_cpu_seconds": 0.037,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.004,
+      "max_rss_kib": 13240,
+      "peak_tasks_observed": 1,
+      "phase": "touch",
+      "returncode": 0,
+      "system_cpu_seconds": 0.003,
+      "user_cpu_seconds": 0.001,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.007,
+      "max_rss_kib": 13368,
+      "peak_tasks_observed": 1,
+      "phase": "landrun",
+      "returncode": 0,
+      "system_cpu_seconds": 0.005,
+      "user_cpu_seconds": 0.003,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.004,
+      "max_rss_kib": 13072,
+      "peak_tasks_observed": 1,
+      "phase": "touch",
+      "returncode": 1,
+      "system_cpu_seconds": 0.004,
+      "user_cpu_seconds": 0.001,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.026,
+      "max_rss_kib": 13368,
+      "peak_tasks_observed": 1,
+      "phase": "python3.11",
+      "returncode": 0,
+      "system_cpu_seconds": 0.005,
+      "user_cpu_seconds": 0.021,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.026,
+      "max_rss_kib": 13072,
+      "peak_tasks_observed": 1,
+      "phase": "python3.11",
+      "returncode": 0,
+      "system_cpu_seconds": 0.01,
+      "user_cpu_seconds": 0.016,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.026,
+      "max_rss_kib": 13240,
+      "peak_tasks_observed": 1,
+      "phase": "python3.11",
+      "returncode": 1,
+      "system_cpu_seconds": 0.009,
+      "user_cpu_seconds": 0.017,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.027,
+      "max_rss_kib": 13240,
+      "peak_tasks_observed": 1,
+      "phase": "python3.11",
+      "returncode": 1,
+      "system_cpu_seconds": 0.008,
+      "user_cpu_seconds": 0.019,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.023,
+      "max_rss_kib": 13368,
+      "peak_tasks_observed": 1,
+      "phase": "python3.11",
+      "returncode": 1,
+      "system_cpu_seconds": 0.005,
+      "user_cpu_seconds": 0.019,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.655,
+      "max_rss_kib": 851428,
+      "peak_tasks_observed": 1,
+      "phase": "lake",
+      "returncode": 0,
+      "system_cpu_seconds": 0.404,
+      "user_cpu_seconds": 0.291,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.62,
+      "max_rss_kib": 851192,
+      "peak_tasks_observed": 1,
+      "phase": "lake",
+      "returncode": 0,
+      "system_cpu_seconds": 0.375,
+      "user_cpu_seconds": 0.286,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 256.88,
+      "max_rss_kib": 3463768,
+      "peak_tasks_observed": 1,
+      "phase": "comparator",
+      "returncode": 0,
+      "system_cpu_seconds": 65.73,
+      "user_cpu_seconds": 505.893,
+      "workspace_disk_peak_bytes": 173088768
+    }
+  ],
+  "schema_version": 1,
+  "solution": {
+    "module": "Solution",
+    "path": "Solution.lean",
+    "sha256": "3b58690107dc547b78066178873c9902814a43ca4c6202dc3f2972785fcc58cd"
+  },
+  "source": {
+    "bytes": 3168052,
+    "commit": "f406eaebc79537487955a484ba9cdc8abeaf1c9a",
+    "repository": "elliotglazer/erdos501",
+    "repository_url": "https://github.com/elliotglazer/erdos501",
+    "tree_url": "https://github.com/elliotglazer/erdos501/tree/f406eaebc79537487955a484ba9cdc8abeaf1c9a"
+  },
+  "stage": "complete",
+  "status": "pass",
+  "submission": {
+    "authorization": {
+      "relationship": "maintainer"
+    },
+    "requested_paths": {
+      "comparator_config_path": "comparator.json",
+      "formalization_metadata_path": "",
+      "project_path": ""
+    },
+    "submission_id": "htgsebjchqg5"
+  },
+  "warnings": [
+    "configured Challenge source exceeds the preferred 32 KiB / 300-line review surface"
+  ],
+  "workflow_url": "https://github.com/PalomarRegistry/PalomarSubmission/actions/runs/32248810098"
+}

@@ -864,6 +864,125 @@ const registry = {
         ],
       },
     },
+    /* The first published-dataset source whose provider asserts immutability
+       without anchoring it: Palomar pins exact commits and never re-verifies an
+       entry against newer toolchains, but publishes no digest and no signature
+       over the entry JSON itself, and older entries carry the current
+       schema_version, so entry files may be re-rendered. The adapter therefore
+       pins its own consumer-computed root over the retained entry bytes and
+       re-verifies the two evidence reports against the digests inside the
+       entry. Registry metadata is CC0, which is what permits retaining those
+       bytes at all; the source project's own license is attributed per record,
+       not asserted here.
+
+       Palomar-local `status: "registered"` and `trust.level` are external
+       standing. The record binds to Repository state only through reference
+       bindings and `external_reference` frontier edges with
+       `local_standing_effect: "none"`; nothing from this source creates a Vela
+       Verification, Decision, or Standing. */
+    {
+      source_id: "source:palomar-registry",
+      native_namespace: "palomar-registry",
+      publisher_or_maintainer: "Palomar Registry",
+      locators: [
+        {
+          locator_id: "homepage",
+          kind: "homepage",
+          url: "https://palomar-registry.org/",
+        },
+        {
+          locator_id: "recent-feed",
+          kind: "api",
+          url: "https://data.palomar-registry.org/recent.json",
+        },
+        {
+          locator_id: "entry",
+          kind: "artifact",
+          url: "https://data.palomar-registry.org/entries/PALOMAR-2026-08-19-000002-v1.json",
+        },
+        {
+          locator_id: "review-policy",
+          kind: "git",
+          url: "https://github.com/PalomarRegistry/PalomarPolicy",
+        },
+        {
+          locator_id: "rights",
+          kind: "documentation",
+          url: "https://palomar-registry.org/about",
+        },
+      ],
+      attributed_claims: [
+        {
+          role: "publisher",
+          name: "Palomar Registry",
+          basis_locator_id: "homepage",
+        },
+      ],
+      source_kind: "formal_library",
+      rights: {
+        status: "declared",
+        license_expression: "CC0-1.0",
+        access: "public",
+        redistribution: "full_under_license",
+        basis: "Registry metadata is published under CC0, stated on the registry's about page; each record additionally carries the source project's own license identity and license-file digest, which this declaration attributes and does not assert.",
+      },
+      snapshot_policy: {
+        mode: "retained_exact_bytes",
+        retention: "immutable_artifact",
+        reason:
+          "Palomar publishes no digest or signature over the entry JSON and may re-render older entries to the current schema, so the adapter pins its own consumer-computed root over the exact fetched entry bytes and re-verifies both evidence reports against the digests inside the entry.",
+      },
+      adapter: networkAdapter("problems-data/palomar-registry", "1.0.0"),
+      coverage: {
+        repository_slugs: ["math"],
+        included: [
+          "The one registered entry PALOMAR-2026-08-19-000002 v1 (elliotglazer/erdos501, an independence resolution of Erdős problem #501), as exact retained entry bytes",
+          "Exact record identity, source commit, formalization surface, verification-run identity, review policy pin and digests, bounded review warnings, preservation locators, and Palomar-local status as the entry declares them",
+        ],
+        omissions: [
+          {
+            code: "palomar_status_is_external_standing",
+            description: "Palomar's registered status and trust level are Palomar-local external standing; they create no Vela Standing, Verification, acceptance, or admission.",
+          },
+          {
+            code: "palomar_nonclaims_are_registry_level",
+            description: "Palomar claims no novelty, no quality assessment, no peer review, no publication status, and no informal-proof verification; these attributed nonclaims are registry-level prose, not per-record data.",
+          },
+          {
+            code: "palomar_mechanical_pass_is_one_scoped_check",
+            description: "Comparator, Lean-kernel, and NanoDa results are folded into Palomar's single mechanical pass and retained as one scoped external check (palomar-mechanical); Vela re-derives none of them and none is a Vela Verification.",
+          },
+          {
+            code: "palomar_review_is_llm_under_policy",
+            description: "The semantic review is an LLM review under a pinned policy commit; its outcome and bounded findings are attributed observations, never adjudication.",
+          },
+          {
+            code: "palomar_consent_is_asserted_relationship",
+            description: "The submitter relationship is an asserted field; Palomar publishes no signed consent artifact.",
+          },
+          {
+            code: "palomar_admission_process_unobservable",
+            description: "Only the admission outcome — status registered with its timestamps — is observable; the registry's admission decision process is internal.",
+          },
+          {
+            code: "palomar_version_relation_reconstructed",
+            description: "Version relations are reconstructed from the shared registry ID and integer versions; Palomar publishes no supersedes or corrects field, and the reason for a new version is unobservable.",
+          },
+          {
+            code: "palomar_entry_bytes_not_provider_signed",
+            description: "Palomar publishes no digest or signature over the entry JSON; authenticity rests on TLS retrieval plus the consumer-computed retained-bytes root, and version-URL immutability is Palomar's assertion.",
+          },
+          {
+            code: "palomar_challenge_render_not_archived",
+            description: "The challenge render is retained as a locator and provider tree digest only; its bytes are not archived.",
+          },
+          {
+            code: "palomar_evidence_tree_not_archived",
+            description: "Beyond the two digest-verified reports, the evidence tree — comparator log tail, resource usage, Mathlib cache and the rest — is pinned by evidence_tree_sha256 and not archived.",
+          },
+        ],
+      },
+    },
     {
       source_id: "source:codetables-stabilizer",
       native_namespace: "codetables-stabilizer",

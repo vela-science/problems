@@ -1,0 +1,158 @@
+{
+  "checks": [
+    {
+      "declarations_checked": [],
+      "findings": [
+        {
+          "evidence": "math.CO (Combinatorics): the theorem constructs arbitrarily large finite planar point sets with exceptionally many unit-distance pairs.",
+          "message": "This is a substantive combinatorial incidence problem concerning extremal counts on finite point sets."
+        },
+        {
+          "evidence": "math.MG (Metric Geometry): unitDist counts pairs at Euclidean distance exactly one in ℝ².",
+          "message": "The result directly concerns configurations defined by a metric constraint, making metric geometry a plausible classification."
+        },
+        {
+          "evidence": "52C10 (Erdős problems and related topics of discrete geometry): the theorem negates the uniform-constant form of Erdős's planar unit-distance conjecture.",
+          "message": "This code precisely describes the named discrete-geometric problem and the theorem's contribution to it."
+        },
+        {
+          "evidence": "11R21 (Other number fields): the metadata identifies multiquadratic CM fields, ideal classes, and norm-one tori as the substantive construction underlying the unit-distance result.",
+          "message": "Although number fields do not appear in the exported theorem statement, they are central mathematical ingredients of the recorded result rather than formalization tools, so the code has a reasonable substantive connection."
+        }
+      ],
+      "outcome": "neutral",
+      "sources_checked": [
+        "formalization.yaml",
+        "Challenge.lean",
+        "mechanical_report",
+        "taxonomies/classification-guide.md"
+      ],
+      "step": "classification",
+      "summary": "All submitted arXiv and MSC2020 codes have plausible substantive connections to the unit-distance result and its number-field construction.",
+      "trust_level": "high"
+    },
+    {
+      "declarations_checked": [],
+      "findings": [
+        {
+          "evidence": "Challenge.lean module documentation and theorem docstring for `UnitDistance.erdos_unit_distance_uniform_constant_false`; formalization.yaml `result.statement`; README.md opening description",
+          "message": "The narrative account is present across these locations and consistently identifies the headline claim. The quantified prose—every positive C and every threshold N admit an n ≥ N and an n-point planar set exceeding the stated bound—matches the named Lean declaration."
+        },
+        {
+          "evidence": "formalization.yaml `repository`, `project.responsible_maintainers`, `sources`, `related_formalizations`, `automation`, `review`, `fidelity`, and `result.scope_limitations`; mechanical report `provenance`, dependency revision, axiom export, and licence records",
+          "message": "The structured provenance is unusually specific: it identifies the repository as a thin wrapper, pins the substantive formalisation to revision `34b4587bbd0740efb9c06a519a8ee14a3eff8cd7`, names its responsible maintainer, distinguishes the mathematical source from related formalisations, discloses extensive AI involvement and lack of independent human review, and records limitations and dependency sorries. The mechanical report corroborates the pinned dependency, exported axioms, and Apache-2.0 licence."
+        },
+        {
+          "evidence": "formalization.yaml first `sources` entry and `review.notes`",
+          "message": "The principal one-page source is candidly identified as a transcription that nobody besides the submitter has checked against the original, and the metadata does not use that disclosure to claim independent validation. This is a clear and appropriately bounded provenance limitation."
+        },
+        {
+          "evidence": "submission `authorization.relationship: maintainer`; formalization.yaml `project.responsible_maintainers` and `repository.substantive_formalization`",
+          "message": "The declared authorisation basis is consistent with the metadata: Kim Morrison is identified as responsible for the submitted formalisation, including the substantive proof library rather than only the comparator wrapper."
+        }
+      ],
+      "outcome": "neutral",
+      "sources_checked": [
+        "formalization.yaml",
+        "Challenge.lean",
+        "README.md",
+        "submission record",
+        "mechanical report"
+      ],
+      "step": "metadata",
+      "summary": "The structured metadata and distributed narrative provide a detailed, internally consistent, and candid account of the claim, substantive repository, sources, authorship, automation, review status, licence, scope, and known limitations.",
+      "trust_level": "high"
+    },
+    {
+      "declarations_checked": [
+        "UnitDistance.erdos_unit_distance_uniform_constant_false"
+      ],
+      "findings": [],
+      "outcome": "neutral",
+      "sources_checked": [
+        "Challenge.lean module documentation and declaration docstring",
+        "Challenge.lean: UnitDistance.unitDist",
+        "Challenge.lean: UnitDistance.erdos_unit_distance_uniform_constant_false",
+        "README.md: project introduction and What to audit",
+        "formalization.yaml: project.short_description, result.statement, and result.scope_limitations",
+        "comparator.json"
+      ],
+      "step": "statement_alignment",
+      "summary": "The sole compared theorem precisely matches the combined informal account, including its quantifiers, positivity hypothesis, arbitrarily-large scope, exact cardinality, Euclidean unit-distance count, strict inequality, and uniform-constant limitation.",
+      "trust_level": "high"
+    },
+    {
+      "declarations_checked": [
+        "UnitDistance.erdos_unit_distance_uniform_constant_false"
+      ],
+      "findings": [],
+      "outcome": "neutral",
+      "sources_checked": [
+        "challenge_source",
+        "kim-em/erdos-unit-distance-comparator@6f54548da16c3f243d7e300716795906b955271a:Challenge.lean",
+        "kim-em/erdos-unit-distance-comparator@6f54548da16c3f243d7e300716795906b955271a:README.md",
+        "kim-em/erdos-unit-distance-comparator@6f54548da16c3f243d7e300716795906b955271a:formalization.yaml",
+        "kim-em/erdos-unit-distance-comparator@6f54548da16c3f243d7e300716795906b955271a:comparator.json",
+        "mechanical_report"
+      ],
+      "step": "definition_fidelity",
+      "summary": "The Challenge module and unitDist docstring accurately describe the Lean definition: Finset.offDiag enumerates ordered distinct pairs, the symmetric distance-one filter counts each unordered pair twice, and division by two gives the advertised count in the Euclidean metric on EuclideanSpace ℝ (Fin 2). The theorem uses standard Mathlib naturals, coercions, real logarithm, and real powers and expresses arbitrarily large cardinalities with the strict inequality obtained by negating the eventual uniform upper bound. The 43-line Challenge has only an allowlisted Mathlib dependency and no compared definition holes, making the complete statement dependency set directly auditable.",
+      "trust_level": "high"
+    },
+    {
+      "declarations_checked": [
+        "UnitDistance.erdos_unit_distance_uniform_constant_false"
+      ],
+      "findings": [
+        {
+          "evidence": "Challenge.lean module documentation; README.md; formalization.yaml result, sources, and related_formalizations",
+          "message": "The narrative was found across these locations and accurately describes the compared theorem as negating the eventual uniform-constant upper bound."
+        },
+        {
+          "evidence": "https://www-cdn.anthropic.com/files/4zrzovbb/website/ca35f196125c899a5ad11f011080202a652aef02.pdf; https://cdn.openai.com/pdf/74c24085-19b0-4534-9c90-465b8e29ad73/unit-distance-proof.pdf",
+          "message": "The result could plausibly support a serious research note: it gives a substantially more elementary, number-theoretic route to a historically significant unit-distance counterexample. Its credible audience comprises researchers in discrete and combinatorial geometry and algebraic number theory."
+        },
+        {
+          "evidence": "formalization.yaml result.scope_limitations, sources, and related_formalizations",
+          "message": "The strongest potential problem is that the selected theorem is now an immediate consequence of stronger fixed-power results and of the intermediate class-field-tower bound. The submission squarely discloses this and identifies the distinct contribution as an elementary alternative argument, which preserves plausible research relevance rather than claiming priority or strength."
+        },
+        {
+          "evidence": "formalization.yaml sources; https://github.com/plby/Erdos90; https://github.com/logical-intelligence/erdos-unit-distance; https://github.com/google-deepmind/formal-conjectures/blob/main/FormalConjectures/ErdosProblems/90.lean",
+          "message": "The literature account distinguishes the unconfirmable one-page source from the separate identically titled paper, records stronger mathematical results, and compares the two substantive Lean proofs. The additional FormalConjectures file is a benchmark statement containing sorries, not an omitted completed proof."
+        }
+      ],
+      "outcome": "neutral",
+      "sources_checked": [
+        "https://www-cdn.anthropic.com/files/4zrzovbb/website/ca35f196125c899a5ad11f011080202a652aef02.pdf",
+        "https://cdn.openai.com/pdf/74c24085-19b0-4534-9c90-465b8e29ad73/unit-distance-proof.pdf",
+        "https://openai.com/index/model-disproves-discrete-geometry-conjecture/",
+        "https://eudml.org/doc/232764",
+        "https://combinatorica.hu/~p_erdos/1982-33.pdf",
+        "https://github.com/kim-em/erdos-unit-distance",
+        "https://github.com/plby/Erdos90",
+        "https://github.com/logical-intelligence/erdos-unit-distance",
+        "https://github.com/google-deepmind/formal-conjectures/blob/main/FormalConjectures/ErdosProblems/90.lean",
+        "https://teorth.github.io/optimizationproblems/constants/84a.html",
+        "https://terrytao.wordpress.com/2026/07/03/a-digestion-of-unit-distance-constructions/"
+      ],
+      "step": "literature_notability",
+      "summary": "The selected result is plausibly research-note-worthy for its elementary alternative route to a significant unit-distance counterexample, with a clear specialist audience and a thorough, candid literature account.",
+      "trust_level": "qualified"
+    }
+  ],
+  "mechanical_report": "https://github.com/PalomarRegistry/PalomarSubmission/actions/runs/31247489373",
+  "outcome": "neutral",
+  "policy_commit": "c51a7a0b5af61885af5307adbeee01d3a3478f79",
+  "requested_changes": [],
+  "reviewed_at": "2026-08-08T08:21:59Z",
+  "reviewer_models": [
+    "codex:gpt-5.6-sol"
+  ],
+  "schema_version": 3,
+  "source": {
+    "commit": "6f54548da16c3f243d7e300716795906b955271a",
+    "repository": "kim-em/erdos-unit-distance-comparator"
+  },
+  "submission_id": "jlqzsuh4ti5y",
+  "summary": "Mechanical verification and all completed editorial checks identified no blocking problem. The formal statement matches its narrative account, its definitions are faithful and auditable, and the metadata candidly documents provenance, limitations, related work, and the result’s specialist research relevance."
+}

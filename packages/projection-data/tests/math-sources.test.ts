@@ -146,6 +146,7 @@ describe("checked Math source declarations", () => {
       "source:gpt-erdos",
       "source:vibemathed",
       "source:oeis-a309370",
+      "source:palomar-registry",
       "source:codetables-stabilizer",
     ]);
     expect(new Set(
@@ -174,6 +175,45 @@ describe("checked Math source declarations", () => {
     expect(audit?.coverage.included).toContain(
       `The public audit package identity at commit ${formalConjecturesAuditProjection.source.commit} and tree ${formalConjecturesAuditProjection.source.tree}`,
     );
+    /* CC0 registry metadata is what authorizes `retained_exact_bytes` here, and
+       the declaration must keep restating the semantic-loss classes the frozen
+       Palomar contract names — external standing above all. */
+    const palomar = mathSourceRegistry.sources.find(
+      ({ source_id }) => source_id === "source:palomar-registry",
+    );
+    expect(palomar).toMatchObject({
+      source_kind: "formal_library",
+      rights: {
+        status: "declared",
+        license_expression: "CC0-1.0",
+        redistribution: "full_under_license",
+      },
+      snapshot_policy: {
+        mode: "retained_exact_bytes",
+        retention: "immutable_artifact",
+      },
+      adapter: {
+        adapter_id: "problems-data/palomar-registry",
+        mode: "networked_acquisition",
+      },
+    });
+    for (const code of [
+      "palomar_status_is_external_standing",
+      "palomar_nonclaims_are_registry_level",
+      "palomar_mechanical_pass_is_one_scoped_check",
+      "palomar_review_is_llm_under_policy",
+      "palomar_consent_is_asserted_relationship",
+      "palomar_admission_process_unobservable",
+      "palomar_version_relation_reconstructed",
+      "palomar_entry_bytes_not_provider_signed",
+      "palomar_challenge_render_not_archived",
+      "palomar_evidence_tree_not_archived",
+    ]) {
+      expect(
+        palomar?.coverage.omissions.map((omission) => omission.code),
+        code,
+      ).toContain(code);
+    }
   });
 
   test("bind every declaration, adapter, attribution, locator, right, and omission", () => {
@@ -378,7 +418,7 @@ describe("release-scoped source projection rows", () => {
       schema: "vela.math-source-registry-release.v1",
       declaration_root: mathSourceRegistry.declaration_root,
       observation_bundle_root: bundle.observation_bundle_root,
-      source_count: 14,
+      source_count: 15,
       observation_count: 1,
       native_record_count: 1,
       release_source_count: 1,

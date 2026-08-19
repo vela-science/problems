@@ -35,6 +35,10 @@ import {
 } from "../src/source-adapters/refresh";
 import { acquirePinnedProofManifest } from "../src/source-adapters/proof-manifests";
 import { acquireOeisA309370 } from "../src/source-adapters/oeis";
+import {
+  acquirePalomarRegistry,
+  palomarRegistryRelease,
+} from "../src/source-adapters/palomar";
 import { acquireVibemathed } from "../src/source-adapters/vibemathed";
 import {
   acquireOpenAiTenProofs,
@@ -462,6 +466,21 @@ async function erdosProblemsFixture(overrides: { registry?: string } = {}) {
     logicalLocator: "https://example.test/problems.yaml",
   };
 }
+
+/* Exact retained Palomar bytes, not synthetic fixtures: each file hashes to
+   the digest the frozen public-record contract pins, and the tests below
+   assert those digests rather than trusting the files. */
+function palomarFixture(name: string) {
+  return join(import.meta.dir, "fixtures", "palomar", name);
+}
+
+const palomarTarget = {
+  dataset: palomarFixture("PALOMAR-2026-08-19-000002-v1.json"),
+  mechanicalReport: palomarFixture(
+    "PALOMAR-2026-08-19-000002-v1.mechanical-report.json",
+  ),
+  reviewReport: palomarFixture("PALOMAR-2026-08-19-000002-v1.review.json"),
+};
 
 async function oeisFixture() {
   return json(join(fixtureRoot, "oeis-a309370.json"), {
@@ -1319,6 +1338,176 @@ describe("pinned external source adapters", () => {
   });
 });
 
+describe("Palomar registry source adapter", () => {
+  /* Steering: immutable identity. Palomar publishes no digest over the entry
+     JSON, so the pin is consumer-computed; the acquisition holds fetched bytes
+     to it and re-verifies both provider-declared evidence digests. */
+  test("pins the retained entry bytes and re-verifies both provider digests", async () => {
+    const acquired = await acquirePalomarRegistry(palomarTarget);
+    expect(palomarRegistryRelease.entry_root).toBe(
+      "sha256:306220a43c9696396c9f0cbb87ddb3d3352941a4b411988269386911c2492688",
+    );
+    expect(sha256(await readFile(palomarTarget.dataset))).toBe(
+      palomarRegistryRelease.entry_root,
+    );
+    expect(acquired.revision.content_root).toBe(palomarRegistryRelease.entry_root);
+    expect(sha256(await readFile(palomarTarget.mechanicalReport))).toBe(
+      "sha256:549c786ac04b11c963045b34bfd721720af99fb5b78693a1e5c2f5746b2044da",
+    );
+    expect(sha256(await readFile(palomarTarget.reviewReport))).toBe(
+      "sha256:9f77c4ffdf25ccaa8f7de7350262f38b6c56848e11288ec8a4fdf9c23d3616b4",
+    );
+    expect(acquired.inputs.map(({ content_root }) => content_root)).toEqual([
+      palomarRegistryRelease.entry_root,
+      "sha256:549c786ac04b11c963045b34bfd721720af99fb5b78693a1e5c2f5746b2044da",
+      "sha256:9f77c4ffdf25ccaa8f7de7350262f38b6c56848e11288ec8a4fdf9c23d3616b4",
+    ]);
+    expect(acquired.coverage).toMatchObject({
+      status: "complete",
+      native_record_count: 1,
+      emitted_record_count: 1,
+      omitted_record_count: 0,
+    });
+    expect(acquired.records[0]).toMatchObject({
+      native_id: "palomar:PALOMAR-2026-08-19-000002-v1",
+      native_kind: "registry-entry",
+      native_revision: palomarRegistryRelease.entry_root,
+      metadata: {
+        id: "PALOMAR-2026-08-19-000002",
+        version: 1,
+        source_declared_state: "registered",
+        source_repository: "elliotglazer/erdos501",
+        source_commit: "f406eaebc79537487955a484ba9cdc8abeaf1c9a",
+        lean_toolchain: "leanprover/lean4:v4.34.0-rc1",
+        verification_mechanical_status: "pass",
+        review_outcome: "neutral",
+        trust_level: "high",
+      },
+    });
+    /* The one real semantic-review warning rides along as a bounded finding. */
+    expect(acquired.records[0].metadata.review_warnings).toHaveLength(1);
+    /* Nothing in the flattened row is an object or an object list, so every
+       field stays readable in SQL. */
+    for (const [key, value] of Object.entries(acquired.records[0].metadata)) {
+      const scalar = value === null || ["string", "number", "boolean"].includes(typeof value);
+      const stringArray = Array.isArray(value)
+        && value.every((entry) => typeof entry === "string");
+      expect(scalar || stringArray, key).toBe(true);
+    }
+  });
+
+  test("fails closed when a single entry byte drifts from the pin", async () => {
+    const bytes = Buffer.from(await readFile(palomarTarget.dataset));
+    bytes[bytes.length - 2] ^= 0x01;
+    const mutated = join(fixtureRoot, "palomar-mutated-entry.json");
+    await writeFile(mutated, bytes);
+    await expect(acquirePalomarRegistry({
+      ...palomarTarget,
+      dataset: mutated,
+    })).rejects.toThrow("does not match pinned root");
+  });
+
+  test("refuses an evidence report whose bytes miss the entry's declared digest", async () => {
+    await expect(acquirePalomarRegistry({
+      ...palomarTarget,
+      reviewReport: palomarTarget.mechanicalReport,
+    })).rejects.toThrow("do not match the digest declared inside entry");
+  });
+
+  /* Steering: version/correction relation. PALOMAR-2026-08-08-000001 exists at
+     v1 and v3 with no supersedes or corrects field; the relation is only the
+     shared registry ID and ordered version integers, and neither version
+     overwrites the other's identity. */
+  test("keeps two versions of one registry ID as distinct immutable records", async () => {
+    const v1 = await acquirePalomarRegistry({
+      dataset: palomarFixture("PALOMAR-2026-08-08-000001-v1.json"),
+      mechanicalReport: palomarFixture("PALOMAR-2026-08-08-000001-v1.mechanical-report.json"),
+      reviewReport: palomarFixture("PALOMAR-2026-08-08-000001-v1.review.json"),
+      logicalLocator: "https://data.palomar-registry.org/entries/PALOMAR-2026-08-08-000001-v1.json",
+      expectedEntryRoot: "sha256:62fb845561db3e7079fdadc716d6e562b7663ec2e8fcc40da797b1637508d56d",
+    });
+    const v3 = await acquirePalomarRegistry({
+      dataset: palomarFixture("PALOMAR-2026-08-08-000001-v3.json"),
+      mechanicalReport: palomarFixture("PALOMAR-2026-08-08-000001-v3.mechanical-report.json"),
+      reviewReport: palomarFixture("PALOMAR-2026-08-08-000001-v3.review.json"),
+      logicalLocator: "https://data.palomar-registry.org/entries/PALOMAR-2026-08-08-000001-v3.json",
+      expectedEntryRoot: "sha256:7f32169b14ad4a90e8f54208272b137bf775adeb580008285ad1c1d53b4cab52",
+    });
+    const [first, third] = [v1.records[0], v3.records[0]];
+    expect(first.metadata.id).toBe("PALOMAR-2026-08-08-000001");
+    expect(third.metadata.id).toBe(first.metadata.id);
+    expect(first.metadata.version).toBe(1);
+    expect(third.metadata.version).toBe(3);
+    expect(first.native_id).toBe("palomar:PALOMAR-2026-08-08-000001-v1");
+    expect(third.native_id).toBe("palomar:PALOMAR-2026-08-08-000001-v3");
+    expect(third.native_revision).not.toBe(first.native_revision);
+    expect(third.content_root).not.toBe(first.content_root);
+    /* No fabricated correction reason: the relation stays version metadata,
+       and the adapter says so in its semantic-loss disclosures. */
+    for (const record of [first, third]) {
+      expect(Object.keys(record.metadata)).not.toContain("corrects");
+      expect(Object.keys(record.metadata)).not.toContain("supersedes");
+    }
+    expect(v3.loss.map(({ code }) => code)).toContain(
+      "palomar_version_relation_reconstructed",
+    );
+  });
+
+  /* Steering: provider-loss / fail-closed fetch. An outage yields a thrown
+     acquisition, no partial bundle, and the previously verified artifact keeps
+     verifying — stale data stays exact and dated rather than fabricated. */
+  test("fails closed on provider outage and leaves the prior verified bundle standing", async () => {
+    const output = join(fixtureRoot, "palomar-outage-bundle");
+    const acquired = await acquirePalomarRegistry(palomarTarget);
+    const bundle = await writeSourceAdapterBundle(output, acquired);
+
+    const dark = Bun.serve({
+      port: 0,
+      fetch: () => new Response("service unavailable", { status: 503 }),
+    });
+    try {
+      await expect(acquirePalomarRegistry({
+        ...palomarTarget,
+        dataset: `http://127.0.0.1:${dark.port}/entries/PALOMAR-2026-08-19-000002-v1.json`,
+      })).rejects.toThrow("source acquisition failed (503)");
+    } finally {
+      dark.stop(true);
+    }
+
+    const verified = await verifySourceAdapterBundle(output);
+    expect(verified.bundle.bundle_root).toBe(bundle.bundle_root);
+    expect(verified.records).toHaveLength(1);
+  });
+
+  /* The one integration-style test allowed to touch the live endpoint. It
+     self-skips offline: reachability is probed first, and an unreachable or
+     non-2xx registry ends the test with a logged skip instead of a failure.
+     When the registry is reachable this is the drift alarm — the live bytes
+     must still hash to the pinned consumer-computed root. */
+  test("re-verifies the pinned entry against the live registry when reachable", async () => {
+    try {
+      const probe = await fetch(palomarRegistryRelease.entry_locator, {
+        method: "GET",
+        signal: AbortSignal.timeout(5_000),
+      });
+      if (!probe.ok) {
+        console.warn(`palomar-registry served ${probe.status}; skipping live pin re-verification`);
+        return;
+      }
+    } catch {
+      console.warn("palomar-registry unreachable; skipping live pin re-verification");
+      return;
+    }
+    const acquired = await acquirePalomarRegistry({
+      dataset: palomarRegistryRelease.entry_locator,
+    });
+    expect(acquired.revision.content_root).toBe(palomarRegistryRelease.entry_root);
+    expect(acquired.records[0].native_id).toBe(
+      "palomar:PALOMAR-2026-08-19-000002-v1",
+    );
+  }, 30_000);
+});
+
 describe("VibeMathed source adapter", () => {
   test("retains the statement prose its licence permits, and attributes it", async () => {
     const acquired = await acquireVibemathed({
@@ -1648,6 +1837,9 @@ describe("projection refresh source-adapter set", () => {
       physlibTree: physlib.tree,
       physlibExpectedRoots: physlib.exactRoots,
       oeisDataset: oeis,
+      palomarDataset: palomarTarget.dataset,
+      palomarMechanicalReport: palomarTarget.mechanicalReport,
+      palomarReviewReport: palomarTarget.reviewReport,
       vibemathedDataset: vibemathed,
       chunkRecordLimit: 2,
     });
@@ -1657,6 +1849,7 @@ describe("projection refresh source-adapter set", () => {
     expect(prepared.bundles.get("source:formal-conjectures")?.records).toHaveLength(3);
     expect(prepared.bundles.get("source:openai-ten-proofs")?.records).toHaveLength(12);
     expect(prepared.bundles.get("source:physlib")?.records).toHaveLength(2);
+    expect(prepared.bundles.get("source:palomar-registry")?.records).toHaveLength(1);
 
     /* An object nested under a metadata key is unreadable in SQL, and no new
      * one may appear.
@@ -1729,6 +1922,7 @@ describe("projection refresh source-adapter set", () => {
       "source:jayyhk-erdos-lean",
       "source:oeis-a309370",
       "source:openai-ten-proofs",
+      "source:palomar-registry",
       "source:physlib",
       "source:plby-lean-proofs",
       "source:vibemathed",

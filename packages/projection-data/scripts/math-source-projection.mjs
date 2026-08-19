@@ -265,6 +265,12 @@ export function sourceIdForClaim(claim) {
   if (text.includes("oeis.org/a309370") || /\ba309370\b/u.test(text)) {
     return declaredSource("source:oeis-a309370", claim);
   }
+  if (
+    text.includes("palomar-registry.org")
+    || /\bpalomar-\d{4}-\d{2}-\d{2}-\d{6}\b/u.test(text)
+  ) {
+    return declaredSource("source:palomar-registry", claim);
+  }
   if (text.includes("codetables.de")) {
     return declaredSource("source:codetables-stabilizer", claim);
   }
@@ -305,6 +311,21 @@ function preferredNativeId(sourceId, claim) {
     if (number) return `jayyhk:erdos:${number}`;
   }
   if (sourceId === "source:oeis-a309370") return "oeis:A309370";
+  /* Adapter records are `palomar:{ID}-v{N}`, versioned exactly. A Claim that
+     cites the record without naming a version guesses an identifier no record
+     carries, and the null-native fallback below then binds it to the Source
+     alone rather than inventing one. */
+  if (sourceId === "source:palomar-registry") {
+    const match = /\b(palomar-\d{4}-\d{2}-\d{2}-\d{6})(-v(\d+))?\b/iu.exec(
+      `${claim.source_title ?? ""} ${claim.imported_object_id ?? ""} ${claim.assertion ?? ""}`,
+    );
+    if (match) {
+      const id = match[1].toUpperCase();
+      return match[3] === undefined
+        ? `palomar:${id}`
+        : `palomar:${id}-v${match[3]}`;
+    }
+  }
   if (claim.imported_object_id) return claim.imported_object_id;
   if (claim.source_title && !claim.source_title.startsWith("record:")) {
     return claim.source_title;
