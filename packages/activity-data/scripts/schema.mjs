@@ -3,6 +3,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { neon } from "@neondatabase/serverless";
 import { sqlStatements } from "./sql-statements.mjs";
+import { expectedTables } from "./expected-tables.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const schemaFiles = readdirSync(resolve(root, "schema"))
@@ -16,29 +17,6 @@ const schemaRoot = `sha256:${createHash("sha256").update(JSON.stringify(
   })),
 )).digest("hex")}`;
 
-const expectedTables = [
-  "accounts",
-  "activity_audit_entries",
-  "approaches",
-  "artifact_refs",
-  "attempts",
-  "connected_codebases",
-  "discussion_entries",
-  "follows",
-  "github_installation_repositories",
-  "github_installations",
-  "github_webhook_deliveries",
-  "idempotency_records",
-  "pilot_telemetry",
-  "public_profile_handles",
-  "public_profile_performers",
-  "public_profiles",
-  "scientific_anchors",
-  "submission_drafts",
-  "workspace_crdt_updates",
-  "workspace_memberships",
-  "workspaces",
-];
 
 const migrate = process.argv.includes("--migrate");
 const check = process.argv.includes("--check");
