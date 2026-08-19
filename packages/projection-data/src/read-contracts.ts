@@ -127,6 +127,16 @@ function nullableString(row: Record<string, unknown>, field: string, label: stri
   return value;
 }
 
+/* Timestamp columns arrive as Date objects from the live driver and as ISO
+   strings from fixtures; both are the same instant. */
+function nullableInstant(row: Record<string, unknown>, field: string, label: string): string | null {
+  const value = row[field];
+  if (value === null || value === undefined) return null;
+  if (value instanceof Date) return value.toISOString();
+  if (typeof value !== "string") throw new Error(`${label} ${field} must be a timestamp or null`);
+  return value;
+}
+
 function finiteNumber(row: Record<string, unknown>, field: string, label: string): number {
   const value = row[field];
   if (typeof value !== "number" || !Number.isFinite(value)) {
@@ -530,7 +540,7 @@ export function deriveProblemFrontierGaps(edges: FrontierEdgeRecord[]): ProblemF
       && edge.problem_entity_id !== null
       && !acceptedEntities.has(edge.problem_entity_id)
     ) {
-      const key = `${edge.problem_entity_id} ${edge.source_ref}`;
+      const key = `${edge.problem_entity_id}\u0000${edge.source_ref}`;
       if (!occurrencesSeen.has(key)) {
         occurrencesSeen.add(key);
         gaps.push({
@@ -666,7 +676,7 @@ export function assembleProblemFrontierTimeline(
     const commit = edge.source_ref;
     const state = states.get(commit) ?? {
       commit_sha: commit,
-      committed_at: nullableString(row, "committed_at", label),
+      committed_at: nullableInstant(row, "committed_at", label),
       repository_root_before: nullableRoot(row, "repository_root_before", label),
       repository_root_after: requiredRoot(row, "repository_root_after", label),
       before_revision_root: nullableRoot(row, "before_revision_root", label),

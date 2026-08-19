@@ -472,6 +472,19 @@ describe("problem frontier reads", () => {
     ));
     expect(() => assembleProblemFrontierTimeline(drifted))
       .toThrow(/exact state_change edges/u);
+
+    /* The live driver hands timestamptz columns over as Date objects, not the
+       ISO strings the fixtures type. The first production release served zero
+       timelines because of exactly this. */
+    const driverDates = rows.map((row) => ({
+      ...row,
+      committed_at: row.committed_at === null ? null : new Date(row.committed_at as string),
+    }));
+    const fromDates = assembleProblemFrontierTimeline(driverDates);
+    expect(fromDates.map((state) => state.committed_at))
+      .toEqual(states.map((state) => (
+        state.committed_at === null ? null : new Date(state.committed_at).toISOString()
+      )));
   });
 
   test("keeps the SQL reads root-bound and keyset-paged", async () => {
