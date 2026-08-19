@@ -52,6 +52,7 @@ const problemsCodebasePage = "apps/problems/src/app/codebases/[id]/page.tsx";
 const problemsHostedAccount = "apps/problems/src/lib/hosted-account.ts";
 const problemsCodebaseInspection = "apps/problems/src/lib/codebase-inspection.ts";
 const problemsPublicContact = "apps/problems/src/lib/public-contact.ts";
+const problemsTelemetryRoute = "apps/problems/src/app/api/telemetry/route.ts";
 
 export const PROBLEMS_IDENTITY_FILES = [
   problemsAccountRoute,
@@ -79,8 +80,11 @@ const PROBLEMS_IDENTITY_ROUTES = new Set([
   problemsGithubWebhookRoute,
 ]);
 
+/* Routes whose POST caller is an external client rather than the browser
+   session: the GitHub provider and the consented content-free Workbench
+   pilot-telemetry emitter. */
 const PROBLEMS_PROVIDER_ROUTES = new Set([
-  problemsGithubInstallRoute, problemsGithubWebhookRoute,
+  problemsGithubInstallRoute, problemsGithubWebhookRoute, problemsTelemetryRoute,
 ]);
 
 const PROBLEMS_ACTIVITY_FILES = new Set([
@@ -96,6 +100,7 @@ const PROBLEMS_ACTIVITY_FILES = new Set([
   problemsHostedAccount,
   problemsGithubCompletion,
   problemsGithubWebhookRoute,
+  problemsTelemetryRoute,
 ]);
 
 const ALLOWED_IDENTITY_ACTIONS = new Map([
@@ -153,7 +158,8 @@ function exactProblemsFetch(file, content, fetches) {
 function inspectProblems(file, content, add) {
   const allowedRoute = problemsReadRoutes.has(file)
     || PROBLEMS_IDENTITY_ROUTES.has(file)
-    || file === problemsActivityDraftRoute;
+    || file === problemsActivityDraftRoute
+    || file === problemsTelemetryRoute;
   if (routeHandler.test(file) && !allowedRoute) {
     add("app_route_handler", "Vela Route Handlers are confined to declared exact reads, identity, and draft export");
   }

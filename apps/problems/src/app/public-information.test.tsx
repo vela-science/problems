@@ -27,6 +27,9 @@ describe("public trust surfaces", () => {
     const { rerender } = render(<PrivacyPage />);
     expect(screen.getByText(/read-only contents and metadata access/iu)).toBeVisible();
     expect(screen.getByText(/does not store a Repository authority key/iu)).toBeVisible();
+    expect(screen.getByText(/only from a Vela Workbench install whose user opted in/iu)).toBeVisible();
+    expect(screen.getByText(/never receives scientific contents, repository files, prompts, credentials, or signatures/iu)).toBeVisible();
+    expect(screen.getByText(/deleted after 90 days/iu)).toBeVisible();
 
     rerender(<TermsPage />);
     expect(screen.getByText(/hosted draft is unsigned/iu)).toBeVisible();

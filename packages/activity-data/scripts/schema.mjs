@@ -29,6 +29,7 @@ const expectedTables = [
   "github_installations",
   "github_webhook_deliveries",
   "idempotency_records",
+  "pilot_telemetry",
   "public_profile_handles",
   "public_profile_performers",
   "public_profiles",

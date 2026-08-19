@@ -18,6 +18,7 @@ export default function PrivacyPage() {
           <li><strong>Public profile:</strong> only if you create one, the product keeps the handle, display name, bio, affiliation, declared links, and visibility you choose. The default visibility is private; email and WorkOS identifiers are never profile fields.</li>
           <li><strong>Private work:</strong> followed Problems, workspaces, approaches, attempts, discussions, assignments, artifact metadata, import state, and unsigned Contribution drafts you choose to save.</li>
           <li><strong>GitHub connections:</strong> selected installation and repository identifiers, repository metadata, exact revisions, inspection results, and delivery receipts. The GitHub App requests read-only contents and metadata access for repositories you select.</li>
+          <li><strong>Pilot telemetry:</strong> only from a Vela Workbench install whose user opted in, the product receives content-free product signals: a stage name from a closed list, a timestamp, a random install identifier created at opt-in, and an elapsed stage duration. It never receives scientific contents, repository files, prompts, credentials, or signatures, is never joined to an account, and each entry is deleted after 90 days.</li>
         </InformationList>
       </InformationSection>
 
