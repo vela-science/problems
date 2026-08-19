@@ -71,7 +71,8 @@ export default function AboutPage() {
 
       <aside className={styles.boundary} aria-labelledby="about-boundary-title">
         <h2 id="about-boundary-title" className="text-title">What this site does not claim</h2>
-        <p className="mt-3 max-w-[72ch] text-body leading-7 text-muted-foreground">A signature proves attribution and integrity, not truth. A passing check does not accept a Result. An account does not grant scientific authority. Discovery helps a reader choose what to inspect next; exact identity and Repository-local decisions remain explicit.</p>
+        <p className="mt-3 max-w-[72ch] text-body leading-7 text-muted-foreground">A signature proves attribution and integrity, not truth. A passing check does not accept a Result. An account does not grant scientific authority. Search and browsing help a reader choose what to inspect; problems.science does not read the literature for new results, rank problems, or decide which question deserves attention next.</p>
+        <p className="mt-4 max-w-[72ch] text-body leading-7 text-muted-foreground">Keeping a contribution, its checks, and a decision on separate axes is a practice other scientific registries also follow, and some present it well. What this site adds is the admitted record behind a Result: the exact source it was scoped to, what each check covered, the named Repository decision that changed state, and every correction since, all replayable from the repository itself.</p>
         <details className="mt-5 border-t border-border pt-4 text-meta">
           <summary className="cursor-pointer font-medium text-foreground">Technical release details</summary>
           <p className="mt-3 max-w-[68ch] text-muted-foreground">The current source revisions, generator version, collection roots, and projection root are published in the exact site manifest.</p>
