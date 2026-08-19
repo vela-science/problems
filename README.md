@@ -134,7 +134,7 @@ source workflow. The July 2026 v1.1 designer handoff is recorded under
 `packages/brand/reference/2026-07-v1.1/`; reference artwork is excluded from
 production. The archived Problems at `vela-site@34e3f20` supplied product
 anatomy, not a second active implementation. Porting provenance is recorded in
-[`docs/problems-provenance.md`](docs/problems-provenance.md).
+[`docs/projection-provenance.md`](docs/projection-provenance.md).
 
 The internal Vela registry coordinates private product source. It is not a
 public registry or separately distributed component library. Licensed Tailwind
