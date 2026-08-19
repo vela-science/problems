@@ -172,6 +172,25 @@ Always keep these axes separate:
 An accepted contribution does not mean the Problem is solved. A passing check
 does not accept a contribution. A signed object proves attribution, not truth.
 
+### Claims boundary
+
+Copy must not say or imply that Vela is better at discovery, attention
+allocation, proof generation, novelty detection, or evidence-axis presentation.
+
+A frozen comparison on 2026-08-19 against FAR and a public problem registry
+found FAR stronger at literature-scale discovery and effort allocation, and
+found separated attempt, machine-check, formal-check, and status surfaces
+already present in a competing product, along with formalization-fidelity
+caveats, attribution, and a preserved retraction. Vela scores absent on
+discovery and allocation, and that is deliberate: it does not read the
+literature, rank Problems, or allocate effort.
+
+What the comparison did support is narrower: exact content-addressed source
+custody and Result scope, independently scoped Checks, an attributed Repository
+Decision with its Event and Standing, linked correction with replay, and
+reconstruction of admitted state from Git alone. Where a stronger claim would
+otherwise go, state that boundary instead.
+
 ## Core workflows
 
 ### Discover
