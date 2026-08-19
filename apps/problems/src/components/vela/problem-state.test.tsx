@@ -129,7 +129,6 @@ describe("Problem tools", () => {
   it("keeps the retired map query on the familiar Result surface", () => {
     render(<ProblemState state={state} basePath="/problems/erdos-problems/321" researchView="map" />);
     expect(screen.getByRole("heading", { name: "Current result" })).toBeVisible();
-    expect(screen.getByRole("link", { name: "Open map" })).toHaveAttribute("href", expect.stringContaining("/graph?repository=math&lens=research&node="));
     expect(screen.getByText("Technical details")).toBeVisible();
     expect(screen.queryByText("exact relationships")).toBeNull();
     expect(screen.queryByText("Current here")).toBeNull();

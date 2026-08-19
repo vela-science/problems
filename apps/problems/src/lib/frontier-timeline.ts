@@ -14,19 +14,25 @@ import type {
   FrontierState,
   FrontierTimelineData,
 } from "@/components/vela/frontier-timeline";
+import { exactResultHeadline } from "@/components/vela/problem-overview-reference";
 
 /* Maps the frontier reader's output onto the presentational timeline. The
  * mapping restates retained edges in first-layer words; it derives nothing the
  * projection did not already state, and each chip label is the fixed
  * translation of one projection basis class. */
 
-/** The five first-layer chip labels, one per projection basis class. */
+/** The five first-layer chip labels, one per projection basis class.
+ *  `exact_derivation` reads as "derived from records", not "exact derivation":
+ *  the basis is a mechanical derivation from retained records, and the earlier
+ *  label read as a mathematical derivation of the Result itself. The two
+ *  non-authoritative bases carry distinguishing prefixes ("source-",
+ *  "heuristic") because they share one neutral chip tone. */
 export const frontierBasisLabels: Record<ProjectionFrontierBasis, FrontierBasis> = {
   source_asserted: "source-asserted",
   mechanically_verified: "checked",
   authority_decided: "repository decision",
-  exact_derivation: "exact derivation",
-  heuristic_advisory: "advisory",
+  exact_derivation: "derived from records",
+  heuristic_advisory: "heuristic advisory",
 };
 
 function humanizeProperty(value: string | null | undefined): string | null {
@@ -39,6 +45,25 @@ function stringField(record: Record<string, unknown>, field: string): string | n
 }
 
 export type FrontierClaimRef = { id: string; assertion: string };
+
+/** The first-layer title for a Result reference: the same short summary the
+ *  Overview derives from the retained assertion, falling back to the first
+ *  sentence when the assertion matches no Overview headline shape. The full
+ *  assertion stays one click away behind the reference's href — inlining it
+ *  repeated one 120-word statement seven times on a single History page. */
+export function shortResultTitle(assertion: string): string {
+  const headline = exactResultHeadline(assertion);
+  if (headline) return headline;
+  const sentence = assertion.split(/(?<=[.!?])\s+/u)[0] ?? assertion;
+  return sentence.length <= 140 ? sentence : `${sentence.slice(0, 139).trimEnd()}…`;
+}
+
+/** Nonclaims arrive as retained sentences, some ending with their own period.
+ *  Joining them into one gap sentence supplies the terminal period, so a
+ *  trailing period here doubled it on the live page. */
+function joinNonclaims(nonclaims: string[]): string {
+  return nonclaims.map((nonclaim) => nonclaim.replace(/\.+$/u, "")).join("; ");
+}
 
 export function mapFrontierTimeline({ states, edges, gaps, claims, claimHref }: {
   states: ProblemFrontierTState[];
@@ -68,13 +93,16 @@ export function mapFrontierTimeline({ states, edges, gaps, claims, claimHref }: 
     .filter((edge) => edge.relation === "state_change")
     .map((edge) => [edge.source_ref, stringField(edge.basis_ref, "semantic_delta_root")]));
 
-  const resultRef = (claimId: string) => ({
-    /* The retained assertion where the release carries the Claim; the removed
-       side of an old correction may no longer be in current state, and then
-       the identifier is the only true title available. */
-    title: claimById.get(claimId)?.assertion ?? claimId,
-    href: claimHref?.(claimId) ?? null,
-  });
+  const resultRef = (claimId: string) => {
+    /* The Overview's short title where the release carries the Claim; the
+       removed side of an old correction may no longer be in current state, and
+       then the identifier is the only true title available. */
+    const claim = claimById.get(claimId);
+    return {
+      title: claim ? shortResultTitle(claim.assertion) : claimId,
+      href: claimHref?.(claimId) ?? null,
+    };
+  };
 
   const mapped = states.map((state): FrontierState => {
     const moved = [...state.accepted_added, ...state.accepted_removed];
@@ -107,11 +135,17 @@ export function mapFrontierTimeline({ states, edges, gaps, claims, claimHref }: 
     }
     const decision = moved.map((claimId) => decisionByClaim.get(claimId)).find(Boolean) ?? null;
     if (decision) {
+      /* Machine performance is first-layer, the same way the Result-history
+         header marks an agent performer: an `agent:` principal is stated as an
+         AI agent rather than left as a namespace only insiders can read. */
+      const reviewedBy = stringField(decision.basis_ref, "reviewed_by");
       evidence.push({
         stage: "repository decision",
         label: "Decision applied",
         basis: frontierBasisLabels.authority_decided,
-        detail: stringField(decision.basis_ref, "reviewed_by"),
+        detail: reviewedBy?.startsWith("agent:")
+          ? `AI agent ${reviewedBy.slice("agent:".length)}`
+          : reviewedBy,
       });
     }
     evidence.push({
@@ -147,25 +181,30 @@ export function mapFrontierTimeline({ states, edges, gaps, claims, claimHref }: 
 
   return {
     states: mapped,
+    /* Gap sentences lead with a first-layer subject; the exact record or
+       occurrence identifier moves into the disclosure idiom via `ref`. */
     gaps: gaps.map((gap) => {
       if (gap.kind === "unresolved_equivalence") {
         return {
           id: `${gap.kind}:${gap.occurrence_ref}`,
-          sentence: `${gap.occurrence_ref} is grouped by the reviewed resolver; semantic equivalence not established.`,
+          sentence: "A grouped formal statement may state a different theorem; equivalence not established.",
           basis: frontierBasisLabels.heuristic_advisory,
+          ref: gap.occurrence_ref,
         };
       }
       if (gap.kind === "verification_nonclaim") {
         return {
           id: `${gap.kind}:${gap.verification_ref}`,
-          sentence: `A check on ${gap.verification_ref} does not establish: ${gap.nonclaims.join("; ")}.`,
+          sentence: `This check does not establish: ${joinNonclaims(gap.nonclaims)}.`,
           basis: frontierBasisLabels.mechanically_verified,
+          ref: gap.verification_ref,
         };
       }
       return {
         id: `${gap.kind}:${gap.occurrence_ref}`,
-        sentence: `${gap.occurrence_ref} has no accepted Result.`,
+        sentence: "A retained source occurrence has no accepted Result.",
         basis: frontierBasisLabels.heuristic_advisory,
+        ref: gap.occurrence_ref,
       };
     }),
   };

@@ -3,7 +3,6 @@ import {
   AlertCircleIcon,
   CancelCircleIcon,
   CheckmarkCircle01Icon,
-  GitForkIcon,
   MinusSignCircleIcon,
   SourceCodeIcon,
 } from "@hugeicons/core-free-icons";
@@ -69,12 +68,7 @@ function CurrentResult({ state, basePath }: { state: State; basePath: string }) 
 
   const sourceBindings = claim.source_bindings ?? [];
   return <section aria-labelledby="current-result-heading">
-    <div className="flex flex-wrap items-center justify-between gap-3">
-      <h2 id="current-result-heading" className="text-title">Current result</h2>
-      <Button nativeButton={false} size="sm" variant="outline" render={<Link href={`/graph?repository=${state.repositorySlug}&lens=research&node=${encodeURIComponent(claim.id)}`} />}>
-        <HugeiconsIcon icon={GitForkIcon} aria-hidden /> Open map
-      </Button>
-    </div>
+    <h2 id="current-result-heading" className="text-title">Current result</h2>
 
     <div className="vela-object-surface mt-5 overflow-hidden">
       <header className="flex flex-wrap items-center justify-between gap-3 border-b bg-muted/20 px-4 py-3 sm:px-5">

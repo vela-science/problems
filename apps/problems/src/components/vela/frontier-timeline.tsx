@@ -12,9 +12,9 @@ import { formatDate } from "@/lib/format";
  * Two house rules govern the shape. Exact roots and event identifiers live
  * only inside the details disclosure, matching the "Exact identities" idiom
  * one section up. And every stated relationship carries a visible basis chip
- * — source-asserted, checked, repository decision, exact derivation, or
- * advisory — so no edge in the flow is an unlabeled line a reader has to
- * trust. */
+ * — source-asserted, checked, repository decision, derived from records, or
+ * heuristic advisory — so no edge in the flow is an unlabeled line a reader
+ * has to trust. */
 
 /** How a stated relationship is known. The chip renders this string as its
  *  visible label; the tone maps it into the existing status vocabulary
@@ -23,8 +23,8 @@ export type FrontierBasis =
   | "source-asserted"
   | "checked"
   | "repository decision"
-  | "exact derivation"
-  | "advisory";
+  | "derived from records"
+  | "heuristic advisory";
 
 /** A Result the state added to or removed from the frontier. */
 export type FrontierResultRef = {
@@ -80,6 +80,9 @@ export type FrontierGap = {
   sentence: string;
   /** How the gap statement is known, when the reader can say. */
   basis?: FrontierBasis;
+  /** The exact record or occurrence identifier the sentence is about.
+   *  Disclosure-only, never part of the first-layer sentence. */
+  ref?: string | null;
 };
 
 /** The whole prop contract, for the integration seam in ProblemHistory. */
@@ -89,16 +92,17 @@ export type FrontierTimelineData = {
 };
 
 /* Basis maps into the existing tone vocabulary rather than a new palette:
- * checked and exact derivation are the evidence family, a repository
+ * checked and derived from records are the evidence family, a repository
  * decision is the decision family, and the two non-authoritative bases stay
  * neutral. The visible label — not the colour — is what separates members of
- * one family, which is the same rule the status axes follow. */
+ * one family, which is the same rule the status axes follow; the neutral pair
+ * carries its distinguishing prefixes ("source-", "heuristic") in the label. */
 const basisTones: Record<FrontierBasis, StatusTone> = {
   "source-asserted": "neutral",
   checked: "evidence",
   "repository decision": "progress",
-  "exact derivation": "evidence",
-  advisory: "neutral",
+  "derived from records": "evidence",
+  "heuristic advisory": "neutral",
 };
 
 function BasisChip({ basis }: { basis: FrontierBasis }) {
@@ -121,7 +125,7 @@ function ResultRefs({ lead, refs }: { lead: string; refs: FrontierResultRef[] })
       <p className="text-meta font-medium text-muted-foreground">{lead}</p>
       <ul className="mt-1 space-y-1">
         {refs.map((ref) => (
-          <li key={ref.title} className="min-w-0 text-compact">
+          <li key={ref.href ?? ref.title} className="min-w-0 text-compact">
             {ref.href
               ? <a href={ref.href} className="font-medium text-primary underline-offset-4 hover:underline">{ref.title}</a>
               : ref.title}
@@ -218,6 +222,12 @@ export function FrontierTimeline({ states, gaps = [] }: { states: FrontierState[
               <li key={gap.id} className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-compact">
                 <span className="min-w-0">{gap.sentence}</span>
                 {gap.basis ? <BasisChip basis={gap.basis} /> : null}
+                {gap.ref ? (
+                  <details className="min-w-0 basis-full text-meta">
+                    <summary className="cursor-pointer font-medium text-muted-foreground">Exact identity</summary>
+                    <div className="mt-1"><RecordId value={gap.ref} /></div>
+                  </details>
+                ) : null}
               </li>
             ))}
           </ul>
