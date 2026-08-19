@@ -314,7 +314,9 @@ Adapt the shadcn.io command-menu behavior already inspected: breadcrumb-aware
 groups, immediate filtering, keyboard selection, and human labels before exact
 identifiers. Home uses a prominent search field; other routes use compact search
 and filters. Search results always qualify numeric Problem identity by
-collection.
+collection. The Add contribution route reuses this behavior as a real Problem
+chooser and sends a selection directly to Work; it does not lead with a step
+diagram or repeat the workflow in prose.
 
 ### Editorial site and product brand opening
 

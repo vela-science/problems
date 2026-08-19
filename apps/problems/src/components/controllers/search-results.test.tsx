@@ -9,10 +9,10 @@ const problemCollections = [
   { namespace: "formal-conjectures", name: "Formal Conjectures", identifierKind: "slug" as const, recordLabels: { "wikipedia-oppermann-conjecture": "Oppermann's Conjecture" } },
 ];
 
-const navigation = vi.hoisted(() => ({ params: new URLSearchParams() }));
+const navigation = vi.hoisted(() => ({ params: new URLSearchParams(), push: vi.fn() }));
 vi.mock("next/navigation", () => ({
   usePathname: () => "/search",
-  useRouter: () => ({ push: vi.fn() }),
+  useRouter: () => ({ push: navigation.push }),
   useSearchParams: () => navigation.params,
 }));
 
@@ -35,6 +35,7 @@ describe("SearchResults", () => {
     navigation.params = new URLSearchParams();
     window.history.replaceState(null, "", "/search");
     vi.mocked(loadSearchIndex).mockReset();
+    navigation.push.mockReset();
   });
 
   test("waits for explicit search intent instead of dumping the corpus", () => {
@@ -75,10 +76,14 @@ describe("SearchResults", () => {
       assertion: "A question about arithmetic progressions",
       href: "/problems/erdos-problems/321",
       standing: "unassessed",
+      source_status: "solved",
+      result_standing: null,
     })] } as never);
 
     const view = render(<SearchResults projectionRoot="sha256:test" searchRoot="sha256:search" repositories={["math"]} problemCollections={problemCollections} />);
     expect(await screen.findByText("Erdős Problems · #321")).toBeVisible();
+    expect(screen.getByText("Source · solved")).toBeVisible();
+    expect(screen.getByText("No reviewed Result")).toBeVisible();
     view.unmount();
   });
 
@@ -92,10 +97,48 @@ describe("SearchResults", () => {
       source_title: "Formal Conjectures",
       href: "/problems/formal-conjectures/wikipedia-oppermann-conjecture",
       standing: "source_open",
+      source_status: "open",
+      result_standing: null,
     })] } as never);
 
     const view = render(<SearchResults projectionRoot="sha256:test" searchRoot="sha256:search" repositories={["math"]} problemCollections={problemCollections} />);
     expect(await screen.findByText("Formal Conjectures · Oppermann's Conjecture")).toBeVisible();
+    expect(screen.getByText("Source · open")).toBeVisible();
+    expect(screen.getByText("No reviewed Result")).toBeVisible();
+    view.unmount();
+  });
+
+  test("takes contribution searches straight to the chosen Problem's Work view", async () => {
+    navigation.params = new URLSearchParams("q=321&kind=claim&repository=erdos&standing=accepted&intent=contribute");
+    vi.mocked(loadSearchIndex).mockResolvedValue({ records: [record({
+      kind: "problem",
+      repository: "math",
+      id: "erdos:321",
+      assertion: "A question about arithmetic progressions",
+      href: "/problems/erdos-problems/321",
+      standing: "unassessed",
+      source_status: "open",
+      result_standing: null,
+    })] } as never);
+
+    const view = render(<SearchResults projectionRoot="sha256:test" searchRoot="sha256:search" repositories={["math"]} problemCollections={problemCollections} />);
+    const result = await screen.findByRole("option", { name: /A question about arithmetic progressions/iu });
+    expect(screen.getByText("Choose a Problem")).toBeVisible();
+    expect(screen.queryByText("Repository")).toBeNull();
+    expect(screen.queryByText("Kind")).toBeNull();
+    expect(screen.queryByText("State")).toBeNull();
+    expect(loadSearchIndex).toHaveBeenCalledWith("sha256:test", "sha256:search", "sha256:collection", expect.objectContaining({ kind: "problem", repository: undefined, standing: undefined }));
+    await userEvent.click(result);
+    expect(navigation.push).toHaveBeenCalledWith("/problems/erdos-problems/321?view=work");
+    view.unmount();
+  });
+
+  test("reports a bounded page without claiming it is the full catalogue", async () => {
+    navigation.params = new URLSearchParams("collection=erdos-problems");
+    vi.mocked(loadSearchIndex).mockResolvedValue({ records: [record({ kind: "problem", id: "erdos:1", href: "/problems/erdos-problems/1", source_status: "open", result_standing: null })], total: 1_217 } as never);
+
+    const view = render(<SearchResults projectionRoot="sha256:test" searchRoot="sha256:search" repositories={["math"]} problemCollections={problemCollections} />);
+    expect(await screen.findByText("Showing 1 of 1,217 results")).toBeVisible();
     view.unmount();
   });
 

@@ -27,6 +27,7 @@ import {
   statementParagraphs,
 } from "@/lib/problem-statement";
 import type { ScientificProblemState } from "@/lib/scientific-state";
+import { resultConditionPresentation } from "@/lib/result-condition";
 import styles from "./problem-overview-reference.module.css";
 
 type State = NonNullable<ScientificProblemState>;
@@ -237,7 +238,7 @@ export function ProblemOverviewReference({ state, route }: { state: State; route
               <summary>Exact result and limitations</summary>
               <div className={styles.technicalBody}>
                 <p><AssertionText text={current.assertion} /></p>
-                {current.conditions.length ? <ul className="mt-3 list-disc space-y-1 pl-5 text-[color:var(--ref-muted)]">{current.conditions.map((condition) => <li key={condition}>{condition}</li>)}</ul> : null}
+                {current.conditions.length ? <ul className="mt-3 list-disc space-y-1 pl-5 text-[color:var(--ref-muted)]">{current.conditions.map((condition) => <li key={condition}>{resultConditionPresentation(condition)}</li>)}</ul> : null}
               </div>
             </details> : null}
             {current ? <div className={styles.relationshipStrip}>

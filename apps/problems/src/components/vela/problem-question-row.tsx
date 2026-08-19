@@ -12,11 +12,12 @@ type State = NonNullable<ScientificProblemState>;
  * The catalogue's own text for most Problems is "Erdős problem 412", so a row
  * built from the record alone tells a reader nothing they can choose between.
  * The written question comes from a source, and the row says which one. */
-export function ProblemQuestionRow({ state, href, number, collectionLabel = "Problem" }: {
+export function ProblemQuestionRow({ state, href, number, collectionLabel = "Problem", actionLabel }: {
   state: State;
   href: string;
   number: string;
   collectionLabel?: string;
+  actionLabel?: string;
 }) {
   const statement = resolveProblemStatement(state);
   const { question } = statementParagraphs(statement);
@@ -28,7 +29,7 @@ export function ProblemQuestionRow({ state, href, number, collectionLabel = "Pro
   const name = question ? `${collectionLabel} ${number}: ${statementPlainText(question)}` : `${collectionLabel} ${number}`;
 
   return <li className="min-w-0">
-    <Link href={href} aria-label={name} className="vela-object-row group -mx-2 flex min-w-0 gap-4 rounded-md px-2 py-4 focus-visible:outline-2 focus-visible:outline-offset-2">
+    <Link href={href} aria-label={actionLabel ? `${actionLabel}: ${name}` : name} className="vela-object-row group -mx-2 flex min-w-0 gap-4 rounded-md px-2 py-4 focus-visible:outline-2 focus-visible:outline-offset-2">
       <span aria-hidden className="mt-0.5 w-12 shrink-0 font-mono text-meta tabular-nums text-muted-foreground">{`#${number}`}</span>
       <span className="min-w-0 flex-1">
         <span className="block max-w-[76ch] text-compact leading-6 group-hover:underline group-hover:decoration-border group-hover:underline-offset-4">
@@ -44,7 +45,10 @@ export function ProblemQuestionRow({ state, href, number, collectionLabel = "Pro
           {statement ? <span className="truncate">via {statement.sourceLabel}</span> : null}
         </span>
       </span>
-      <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden className="mt-1 size-4 shrink-0 text-muted-foreground opacity-0 transition-[opacity,transform] duration-150 group-hover:translate-x-0.5 group-hover:opacity-100 group-focus-visible:opacity-100" />
+      <span className="mt-0.5 flex shrink-0 items-center gap-2 text-meta font-medium text-primary">
+        {actionLabel ? <span className="hidden sm:inline">{actionLabel}</span> : null}
+        <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden className={`size-4 transition-[opacity,transform] duration-150 group-hover:translate-x-0.5 ${actionLabel ? "" : "opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100"}`} />
+      </span>
     </Link>
   </li>;
 }

@@ -2,13 +2,25 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import {
   ArrowRight01Icon as ArrowRight,
+  CodeIcon,
+  GitBranchIcon,
   PuzzleIcon,
-  WorkIcon,
+  Search01Icon as Search,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { formalConjecturesCollection } from "@vela/projection-data";
+import { Badge } from "@vela/ui/components/badge";
 import { Button } from "@vela/ui/components/button";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@vela/ui/components/input-group";
 import { PageHero, PageSection, PageShell } from "@vela/ui/vela/page-shell";
-import { ContributionStepper } from "@/components/vela/contribution-stepper";
+import { ScientificText } from "@vela/ui/vela/scientific-text";
+import { ProblemQuestionRow } from "@/components/vela/problem-question-row";
+import { discoveredProblems, problemStatePreviews } from "@/lib/scientific-state";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -16,43 +28,84 @@ export const metadata: Metadata = {
   description: "Start from a Problem, check prior work, and prepare evidence for review.",
 };
 
-export default function WorkPage() {
+const ERDOS_COLLECTION = "/problems/erdos-problems";
+const FORMAL_COLLECTION = "/problems/formal-conjectures";
+
+export default async function WorkPage() {
+  const catalog = await discoveredProblems();
+  const candidates = [
+    ...catalog
+      .filter((problem) => problem.record.local_standing)
+      .sort((left, right) => (right.record.local_assessed_at ?? "").localeCompare(left.record.local_assessed_at ?? "")),
+    ...catalog.filter((problem) => problem.record.declared_status === "open" && problem.record.formalized && !problem.record.local_standing),
+  ].filter((problem) => problem.canonicalPath).slice(0, 3);
+  const candidatePreviews = await problemStatePreviews(candidates);
+  const formalCandidate = formalConjecturesCollection.data.items[0] ?? null;
+
   return (
     <PageShell archetype="work">
       <PageHero density="compact" className="vela-work-hero">
-        <div className="flex items-center gap-2">
-          <HugeiconsIcon icon={WorkIcon} aria-hidden className="size-5" />
-          <p className="text-eyebrow uppercase text-muted-foreground">Start from a Problem</p>
-        </div>
-        <h1 className="mt-3 text-display">Add a contribution</h1>
-        <p className="mt-3 max-w-2xl text-body text-muted-foreground">
-          Choose the question first so its scope, prior work, sources, and contribution path
-          are already in view.
-        </p>
-        <Button className="mt-6" nativeButton={false} render={<Link href="/problems" />}>
-          Choose a Problem <HugeiconsIcon icon={ArrowRight} aria-hidden data-icon="inline-end" />
-        </Button>
+        <h1 className="text-display">Choose a Problem</h1>
+        <p className="mt-3 max-w-2xl text-body text-muted-foreground">Open its Work view to check prior approaches, attach evidence, and prepare a Result.</p>
+        <form action="/search" method="get" aria-label="Find a Problem to contribute to" className="mt-6 max-w-3xl">
+          <input type="hidden" name="kind" value="problem" />
+          <input type="hidden" name="intent" value="contribute" />
+          <label htmlFor="contribution-problem-search" className="sr-only">Find a Problem to contribute to</label>
+          <InputGroup className="h-14 border-input bg-background shadow-[var(--vela-shadow-raised)] focus-within:border-primary">
+            <InputGroupAddon><HugeiconsIcon icon={Search} aria-hidden className="size-5" /></InputGroupAddon>
+            <InputGroupInput id="contribution-problem-search" name="q" type="search" maxLength={200} placeholder="Search by question, collection, or number" />
+            <InputGroupAddon align="inline-end"><InputGroupButton type="submit" variant="secondary" className="h-10 px-4">Find Problem</InputGroupButton></InputGroupAddon>
+          </InputGroup>
+        </form>
       </PageHero>
 
-      <PageSection aria-labelledby="contribution-path-heading">
-        <span id="contribution-path-heading" className="sr-only">Contribution path</span>
-        <ContributionStepper current={1} />
-        <p className="mt-6 max-w-[76ch] rounded-lg border bg-status-evidence/5 px-4 py-3 text-compact text-muted-foreground">Before attaching new work, read accepted and partial results and check prior approaches. Use exact matches to identify prior work; similarity only suggests possible overlap.</p>
-      </PageSection>
+      <PageSection className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-14" aria-labelledby="starting-points-heading">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-end justify-between gap-3 border-b pb-3">
+            <div><p className="text-meta text-muted-foreground">Published collections</p><h2 id="starting-points-heading" className="mt-1 text-title">Starting points</h2></div>
+            <Link href="/problems" className="text-meta font-medium text-primary hover:underline">Browse all Problems</Link>
+          </div>
 
-      <PageSection as="nav" aria-label="Choose a scientific Problem">
-        {[
-          { href: "/problems", icon: PuzzleIcon, title: "Browse Problems", detail: "Start from the question and the evidence already attached to it" },
-        ].map((item) => (
-          <Link key={item.href} href={item.href} className="group flex min-h-24 items-start gap-3 rounded-lg px-4 py-4 hover:bg-background focus-visible:outline-2 focus-visible:outline-offset-2">
-            <HugeiconsIcon icon={item.icon} aria-hidden className="mt-0.5 size-5" />
-            <span>
-              <span className="block text-label font-medium">{item.title}</span>
-              <span className="mt-1 block text-meta text-muted-foreground">{item.detail}</span>
-            </span>
-            <HugeiconsIcon icon={ArrowRight} aria-hidden className="ml-auto mt-0.5 size-4 transition-transform group-hover:translate-x-1" />
-          </Link>
-        ))}
+          <section aria-labelledby="erdos-starting-points" className="mt-4">
+            <div className="flex items-center justify-between gap-3 px-2 py-2">
+              <h3 id="erdos-starting-points" className="flex items-center gap-2 text-label"><HugeiconsIcon icon={PuzzleIcon} aria-hidden className="size-4 text-primary" />Erdős Problems</h3>
+              <Link href={ERDOS_COLLECTION} className="text-micro font-medium text-muted-foreground hover:text-foreground">View collection</Link>
+            </div>
+            {candidatePreviews.length ? <ul className="divide-y" aria-labelledby="erdos-starting-points">
+              {candidatePreviews.map(({ discovery, state }) => <ProblemQuestionRow
+                key={`${discovery.repository}/${discovery.problem}`}
+                state={state}
+                number={discovery.problem}
+                collectionLabel="Erdős problem"
+                href={`${discovery.canonicalPath}?view=work`}
+                actionLabel="Open Work"
+              />)}
+            </ul> : <p className="px-2 py-5 text-compact text-muted-foreground">No Problem with a retained question is available to start from.</p>}
+          </section>
+
+          {formalCandidate ? <section aria-labelledby="formal-starting-points" className="mt-6">
+            <div className="flex items-center justify-between gap-3 px-2 py-2">
+              <h3 id="formal-starting-points" className="flex items-center gap-2 text-label"><HugeiconsIcon icon={CodeIcon} aria-hidden className="size-4 text-primary" />Formal Conjectures</h3>
+              <Link href={FORMAL_COLLECTION} className="text-micro font-medium text-muted-foreground hover:text-foreground">View collection</Link>
+            </div>
+            <ul aria-labelledby="formal-starting-points"><li>
+              <Link href={`${FORMAL_COLLECTION}/${formalCandidate.route_slug}?view=work`} aria-label={`Open Work: ${formalCandidate.title}`} className="vela-object-row group -mx-2 flex min-w-0 gap-4 rounded-md px-2 py-4 focus-visible:outline-2 focus-visible:outline-offset-2">
+                <span aria-hidden className="mt-0.5 grid size-8 shrink-0 place-items-center rounded-md bg-primary/10 text-primary"><HugeiconsIcon icon={CodeIcon} className="size-4" /></span>
+                <span className="min-w-0 flex-1"><span className="block max-w-[76ch] text-compact leading-6 group-hover:underline group-hover:decoration-border group-hover:underline-offset-4"><ScientificText text={formalCandidate.title} /></span><span className="mt-1.5 flex flex-wrap gap-2 text-meta text-muted-foreground"><span>{formalCandidate.source_family}</span><Badge variant="secondary" className="h-5 capitalize">{formalCandidate.category}</Badge></span></span>
+                <span className="mt-0.5 flex shrink-0 items-center gap-2 text-meta font-medium text-primary"><span className="hidden sm:inline">Open Work</span><HugeiconsIcon icon={ArrowRight} aria-hidden className="size-4 transition-transform duration-150 group-hover:translate-x-0.5" /></span>
+              </Link>
+            </li></ul>
+          </section> : null}
+        </div>
+
+        <aside aria-label="Other contribution paths" className="h-fit border-l pl-5">
+          <h2 className="text-label">Already have work?</h2>
+          <p className="mt-2 text-meta text-muted-foreground">Connect a GitHub repository or exact public commit, then attach it to a Problem.</p>
+          <Button className="mt-4 w-full justify-between" variant="outline" nativeButton={false} render={<Link href="/import" />}>
+            <span className="flex items-center gap-2"><HugeiconsIcon icon={GitBranchIcon} aria-hidden className="size-4" />Connect code</span><HugeiconsIcon icon={ArrowRight} aria-hidden data-icon="inline-end" />
+          </Button>
+          <p className="mt-5 border-t pt-4 text-micro text-muted-foreground">Problems keeps the draft and handoff visible. Source files, local tools, credentials, and execution stay in GitHub or your local workspace.</p>
+        </aside>
       </PageSection>
     </PageShell>
   );

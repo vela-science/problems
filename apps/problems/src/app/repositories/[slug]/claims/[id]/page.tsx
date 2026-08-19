@@ -34,6 +34,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@vela/ui/co
 import { Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemTitle } from "@vela/ui/components/item";
 import { RootFact } from "@/components/vela/root-fact";
 import { ReviewProvenance } from "@/components/vela/review-provenance";
+import { resultConditionPresentation } from "@/lib/result-condition";
 
 export const dynamicParams = true;
 export const dynamic = "force-static";
@@ -307,7 +308,7 @@ export default async function FindingPage({ params }: PageProps<"/repositories/[
           <section><h2 className="mb-3 text-subtitle">Scope and conditions</h2>
             {claim.conditions.length ? (
               <ul className="max-w-3xl list-disc space-y-1 pl-5 text-body leading-6 text-muted-foreground">
-                {claim.conditions.map((condition) => <li key={condition}>{condition}</li>)}
+                {claim.conditions.map((condition) => <li key={condition}>{resultConditionPresentation(condition)}</li>)}
               </ul>
             ) : (
               <p className="max-w-3xl text-body leading-6 text-muted-foreground">No additional conditions are projected for this record. Inspect the exact source for complete caveats.</p>

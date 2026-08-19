@@ -24,7 +24,7 @@ product: problems.science application
 | `/updates` | Meaningful published changes | Open affected context |
 | `/activity` | Permanent compatibility redirect | Continue to Updates |
 | `/search` | Cross-product results | Open the named object |
-| `/contribute` | Contribution workflow | Choose a Problem |
+| `/contribute` | Problem chooser and code handoff | Search or open Work |
 | `/import` | Exact GitHub revision | Inspect or connect code |
 | `/my-work` | Private work continuity | Open saved work |
 | `/account` | Identity, connections, and session | Manage or continue |
@@ -93,6 +93,11 @@ current names only.
 - Missing data gets a compact missing state, not speculative prose.
 
 ## Work and account boundary
+
+Add contribution is an active entry surface, not a workflow explainer. It
+searches both published collections, offers a short exact list of Problems,
+opens the selected Problem's Work view, and keeps GitHub import as a distinct
+secondary path.
 
 Hosted Work may manage account-scoped workspaces, approaches, attempts, notes,
 Research Blocks, follows, artifact references, and unsigned Submission v3

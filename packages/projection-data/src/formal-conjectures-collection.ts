@@ -174,8 +174,13 @@ export const formalConjecturesCollectionRoot = formalConjecturesCollection.roots
 
 export function compositeSearchRoot(projectionRoot: HashRoot): HashRoot {
   return sha256(canonicalJson({
-    schema: "site.composite-search-identity.v1",
+    /* v3 includes the projection-owned Problem catalogue and its two explicit
+       source-status/Result-standing fields in the public search body. The salt
+       is part of the immutable response identity: changing bytes selected from
+       an unchanged projection must not reuse a year-long cache key. */
+    schema: "site.composite-search-identity.v3",
     projection_root: projectionRoot,
+    projection_collections: ["erdos-problems"],
     supplemental_collections: [{
       collection_id: formalConjecturesCollection.collection_id,
       collection_root: formalConjecturesCollectionRoot,
@@ -199,6 +204,8 @@ export function formalConjecturesSearchRecords(query = ""): SiteSearchRecord[] {
     assertion: item.title,
     source_title: formalConjecturesCollection.name,
     standing: "source_open",
+    source_status: "open",
+    result_standing: null,
     href: `/problems/formal-conjectures/${item.route_slug}`,
   }));
 }

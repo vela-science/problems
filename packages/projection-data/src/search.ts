@@ -7,6 +7,10 @@ export interface SiteSearchRecord {
   assertion: string;
   source_title: string | null;
   standing: string;
+  /** Source-owned status for a Problem occurrence, kept separate from any Repository-local Result. */
+  source_status?: string | null;
+  /** Repository-local Result standing for a Problem, absent when no Result is bound. */
+  result_standing?: string | null;
   href: string;
 }
 
