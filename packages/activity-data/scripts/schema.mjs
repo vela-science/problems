@@ -29,6 +29,7 @@ const expectedTables = [
   "github_installations",
   "github_webhook_deliveries",
   "idempotency_records",
+  "pilot_telemetry",
   "public_profile_handles",
   "public_profile_performers",
   "public_profiles",
@@ -102,8 +103,9 @@ if (migrate) {
     has_function_privilege(current_user, 'activity_api.ensure_account(text,text,text)', 'EXECUTE') AS account_api,
     has_function_privilege(current_user, 'activity_api.list_github_connections(uuid)', 'EXECUTE') AS github_api,
     has_function_privilege(current_user, 'activity_api.get_public_profile(text,uuid)', 'EXECUTE') AS public_profile_read,
-    has_function_privilege(current_user, 'activity_api.save_public_profile(uuid,jsonb,bigint)', 'EXECUTE') AS public_profile_write`);
-  if (!access?.api_usage || access.storage_usage || access.temporary_access || access.base_access || !access.account_api || !access.github_api || !access.public_profile_read || !access.public_profile_write) {
+    has_function_privilege(current_user, 'activity_api.save_public_profile(uuid,jsonb,bigint)', 'EXECUTE') AS public_profile_write,
+    has_function_privilege(current_user, 'activity_api.record_pilot_telemetry(text,text,text,timestamptz,bigint)', 'EXECUTE') AS pilot_telemetry`);
+  if (!access?.api_usage || access.storage_usage || access.temporary_access || access.base_access || !access.account_api || !access.github_api || !access.public_profile_read || !access.public_profile_write || !access.pilot_telemetry) {
     throw new Error(`activity application role boundary failed: ${JSON.stringify(access)}`);
   }
 }

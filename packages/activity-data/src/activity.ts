@@ -35,6 +35,11 @@ import {
   type SubmissionDraftExport,
 } from "./draft-submission";
 import { activityDatabaseError } from "./errors";
+import {
+  pilotTelemetryRecord,
+  type PilotTelemetryReceipt,
+  type PilotTelemetryRecord,
+} from "./pilot-telemetry";
 import { parseCrdtUpdates, parseProblemActivity as parseProblemActivityResponse } from "./problem-activity";
 
 type JsonRecord = Record<string, unknown>;
@@ -494,6 +499,24 @@ export function saveSubmissionDraft(
     payload,
     payload_root: sha256(canonicalJson(payload)),
   }, options, expectedVersion);
+}
+
+export async function recordPilotTelemetry(input: PilotTelemetryRecord): Promise<PilotTelemetryReceipt> {
+  const parsed = pilotTelemetryRecord.parse(input);
+  try {
+    const rows = await activitySql().query(
+      "SELECT activity_api.record_pilot_telemetry($1, $2, $3, $4::timestamptz, $5::bigint) AS result",
+      [parsed.install_id, parsed.record_id, parsed.signal, parsed.occurred_at, parsed.stage_ms ?? null],
+    );
+    const result = record(rows[0]?.result, "pilot telemetry");
+    if (typeof result.stored !== "boolean" || typeof result.duplicate !== "boolean"
+      || result.authority_effect !== "none") {
+      throw new Error("pilot telemetry response is invalid");
+    }
+    return { stored: result.stored, duplicate: result.duplicate, authorityEffect: "none" };
+  } catch (error) {
+    throw activityDatabaseError(error);
+  }
 }
 
 export async function exportSubmissionDraft(
