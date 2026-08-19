@@ -16,6 +16,105 @@ export type ActivityAccount = {
   createdAt: string;
 };
 
+export type PublicProfileVisibility = "private" | "unlisted" | "public";
+export type PublicProfileLinks = Partial<Record<"github" | "orcid" | "website" | "lab", string>>;
+
+export type PublicProfilePerformerLink = {
+  performerId: string;
+  performerKind: "human" | "agent" | "organization";
+  verificationKind: "signed_record" | "connected_github" | "connected_orcid" | "source_owner";
+  evidenceLocator: string;
+  createdAt: string;
+};
+
+export type PublicProfileHandle = {
+  handle: string;
+  createdAt: string;
+  retiredAt: string | null;
+};
+
+export type PublicProfile = {
+  id: string;
+  handle: string;
+  profileKind: "account";
+  status: "active";
+  displayName: string;
+  bio: string;
+  affiliation: string;
+  visibility: PublicProfileVisibility;
+  links: PublicProfileLinks;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  handles: PublicProfileHandle[];
+  performers: PublicProfilePerformerLink[];
+  requestedHandle?: string;
+  redirect?: boolean;
+  ownerPreview?: boolean;
+};
+
+export type SavePublicProfileInput = {
+  handle: string;
+  displayName: string;
+  bio: string;
+  affiliation: string;
+  visibility: PublicProfileVisibility;
+  links: PublicProfileLinks;
+};
+
+const reservedProfileHandles = new Set([
+  "account", "admin", "api", "auth", "help", "people", "problems",
+  "problems-science", "root", "security", "support", "system", "vela",
+]);
+
+export function normalizePublicProfileHandle(value: string): string {
+  const handle = value.trim().toLowerCase();
+  if (!/^[a-z0-9](?:[a-z0-9-]{1,37}[a-z0-9])$/u.test(handle) || handle.startsWith("p-") || reservedProfileHandles.has(handle)) {
+    throw new Error("Profile handle must be 3–39 lowercase letters, numbers, or interior hyphens and cannot use a reserved product name");
+  }
+  return handle;
+}
+
+function publicProfileUrl(value: string, kind: keyof PublicProfileLinks): string {
+  let url: URL;
+  try {
+    url = new URL(value.trim());
+  } catch {
+    throw new Error(`${kind} link must be a complete HTTPS URL`);
+  }
+  if (url.protocol !== "https:" || url.username || url.password || url.hash || value.length > 500) {
+    throw new Error(`${kind} link must be a safe HTTPS URL without credentials or a fragment`);
+  }
+  if (kind === "github" && (url.hostname !== "github.com" || url.pathname.split("/").filter(Boolean).length !== 1)) {
+    throw new Error("GitHub link must identify one github.com account or organization");
+  }
+  if (kind === "orcid" && (url.hostname !== "orcid.org" || !/^\/\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/u.test(url.pathname))) {
+    throw new Error("ORCID link must use a complete orcid.org identifier");
+  }
+  return url.toString();
+}
+
+export function normalizePublicProfileInput(input: SavePublicProfileInput): SavePublicProfileInput {
+  const displayName = input.displayName.trim();
+  const bio = input.bio.trim();
+  const affiliation = input.affiliation.trim();
+  if (!displayName || displayName.length > 120) throw new Error("Profile name must contain 1–120 characters");
+  if (bio.length > 800) throw new Error("Profile bio must contain at most 800 characters");
+  if (affiliation.length > 240) throw new Error("Profile affiliation must contain at most 240 characters");
+  if (!["private", "unlisted", "public"].includes(input.visibility)) throw new Error("Profile visibility is invalid");
+  const links = Object.fromEntries(Object.entries(input.links)
+    .filter((entry): entry is [keyof PublicProfileLinks, string] => Boolean(entry[1]?.trim()))
+    .map(([kind, value]) => [kind, publicProfileUrl(value, kind)])) as PublicProfileLinks;
+  return {
+    handle: normalizePublicProfileHandle(input.handle),
+    displayName,
+    bio,
+    affiliation,
+    visibility: input.visibility,
+    links,
+  };
+}
+
 export type Workspace = {
   id: string;
   slug: string;

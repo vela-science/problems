@@ -12,7 +12,7 @@ export class ActivityDataError extends Error {
 export function activityDatabaseError(error: unknown): ActivityDataError {
   const candidate = error as { code?: string; message?: string } | null;
   const message = candidate?.message ?? "activity database operation failed";
-  if (candidate?.code === "VAI01" || message.includes("idempotency key")) {
+  if (candidate?.code === "VAI01" || candidate?.code === "VA409" || message.includes("idempotency key")) {
     return new ActivityDataError("conflict", message, error);
   }
   if (candidate?.code === "VACAS" || message.includes("version conflict")) {

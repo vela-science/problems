@@ -13,6 +13,7 @@ import { COMMAND_PALETTE_TRIGGER_ID, useCommandPalette } from "@/components/vela
 import { NotificationCenter } from "@/components/vela/notification-center";
 import { ThemeToggle } from "@/components/vela/theme-toggle";
 import type { PublishedProblemCollection } from "@/lib/problem-collections";
+import { performerIdFromSegment } from "@/lib/performer-route";
 
 type PublishedRepository = {
   slug: string;
@@ -100,6 +101,28 @@ function headerTrail(pathname: string, repositories: PublishedRepository[], prob
       collection: null,
       record: collection.name,
       compactRecord: collection.name,
+    };
+  }
+  if (pathname === "/account/profile") return {
+    repository: null,
+    section: "Account",
+    sectionHref: "/account",
+    sectionKey: null,
+    collection: null,
+    record: "Public profile",
+    compactRecord: "Public profile",
+  };
+  const contributorMatch = pathname.match(/^\/people\/([^/]+)$/u);
+  if (contributorMatch) {
+    const identity = decodeURIComponent(contributorMatch[1]!);
+    return {
+      repository: null,
+      section: "Contributor",
+      sectionHref: null,
+      sectionKey: null,
+      collection: null,
+      record: performerIdFromSegment(identity) ? "Performer" : `@${recordTrailLabel(identity)}`,
+      compactRecord: performerIdFromSegment(identity) ? "Performer" : `@${recordTrailLabel(identity)}`,
     };
   }
   const repository = repositories.find(({ slug }) =>
@@ -191,7 +214,7 @@ export function AppHeader({
                 {trail.section}
               </Link>
             ) : (
-              <span className="min-w-0 truncate font-medium text-foreground" aria-current="page">{trail.section}</span>
+              <span className="min-w-0 truncate font-medium text-foreground" aria-current={trail.record ? undefined : "page"}>{trail.section}</span>
             )}
           </>
         ) : null}

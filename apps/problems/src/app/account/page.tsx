@@ -4,7 +4,7 @@ import { PageShell } from "@vela/ui/vela/page-shell";
 import { AccountProfile, type AccountProfileData } from "@/components/vela/account-profile";
 import { authConfiguration } from "@/lib/auth";
 import { githubAppConfiguration } from "@/lib/github-app";
-import { accountGitHubConnections, accountWorkspaces, currentActivityAccount } from "@/lib/hosted-account";
+import { accountGitHubConnections, accountProfile, accountWorkspaces, currentActivityAccount } from "@/lib/hosted-account";
 import { githubIdentityForUser } from "@/lib/workos-identities";
 
 export const dynamic = "force-dynamic";
@@ -27,7 +27,8 @@ export default async function AccountPage() {
   const account = await currentActivityAccount();
   if (!account) redirect("/sign-in?returnTo=/account");
 
-  const [workspaces, githubIdentity, githubConnections] = await Promise.all([
+  const [publicProfile, workspaces, githubIdentity, githubConnections] = await Promise.all([
+    loadResult(() => accountProfile(account.activity.id)),
     loadResult(() => accountWorkspaces(account.activity.id)),
     loadResult(() => githubIdentityForUser(account.hosted.id)),
     loadResult(() => accountGitHubConnections(account.activity.id)),
@@ -45,6 +46,6 @@ export default async function AccountPage() {
     : { status: "unavailable" };
 
   return <PageShell archetype="default" layout="reading" className="flex flex-col gap-10">
-    <AccountProfile account={account.hosted} workspaces={workspaces} connections={connections} />
+    <AccountProfile account={account.hosted} publicProfile={publicProfile} workspaces={workspaces} connections={connections} />
   </PageShell>;
 }

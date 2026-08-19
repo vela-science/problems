@@ -61,7 +61,7 @@ export function HomeResultRow({ state, href, number }: { state: State; href: str
           <span className="font-medium text-foreground">Scope:</span> <AssertionText text={limitation} />
         </span> : null}
         <span className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-meta text-muted-foreground">
-          {producer ? <Performer name={producer} detail="Result performer" /> : <span>Performer not retained</span>}
+          {producer ? <Performer name={producer} kind="agent" performerId={producer} detail="Result performer" /> : <span>Performer not retained</span>}
           <span>{summarizeCheckOutcomes(checks)}</span>
           {review.reviewed_at ? <time dateTime={review.reviewed_at}>{formatDate(review.reviewed_at)}</time> : null}
         </span>

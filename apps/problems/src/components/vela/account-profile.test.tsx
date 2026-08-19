@@ -3,6 +3,10 @@ import { describe, expect, it, vi } from "vitest";
 import { AccountProfile, type AccountProfileData } from "./account-profile";
 
 vi.mock("@/app/actions/auth", () => ({ signOutAccount: vi.fn() }));
+vi.mock("@/app/actions/profile", () => ({
+  initialProfileActionState: { status: "idle", message: "" },
+  savePublicProfileAction: vi.fn(),
+}));
 
 const account = {
   id: "user_01",
@@ -14,6 +18,7 @@ const account = {
 function data(overrides: Partial<AccountProfileData> = {}): AccountProfileData {
   return {
     account,
+    publicProfile: { status: "ready", value: null },
     workspaces: {
       status: "ready",
       value: [{ id: "workspace_01", slug: "prime-gaps", name: "Prime gaps", role: "owner", updatedAt: "2026-08-17T12:00:00Z" }],
@@ -41,6 +46,9 @@ describe("AccountProfile", () => {
     expect(screen.getByRole("heading", { level: 1, name: "Ada Lovelace" })).toBeVisible();
     expect(screen.getByText("ada@example.org")).toBeVisible();
     expect(screen.getByText("Visible only to you")).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Public contributor profile" })).toBeVisible();
+    expect(screen.getByRole("link", { name: "Create profile" })).toHaveAttribute("href", "/account/profile");
+    expect(screen.queryByRole("radio")).toBeNull();
     expect(screen.getByText(/each Result keeps its own scientific attribution/iu)).toBeVisible();
     expect(screen.getByRole("link", { name: "My work" })).toHaveAttribute("href", "/my-work");
     expect(screen.getByRole("link", { name: "Manage connections" })).toHaveAttribute("href", "/account/connections");

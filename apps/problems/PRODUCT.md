@@ -27,6 +27,7 @@ product: problems.science application
 | `/import` | Exact GitHub revision | Inspect or connect code |
 | `/my-work` | Private work continuity | Open saved work |
 | `/account` | Identity, connections, and session | Manage or continue |
+| `/people/{handle-or-id}` | Public contributor attribution | Open exact activity context |
 | `/about` | Current product explanation and vision | Understand the boundary or open the essay |
 | `/about/endless-frontiers` | Permanent compatibility redirect | Continue to the canonical essay at vela.space |
 
@@ -98,9 +99,13 @@ drafts through `@vela/activity-data`. It cannot access local files, execute
 research code, control agent sessions, sign, issue a Decision, or change
 scientific state.
 
-Account is private unless durable public contributor data supports a separate
-route. WorkOS identity, GitHub access, scientific attribution, and Repository
-authority are distinct.
+Account stays private. A contributor may separately publish or unlist a small
+presentation profile at `/people/{handle}`; the safe default is private. Exact
+retained performers also have stable `/people/p-{id}` attribution routes, and
+only a separately verified link may redirect one to an account profile. WorkOS
+identity, GitHub access, scientific attribution, performer kind, and Repository
+authority are distinct. Removing an account link never rewrites historical
+scientific attribution.
 
 ## Acceptance matrix
 

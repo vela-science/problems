@@ -1,7 +1,19 @@
 import "server-only";
 
-import { ensureCurrentAccount, listGitHubConnections, listWorkspaces } from "@vela/activity-data";
+import {
+  accountPublicProfile,
+  ensureCurrentAccount,
+  listGitHubConnections,
+  listWorkspaces,
+  publicProfileByHandle,
+  publicProfileForPerformer,
+  savePublicProfile,
+  type PublicProfile,
+  type SavePublicProfileInput,
+} from "@vela/activity-data";
 import { currentAccount } from "./auth";
+
+export type { PublicProfile };
 
 export async function currentActivityAccount() {
   const hosted = await currentAccount();
@@ -16,4 +28,24 @@ export async function accountWorkspaces(accountId: string) {
 
 export async function accountGitHubConnections(accountId: string) {
   return listGitHubConnections(accountId);
+}
+
+export async function accountProfile(accountId: string) {
+  return accountPublicProfile(accountId);
+}
+
+export async function profileByHandle(handle: string, viewerAccountId?: string | null) {
+  return publicProfileByHandle(handle, viewerAccountId);
+}
+
+export async function profileForPerformer(performerId: string) {
+  return publicProfileForPerformer(performerId);
+}
+
+export async function updateAccountProfile(
+  accountId: string,
+  input: SavePublicProfileInput,
+  expectedVersion?: number | null,
+) {
+  return savePublicProfile(accountId, input, expectedVersion);
 }

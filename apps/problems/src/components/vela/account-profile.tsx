@@ -7,6 +7,7 @@ import {
   Mail01Icon,
   SecurityCheckIcon,
   SourceCodeIcon,
+  UserCircle02Icon,
   WorkIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -25,6 +26,7 @@ import {
 } from "@vela/ui/components/item";
 import { signOutAccount } from "@/app/actions/auth";
 import type { AccountIdentity } from "@/lib/auth";
+import type { PublicProfile } from "@/lib/hosted-account";
 import { formatDate } from "@/lib/format";
 
 type Result<T> = { status: "ready"; value: T } | { status: "unavailable" };
@@ -51,6 +53,7 @@ type AccountConnections = {
 
 export type AccountProfileData = {
   account: AccountIdentity;
+  publicProfile: Result<PublicProfile | null>;
   workspaces: Result<AccountWorkspace[]>;
   connections: Result<{
     githubIdentityConnected: boolean;
@@ -143,7 +146,33 @@ function ConnectionRow({ icon, title, description, status }: {
   </div>;
 }
 
-export function AccountProfile({ account, workspaces, connections }: AccountProfileData) {
+function PublicProfileSummary({ result }: { result: AccountProfileData["publicProfile"] }) {
+  if (result.status === "unavailable") return <Alert>
+    <AlertTitle>Public profile settings are unavailable</AlertTitle>
+    <AlertDescription>Your private account and scientific attribution are unchanged. Try again later.</AlertDescription>
+  </Alert>;
+  const profile = result.value;
+  return <section aria-labelledby="account-public-profile-heading" className="vela-object-surface overflow-hidden">
+    <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex min-w-0 items-start gap-3">
+        <div className="flex size-10 shrink-0 items-center justify-center rounded-md bg-primary/8 text-primary"><HugeiconsIcon icon={UserCircle02Icon} aria-hidden className="size-5" /></div>
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <h2 id="account-public-profile-heading" className="text-subtitle font-medium">Public contributor profile</h2>
+            <Badge variant={profile?.visibility === "public" ? "default" : "secondary"}>{profile?.visibility ?? "not created"}</Badge>
+          </div>
+          <p className="mt-1 text-meta text-muted-foreground">{profile ? `problems.science/people/${profile.handle}` : "Choose what, if anything, appears publicly beside exact attribution."}</p>
+        </div>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {profile ? <Button size="sm" variant="outline" nativeButton={false} render={<Link href={`/people/${profile.handle}`} />}>Preview</Button> : null}
+        <Button size="sm" nativeButton={false} render={<Link href="/account/profile" />}>{profile ? "Edit profile" : "Create profile"}</Button>
+      </div>
+    </div>
+  </section>;
+}
+
+export function AccountProfile({ account, publicProfile, workspaces, connections }: AccountProfileData) {
   const connection = connections.status === "ready" ? connections.value : null;
   const installations = connection?.data.installations ?? [];
   const accessibleRepositories = connection?.data.repositories.filter((repository) =>
@@ -174,6 +203,8 @@ export function AccountProfile({ account, workspaces, connections }: AccountProf
 
     <div className="grid gap-10 xl:grid-cols-[minmax(0,1fr)_21rem] xl:items-start">
       <div className="space-y-10">
+        <PublicProfileSummary result={publicProfile} />
+
         <section aria-labelledby="account-work-heading" className="vela-object-surface p-5">
           <SectionHeading id="account-work-heading" title="Continue your work" description="Private workspaces retained for questions you are exploring." action={workspaces.status === "ready" && workspaces.value.length ? <Button className="min-h-11 sm:min-h-7" size="sm" variant="ghost" nativeButton={false} render={<Link href="/my-work" />}>View all</Button> : undefined} />
           <Workspaces result={workspaces} />

@@ -39,7 +39,7 @@ export function ProblemHistory({ state }: { state: State }) {
           <article className="vela-object-surface vela-object-row min-w-0 overflow-hidden">
             <header className="flex flex-wrap items-center justify-between gap-3 border-b bg-muted/20 px-4 py-3">
               {review.producer_package?.producer_actor
-                ? <Performer name={review.producer_package.producer_actor} detail="Result performer" />
+                ? <Performer name={review.producer_package.producer_actor} kind="agent" performerId={review.producer_package.producer_actor} detail="Result performer" />
                 : <p className="text-meta text-muted-foreground">Result performer not retained</p>}
               <time dateTime={review.reviewed_at ?? review.created_at ?? undefined} className="text-meta text-muted-foreground">{formatDate(review.reviewed_at ?? review.created_at)}</time>
             </header>
@@ -47,7 +47,7 @@ export function ProblemHistory({ state }: { state: State }) {
               <div className="flex flex-wrap items-center gap-2"><StatusBadge axis="proposal" state={review.status}>{review.status.replaceAll("_", " ")}</StatusBadge>{review.verification_record_count ? <span className="text-meta text-muted-foreground">{review.verification_record_count} {review.verification_record_count === 1 ? "check" : "checks"}</span> : null}</div>
               <p className="mt-3 text-label font-semibold">{review.status === "accepted" ? "Repository accepted this Result" : `Repository change ${review.status.replaceAll("_", " ")}`}</p>
               {review.claim_retirement ? <p className="mt-1 text-meta text-muted-foreground">The Result was later {review.claim_retirement}.</p> : null}
-              {review.reviewed_by ? <div className="mt-3 text-meta text-muted-foreground">Decision recorded by <Actor name={review.reviewed_by} kind={review.decision_actor_class} className="ms-1 align-middle" /></div> : null}
+              {review.reviewed_by ? <div className="mt-3 text-meta text-muted-foreground">Decision recorded by <Actor name={review.reviewed_by} kind={review.decision_actor_class} performerId={review.reviewed_by} className="ms-1 align-middle" /></div> : null}
               <a href={`/repositories/${state.repositorySlug}/proposals/${review.proposal_id}`} className="mt-3 inline-block text-meta font-semibold text-primary underline-offset-4 hover:underline">Open change details <span className="sr-only"><RecordId value={review.proposal_id} copy={false} /></span></a>
             </div>
           </article>

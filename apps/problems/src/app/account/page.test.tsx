@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => ({
   redirect: vi.fn(),
   workspaces: vi.fn(),
   connections: vi.fn(),
+  profile: vi.fn(),
   identity: vi.fn(),
 }));
 
@@ -17,6 +18,7 @@ vi.mock("@/lib/hosted-account", () => ({
   currentActivityAccount: () => Promise.resolve(mocks.account),
   accountWorkspaces: mocks.workspaces,
   accountGitHubConnections: mocks.connections,
+  accountProfile: mocks.profile,
 }));
 vi.mock("@/lib/github-app", () => ({ githubAppConfiguration: () => ({ enabled: true }) }));
 vi.mock("@/lib/workos-identities", () => ({ githubIdentityForUser: mocks.identity }));
@@ -30,6 +32,7 @@ beforeEach(() => {
   mocks.redirect.mockClear();
   mocks.workspaces.mockResolvedValue([]);
   mocks.connections.mockResolvedValue({ installations: [], repositories: [], codebases: [] });
+  mocks.profile.mockResolvedValue(null);
   mocks.identity.mockResolvedValue(null);
 });
 
@@ -54,6 +57,7 @@ describe("Account page", () => {
     expect(screen.getByRole("heading", { name: "Connected codebases" })).toBeVisible();
     expect(mocks.workspaces).toHaveBeenCalledWith("activity_01");
     expect(mocks.connections).toHaveBeenCalledWith("activity_01");
+    expect(mocks.profile).toHaveBeenCalledWith("activity_01");
     expect(mocks.identity).toHaveBeenCalledWith("user_01");
   });
 });

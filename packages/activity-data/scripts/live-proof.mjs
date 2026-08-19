@@ -13,6 +13,9 @@ import {
   followProblem,
   forkApproach,
   getProblemActivity,
+  publicProfileByHandle,
+  publicProfileForPerformer,
+  savePublicProfile,
   saveSubmissionDraft,
   scientificAnchorRoot,
   updateAttempt,
@@ -87,6 +90,102 @@ const accountB = await ensureCurrentAccount({
   displayName: "Live proof B",
   email: `liveproof-b-${suffix}@example.invalid`,
 });
+const privateHandle = `live-a-${suffix}`;
+const currentHandle = `live-current-${suffix}`;
+const accountProfile = await savePublicProfile(accountA.id, {
+  handle: privateHandle,
+  displayName: "Live proof contributor",
+  bio: "Bounded public-profile proof.",
+  affiliation: "",
+  visibility: "private",
+  links: { website: "https://example.invalid/live-proof" },
+}, null);
+if (await publicProfileByHandle(privateHandle)) throw new Error("private profile was publicly readable");
+const ownerPreview = await publicProfileByHandle(privateHandle, accountA.id);
+if (!ownerPreview?.ownerPreview || ownerPreview.handle !== privateHandle) throw new Error("profile owner preview failed");
+const unlistedProfile = await savePublicProfile(accountA.id, {
+  handle: privateHandle,
+  displayName: "Live proof contributor",
+  bio: "Bounded public-profile proof.",
+  affiliation: "",
+  visibility: "unlisted",
+  links: { website: "https://example.invalid/live-proof" },
+}, accountProfile.version);
+const linkedPerformerId = `agent:live-proof-${suffix}`;
+await ownerTransaction((transaction) => [transaction.query(
+  `INSERT INTO activity.public_profile_performers
+     (profile_id, performer_id, performer_kind, verification_kind, evidence_locator)
+   VALUES ($1::uuid, $2, 'agent', 'signed_record', 'https://example.invalid/evidence')`,
+  [unlistedProfile.id, linkedPerformerId],
+)]);
+if (!await publicProfileByHandle(privateHandle)) throw new Error("unlisted profile was not readable by exact handle");
+if (await publicProfileForPerformer(linkedPerformerId)) throw new Error("unlisted profile leaked through public attribution");
+const renamedProfile = await savePublicProfile(accountA.id, {
+  handle: currentHandle,
+  displayName: "Live proof contributor",
+  bio: "Bounded public-profile proof.",
+  affiliation: "",
+  visibility: "public",
+  links: { website: "https://example.invalid/live-proof" },
+}, unlistedProfile.version);
+if ((await publicProfileForPerformer(linkedPerformerId))?.handle !== currentHandle) {
+  throw new Error("public profile was not reachable from exact performer attribution");
+}
+const renamedRead = await publicProfileByHandle(privateHandle);
+if (!renamedRead?.redirect || renamedRead.handle !== currentHandle) throw new Error("retired profile handle did not redirect");
+await denied(savePublicProfile(accountB.id, {
+  handle: currentHandle,
+  displayName: "Collision attempt",
+  bio: "",
+  affiliation: "",
+  visibility: "public",
+  links: {},
+}, null), "public profile handle collision");
+
+const deletedHandle = `live-deleted-${suffix}`;
+const accountC = await ensureCurrentAccount({
+  workosUserId: `user_liveproofc${suffix}`,
+  displayName: "Live proof deleted account",
+  email: `liveproof-c-${suffix}@example.invalid`,
+});
+const deletedProfile = await savePublicProfile(accountC.id, {
+  handle: deletedHandle,
+  displayName: "Private name removed on deletion",
+  bio: "Private biography removed on deletion.",
+  affiliation: "Private affiliation",
+  visibility: "public",
+  links: { website: "https://example.invalid/deleted-profile" },
+}, null);
+await ownerTransaction((transaction) => [transaction.query(
+  "DELETE FROM activity.accounts WHERE id=$1::uuid",
+  [accountC.id],
+)]);
+if (await publicProfileByHandle(deletedHandle)) throw new Error("deleted account profile remained public");
+const deletedRows = await ownerTransaction((transaction) => [transaction.query(
+  `SELECT account_id, status, display_name, bio, affiliation, visibility, links
+   FROM activity.public_profiles WHERE id=$1::uuid`,
+  [deletedProfile.id],
+)]);
+const deletedRow = deletedRows.at(-1)?.[0];
+if (deletedRow?.account_id !== null || deletedRow?.status !== "deleted"
+  || deletedRow?.display_name !== "Deleted contributor" || deletedRow?.bio !== ""
+  || deletedRow?.affiliation !== "" || deletedRow?.visibility !== "private"
+  || JSON.stringify(deletedRow?.links) !== "{}") {
+  throw new Error(`deleted profile was not safely tombstoned: ${JSON.stringify(deletedRow)}`);
+}
+const accountD = await ensureCurrentAccount({
+  workosUserId: `user_liveproofd${suffix}`,
+  displayName: "Live proof handle reuse",
+  email: `liveproof-d-${suffix}@example.invalid`,
+});
+await denied(savePublicProfile(accountD.id, {
+  handle: deletedHandle,
+  displayName: "Impersonation attempt",
+  bio: "",
+  affiliation: "",
+  visibility: "public",
+  links: {},
+}, null), "deleted profile handle reuse");
 const workspaceA = await createWorkspace(accountA.id, {
   slug: `live-proof-a-${suffix}`,
   name: "Live proof A",
@@ -382,7 +481,7 @@ const catalogRows = catalogResults.at(-1);
 const catalog = catalogRows?.[0];
 if (!catalog) throw new Error("activity catalog probe returned no row");
 if (
-  Number(catalog.table_count) !== 17
+  Number(catalog.table_count) !== 20
   || Number(catalog.authority_secret_columns) !== 0
   || Number(catalog.retired_columns) !== 0
   || Number(catalog.unexpected_byte_columns) !== 0
@@ -425,7 +524,11 @@ const cleanupResults = await ownerTransaction((transaction) => [
   ),
   transaction.query(
     "DELETE FROM activity.accounts WHERE id = ANY($1::uuid[])",
-    [[accountA.id, accountB.id]],
+    [[accountA.id, accountB.id, accountD.id]],
+  ),
+  transaction.query(
+    "DELETE FROM activity.public_profiles WHERE id = ANY($1::uuid[])",
+    [[renamedProfile.id, deletedProfile.id]],
   ),
   transaction.query(
     "ALTER TABLE activity.activity_audit_entries ENABLE TRIGGER activity_audit_append_only",
@@ -433,12 +536,13 @@ const cleanupResults = await ownerTransaction((transaction) => [
   transaction.query(
     `SELECT
        (SELECT count(*) FROM activity.workspaces WHERE id = ANY($1::uuid[]))::integer AS workspaces,
-       (SELECT count(*) FROM activity.accounts WHERE id = ANY($2::uuid[]))::integer AS accounts`,
-    [[workspaceA.id, workspaceB.id], [accountA.id, accountB.id]],
+       (SELECT count(*) FROM activity.accounts WHERE id = ANY($2::uuid[]))::integer AS accounts,
+       (SELECT count(*) FROM activity.public_profiles WHERE id = ANY($3::uuid[]))::integer AS profiles`,
+    [[workspaceA.id, workspaceB.id], [accountA.id, accountB.id, accountD.id], [renamedProfile.id, deletedProfile.id]],
   ),
 ]);
 const cleanup = cleanupResults.at(-1)?.[0];
-if (Number(cleanup?.workspaces) !== 0 || Number(cleanup?.accounts) !== 0) {
+if (Number(cleanup?.workspaces) !== 0 || Number(cleanup?.accounts) !== 0 || Number(cleanup?.profiles) !== 0) {
   throw new Error(`activity live-proof cleanup failed: ${JSON.stringify(cleanup)}`);
 }
 const standingAfter = await standingSnapshot();
@@ -469,6 +573,7 @@ console.log(JSON.stringify({
   cleanupProved: true,
   problemScopedForkAndAuditProved: true,
   optimisticVersioningProved: true,
+  profilePrivacyRenameCollisionDeletionProved: true,
   exactAnchorFollowingProved: true,
   appBaseTablesDenied: true,
   problemsWriteDenied: true,

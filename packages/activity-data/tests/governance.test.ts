@@ -91,7 +91,7 @@ describe("Workspace implementation permission matrix", () => {
     expect(liveProof).toContain('"cross-tenant activity write"');
     expect(liveProof).toContain('"unsigned draft export without membership"');
     expect(liveProof).toContain('"private note crossed its author boundary"');
-    expect(liveProof).toContain("Number(catalog.table_count) !== 17");
+    expect(liveProof).toContain("Number(catalog.table_count) !== 20");
     expect(liveProof).toContain("DELETE FROM activity.workspaces");
     expect(liveProof).toContain("cleanupProved: true");
   });

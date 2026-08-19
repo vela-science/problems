@@ -118,6 +118,23 @@ describe("AppHeader trail", () => {
     expect(screen.getByText("Erdős Problems")).toHaveAttribute("aria-current", "page");
   });
 
+  it("keeps a contributor profile in contextual chrome without adding People navigation", () => {
+    navigation.pathname = "/people/ada-lovelace";
+    render(<Shell />);
+
+    expect(screen.getByText("Contributor")).not.toHaveAttribute("aria-current");
+    expect(screen.getByText("@ada-lovelace")).toHaveAttribute("aria-current", "page");
+    expect(screen.queryByRole("link", { name: "People" })).not.toBeInTheDocument();
+  });
+
+  it("keeps public profile settings inside Account context", () => {
+    navigation.pathname = "/account/profile";
+    render(<Shell />);
+
+    expect(screen.getByRole("link", { name: "Account" })).toHaveAttribute("href", "/account");
+    expect(screen.getByText("Public profile")).toHaveAttribute("aria-current", "page");
+  });
+
   /* Collapsing the section crumb below `sm` left its separator behind, so a
      Problem or Source page opened with a bare "/" on a phone — the shape of
      1,217 of the 1,253 URLs in the sitemap. A separator is hidden exactly when

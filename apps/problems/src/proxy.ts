@@ -25,6 +25,7 @@ export const config = {
     "/codebases/:path*",
     "/import",
     "/my-work",
+    "/people/:path*",
     "/problems/:namespace/:problem",
     "/sign-in",
   ],

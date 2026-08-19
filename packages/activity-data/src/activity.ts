@@ -17,10 +17,15 @@ import {
   type HostedAccountInput,
   type ProblemActivity,
   type ProblemActivityQuery,
+  type PublicProfile,
+  type PublicProfileLinks,
+  type PublicProfilePerformerLink,
+  type SavePublicProfileInput,
   type ScientificAnchor,
   type UpdateAttemptInput,
   type Workspace,
   type WorkspaceContext,
+  normalizePublicProfileInput,
 } from "./contracts";
 import {
   assertSubmissionDraft,
@@ -77,6 +82,69 @@ function workspaceFrom(value: unknown): Workspace {
   };
 }
 
+function nullableText(value: unknown, field: string): string | null {
+  if (value === null || value === undefined) return null;
+  return text(value, field);
+}
+
+function profileLinksFrom(value: unknown): PublicProfileLinks {
+  const row = record(value ?? {}, "public profile links");
+  const links: PublicProfileLinks = {};
+  for (const kind of ["github", "orcid", "website", "lab"] as const) {
+    if (row[kind] !== undefined) links[kind] = text(row[kind], `${kind} link`);
+  }
+  return links;
+}
+
+function profilePerformerFrom(value: unknown): PublicProfilePerformerLink {
+  const row = record(value, "profile performer");
+  const performerKind = row.performer_kind;
+  const verificationKind = row.verification_kind;
+  if (!["human", "agent", "organization"].includes(String(performerKind))) throw new Error("profile performer has invalid kind");
+  if (!["signed_record", "connected_github", "connected_orcid", "source_owner"].includes(String(verificationKind))) throw new Error("profile performer has invalid verification kind");
+  return {
+    performerId: text(row.performer_id, "performer id"),
+    performerKind: performerKind as PublicProfilePerformerLink["performerKind"],
+    verificationKind: verificationKind as PublicProfilePerformerLink["verificationKind"],
+    evidenceLocator: text(row.evidence_locator, "performer evidence locator"),
+    createdAt: text(row.created_at, "performer link created_at"),
+  };
+}
+
+function publicProfileFrom(value: unknown): PublicProfile {
+  const row = record(value, "public profile");
+  const visibility = row.visibility;
+  if (!["private", "unlisted", "public"].includes(String(visibility))) throw new Error("public profile has invalid visibility");
+  if (row.profile_kind !== "account" || row.status !== "active") throw new Error("account profile has invalid kind or status");
+  const handles = Array.isArray(row.handles) ? row.handles.map((value) => {
+    const handle = record(value, "profile handle");
+    return {
+      handle: text(handle.handle, "profile handle"),
+      createdAt: text(handle.created_at, "profile handle created_at"),
+      retiredAt: nullableText(handle.retired_at, "profile handle retired_at"),
+    };
+  }) : [];
+  return {
+    id: text(row.id, "public profile id"),
+    handle: text(row.handle, "public profile handle"),
+    profileKind: "account",
+    status: "active",
+    displayName: text(row.display_name, "public profile display name"),
+    bio: typeof row.bio === "string" ? row.bio : "",
+    affiliation: typeof row.affiliation === "string" ? row.affiliation : "",
+    visibility: visibility as PublicProfile["visibility"],
+    links: profileLinksFrom(row.links),
+    version: integer(row.version, "public profile version"),
+    createdAt: text(row.created_at, "public profile created_at"),
+    updatedAt: text(row.updated_at, "public profile updated_at"),
+    handles,
+    performers: Array.isArray(row.performers) ? row.performers.map(profilePerformerFrom) : [],
+    ...(typeof row.requested_handle === "string" ? { requestedHandle: row.requested_handle } : {}),
+    ...(typeof row.redirect === "boolean" ? { redirect: row.redirect } : {}),
+    ...(typeof row.owner_preview === "boolean" ? { ownerPreview: row.owner_preview } : {}),
+  };
+}
+
 function dbAnchor(anchor: ScientificAnchor): JsonRecord {
   return {
     root: scientificAnchorRoot(anchor),
@@ -128,6 +196,66 @@ export async function ensureCurrentAccount(input: HostedAccountInput): Promise<A
       [input.workosUserId, input.displayName, input.email],
     );
     return accountFrom(rows[0]?.result);
+  } catch (error) {
+    throw activityDatabaseError(error);
+  }
+}
+
+export async function accountPublicProfile(accountId: string): Promise<PublicProfile | null> {
+  try {
+    const rows = await activitySql().query(
+      "SELECT activity_api.get_account_profile($1::uuid) AS result",
+      [accountId],
+    );
+    return rows[0]?.result ? publicProfileFrom(rows[0].result) : null;
+  } catch (error) {
+    throw activityDatabaseError(error);
+  }
+}
+
+export async function publicProfileByHandle(handle: string, viewerAccountId?: string | null): Promise<PublicProfile | null> {
+  try {
+    const rows = await activitySql().query(
+      "SELECT activity_api.get_public_profile($1, $2::uuid) AS result",
+      [handle.trim().toLowerCase(), viewerAccountId ?? null],
+    );
+    return rows[0]?.result ? publicProfileFrom(rows[0].result) : null;
+  } catch (error) {
+    throw activityDatabaseError(error);
+  }
+}
+
+export async function publicProfileForPerformer(performerId: string): Promise<PublicProfile | null> {
+  try {
+    const rows = await activitySql().query(
+      "SELECT activity_api.get_profile_for_performer($1) AS result",
+      [performerId],
+    );
+    return rows[0]?.result ? publicProfileFrom(rows[0].result) : null;
+  } catch (error) {
+    throw activityDatabaseError(error);
+  }
+}
+
+export async function savePublicProfile(
+  accountId: string,
+  input: SavePublicProfileInput,
+  expectedVersion?: number | null,
+): Promise<PublicProfile> {
+  try {
+    const normalized = normalizePublicProfileInput(input);
+    const rows = await activitySql().query(
+      "SELECT activity_api.save_public_profile($1::uuid, $2::jsonb, $3::bigint) AS result",
+      [accountId, JSON.stringify({
+        handle: normalized.handle,
+        display_name: normalized.displayName,
+        bio: normalized.bio,
+        affiliation: normalized.affiliation,
+        visibility: normalized.visibility,
+        links: normalized.links,
+      }), expectedVersion ?? null],
+    );
+    return publicProfileFrom(rows[0]?.result);
   } catch (error) {
     throw activityDatabaseError(error);
   }

@@ -1,5 +1,7 @@
+import Link from "next/link";
 import { Avatar, AvatarFallback } from "@vela/ui/components/avatar";
 import { cn } from "@vela/ui/lib/utils";
+import { performerProfileSegment } from "@/lib/performer-route";
 
 /* A person, with a mark beside their name.
  *
@@ -33,22 +35,28 @@ function actorInitials(name: string, machine: boolean) {
 export function Actor({
   name,
   kind = "unknown",
+  performerId,
   className,
 }: {
   name: string | null | undefined;
   kind?: ActorKind | null;
+  performerId?: string | null;
   className?: string;
 }) {
   if (!name) return null;
   const machine = isMachine(kind);
   const initials = actorInitials(name, machine);
+  const content = <>
+    <Avatar className={cn("size-4", machine && "rounded-md bg-primary/10 text-primary")}>
+      <AvatarFallback className={cn("text-[0.5rem]", machine && "rounded-md bg-primary/10 font-semibold text-primary")}>{initials}</AvatarFallback>
+    </Avatar>
+    <span className="min-w-0 truncate">{name}</span>
+  </>;
+  if (performerId) return <Link href={`/people/${performerProfileSegment(performerId)}`} className={cn("inline-flex min-w-0 items-center gap-1.5 hover:underline", className)} title={name} aria-label={name}>{content}</Link>;
 
   return (
     <span className={cn("inline-flex min-w-0 items-center gap-1.5", className)} title={name}>
-      <Avatar className={cn("size-4", machine && "rounded-md bg-primary/10 text-primary")}>
-        <AvatarFallback className={cn("text-[0.5rem]", machine && "rounded-md bg-primary/10 font-semibold text-primary")}>{initials}</AvatarFallback>
-      </Avatar>
-      <span className="min-w-0 truncate">{name}</span>
+      {content}
     </span>
   );
 }
@@ -56,17 +64,19 @@ export function Actor({
 export function Performer({
   name,
   kind = "unknown",
+  performerId,
   detail,
   className,
 }: {
   name: string | null | undefined;
   kind?: ActorKind | null;
+  performerId?: string | null;
   detail?: string | null;
   className?: string;
 }) {
   if (!name) return null;
   const machine = isMachine(kind);
-  return <span className={cn("inline-flex min-w-0 items-center gap-2.5", className)}>
+  const content = <>
     <Avatar className={cn("size-8 shrink-0", machine && "rounded-md bg-primary/10 text-primary")}>
       <AvatarFallback className={cn("text-[0.65rem] font-semibold", machine && "rounded-md bg-primary/10 text-primary")}>{actorInitials(name, machine)}</AvatarFallback>
     </Avatar>
@@ -74,5 +84,7 @@ export function Performer({
       <span className="block truncate text-compact font-semibold">{name}</span>
       {detail ? <span className="block truncate text-micro text-muted-foreground">{detail}</span> : null}
     </span>
-  </span>;
+  </>;
+  if (performerId) return <Link href={`/people/${performerProfileSegment(performerId)}`} className={cn("inline-flex min-w-0 items-center gap-2.5 hover:underline", className)} aria-label={name}>{content}</Link>;
+  return <span className={cn("inline-flex min-w-0 items-center gap-2.5", className)}>{content}</span>;
 }

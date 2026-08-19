@@ -20,7 +20,7 @@ import {
   ItemTitle,
 } from "@vela/ui/components/item";
 import { AssertionText } from "@/components/vela/assertion-text";
-import { Performer } from "@/components/vela/actor";
+import { Actor, Performer } from "@/components/vela/actor";
 import { FormalConjecturesAudit } from "@/components/vela/formal-conjectures-audit";
 import { formalFilePath } from "@/components/vela/formal-statement-card";
 import { ProblemFiles, type FileEntry } from "@/components/vela/problem-files";
@@ -81,7 +81,7 @@ function CurrentResult({ state, basePath }: { state: State; basePath: string }) 
           <span className="text-compact font-medium">Result</span>
           <span className="text-meta text-muted-foreground">{claim.created ? formatAgo(claim.created) : "date not recorded"}</span>
         </div>
-        {producer ? <Performer className="max-w-full" name={producer} detail={[review?.producer_package?.replayability, review?.producer_package?.requested_change_kind].filter(Boolean).map((value) => humanize(value)).join(" · ") || "Result performer"} /> : null}
+        {producer ? <Performer className="max-w-full" name={producer} kind="agent" performerId={producer} detail={[review?.producer_package?.replayability, review?.producer_package?.requested_change_kind].filter(Boolean).map((value) => humanize(value)).join(" · ") || "Result performer"} /> : null}
       </header>
 
       <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_19rem]">
@@ -102,7 +102,7 @@ function CurrentResult({ state, basePath }: { state: State; basePath: string }) 
                 <ItemMedia variant="icon" data-check-outcome={check.outcome} className={`mt-0.5 size-8 rounded-full ${presentation.className}`}><HugeiconsIcon icon={presentation.icon} aria-hidden /></ItemMedia>
                 <ItemContent>
                   <ItemTitle className="line-clamp-none">{humanize(check.property, "Scoped check")}</ItemTitle>
-                  <ItemDescription className="line-clamp-none">{reviewer}{method ? ` · ${method}` : ""}</ItemDescription>
+                  <ItemDescription className="line-clamp-none"><Actor name={reviewer} kind={check.reviewer_kind ?? "unknown"} performerId={check.verifier_actor} />{method ? <span> · {method}</span> : null}</ItemDescription>
                   {check.does_not_establish?.length ? <details className="text-micro text-muted-foreground"><summary className="w-fit cursor-pointer font-medium text-foreground">Limits</summary><p className="mt-1 max-w-[72ch]">{check.does_not_establish.join("; ")}</p></details> : null}
                 </ItemContent>
                 <ItemActions><Badge variant={check.outcome === "pass" ? "default" : "outline"}>{outcomeLabel(check.outcome)}</Badge></ItemActions>

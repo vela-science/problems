@@ -3,6 +3,8 @@ import {
   assessAnchorFreshness,
   commandRequestRoot,
   followsCurrentAnchor,
+  normalizePublicProfileHandle,
+  normalizePublicProfileInput,
   scientificAnchorRoot,
   type ScientificAnchor,
 } from "../src/contracts";
@@ -49,6 +51,54 @@ describe("scientific activity anchors", () => {
       state: "unavailable",
       fields: ["current_anchor"],
     });
+  });
+});
+
+describe("public profile input", () => {
+  test("normalizes a safe private-by-choice profile and declared links", () => {
+    expect(normalizePublicProfileInput({
+      handle: "  Ada-Lovelace  ",
+      displayName: " Ada Lovelace ",
+      bio: " Works on exact scientific computation. ",
+      affiliation: " Analytical Engine Institute ",
+      visibility: "unlisted",
+      links: {
+        github: "https://github.com/ada-lovelace",
+        orcid: "https://orcid.org/0000-0002-1825-0097",
+      },
+    })).toEqual({
+      handle: "ada-lovelace",
+      displayName: "Ada Lovelace",
+      bio: "Works on exact scientific computation.",
+      affiliation: "Analytical Engine Institute",
+      visibility: "unlisted",
+      links: {
+        github: "https://github.com/ada-lovelace",
+        orcid: "https://orcid.org/0000-0002-1825-0097",
+      },
+    });
+  });
+
+  test("refuses reserved, ambiguous, and unsafe identity presentation", () => {
+    for (const handle of ["admin", "vela", "a", "-person", "person--", "p-retained-performer"]) {
+      expect(() => normalizePublicProfileHandle(handle)).toThrow();
+    }
+    expect(() => normalizePublicProfileInput({
+      handle: "safe-person",
+      displayName: "Safe Person",
+      bio: "",
+      affiliation: "",
+      visibility: "public",
+      links: { website: "javascript:alert(1)" },
+    })).toThrow(/HTTPS/u);
+    expect(() => normalizePublicProfileInput({
+      handle: "safe-person",
+      displayName: "Safe Person",
+      bio: "",
+      affiliation: "",
+      visibility: "public",
+      links: { github: "https://github.com/org/repository" },
+    })).toThrow(/one github.com account/u);
   });
 });
 

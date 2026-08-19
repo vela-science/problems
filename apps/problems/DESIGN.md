@@ -33,6 +33,7 @@ search, rows, files, results, or controls.
 | Import | repository identity + status | GitHub access and exact revision |
 | My work | workspace rows | real private work and state |
 | Account | profile + grouped settings | WorkOS, GitHub, workspaces, session |
+| Contributor profile | identity rail + attributed activity | exact role, Problem, Result/check context |
 | About | watercolor opening + concise product boundary | vision essay, public loop, exact release detail |
 | Endless Frontiers | continuous long-form folio | retained paintings, citations, route back to Problems |
 

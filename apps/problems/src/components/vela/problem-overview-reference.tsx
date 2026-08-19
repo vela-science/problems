@@ -222,7 +222,7 @@ export function ProblemOverviewReference({ state, route }: { state: State; route
             <div className={styles.resultObjectHeader}>
               <div className="flex min-w-0 items-center gap-3">
                 <span data-check-outcome={dominantCheckOutcome(checks) ?? "none"} className={`${styles.resultGlyph} ${resultCheckPresentation.className}`}><HugeiconsIcon icon={resultCheckPresentation.icon} aria-hidden className="size-5" /></span>
-                {producer ? <Performer name={producer} detail={`Result performer · ${humanize(current?.assertion_type, "research result")}`} /> : <div><p className={styles.sectionKicker}>Current Result</p><p className="mt-0.5 text-meta text-[color:var(--ref-muted)]">Durable output in {state.repositoryName}</p></div>}
+                {producer ? <Performer name={producer} kind="agent" performerId={producer} detail={`Result performer · ${humanize(current?.assertion_type, "research result")}`} /> : <div><p className={styles.sectionKicker}>Current Result</p><p className="mt-0.5 text-meta text-[color:var(--ref-muted)]">Durable output in {state.repositoryName}</p></div>}
               </div>
               <div className="flex flex-wrap items-center gap-2"><Badge>Current Result</Badge>{current ? <Badge variant="outline" className="capitalize">{humanize(current.standing)}</Badge> : null}</div>
             </div>

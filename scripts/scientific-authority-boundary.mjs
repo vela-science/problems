@@ -34,6 +34,7 @@ const problemsAuthCallbackRoute = "apps/problems/src/app/auth/callback/route.ts"
 const problemsSignInRoute = "apps/problems/src/app/sign-in/route.ts";
 const problemsSignOutAction = "apps/problems/src/app/actions/auth.ts";
 const problemsActivityAction = "apps/problems/src/app/actions/activity.ts";
+const problemsProfileAction = "apps/problems/src/app/actions/profile.ts";
 const problemsActivityDraftRoute = "apps/problems/src/app/drafts/[id]/export/route.ts";
 const problemsActivityWorkspace = "apps/problems/src/components/vela/problem-workspace.tsx";
 const problemsMyWorkPage = "apps/problems/src/app/my-work/page.tsx";
@@ -84,6 +85,7 @@ const PROBLEMS_PROVIDER_ROUTES = new Set([
 
 const PROBLEMS_ACTIVITY_FILES = new Set([
   problemsActivityAction,
+  problemsProfileAction,
   problemsActivityDraftRoute,
   problemsActivityWorkspace,
   problemsMyWorkPage,
