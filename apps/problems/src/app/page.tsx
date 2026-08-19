@@ -22,8 +22,6 @@ import { ProblemQuestionRow } from "@/components/vela/problem-question-row";
 import { discoveredProblems, problemStatePreviews } from "@/lib/scientific-state";
 import { formalConjecturesCollection } from "@vela/projection-data";
 import { ScientificText } from "@vela/ui/vela/scientific-text";
-import { EditorialPlate } from "@/components/vela/editorial-plate";
-import openingPlate from "@editorial/assets/paintings/endless-folio-opening.webp";
 import styles from "./home-brand.module.css";
 
 export const dynamic = "force-dynamic";
@@ -108,15 +106,6 @@ export default async function HomePage() {
         </div>
 
         </div>
-
-        <EditorialPlate
-          image={openingPlate}
-          caption="A public record should help the next researcher find their bearing."
-          href="/about/endless-frontiers"
-          linkLabel="Read the vision"
-          priority
-          className={styles.art}
-        />
 
         <div className={styles.collections}>
         <div className={styles.collectionList}>

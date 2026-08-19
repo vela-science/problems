@@ -20,6 +20,7 @@ describe("public trust surfaces", () => {
     expect(screen.getByText(/signature proves attribution and integrity, not truth/iu)).toBeVisible();
     expect(screen.getByRole("link", { name: "Browse Problems" })).toHaveAttribute("href", "/problems");
     expect(screen.getByRole("link", { name: "Read Endless Frontiers" })).toHaveAttribute("href", "/about/endless-frontiers");
+    expect(screen.getByRole("link", { name: "Learn about Vela" })).toHaveAttribute("href", "https://vela.space");
   });
 
   it("publishes the current living vision essay without restoring a second shell", () => {

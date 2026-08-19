@@ -1,15 +1,20 @@
 ---
 register: product
-product: problems.science
-version: 2026-08-18-brand-01
+product: Vela Web
+version: 2026-08-18-brand-02
 ---
 
-# problems.science product brief
+# Vela Web product and editorial brief
 
 ## Product promise
 
 problems.science helps people find scientific problems, understand the evidence
 around them, see active work and durable results, and contribute their own work.
+
+vela.space is the separate read-only Vela editorial home. It introduces the
+project and publishes the complete living *Endless Frontiers* essay at
+`/constellations`. It does not carry product navigation, accounts, scientific
+state, or an embedded copy of Core documentation.
 
 The Problem is the primary public object. The product should be understandable
 without knowing Vela's protocol vocabulary.
@@ -45,15 +50,23 @@ search, contribution flows, account, and settings. These pages prioritize the
 working object, compact attributed rows, files, diffs, checks, and familiar
 controls.
 
-**Editorial and brand register:** the decisive Home art moment, About, the
-living *Endless Frontiers* essay, collection cover moments, meaningful empty or
-degraded states, graph orientation, and restrained profile accents. These
-surfaces may use the retained paintings and editorial type. They remain inside
-the same problems.science shell and keep the next useful action obvious.
+**Editorial and brand register:** `vela.space`, its landing page, and the full
+living *Endless Frontiers* essay, plus restrained identity moments reused by
+Problems where they help orientation. These surfaces may use the retained
+paintings and editorial type. They have their own static shell and do not enter
+the Problems AppShell.
 
-The canonical source assets live under `content/editorial/source`. Home and
-About reuse those exact authored paintings; the application does not generate
-replacement art, redraw the sail, or restore the retired standalone site.
+The canonical source assets live under `content/editorial/source`. `apps/www`
+compiles those exact authored compositions directly. Problems may reuse selected
+paintings but does not copy or abbreviate the canonical essay. Neither app
+generates replacement art or redraws the sail.
+
+Cutover is deliberately two-step. Until `vela.space` is qualified and live,
+Problems keeps its current `/about/endless-frontiers` route, links, and sitemap
+entry as the production compatibility floor. After the editorial origin is
+live, those links move to `https://vela.space/constellations`, the Problems
+route becomes a permanent cross-origin redirect, and the duplicate sitemap
+entry is removed in the same release.
 
 ## People and jobs
 
@@ -121,8 +134,9 @@ Primary navigation:
 The product mark also returns Home. Search belongs to the header command
 control. Research map is contextual and command-searchable. Release details
 belong under About and the exact well-known manifest, not in task navigation.
-About owns the current product explanation and links to the living vision
-essay. Privacy, Terms, Accessibility, and Contact remain compact trust routes.
+About owns the current product explanation and links across to the living vision
+essay on `vela.space`. Privacy, Terms, Accessibility, and Contact remain compact
+Problems trust routes.
 
 The canonical Problem modes are:
 
@@ -164,8 +178,8 @@ does not accept a contribution. A signed object proves attribution, not truth.
 
 ### Discover
 
-Home is the activation front door. Search is the dominant object. One retained
-Vela watercolor establishes the horizon and links to the product vision without
+Problems Home is the activation front door. Search is the dominant object. One retained
+Vela watercolor establishes the horizon and links to `vela.space/constellations` without
 delaying search or browse. The same opening contains one compact published-
 collections list; below it are three or four real Problems worth opening and
 the latest durable reviewed Results. A single link reaches all Updates. Home

@@ -7,15 +7,15 @@
 .grid {
   display: grid;
   grid-template-areas:
-    "task art"
-    "collections art";
-  grid-template-columns: minmax(0, 1.12fr) minmax(19rem, 0.88fr);
-  gap: 1.25rem clamp(1.5rem, 3vw, 3.5rem);
+    "task"
+    "collections";
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem;
   align-items: start;
+  max-width: 52rem;
 }
 
 .task { grid-area: task; min-width: 0; }
-.art { grid-area: art; align-self: start; }
 .collections { grid-area: collections; min-width: 0; }
 
 .title {
@@ -47,10 +47,6 @@
   border-top: 1px solid color-mix(in oklab, var(--vela-color-water) 16%, var(--border));
 }
 
-.art :global(img) {
-  object-position: 57% 50%;
-}
-
 :global(.dark) .hero {
   background: color-mix(in oklab, var(--vela-color-midnight) 88%, var(--vela-color-water));
 }
@@ -58,20 +54,6 @@
 :global(.dark) .collectionList {
   border-color: color-mix(in oklab, var(--vela-color-stardust) 28%, var(--border));
   background: color-mix(in oklab, var(--vela-color-midnight) 86%, transparent);
-}
-
-@media (max-width: 900px) {
-  .grid {
-    grid-template-areas:
-      "task"
-      "art"
-      "collections";
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .art {
-    margin-top: 0.25rem;
-  }
 }
 
 @media (max-width: 520px) {

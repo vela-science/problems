@@ -50,6 +50,56 @@
         "vitest": "^4.1.10",
       },
     },
+    "apps/www": {
+      "name": "@vela/www",
+      "dependencies": {
+        "@hugeicons/core-free-icons": "4.2.3",
+        "@hugeicons/react": "1.1.9",
+        "@vela/brand": "workspace:*",
+        "@vela/editorial-source": "workspace:*",
+        "@vela/projection-data": "workspace:*",
+        "@vela/ui": "workspace:*",
+        "clsx": "^2.1.1",
+        "next": "16.2.12",
+        "react": "19.2.8",
+        "react-dom": "19.2.8",
+      },
+      "devDependencies": {
+        "@tailwindcss/postcss": "4.3.3",
+        "@testing-library/jest-dom": "^6.9.1",
+        "@testing-library/react": "^16.3.2",
+        "@types/node": "^20",
+        "@types/react": "^19",
+        "@types/react-dom": "^19",
+        "eslint": "^9",
+        "eslint-config-next": "16.2.12",
+        "jsdom": "^29.1.1",
+        "postcss": "8.5.25",
+        "tailwindcss": "4.3.3",
+        "typescript": "^5",
+        "vite-tsconfig-paths": "^6.1.1",
+        "vitest": "^4.1.10",
+      },
+    },
+    "content/editorial": {
+      "name": "@vela/editorial-source",
+      "dependencies": {
+        "@hugeicons/core-free-icons": "4.2.3",
+        "@hugeicons/react": "1.1.9",
+        "@vela/brand": "workspace:*",
+        "@vela/projection-data": "workspace:*",
+        "@vela/ui": "workspace:*",
+        "clsx": "^2.1.1",
+        "next": "16.2.12",
+        "react": "19.2.8",
+        "react-dom": "19.2.8",
+      },
+      "devDependencies": {
+        "@types/react": "^19",
+        "@types/react-dom": "^19",
+        "tailwindcss": "4.3.3",
+      },
+    },
     "packages/activity-data": {
       "name": "@vela/activity-data",
       "dependencies": {
@@ -695,11 +745,15 @@
 
     "@vela/brand": ["@vela/brand@workspace:packages/brand"],
 
+    "@vela/editorial-source": ["@vela/editorial-source@workspace:content/editorial"],
+
     "@vela/problems": ["@vela/problems@workspace:apps/problems"],
 
     "@vela/projection-data": ["@vela/projection-data@workspace:packages/projection-data"],
 
     "@vela/ui": ["@vela/ui@workspace:packages/ui"],
+
+    "@vela/www": ["@vela/www@workspace:apps/www"],
 
     "@vitest/expect": ["@vitest/expect@4.1.10", "", { "dependencies": { "@standard-schema/spec": "^1.1.0", "@types/chai": "^5.2.2", "@vitest/spy": "4.1.10", "@vitest/utils": "4.1.10", "chai": "^6.2.2", "tinyrainbow": "^3.1.0" } }, "sha512-YsCn+qAk1GWjQOWFEsEcL2gNQ0zmVmQu3T03qP6UyjhtmdtwtbuI+DASn/7iQB3HGTXkdBwGddzxPlmiql5vlA=="],
 

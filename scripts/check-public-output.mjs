@@ -26,14 +26,15 @@ const activityPrivacyRules = [
 
 function deliveredFiles(repository) {
   const app = (name) => resolve(repository, "apps", name);
-  const nextFiles = (name) => [
-    ...filesBelow(resolve(app(name), ".next/static")),
-    ...filesBelow(resolve(app(name), "public")),
-    ...filesBelow(resolve(app(name), ".next/server/app")),
-  ].filter((path) => deliveredExtensions.test(path) && !path.endsWith(".map"));
+  const deliveredAppFiles = (name, directories) => directories.flatMap((directory) =>
+    filesBelow(resolve(app(name), directory))
+  ).filter((path) => deliveredExtensions.test(path) && !path.endsWith(".map"));
 
   return [
-    ...nextFiles("problems").map((path) => ({ path, profile: "app" })),
+    ...deliveredAppFiles("problems", [".next/static", "public", ".next/server/app"])
+      .map((path) => ({ path, profile: "app" })),
+    ...deliveredAppFiles("www", ["out"])
+      .map((path) => ({ path, profile: "editorial" })),
   ];
 }
 

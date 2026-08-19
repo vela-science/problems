@@ -1,7 +1,7 @@
 ---
-version: beta-brand-01
-name: problems.science Two-Register Research Product
-description: Familiar scientific work surfaces with a living Vela editorial register built from retained watercolor, horizon light, and the canonical sail.
+version: beta-brand-02
+name: Vela Two-Application Design System
+description: A familiar scientific product at problems.science and a separate living editorial folio at vela.space, joined by one brand.
 colors:
   background: "oklch(0.985 0.003 255)"
   surface: "oklch(0.992 0.004 86)"
@@ -138,7 +138,7 @@ components:
 
 ## Overview
 
-The visual system is one product with two registers. Its workspaces play a
+The visual system is one brand with two applications and two registers. Its workspaces play a
 modern research product straight: neutral canvas, deep marine navigation,
 cobalt interaction, semantic state colors, sans typography, and recognizable
 instruments. Its editorial moments are unmistakably Vela: retained watercolor,
@@ -157,12 +157,18 @@ secondary references for files, diffs, checks, history, collection discovery,
 filters, tags, and approachable technical identity pages. Base UI supplies
 accessible behavior. None supplies Vela's ontology or visual brand.
 
-The registers are coordinated, not blended. Product workspaces use Entire-like
+The registers are coordinated, not blended. `apps/problems` workspaces use Entire-like
 dominant objects, GitHub-like files and diffs, and Hugging Face-like discovery.
-Home, About, the living essay, collection cover moments, meaningful empty
-states, graph orientation, and profile accents may use first-party paintings
-and editorial type. Use the canonical sail and retained artwork; do not redraw
-the mark or generate substitutes.
+The separate `apps/www` landing and living essay own the full editorial register.
+Problems Home, collection cover moments, meaningful empty states, graph
+orientation, and profile accents may inherit restrained first-party materials.
+Use the canonical sail and retained artwork; do not redraw the mark or generate
+substitutes.
+
+The pre-existing Problems essay route is a temporary release floor, not a third
+register. Keep it intact while `vela.space` is local or unqualified; switch the
+links and route to a cross-origin redirect only when the editorial deployment
+is live.
 
 ### Functional motif grammar
 
@@ -274,8 +280,9 @@ key, focus, and active-tab visibility. Do not hide later modes with no cue.
 - History: semantic chronology and diffs.
 - Graph: exact relationship canvas with synchronized list fallback.
 - Account: person, connections, work continuity, and security actions.
-- About and essay: authored argument, orientation, and a direct route back to
-  Problems.
+- Problems About: concise product explanation and a cross-domain route to Vela.
+- Vela landing and essay: authored argument, orientation, and a direct route
+  into Problems.
 
 Supporting content should not compete with that object. If a section merely
 restates a tab, badge, or status row, remove it.
@@ -310,17 +317,17 @@ identifiers. Home uses a prominent search field; other routes use compact search
 and filters. Search results always qualify numeric Problem identity by
 collection.
 
-### Editorial plate and brand opening
+### Editorial site and product brand opening
 
 Adapt the selected shadcn.io split-image geometry, not its demo styling: one
 dominant copy/action column and one decisive image field. Home keeps search in
 the copy column and places the retained painting beside it on wide screens,
 after it on narrow screens. The painting is not a card, metric, or data figure.
 
-Long-form pages adapt the selected editorial-layout reading measure and aside
-rhythm without drop-cap theatre, KPI cards, or copied dependencies. Zodiak owns
-display moments; Gambetta owns authored long-form prose; Switzer or Geist owns
-navigation and metadata.
+The full long-form composition lives in `apps/www`, outside the Problems shell.
+It preserves the historical continuous folio, margin notes, authored figures,
+deep links, and time-of-day atmosphere. Product pages may reuse a painting or
+quiet accent, but they do not import the essay layout.
 
 ### Problem header and Overview
 

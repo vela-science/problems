@@ -23,6 +23,9 @@ export default function AboutPage() {
           <div className="mb-8"><PublicInformationNav current="/about" /></div>
           <h1 className={styles.title}>Science should remember the route, not only the arrival.</h1>
           <p className={styles.lead}>problems.science brings a question, its sources, durable Results, active Work, and the history between them into one readable place.</p>
+          <p className="mt-4 max-w-[58ch] text-body leading-7 text-muted-foreground">
+            problems.science is a Vela project. <a href="https://vela.space" className="font-medium text-primary underline underline-offset-4">Learn about Vela</a>.
+          </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Button nativeButton={false} render={<Link href="/problems" />}>Browse Problems <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden data-icon="inline-end" /></Button>
             <Button nativeButton={false} variant="outline" render={<Link href="/about/endless-frontiers" />}>Read Endless Frontiers</Button>

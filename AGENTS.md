@@ -2,14 +2,15 @@
 
 ## Product boundary
 
-This private Bun workspace contains one deployed Next.js application, retained
-editorial source selectively consumed by that application, and four shared
-packages:
+This private Bun workspace contains two deliberately separate Next.js
+applications, one retained editorial source library, and four shared packages:
 
 - `apps/problems`: the unified Vela product application at canonical
   `problems.science`,
   combining exact scientific State, non-authoritative Work, and advanced record
   inspection;
+- `apps/www`: the static Vela editorial application at canonical `vela.space`,
+  owning the landing page and the full living essay at `/constellations`;
 - `packages/brand`: framework-neutral tokens, fonts, marks, and licenses;
 - `packages/ui`: shared React UI source built from shadcn `base-nova` on Base
   UI, plus stable Vela presentation semantics;
@@ -30,8 +31,10 @@ accounts remain separate from Vela actor identities.
 
 ## Sources of truth
 
-- Retained paintings and authored essay source: `content/editorial`; only
-  explicitly reviewed assets and copy enter the Problems build
+- Retained paintings and authored essay source: `content/editorial`; `apps/www`
+  compiles this source directly, while Problems may reuse only explicitly
+  reviewed assets and passages
+- Vela editorial routes and shell: `apps/www/src/app`
 - Vela product routes and compositions: `apps/problems/src/app`,
   `apps/problems/src/components`
 - Brand contract: `packages/brand/vela.tokens.json` and its generated outputs
@@ -67,11 +70,11 @@ when their authors wrote them. Do not rewrite them to match the current system.
   references for files, diffs, checks, history, tabs, breadcrumbs, and
   collection discovery. Borrow task conventions, not brand skins or
   ontologies.
-- Use two deliberate registers. Dense product routes use a neutral application
+- Use two deliberate applications and registers. Dense Problems routes use a neutral application
   canvas, deep marine navigation, cobalt interaction, and semantic colors for
   real state. Earned editorial and identity moments may reuse the canonical
   sail, first-party watercolor, horizon, constellation, borrowed-light, and
-  long-handoff language. Constellations must encode exact relationships;
+  long-handoff language on `apps/www`. Constellations must encode exact relationships;
   nautical motifs must clarify orientation or handoff. Never turn product
   controls into themed props or use literal galaxy wallpaper, glass, neon,
   route hero slabs, card soup, or decorative charts.
@@ -99,6 +102,10 @@ when their authors wrote them. Do not rewrite them to match the current system.
 ## Editing workflow
 
 - Use Bun only. Do not add npm, pnpm, Yarn, Turborepo, or app-local lockfiles.
+- Keep `apps/www` static and read-only. It may import current committed release
+  facts and shared brand/UI source; it must not read request state, connect to
+  the projection or activity databases, host identity, or interpret protocol
+  records.
 - Preserve exact-state semantics and the distinction between Verification and
   acceptance.
 - Preserve the canonical Vela sail unless an approved brand pass replaces it.

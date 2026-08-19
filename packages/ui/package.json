@@ -14,6 +14,7 @@
     "./hooks/*": "./src/hooks/*.ts",
     "./lib/*": "./src/lib/*.ts",
     "./product.css": "./src/styles/product.css",
+    "./editorial.css": "./src/styles/editorial.css",
     "./foundation.css": "./src/styles/foundation.css",
     "./typeset.css": "./src/styles/typeset.css"
   },

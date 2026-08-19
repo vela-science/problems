@@ -37,6 +37,7 @@ apps/problems/public/.well-known/vela-site.json
 apps/*/public/assets/fonts/
 apps/problems/public/favicon.svg
 apps/problems/public/data/
+apps/www/public/
 
 # Local development may check canonical repositories out here. The release
 # command uses a private disposable directory instead; committing either would

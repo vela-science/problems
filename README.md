@@ -1,15 +1,16 @@
 <p align="center">
-  <a href="https://problems.science/">
+  <a href="https://vela.space/">
     <img src="packages/brand/marks/exports/svg/vela-lockup-horizontal-color.svg" width="240" alt="Vela">
   </a>
 </p>
 
 <p align="center">
-  <strong>The root-bound Problems product for Vela.</strong><br>
-  Exact scientific state, published without moving the authority boundary into the web.
+  <strong>Vela Web: the living editorial home and the Problems research product.</strong><br>
+  Scientific direction and exact state, without moving the authority boundary into the web.
 </p>
 
 <p align="center">
+  <a href="https://vela.space/constellations">Endless Frontiers</a> ·
   <a href="https://problems.science/problems">Problems</a> ·
   <a href="https://github.com/vela-science/vela">Protocol and CLI</a> ·
   <a href="docs/WEB.md">Web operations</a>
@@ -17,20 +18,22 @@
 
 ## What lives here
 
-Vela Web is one private Bun workspace with one deployed Next.js application
-and shared packages.
+Vela Web is one private Bun workspace with two deliberately separate Next.js
+applications and shared packages.
 
 | Path | Runtime | Purpose |
 | --- | --- | --- |
-| `apps/problems` | Next.js | Root-bound Problem, Repository, Claim, Proposal, Decision, Source, graph, and replay views |
-| `content/editorial` | Non-runnable authored source | The retained landing composition and *Endless Frontiers* essay; no package, route, renderer, or deployment |
+| `apps/problems` | Next.js server application | The research product at `problems.science`: Problems, Results, Sources, Work, History, graph, and contribution flows |
+| `apps/www` | Static Next.js export | The Vela landing and full *Endless Frontiers* essay at `vela.space` |
+| `content/editorial` | Private authored-source package | The full landing, essay, notes, figures, and retained paintings compiled by `apps/www` |
 | `packages/brand` | TypeScript and CSS | Framework-neutral sail, tokens, fonts, licenses, and deterministic exports |
 | `packages/ui` | React, shadcn, and Base UI | Private shared primitives and stable Vela presentation semantics |
 | `packages/projection-data` | TypeScript | Sole validator and projector for Repository, Problem, search, and graph data |
 
-The application shares brand assets, exact facts, and eligible React
-primitives with the workspace packages. It cannot sign, accept, or mutate
-scientific state.
+Both applications share brand assets and eligible React primitives. The
+editorial application is entirely static. The Problems application may own
+hosted account and workspace activity, but neither application can sign,
+accept, or mutate scientific state.
 
 Vela follows one product story:
 
@@ -65,7 +68,9 @@ canonical repository Git repositories
 
 ## Product invariants
 
-- `problems.science` is the sole canonical and deployed product origin.
+- `vela.space` is the canonical editorial origin. `problems.science` is the
+  canonical research-product origin. Editorial pages do not live inside the
+  Problems application shell.
 - Repository pages are exact-root projections. The active data head moves only
   through an atomic, verified projection release; every request remains bound
   to one readable release root.
@@ -95,6 +100,7 @@ npm, pnpm, Yarn, Turborepo, or per-application lockfiles.
 ```bash
 bun install --frozen-lockfile
 bun run dev:problems     # http://127.0.0.1:4322
+bun run dev:www          # configurable local editorial preview
 ```
 
 ## Verify a release candidate
