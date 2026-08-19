@@ -17,7 +17,7 @@ import {
 } from "@vela/ui/components/command";
 import { JUMP_DESTINATIONS, KeyboardShortcuts } from "@/components/vela/keyboard-shortcuts";
 import { loadSearchIndex } from "@/lib/search-index";
-import { problemCollectionForPath, type PublishedProblemCollection } from "@/lib/problem-collections";
+import { problemCollectionForPath, problemCollectionRecordLabel, type PublishedProblemCollection } from "@/lib/problem-collections";
 
 type PublishedRepository = { slug: string; name: string; pending: number; hasGraph: boolean; hasProblems: boolean };
 type CommandContextValue = { open: boolean; setOpen: (open: boolean) => void };
@@ -46,11 +46,15 @@ export function CommandPaletteProvider({
   repositories,
   problemCollections,
   projectionRoot,
+  searchRoot,
+  collectionRoot,
 }: {
   children: React.ReactNode;
   repositories: PublishedRepository[];
   problemCollections: PublishedProblemCollection[];
   projectionRoot: string;
+  searchRoot: string;
+  collectionRoot: string;
 }) {
   const [open, setOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
@@ -133,7 +137,7 @@ export function CommandPaletteProvider({
 
     let cancelled = false;
     const timeout = window.setTimeout(() => {
-      loadSearchIndex(projectionRoot, { q: normalized })
+      loadSearchIndex(projectionRoot, searchRoot, collectionRoot, { q: normalized })
         .then((index) => {
           if (!cancelled) setSearchResult({ query: normalized, records: index.records.slice(0, 12), error: false });
         })
@@ -146,7 +150,7 @@ export function CommandPaletteProvider({
       cancelled = true;
       window.clearTimeout(timeout);
     };
-  }, [normalized, open, projectionRoot]);
+  }, [collectionRoot, normalized, open, projectionRoot, searchRoot]);
 
   const navigate = useCallback((href: string) => {
     setOpen(false);
@@ -185,7 +189,7 @@ export function CommandPaletteProvider({
                   {records.map((record) => {
                     const problem = record.kind === "problem" ? problemCollectionForPath(record.href, problemCollections) : null;
                     const label = problem?.problem
-                      ? `${problem.name} · #${problem.problem}`
+                      ? problemCollectionRecordLabel(problem)
                       : SEARCH_KIND_LABEL[record.kind] ?? record.source_title ?? "Published record";
                     return (
                     <CommandItem key={`${record.repository}:${record.id}`} value={`${record.id} ${record.assertion}`} onSelect={() => navigate(record.href)}>

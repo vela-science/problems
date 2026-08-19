@@ -3,6 +3,7 @@ import Link from "next/link";
 import {
   ArrowRight01Icon as ArrowRight,
   BookOpen01Icon,
+  CodeIcon,
   Search01Icon as Search,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -19,6 +20,8 @@ import { HomeResultRow } from "@/components/vela/home-result-row";
 import { currentReview } from "@/components/vela/problem-provenance";
 import { ProblemQuestionRow } from "@/components/vela/problem-question-row";
 import { discoveredProblems, problemStatePreviews } from "@/lib/scientific-state";
+import { formalConjecturesCollection } from "@vela/projection-data";
+import { ScientificText } from "@vela/ui/vela/scientific-text";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -27,6 +30,7 @@ export const metadata: Metadata = {
 };
 
 const COLLECTION_PATH = "/problems/erdos-problems";
+const FORMAL_COLLECTION_PATH = "/problems/formal-conjectures";
 
 export default async function HomePage() {
   const catalog = await discoveredProblems();
@@ -42,7 +46,7 @@ export default async function HomePage() {
   const featured = [
     ...assessed,
     ...catalog.filter((problem) => problem.record.declared_status === "open" && problem.record.formalized && !problem.record.local_standing),
-  ].slice(0, 4);
+  ].slice(0, 3);
   const previewDiscoveries = [...new Map(
     [...featured, ...assessed].map((problem) => [`${problem.repository}/${problem.problem}`, problem]),
   ).values()];
@@ -76,7 +80,7 @@ export default async function HomePage() {
               name="q"
               type="search"
               maxLength={200}
-              placeholder="Search Problems by question, number, or topic"
+              placeholder="Search Problems across published collections"
             />
             <InputGroupAddon align="inline-end">
               <InputGroupButton type="submit" variant="secondary" className="h-10 px-4">Search</InputGroupButton>
@@ -99,14 +103,20 @@ export default async function HomePage() {
           </Button>
         </div>
 
-        <div className="mt-9 max-w-3xl border-y border-border">
-          <Link href={COLLECTION_PATH} className="vela-object-row group flex min-w-0 items-center gap-3 px-1 py-4 focus-visible:outline-2 focus-visible:outline-offset-2">
+        <div className="mt-9 max-w-3xl divide-y overflow-hidden rounded-lg border border-border">
+          <Link href={COLLECTION_PATH} className="vela-object-row group flex min-w-0 items-center gap-3 px-1 py-3.5 focus-visible:outline-2 focus-visible:outline-offset-2">
             <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary"><HugeiconsIcon icon={BookOpen01Icon} aria-hidden className="size-4" /></span>
             <span className="min-w-0 flex-1">
               <span className="block text-compact font-semibold">Erdős Problems</span>
               <span className="block text-meta text-muted-foreground">{publishedCount} published Problems</span>
             </span>
             <Badge variant="secondary" className="hidden sm:inline-flex">Published collection</Badge>
+            <HugeiconsIcon icon={ArrowRight} aria-hidden className="size-4 shrink-0 text-muted-foreground transition-transform duration-150 group-hover:translate-x-0.5" />
+          </Link>
+          <Link href={FORMAL_COLLECTION_PATH} className="vela-object-row group flex min-w-0 items-center gap-3 px-1 py-3.5 focus-visible:outline-2 focus-visible:outline-offset-2">
+            <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary"><HugeiconsIcon icon={CodeIcon} aria-hidden className="size-4" /></span>
+            <span className="min-w-0 flex-1"><span className="block text-compact font-semibold">Formal Conjectures</span><span className="block text-meta text-muted-foreground">{formalConjecturesCollection.data.items.length} rights-reviewed formalizations</span></span>
+            <Badge variant="secondary" className="hidden sm:inline-flex">Published subset</Badge>
             <HugeiconsIcon icon={ArrowRight} aria-hidden className="size-4 shrink-0 text-muted-foreground transition-transform duration-150 group-hover:translate-x-0.5" />
           </Link>
         </div>
@@ -117,7 +127,7 @@ export default async function HomePage() {
       <div className="min-w-0">
         <div className="flex flex-wrap items-end justify-between gap-4 border-b pb-3">
           <h2 id="open-a-question-heading" className="text-title">Problems to explore</h2>
-          <Link href={COLLECTION_PATH} className="shrink-0 text-meta font-medium text-primary underline-offset-4 hover:underline">All {publishedCount} problems</Link>
+          <Link href="/problems" className="shrink-0 text-meta font-medium text-primary underline-offset-4 hover:underline">All collections</Link>
         </div>
         {featuredPreviews.length ? <ul className="mt-2 divide-y" aria-labelledby="open-a-question-heading">
           {featuredPreviews.map(({ discovery, state }) => <ProblemQuestionRow
@@ -126,6 +136,7 @@ export default async function HomePage() {
             number={discovery.problem} collectionLabel="Erdős problem"
             href={discovery.canonicalPath ?? COLLECTION_PATH}
           />)}
+          {formalConjecturesCollection.data.items.slice(0, 1).map((item) => <li key={item.route_slug} className="min-w-0"><Link href={`${FORMAL_COLLECTION_PATH}/${item.route_slug}`} className="vela-object-row group -mx-2 flex min-w-0 gap-4 rounded-md px-2 py-4"><span aria-hidden className="mt-0.5 grid size-8 shrink-0 place-items-center rounded-md bg-primary/10 text-primary"><HugeiconsIcon icon={CodeIcon} className="size-4" /></span><span className="min-w-0 flex-1"><span className="block max-w-[76ch] text-compact leading-6 group-hover:text-primary"><ScientificText text={item.title} /></span><span className="mt-1.5 block text-meta text-muted-foreground">Formal Conjectures · {item.source_family}</span></span><HugeiconsIcon icon={ArrowRight} aria-hidden className="mt-1 size-4 shrink-0 text-muted-foreground" /></Link></li>)}
         </ul> : <p className="border-b py-6 text-body text-muted-foreground">No Problem in this release has a retained question to preview.</p>}
       </div>
 

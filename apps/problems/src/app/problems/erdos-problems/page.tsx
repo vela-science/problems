@@ -70,7 +70,8 @@ const selectItems = (allLabel: string, entries: ReadonlyArray<readonly [string, 
 /* The statement is the row.
  *
  * Every other element earns its place by varying. Four did not: the collection
- * badge (one collection is published, so it printed on all 1,217 rows), the
+ * badge (the route already identifies this collection, so it printed on all
+ * 1,217 rows), the
  * contribution path (a hard-coded literal), the Local Standing caption ("not
  * assessed" on 1,215 of 1,217), and the topic list, which the eyebrow and
  * `theme` computed identically and printed twice. What is left is the number,
@@ -167,7 +168,7 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
     ...overrides,
   });
 
-  const corpusLabel = `${catalog.length.toLocaleString()} source-owned Problems · 1 published collection`;
+  const corpusLabel = `${catalog.length.toLocaleString()} source-owned Problems · Erdős Problems`;
   const collectionStructuredData = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -189,7 +190,7 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionStructuredData) }} />
       <PageHero className="vela-collection-hero grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,.42fr)] lg:items-end">
         <div><p className="text-eyebrow uppercase text-muted-foreground">{corpusLabel}</p><h1 className="mt-3 text-display">Erdős Problems</h1><p className="typeset typeset-compact mt-4 max-w-2xl text-muted-foreground">Browse this source-owned collection by topic, then inspect each question, its evidence, prior work, and current Repository state.</p><div className="mt-6 flex flex-wrap gap-3"><Button nativeButton={false} render={<Link href={{ pathname: COLLECTION_PATH, query: { view: "all", ...scopeQuery() } }} />}>Open collection directory <HugeiconsIcon icon={ArrowRight} aria-hidden data-icon="inline-end" /></Button><Button nativeButton={false} variant="outline" render={<Link href="/contribute" />}>Add a contribution</Button></div></div>
-        <div className="vela-evidence-surface rounded-xl px-5 py-5"><p className="text-eyebrow uppercase text-muted-foreground">Collection scope</p><p className="mt-2 text-title">{catalog.length.toLocaleString()} Erdős problems</p><p className="mt-2 text-meta text-muted-foreground">One explicit Problem collection with {new Set(catalog.flatMap(({ topics }) => topics.map(({ key }) => key))).size} source-owned Topics. Other sources appear as evidence, not as additional Problem collections.</p><div className="mt-4 flex flex-wrap gap-2">{domains.map(([key, name]) => <Link key={key} href={{ pathname: COLLECTION_PATH, query: { domain: key } }} className="rounded-full bg-background/70 px-3 py-1.5 text-meta font-medium hover:bg-background">Area · {name}</Link>)}</div></div>
+        <div className="vela-evidence-surface rounded-xl px-5 py-5"><p className="text-eyebrow uppercase text-muted-foreground">Collection scope</p><p className="mt-2 text-title">{catalog.length.toLocaleString()} Erdős problems</p><p className="mt-2 text-meta text-muted-foreground">This source profile organizes the collection into {new Set(catalog.flatMap(({ topics }) => topics.map(({ key }) => key))).size} source-owned Topics. Supporting sources remain evidence attached to each Problem.</p><div className="mt-4 flex flex-wrap gap-2">{domains.map(([key, name]) => <Link key={key} href={{ pathname: COLLECTION_PATH, query: { domain: key } }} className="rounded-full bg-background/70 px-3 py-1.5 text-meta font-medium hover:bg-background">Area · {name}</Link>)}</div></div>
       </PageHero>
 
       <PageSection aria-labelledby="browse-problems">

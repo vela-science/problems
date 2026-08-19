@@ -40,6 +40,8 @@ describe("AppShell accessibility boundary", () => {
         publishedRepositories={[]}
         problemCollections={[{ namespace: "erdos-problems", name: "Erdős Problems" }]}
         projectionRoot={`sha256:${"a".repeat(64)}`}
+        searchRoot={`sha256:${"b".repeat(64)}`}
+        collectionRoot={`sha256:${"c".repeat(64)}`}
         authEnabled={false}
       >
         <p>Published state</p>

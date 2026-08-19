@@ -68,6 +68,7 @@ export * from "./problem-public-routes";
 export * from "./problem-source-coverage";
 export * from "./source-corpus-map";
 export * from "./formal-conjectures-audit";
+export * from "./formal-conjectures-collection";
 export * from "./proposed-state-preview";
 export * from "./registry";
 export * from "./core-integration";

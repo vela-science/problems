@@ -1,9 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 
-const mocks = vi.hoisted(() => ({ discovered: vi.fn(), redirect: vi.fn() }));
-
-vi.mock("next/navigation", () => ({ redirect: (href: string) => { mocks.redirect(href); throw new Error("NEXT_REDIRECT"); } }));
+const mocks = vi.hoisted(() => ({ discovered: vi.fn() }));
 vi.mock("@/lib/scientific-state", () => ({
   discoveredProblems: mocks.discovered,
   problemDiscoveryCollections: (catalog: Array<Record<string, unknown>>) => [{
@@ -59,19 +57,20 @@ describe("global Problems entry", () => {
     mocks.discovered.mockResolvedValue([problem("321", "accepted"), problem("94")]);
   });
 
-  it("states the one-collection scope and links its directory", async () => {
+  it("publishes two honest collections and collection-qualified starting points", async () => {
     expect(metadata.alternates).toEqual({ canonical: "/problems" });
-    render(await ProblemsPage({ searchParams: Promise.resolve({}) }));
-    expect(screen.getByRole("heading", { level: 1, name: "Problems" })).toBeInTheDocument();
-    expect(screen.getByText(/current release contains one collection/u)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /Browse Erdős Problems/u })).toHaveAttribute("href", "/problems/erdos-problems");
-    expect(screen.getByRole("link", { name: "Erdős problem 321: Question for 321" }))
-      .toHaveAttribute("href", "/problems/erdos-problems/321");
+    const view = render(await ProblemsPage({ searchParams: Promise.resolve({}) }));
+    expect(view.container.querySelector("h1")).toHaveTextContent("Problems");
+    expect(screen.getByText("2 published collections")).toBeInTheDocument();
+    expect(screen.getAllByText("Erdős Problems")[0]?.closest("a")).toHaveAttribute("href", "/problems/erdos-problems");
+    expect(screen.getAllByText("Formal Conjectures")[0]?.closest("a")).toHaveAttribute("href", "/problems/formal-conjectures");
+    expect([...view.container.querySelectorAll("a")].find((link) => link.getAttribute("href") === "/problems/erdos-problems/321"))
+      .toBeTruthy();
   });
 
-  it("preserves old directory query links at the collection address", async () => {
-    await expect(ProblemsPage({ searchParams: Promise.resolve({ q: "prime", status: "open" }) })).rejects.toThrow("NEXT_REDIRECT");
-    expect(mocks.redirect).toHaveBeenCalledWith("/problems/erdos-problems?q=prime&status=open");
-    expect(mocks.discovered).not.toHaveBeenCalled();
+  it("keeps global search on the global collection entry", async () => {
+    render(await ProblemsPage({ searchParams: Promise.resolve({}) }));
+    expect(screen.getByRole("textbox", { name: "Search all Problems" })).toHaveAttribute("name", "q");
+    expect(screen.getByRole("button", { name: "Search" })).toBeInTheDocument();
   });
 });

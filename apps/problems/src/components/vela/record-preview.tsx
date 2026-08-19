@@ -35,20 +35,20 @@ import { loadSearchIndex } from "@/lib/search-index";
  * A dedicated context with an empty default is neither: the shell always
  * provides it, and where there is no shell there is no projection identity, so
  * there is nothing a preview could honestly show. */
-const ProjectionRootContext = createContext("");
+const ProjectionRootContext = createContext({ projectionRoot: "", searchRoot: "", collectionRoot: "" });
 
-export function ProjectionRootProvider({ root, children }: { root: string; children: React.ReactNode }) {
-  return <ProjectionRootContext.Provider value={root}>{children}</ProjectionRootContext.Provider>;
+export function ProjectionRootProvider({ root, searchRoot, collectionRoot, children }: { root: string; searchRoot: string; collectionRoot: string; children: React.ReactNode }) {
+  return <ProjectionRootContext.Provider value={{ projectionRoot: root, searchRoot, collectionRoot }}>{children}</ProjectionRootContext.Provider>;
 }
 
 export function RecordPreview({ id, children }: { id: string; children: React.ReactNode }) {
-  const projectionRoot = useContext(ProjectionRootContext);
+  const { projectionRoot, searchRoot, collectionRoot } = useContext(ProjectionRootContext);
   const [state, setState] = useState<{ status: "idle" | "loading" | "missing" | "error"; record?: SiteSearchRecord }>({ status: "idle" });
 
   const load = (open: boolean) => {
     if (!open || state.status !== "idle") return;
     setState({ status: "loading" });
-    loadSearchIndex(projectionRoot, { q: id.toLocaleLowerCase() })
+    loadSearchIndex(projectionRoot, searchRoot, collectionRoot, { q: id.toLocaleLowerCase() })
       .then((index) => {
         const record = index.records.find((entry) => entry.id === id) ?? index.records[0];
         setState(record ? { status: "idle", record } : { status: "missing" });
@@ -58,7 +58,7 @@ export function RecordPreview({ id, children }: { id: string; children: React.Re
 
   /* No shell, no projection identity, no card — the reference itself is
      unchanged, which is what `DESIGN.md` requires of anything behind hover. */
-  if (!projectionRoot) return <>{children}</>;
+  if (!projectionRoot || !searchRoot || !collectionRoot) return <>{children}</>;
 
   return (
     <HoverCard onOpenChange={load}>

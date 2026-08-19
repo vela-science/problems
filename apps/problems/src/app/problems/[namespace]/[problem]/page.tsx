@@ -2,11 +2,14 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
   canonicalProblemPath,
+  formalConjectureOccurrence,
   problemPublicRouteForCanonicalPath,
   problemResolutionConfig,
   repositoryForCanonicalProblemNamespace,
 } from "@vela/projection-data";
 import { ProblemPageView, type ProblemPageQuery } from "@/components/vela/problem-page";
+import { FormalConjecturePage } from "@/components/vela/formal-conjecture-page";
+import type { ProblemReferenceView } from "@/components/vela/problem-overview-reference";
 import { publishedProblemCollections } from "@/lib/published-problem-collections";
 
 export const dynamic = "force-dynamic";
@@ -26,7 +29,12 @@ export const dynamic = "force-dynamic";
  * does not, the page resolves the Problem through the projection like any
  * other read, which asserts identity without asserting review. */
 function resolve(namespace: string, problem: string) {
-  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/u.test(namespace) || !/^[1-9][0-9]*$/u.test(problem)) return null;
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/u.test(namespace)) return null;
+  if (namespace === "formal-conjectures") {
+    const occurrence = formalConjectureOccurrence(problem);
+    return occurrence ? { kind: "formal-conjecture" as const, route: `/problems/formal-conjectures/${problem}`, collection: publishedProblemCollections.find((entry) => entry.namespace === namespace)!, occurrence } : null;
+  }
+  if (!/^[1-9][0-9]*$/u.test(problem)) return null;
   const repository = repositoryForCanonicalProblemNamespace(namespace);
   if (!repository) return null;
   const collection = publishedProblemCollections.find((entry) => entry.namespace === namespace);
@@ -37,12 +45,25 @@ function resolve(namespace: string, problem: string) {
   const entity = reviewed
     ? problemResolutionConfig.entities.find(({ entity_id }) => entity_id === reviewed.entity_id) ?? null
     : null;
-  return { repository, route, entity, collection };
+  return { kind: "repository-problem" as const, repository, route, entity, collection };
+}
+
+function referenceView(query: ProblemPageQuery): ProblemReferenceView {
+  if (["work", "workspace"].includes(query.view ?? "")) return "work";
+  if (["results", "contributions", "evidence", "map"].includes(query.view ?? "")) return "results";
+  if (["sources", "files"].includes(query.view ?? "")) return "sources";
+  if (["history", "timeline", "record"].includes(query.view ?? "")) return "history";
+  return "overview";
 }
 
 export async function generateMetadata({ params }: PageProps<"/problems/[namespace]/[problem]">): Promise<Metadata> {
   const { namespace, problem } = await params;
   const resolved = resolve(namespace, problem);
+  if (resolved?.kind === "formal-conjecture") return {
+    title: resolved.occurrence.title,
+    description: `Inspect the exact Formal Conjectures declaration, source, and retained status for ${resolved.occurrence.title}.`,
+    alternates: { canonical: resolved.route },
+  };
   return resolved ? {
     title: `${resolved.collection.name.replace(/ Problems$/u, " problem")} ${problem}`,
     description: `Read what is known, check prior work, and inspect exact evidence for ${resolved.collection.name.replace(/ Problems$/u, " problem")} ${problem}.`,
@@ -54,6 +75,7 @@ export default async function ProblemPage({ params, searchParams }: PageProps<"/
   const [{ namespace, problem }, query] = await Promise.all([params, searchParams]);
   const resolved = resolve(namespace, problem);
   if (!resolved) notFound();
+  if (resolved.kind === "formal-conjecture") return <FormalConjecturePage item={resolved.occurrence} route={resolved.route} current={referenceView(query)} />;
   const { repository, route, entity, collection } = resolved;
   return <ProblemPageView
     repository={repository}

@@ -3,6 +3,9 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import type { ProblemDiscovery } from "@/lib/scientific-state";
 
 vi.mock("server-only", () => ({}));
+vi.mock("@vela/ui/vela/scientific-text", () => ({
+  ScientificText: ({ text }: { text: string }) => text,
+}));
 
 const reads = vi.hoisted(() => ({ catalog: vi.fn(), previews: vi.fn() }));
 vi.mock("@/lib/scientific-state", () => ({
@@ -115,7 +118,7 @@ function previews() {
 }
 
 describe("Home", () => {
-  it("makes discovery the dominant first task and states the one-collection truth once", async () => {
+  it("makes discovery the dominant first task and states the two-collection truth once", async () => {
     reads.catalog.mockResolvedValue(catalogue());
     reads.previews.mockResolvedValue(previews());
     const { container } = render(await HomePage());
@@ -126,7 +129,9 @@ describe("Home", () => {
     expect(screen.getByRole("link", { name: "Add contribution" })).toHaveAttribute("href", "/contribute");
 
     expect(screen.getAllByText("Erdős Problems")).toHaveLength(1);
+    expect(screen.getAllByText("Formal Conjectures")).toHaveLength(1);
     expect(screen.getByText("14 published Problems")).toBeVisible();
+    expect(screen.getByText("7 rights-reviewed formalizations")).toBeVisible();
     expect(container.querySelector(".vela-page-hero")).not.toHaveTextContent(/Repository|Standing|authority|roots|records/iu);
   });
 
@@ -145,10 +150,11 @@ describe("Home", () => {
   it("shows four useful Problems and the two durable reviewed Results", async () => {
     reads.catalog.mockResolvedValue(catalogue());
     reads.previews.mockResolvedValue(previews());
-    render(await HomePage());
+    const { container } = render(await HomePage());
 
     expect(screen.getByRole("heading", { name: "Problems to explore" })).toBeVisible();
-    expect(screen.getAllByRole("link", { name: /^Erdős problem .*:/u })).toHaveLength(4);
+    expect(container.querySelectorAll('a[href^="/problems/erdos-problems/"]')).toHaveLength(5);
+    expect(container.querySelector('a[href^="/problems/formal-conjectures/"]')).toBeTruthy();
     expect(screen.getByRole("heading", { name: "Reviewed Results" })).toBeVisible();
     expect(screen.getByRole("link", { name: "Open reviewed Result for Erdős problem 94" })).toHaveAttribute("href", "/problems/erdos-problems/94?view=results");
     expect(screen.getByRole("link", { name: "Open reviewed Result for Erdős problem 321" })).toHaveAttribute("href", "/problems/erdos-problems/321?view=results");

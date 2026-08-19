@@ -20,6 +20,8 @@ describe("safeReturnTo", () => {
     expect(safeReturnTo("/problems/erdos-problems/94?view=work&workspace=ws_1")).toBe("/problems/erdos-problems/94?view=work&workspace=ws_1");
     expect(safeReturnTo("/problems/erdos-problems/94")).toBe("/problems/erdos-problems/94");
     expect(safeReturnTo("/problems/erdos-problems")).toBe("/problems/erdos-problems");
+    expect(safeReturnTo("/problems/formal-conjectures/wikipedia-oppermann-conjecture?view=sources"))
+      .toBe("/problems/formal-conjectures/wikipedia-oppermann-conjecture?view=sources");
     expect(safeReturnTo("/repositories/math/problems/321")).toBe("/repositories/math/problems/321");
     expect(safeReturnTo("/repositories/math")).toBe("/repositories/math");
   });

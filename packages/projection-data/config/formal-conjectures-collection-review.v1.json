@@ -1,0 +1,135 @@
+{
+  "schema": "vela.web.formal-conjectures-collection-review.v1",
+  "collection_id": "formal-conjectures",
+  "name": "Formal Conjectures",
+  "selection_id": "research-open-rights-reviewed-v1",
+  "authority_effect": "none",
+  "upstream_repository": "https://github.com/google-deepmind/formal-conjectures",
+  "selection_policy": {
+    "included_category": "research open",
+    "scope": "Seven exact Formal Conjectures declaration occurrences whose tracked question text, source locator, and redistribution basis were reviewed for this release.",
+    "exclusions": "All other declarations remain outside this published subset until their question-text retention, source locator, and occurrence identity are reviewed.",
+    "scientific_status": "The category is an attributed Formal Conjectures source assertion, not a problems.science or Vela judgment that the scientific question is open.",
+    "review_boundary": "GitHub pull requests and Formal Conjectures CI remain upstream contribution and advisory-check surfaces. Neither establishes a Vela Result, Decision, or current scientific state."
+  },
+  "items": [
+    {
+      "route_slug": "wikipedia-oppermann-part-i",
+      "declaration": "Oppermann.oppermann_conjecture.parts.i",
+      "source_path": "FormalConjectures/Wikipedia/Oppermann.lean",
+      "display_basis": "docstring_first_paragraph",
+      "source_family": "Wikipedia",
+      "source_locator": "https://en.wikipedia.org/wiki/Oppermann%27s_conjecture",
+      "rights": {
+        "lean_source_license": "Apache-2.0",
+        "question_text_license": "CC-BY-SA-4.0",
+        "attribution": "Wikipedia contributors, Oppermann's conjecture",
+        "retention": "exact_tracked_docstring"
+      },
+      "group_id": "wikipedia-oppermann",
+      "relations": [{ "kind": "part_of", "target": "wikipedia-oppermann-conjecture" }]
+    },
+    {
+      "route_slug": "wikipedia-oppermann-part-ii",
+      "declaration": "Oppermann.oppermann_conjecture.parts.ii",
+      "source_path": "FormalConjectures/Wikipedia/Oppermann.lean",
+      "display_basis": "docstring_first_paragraph",
+      "source_family": "Wikipedia",
+      "source_locator": "https://en.wikipedia.org/wiki/Oppermann%27s_conjecture",
+      "rights": {
+        "lean_source_license": "Apache-2.0",
+        "question_text_license": "CC-BY-SA-4.0",
+        "attribution": "Wikipedia contributors, Oppermann's conjecture",
+        "retention": "exact_tracked_docstring"
+      },
+      "group_id": "wikipedia-oppermann",
+      "relations": [{ "kind": "part_of", "target": "wikipedia-oppermann-conjecture" }]
+    },
+    {
+      "route_slug": "wikipedia-oppermann-conjecture",
+      "declaration": "Oppermann.oppermann_conjecture",
+      "source_path": "FormalConjectures/Wikipedia/Oppermann.lean",
+      "display_basis": "module_heading",
+      "source_family": "Wikipedia",
+      "source_locator": "https://en.wikipedia.org/wiki/Oppermann%27s_conjecture",
+      "rights": {
+        "lean_source_license": "Apache-2.0",
+        "question_text_license": "CC-BY-SA-4.0",
+        "attribution": "Wikipedia contributors, Oppermann's conjecture",
+        "retention": "exact_tracked_docstring"
+      },
+      "group_id": "wikipedia-oppermann",
+      "relations": [
+        { "kind": "composed_of", "target": "wikipedia-oppermann-part-i" },
+        { "kind": "composed_of", "target": "wikipedia-oppermann-part-ii" }
+      ]
+    },
+    {
+      "route_slug": "oeis-a103662-finiteness",
+      "declaration": "OeisA103662.conjecture",
+      "source_path": "FormalConjectures/OEIS/103662.lean",
+      "display_basis": "docstring_first_paragraph",
+      "source_family": "OEIS",
+      "source_locator": "https://oeis.org/A103662",
+      "upstream_identity": { "provider": "OEIS", "id": "A103662" },
+      "rights": {
+        "lean_source_license": "Apache-2.0",
+        "question_text_license": "CC-BY-SA-4.0",
+        "attribution": "OEIS Foundation Inc. and contributors, sequence A103662",
+        "retention": "exact_tracked_docstring"
+      },
+      "group_id": "oeis-a103662",
+      "relations": []
+    },
+    {
+      "route_slug": "oeis-a103662-a-40",
+      "declaration": "OeisA103662.conjecture.variants.a_40",
+      "source_path": "FormalConjectures/OEIS/103662.lean",
+      "display_basis": "docstring_first_paragraph",
+      "source_family": "OEIS",
+      "source_locator": "https://oeis.org/A103662",
+      "upstream_identity": { "provider": "OEIS", "id": "A103662" },
+      "rights": {
+        "lean_source_license": "Apache-2.0",
+        "question_text_license": "CC-BY-SA-4.0",
+        "attribution": "OEIS Foundation Inc. and contributors, sequence A103662",
+        "retention": "exact_tracked_docstring"
+      },
+      "group_id": "oeis-a103662",
+      "relations": [{ "kind": "variant_of", "target": "oeis-a103662-finiteness" }]
+    },
+    {
+      "route_slug": "mathoverflow-434111-restricted-prime-number-theorem",
+      "declaration": "MathOverflow434111.restricted_prime_number_theorem",
+      "source_path": "FormalConjectures/Mathoverflow/434111.lean",
+      "display_basis": "module_heading",
+      "source_family": "MathOverflow",
+      "source_locator": "https://mathoverflow.net/questions/434111/are-prime-numbers-among-sums-of-prime-numbers-distributed-as-frac-n2-lnn",
+      "upstream_identity": { "provider": "MathOverflow", "id": "434111" },
+      "rights": {
+        "lean_source_license": "Apache-2.0",
+        "question_text_license": "CC-BY-SA-4.0",
+        "attribution": "MathOverflow question 434111 contributors",
+        "retention": "exact_tracked_docstring"
+      },
+      "group_id": null,
+      "relations": []
+    },
+    {
+      "route_slug": "wikipedia-invariant-subspace-problem",
+      "declaration": "InvariantSubspaceProblem.Invariant_subspace_problem",
+      "source_path": "FormalConjectures/Wikipedia/InvariantSubspaceProblem.lean",
+      "display_basis": "module_heading",
+      "source_family": "Wikipedia",
+      "source_locator": "https://en.wikipedia.org/wiki/Invariant_subspace_problem",
+      "rights": {
+        "lean_source_license": "Apache-2.0",
+        "question_text_license": "CC-BY-SA-4.0",
+        "attribution": "Wikipedia contributors, Invariant subspace problem",
+        "retention": "exact_tracked_docstring"
+      },
+      "group_id": null,
+      "relations": []
+    }
+  ]
+}

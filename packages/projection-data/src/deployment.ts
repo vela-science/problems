@@ -4,6 +4,7 @@ import {
   projectionManifestSchema,
 } from "./index";
 import { projectionReaderIdentity } from "./projection-reader";
+import { formalConjecturesCollection } from "./formal-conjectures-collection";
 
 const brandRootSchema = "vela.brand-root.v2" as const;
 
@@ -59,6 +60,17 @@ const problemsDeploymentManifestBase = z.object({
     brand: z.object({ schema: z.literal("vela.brand-root.v2"), root: rootSchema }),
   }),
   projection: projectionManifestSchema,
+  supplemental_collections: z.array(z.object({
+    collection_id: z.literal("formal-conjectures"),
+    selection_id: z.literal("research-open-rights-reviewed-v1"),
+    source_commit: commitSchema,
+    source_tree: commitSchema,
+    collection_root: rootSchema,
+    review_root: rootSchema,
+    data_root: rootSchema,
+    item_count: z.literal(7),
+    authority_effect: z.literal("none"),
+  }).strict()).length(1),
   data_source: z.object({
     provider: z.literal("neon"),
     project_id: z.string(),
@@ -124,6 +136,17 @@ export function createProblemsDeploymentManifest(input: {
       brand: { schema: brandRootSchema, root: input.brandRoot },
     },
     projection: input.projection,
+    supplemental_collections: [{
+      collection_id: formalConjecturesCollection.collection_id,
+      selection_id: formalConjecturesCollection.selection_id,
+      source_commit: formalConjecturesCollection.source_snapshot.commit,
+      source_tree: formalConjecturesCollection.source_snapshot.tree,
+      collection_root: formalConjecturesCollection.roots.collection_root,
+      review_root: formalConjecturesCollection.roots.review_root,
+      data_root: formalConjecturesCollection.roots.data_root,
+      item_count: formalConjecturesCollection.data.items.length,
+      authority_effect: formalConjecturesCollection.authority_effect,
+    }],
     data_source: {
       provider: "neon",
       project_id: "lingering-meadow-20929365",

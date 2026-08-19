@@ -34,7 +34,10 @@ function renderSidebar() {
     <TooltipProvider>
       <SidebarProvider>
         <MobileState />
-        <AppSidebar />
+        <AppSidebar problemCollections={[
+          { namespace: "erdos-problems", name: "Erdős Problems", identifierKind: "number" },
+          { namespace: "formal-conjectures", name: "Formal Conjectures", identifierKind: "slug" },
+        ]} />
       </SidebarProvider>
     </TooltipProvider>,
   );
@@ -87,7 +90,7 @@ describe("AppSidebar", () => {
     expect(screen.queryByRole("link", { name: "Assertions" })).not.toBeInTheDocument();
   });
 
-  it("shows the current published collection beneath Problems only on that branch", async () => {
+  it("shows the compact published collections beneath Problems only on that branch", async () => {
     navigation.pathname = "/problems/erdos-problems/321";
     renderSidebar();
     fireEvent.click(screen.getByRole("button", { name: "Open test navigation" }));
@@ -95,6 +98,7 @@ describe("AppSidebar", () => {
     expect(await screen.findByRole("link", { name: "Problems" })).not.toHaveAttribute("aria-current");
     expect(screen.getByRole("link", { name: "Erdős Problems" })).toHaveAttribute("href", "/problems/erdos-problems");
     expect(screen.getByRole("link", { name: "Erdős Problems" })).toHaveAttribute("data-active");
+    expect(screen.getByRole("link", { name: "Formal Conjectures" })).toHaveAttribute("href", "/problems/formal-conjectures");
   });
 
   it("marks exact pages and closes after navigation", async () => {

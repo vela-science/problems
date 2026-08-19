@@ -12,6 +12,7 @@ vi.mock("@vela/projection-data", () => ({
     repository === "math" ? `/problems/erdos-problems/${problem}` : null
   ),
   mathSourceRegistryRead: () => Promise.resolve({ sources: [] }),
+  formalConjecturesCollection: { data: { items: [{ route_slug: "wikipedia-oppermann-conjecture" }] } },
 }));
 
 import sitemap from "./sitemap";
@@ -26,6 +27,8 @@ describe("public sitemap", () => {
     expect(urls).toContain("https://problems.science/problems/erdos-problems");
     expect(urls).toContain("https://problems.science/problems/erdos-problems/321");
     expect(urls).toContain("https://problems.science/problems/erdos-problems/999");
+    expect(urls).toContain("https://problems.science/problems/formal-conjectures");
+    expect(urls).toContain("https://problems.science/problems/formal-conjectures/wikipedia-oppermann-conjecture");
     expect(urls).not.toContain("https://problems.science/p/math/321");
     expect(urls).not.toContain("https://problems.science/repositories/math/problems/321");
     for (const route of ["about", "privacy", "terms", "accessibility", "contact"]) {

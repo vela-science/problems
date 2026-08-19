@@ -1,0 +1,340 @@
+{
+  "schema": "vela.web.formal-conjectures-collection.v1",
+  "collection_id": "formal-conjectures",
+  "name": "Formal Conjectures",
+  "selection_id": "research-open-rights-reviewed-v1",
+  "authority_effect": "none",
+  "source_snapshot": {
+    "repository": "https://github.com/google-deepmind/formal-conjectures",
+    "commit": "33c6a2dcafc5e3cdebfc083203b0a051309ea5b4",
+    "tree": "99d1ddec4fbdddbe29833505aa4b9f56c1c958c3",
+    "lean_toolchain": "leanprover/lean4:v4.27.0",
+    "access": "public",
+    "source_license": "Apache-2.0"
+  },
+  "selection_policy": {
+    "included_category": "research open",
+    "scope": "Seven exact Formal Conjectures declaration occurrences whose tracked question text, source locator, and redistribution basis were reviewed for this release.",
+    "exclusions": "All other declarations remain outside this published subset until their question-text retention, source locator, and occurrence identity are reviewed.",
+    "scientific_status": "The category is an attributed Formal Conjectures source assertion, not a problems.science or Vela judgment that the scientific question is open.",
+    "review_boundary": "GitHub pull requests and Formal Conjectures CI remain upstream contribution and advisory-check surfaces. Neither establishes a Vela Result, Decision, or current scientific state."
+  },
+  "roots": {
+    "review_root": "sha256:1137d9fe5f97d288cd0b75a359fce0417f02a9d4dd5b983e689a629da33e5bfc",
+    "data_root": "sha256:ffabdc81ebe30f4710e5c0fbc54c2c8a29810d99869363fd5cfa58da5f01503e",
+    "collection_root": "sha256:081ac179c36d0958b2b9f0e974984ccbd3db7f4798f8d957ff5aef5482dd7163"
+  },
+  "data": {
+    "items": [
+      {
+        "collection_id": "formal-conjectures",
+        "occurrence_id": "formal-conjectures:Oppermann.oppermann_conjecture.parts.i",
+        "route_slug": "wikipedia-oppermann-part-i",
+        "declaration": "Oppermann.oppermann_conjecture.parts.i",
+        "source_path": "FormalConjectures/Wikipedia/Oppermann.lean",
+        "title": "For every integer $x \\ge 2$ there exists a prime between $x(x-1)$ and $x^2$.",
+        "question": "For every integer $x \\ge 2$ there exists a prime between $x(x-1)$ and $x^2$.",
+        "formal_statement": "theorem oppermann_conjecture.parts.i (x : ℕ) (hx : 2 ≤ x) :\n    ∃ p ∈ Ioo (x * (x - 1)) (x^2), p.Prime",
+        "source_excerpt": "/--\nFor every integer $x \\ge 2$ there exists a prime between $x(x-1)$ and $x^2$.\n-/\n@[category research open, AMS 11]\ntheorem oppermann_conjecture.parts.i (x : ℕ) (hx : 2 ≤ x) :\n    ∃ p ∈ Ioo (x * (x - 1)) (x^2), p.Prime := by\n  sorry",
+        "category": "research open",
+        "source_family": "Wikipedia",
+        "source_locator": "https://en.wikipedia.org/wiki/Oppermann%27s_conjecture",
+        "source_url": "https://github.com/google-deepmind/formal-conjectures/blob/33c6a2dcafc5e3cdebfc083203b0a051309ea5b4/FormalConjectures/Wikipedia/Oppermann.lean",
+        "source_blob_oid": "1a9ed16f83e1967a34727f3ef91be9070a6cc717",
+        "source_blob_root": "sha256:cc597284b6b852028991b01032d82eaad677a179405565417f8afc17de50ef5f",
+        "formal_proof": false,
+        "rights": {
+          "lean_source_license": "Apache-2.0",
+          "question_text_license": "CC-BY-SA-4.0",
+          "attribution": "Wikipedia contributors, Oppermann's conjecture",
+          "retention": "exact_tracked_docstring"
+        },
+        "group_id": "wikipedia-oppermann",
+        "relations": [
+          {
+            "kind": "part_of",
+            "target": "wikipedia-oppermann-conjecture"
+          }
+        ],
+        "aliases": [],
+        "history": [
+          {
+            "event": "registered",
+            "revision": "33c6a2dcafc5e3cdebfc083203b0a051309ea5b4",
+            "note": "Published from this exact Formal Conjectures declaration occurrence."
+          }
+        ],
+        "authority_effect": "none",
+        "content_root": "sha256:6ea7951e02178872332001933addc9671b150b0c9c69d0c848abd3d488ce32f6"
+      },
+      {
+        "collection_id": "formal-conjectures",
+        "occurrence_id": "formal-conjectures:Oppermann.oppermann_conjecture.parts.ii",
+        "route_slug": "wikipedia-oppermann-part-ii",
+        "declaration": "Oppermann.oppermann_conjecture.parts.ii",
+        "source_path": "FormalConjectures/Wikipedia/Oppermann.lean",
+        "title": "For every integer $x \\ge 2$ there exists a prime between $x^2$ and $x(x+1)$.",
+        "question": "For every integer $x \\ge 2$ there exists a prime between $x^2$ and $x(x+1)$.",
+        "formal_statement": "theorem oppermann_conjecture.parts.ii (x : ℕ) (hx : 2 ≤ x) :\n    ∃ p ∈ Ioo (x^2) (x * (x + 1)), p.Prime",
+        "source_excerpt": "/--\nFor every integer $x \\ge 2$ there exists a prime between $x^2$ and $x(x+1)$.\n-/\n@[category research open, AMS 11]\ntheorem oppermann_conjecture.parts.ii (x : ℕ) (hx : 2 ≤ x) :\n    ∃ p ∈ Ioo (x^2) (x * (x + 1)), p.Prime := by\n  sorry",
+        "category": "research open",
+        "source_family": "Wikipedia",
+        "source_locator": "https://en.wikipedia.org/wiki/Oppermann%27s_conjecture",
+        "source_url": "https://github.com/google-deepmind/formal-conjectures/blob/33c6a2dcafc5e3cdebfc083203b0a051309ea5b4/FormalConjectures/Wikipedia/Oppermann.lean",
+        "source_blob_oid": "1a9ed16f83e1967a34727f3ef91be9070a6cc717",
+        "source_blob_root": "sha256:cc597284b6b852028991b01032d82eaad677a179405565417f8afc17de50ef5f",
+        "formal_proof": false,
+        "rights": {
+          "lean_source_license": "Apache-2.0",
+          "question_text_license": "CC-BY-SA-4.0",
+          "attribution": "Wikipedia contributors, Oppermann's conjecture",
+          "retention": "exact_tracked_docstring"
+        },
+        "group_id": "wikipedia-oppermann",
+        "relations": [
+          {
+            "kind": "part_of",
+            "target": "wikipedia-oppermann-conjecture"
+          }
+        ],
+        "aliases": [],
+        "history": [
+          {
+            "event": "registered",
+            "revision": "33c6a2dcafc5e3cdebfc083203b0a051309ea5b4",
+            "note": "Published from this exact Formal Conjectures declaration occurrence."
+          }
+        ],
+        "authority_effect": "none",
+        "content_root": "sha256:4b87ad2fbefdb85dd036361e3a862ae4ab1144f51fed3606ef431c04ee966012"
+      },
+      {
+        "collection_id": "formal-conjectures",
+        "occurrence_id": "formal-conjectures:Oppermann.oppermann_conjecture",
+        "route_slug": "wikipedia-oppermann-conjecture",
+        "declaration": "Oppermann.oppermann_conjecture",
+        "source_path": "FormalConjectures/Wikipedia/Oppermann.lean",
+        "title": "Oppermann's Conjecture",
+        "question": "**Oppermann's Conjecture**:\nFor every integer $x \\ge 2$, the following hold:\n- There exists a prime between $x(x-1)$ and $x^2$.\n- There exists a prime between $x^2$ and $x(x+1)$.",
+        "formal_statement": "theorem oppermann_conjecture (x : ℕ) (hx : 2 ≤ x) :\n    (∃ p ∈ Ioo (x * (x - 1)) (x^2), p.Prime) ∧\n    (∃ p ∈ Ioo (x^2) (x * (x + 1)), p.Prime)",
+        "source_excerpt": "/--\n**Oppermann's Conjecture**:\nFor every integer $x \\ge 2$, the following hold:\n- There exists a prime between $x(x-1)$ and $x^2$.\n- There exists a prime between $x^2$ and $x(x+1)$.\n-/\n@[category research open, AMS 11]\ntheorem oppermann_conjecture (x : ℕ) (hx : 2 ≤ x) :\n    (∃ p ∈ Ioo (x * (x - 1)) (x^2), p.Prime) ∧\n    (∃ p ∈ Ioo (x^2) (x * (x + 1)), p.Prime) := by\n  sorry",
+        "category": "research open",
+        "source_family": "Wikipedia",
+        "source_locator": "https://en.wikipedia.org/wiki/Oppermann%27s_conjecture",
+        "source_url": "https://github.com/google-deepmind/formal-conjectures/blob/33c6a2dcafc5e3cdebfc083203b0a051309ea5b4/FormalConjectures/Wikipedia/Oppermann.lean",
+        "source_blob_oid": "1a9ed16f83e1967a34727f3ef91be9070a6cc717",
+        "source_blob_root": "sha256:cc597284b6b852028991b01032d82eaad677a179405565417f8afc17de50ef5f",
+        "formal_proof": false,
+        "rights": {
+          "lean_source_license": "Apache-2.0",
+          "question_text_license": "CC-BY-SA-4.0",
+          "attribution": "Wikipedia contributors, Oppermann's conjecture",
+          "retention": "exact_tracked_docstring"
+        },
+        "group_id": "wikipedia-oppermann",
+        "relations": [
+          {
+            "kind": "composed_of",
+            "target": "wikipedia-oppermann-part-i"
+          },
+          {
+            "kind": "composed_of",
+            "target": "wikipedia-oppermann-part-ii"
+          }
+        ],
+        "aliases": [],
+        "history": [
+          {
+            "event": "registered",
+            "revision": "33c6a2dcafc5e3cdebfc083203b0a051309ea5b4",
+            "note": "Published from this exact Formal Conjectures declaration occurrence."
+          }
+        ],
+        "authority_effect": "none",
+        "content_root": "sha256:828c56ccf503504141cc78e25ca51292553181e287f8a77052b14b2d0803ad6f"
+      },
+      {
+        "collection_id": "formal-conjectures",
+        "occurrence_id": "formal-conjectures:OeisA103662.conjecture",
+        "route_slug": "oeis-a103662-finiteness",
+        "declaration": "OeisA103662.conjecture",
+        "source_path": "FormalConjectures/OEIS/103662.lean",
+        "title": "For statistical reasons it is conjectured that the sequence is finite.\nThis is formalized as the assertion that for large enough $n$, no valid zeroless power exists,\nwhich in our definition results in $a(n) = 0$.",
+        "question": "For statistical reasons it is conjectured that the sequence is finite.\nThis is formalized as the assertion that for large enough $n$, no valid zeroless power exists,\nwhich in our definition results in $a(n) = 0$.",
+        "formal_statement": "theorem conjecture : ∃ N : ℕ, ∀ n : ℕ, n > N → a n = 0",
+        "source_excerpt": "/--\nFor statistical reasons it is conjectured that the sequence is finite.\nThis is formalized as the assertion that for large enough $n$, no valid zeroless power exists,\nwhich in our definition results in $a(n) = 0$.\n-/\n@[category research open, AMS 11]\ntheorem conjecture : ∃ N : ℕ, ∀ n : ℕ, n > N → a n = 0 := by\n  sorry",
+        "category": "research open",
+        "source_family": "OEIS",
+        "source_locator": "https://oeis.org/A103662",
+        "source_url": "https://github.com/google-deepmind/formal-conjectures/blob/33c6a2dcafc5e3cdebfc083203b0a051309ea5b4/FormalConjectures/OEIS/103662.lean",
+        "source_blob_oid": "0f213b4baa8198f9122e1a5e4b39731f652249f9",
+        "source_blob_root": "sha256:710e32274fa0f91065cccfc792e292fb2f71e78b11ebf994f6ff199132bc05e5",
+        "formal_proof": false,
+        "upstream_identity": {
+          "provider": "OEIS",
+          "id": "A103662"
+        },
+        "rights": {
+          "lean_source_license": "Apache-2.0",
+          "question_text_license": "CC-BY-SA-4.0",
+          "attribution": "OEIS Foundation Inc. and contributors, sequence A103662",
+          "retention": "exact_tracked_docstring"
+        },
+        "group_id": "oeis-a103662",
+        "relations": [],
+        "aliases": [],
+        "history": [
+          {
+            "event": "registered",
+            "revision": "33c6a2dcafc5e3cdebfc083203b0a051309ea5b4",
+            "note": "Published from this exact Formal Conjectures declaration occurrence."
+          }
+        ],
+        "authority_effect": "none",
+        "content_root": "sha256:ed7b61ae98bec7e0f27effe5b7cbbc187d2583157c30fd55c18ca2227e4ba332"
+      },
+      {
+        "collection_id": "formal-conjectures",
+        "occurrence_id": "formal-conjectures:OeisA103662.conjecture.variants.a_40",
+        "route_slug": "oeis-a103662-a-40",
+        "declaration": "OeisA103662.conjecture.variants.a_40",
+        "source_path": "FormalConjectures/OEIS/103662.lean",
+        "title": "$a(40)$, if it exists, is not known.",
+        "question": "$a(40)$, if it exists, is not known.\n\nThis claim is rooted in the finiteness conjecture. The most direct mathematical expression\nof the open problem concerning $a(40)$ is the negation of the existence of a valid base.",
+        "formal_statement": "theorem conjecture.variants.a_40 :\n  ¬ ∃ (b : ℕ), IsValidZerolessPower 40 b",
+        "source_excerpt": "/--\n$a(40)$, if it exists, is not known.\n\nThis claim is rooted in the finiteness conjecture. The most direct mathematical expression\nof the open problem concerning $a(40)$ is the negation of the existence of a valid base.\n-/\n@[category research open, AMS 11]\ntheorem conjecture.variants.a_40 :\n  ¬ ∃ (b : ℕ), IsValidZerolessPower 40 b := by\n  sorry",
+        "category": "research open",
+        "source_family": "OEIS",
+        "source_locator": "https://oeis.org/A103662",
+        "source_url": "https://github.com/google-deepmind/formal-conjectures/blob/33c6a2dcafc5e3cdebfc083203b0a051309ea5b4/FormalConjectures/OEIS/103662.lean",
+        "source_blob_oid": "0f213b4baa8198f9122e1a5e4b39731f652249f9",
+        "source_blob_root": "sha256:710e32274fa0f91065cccfc792e292fb2f71e78b11ebf994f6ff199132bc05e5",
+        "formal_proof": false,
+        "upstream_identity": {
+          "provider": "OEIS",
+          "id": "A103662"
+        },
+        "rights": {
+          "lean_source_license": "Apache-2.0",
+          "question_text_license": "CC-BY-SA-4.0",
+          "attribution": "OEIS Foundation Inc. and contributors, sequence A103662",
+          "retention": "exact_tracked_docstring"
+        },
+        "group_id": "oeis-a103662",
+        "relations": [
+          {
+            "kind": "variant_of",
+            "target": "oeis-a103662-finiteness"
+          }
+        ],
+        "aliases": [],
+        "history": [
+          {
+            "event": "registered",
+            "revision": "33c6a2dcafc5e3cdebfc083203b0a051309ea5b4",
+            "note": "Published from this exact Formal Conjectures declaration occurrence."
+          }
+        ],
+        "authority_effect": "none",
+        "content_root": "sha256:c0ff03e0756cfbcdeb456354bc52bbb4e465247eb2cf13203fddb37c815b4fcb"
+      },
+      {
+        "collection_id": "formal-conjectures",
+        "occurrence_id": "formal-conjectures:MathOverflow434111.restricted_prime_number_theorem",
+        "route_slug": "mathoverflow-434111-restricted-prime-number-theorem",
+        "declaration": "MathOverflow434111.restricted_prime_number_theorem",
+        "source_path": "FormalConjectures/Mathoverflow/434111.lean",
+        "title": "Are prime numbers among sums of prime numbers distributed as $\\frac n{2\\ln(n)}$?",
+        "question": "The conjecture claims that $\\pi_n\\sim\\frac n{2\\ln(n)}$.\n\nIn other words, primes are distributed among the much sparser sequence $(S_n)_n$\nwith essentially the same density as in the positive integers, up to a factor of $2$.\n\n[MathOverflow 434111](https://mathoverflow.net/questions/434111/are-prime-numbers-among-sums-of-prime-numbers-distributed-as-frac-n2-lnn).\n\n[Me18] Meštrović, R., *Curious Conjectures on the Distribution of Primes\nAmong the Sums of the First `2n` Primes*, [arXiv:1804.04198](https://arxiv.org/abs/1804.04198)\n(2018).",
+        "formal_statement": "theorem restricted_prime_number_theorem :\n    answer(sorry) ↔ ((fun n : ℕ => (piRestricted n : ℝ)) ~[atTop] (fun n : ℕ => (n : ℝ) / (2 * Real.log n)))",
+        "source_excerpt": "/-- The conjecture claims that $\\pi_n\\sim\\frac n{2\\ln(n)}$.\n\nIn other words, primes are distributed among the much sparser sequence $(S_n)_n$\nwith essentially the same density as in the positive integers, up to a factor of $2$.\n\n[MathOverflow 434111](https://mathoverflow.net/questions/434111/are-prime-numbers-among-sums-of-prime-numbers-distributed-as-frac-n2-lnn).\n\n[Me18] Meštrović, R., *Curious Conjectures on the Distribution of Primes\nAmong the Sums of the First `2n` Primes*, [arXiv:1804.04198](https://arxiv.org/abs/1804.04198)\n(2018).\n-/\n@[category research open, AMS 11]\ntheorem restricted_prime_number_theorem :\n    answer(sorry) ↔ ((fun n : ℕ => (piRestricted n : ℝ)) ~[atTop] (fun n : ℕ => (n : ℝ) / (2 * Real.log n))) := by\n  sorry",
+        "category": "research open",
+        "source_family": "MathOverflow",
+        "source_locator": "https://mathoverflow.net/questions/434111/are-prime-numbers-among-sums-of-prime-numbers-distributed-as-frac-n2-lnn",
+        "source_url": "https://github.com/google-deepmind/formal-conjectures/blob/33c6a2dcafc5e3cdebfc083203b0a051309ea5b4/FormalConjectures/Mathoverflow/434111.lean",
+        "source_blob_oid": "31b59b4799b3b3b9f7d31350fc29541b1515d84b",
+        "source_blob_root": "sha256:6fe57f74944fb6736cbc47b99d2e3ca341ecc72668593f2510e754b29d03d487",
+        "formal_proof": false,
+        "upstream_identity": {
+          "provider": "MathOverflow",
+          "id": "434111"
+        },
+        "rights": {
+          "lean_source_license": "Apache-2.0",
+          "question_text_license": "CC-BY-SA-4.0",
+          "attribution": "MathOverflow question 434111 contributors",
+          "retention": "exact_tracked_docstring"
+        },
+        "group_id": null,
+        "relations": [],
+        "aliases": [],
+        "history": [
+          {
+            "event": "registered",
+            "revision": "33c6a2dcafc5e3cdebfc083203b0a051309ea5b4",
+            "note": "Published from this exact Formal Conjectures declaration occurrence."
+          }
+        ],
+        "authority_effect": "none",
+        "content_root": "sha256:f856b7f927658dfa67f9a9b93fcf1bb27f2b7fc3b25e9d1b384b21a36e5d2337"
+      },
+      {
+        "collection_id": "formal-conjectures",
+        "occurrence_id": "formal-conjectures:InvariantSubspaceProblem.Invariant_subspace_problem",
+        "route_slug": "wikipedia-invariant-subspace-problem",
+        "declaration": "InvariantSubspaceProblem.Invariant_subspace_problem",
+        "source_path": "FormalConjectures/Wikipedia/InvariantSubspaceProblem.lean",
+        "title": "Invariant Subspace Problem",
+        "question": "Show that every bounded linear operator `T : H → H` on a separable Hilbert space `H` of dimension\nat least 2 has a non-trivial closed `T`-invariant subspace: a closed linear subspace `W` of `H`,\nwhich is different from `H` and from `{0}`, such that `T ( W ) ⊂ W`. One needs the assumption that\nthe dimension of `H` is at least 2 because otherwise any subspace would be either `H` or `{0}`.",
+        "formal_statement": "theorem Invariant_subspace_problem [InnerProductSpace ℂ H] [TopologicalSpace.SeparableSpace H]\n    [CompleteSpace H] (hdim : 2 ≤ Module.rank ℂ H) (T : H →L[ℂ] H) :\n    Nonempty (ClosedInvariantSubspace T)",
+        "source_excerpt": "/--\nShow that every bounded linear operator `T : H → H` on a separable Hilbert space `H` of dimension\nat least 2 has a non-trivial closed `T`-invariant subspace: a closed linear subspace `W` of `H`,\nwhich is different from `H` and from `{0}`, such that `T ( W ) ⊂ W`. One needs the assumption that\nthe dimension of `H` is at least 2 because otherwise any subspace would be either `H` or `{0}`. -/\n@[category research open, AMS 47]\ntheorem Invariant_subspace_problem [InnerProductSpace ℂ H] [TopologicalSpace.SeparableSpace H]\n    [CompleteSpace H] (hdim : 2 ≤ Module.rank ℂ H) (T : H →L[ℂ] H) :\n    Nonempty (ClosedInvariantSubspace T) := by\n  sorry",
+        "category": "research open",
+        "source_family": "Wikipedia",
+        "source_locator": "https://en.wikipedia.org/wiki/Invariant_subspace_problem",
+        "source_url": "https://github.com/google-deepmind/formal-conjectures/blob/33c6a2dcafc5e3cdebfc083203b0a051309ea5b4/FormalConjectures/Wikipedia/InvariantSubspaceProblem.lean",
+        "source_blob_oid": "2d97cd7d24d9138d938c9009682ba9278ddb24dd",
+        "source_blob_root": "sha256:f8a7e0161d38e61f7a4046f95f661a425cbd6840650982c8c5b64d3549f77cc1",
+        "formal_proof": false,
+        "rights": {
+          "lean_source_license": "Apache-2.0",
+          "question_text_license": "CC-BY-SA-4.0",
+          "attribution": "Wikipedia contributors, Invariant subspace problem",
+          "retention": "exact_tracked_docstring"
+        },
+        "group_id": null,
+        "relations": [],
+        "aliases": [],
+        "history": [
+          {
+            "event": "registered",
+            "revision": "33c6a2dcafc5e3cdebfc083203b0a051309ea5b4",
+            "note": "Published from this exact Formal Conjectures declaration occurrence."
+          }
+        ],
+        "authority_effect": "none",
+        "content_root": "sha256:b87b4ffbfd0c064567ee88e2bea3c9afbbda15e317ea4781f1fd60b1876676f8"
+      }
+    ],
+    "groups": [
+      {
+        "id": "wikipedia-oppermann",
+        "kind": "multipart",
+        "title": "Oppermann's Conjecture",
+        "members": [
+          "wikipedia-oppermann-part-i",
+          "wikipedia-oppermann-part-ii",
+          "wikipedia-oppermann-conjecture"
+        ]
+      },
+      {
+        "id": "oeis-a103662",
+        "kind": "variant_set",
+        "title": "OEIS A103662 open questions",
+        "members": [
+          "oeis-a103662-finiteness",
+          "oeis-a103662-a-40"
+        ]
+      }
+    ]
+  }
+}

@@ -28,10 +28,14 @@ is a durable product preference, not a temporary mood board.
   discovery, filters, tags, identity pages, and useful technical density.
 
 Borrow interaction conventions, not branding or ontology. Vela must feel like
-one coherent research product, not a collage of those products. Familiarity is
-preferred over metaphor. The product does not use starscapes, nautical props,
-instrument cosplay, parchment, glass, neon, or decorative scientific charts as
-its interface concept.
+one coherent research product, not a collage of those products.
+
+The product uses two deliberate registers. Dense task surfaces use the familiar
+Entire, GitHub, and Hugging Face product grammar. Editorial and identity moments
+may use Vela's first-party watercolor, sail, horizon, constellation, borrowed
+light, and long-handoff language. Those motifs must clarify orientation,
+lineage, evidence, or transition; they never replace ordinary controls or imply
+relationships the data does not contain.
 
 ## People and jobs
 
@@ -55,7 +59,8 @@ Within five seconds, Home answers:
 
 1. This is a place to find scientific problems and evidence.
 2. Search or browse is the fastest way to begin.
-3. One published collection is available today: 1,217 Erdős Problems.
+3. Two published collections are available today: 1,217 Erdős Problems and a
+   seven-occurrence, rights-reviewed Formal Conjectures subset.
 
 A Problem answers within ten seconds:
 
@@ -70,14 +75,20 @@ not substitute a policy explanation or fabricated scientific summary.
 
 ## Current release truth
 
-Today there is one published Problem collection: **1,217 Erdős Problems**.
-`/problems` is the global entry point and says this plainly.
-`/problems/erdos-problems` is the collection directory. A number such as `321`
-is meaningful only inside that collection.
+Today there are two published collections. **Erdős Problems** contains 1,217
+numbered scientific Problems. **Formal Conjectures** contains seven exact
+`research open` Lean declaration occurrences whose tracked question text,
+source locator, and retention basis were reviewed for this release. It is
+explicitly a subset, not the whole upstream repository.
 
-Formal Conjectures, Lean libraries, VibeMathed, TheoremDB, papers, datasets,
-and code repositories may appear as sources or evidence. They are not Problem
-collections without accepted source-owned identities and a collection profile.
+`/problems` is the global collection entry. `/problems/erdos-problems` and
+`/problems/formal-conjectures` are collection directories. A number such as
+`321` is meaningful only inside Erdős Problems; an FC route identifies an exact
+declaration occurrence and does not claim a merged scientific Problem identity.
+
+Other Lean libraries, VibeMathed, TheoremDB, papers, datasets, and code
+repositories may appear as sources or evidence. They do not become Problem
+collections without a reviewed exact collection adapter.
 
 ## Visible information architecture
 
@@ -134,7 +145,7 @@ does not accept a contribution. A signed object proves attribution, not truth.
 ### Discover
 
 Home is the activation front door. Search is the dominant object, followed by
-one compact published-collection row, three or four real Problems worth
+one compact published-collections list, three or four real Problems worth
 opening, and the latest durable reviewed Results. A single link reaches all
 Updates. Home does not host the raw source-update feed, collection analytics,
 or a second contribution-onboarding footer.

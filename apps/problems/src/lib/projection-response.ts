@@ -16,6 +16,21 @@ export function immutableProjectionHeaders(root: string, query: string): Record<
   };
 }
 
+export function immutableCompositeSearchHeaders(input: {
+  projectionRoot: string;
+  collectionRoot: string;
+  searchRoot: string;
+  query: string;
+}): Record<string, string> {
+  return {
+    "Cache-Control": "public, max-age=31536000, immutable",
+    ETag: `"${input.searchRoot.slice("sha256:".length)}-${createHash("sha256").update(input.query).digest("hex").slice(0, 16)}"`,
+    "X-Vela-Projection-Root": input.projectionRoot,
+    "X-Vela-Collection-Root": input.collectionRoot,
+    "X-Vela-Search-Root": input.searchRoot,
+  };
+}
+
 /**
  * The status a failed rooted read answers with, and the code it names.
  *

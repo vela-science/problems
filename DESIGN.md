@@ -119,8 +119,11 @@ secondary references for files, diffs, checks, history, collection discovery,
 filters, tags, and approachable technical identity pages. Base UI supplies
 accessible behavior. None supplies Vela's ontology or visual brand.
 
-This system explicitly replaces the former ink-folio, warm-paper, metaphor-led
-world. Do not blend the two.
+The system has two coordinated registers. Product workspaces play familiar
+research software straight. Editorial and identity moments may draw on Vela's
+first-party watercolor, sail, horizon, constellation, borrowed-light, and
+long-handoff language. Use the canonical sail and retained artwork; do not
+redraw the mark or generate substitutes.
 
 ## Visual identity
 
@@ -132,9 +135,10 @@ Success, warning, error, and evidence colors encode real state only.
 
 Dark mode derives the same hierarchy: deep neutral canvas, slightly raised
 neutral surfaces, lighter cobalt, and the same semantic meanings. It is not a
-space theme. Avoid gradients, atmospheric glows, transparent glass, decorative
-star fields, parchment, coral-as-decoration, and color applied merely to make a
-screen feel less empty.
+space theme. Product workspaces avoid atmospheric effects and decoration that
+competes with data. Brand surfaces may use retained watercolor and open-sky
+imagery with deliberate contrast, responsive crops, stable layout, and useful
+fallbacks.
 
 Use color in three ways:
 
@@ -188,8 +192,8 @@ Every route has one visually dominant object.
 ## Shell and navigation
 
 The sidebar owns Home, Problems, signed-in My work, Updates, and one visually
-separate Add contribution action. Show the current published collection as a
-compact child of Problems only where that branch is relevant. Search belongs
+separate Add contribution action. Show the small set of published collections
+as compact children of Problems only where that branch is relevant. Search belongs
 to the header command control; maps, exact records, and release details stay
 contextual. Use the mark, familiar icons, clear selected state, and the
 minimum necessary account controls. The
@@ -345,12 +349,16 @@ document.
 - Use Hugging Face-like discovery density for collections and resources.
 - Keep exact scientific data reachable without making it the headline.
 - Let empty space support hierarchy, not compensate for missing structure.
+- Use the canonical sail, retained paintings, horizon, and borrowed-light
+  language at earned Home, About, collection-cover, graph-orientation, and
+  meaningful transition moments.
+- Let constellation lines represent exact retained relationships only.
 
 ## Do not
 
-- Do not use a visual metaphor as the product shell.
-- Do not add stars, sails, polar plots, parchment, glass, neon, or gradients as
-  brand decoration.
+- Do not turn dense product workspaces into fantasy or editorial scenes.
+- Do not use literal galaxy wallpaper, stars everywhere, purple-neon sci-fi,
+  glass, faux nautical controls, or decorative constellations that imply data.
 - Do not create card soup, KPI slabs, bento dashboards, nested panels, or a
   repeated banner on every route.
 - Do not repeat uppercase micro-labels or use tracking as decoration.

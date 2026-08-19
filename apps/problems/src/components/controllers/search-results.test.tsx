@@ -1,10 +1,13 @@
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { SearchResults } from "@/components/controllers/search-results";
+import { SearchResults as ActualSearchResults } from "@/components/controllers/search-results";
 import { loadSearchIndex } from "@/lib/search-index";
 
-const problemCollections = [{ namespace: "erdos-problems", name: "Erdős Problems" }];
+const problemCollections = [
+  { namespace: "erdos-problems", name: "Erdős Problems", identifierKind: "number" as const },
+  { namespace: "formal-conjectures", name: "Formal Conjectures", identifierKind: "slug" as const, recordLabels: { "wikipedia-oppermann-conjecture": "Oppermann's Conjecture" } },
+];
 
 const navigation = vi.hoisted(() => ({ params: new URLSearchParams() }));
 vi.mock("next/navigation", () => ({
@@ -14,6 +17,10 @@ vi.mock("next/navigation", () => ({
 }));
 
 vi.mock("@/lib/search-index", () => ({ loadSearchIndex: vi.fn() }));
+
+function SearchResults(props: Omit<React.ComponentProps<typeof ActualSearchResults>, "collectionRoot">) {
+  return <ActualSearchResults collectionRoot="sha256:collection" {...props} />;
+}
 
 function record(overrides: Record<string, unknown>) {
   return {
@@ -31,7 +38,7 @@ describe("SearchResults", () => {
   });
 
   test("waits for explicit search intent instead of dumping the corpus", () => {
-    const view = render(<SearchResults projectionRoot="sha256:test" repositories={["erdos"]} problemCollections={problemCollections} />);
+    const view = render(<SearchResults projectionRoot="sha256:test" searchRoot="sha256:search" repositories={["erdos"]} problemCollections={problemCollections} />);
 
     expect(screen.getByText("Find a scientific Problem or Result")).toBeVisible();
     expect(screen.getByText("Ready for a query")).toBeVisible();
@@ -50,7 +57,7 @@ describe("SearchResults", () => {
       ],
     } as never);
 
-    const view = render(<SearchResults projectionRoot="sha256:test" repositories={["erdos"]} problemCollections={problemCollections} />);
+    const view = render(<SearchResults projectionRoot="sha256:test" searchRoot="sha256:search" repositories={["erdos"]} problemCollections={problemCollections} />);
     await waitFor(() => expect(screen.getByText("standing · accepted")).toBeVisible());
     expect(screen.getByText("proposal · withdrawn")).toBeVisible();
     expect(screen.getByText("integrity · strict pass")).toBeVisible();
@@ -70,8 +77,25 @@ describe("SearchResults", () => {
       standing: "unassessed",
     })] } as never);
 
-    const view = render(<SearchResults projectionRoot="sha256:test" repositories={["math"]} problemCollections={problemCollections} />);
+    const view = render(<SearchResults projectionRoot="sha256:test" searchRoot="sha256:search" repositories={["math"]} problemCollections={problemCollections} />);
     expect(await screen.findByText("Erdős Problems · #321")).toBeVisible();
+    view.unmount();
+  });
+
+  test("identifies a formalized occurrence by collection-qualified human label", async () => {
+    navigation.params = new URLSearchParams("q=oppermann");
+    vi.mocked(loadSearchIndex).mockResolvedValue({ records: [record({
+      kind: "problem",
+      repository: "source:formal-conjectures",
+      id: "formal-conjectures:Oppermann.oppermann_conjecture",
+      assertion: "Oppermann's Conjecture",
+      source_title: "Formal Conjectures",
+      href: "/problems/formal-conjectures/wikipedia-oppermann-conjecture",
+      standing: "source_open",
+    })] } as never);
+
+    const view = render(<SearchResults projectionRoot="sha256:test" searchRoot="sha256:search" repositories={["math"]} problemCollections={problemCollections} />);
+    expect(await screen.findByText("Formal Conjectures · Oppermann's Conjecture")).toBeVisible();
     view.unmount();
   });
 
@@ -82,7 +106,7 @@ describe("SearchResults", () => {
       assertion: "A readable scientific result",
     })] } as never);
 
-    const view = render(<SearchResults projectionRoot="sha256:test" repositories={["erdos"]} problemCollections={problemCollections} />);
+    const view = render(<SearchResults projectionRoot="sha256:test" searchRoot="sha256:search" repositories={["erdos"]} problemCollections={problemCollections} />);
     expect(await screen.findByText("A readable scientific result")).toBeVisible();
     expect(screen.getByText("Result")).toBeVisible();
     expect(screen.queryByText(/vcl_1234567890abcdef/u)).toBeNull();
@@ -90,13 +114,14 @@ describe("SearchResults", () => {
   });
 
   test("does not offer one filter named for a single axis", async () => {
-    const view = render(<SearchResults projectionRoot="sha256:test" repositories={["erdos"]} problemCollections={problemCollections} />);
+    const view = render(<SearchResults projectionRoot="sha256:test" searchRoot="sha256:search" repositories={["erdos"]} problemCollections={problemCollections} />);
 
     /* Named "State", not "Standing" — and now labelled on screen rather than
        only in an aria-label, because three unlabelled triggers all reading
        "all" said nothing about what any of them filtered. */
     expect(screen.queryByRole("combobox", { name: "Standing" })).toBeNull();
     expect(screen.getByText("Repository")).toBeVisible();
+    expect(screen.getByText("Collection")).toBeVisible();
     expect(screen.getByText("Kind")).toBeVisible();
     await userEvent.click(screen.getByRole("combobox", { name: "State" }));
 

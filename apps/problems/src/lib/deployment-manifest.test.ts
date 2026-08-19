@@ -55,6 +55,12 @@ describe("Problems deployment identity", () => {
     expect(problemsDeploymentManifestSchema.parse(manifest).authority).toBe("read_only_projection");
     expect(manifest.canonical_url).toBe("https://problems.science/");
     expect(manifest.delivery.mode).toBe("immutable_isr");
+    expect(manifest.supplemental_collections).toEqual([expect.objectContaining({
+      collection_id: "formal-conjectures",
+      selection_id: "research-open-rights-reviewed-v1",
+      item_count: 7,
+      authority_effect: "none",
+    })]);
     expect(manifest.data_source).toEqual({
       provider: "neon",
       project_id: "lingering-meadow-20929365",

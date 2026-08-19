@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
 import Script from "next/script";
-import { allRepositories, projectionManifest } from "@vela/projection-data";
+import { allRepositories, compositeSearchRoot, formalConjecturesCollectionRoot, projectionManifest } from "@vela/projection-data";
 import { AppShell } from "@/components/vela/app-shell";
 import { authConfiguration } from "@/lib/auth";
 import { publishedProblemCollections } from "@/lib/published-problem-collections";
@@ -71,6 +71,8 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
           publishedRepositories={publishedRepositories}
           problemCollections={publishedProblemCollections}
           projectionRoot={manifest.release_root}
+          searchRoot={compositeSearchRoot(manifest.release_root)}
+          collectionRoot={formalConjecturesCollectionRoot}
           authEnabled={authEnabled}
         >
           {children}

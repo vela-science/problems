@@ -81,8 +81,12 @@ function headerTrail(pathname: string, repositories: PublishedRepository[], prob
       sectionHref: "/problems",
       sectionKey: null,
       collection: collection ? { name: collection.name, href: `/problems/${collection.namespace}` } : null,
-      record: problem && collection ? `${collection.name.replace(/ Problems$/u, " problem")} ${recordTrailLabel(problem)}` : null,
-      compactRecord: problem ? `#${recordTrailLabel(problem)}` : null,
+      record: problem && collection
+        ? collection.recordLabels?.[problem] ?? `${collection.name.replace(/ Problems$/u, " problem")} ${recordTrailLabel(problem)}`
+        : null,
+      compactRecord: problem
+        ? collection?.identifierKind === "slug" ? recordTrailLabel(problem) : `#${recordTrailLabel(problem)}`
+        : null,
     };
   }
   const collectionMatch = pathname.match(/^\/problems\/([^/]+)$/u);

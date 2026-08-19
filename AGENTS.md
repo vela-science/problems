@@ -65,10 +65,14 @@ when their authors wrote them. Do not rewrite them to match the current system.
   references for files, diffs, checks, history, tabs, breadcrumbs, and
   collection discovery. Borrow task conventions, not brand skins or
   ontologies.
-- Use a neutral application canvas, deep marine navigation, cobalt interaction,
-  and semantic colors for real state. Do not use starscapes, nautical props,
-  instrument cosplay, parchment, glass, neon, gradients-as-brand, route hero
-  slabs, card soup, or decorative charts.
+- Use two deliberate registers. Dense product routes use a neutral application
+  canvas, deep marine navigation, cobalt interaction, and semantic colors for
+  real state. Earned editorial and identity moments may reuse the canonical
+  sail, first-party watercolor, horizon, constellation, borrowed-light, and
+  long-handoff language. Constellations must encode exact relationships;
+  nautical motifs must clarify orientation or handoff. Never turn product
+  controls into themed props or use literal galaxy wallpaper, glass, neon,
+  route hero slabs, card soup, or decorative charts.
 - A Problem is an active scientific surface. Use maps for relationships, file
   trees and previews for source material, typed rows for Contributions,
   timelines and diffs for change, and canvases for shared work. Do not satisfy
@@ -102,6 +106,12 @@ when their authors wrote them. Do not rewrite them to match the current system.
 - Reuse `@vela/projection-data` exact reads and canonical contracts. Do not add
   a second repository parser, index, source registry, graph builder, or manifest
   generator.
+- Publish a Problem collection only through one exact, provider-loss-safe
+  collection adapter with stable collection-qualified occurrence identity,
+  per-item rights and source attribution, immutable roots, and
+  `authority_effect:none`. Formal Conjectures declarations remain source-owned
+  occurrences unless an exact upstream scientific Problem mapping exists;
+  GitHub review and CI remain advisory source workflow, not Vela state.
 - Store large artifact bytes outside Postgres. Activity records may retain
   roots, byte counts, metadata, and locators.
 - Bind activity to exact Repository, Problem, Claim, and projection anchors.

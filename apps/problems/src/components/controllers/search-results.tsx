@@ -17,7 +17,7 @@ import { LedgerSkeleton } from "@/components/vela/route-skeleton";
 import { kindLabel, recordHeading, stateBadge } from "@/lib/product-language";
 import { loadSearchIndex } from "@/lib/search-index";
 import { useQueryNavigation } from "@/lib/use-query-navigation";
-import { problemCollectionForPath, type PublishedProblemCollection } from "@/lib/problem-collections";
+import { problemCollectionForPath, problemCollectionRecordLabel, type PublishedProblemCollection } from "@/lib/problem-collections";
 
 /* One projected column, four vocabularies: a Repository row carries repository
    integrity, a Claim carries its standing, a Proposal carries its status, a
@@ -32,27 +32,29 @@ const STATES = ["accepted", "contested", "pending_review", "recorded", "rejected
 const KINDS = ["repository", "claim", "problem", "artifact", "proposal", "verifier_attachment", "attempt", "producer", "channel", "lease", "commit"];
 
 
-export function SearchResults({ projectionRoot, repositories, problemCollections }: { projectionRoot: string; repositories: string[]; problemCollections: PublishedProblemCollection[] }) {
+export function SearchResults({ projectionRoot, searchRoot, collectionRoot, repositories, problemCollections }: { projectionRoot: string; searchRoot: string; collectionRoot: string; repositories: string[]; problemCollections: PublishedProblemCollection[] }) {
   const params = useSearchParams();
   const router = useRouter();
   const { replace } = useQueryNavigation();
   const [result, setResult] = useState<{ key: string | null; records: SiteSearchRecord[] | null; error: string | null }>({ key: null, records: [], error: null });
   const query = params.get("q") ?? "";
   const repository = repositories.includes(params.get("repository") ?? "") ? params.get("repository")! : "all";
+  const collection = problemCollections.some(({ namespace }) => namespace === params.get("collection")) ? params.get("collection")! : "all";
   const kind = KINDS.includes(params.get("kind") ?? "") ? params.get("kind")! : "all";
   const standing = STATES.includes(params.get("standing") ?? "") ? params.get("standing")! : "all";
   const deferredQuery = useDeferredValue(query.trim().toLocaleLowerCase());
-  const hasIntent = Boolean(deferredQuery || repository !== "all" || kind !== "all" || standing !== "all");
-  const queryKey = `${projectionRoot}\u0000${repository}\u0000${kind}\u0000${standing}\u0000${deferredQuery}`;
+  const hasIntent = Boolean(deferredQuery || repository !== "all" || collection !== "all" || kind !== "all" || standing !== "all");
+  const queryKey = `${searchRoot}\u0000${repository}\u0000${collection}\u0000${kind}\u0000${standing}\u0000${deferredQuery}`;
 
   useEffect(() => {
     if (!hasIntent) {
       return;
     }
     let active = true;
-    loadSearchIndex(projectionRoot, {
+    loadSearchIndex(projectionRoot, searchRoot, collectionRoot, {
       q: deferredQuery || undefined,
       repository: repository === "all" ? undefined : repository,
+      collection: collection === "all" ? undefined : collection,
       kind: kind === "all" ? undefined : kind,
       standing: standing === "all" ? undefined : standing,
     }).then((index) => {
@@ -61,15 +63,15 @@ export function SearchResults({ projectionRoot, repositories, problemCollections
       if (active) setResult({ key: queryKey, records: null, error: reason instanceof Error ? reason.message : "Search artifact is unavailable." });
     });
     return () => { active = false; };
-  }, [deferredQuery, repository, hasIntent, kind, projectionRoot, queryKey, standing]);
+  }, [collection, collectionRoot, deferredQuery, repository, hasIntent, kind, projectionRoot, queryKey, searchRoot, standing]);
 
   const records = !hasIntent ? [] : result.key === queryKey ? result.records : null;
   const error = hasIntent && result.key === queryKey ? result.error : null;
   const exact = records?.find((record) => record.id.toLocaleLowerCase() === deferredQuery);
   const exactProblem = exact?.kind === "problem" ? problemCollectionForPath(exact.href, problemCollections) : null;
-  const filtered = Boolean(query || repository !== "all" || kind !== "all" || standing !== "all");
+  const filtered = Boolean(query || repository !== "all" || collection !== "all" || kind !== "all" || standing !== "all");
 
-  if (hasIntent && error) return <Alert variant="destructive"><HugeiconsIcon icon={Search} aria-hidden /><AlertTitle>Search integrity check failed</AlertTitle><AlertDescription>{error}. Published records remain available from Repositories.</AlertDescription></Alert>;
+  if (hasIntent && error) return <Alert variant="destructive"><HugeiconsIcon icon={Search} aria-hidden /><AlertTitle>Search integrity check failed</AlertTitle><AlertDescription>{error}. Published Problems remain available from their collection directories.</AlertDescription></Alert>;
 
   return <Command shouldFilter={false} className="vela-object-surface p-0">
     <div className="border-b bg-muted/15 p-3 sm:p-4">
@@ -85,6 +87,7 @@ export function SearchResults({ projectionRoot, repositories, problemCollections
           the results it filters. */}
       <div className="mt-3 flex flex-wrap items-end gap-3">
         {([
+          ["Collection", collection, ["all", ...problemCollections.map(({ namespace }) => namespace)], "collection"],
           ["Repository", repository, ["all", ...repositories], "repository"],
           ["Kind", kind, ["all", ...KINDS], "kind"],
           ["State", standing, ["all", ...STATES], "standing"],
@@ -99,9 +102,9 @@ export function SearchResults({ projectionRoot, repositories, problemCollections
             />
           </div>
         ))}
-        {filtered ? <Button variant="ghost" size="sm" className="mb-0.5" onClick={() => replace({ q: null, repository: null, kind: null, standing: null })}>Clear</Button> : null}
+        {filtered ? <Button variant="ghost" size="sm" className="mb-0.5" onClick={() => replace({ q: null, repository: null, collection: null, kind: null, standing: null })}>Clear</Button> : null}
       </div>
-      {exact ? <Button className="mt-3" size="sm" nativeButton={false} render={<Link href={exact.href} />}>{exactProblem?.problem ? `Open ${exactProblem.name} · #${exactProblem.problem}` : `Open exact ID ${exact.id}`}<HugeiconsIcon icon={ArrowRight} aria-hidden data-icon="inline-end" /></Button> : null}
+      {exact ? <Button className="mt-3" size="sm" nativeButton={false} render={<Link href={exact.href} />}>{exactProblem?.problem ? `Open ${problemCollectionRecordLabel(exactProblem)}` : `Open exact ID ${exact.id}`}<HugeiconsIcon icon={ArrowRight} aria-hidden data-icon="inline-end" /></Button> : null}
     </div>
     {/* Relevance, not lexical order — but still not authority. The sentence
         exists because rank on a scientific record is the one place a reader
@@ -127,7 +130,7 @@ export function SearchResults({ projectionRoot, repositories, problemCollections
               {heading ? <ScientificText text={heading} /> : <span className="font-mono text-meta">{record.id}</span>}
             </p>
             <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-micro text-muted-foreground">
-              <span>{problem?.problem ? `${problem.name} · #${problem.problem}` : record.repository}</span>
+              <span>{problem?.problem ? problemCollectionRecordLabel(problem) : record.repository}</span>
               <span aria-hidden>·</span>
               <span>{kindLabel(record.kind)}</span>
             </div>

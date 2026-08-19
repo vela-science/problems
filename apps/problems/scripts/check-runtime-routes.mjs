@@ -1,6 +1,8 @@
 import {
   allRepositories,
   claimsForRepository,
+  compositeSearchRoot,
+  formalConjecturesCollection,
   problemPublicRoutes,
   projectionManifest,
   problemsForRepository,
@@ -77,6 +79,7 @@ try {
   const published = repositories[0];
   if (!published) throw new Error("the projection publishes no Repository to smoke");
   const slug = published.slug;
+  const searchRoot = compositeSearchRoot(manifest.release_root);
   /* The manifest names repositories, the reader names handles, and this is the
      one place the smoke test crosses between them. */
   const declared = manifest.source_repositories.find(
@@ -149,6 +152,16 @@ try {
   await expectStatus(`/problems/${canonicalRoute.canonical_namespace}/999999`, 404);
   await expectStatus("/problems/not-a-namespace/1", 404);
 
+  /* Supplemental source-owned collections live beside, not inside, the Vela
+     Repository projection. Their directory, one durable occurrence route,
+     and fail-closed unknown route are all part of the public release surface. */
+  const formalConjecture = formalConjecturesCollection.data.items[0];
+  if (!formalConjecture) throw new Error("Formal Conjectures publishes no retained occurrence");
+  await expectRenderedHtml("/problems");
+  await expectRenderedHtml("/problems/formal-conjectures");
+  await expectRenderedHtml(`/problems/formal-conjectures/${formalConjecture.route_slug}`);
+  await expectStatus("/problems/formal-conjectures/not-a-retained-occurrence", 404);
+
   /* Every Problem is addressed, not only the reviewed ones. The
      Repository-shaped `/p/` form is gone rather than redirected: it was a
      prelaunch address, it was the only remaining second Problem surface, and
@@ -184,9 +197,9 @@ try {
   /* A root of sixty-four zeros was never activated, so the answer is that this
      reader has none — not that it once served this projection and stopped. */
   const absent = encodeURIComponent(`sha256:${"0".repeat(64)}`);
-  await expectRefusal(`/api/search?root=${absent}`, 404, "unknown_root");
-  await expectRefusal("/api/search?root=not-a-root", 400, "malformed_root");
-  const search = await expectStatus(`/api/search?root=${encodeURIComponent(manifest.release_root)}`, 200);
+  await expectRefusal(`/api/search?root=${absent}&search_root=${encodeURIComponent(searchRoot)}`, 404, "unknown_root");
+  await expectRefusal(`/api/search?root=not-a-root&search_root=${encodeURIComponent(searchRoot)}`, 400, "malformed_root");
+  const search = await expectStatus(`/api/search?root=${encodeURIComponent(manifest.release_root)}&search_root=${encodeURIComponent(searchRoot)}`, 200);
   await expectRefusal(`/api/graph?root=${absent}&repository=${slug}`, 404, "unknown_root");
   await expectRefusal(
     `/api/graph?root=${encodeURIComponent(manifest.release_root)}&repository=not-a-repository`,
@@ -198,7 +211,7 @@ try {
   if (graph.nodes?.length !== declared.graph_node_count || graph.edges?.length !== declared.graph_edge_count) {
     throw new Error(`complete ${slug} graph mismatch: ${graph.nodes?.length ?? 0} nodes / ${graph.edges?.length ?? 0} edges against ${declared.graph_node_count} / ${declared.graph_edge_count}`);
   }
-  if (search.headers.get("x-vela-projection-root") !== manifest.release_root) throw new Error("search response root header drift");
+  if (search.headers.get("x-vela-projection-root") !== manifest.release_root || search.headers.get("x-vela-search-root") !== searchRoot) throw new Error("search response composite root header drift");
 
   console.log(JSON.stringify({
     ok: true,

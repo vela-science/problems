@@ -32,6 +32,7 @@ import {
 } from "@vela/ui/components/sidebar";
 import { BrandMark as VelaMark } from "@vela/ui/vela/brand-mark";
 import { useAccountState } from "@/components/vela/account-state";
+import type { PublishedProblemCollection } from "@/lib/problem-collections";
 
 type SidebarDestination = {
   href: string;
@@ -46,7 +47,7 @@ const PRIMARY_DESTINATIONS: SidebarDestination[] = [
   { href: "/activity", label: "Updates", icon: Activity01Icon },
 ];
 
-export function AppSidebar() {
+export function AppSidebar({ problemCollections = [{ namespace: "erdos-problems", name: "Erdős Problems", identifierKind: "number" }] }: { problemCollections?: PublishedProblemCollection[] }) {
   const pathname = usePathname();
   const accountState = useAccountState();
   const { isMobile, setOpenMobile, state, toggleSidebar } = useSidebar();
@@ -122,15 +123,15 @@ export function AppSidebar() {
                     <span>{label}</span>
                   </SidebarMenuButton>
                   {href === "/problems" && pathname.startsWith("/problems") ? <SidebarMenuSub>
-                    <SidebarMenuSubItem>
+                    {problemCollections.map((collection) => <SidebarMenuSubItem key={collection.namespace}>
                       <SidebarMenuSubButton
                         className="h-10 md:h-7"
-                        isActive={pathname === "/problems/erdos-problems" || pathname.startsWith("/problems/erdos-problems/")}
-                        render={<Link href="/problems/erdos-problems" onClick={closeMobileNavigation} />}
+                        isActive={pathname === `/problems/${collection.namespace}` || pathname.startsWith(`/problems/${collection.namespace}/`)}
+                        render={<Link href={`/problems/${collection.namespace}`} onClick={closeMobileNavigation} />}
                       >
-                        <span>Erdős Problems</span>
+                        <span>{collection.name}</span>
                       </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
+                    </SidebarMenuSubItem>)}
                   </SidebarMenuSub> : null}
                 </SidebarMenuItem>;
               })}

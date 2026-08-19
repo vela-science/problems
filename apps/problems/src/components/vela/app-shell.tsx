@@ -18,25 +18,29 @@ export function AppShell({
   publishedRepositories,
   problemCollections,
   projectionRoot,
+  searchRoot,
+  collectionRoot,
   authEnabled,
 }: {
   children: React.ReactNode;
   publishedRepositories: PublishedRepository[];
   problemCollections: PublishedProblemCollection[];
   projectionRoot: string;
+  searchRoot: string;
+  collectionRoot: string;
   authEnabled: boolean;
 }) {
   return (
     <TooltipProvider delay={800}>
       <AccountStateProvider enabled={authEnabled}>
-       <ProjectionRootProvider root={projectionRoot}>
-        <CommandPaletteProvider repositories={publishedRepositories} problemCollections={problemCollections} projectionRoot={projectionRoot}>
+       <ProjectionRootProvider root={projectionRoot} searchRoot={searchRoot} collectionRoot={collectionRoot}>
+        <CommandPaletteProvider repositories={publishedRepositories} problemCollections={problemCollections} projectionRoot={projectionRoot} searchRoot={searchRoot} collectionRoot={collectionRoot}>
           <SidebarProvider
             defaultOpen
             className="h-svh min-w-0 overflow-y-hidden print:block print:h-auto print:overflow-visible print:bg-background"
             style={{ "--sidebar-width": "12.5rem", "--sidebar-width-icon": "3rem" } as CSSProperties}
           >
-            <AppSidebar />
+            <AppSidebar problemCollections={problemCollections} />
             <SidebarInset
               id="main-content"
               tabIndex={-1}

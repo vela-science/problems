@@ -14,6 +14,8 @@ product: problems.science application
 | `/problems` | Published collections | Open a collection |
 | `/problems/erdos-problems` | Filterable Problem directory | Open a Problem |
 | `/problems/erdos-problems/{number}` | Question and current state | Read Overview |
+| `/problems/formal-conjectures` | Rights-reviewed formalization subset | Open a formalization |
+| `/problems/formal-conjectures/{occurrence}` | Exact declaration occurrence | Read Overview or Sources |
 | `?view=work` | Canvas, files, and research objects | Continue work |
 | `?view=results` | Durable outputs and checks | Open a Result |
 | `?view=sources` | File browser and exact preview | Select a source |
@@ -33,7 +35,7 @@ routes are durable contextual destinations, not primary navigation.
 
 Home is the product activation screen, not a marketing hero. Search is the
 dominant object. The first viewport also provides Browse problems, Add
-contribution, and one compact row stating the exact one-collection truth.
+contribution, and one compact list stating the exact two-collection truth.
 Below it, use three or four real question rows and the two durable reviewed
 Results. Link once to all Updates. Do not repeat collection analytics, raw
 source activity, availability, or contribution onboarding on Home.
@@ -45,10 +47,17 @@ than competing in the global spine.
 
 ## Collection
 
-The collection route uses a concise collection identity, exact count, truthful
-source-status distribution, search and filters, then the Problem directory.
-Rows lead with the collection-local number and retained question. Source status,
-formal material, reviewed Results, and source stay distinct.
+Each collection route uses a concise identity, exact count, truthful scope,
+search and useful source-owned filters, then its directory. Erdős rows lead
+with the collection-local number and retained question. Formal Conjectures rows
+lead with the human question and keep declaration identity progressive. Source
+status, formal material, reviewed Results, and Vela state stay distinct.
+
+Formal Conjectures is a bounded read-only adapter over exact upstream Git
+bytes. Its initial seven occurrences retain exact declaration, file, category,
+docstring, rights basis, revision, and roots. Upstream GitHub PRs and automated
+checks remain advisory/source workflow; they do not become Vela Results,
+Decisions, or Standing.
 
 ## Problem
 

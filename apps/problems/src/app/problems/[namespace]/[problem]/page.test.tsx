@@ -15,12 +15,19 @@ vi.mock("@vela/projection-data", () => ({
     entity_id: "problem:erdos:321",
     canonical_occurrence: { source_id: "source:erdos-problems", native_id: "erdos:321", native_kind: "problem", content_root: "sha256:source" },
   }] },
+  formalConjectureOccurrence: (slug: string) => slug === "wikipedia-oppermann-conjecture" ? {
+    route_slug: slug,
+    title: "Oppermann's Conjecture",
+  } : null,
 }));
 vi.mock("@/components/vela/problem-page", () => ({
   ProblemPageView: (props: Record<string, unknown>) => { mocks.view(props); return <div>Problem</div>; },
 }));
+vi.mock("@/components/vela/formal-conjecture-page", () => ({
+  FormalConjecturePage: ({ item, current }: { item: { title: string }; current: string }) => <div>{item.title} · {current}</div>,
+}));
 vi.mock("@/lib/published-problem-collections", () => ({
-  publishedProblemCollections: [{ namespace: "erdos-problems", name: "Erdős Problems" }],
+  publishedProblemCollections: [{ namespace: "erdos-problems", name: "Erdős Problems" }, { namespace: "formal-conjectures", name: "Formal Conjectures", identifierKind: "slug" }],
 }));
 vi.mock("next/navigation", () => ({ notFound: () => { mocks.notFound(); throw new Error("NOT_FOUND"); } }));
 
@@ -73,5 +80,13 @@ describe("the canonical Problem address", () => {
     mocks.reviewed.mockReturnValue(null);
     expect(await generateMetadata({ params: Promise.resolve({ namespace: "erdos-problems", problem: "999" }), searchParams: Promise.resolve({}) }))
       .toMatchObject({ title: "Erdős problem 999", alternates: { canonical: "/problems/erdos-problems/999" } });
+  });
+
+  it("resolves an exact Formal Conjectures occurrence without inventing Repository state", async () => {
+    render(await open("formal-conjectures", "wikipedia-oppermann-conjecture", { view: "sources" }));
+    expect(screen.getByText("Oppermann's Conjecture · sources")).toBeInTheDocument();
+    expect(mocks.view).not.toHaveBeenCalled();
+    expect(await generateMetadata({ params: Promise.resolve({ namespace: "formal-conjectures", problem: "wikipedia-oppermann-conjecture" }), searchParams: Promise.resolve({}) }))
+      .toMatchObject({ title: "Oppermann's Conjecture", alternates: { canonical: "/problems/formal-conjectures/wikipedia-oppermann-conjecture" } });
   });
 });

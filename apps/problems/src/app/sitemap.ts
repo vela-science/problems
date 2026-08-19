@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { allClaimRouteIds, allRepositories, allProblemRouteIds, canonicalProblemPath, mathSourceRegistryRead, projectionManifest, slugForRepositoryId } from "@vela/projection-data";
+import { allClaimRouteIds, allRepositories, allProblemRouteIds, canonicalProblemPath, formalConjecturesCollection, mathSourceRegistryRead, projectionManifest, slugForRepositoryId } from "@vela/projection-data";
 
 const base = "https://problems.science";
 export const dynamic = "force-static";
@@ -10,6 +10,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/",
     "/problems",
     "/problems/erdos-problems",
+    "/problems/formal-conjectures",
     "/contribute",
     "/hubs",
     "/activity",
@@ -50,6 +51,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
        to index two URLs for one record; that view now declares the canonical
        address instead of competing with it. */
     ...problems.map(({ repository, problem }) => canonicalProblemPath(repository, problem)).filter((path): path is string => path !== null),
+    ...formalConjecturesCollection.data.items.map(({ route_slug }) => `/problems/formal-conjectures/${route_slug}`),
     ...sources.sources.map(({ declaration }) => `/sources/${encodeURIComponent(declaration.source_id)}`),
   ];
 

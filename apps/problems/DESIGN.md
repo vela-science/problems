@@ -6,13 +6,21 @@ application: problems
 
 # Problems composition guide
 
+This app follows the root two-register system. Task routes use the familiar
+product grammar below. Home, collection identity, graph orientation, and
+meaningful empty or degraded moments may use restrained first-party Vela art
+and the canonical sail when that improves orientation without competing with
+search, rows, files, results, or controls.
+
 ## Route map
 
 | Surface | Dominant composition | Supporting data |
 | --- | --- | --- |
-| Home | search + discovery list | one collection row, questions, reviewed Results |
+| Home | search + discovery list | compact collection rows, questions, reviewed Results |
 | Global Problems | collection directory | published collections only |
 | Erdős collection | filters + Problem rows | exact count, source status, formal/review coverage |
+| Formal Conjectures collection | filters + formalization rows | exact declaration, source family, category, revision |
+| Formal Conjectures occurrence | question + declaration object | source code, rights, exact revision, honest missing Result |
 | Problem Overview | question + current Result | scope, checks, landmarks, representations |
 | Work | object tree + canvas + inspector | files, Research Blocks, notes, attempts |
 | Results | Result reader + checks | assertion, performer, evidence, sources, decision |
@@ -28,8 +36,8 @@ application: problems
 
 ## Calibration surfaces
 
-Home, the Erdős collection directory, and Erdős Problem 321 are the initial
-system checkpoint. They establish the neutral canvas, marine navigation,
+Home, both collection directories, Erdős Problem 321, and an exact Formal
+Conjectures occurrence are the initial system checkpoint. They establish the neutral canvas, marine navigation,
 cobalt interaction, normal product headers, directory density, question-first
 Problem identity, border-bottom tabs, current Result composition, and compact
 metadata rail. They are not demo-specific implementations.
@@ -54,7 +62,7 @@ targets, no current Result, partial sources, and corrected history.
 ### Home
 
 Use one concise heading, one sentence, a prominent search field, and two actions.
-Place one compact published-collection row close to search. Follow with three
+Place one compact published-collections list close to search. Follow with three
 or four question rows and the two durable reviewed Results. Keep one small link
 to all Updates. Remove raw update feeds, Home collection charts, marketing
 banners, repeated onboarding labels, and duplicated coverage explanations.

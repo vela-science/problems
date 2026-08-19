@@ -6,6 +6,8 @@ import { describe, expect, it, vi } from "vitest";
 vi.mock("geist/font/sans", () => ({ GeistSans: { variable: "font-geist" } }));
 vi.mock("@vela/projection-data", () => ({
   allRepositories: async () => [],
+  compositeSearchRoot: () => "sha256:search",
+  formalConjecturesCollectionRoot: "sha256:formal-conjectures",
   /* The sidebar's record gate reads the manifest's per-repository counts, so
      the stub carries them rather than a bare root. */
   projectionManifest: async () => ({ release_root: "sha256:test", source_repositories: [] }),
