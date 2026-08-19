@@ -101,6 +101,62 @@ function neonEnvironment(environment) {
   return environmentFor(environment, ["NEON_API_KEY"]);
 }
 
+const ADOPTED_LOCAL_ENVIRONMENT = Object.freeze([
+  "VELA_PROJECTION_DATABASE_URL",
+  "VELA_ACTIVITY_DATABASE_URL",
+]);
+
+export function parseOperatorEnvFile(text) {
+  const entries = {};
+  for (const line of text.split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const separator = trimmed.indexOf("=");
+    if (separator < 1) continue;
+    const name = trimmed.slice(0, separator).trim();
+    let value = trimmed.slice(separator + 1).trim();
+    if (value.length >= 2 && (value[0] === '"' || value[0] === "'") && value.at(-1) === value[0]) {
+      value = value.slice(1, -1);
+    }
+    entries[name] = value;
+  }
+  return entries;
+}
+
+function neonConnectionString(environment, database, role) {
+  const config = environment.NEON_API_KEY
+    ? []
+    : ["--config-dir", required(environment, "VELA_NEON_CONFIG_DIR")];
+  /* On failure run() reports exit status and stderr only; on success stdout
+     IS the connection string and must never enter an error message. */
+  return run("neonctl", [
+    "connection-string",
+    "--project-id", "lingering-meadow-20929365",
+    "--database-name", database,
+    "--role-name", role,
+    ...config,
+  ], { environment: neonEnvironment(environment), quiet: true });
+}
+
+function deriveOperatorEnvironment(scoped) {
+  if (!scoped.VELA_BIN) {
+    scoped.VELA_BIN = join(required(scoped, "HOME"), ".local", "bin", "vela");
+  }
+  const local = resolve(root, "apps/problems/.env.local");
+  if (existsSync(local)) {
+    const entries = parseOperatorEnvFile(readFileSync(local, "utf8"));
+    for (const name of ADOPTED_LOCAL_ENVIRONMENT) {
+      if (!scoped[name] && entries[name]) scoped[name] = entries[name];
+    }
+  }
+  if (!scoped.VELA_PROJECTION_WRITER_DATABASE_URL) {
+    scoped.VELA_PROJECTION_WRITER_DATABASE_URL = neonConnectionString(scoped, "vela_projection", "neondb_owner");
+  }
+  if (!scoped.VELA_ACTIVITY_MIGRATOR_DATABASE_URL) {
+    scoped.VELA_ACTIVITY_MIGRATOR_DATABASE_URL = neonConnectionString(scoped, "vela_activity", "vela_activity_migrator");
+  }
+}
+
 function vercelEnvironment(environment) {
   return environmentFor(environment, ["VERCEL_TOKEN", "VERCEL_GLOBAL_CONFIG"]);
 }
@@ -749,16 +805,8 @@ export function releaseOrder() {
 }
 
 export async function refreshProblems(environment = process.env) {
-  required(environment, "VELA_BIN");
-  required(environment, "VELA_PROJECTION_WRITER_DATABASE_URL");
-  required(environment, "VELA_PROJECTION_DATABASE_URL");
-  required(environment, "VELA_ACTIVITY_MIGRATOR_DATABASE_URL");
-  required(environment, "VELA_ACTIVITY_DATABASE_URL");
   const work = releaseWorkDirectory(environment);
-  const context = {
-    work: work.path,
-    velaBin: resolve(environment.VELA_BIN),
-  };
+  const context = { work: work.path };
   let completed = false;
   let failed = false;
   let scoped;
@@ -794,6 +842,13 @@ export async function refreshProblems(environment = process.env) {
         ?? join(operatorHome, ".config", "neonctl"),
       ...(vercelConfig ? { VERCEL_GLOBAL_CONFIG: vercelConfig } : {}),
     };
+    deriveOperatorEnvironment(scoped);
+    required(scoped, "VELA_BIN");
+    required(scoped, "VELA_PROJECTION_WRITER_DATABASE_URL");
+    required(scoped, "VELA_PROJECTION_DATABASE_URL");
+    required(scoped, "VELA_ACTIVITY_MIGRATOR_DATABASE_URL");
+    required(scoped, "VELA_ACTIVITY_DATABASE_URL");
+    context.velaBin = resolve(scoped.VELA_BIN);
     for (const [, stage] of stageDefinitions) await stage(scoped, context);
     completed = true;
     return {
