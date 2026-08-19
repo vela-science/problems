@@ -10,6 +10,7 @@ import * as tar from "tar";
 import type { Octokit } from "octokit";
 import { inspectCoreIntegration } from "@vela/projection-data";
 import { canonicalJson, sha256 } from "@vela/projection-data/canonical";
+import { velaRelease } from "@vela/projection-data/release";
 
 const fullNamePattern = /^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/u;
 const commitPattern = /^[0-9a-f]{40}$/u;
@@ -165,7 +166,7 @@ export async function inspectGitHubCodebase(input: {
     const result = await runCore(checkout);
     const inspection = {
       schema: "vela.connected-codebase-inspection.v1",
-      core_version: "0.977.3",
+      core_version: velaRelease.version,
       status: result.status,
       detail: result.detail,
       source_commit: sourceCommit,
