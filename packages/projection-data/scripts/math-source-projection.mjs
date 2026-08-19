@@ -141,6 +141,12 @@ export function reviewedClaimSubjectOccurrences(claim, packet) {
 }
 
 export function claimOccurrencePacket(material, claim) {
+  return retainedClaimOccurrencePacket(material, claim)?.packet ?? null;
+}
+
+/** The packet plus the root of the exact retained Artifact bytes it was parsed
+ * from, for a consumer that must name those bytes rather than the parse. */
+export function retainedClaimOccurrencePacket(material, claim) {
   const packets = [];
   for (const evidence of claim.record?.evidence ?? []) {
     if (typeof evidence.artifact_path !== "string") continue;
@@ -157,7 +163,7 @@ export function claimOccurrencePacket(material, claim) {
     const corrects = (claim.record?.relations ?? []).some(({ kind }) => kind === "corrects");
     if (!corrects) continue;
     assert(candidate.successor?.assertion === claim.assertion, `${claim.claim_id}: current correction packet successor drift`);
-    packets.push(candidate);
+    packets.push({ packet: candidate, artifact_root: evidence.artifact_root });
   }
   assert(packets.length <= 1, `${claim.claim_id}: multiple Claim occurrence packets are ambiguous`);
   return packets[0] ?? null;

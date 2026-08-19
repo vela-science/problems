@@ -809,6 +809,35 @@ const projectionManifestBaseSchema = z.object({
   table_roots: z.record(z.string(), hashRootSchema),
 }).strict();
 
+export const frontierBasisClassSchema = z.enum([
+  "source_asserted",
+  "mechanically_verified",
+  "authority_decided",
+  "exact_derivation",
+  "heuristic_advisory",
+]);
+export type FrontierBasisClass = z.infer<typeof frontierBasisClassSchema>;
+
+/* Additive: the block appears on releases whose builder projected frontier
+   edges, and its absence on an older stored release is not a defect. The
+   release root hashes the whole manifest body, so a release that carries the
+   block is committed to its counts. */
+const frontierProjectionManifestSchema = z.object({
+  schema: z.literal("site.frontier-projection.v1"),
+  edge_count: z.number().int().nonnegative(),
+  basis_counts: z.record(frontierBasisClassSchema, z.number().int().nonnegative()),
+}).strict().superRefine((frontier, context) => {
+  const counted = Object.values(frontier.basis_counts)
+    .reduce((total, count) => total + (count ?? 0), 0);
+  if (counted !== frontier.edge_count) {
+    context.addIssue({
+      code: "custom",
+      path: ["basis_counts"],
+      message: "frontier basis counts do not partition the projected edges",
+    });
+  }
+});
+
 export const currentProjectionManifestSchema = projectionManifestBaseSchema.extend({
   schema: z.literal(currentProjectionManifestSchemaId),
   /* Submission v3 is an explicit hard cut. Refresh the exact current projection
@@ -817,6 +846,7 @@ export const currentProjectionManifestSchema = projectionManifestBaseSchema.exte
   vela_version: z.enum(velaReadableVersions as [string, ...string[]]),
   source_repositories: z.array(currentProjectionSourceRepositorySchema),
   source_registry: mathSourceRegistryReleaseSchema,
+  frontier_projection: frontierProjectionManifestSchema.optional(),
 }).superRefine((manifest, context) => {
   if (!velaGeneratorBinaryRoots.has(manifest.vela_binary_sha256)) {
     context.addIssue({

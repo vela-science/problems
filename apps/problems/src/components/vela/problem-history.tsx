@@ -3,6 +3,7 @@ import { StatusBadge } from "@vela/ui/vela/status-badge";
 import { RootFact } from "@/components/vela/root-fact";
 import { RecordId } from "@/components/vela/record-id";
 import { CorrectionComparison } from "@/components/vela/correction-comparison";
+import { FrontierTimeline, type FrontierTimelineData } from "@/components/vela/frontier-timeline";
 import { Actor, Performer } from "@/components/vela/actor";
 import { formatDate } from "@/lib/format";
 import type { ScientificProblemState } from "@/lib/scientific-state";
@@ -28,7 +29,13 @@ function correctionRelations(claim: State["claims"][number]) {
  * retained, and the exact technical provenance. This is the disclosure
  * layer, so nothing sits behind a Collapsible — the address is the
  * disclosure, and every fact below is complete HTML here. */
-export function ProblemHistory({ state }: { state: State }) {
+export function ProblemHistory({ state, frontier }: {
+  state: State;
+  /* Frontier movement is a separate reader that is not wired yet. The prop
+     defaults to absent so this page renders unchanged until the integration
+     commit maps the reader's output onto FrontierTimelineData. */
+  frontier?: FrontierTimelineData;
+}) {
   const corrections = state.claims.flatMap((claim) => correctionRelations(claim).map((relation) => ({ claim, relation })));
   return <>
     <section aria-labelledby="proposed-changes-heading">
@@ -63,6 +70,8 @@ export function ProblemHistory({ state }: { state: State }) {
         return <article key={`${claim.id}:${relation.kind}:${relation.target_claim_id}`} className="vela-object-surface overflow-hidden"><div className="grid items-stretch sm:grid-cols-[minmax(0,1fr)_5rem_minmax(0,1fr)]"><div className="p-4"><p className="text-meta font-medium text-muted-foreground">Previous Result</p>{predecessor ? <p className="mt-2 line-clamp-3 text-compact">{predecessor.assertion}</p> : <p className="mt-2 text-compact text-muted-foreground">Statement not retained here</p>}</div><div className="grid place-items-center border-y bg-muted/20 px-2 py-3 text-center sm:border-x sm:border-y-0"><StatusBadge tone="caution">{relation.kind}</StatusBadge><span aria-hidden className="mt-1 text-muted-foreground">→</span></div><div className="p-4"><p className="text-meta font-medium text-muted-foreground">{isCurrent ? "Current Result" : "Later version"}</p><p className="mt-2 line-clamp-3 text-compact">{claim.assertion}</p></div></div>{predecessor ? <div className="border-t p-4"><CorrectionComparison kind={relation.kind as "corrects" | "supersedes"} before={predecessor.assertion} after={claim.assertion} /></div> : null}<details className="border-t px-4 py-3 text-meta"><summary className="cursor-pointer font-medium">Exact identities</summary><div className="mt-3 flex flex-wrap items-center gap-2"><RecordId value={relation.target_claim_id} /><span aria-hidden>→</span><RecordId value={claim.id} /></div></details></article>;
       })}</div> : <div className="mt-5 rounded-lg border border-dashed p-5"><p className="text-label font-medium">No correction history</p></div>}
     </section>
+
+    {frontier ? <FrontierTimeline states={frontier.states} gaps={frontier.gaps} /> : null}
 
     <details className="group border-y py-1">
       <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-3 marker:content-none focus-visible:outline-2 focus-visible:outline-offset-2"><span><span aria-hidden className="mr-2 inline-block transition-transform group-open:rotate-90">›</span><span className="text-label font-medium">Technical details</span></span><span className="text-meta text-muted-foreground">Exact roots, source, and retained record identifiers</span></summary>

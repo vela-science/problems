@@ -18,8 +18,15 @@ import {
 import {
   buildMathSourceProjection,
   latestRfc3339Instant,
+  retainedClaimOccurrencePacket,
+  reviewedClaimSubjectOccurrences,
+  sourceIdForClaim,
   UNSCOPED_RELEASE_ROOT,
 } from "./math-source-projection.mjs";
+import {
+  problemResolutionConfig,
+  problemResolutionEntityRoot,
+} from "../src/problem-resolution.ts";
 
 export { canonicalJson, latestRfc3339Instant, sha256 };
 
@@ -1010,6 +1017,416 @@ export function projectGraph(slug, repositoriesRoot, current, claims, reviews) {
   };
 }
 
+export const frontierProjectionSchema = "site.frontier-projection.v1";
+export const frontierBasisClasses = Object.freeze([
+  "source_asserted",
+  "mechanically_verified",
+  "authority_decided",
+  "exact_derivation",
+  "heuristic_advisory",
+]);
+
+const occurrenceEdgeRef = (occurrence) => `${occurrence.source_id}/${occurrence.native_id}`;
+
+function nativeRecordBasisRef(record) {
+  return {
+    kind: "native_record",
+    source_id: record.source_id,
+    native_id: record.native_id,
+    native_kind: record.native_kind,
+    content_root: record.content_root ?? null,
+    row_root: record.row_root,
+  };
+}
+
+/**
+ * One typed frontier edge per retained relationship the builder already holds
+ * in memory. Every edge names the retained record that justifies its basis
+ * class in `basis_ref`; nothing here reads a network, infers an equivalence,
+ * or upgrades a heuristic grouping past what a reviewed packet decided.
+ *
+ * `claimProblemBindings` maps a Claim to the reviewed resolver entity its
+ * accepted occurrence packet names. It is the only path that sets
+ * `problem_entity_id` on Claim-anchored edges: a classifier match on titles or
+ * numbers is navigation, not identity, so a Claim without a packet keeps NULL
+ * rather than borrowing an entity it was never bound to.
+ */
+export function projectFrontierEdges({
+  claims,
+  reviews,
+  verifications,
+  transitions,
+  nativeRecords,
+  sourceDeclarations,
+  resolutionConfig = problemResolutionConfig,
+  claimProblemBindings = new Map(),
+  classifySourceId = sourceIdForClaim,
+}) {
+  const edges = new Map();
+  const addEdge = ({
+    repository_id = null,
+    problem_entity_id = null,
+    source_kind,
+    source_ref,
+    source_root = null,
+    target_kind,
+    target_ref,
+    target_root = null,
+    relation,
+    basis,
+    basis_ref,
+    nonclaims = [],
+  }) => {
+    assert(frontierBasisClasses.includes(basis), `frontier edge ${relation} carries unknown basis ${basis}`);
+    assert(
+      basis_ref !== null && typeof basis_ref === "object" && !Array.isArray(basis_ref),
+      `frontier edge ${relation} ${source_ref} -> ${target_ref} names no retained basis record`,
+    );
+    const identity = {
+      repository_id,
+      problem_entity_id,
+      source_kind,
+      source_ref,
+      target_kind,
+      target_ref,
+      relation,
+    };
+    const row = {
+      edge_id: `edge_${sha256(canonicalJson(identity)).slice(7, 39)}`,
+      problem_entity_id,
+      repository_id,
+      source_kind,
+      source_ref,
+      source_root,
+      target_kind,
+      target_ref,
+      target_root,
+      relation,
+      basis,
+      basis_ref,
+      nonclaims,
+    };
+    const existing = edges.get(row.edge_id);
+    if (existing) {
+      /* The same relationship stated twice from the same records is one edge;
+         the same identity with a different basis or root is a derivation bug. */
+      assert(
+        canonicalJson(existing) === canonicalJson(row),
+        `frontier edge identity collision: ${relation} ${source_ref} -> ${target_ref}`,
+      );
+      return;
+    }
+    edges.set(row.edge_id, row);
+  };
+
+  /* Resolver-grouped occurrences. The canonical occurrence is the Source's own
+     assertion of which Problem it states; every other reviewed occurrence is a
+     navigation grouping whose equivalence nobody has established — unless an
+     accepted Claim's occurrence packet bound it, which is a Decision. */
+  const nativeByIdentity = new Map(
+    nativeRecords.map((record) => [`${record.source_id}\0${record.native_id}`, record]),
+  );
+  const packetBoundOccurrences = new Map();
+  for (const [claimId, binding] of claimProblemBindings) {
+    for (const occurrence of binding.occurrences) {
+      packetBoundOccurrences.set(
+        `${binding.entity_id}\0${occurrence.source_id}\0${occurrence.native_id}`,
+        { claim_id: claimId, ...binding },
+      );
+    }
+  }
+  for (const entity of resolutionConfig.entities) {
+    const canonical = nativeByIdentity.get(
+      `${entity.canonical_occurrence.source_id}\0${entity.canonical_occurrence.native_id}`,
+    );
+    if (canonical) {
+      addEdge({
+        problem_entity_id: entity.entity_id,
+        source_kind: "occurrence",
+        source_ref: occurrenceEdgeRef(canonical),
+        source_root: canonical.row_root,
+        target_kind: "problem",
+        target_ref: entity.entity_id,
+        relation: "occurrence_of",
+        basis: "source_asserted",
+        basis_ref: nativeRecordBasisRef(canonical),
+      });
+    }
+    for (const occurrence of entity.reviewed_occurrences) {
+      const record = nativeByIdentity.get(`${occurrence.source_id}\0${occurrence.native_id}`);
+      /* No retained record, no edge: an occurrence the release does not carry
+         has no bytes for basis_ref to name. */
+      if (!record) continue;
+      if (occurrence.relation_kind === "formal_statement_reference") {
+        addEdge({
+          problem_entity_id: entity.entity_id,
+          source_kind: "occurrence",
+          source_ref: occurrenceEdgeRef(record),
+          source_root: record.row_root,
+          target_kind: "problem",
+          target_ref: entity.entity_id,
+          relation: "formalizes",
+          basis: "source_asserted",
+          basis_ref: nativeRecordBasisRef(record),
+        });
+      }
+      const bound = packetBoundOccurrences.get(
+        `${entity.entity_id}\0${occurrence.source_id}\0${occurrence.native_id}`,
+      );
+      addEdge({
+        problem_entity_id: entity.entity_id,
+        source_kind: "occurrence",
+        source_ref: occurrenceEdgeRef(record),
+        source_root: record.row_root,
+        target_kind: "problem",
+        target_ref: entity.entity_id,
+        relation: "grouped_with",
+        basis: bound ? "authority_decided" : "heuristic_advisory",
+        basis_ref: bound
+          ? {
+              kind: "claim_occurrence_packet",
+              claim_id: bound.claim_id,
+              claim_root: bound.claim_root,
+              packet_root: bound.packet_root,
+              entity_id: entity.entity_id,
+            }
+          : {
+              kind: "reviewed_resolver_entity",
+              entity_id: entity.entity_id,
+              entity_root: problemResolutionEntityRoot(entity),
+            },
+        nonclaims: bound ? [] : ["semantic equivalence not established"],
+      });
+    }
+  }
+
+  const problemEntityForClaim = (claimId) => claimProblemBindings.get(claimId)?.entity_id ?? null;
+  const claimByKey = new Map(claims.map((claim) => [`${claim.repository_id}\0${claim.claim_id}`, claim]));
+
+  for (const claim of claims) {
+    const problemEntityId = problemEntityForClaim(claim.claim_id);
+    const accepted = claim.standing === "accepted";
+    const acceptingReview = accepted
+      ? reviews.find((review) => (
+          review.repository_id === claim.repository_id
+          && review.target === claim.claim_id
+          && review.status === "accepted"
+        )) ?? null
+      : null;
+    for (const evidence of claim.record?.evidence ?? []) {
+      const artifactId = evidence.artifact_id ?? evidence.artifact_root?.slice(7);
+      assert(artifactId, `${claim.claim_id}: Claim evidence has no artifact identity`);
+      addEdge({
+        repository_id: claim.repository_id,
+        problem_entity_id: problemEntityId,
+        source_kind: "artifact",
+        source_ref: artifactId,
+        source_root: evidence.artifact_root ?? null,
+        target_kind: "claim",
+        target_ref: claim.claim_id,
+        target_root: claim.claim_root,
+        relation: "evidence_for",
+        basis: accepted ? "authority_decided" : "source_asserted",
+        basis_ref: accepted
+          ? acceptingReview
+            ? {
+                kind: "decision_event",
+                proposal_id: acceptingReview.proposal_id,
+                decision_event_id: acceptingReview.decision_event_id,
+                applied_event_id: acceptingReview.applied_event_id,
+                claim_id: claim.claim_id,
+                claim_root: claim.claim_root,
+              }
+            /* Accepted with no retained Proposal row — the accepted Claim
+               record under the current Repository root is the retained fact. */
+            : {
+                kind: "accepted_claim_record",
+                claim_id: claim.claim_id,
+                claim_root: claim.claim_root,
+                standing: claim.standing,
+              }
+          : {
+              kind: "claim_record",
+              claim_id: claim.claim_id,
+              claim_root: claim.claim_root,
+              standing: claim.standing,
+            },
+      });
+    }
+    for (const relation of claim.record?.relations ?? []) {
+      if (relation.kind !== "corrects" && relation.kind !== "supersedes") continue;
+      const retiringReview = reviews.find((review) => (
+        review.repository_id === claim.repository_id
+        && review.retired_by_claim_id === claim.claim_id
+        && review.target === relation.target_claim_id
+      )) ?? null;
+      addEdge({
+        repository_id: claim.repository_id,
+        problem_entity_id: problemEntityId,
+        source_kind: "claim",
+        source_ref: claim.claim_id,
+        source_root: claim.claim_root,
+        target_kind: "claim",
+        target_ref: relation.target_claim_id,
+        target_root: claimByKey.get(`${claim.repository_id}\0${relation.target_claim_id}`)?.claim_root ?? null,
+        relation: relation.kind,
+        basis: "authority_decided",
+        basis_ref: retiringReview
+          ? {
+              kind: "decision_event",
+              proposal_id: retiringReview.proposal_id,
+              decision_event_id: retiringReview.decision_event_id,
+              claim_retirement: retiringReview.claim_retirement,
+              claim_id: claim.claim_id,
+              claim_root: claim.claim_root,
+            }
+          : {
+              kind: "claim_record",
+              claim_id: claim.claim_id,
+              claim_root: claim.claim_root,
+              standing: claim.standing,
+            },
+      });
+    }
+    const sourceId = classifySourceId(claim);
+    if (sourceId !== null) {
+      const declaration = sourceDeclarations.find((row) => row.source_id === sourceId) ?? null;
+      assert(declaration, `${claim.claim_id}: external dependency ${sourceId} has no retained Source declaration`);
+      addEdge({
+        repository_id: claim.repository_id,
+        problem_entity_id: problemEntityId,
+        source_kind: "claim",
+        source_ref: claim.claim_id,
+        source_root: claim.claim_root,
+        target_kind: "external_reference",
+        target_ref: sourceId,
+        target_root: declaration.declaration_root,
+        relation: "external_dependency",
+        basis: "source_asserted",
+        basis_ref: {
+          kind: "source_declaration",
+          source_id: sourceId,
+          declaration_root: declaration.declaration_root,
+          claim_id: claim.claim_id,
+          claim_root: claim.claim_root,
+        },
+      });
+    }
+  }
+
+  /* Proposal edges exist only where a signed Decision does. A pending or
+     withdrawn Proposal has no decision provenance to rest an edge on, so it
+     contributes nothing here rather than a weaker basis it never earned. */
+  for (const review of reviews) {
+    if (review.decision_provenance !== "signed_record") continue;
+    const problemEntityId = problemEntityForClaim(review.target);
+    const decisionRef = {
+      kind: "decision_event",
+      proposal_id: review.proposal_id,
+      status: review.status,
+      decision_event_id: review.decision_event_id,
+      applied_event_id: review.applied_event_id,
+      reviewed_by: review.reviewed_by,
+      decision_actor_class: review.decision_actor_class,
+    };
+    addEdge({
+      repository_id: review.repository_id,
+      problem_entity_id: problemEntityId,
+      source_kind: "claim",
+      source_ref: review.target,
+      source_root: review.content_root ?? null,
+      target_kind: "proposal",
+      target_ref: review.proposal_id,
+      relation: "proposed_by",
+      basis: "authority_decided",
+      basis_ref: decisionRef,
+    });
+    addEdge({
+      repository_id: review.repository_id,
+      problem_entity_id: problemEntityId,
+      source_kind: "proposal",
+      source_ref: review.proposal_id,
+      target_kind: "claim",
+      target_ref: review.target,
+      target_root: review.content_root ?? null,
+      relation: "decided_by",
+      basis: "authority_decided",
+      basis_ref: decisionRef,
+    });
+  }
+
+  for (const verification of verifications) {
+    addEdge({
+      repository_id: verification.repository_id,
+      problem_entity_id: problemEntityForClaim(verification.claim_id),
+      source_kind: "submission",
+      source_ref: verification.submission_id,
+      source_root: verification.submission_root,
+      target_kind: "verification",
+      target_ref: verification.verification_record_id,
+      target_root: verification.verification_root,
+      relation: "verified_by",
+      basis: "mechanically_verified",
+      basis_ref: {
+        kind: "verification_record",
+        verification_record_id: verification.verification_record_id,
+        verification_root: verification.verification_root,
+        proposal_id: verification.proposal_id,
+        outcome: verification.outcome,
+        property: verification.property ?? null,
+      },
+      /* The record's own declared limits ride along, so a reader never takes a
+         scoped check for more than the scope it stated. */
+      nonclaims: (verification.does_not_establish ?? []).map(String),
+    });
+  }
+
+  for (const transition of transitions) {
+    if (transition.comparison_state !== "verified") continue;
+    for (const [change, claimIds] of [
+      ["accepted_added", transition.accepted_added],
+      ["accepted_removed", transition.accepted_removed],
+    ]) {
+      for (const claimId of claimIds) {
+        addEdge({
+          repository_id: transition.repository_id,
+          problem_entity_id: problemEntityForClaim(claimId),
+          source_kind: "transition",
+          source_ref: transition.commit_sha,
+          source_root: transition.semantic_delta_root,
+          target_kind: "claim",
+          target_ref: claimId,
+          target_root: claimByKey.get(`${transition.repository_id}\0${claimId}`)?.claim_root ?? null,
+          relation: "state_change",
+          basis: "exact_derivation",
+          basis_ref: {
+            kind: "semantic_delta",
+            semantic_delta_root: transition.semantic_delta_root,
+            repository_root_before: transition.repository_root_before,
+            repository_root_after: transition.repository_root_after,
+            before_revision_root: transition.before_revision_root,
+            after_revision_root: transition.after_revision_root,
+            change,
+          },
+        });
+      }
+    }
+  }
+
+  return [...edges.values()].sort((left, right) => left.edge_id.localeCompare(right.edge_id));
+}
+
+export function frontierProjectionManifestBlock(frontierEdges) {
+  return {
+    schema: frontierProjectionSchema,
+    edge_count: frontierEdges.length,
+    basis_counts: Object.fromEntries(frontierBasisClasses.map((basis) => [
+      basis,
+      frontierEdges.filter((edge) => edge.basis === basis).length,
+    ])),
+  };
+}
+
 function tableRoot(rows) {
   return sha256(canonicalJson(rows.map((row) => row.row_root).sort()));
 }
@@ -1042,6 +1459,7 @@ export function buildProjection({
     commits: [],
     repository_revisions: [],
     repository_transitions: [],
+    frontier_edges: [],
     source_declarations: [],
     source_observations: [],
     native_records: [],
@@ -1247,6 +1665,34 @@ export function buildProjection({
       sourceDeclarations: tables.source_declarations,
     }),
   })));
+  /* Frontier edges come last: they read the Claim, Proposal, Verification,
+     transition and Source rows the loop and the source projection already
+     produced, and add no new observation of their own. The packet bindings are
+     the one file read — the same retained occurrence Artifacts the source
+     projection just verified for its Claim bindings. */
+  const claimProblemBindings = new Map();
+  for (const material of repositoryMaterials) {
+    for (const claim of material.claims) {
+      const retained = retainedClaimOccurrencePacket(material, claim);
+      if (!retained) continue;
+      claimProblemBindings.set(claim.claim_id, {
+        claim_root: claim.claim_root,
+        entity_id: retained.packet.occurrence_resolution.entity_id,
+        packet_root: retained.artifact_root,
+        occurrences: reviewedClaimSubjectOccurrences(claim, retained.packet),
+      });
+    }
+  }
+  tables.frontier_edges.push(...projectFrontierEdges({
+    claims: tables.claims,
+    reviews: tables.reviews,
+    verifications: tables.verifications,
+    transitions: tables.repository_transitions,
+    nativeRecords: tables.native_records,
+    sourceDeclarations: tables.source_declarations,
+    claimProblemBindings,
+  }).map((row) => rooted(row)));
+
   const table_roots = Object.fromEntries(
     Object.entries(tables).map(([name, rows]) => [name, tableRoot(rows)]),
   );
@@ -1281,6 +1727,7 @@ export function buildProjection({
     table_roots,
     source_repositories,
     source_registry: sourceProjection.source_registry,
+    frontier_projection: frontierProjectionManifestBlock(tables.frontier_edges),
   };
   const release_root = sha256(canonicalJson(manifestBody));
   const scopedSourceProjection = buildMathSourceProjection(
