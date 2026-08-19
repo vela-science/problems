@@ -18,7 +18,7 @@ export const JUMP_DESTINATIONS = [
   { key: "p", href: "/problems", label: "Problems" },
   { key: "w", href: "/contribute", label: "Contribute" },
   { key: "u", href: "/hubs", label: "Hubs" },
-  { key: "a", href: "/activity", label: "Updates" },
+  { key: "a", href: "/updates", label: "Updates" },
   { key: "r", href: "/repositories", label: "Repositories" },
   { key: "s", href: "/sources", label: "Sources" },
 ] as const;

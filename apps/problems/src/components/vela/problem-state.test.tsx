@@ -88,10 +88,42 @@ describe("Problem tools", () => {
     expect(screen.getByText("claim chain fidelity")).toBeVisible();
     expect(screen.getByRole("heading", { name: "Linked sources" })).toBeVisible();
     expect(screen.getByRole("complementary", { name: "Result details" })).toBeVisible();
+    expect(screen.getByText("Repository decision")).toBeVisible();
+    expect(screen.getByText("Result source Git")).toBeVisible();
+    expect(screen.getByText("Formal source relationship")).toBeVisible();
     expect(screen.queryByRole("heading", { name: "Provenance" })).toBeNull();
     expect(screen.queryByRole("heading", { name: "Other results" })).toBeNull();
     expect(screen.queryByRole("heading", { name: /What can I do/u })).toBeNull();
     expect(screen.queryByText(/Repository-local Standing, scoped/u)).toBeNull();
+  });
+
+  it("keeps Standing, Git custody, scoped Verification, and source acceptance separate", () => {
+    const claim = {
+      ...state.claims![0]!,
+      assertion: `At lean-proofs commit ${"a".repeat(40)}, the bounded identity is proved.`,
+      source_bindings: [{
+        ...state.claims![0]!.source_bindings![0]!,
+        translation_disposition: "unresolved",
+        authority_effect: "none",
+      }],
+    };
+    const check = {
+      ...state.reviews![0]!.verification_records![0]!,
+      independent_of: ["agent:producer"],
+      shared_dependencies: ["Same source bytes and provider"],
+    };
+    const reviews = [{
+      ...state.reviews![0]!,
+      claim: claim.assertion,
+      verification_records: [check],
+    }];
+    render(<ProblemState state={{ ...state, claims: [claim], reviews } as never} basePath="/problems/erdos-problems/94" />);
+    expect(screen.getByText("Not retained as structured custody")).toBeVisible();
+    expect(screen.getByText(/does not validate their repository or branch and merge status/iu)).toBeVisible();
+    expect(screen.getByText(/Declared independent of agent:producer/iu)).toBeVisible();
+    expect(screen.getByText("Same source bytes and provider")).toBeVisible();
+    expect(screen.getByText(/unresolved · no authority effect/iu)).toBeVisible();
+    expect(screen.getByText("A source reference does not establish upstream acceptance or Standing.")).toBeVisible();
   });
 
   it("keeps the retired map query on the familiar Result surface", () => {

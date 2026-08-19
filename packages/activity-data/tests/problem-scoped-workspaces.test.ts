@@ -30,4 +30,13 @@ describe("problem-scoped Workspace discovery", () => {
     expect(workspace).toContain("state.anchor.problemId");
     expect(workspace).not.toContain("const workspaces = await listWorkspaces(account.id)");
   });
+
+  test("summarizes only retained exact anchor identities for My Work navigation", () => {
+    const migration = read("packages/activity-data/schema/workspace-contexts.sql");
+    expect(migration).toContain("DISTINCT ON (a.repository_id, a.problem_id)");
+    expect(migration).toContain("a.projection_release_root");
+    expect(migration).toContain("a.anchor_root");
+    expect(migration).toContain("a.captured_at DESC");
+    expect(migration).not.toMatch(/workspace\.name|w\.name.*problem/iu);
+  });
 });

@@ -82,7 +82,7 @@ describe("AppHeader trail", () => {
     const { rerender } = render(<Shell />);
     expect(screen.getByText("Add a contribution")).toHaveAttribute("aria-current", "page");
 
-    navigation.pathname = "/activity";
+    navigation.pathname = "/updates";
     rerender(<Shell />);
     expect(screen.getByText("Updates")).toHaveAttribute("aria-current", "page");
   });

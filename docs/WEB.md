@@ -386,18 +386,12 @@ neutral records; they do not embed a Modal, Buzz, or other runtime.
 
 An exported draft must validate against the public `vela.submission.v3` schema
 vendored from the exact Vela release pin. The hosted service exports canonical,
-unsigned bytes with their payload root. A user may pass those bytes to the
-explicit local helper:
-
-```bash
-bun run activity:submission:sign-local -- \
-  /path/to/vela-submission-draft.json \
-  --private-key /path/to/user-controlled-key.pem \
-  --output /path/to/signed-submission.json
-```
-
-The helper is not exported from the package root, and applications are barred
-from importing its subpath. Hosted accounts do not become Vela actors. The
+unsigned bytes with their payload root. The exported product contract contains
+no private workspace command. A compatible local tool must bind a user-held
+identity, sign, and submit inside the source Repository. The package's local
+signing script exists only for conformance and development checks; applications
+are barred from importing its subpath or presenting it as a public workflow.
+Hosted accounts do not become Vela actors. The
 activity schema and API cannot emit a Vela Event, Decision, Verification, or
 Standing, cannot access an authority key, and cannot write the Problems.
 Deleting `vela_activity` leaves Repository Standing intact; rebuilding

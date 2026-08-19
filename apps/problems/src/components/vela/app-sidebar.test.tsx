@@ -70,7 +70,7 @@ describe("AppSidebar", () => {
     renderSidebar();
     fireEvent.click(screen.getByRole("button", { name: "Open test navigation" }));
 
-    for (const [label, href] of [["Home", "/"], ["Problems", "/problems"], ["Updates", "/activity"], ["Add contribution", "/contribute"]]) {
+    for (const [label, href] of [["Home", "/"], ["Problems", "/problems"], ["Updates", "/updates"], ["Add contribution", "/contribute"]]) {
       expect(await screen.findByRole("link", { name: label })).toHaveAttribute("href", href);
     }
     for (const label of ["Search", "Research map", "Release details", "Repositories", "Assertions", "Proposed changes"]) {
@@ -86,7 +86,7 @@ describe("AppSidebar", () => {
 
     expect(await screen.findByRole("link", { name: "Home" })).toHaveAttribute("href", "/");
     expect(screen.getByRole("link", { name: "Problems" })).toHaveAttribute("href", "/problems");
-    expect(screen.getByRole("link", { name: "Updates" })).toHaveAttribute("href", "/activity");
+    expect(screen.getByRole("link", { name: "Updates" })).toHaveAttribute("href", "/updates");
     expect(screen.queryByRole("link", { name: "Assertions" })).not.toBeInTheDocument();
   });
 

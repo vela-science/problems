@@ -13,6 +13,7 @@ import {
   followProblem,
   forkApproach,
   getProblemActivity,
+  listWorkspaces,
   publicProfileByHandle,
   publicProfileForPerformer,
   savePublicProfile,
@@ -255,6 +256,20 @@ const approach = await createApproach(contextA, {
   title: approachPayload.title,
   summary: approachPayload.summary,
 }, approachCommand);
+const [listedWorkspaceA] = (await listWorkspaces(accountA.id)).filter(({ id }) => id === workspaceA.id);
+if (
+  listedWorkspaceA?.problemContexts.length !== 1
+  || listedWorkspaceA.problemContexts[0]?.projectionReleaseRoot !== anchor.projectionReleaseRoot
+  || listedWorkspaceA.problemContexts[0]?.repositoryId !== anchor.repositoryId
+  || listedWorkspaceA.problemContexts[0]?.problemId !== anchor.problemId
+  || listedWorkspaceA.problemContexts[0]?.anchorRoot !== currentAnchorRoot
+) {
+  throw new Error(`My Work context summary lost exact anchor identity: ${JSON.stringify(listedWorkspaceA?.problemContexts)}`);
+}
+const [listedWorkspaceB] = (await listWorkspaces(accountB.id)).filter(({ id }) => id === workspaceB.id);
+if (!listedWorkspaceB || listedWorkspaceB.problemContexts.length !== 0) {
+  throw new Error("an unanchored Workspace invented Problem context");
+}
 const retriedApproach = await createApproach(contextA, {
   anchor,
   title: approachPayload.title,

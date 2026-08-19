@@ -380,8 +380,15 @@ ungrouped feed or a row dominated by an opaque ID.
 Work uses recognizable Files, Canvas, Research Blocks, Notes, and attempts.
 Signed-out users see a truthful read-only structure and a concise sign-in or
 Continue locally action. Signed-in users get object tree, canvas/selected object,
-and inspector. The canvas shows only explicit retained relationships and always
-has a list fallback.
+and inspector. Continue locally is an ordinary secondary action that opens the
+exact provider-neutral Workbench v1 handoff; it is rendered only when every
+required public Problem, Repository, and full Git-ref field is available. The
+canvas shows only explicit retained relationships and always has a list fallback.
+
+My work uses linked object rows with selected state and an adjacent workspace
+detail. Exact Problem anchors lead back to Work; missing anchors use a compact
+recovery state. Unsigned drafts use a four-stage handoff rail from local tool to
+Repository review to public Result, not a private shell command.
 
 ### Empty, loading, error, and degraded states
 

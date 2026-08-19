@@ -120,9 +120,18 @@ export type Workspace = {
   slug: string;
   name: string;
   role: "owner" | "member";
+  problemContexts: WorkspaceProblemContext[];
   version: number;
   createdAt: string;
   updatedAt: string;
+};
+
+export type WorkspaceProblemContext = {
+  projectionReleaseRoot: HashRoot;
+  repositoryId: string;
+  problemId: string;
+  anchorRoot: HashRoot;
+  capturedAt: string;
 };
 
 export type WorkspaceContext = {

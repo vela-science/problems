@@ -21,7 +21,8 @@ product: problems.science application
 | `?view=sources` | File browser and exact preview | Select a source |
 | `?view=history` | Chronology and correction diffs | Open an event |
 | `/graph` | Exact relationship canvas | Choose a Problem or Result |
-| `/activity` | Meaningful published changes | Open affected context |
+| `/updates` | Meaningful published changes | Open affected context |
+| `/activity` | Permanent compatibility redirect | Continue to Updates |
 | `/search` | Cross-product results | Open the named object |
 | `/contribute` | Contribution workflow | Choose a Problem |
 | `/import` | Exact GitHub revision | Inspect or connect code |
@@ -98,6 +99,21 @@ Research Blocks, follows, artifact references, and unsigned Submission v3
 drafts through `@vela/activity-data`. It cannot access local files, execute
 research code, control agent sessions, sign, issue a Decision, or change
 scientific state.
+
+Every My work row opens its workspace. An exact retained scientific anchor may
+continue to that Problem's Work surface; an older unanchored workspace stays
+readable but is never matched to a Problem by its title. Continue locally
+opens the reviewed Workbench v1 handoff with the canonical public Problem URL,
+exact HTTPS source and authority Repository locators, and a full Git object ID.
+It fails closed if any field is unavailable and never carries credentials,
+implicit artifacts, local state, or an instruction to clone, switch, upload,
+execute, or infer authority.
+
+An unsigned draft has one visible handoff: download, open in a compatible local
+tool, submit inside the source Repository, wait for a separate Repository
+Decision, then read the Result and History after the projection refreshes. The
+hosted product does not emit a private repo command or imply automatic
+submission, acceptance, or readback.
 
 Account stays private. A contributor may separately publish or unlist a small
 presentation profile at `/people/{handle}`; the safe default is private. Exact

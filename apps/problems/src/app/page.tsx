@@ -149,7 +149,7 @@ export default async function HomePage() {
       <section className="min-w-0" aria-labelledby="latest-results-heading">
         <div className="flex items-end justify-between gap-4 border-b pb-3">
           <h2 id="latest-results-heading" className="text-title">Reviewed Results</h2>
-          <Link href="/activity" className="shrink-0 text-meta font-medium text-primary underline-offset-4 hover:underline">All updates</Link>
+          <Link href="/updates" className="shrink-0 text-meta font-medium text-primary underline-offset-4 hover:underline">All updates</Link>
         </div>
         {reviewedResults.length ? <ul className="mt-2 divide-y" aria-labelledby="latest-results-heading">
           {reviewedResults.map(({ discovery, state }) => <HomeResultRow

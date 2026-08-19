@@ -198,12 +198,23 @@ stay one disclosure deeper.
 
 A user chooses a Problem, attaches work or evidence, reviews a plain-language
 preview, and exports an unsigned Submission v3 draft or submits hosted metadata
-where allowed. Code stays repository-native. Continue locally and Open source
-are first-class handoffs; the browser does not pretend to be a local IDE.
+where allowed. Code stays repository-native. Continue locally carries the exact
+canonical Problem, source Repository, Git object, and authority Repository to
+Workbench v1; it never carries credentials or implies a clone, checkout,
+upload, execution, or authority change. Open source remains the ordinary web
+handoff. The browser does not pretend to be a local IDE.
+
+The unsigned-draft path is explicit: download, open with a compatible local
+tool, submit inside the source Repository, receive a separate Repository
+Decision, and read the projected Result or History after publication. Hosted
+Problems never supplies a private Web-repository command, signs, or promises
+automatic readback.
 
 ### Resume work and manage identity
 
-My work lists real account-scoped workspaces and attempts. Account is a private
+My work lists real account-scoped workspaces and attempts. Every workspace row
+opens. Exact retained anchors may continue to the relevant Problem; unanchored
+legacy work remains honest rather than being matched by its name. Account is a private
 hub for WorkOS identity, GitHub access, connected codebases, workspaces, and
 session controls. Login identity, scientific attribution, and Repository
 authority remain visibly distinct.

@@ -20,7 +20,8 @@ import {
   ItemTitle,
 } from "@vela/ui/components/item";
 import { AssertionText } from "@/components/vela/assertion-text";
-import { Actor, Performer } from "@/components/vela/actor";
+import { Performer } from "@/components/vela/actor";
+import { Attribution } from "@/components/vela/attribution";
 import { FormalConjecturesAudit } from "@/components/vela/formal-conjectures-audit";
 import { formalFilePath } from "@/components/vela/formal-statement-card";
 import { ProblemFiles, type FileEntry } from "@/components/vela/problem-files";
@@ -95,14 +96,12 @@ function CurrentResult({ state, basePath }: { state: State; basePath: string }) 
               <Badge variant="outline">{checks.length} {checks.length === 1 ? "check" : "checks"}</Badge>
             </div>
             {checks.length ? <ItemGroup className="gap-0 divide-y">{checks.map((check) => {
-              const reviewer = check.reviewer_display_name || check.verifier_actor;
-              const method = [check.reviewer_provider, check.reviewer_version].filter(Boolean).join(" · ");
               const presentation = checkPresentation(check.outcome);
               return <Item key={check.verification_record_id} className="vela-object-row items-start rounded-md border-0 px-2 py-4">
                 <ItemMedia variant="icon" data-check-outcome={check.outcome} className={`mt-0.5 size-8 rounded-full ${presentation.className}`}><HugeiconsIcon icon={presentation.icon} aria-hidden /></ItemMedia>
                 <ItemContent>
                   <ItemTitle className="line-clamp-none">{humanize(check.property, "Scoped check")}</ItemTitle>
-                  <ItemDescription className="line-clamp-none"><Actor name={reviewer} kind={check.reviewer_kind ?? "unknown"} performerId={check.verifier_actor} />{method ? <span> · {method}</span> : null}</ItemDescription>
+                  <div className="text-meta"><Attribution record={check} producer={producer} /></div>
                   {check.does_not_establish?.length ? <details className="text-micro text-muted-foreground"><summary className="w-fit cursor-pointer font-medium text-foreground">Limits</summary><p className="mt-1 max-w-[72ch]">{check.does_not_establish.join("; ")}</p></details> : null}
                 </ItemContent>
                 <ItemActions><Badge variant={check.outcome === "pass" ? "default" : "outline"}>{outcomeLabel(check.outcome)}</Badge></ItemActions>
@@ -122,6 +121,7 @@ function CurrentResult({ state, basePath }: { state: State; basePath: string }) 
                 <ItemContent>
                   <ItemTitle className="line-clamp-none">{occurrence?.source_label ?? binding.source_id}</ItemTitle>
                   <ItemDescription className="line-clamp-none font-mono text-micro">{binding.native_id}</ItemDescription>
+                  <p className="text-micro text-muted-foreground">{sourceRelationLabel(binding.relation_kind)} · {humanize(binding.translation_disposition, "mapping not resolved")} · no authority effect</p>
                 </ItemContent>
                 <ItemActions><span className="hidden text-micro text-muted-foreground sm:inline">{sourceRelationLabel(binding.relation_kind)}</span></ItemActions>
               </Item>;
@@ -131,11 +131,11 @@ function CurrentResult({ state, basePath }: { state: State; basePath: string }) 
 
         <aside aria-label="Result details" className="border-t bg-muted/10 xl:border-l xl:border-t-0">
           <dl className="divide-y">
-            <div className="px-5 py-4"><dt className="text-micro text-muted-foreground">Result type</dt><dd className="mt-1 text-compact font-medium">{humanize(claim.assertion_type, "Research result")}</dd></div>
-            <div className="px-5 py-4"><dt className="text-micro text-muted-foreground">Evidence</dt><dd className="mt-1 text-compact font-medium">{claim.evidence_count ?? 0} {(claim.evidence_count ?? 0) === 1 ? "item" : "items"}</dd></div>
-            <div className="px-5 py-4"><dt className="text-micro text-muted-foreground">Decision</dt><dd className="mt-1 flex flex-wrap items-center gap-2 text-compact font-medium"><span>{review ? humanize(review.status) : "None"}</span>{review?.decision_actor_class ? <Badge variant="outline">{review.decision_actor_class}</Badge> : null}</dd>{reviewedAt ? <dd className="mt-1 text-micro text-muted-foreground">{formatDate(reviewedAt)}</dd> : null}</div>
-            <div className="px-5 py-4"><dt className="text-micro text-muted-foreground">Revision</dt><dd className="mt-1 text-compact font-medium">{claim.revision ?? "Not recorded"}</dd></div>
-            <div className="px-5 py-4"><dt className="text-micro text-muted-foreground">Current in</dt><dd className="mt-1 text-compact font-medium">{state.repositoryName}</dd></div>
+            <div className="px-5 py-4"><dt className="text-micro text-muted-foreground">Repository decision</dt><dd className="mt-1 flex flex-wrap items-center gap-2 text-compact font-medium"><span>{review ? humanize(review.status) : "None"}</span>{review?.decision_actor_class ? <Badge variant="outline">{review.decision_actor_class}</Badge> : null}</dd>{reviewedAt ? <dd className="mt-1 text-micro text-muted-foreground">Current in {state.repositoryName} · {formatDate(reviewedAt)}</dd> : null}</div>
+            <div className="px-5 py-4"><dt className="text-micro text-muted-foreground">Verification</dt><dd className="mt-1 text-compact font-medium">{checks.length} scoped {checks.length === 1 ? "check" : "checks"}</dd><dd className="mt-1 text-micro text-muted-foreground">Independence and limits are declared per check.</dd></div>
+            <div className="px-5 py-4"><dt className="text-micro text-muted-foreground">Result source Git</dt><dd className="mt-1 text-compact font-medium">Not retained as structured custody</dd><dd className="mt-1 text-micro text-muted-foreground">The Result text may name source commits, but this projection does not validate their repository or branch and merge status.</dd></div>
+            <div className="px-5 py-4"><dt className="text-micro text-muted-foreground">Formal source relationship</dt><dd className="mt-1 text-compact font-medium">{sourceBindings.length ? `${sourceBindings.length} exact ${sourceBindings.length === 1 ? "reference" : "references"}` : "None retained"}</dd><dd className="mt-1 text-micro text-muted-foreground">A source reference does not establish upstream acceptance or Standing.</dd></div>
+            <div className="px-5 py-4"><dt className="text-micro text-muted-foreground">Result</dt><dd className="mt-1 text-compact font-medium">{humanize(claim.assertion_type, "Research result")} · {claim.evidence_count ?? 0} {(claim.evidence_count ?? 0) === 1 ? "evidence item" : "evidence items"}</dd></div>
           </dl>
           <div className="space-y-2 border-t p-4">
             <Button className="w-full" nativeButton={false} size="sm" render={<Link href={`/repositories/${state.repositorySlug}/claims/${encodeURIComponent(claim.id)}`} />}>Open result</Button>

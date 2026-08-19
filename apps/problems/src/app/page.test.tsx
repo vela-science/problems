@@ -167,7 +167,7 @@ describe("Home", () => {
       "Open reviewed Result for Erdős problem 321",
       "Open reviewed Result for Erdős problem 94",
     ]);
-    expect(screen.getByRole("link", { name: "All updates" })).toHaveAttribute("href", "/activity");
+    expect(screen.getByRole("link", { name: "All updates" })).toHaveAttribute("href", "/updates");
   });
 
   it("does not repeat collection analytics, raw updates, or contribution onboarding", async () => {

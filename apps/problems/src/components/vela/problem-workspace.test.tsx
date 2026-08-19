@@ -10,16 +10,21 @@ const state = {
   repositorySlug: "math",
   repositoryName: "Math",
   problem: { problem: "321" },
-  anchor: {},
+  source: {
+    native_revision: "a".repeat(40),
+    locators: [{ url: `https://github.com/teorth/erdosproblems/blob/${"a".repeat(40)}/data/problems.yaml` }],
+  },
+  anchor: { sourceCommit: "a".repeat(40) },
 } as unknown as NonNullable<ScientificProblemState>;
 const anchorRoot = `sha256:${"1".repeat(64)}` as const;
 const workspace = { id: "workspace-1", name: "Problem 321", version: 1 } as unknown as Parameters<typeof workspaceObjects>[0]["workspace"];
 const scope = { repository: "math", problem: "321", workspaceId: "workspace-1", expectedAnchorRoot: anchorRoot };
 
 describe("Problem Workspace", () => {
-  afterEach(cleanup);
+  afterEach(() => { cleanup(); vi.unstubAllEnvs(); });
 
   it("keeps signed-out coordination separate from scientific State", async () => {
+    vi.stubEnv("NEXT_PUBLIC_WORKOS_REDIRECT_URI", "http://127.0.0.1:4322/auth/callback");
     render(await ProblemWorkspace({ basePath: "/problems/erdos-problems/321", state, hostedAccount: null }));
     expect(screen.getByRole("heading", { name: "Workspace" })).toBeVisible();
     expect(screen.getByLabelText("Public workspace context")).toBeVisible();
@@ -28,6 +33,8 @@ describe("Problem Workspace", () => {
       "/graph?repository=math&lens=research",
     );
     expect(screen.getByRole("link", { name: "Sign in to contribute" })).toBeVisible();
+    expect(screen.getByRole("link", { name: "Continue locally" })).toHaveAttribute("href", expect.stringMatching(/^vela-workbench:\/\/continue\?/u));
+    expect(screen.getByText(/does not clone, switch, upload, or execute/iu)).toBeVisible();
     expect(screen.getByText("Research Blocks")).toBeVisible();
     expect(screen.getByText("Notes")).toBeVisible();
   });
@@ -41,8 +48,10 @@ describe("Problem Workspace", () => {
   });
 
   it("starts one Problem-scoped Workspace", () => {
-    render(<EmptyHostedWorkspace state={state} accountId="account-1" />);
+    render(<EmptyHostedWorkspace state={state} accountId="account-1" workbenchHandoff={`vela-workbench://continue?v=1&ref=${"a".repeat(40)}`} />);
     expect(screen.getByRole("heading", { name: "Start a workspace" })).toBeVisible();
+    expect(screen.getByRole("link", { name: "Continue locally" })).toBeVisible();
+    expect(screen.getByText(/does not clone, switch, upload, or execute/iu)).toBeVisible();
     expect(screen.getByLabelText("Problem files")).toBeVisible();
     expect(screen.getByLabelText("Workspace tools")).toBeVisible();
     expect(screen.queryByText("account-1")).toBeNull();
@@ -64,7 +73,7 @@ describe("Problem Workspace", () => {
       }],
       drafts: [],
     } as unknown as Parameters<typeof workspaceObjects>[0]["activity"];
-    const objects = workspaceObjects({ state, activity, workspace, scope, currentAnchorRoot: anchorRoot });
+    const objects = workspaceObjects({ state, activity, workspace, scope, currentAnchorRoot: anchorRoot, basePath: "/problems/erdos-problems/321" });
     expect(objects.map(({ id }) => id)).toContain("codebase:math");
     expect(objects.map(({ id }) => id)).toContain("approach:approach-1");
 
@@ -86,10 +95,29 @@ describe("Problem Workspace", () => {
       }],
       attempts: [], artifacts: [], drafts: [],
     } as unknown as Parameters<typeof workspaceObjects>[0]["activity"];
-    const object = workspaceObjects({ state, activity, workspace, scope, currentAnchorRoot: anchorRoot })
+    const object = workspaceObjects({ state, activity, workspace, scope, currentAnchorRoot: anchorRoot, basePath: "/problems/erdos-problems/321" })
       .find(({ id }) => id === "approach:stale")!;
     render(<>{object.content}</>);
     expect(screen.getByText("Earlier activity anchor")).toBeVisible();
     expect(screen.queryByRole("button", { name: /Start Attempt/iu })).not.toBeInTheDocument();
+  });
+
+  it("turns an unsigned draft into a truthful local-to-public handoff", () => {
+    const activity = {
+      approaches: [], attempts: [], artifacts: [],
+      drafts: [{
+        id: "draft-1", payloadRoot: `sha256:${"8".repeat(64)}`,
+        anchorRoot, version: 1,
+      }],
+    } as unknown as Parameters<typeof workspaceObjects>[0]["activity"];
+    const object = workspaceObjects({ state, activity, workspace, scope, currentAnchorRoot: anchorRoot, basePath: "/problems/erdos-problems/321" })
+      .find(({ id }) => id === "draft:draft-1")!;
+    render(<>{object.content}</>);
+    expect(screen.getByRole("link", { name: "Download unsigned draft" })).toHaveAttribute("href", "/drafts/draft-1/export?workspace=workspace-1");
+    expect(screen.getByLabelText("Result handoff")).toBeVisible();
+    expect(screen.getByRole("link", { name: "Repository instructions" })).toHaveAttribute("href", "/repositories/math/contribute");
+    expect(screen.getByRole("link", { name: "Results" })).toHaveAttribute("href", "/problems/erdos-problems/321?view=results");
+    expect(screen.getByRole("link", { name: "History" })).toHaveAttribute("href", "/problems/erdos-problems/321?view=history");
+    expect(screen.queryByText(/submission:sign-local/iu)).not.toBeInTheDocument();
   });
 });

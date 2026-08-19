@@ -57,7 +57,14 @@ describe("vela.submission.v3 drafts", () => {
     const exported = createSubmissionDraftExport(fixture());
     expect(exported.payload.schema).toBe("vela.submission.v3");
     expect(exported.payloadRoot).toMatch(/^sha256:[0-9a-f]{64}$/);
-    expect(exported.signingHandoff).toMatchObject({ state: "unsigned", serverHeldKey: false });
+    expect(exported.signingHandoff).toEqual({
+      state: "unsigned",
+      serverHeldKey: false,
+      payloadType: "application/vnd.vela.submission.v3+json",
+      compatibleLocalToolRequired: true,
+      note: expect.stringContaining("compatible local tool"),
+    });
+    expect(exported.signingHandoff).not.toHaveProperty("command");
   });
 
   test("rejects hosted identities and properties outside the public schema", () => {

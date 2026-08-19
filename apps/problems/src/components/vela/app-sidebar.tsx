@@ -44,7 +44,7 @@ type SidebarDestination = {
 const PRIMARY_DESTINATIONS: SidebarDestination[] = [
   { href: "/", label: "Home", icon: Home01Icon, exact: true },
   { href: "/problems", label: "Problems", icon: PuzzleIcon },
-  { href: "/activity", label: "Updates", icon: Activity01Icon },
+  { href: "/updates", label: "Updates", icon: Activity01Icon },
 ];
 
 export function AppSidebar({ problemCollections = [{ namespace: "erdos-problems", name: "Erdős Problems", identifierKind: "number" }] }: { problemCollections?: PublishedProblemCollection[] }) {
@@ -54,7 +54,7 @@ export function AppSidebar({ problemCollections = [{ namespace: "erdos-problems"
   const collapsedDesktop = !isMobile && state === "collapsed";
   const closeMobileNavigation = () => setOpenMobile(false);
   const destinations: SidebarDestination[] = PRIMARY_DESTINATIONS.flatMap((destination) => (
-    accountState.status === "signed_in" && destination.href === "/activity"
+    accountState.status === "signed_in" && destination.href === "/updates"
       ? [{ href: "/my-work", label: "My work", icon: WorkIcon }, destination]
       : [destination]
   ));

@@ -114,7 +114,7 @@ export type SubmissionDraftExport = {
     state: "unsigned";
     serverHeldKey: false;
     payloadType: typeof VELA_SUBMISSION_PAYLOAD_TYPE;
-    command: string;
+    compatibleLocalToolRequired: true;
     note: string;
   };
 };
@@ -132,8 +132,8 @@ export function createSubmissionDraftExport(value: unknown): SubmissionDraftExpo
       state: "unsigned",
       serverHeldKey: false,
       payloadType: VELA_SUBMISSION_PAYLOAD_TYPE,
-      command: "bun run --filter @vela/activity-data submission:sign-local -- vela-submission-draft.json --private-key <local-pkcs8-pem> --output submission.json",
-      note: "Run locally. The helper reads the private key only from the named local file, verifies it matches identity.public_key_hex, signs a DSSE envelope, and never contacts the hosted workbench.",
+      compatibleLocalToolRequired: true,
+      note: "This is a portable unsigned draft. A compatible local tool must bind user-held identity, sign, and submit it inside the source Repository; the hosted product cannot perform those steps.",
     },
   };
 }

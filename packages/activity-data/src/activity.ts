@@ -25,6 +25,7 @@ import {
   type UpdateAttemptInput,
   type Workspace,
   type WorkspaceContext,
+  type WorkspaceProblemContext,
   normalizePublicProfileInput,
 } from "./contracts";
 import {
@@ -49,6 +50,12 @@ function integer(value: unknown, field: string): number {
   return parsed;
 }
 
+function hashRoot(value: unknown, field: string): `sha256:${string}` {
+  const parsed = text(value, field);
+  if (!/^sha256:[0-9a-f]{64}$/u.test(parsed)) throw new Error(`activity response has invalid ${field}`);
+  return parsed as `sha256:${string}`;
+}
+
 function record(value: unknown, label: string): JsonRecord {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     throw new Error(`${label} response must be an object`);
@@ -67,15 +74,32 @@ function accountFrom(value: unknown): ActivityAccount {
   };
 }
 
-function workspaceFrom(value: unknown): Workspace {
+function workspaceProblemContextFrom(value: unknown): WorkspaceProblemContext {
+  const row = record(value, "workspace Problem context");
+  return {
+    projectionReleaseRoot: hashRoot(row.projection_release_root, "workspace Problem context release root"),
+    repositoryId: text(row.repository_id, "workspace Problem context repository id"),
+    problemId: text(row.problem_id, "workspace Problem context Problem id"),
+    anchorRoot: hashRoot(row.anchor_root, "workspace Problem context anchor root"),
+    capturedAt: text(row.captured_at, "workspace Problem context captured_at"),
+  };
+}
+
+function workspaceFrom(value: unknown, requireProblemContexts = false): Workspace {
   const row = record(value, "workspace");
   const role = row.role;
   if (role !== "owner" && role !== "member") throw new Error("activity response has invalid workspace role");
+  if (requireProblemContexts && !Array.isArray(row.problem_contexts)) {
+    throw new Error("activity response has no workspace Problem contexts");
+  }
   return {
     id: text(row.id, "workspace id"),
     slug: text(row.slug, "workspace slug"),
     name: text(row.name, "workspace name"),
     role,
+    problemContexts: Array.isArray(row.problem_contexts)
+      ? row.problem_contexts.map(workspaceProblemContextFrom)
+      : [],
     version: integer(row.version, "workspace version"),
     createdAt: text(row.created_at, "workspace created_at"),
     updatedAt: text(row.updated_at, "workspace updated_at"),
@@ -286,7 +310,7 @@ export async function listWorkspaces(accountId: string): Promise<Workspace[]> {
     );
     const result = rows[0]?.result;
     if (!Array.isArray(result)) throw new Error("workspace list response must be an array");
-    return result.map(workspaceFrom);
+    return result.map((workspace) => workspaceFrom(workspace, true));
   } catch (error) {
     throw activityDatabaseError(error);
   }
@@ -304,7 +328,7 @@ export async function listProblemWorkspaces(
     );
     const result = rows[0]?.result;
     if (!Array.isArray(result)) throw new Error("problem workspace list response must be an array");
-    return result.map(workspaceFrom);
+    return result.map((workspace) => workspaceFrom(workspace, true));
   } catch (error) {
     throw activityDatabaseError(error);
   }
