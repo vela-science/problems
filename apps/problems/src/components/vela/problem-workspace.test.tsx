@@ -28,10 +28,6 @@ describe("Problem Workspace", () => {
     render(await ProblemWorkspace({ basePath: "/problems/erdos-problems/321", state, hostedAccount: null }));
     expect(screen.getByRole("heading", { name: "Workspace" })).toBeVisible();
     expect(screen.getByLabelText("Public workspace context")).toBeVisible();
-    expect(screen.getByRole("link", { name: "Open research map" })).toHaveAttribute(
-      "href",
-      "/graph?repository=math&lens=research",
-    );
     expect(screen.getByRole("link", { name: "Sign in to contribute" })).toBeVisible();
     expect(screen.getByRole("link", { name: "Continue locally" })).toHaveAttribute("href", expect.stringMatching(/^vela-workbench:\/\/continue\?/u));
     expect(screen.getByText(/does not clone, switch, upload, or execute/iu)).toBeVisible();

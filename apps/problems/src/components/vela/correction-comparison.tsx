@@ -1,6 +1,18 @@
 import { AssertionText } from "@/components/vela/assertion-text";
 
 export function CorrectionComparison({ kind, before, after }: { kind: "corrects" | "supersedes"; before: string; after: string }) {
+  /* A correction may leave the statement bytes untouched: the live Erdős 94
+     chain carries a `corrects` relation between two Claims with byte-identical
+     assertions, where the revision changed the record's relations. Twin
+     before/after panes showing the same text read as a rendering bug, so the
+     identical case is one sentence instead of a comparison. */
+  if (before === after) {
+    return (
+      <p className="mt-3 text-compact leading-6 text-muted-foreground">
+        The retained statement is identical before and after: this {kind === "corrects" ? "correction" : "supersession"} revised the record&rsquo;s relations, not the statement text.
+      </p>
+    );
+  }
   return <details className="group mt-3 rounded-lg border bg-muted/20">
     <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 px-4 py-2 text-label font-medium marker:content-none focus-visible:outline-2 focus-visible:outline-offset-2">
       <span><span aria-hidden className="mr-2 inline-block transition-transform group-open:rotate-90">›</span>Compare retained statements</span>

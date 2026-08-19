@@ -309,8 +309,10 @@ export function ProblemOverviewReference({ state, route }: { state: State; route
 
         <section className={styles.railSection}>
           <h2 className="text-compact font-semibold">Related problems</h2>
+          {/* The release retains no related-Problem relationship, so there is
+              nothing for a map link to show under this heading. The research
+              map stays reachable from About and the command palette. */}
           <p className="mt-2 text-compact leading-5 text-[color:var(--ref-muted)]">No exact related-Problem relationship is retained for this release.</p>
-          <Link href={`/graph?repository=${state.repositorySlug}&lens=research${current ? `&node=${encodeURIComponent(current.id)}` : ""}`} className="mt-3 inline-flex items-center gap-1 text-compact font-semibold text-[color:var(--ref-cobalt)] underline-offset-4 hover:underline">Open exact map <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden className="size-3.5" /></Link>
         </section>
 
         <details className={`${styles.technical} border-t border-[color:var(--ref-line)]`}>

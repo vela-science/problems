@@ -21,7 +21,7 @@ const accepted = state({
     { stage: "submission", label: "Submission received", basis: "source-asserted" },
     { stage: "check", label: "Check passed", basis: "checked" },
     { stage: "repository decision", label: "Repository decision: accepted", basis: "repository decision" },
-    { stage: "result standing", label: "Result standing: accepted", basis: "exact derivation" },
+    { stage: "result standing", label: "Result standing: accepted", basis: "derived from records" },
   ],
   anchors: {
     repository_root_before: "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
@@ -66,7 +66,7 @@ describe("FrontierTimeline", () => {
   test("labels every basis chip accessibly, prefixed as a basis", () => {
     render(<FrontierTimeline states={[accepted]} />);
     const article = screen.getByRole("article");
-    for (const basis of ["source-asserted", "checked", "repository decision", "exact derivation"]) {
+    for (const basis of ["source-asserted", "checked", "repository decision", "derived from records"]) {
       const chip = within(article).getByText(basis, { exact: true });
       expect(chip.parentElement).toHaveTextContent(`basis: ${basis}`);
     }
@@ -104,6 +104,29 @@ describe("FrontierTimeline", () => {
     );
     expect(screen.getByRole("heading", { name: "Still unresolved" })).toBeInTheDocument();
     expect(screen.getByText("4 formalizations; equivalence not established.")).toBeInTheDocument();
+  });
+
+  test("keeps a gap's exact identifier behind a closed disclosure", () => {
+    render(
+      <FrontierTimeline
+        states={[]}
+        gaps={[{
+          id: "gap-ref",
+          sentence: "This check does not establish: Standing.",
+          basis: "checked",
+          ref: "vvr_ac3996330910c9fb",
+        }]}
+      />,
+    );
+    const disclosure = screen.getByText("Exact identity").closest("details");
+    expect(disclosure).not.toBeNull();
+    expect(disclosure).not.toHaveAttribute("open");
+    expect(within(disclosure as HTMLElement).getByText("vvr_ac3996330910c9fb")).toBeInTheDocument();
+    /* The identifier exists nowhere outside the disclosure. */
+    const item = screen.getByRole("listitem");
+    const outside = item.cloneNode(true) as HTMLElement;
+    outside.querySelector("details")?.remove();
+    expect(outside.textContent).not.toContain("vvr_");
   });
 
   test("authors no animation, so reduced motion has nothing to remove", () => {
