@@ -28,7 +28,7 @@ export default function AboutPage() {
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Button nativeButton={false} render={<Link href="/problems" />}>Browse Problems <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden data-icon="inline-end" /></Button>
-            <Button nativeButton={false} variant="outline" render={<Link href="/about/endless-frontiers" />}>Read Endless Frontiers</Button>
+            <Button nativeButton={false} variant="outline" render={<a href="https://vela.space/constellations" />}>Read Endless Frontiers</Button>
           </div>
         </div>
         <EditorialPlate

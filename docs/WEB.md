@@ -5,15 +5,14 @@ Earlier design and migration plans live under `docs/history/`.
 
 ## Product boundary
 
-- `problems.science` is the sole canonical and deployed Vela application
-  origin. Problems is the application's conceptual center, while Home orients
+- `problems.science` is the canonical Vela Problems product. Problems is the
+  application's conceptual center, while Home orients
   readers across current
   change, direct contribution, communities, and the exact scientific record. Advanced
   records remain available in the same runtime.
-- `content/editorial` retains the landing and *Endless Frontiers* authored
-  sources. It is not a package or deployment; Problems selectively consumes
-  reviewed paintings and current passages for Home, About, and the living
-  essay route without restoring the retired shell.
+- `vela.space` is the separate static editorial origin compiled by `apps/www`
+  from the canonical source in `content/editorial`. Problems links to the full
+  *Endless Frontiers* folio rather than copying it into the product shell.
 - Hosted Vela is non-authoritative. The Problems reads a bounded SELECT-only
   projection from Neon. Work mode writes hosted research activity through
   `@vela/activity-data`. Canonical custody remains in Repository Git
@@ -29,12 +28,13 @@ the named identity files. The package-direction check keeps
 `@vela/projection-data` independent of mutable activity and limits
 `@vela/activity-data` reuse to exact canonical and read contracts.
 
-The repository is a Bun workspace with five maintained runtime boundaries and
+The repository is a Bun workspace with six maintained runtime boundaries and
 one non-runnable content area:
 
 ```text
-apps/problems        unified Vela application: Problem State, Work, and Records
-content/editorial       retained editorial source selectively compiled by Problems
+apps/problems        Vela Problems product: Problem State, Work, and Records
+apps/www             static Vela landing and full editorial folio
+content/editorial    canonical retained editorial source compiled by apps/www
 packages/brand          governed identity, tokens, fonts, and delivery assets
 packages/ui             shared shadcn/Base UI source and Vela presentation semantics
 packages/projection-data  Git-to-Neon projection, validation, search, and manifests

@@ -1,7 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import AboutPage from "./about/page";
-import EndlessFrontiersPage from "./about/endless-frontiers/page";
 import AccessibilityPage from "./accessibility/page";
 import ContactPage from "./contact/page";
 import PrivacyPage from "./privacy/page";
@@ -19,17 +18,9 @@ describe("public trust surfaces", () => {
     expect(screen.getByText(/scoped review records what it observed/iu)).toBeVisible();
     expect(screen.getByText(/signature proves attribution and integrity, not truth/iu)).toBeVisible();
     expect(screen.getByRole("link", { name: "Browse Problems" })).toHaveAttribute("href", "/problems");
-    expect(screen.getByRole("link", { name: "Read Endless Frontiers" })).toHaveAttribute("href", "/about/endless-frontiers");
+    expect(screen.getByRole("link", { name: "Read Endless Frontiers" })).toHaveAttribute("href", "https://vela.space/constellations");
     expect(screen.getByRole("link", { name: "Learn about Vela" })).toHaveAttribute("href", "https://vela.space");
-  });
-
-  it("publishes the current living vision essay without restoring a second shell", () => {
-    render(<EndlessFrontiersPage />);
-    expect(screen.getByRole("heading", { level: 1, name: "Endless Frontiers" })).toBeVisible();
-    expect(screen.getByText(/Produce\. Preserve\. Check\. Decide\. Reuse\./u)).toBeVisible();
-    expect(screen.getByText(/Vela keeps current state Repository-local/iu)).toBeVisible();
-    expect(screen.getByRole("navigation", { name: "Essay sections" })).toBeVisible();
-    expect(screen.getByRole("link", { name: /Browse Problems/iu })).toHaveAttribute("href", "/problems");
+    expect(screen.getByRole("link", { name: "Essay" })).toHaveAttribute("href", "https://vela.space/constellations");
   });
 
   it("states current privacy, terms, and accessibility boundaries", () => {

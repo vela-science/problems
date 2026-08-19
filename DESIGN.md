@@ -165,10 +165,9 @@ orientation, and profile accents may inherit restrained first-party materials.
 Use the canonical sail and retained artwork; do not redraw the mark or generate
 substitutes.
 
-The pre-existing Problems essay route is a temporary release floor, not a third
-register. Keep it intact while `vela.space` is local or unqualified; switch the
-links and route to a cross-origin redirect only when the editorial deployment
-is live.
+The former Problems essay route is a compatibility redirect, not a third
+register. Product surfaces link directly to the canonical folio at
+`https://vela.space/constellations`.
 
 ### Functional motif grammar
 
@@ -319,10 +318,10 @@ collection.
 
 ### Editorial site and product brand opening
 
-Adapt the selected shadcn.io split-image geometry, not its demo styling: one
-dominant copy/action column and one decisive image field. Home keeps search in
-the copy column and places the retained painting beside it on wide screens,
-after it on narrow screens. The painting is not a card, metric, or data figure.
+Problems Home is a direct, single-column activation surface: question-led
+promise, search, actions, and the compact collection list. It does not carry an
+editorial plate. Retained paintings belong to `vela.space`, About, and other
+explicit editorial moments rather than beside the product search.
 
 The full long-form composition lives in `apps/www`, outside the Problems shell.
 It preserves the historical continuous folio, margin notes, authored figures,

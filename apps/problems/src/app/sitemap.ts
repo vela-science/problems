@@ -2,7 +2,6 @@ import type { MetadataRoute } from "next";
 import { allClaimRouteIds, allRepositories, allProblemRouteIds, canonicalProblemPath, formalConjecturesCollection, mathSourceRegistryRead, projectionManifest, slugForRepositoryId } from "@vela/projection-data";
 
 const base = "https://problems.science";
-const essayModifiedAt = new Date("2026-08-18T00:00:00.000Z");
 export const dynamic = "force-static";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -22,7 +21,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/search",
     "/sources",
     "/about",
-    "/about/endless-frontiers",
     "/privacy",
     "/terms",
     "/accessibility",
@@ -59,7 +57,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return routes.map((route) => ({
     url: `${base}${route}`,
-    lastModified: route === "/about/endless-frontiers" ? essayModifiedAt : new Date(release.generated_at),
+    lastModified: new Date(release.generated_at),
     changeFrequency: "weekly",
     priority: route === "/" ? 1 : route === "/problems" ? 0.9 : route === "/problems/erdos-problems" ? 0.85 : route.startsWith("/repositories/") ? 0.8 : 0.6,
   }));

@@ -61,12 +61,10 @@ compiles those exact authored compositions directly. Problems may reuse selected
 paintings but does not copy or abbreviate the canonical essay. Neither app
 generates replacement art or redraws the sail.
 
-Cutover is deliberately two-step. Until `vela.space` is qualified and live,
-Problems keeps its current `/about/endless-frontiers` route, links, and sitemap
-entry as the production compatibility floor. After the editorial origin is
-live, those links move to `https://vela.space/constellations`, the Problems
-route becomes a permanent cross-origin redirect, and the duplicate sitemap
-entry is removed in the same release.
+The editorial origin is live. Problems links directly to
+`https://vela.space/constellations`; its former `/about/endless-frontiers`
+address is retained only as a permanent cross-origin redirect and is not
+published in the Problems sitemap.
 
 ## People and jobs
 
@@ -178,10 +176,9 @@ does not accept a contribution. A signed object proves attribution, not truth.
 
 ### Discover
 
-Problems Home is the activation front door. Search is the dominant object. One retained
-Vela watercolor establishes the horizon and links to `vela.space/constellations` without
-delaying search or browse. The same opening contains one compact published-
-collections list; below it are three or four real Problems worth opening and
+Problems Home is the activation front door. Search is the dominant object. Its
+single-column opening contains one compact published-collections list; below it
+are three or four real Problems worth opening and
 the latest durable reviewed Results. A single link reaches all Updates. Home
 does not host the raw source-update feed, collection analytics, a manifesto, or
 a second contribution-onboarding footer.

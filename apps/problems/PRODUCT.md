@@ -28,10 +28,10 @@ product: problems.science application
 | `/my-work` | Private work continuity | Open saved work |
 | `/account` | Identity, connections, and session | Manage or continue |
 | `/about` | Current product explanation and vision | Understand the boundary or open the essay |
-| `/about/endless-frontiers` | Living Vela vision essay | Read or return to Problems |
+| `/about/endless-frontiers` | Permanent compatibility redirect | Continue to the canonical essay at vela.space |
 
-About is the living bridge between product and editorial registers. The vision
-essay is source-backed and current to the product boundary. Privacy, Terms,
+About is the living bridge between product and editorial registers. The full
+vision essay lives at `https://vela.space/constellations`. Privacy, Terms,
 Accessibility, and Contact remain compact institutional surfaces. Exact-record
 and Repository routes are durable contextual destinations, not primary
 navigation.
@@ -39,10 +39,10 @@ navigation.
 ## Home
 
 Home is the product activation screen, not a marketing site. Search is the
-dominant object. A single retained Vela watercolor provides a decisive horizon
-moment and links to the vision without delaying the task. The first viewport
-also provides Browse problems, Add contribution, and one compact list stating
-the exact two-collection truth.
+dominant object. Its focused single-column opening provides Browse problems,
+Add contribution, and one compact list stating the exact two-collection truth.
+Editorial artwork and the full vision live at `vela.space`, not beside the
+product search.
 Below it, use three or four real question rows and the two durable reviewed
 Results. Link once to all Updates. Do not repeat collection analytics, raw
 source activity, availability, or contribution onboarding on Home.
