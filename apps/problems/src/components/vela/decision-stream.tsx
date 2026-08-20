@@ -6,6 +6,7 @@ import { stateIcons, stateTones, type StatusTone } from "@vela/ui/vela/status-ba
 import { RecordId } from "@/components/vela/record-id";
 import { WorkSessionRef } from "@/components/vela/work-session-ref";
 import { RelativeTime } from "@/components/vela/relative-time";
+import { WITHDRAWAL_NOTE } from "@/components/vela/proposal-ledger";
 
 /* The authority event stream, which is the thing "Activity" was always naming.
  *
@@ -42,6 +43,10 @@ export type DecisionEntry = {
   reason: string | null;
   recordedAt: string | null;
   eventId: string | null;
+  /* A producer withdrawal is not a Decision: nobody ruled on it. The stream
+     needs to know, because "No reason is retained with this Decision" would
+     put the producer in the authority slot. */
+  provenance?: string | null;
 };
 
 /* The glyph and the hue come from the badge's own map, the way sigma-map.tsx
@@ -115,7 +120,9 @@ export function DecisionStream({ entries }: { entries: DecisionEntry[] }) {
                     {entry.claim || entry.target || entry.proposalId}
                   </Link>
 
-                  {entry.reason ? (
+                  {entry.provenance === "producer_withdrawal" ? (
+                    <p className="mt-1.5 text-compact text-muted-foreground">{WITHDRAWAL_NOTE}</p>
+                  ) : entry.reason ? (
                     <p className="mt-1.5 max-w-[80ch] text-compact text-muted-foreground">{entry.reason}</p>
                   ) : (
                     <p className="mt-1.5 text-compact text-muted-foreground">No reason is retained with this Decision.</p>

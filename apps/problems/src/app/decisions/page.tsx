@@ -5,11 +5,9 @@ import Link from "next/link";
 import { allRepositories } from "@vela/projection-data";
 import { DecisionStream, type DecisionEntry } from "@/components/vela/decision-stream";
 import { RouteTitle } from "@/components/vela/route-title";
-import { RelativeTime } from "@/components/vela/relative-time";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@vela/ui/components/empty";
 import { FilterChips } from "@/components/vela/filter-chips";
 import { Button } from "@vela/ui/components/button";
-import { WITHDRAWAL_NOTE } from "@/components/vela/proposal-ledger";
 
 export const metadata: Metadata = {
   title: "Decisions",
@@ -138,31 +136,10 @@ export default async function DecisionsPage({ searchParams }: PageProps<"/decisi
               {withdrawals.length.toLocaleString()} withdrawn
             </span>
           </div>
-          <ul className="mt-4 divide-y">
-            {withdrawals.map((entry) => (
-              <li key={`${entry.repository}:${entry.proposalId}`} className="py-3">
-                <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-                  <p className="min-w-0 text-compact text-muted-foreground">
-                    withdrawn in{" "}
-                    <Link className="underline-offset-2 hover:underline" href={`/repositories/${entry.repository}`}>
-                      {entry.repositoryName}
-                    </Link>
-                  </p>
-                  <RelativeTime className="shrink-0 text-micro text-muted-foreground" value={entry.recordedAt} />
-                </div>
-                <Link
-                  className="mt-1 block text-body underline-offset-2 hover:underline"
-                  href={`/repositories/${entry.repository}/proposals/${encodeURIComponent(entry.proposalId)}`}
-                >
-                  {entry.claim || entry.target || entry.proposalId}
-                </Link>
-                <p className="mt-1.5 text-compact text-muted-foreground">{WITHDRAWAL_NOTE}</p>
-                {entry.actor ? (
-                  <p className="mt-1 min-w-0 truncate font-mono text-micro text-muted-foreground">{entry.actor}</p>
-                ) : null}
-              </li>
-            ))}
-          </ul>
+          {/* The same row, drawn by the same component. This list re-implemented
+              DecisionStream's markup inline — the same header line, the same
+              claim link, the same actor line — one screen below the real one. */}
+          <div className="mt-4"><DecisionStream entries={withdrawals} /></div>
         </section>
       ) : null}
     </PageShell>
