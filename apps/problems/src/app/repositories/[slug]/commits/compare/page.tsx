@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 function RevisionFacts({ label, revision }: { label: string; revision: RepositoryRevision }) {
   return (
     <section aria-labelledby={`${label.toLowerCase()}-revision`} className="min-w-0 py-4">
-      <h2 id={`${label.toLowerCase()}-revision`} className="text-eyebrow text-muted-foreground">
+      <h2 id={`${label.toLowerCase()}-revision`} className="text-subtitle">
         {label} revision
       </h2>
       <p className="mt-2 font-mono text-body break-all">{revision.git_commit}</p>
@@ -52,7 +52,7 @@ function ClaimDelta({
   return (
     <section aria-labelledby={`${label.toLowerCase()}-delta`} className="py-5">
       <div className="flex flex-wrap items-baseline justify-between gap-3">
-        <h3 id={`${label.toLowerCase()}-delta`} className="text-title">{label}</h3>
+        <h3 id={`${label.toLowerCase()}-delta`} className="text-subtitle">{label}</h3>
         <p className="font-mono text-meta tabular-nums text-muted-foreground">
           {before.toLocaleString()} → {after.toLocaleString()}
         </p>
@@ -159,6 +159,9 @@ export default async function RevisionComparePage({
 
       <PageSection aria-labelledby="semantic-delta">
         <PageSectionHeader>
+          {/* Heading order read h1 24px > h2 11px > h2 18px > h3 18px, so an
+              h3 was drawn the same size as an h2 and both outranked the two
+              other h2s on the page. Sizes now fall with depth. */}
           <h2 id="semantic-delta" className="text-title">Semantic delta</h2>
           <span className="text-meta text-muted-foreground">complete over both replayed Claim sets</span>
         </PageSectionHeader>

@@ -74,11 +74,20 @@ describe("the Repositories page orients the reader from projected facts", () => 
     expect(html).not.toContain("Four exact Git");
   });
 
-  test("derives Repository, Standing, and integrity signals from the rows", async () => {
+  test("leads with the list, not with a grid of tiles restating it", async () => {
     const html = await render([repository("math", 4), repository("physics", 2), repository("chem", 1)]);
-    expect(html).toContain("exact Git custody boundaries");
-    expect(html).toContain("accepted Repository-local Claims");
-    expect(html).toContain("3/3");
+
+    /* The four-signal grid is gone. `composition-bar.tsx` says why in its own
+       header — the metric tile is what root DESIGN.md lists under Avoid, and it
+       was "the first thing on the Repositories page". Every number it carried
+       is per-Repository and drawn in the row, and the count is the list's
+       length. If this page ever needs an aggregate, the sanctioned shape is a
+       composition bar, not tiles. */
+    expect(html).not.toContain("exact Git custody boundaries");
+    expect(html).not.toContain("accepted Repository-local Claims");
+
+    /* The rows still carry the facts. */
+    for (const slug of ["math", "physics", "chem"]) expect(html).toContain(slug);
   });
 
   test("does not render direct-submission mode as zero centralized work", async () => {

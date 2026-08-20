@@ -69,8 +69,11 @@ function Overview({ item, route }: { item: FormalConjectureOccurrence; route: st
         </ul>
       </section> : null}
     </div>
-    <aside aria-label="Formalization details" className="h-fit border-l pl-5 lg:sticky lg:top-16">
-      <h2 className="text-label">Formalization details</h2>
+    {/* `aria-labelledby`, not `aria-label`: the heading below says the same
+        words, and a landmark named by a duplicate string announces them
+        twice. */}
+    <aside aria-labelledby="formalization-details-heading" className="h-fit border-l pl-5 lg:sticky lg:top-16">
+      <h2 id="formalization-details-heading" className="text-label">Formalization details</h2>
       <dl className="mt-3 space-y-3 text-meta">
         <div><dt className="text-muted-foreground">Collection</dt><dd className="mt-0.5">Formal Conjectures</dd></div>
         <div><dt className="text-muted-foreground">Source family</dt><dd className="mt-0.5">{item.source_family}</dd></div>

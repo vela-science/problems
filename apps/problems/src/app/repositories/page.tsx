@@ -31,12 +31,6 @@ const number = new Intl.NumberFormat("en-US");
 
 export default async function RepositoriesPage() {
   const repositories = await allRepositories();
-  const acceptedClaims = repositories.reduce((total, repository) => total + repository.status.counts.accepted_claims, 0);
-  const exactRepositories = repositories.filter((repository) => {
-    const integrity = repositoryIntegrity(repository);
-    return integrity.replayed && integrity.strict;
-  }).length;
-  const pendingReview = repositories.reduce((total, repository) => total + repository.status.counts.pending_review, 0);
   const maximumClaims = Math.max(...repositories.map((repository) => statusClaimCount(repository.status)), 1);
   return (
     <PageShell archetype="data" layout="canvas" className="flex flex-col gap-6">
@@ -47,12 +41,14 @@ export default async function RepositoriesPage() {
            on saying it after they were consolidated into one authority — a
            header claiming four above a page listing one. */
         description="Source repositories and the scientific state each one currently publishes."
-        signals={[
-          { label: "Repositories", value: number.format(repositories.length), detail: "exact Git custody boundaries", tone: "neutral" },
-          { label: "Standing", value: number.format(acceptedClaims), detail: "accepted Repository-local Claims", tone: "progress" },
-          { label: "Integrity", value: `${number.format(exactRepositories)}/${number.format(repositories.length)}`, detail: "replay verified and strict", tone: "neutral" },
-          { label: "Pending Proposals", value: number.format(pendingReview), detail: "Decisions pending", tone: pendingReview ? "caution" : "neutral" },
-        ]}
+        /* No signal grid. `composition-bar.tsx` says why in its own header:
+           the metric tile is what root DESIGN.md lists under Avoid, and it was
+           "the first thing on the Repositories page". Four tiles over a list of
+           one repository restated what that row already shows — the count is
+           the list's length, and Standing, Integrity and Pending are per
+           Repository and drawn in each row. DESIGN.md:461 forbids the KPI slab;
+           PRODUCT.md:253 asks for one dominant object, and here it is the
+           list. */
       />
 
       <section aria-labelledby="repository-state-heading">
