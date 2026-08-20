@@ -372,7 +372,7 @@ export default async function FindingPage({ params }: PageProps<"/repositories/[
 
       <Collapsible className="mt-4 rounded-lg border">
         <CollapsibleTrigger className="flex w-full items-center justify-between px-3 py-2 text-compact font-medium">Exact record identity <span className="text-meta text-muted-foreground">{4 + (claim.root ? 1 : 0) + stateRoots.length} values</span></CollapsibleTrigger>
-        <CollapsibleContent className="border-t p-4"><dl className="grid gap-4 sm:grid-cols-2"><RootFact label="Claim ID" value={claim.id} />{claim.root ? <RootFact label="Claim root" value={claim.root} /> : null}<RootFact label="Repository" value={repository.status.repository.id} /><RootFact label="Commit" value={repository.source.commit} /><RootFact label="Tree" value={repository.source.tree} />{stateRoots.map((root) => <RootFact key={root.label} label={root.label} value={root.value} />)}</dl></CollapsibleContent>
+        <CollapsibleContent className="border-t p-4"><dl className="grid gap-4 sm:grid-cols-2"><RootFact label="Claim ID" value={claim.id} />{claim.root ? <RootFact label="Claim root" value={claim.root} /> : null}<RootFact label="Repository" value={repository.status.repository.id} /><RootFact label="Source commit" value={repository.source.commit} /><RootFact label="Tree" value={repository.source.tree} />{stateRoots.map((root) => <RootFact key={root.label} label={root.label} value={root.value} />)}</dl></CollapsibleContent>
       </Collapsible>
     </PageShell>
   );

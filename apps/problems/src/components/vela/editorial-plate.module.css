@@ -28,7 +28,7 @@
   background: color-mix(in oklab, var(--vela-color-light) 92%, var(--vela-color-horizon));
   color: var(--vela-color-midnight);
   font-family: var(--vela-font-sans);
-  font-size: 0.8125rem;
+  font-size: var(--text-compact);
   line-height: 1.35;
 }
 

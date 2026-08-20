@@ -45,7 +45,7 @@
   padding-top: 0.7rem;
   border-top: 1px solid color-mix(in oklab, var(--ref-line) 70%, transparent);
   color: var(--ref-muted);
-  font-size: 0.75rem;
+  font-size: var(--text-meta);
 }
 
 .statement figcaption span { color: var(--ref-ink); font-weight: 550; }
@@ -56,7 +56,7 @@
   margin: 0.55rem 0 0;
   overflow: hidden;
   color: var(--ref-muted);
-  font-size: 0.9375rem;
+  font-size: var(--text-subtitle);
   font-weight: 500;
   line-height: 1.5;
   letter-spacing: -0.006em;
@@ -69,7 +69,7 @@
 .sourceLine {
   margin-top: 0.6rem;
   color: var(--ref-muted);
-  font-size: 0.8125rem;
+  font-size: var(--text-compact);
   line-height: 1.25rem;
 }
 
@@ -96,13 +96,13 @@
 
 .heroFact:last-child { border-right: 0; }
 
-.heroFact dt { color: var(--ref-muted); font-size: 0.75rem; line-height: 1rem; }
+.heroFact dt { color: var(--ref-muted); font-size: var(--text-meta); line-height: 1rem; }
 
 .heroFact dd {
   min-width: 0;
   margin-top: 0.25rem;
   color: color-mix(in oklab, var(--ref-ink) 88%, transparent);
-  font-size: 0.8125rem;
+  font-size: var(--text-compact);
   font-weight: 550;
   line-height: 1.15rem;
   overflow-wrap: anywhere;
@@ -135,7 +135,7 @@
   gap: 0.75rem 1.5rem;
 }
 
-.sectionKicker { font-size: 0.875rem; font-weight: 650; }
+.sectionKicker { font-size: var(--text-body); font-weight: 650; }
 
 .stateHeadline {
   max-width: 49rem;
@@ -156,7 +156,7 @@
   border: 1px solid color-mix(in oklab, var(--status-caution) 32%, var(--ref-line));
   border-radius: 0.5rem;
   background: color-mix(in oklab, var(--status-caution) 7%, var(--background));
-  font-size: 0.8125rem;
+  font-size: var(--text-compact);
   line-height: 1.3rem;
 }
 
@@ -174,8 +174,8 @@
 }
 
 .stateMeta > div:last-child { border-right: 0; }
-.stateMeta dt { color: var(--ref-muted); font-size: 0.6875rem; line-height: 0.875rem; }
-.stateMeta dd { margin-top: 0.25rem; font-size: 0.75rem; font-weight: 600; line-height: 1rem; }
+.stateMeta dt { color: var(--ref-muted); font-size: var(--text-micro); line-height: 0.875rem; }
+.stateMeta dd { margin-top: 0.25rem; font-size: var(--text-meta); font-weight: 600; line-height: 1rem; }
 
 .section {
   margin-top: 2rem;
@@ -223,10 +223,10 @@
 .technicalSummary {
   padding: 0.7rem 0;
   color: var(--ref-cobalt);
-  font-size: 0.75rem;
+  font-size: var(--text-meta);
   font-weight: 600;
 }
-.technicalBody { border-top: 1px solid var(--ref-line); padding: 0.9rem 0; font-size: 0.8125rem; line-height: 1.4rem; }
+.technicalBody { border-top: 1px solid var(--ref-line); padding: 0.9rem 0; font-size: var(--text-compact); line-height: 1.4rem; }
 
 @media (max-width: 960px) {
   .heroRail { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -241,11 +241,11 @@
 
 @media (max-width: 560px) {
   .statement { padding: 0.9rem 1rem; }
-  .statement blockquote { font-size: 0.9375rem; }
+  .statement blockquote { font-size: var(--text-subtitle); }
   .heroRail { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .heroFact { padding: 0.6rem; }
-  .heroFact dt { font-size: 0.6875rem; }
-  .heroFact dd { align-items: flex-start; font-size: 0.75rem; line-height: 1rem; }
+  .heroFact dt { font-size: var(--text-micro); }
+  .heroFact dd { align-items: flex-start; font-size: var(--text-meta); line-height: 1rem; }
   .stateMeta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .stateMeta > div:nth-child(2) { border-right: 0; }
   .stateMeta > div:nth-child(n + 3) { border-top: 1px solid var(--ref-line); }
