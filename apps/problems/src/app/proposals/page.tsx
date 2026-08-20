@@ -1,8 +1,6 @@
 import { PageShell } from "@vela/ui/vela/page-shell";
 
 import type { Metadata } from "next";
-import Link from "next/link";
-import { Button } from "@vela/ui/components/button";
 import { allRepositories } from "@vela/projection-data";
 import { ProposalLedgerRows, type ProposalEntry } from "@/components/vela/proposal-ledger-rows";
 import { RouteTitle } from "@/components/vela/route-title";
