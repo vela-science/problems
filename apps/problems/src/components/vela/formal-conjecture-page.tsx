@@ -38,15 +38,22 @@ function Overview({ item, route }: { item: FormalConjectureOccurrence; route: st
     relation,
     target: formalConjecturesCollection.data.items.find(({ route_slug }) => route_slug === relation.target),
   })).filter((entry) => entry.target);
+  const question = presentationQuestion(item.question, item.title);
   return <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_18rem]">
     <div className="min-w-0 space-y-6">
-      <section aria-labelledby="fc-question" className="vela-object-surface overflow-hidden">
+      {/* Nothing is drawn when the question adds nothing to the title.
+          `presentationQuestion` drops a first line that merely repeats the
+          heading, and for an occurrence whose question *is* its title — two of
+          the seven published — that removed the only line and left a titled,
+          bordered panel with nothing inside it. The statement is already the
+          page heading; an empty card reads as a failed load. */}
+      {question ? <section aria-labelledby="fc-question" className="vela-object-surface overflow-hidden">
         <div className="border-b bg-muted/20 px-5 py-3 text-meta font-medium">Tracked question</div>
         <div className="px-5 py-5 sm:px-6">
           <h2 id="fc-question" className="sr-only">Question</h2>
-          <div className="typeset max-w-[78ch] whitespace-pre-line text-body leading-7"><HumanText>{presentationQuestion(item.question, item.title)}</HumanText></div>
+          <div className="typeset max-w-[78ch] whitespace-pre-line text-body leading-7"><HumanText>{question}</HumanText></div>
         </div>
-      </section>
+      </section> : null}
       <section aria-labelledby="fc-formal-statement" className="vela-object-surface overflow-hidden">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b bg-muted/20 px-5 py-3">
           <h2 id="fc-formal-statement" className="text-label">Lean declaration</h2>
@@ -142,12 +149,28 @@ export function FormalConjecturePage({ item, route, current }: { item: FormalCon
   /* No workspace on this route — it is a reading surface end to end, so it
      takes the ordinary capped frame rather than the canvas one. */
   return <PageShell as="article" archetype="problem" className="!pt-2">
-    <header className="mt-2 rounded-lg bg-[var(--vela-ink)] px-5 py-5 text-sidebar-foreground sm:px-7 sm:py-6">
-      <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-meta text-sidebar-foreground/75"><Link href={collectionHref} className="hover:text-sidebar-foreground">Formal Conjectures</Link><span aria-hidden className="mx-2">/</span><span>{item.source_family}</span></p><h1 className="mt-3 max-w-[34ch] text-display leading-tight"><HumanText>{item.title}</HumanText></h1><p className="mt-3 max-w-3xl text-compact text-sidebar-foreground/75">Exact formalization occurrence from the upstream source collection.</p></div><Button nativeButton={false} size="sm" render={<a href={item.source_url} />}>Open source <HugeiconsIcon icon={ArrowUpRight01Icon} aria-hidden data-icon="inline-end" /></Button></div>
-      <dl className="mt-6 grid gap-px overflow-hidden rounded-md bg-sidebar-foreground/15 sm:grid-cols-3">
-        <div className="bg-sidebar/80 px-4 py-3"><dt className="text-micro text-sidebar-foreground/70">Source category</dt><dd className="mt-1 text-label capitalize">{item.category}</dd></div>
-        <div className="bg-sidebar/80 px-4 py-3"><dt className="text-micro text-sidebar-foreground/70">Formal proof</dt><dd className="mt-1 text-label">{item.formal_proof ? "Retained" : "Not retained"}</dd></div>
-        <div className="bg-sidebar/80 px-4 py-3"><dt className="text-micro text-sidebar-foreground/70">Vela current state</dt><dd className="mt-1 text-label">No Repository Result attached</dd></div>
+    {/* An ordinary product header, like every other application route.
+        This was the one route in the product that painted a dark slab behind
+        its title, with its own inverted `sidebar-foreground` type ramp and a
+        three-up inverted fact grid — a second visual register for one page,
+        and the reader met it immediately after leaving a light Problem page. */}
+    <header className="mt-2 border-b pb-6">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="min-w-0">
+          <p className="text-meta text-muted-foreground">
+            <Link href={collectionHref} className="hover:text-foreground">Formal Conjectures</Link>
+            <span aria-hidden className="mx-2">/</span>
+            <span>{item.source_family}</span>
+          </p>
+          <h1 className="mt-3 max-w-[34ch] text-display leading-tight"><HumanText>{item.title}</HumanText></h1>
+          <p className="mt-3 max-w-3xl text-compact text-muted-foreground">Exact formalization occurrence from the upstream source collection.</p>
+        </div>
+        <Button nativeButton={false} size="sm" variant="outline" render={<a href={item.source_url} />}>Open source <HugeiconsIcon icon={ArrowUpRight01Icon} aria-hidden data-icon="inline-end" /></Button>
+      </div>
+      <dl className="mt-6 grid gap-x-6 gap-y-4 sm:grid-cols-3">
+        <div><dt className="text-micro text-muted-foreground">Source category</dt><dd className="mt-1 text-label capitalize">{item.category}</dd></div>
+        <div><dt className="text-micro text-muted-foreground">Formal proof</dt><dd className="mt-1 text-label">{item.formal_proof ? "Retained" : "Not retained"}</dd></div>
+        <div><dt className="text-micro text-muted-foreground">Vela current state</dt><dd className="mt-1 text-label">No Repository Result attached</dd></div>
       </dl>
     </header>
     {current === "overview" ? <Overview item={item} route={route} /> : current === "work" ? <Work item={item} /> : current === "results" ? <Results item={item} /> : current === "sources" ? <Sources item={item} /> : <History item={item} />}

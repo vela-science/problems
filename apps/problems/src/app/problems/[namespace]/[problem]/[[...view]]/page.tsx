@@ -10,6 +10,7 @@ import {
 import { ProblemPageView, type ProblemPageQuery } from "@/components/vela/problem-page";
 import { FormalConjecturePage } from "@/components/vela/formal-conjecture-page";
 import type { ProblemReferenceView } from "@/components/vela/problem-overview-reference";
+import { statementPlainText } from "@/lib/problem-statement";
 import { publishedProblemCollections } from "@/lib/published-problem-collections";
 
 export const dynamic = "force-dynamic";
@@ -59,11 +60,19 @@ function referenceView(query: ProblemPageQuery): ProblemReferenceView {
 export async function generateMetadata({ params }: PageProps<"/problems/[namespace]/[problem]/[[...view]]">): Promise<Metadata> {
   const { namespace, problem } = await params;
   const resolved = resolve(namespace, problem);
-  if (resolved?.kind === "formal-conjecture") return {
-    title: resolved.occurrence.title,
-    description: `Inspect the exact Formal Conjectures declaration, source, and retained status for ${resolved.occurrence.title}.`,
-    alternates: { canonical: resolved.route },
-  };
+  if (resolved?.kind === "formal-conjecture") {
+    /* Spoken form, not the source TeX. These titles are statements, so the raw
+       value put `For every integer $x \ge 2$ there exists a prime between
+       $x(x-1)$ and $x^2$.` into the browser tab, the bookmark and the search
+       snippet — and the backslash did not survive the trip, so it read
+       `$x  ge 2$`. */
+    const spoken = statementPlainText(resolved.occurrence.title);
+    return {
+      title: spoken,
+      description: `Inspect the exact Formal Conjectures declaration, source, and retained status for ${spoken}.`,
+      alternates: { canonical: resolved.route },
+    };
+  }
   return resolved ? {
     title: `${resolved.collection.name.replace(/ Problems$/u, " problem")} ${problem}`,
     description: `Read what is known, check prior work, and inspect exact evidence for ${resolved.collection.name.replace(/ Problems$/u, " problem")} ${problem}.`,
