@@ -87,7 +87,14 @@ describe("AppSidebar", () => {
     expect(await screen.findByRole("link", { name: "Home" })).toHaveAttribute("href", "/");
     expect(screen.getByRole("link", { name: "Problems" })).toHaveAttribute("href", "/problems");
     expect(screen.getByRole("link", { name: "Updates" })).toHaveAttribute("href", "/updates");
-    expect(screen.queryByRole("link", { name: "Assertions" })).not.toBeInTheDocument();
+
+    /* The spine stays — a Repository is a provenance surface, not one of the
+       five primary destinations, so it does not take the rail a Problem takes.
+       Its sections are now offered *beneath* the spine rather than not at all:
+       eight routes used to be reachable only from the command palette. */
+    expect(screen.getByRole("link", { name: "Assertions" })).toHaveAttribute("href", "/repositories/erdos/claims");
+    expect(screen.getByRole("link", { name: "Commits" })).toHaveAttribute("href", "/repositories/erdos/commits");
+    expect(screen.getByRole("link", { name: "Assertions" })).toHaveAttribute("aria-current", "page");
   });
 
   it("shows the compact published collections beneath Problems only on that branch", async () => {
