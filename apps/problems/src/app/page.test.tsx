@@ -8,7 +8,12 @@ vi.mock("@vela/ui/vela/scientific-text", () => ({
 }));
 
 const reads = vi.hoisted(() => ({ catalog: vi.fn(), previews: vi.fn() }));
-vi.mock("@/lib/scientific-state", () => ({
+/* Only the two reads are stubbed. `problemDiscoveryCollections` stays real so
+   the Topic entries and their counts are actually derived from the catalogue
+   under test — a stubbed facet builder would let Home advertise a count no
+   collection could honour, which is the one thing these entries must not do. */
+vi.mock("@/lib/scientific-state", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/scientific-state")>()),
   discoveredProblems: reads.catalog,
   problemStatePreviews: reads.previews,
 }));
@@ -107,13 +112,13 @@ function preview(discovery: ProblemDiscovery, question: string, reviewedAt?: str
   } as never;
 }
 
+/* Home now previews only the assessed Problems, because the accepted Results
+   are what it renders. */
 function previews() {
   const catalog = catalogue();
   return [
     preview(catalog.find((item) => item.problem === "94")!, "Suppose n points determine a convex polygon.", "2026-08-14T16:04:07.000Z"),
     preview(catalog.find((item) => item.problem === "321")!, "What is the largest A with distinct subset sums?", "2026-08-16T16:04:07.000Z"),
-    preview(catalog.find((item) => item.problem === "1")!, "How large must N be for distinct subset sums?"),
-    preview(catalog.find((item) => item.problem === "2")!, "Can the lower bound be improved?"),
   ];
 }
 
@@ -130,8 +135,20 @@ describe("Home", () => {
 
     expect(screen.getAllByText("Erdős Problems")).toHaveLength(1);
     expect(screen.getAllByText("Formal Conjectures")).toHaveLength(1);
+
+    /* The honest state of the place, stated once and computed from the
+       catalogue rather than written down. */
     expect(screen.getByText("14 published Problems")).toBeVisible();
     expect(screen.getByText("7 rights-reviewed formalizations")).toBeVisible();
+
+    /* Home used to restate `/problems`' own "Problems to explore" heading and
+       `/updates`' recent-updates list, both one click away in the sidebar, so
+       a newcomer met the same rows twice. Its sections are now its own: the
+       Repository whose state the panel shows, and the collections. */
+    expect(screen.getAllByRole("heading", { level: 2 }).map((node) => node.textContent)).toEqual([
+      "Vela Mathematics Program",
+      "Published collections",
+    ]);
     expect(screen.queryByRole("link", { name: /Read the vision/iu })).not.toBeInTheDocument();
     expect(container.querySelector("img[src*='endless-folio-opening']")).not.toBeInTheDocument();
     expect(container.querySelector(".vela-page-hero")).not.toHaveTextContent(/Repository|Standing|authority|roots|records/iu);
@@ -149,25 +166,42 @@ describe("Home", () => {
     expect(within(search).getByRole("button", { name: "Search" })).toHaveAttribute("type", "submit");
   });
 
-  it("shows four useful Problems and the two durable reviewed Results", async () => {
+  it("leads with what has been accepted, which the catalogue never shows", async () => {
     reads.catalog.mockResolvedValue(catalogue());
     reads.previews.mockResolvedValue(previews());
-    const { container } = render(await HomePage());
+    render(await HomePage());
 
-    expect(screen.getByRole("heading", { name: "Problems to explore" })).toBeVisible();
-    expect(container.querySelectorAll('a[href^="/problems/erdos-problems/"]')).toHaveLength(5);
-    expect(container.querySelector('a[href^="/problems/formal-conjectures/"]')).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "Reviewed Results" })).toBeVisible();
-    expect(screen.getByRole("link", { name: "Open reviewed Result for Erdős problem 94" })).toHaveAttribute("href", "/problems/erdos-problems/94/results");
-    expect(screen.getByRole("link", { name: "Open reviewed Result for Erdős problem 321" })).toHaveAttribute("href", "/problems/erdos-problems/321/results");
-    expect(screen.getAllByText("Accepted by Vela Mathematics Program")).toHaveLength(2);
+    /* `/problems` owns browsing and never renders a Result. This is the half
+       of the product a catalogue cannot carry, so it is Home's dominant
+       object — most recently reviewed first. */
+    const accepted = screen.getAllByRole("link", { name: /^Erdős problem/u });
+    expect(accepted.map((link) => link.getAttribute("href"))).toEqual([
+      "/problems/erdos-problems/321/results",
+      "/problems/erdos-problems/94/results",
+    ]);
+
+    /* The panel is the Repository's own state, carrying the exact root those
+       Results were read at rather than a decorative window chrome. */
+    expect(screen.getByRole("heading", { level: 2, name: "Vela Mathematics Program" })).toBeVisible();
+    expect(screen.getByText("aaaaaaaaaaaa")).toBeVisible();
+
+    /* Each Result states what it does not settle, beside the claim itself, and
+       the lane ends on the real remainder rather than trailing off. */
     expect(screen.getByText("It does not establish the full Problem.")).toBeVisible();
     expect(screen.getByText("This is a candidate answer, not a proof of the full Problem.")).toBeVisible();
-    expect(screen.getAllByRole("link", { name: /^Open reviewed Result/u }).map((link) => link.getAttribute("aria-label"))).toEqual([
-      "Open reviewed Result for Erdős problem 321",
-      "Open reviewed Result for Erdős problem 94",
-    ]);
-    expect(screen.getByRole("link", { name: "All updates" })).toHaveAttribute("href", "/updates");
+    expect(screen.getByRole("link", { name: "12 questions still open" })).toHaveAttribute("href", "/problems");
+  });
+
+  it("offers topic entries that really filter the collection", async () => {
+    reads.catalog.mockResolvedValue(catalogue());
+    reads.previews.mockResolvedValue(previews());
+    render(await HomePage());
+
+    /* The Topics come from the projection's own source-native vocabulary, and
+       `/problems/erdos-problems` filters on this key — Home invents no
+       taxonomy and advertises no count it cannot honour. */
+    const entry = screen.getByRole("link", { name: "Number Theory, 14 Problems" });
+    expect(entry).toHaveAttribute("href", "/problems/erdos-problems?topic=number-theory");
   });
 
   it("does not repeat collection analytics, raw updates, or contribution onboarding", async () => {
@@ -183,13 +217,17 @@ describe("Home", () => {
     reads.previews.mockResolvedValue([]);
     render(await HomePage());
 
-    expect(screen.getByText("No question is ready to preview")).toBeVisible();
+    /* With nothing admitted, the instrument is replaced rather than drawn
+       empty — an empty lane would imply a Repository that had ruled and found
+       nothing. */
     expect(screen.getByText("No Result has been accepted here yet")).toBeVisible();
     /* An absence states its cause and offers the next thing to do; a bare
        sentence cannot carry the action (DESIGN.md, "concise cause plus one
        next action"). */
-    const onward = screen.getAllByRole("link", { name: "Browse every Problem" });
-    expect(onward).toHaveLength(2);
-    for (const link of onward) expect(link).toHaveAttribute("href", "/problems");
+    expect(screen.getByRole("link", { name: "Browse every Problem" })).toHaveAttribute("href", "/problems");
+    /* The collections stay named and reachable: an empty state must not read
+       as a missing catalogue. */
+    expect(screen.getByRole("heading", { level: 2, name: "Published collections" })).toBeVisible();
+    expect(screen.getByText("2 published Problems")).toBeVisible();
   });
 });

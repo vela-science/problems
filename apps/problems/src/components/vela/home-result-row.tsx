@@ -68,7 +68,12 @@ export function HomeResultRow({ state, href, number }: { state: State; href: str
         <span className="font-medium text-foreground">Scope:</span> <AssertionText text={limitation} />
       </ItemDescription> : null}
       <ItemDescription className="relative line-clamp-none flex w-fit flex-wrap items-center gap-x-3 gap-y-1 text-meta">
-        {producer ? <Performer name={producer} kind="agent" performerId={producer} detail="Submitted by" /> : <span>Submitter not recorded</span>}
+        {/* `detail` stacks a second line under the actor's name, so a bare
+            "Submitted by" there reads backwards — the label belongs before the
+            name, not beneath it. */}
+        {producer ? <span className="flex min-w-0 items-center gap-2">
+          Submitted by <Performer name={producer} kind="agent" performerId={producer} />
+        </span> : <span>Submitter not recorded</span>}
         <span>{summarizeCheckOutcomes(checks)}</span>
         {review.reviewed_at ? <time dateTime={review.reviewed_at}>{formatDate(review.reviewed_at)}</time> : null}
       </ItemDescription>

@@ -1,111 +1,138 @@
 /* Home is an application route, not an editorial one.
  *
- * This filled the hero with a horizon/stardust wash and, in dark, with
- * midnight — the only route on the site to paint its own slab; every other
- * hero is deliberately transparent (globals.css, "Route leads are ordinary
- * product headers"). DESIGN.md:303 "Do not use a dark hero slab on application
- * routes", and :339 Home "does not carry an editorial plate". */
+ * The hero paints no slab of its own; the entry card below carries the surface
+ * and the shell's ground shows through around it. Retained paintings stay on
+ * `vela.space` and About — a picture beside the product search would be
+ * decoration, and this page has an instrument to show instead. */
 .hero {
   border-bottom: 0;
   background: transparent;
+  padding-inline: 0;
+}
+
+/* The entry card. One contained surface for the whole first screen, which is
+   what stops Home reading as loose furniture on a blank page. */
+.card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  background: var(--card);
+  padding: clamp(1.5rem, 3.5vw, 3rem);
+}
+
+/* Graph paper, radially faded. Quiet ground for an instrument, and the one
+   texture that cannot be mistaken for data: no line encodes a relationship.
+   `-z-10` would escape the card, so the stack is contained by `isolation`. */
+.ground {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  height: 100%;
+  width: 100%;
+  color: var(--muted-foreground);
+  opacity: 0.32;
+  -webkit-mask-image: radial-gradient(ellipse 72% 62% at 28% 34%, black, transparent 78%);
+  mask-image: radial-gradient(ellipse 72% 62% at 28% 34%, black, transparent 78%);
 }
 
 .grid {
   display: grid;
-  grid-template-areas:
-    "task"
-    "collections";
   grid-template-columns: minmax(0, 1fr);
-  gap: 1.25rem;
+  gap: 2.5rem;
   align-items: start;
-  max-width: 52rem;
 }
 
-.task { grid-area: task; min-width: 0; }
-.collections { grid-area: collections; min-width: 0; }
+@media (min-width: 64rem) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.94fr);
+    gap: 3.5rem;
+  }
+}
 
-/* DESIGN.md:225 names Home the one route allowed 1.75–2.25rem. This ran to
-   4.5rem, which is editorial-display territory and read as a marketing
-   headline on the product's entry route. */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--muted) 50%, transparent);
+  padding: 0.25rem 0.75rem;
+  font-size: var(--vela-text-micro-size, 0.75rem);
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Home is the product's entry screen and carries its one large claim. The
+   former 2.25rem cap left the promise smaller than the page it introduces;
+   this stays under editorial display size and never becomes a billboard. */
 .title {
-  max-width: 22ch;
-  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  max-width: 16ch;
+  font-size: clamp(2rem, 3.4vw, 3.25rem);
   font-weight: 620;
-  line-height: 1.1;
-  letter-spacing: -0.025em;
+  line-height: 1.06;
+  letter-spacing: -0.03em;
   text-wrap: balance;
 }
 
 .lead {
   margin-top: 1.125rem;
-  max-width: 38rem;
+  max-width: 34rem;
   font-size: clamp(1rem, 1.5vw, 1.125rem);
   line-height: 1.65;
   color: var(--muted-foreground);
   text-wrap: pretty;
 }
 
-/* An ordinary contained surface: 8px per DESIGN.md:239, the working border,
-   and no brand tint. Gold and horizon are "never status" and the collection
-   list is product furniture. */
-.collectionList {
-  overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  background: var(--card);
-}
-
-.collectionList > * + * { border-top: 1px solid var(--border); }
-
 @media (max-width: 520px) {
-  .hero {
-    padding-inline: 0;
-  }
-
-  /* Only the measure narrows. The size stays under the 2.25rem cap the
-     desktop rule already sets — a phone is not the place the title grows. */
+  /* Only the measure narrows. The size stays under the cap the desktop rule
+     already sets — a phone is not the place the title grows. */
   .title {
-    max-width: 15ch;
+    max-width: 14ch;
     line-height: 1.05;
   }
 }
 
 @media (forced-colors: active) {
-  .hero {
-    border-bottom: 2px solid CanvasText;
-    background: Canvas;
-    box-shadow: none;
-  }
-
-  .collectionList {
+  .card {
     border: 1px solid CanvasText;
     background: Canvas;
   }
 
-  .grid {
-    grid-template-areas:
-      "task"
-      "collections";
-    grid-template-columns: minmax(0, 1fr);
+  /* A masked pattern is not painted in forced colors, and a ghost of one would
+     only add noise to a high-contrast page. */
+  .ground {
+    display: none;
+  }
+
+  .pill {
+    border: 1px solid CanvasText;
+    background: Canvas;
   }
 }
 
 @media print {
-  .hero {
-    border-bottom: 1px solid CanvasText;
+  .card {
+    border: 1px solid CanvasText;
     background: Canvas;
-    box-shadow: none;
+    padding: 0;
   }
 
+  .ground {
+    display: none;
+  }
+
+  /* Two columns do not survive a page break usefully; print reads in order. */
   .grid {
-    grid-template-areas:
-      "task"
-      "collections";
     grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
   }
 
   .title {
     max-width: 18ch;
-    font-size: 36pt;
+    font-size: 28pt;
   }
 }

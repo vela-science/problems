@@ -222,10 +222,11 @@ disagree, the token file is right and the other two are stale.
 
 - Page title or Problem question: 1.5rem, controlled measure, weight 600. This
   is the `display` token, which 24 route headings use.
-- Home's heading is the single exception, at `clamp(1.75rem, 3vw, 2.25rem)`. It
-  is the front door and carries no plate, slab, or brand fill to do the work
-  instead. No other route may take this size; a larger heading anywhere is an
-  editorial register the product routes do not carry.
+- Home's heading is the single exception, at `clamp(2rem, 3.4vw, 3.25rem)`. It
+  is the front door and carries the product's one large claim. It stays under
+  editorial display size and takes no painting or brand fill. No other route
+  may take this size; a larger heading anywhere is an editorial register the
+  product routes do not carry.
 - Section title: 1.125rem, weight 600.
 - Body: 0.875rem at 1.5–1.6 line height.
 - Dense rows and metadata: 0.75–0.8125rem.
@@ -279,7 +280,7 @@ key, focus, and active-tab visibility. Do not hide later modes with no cue.
 
 ### One dominant object
 
-- Home: search and discovery.
+- Home: search, and the state this Repository has admitted.
 - Global Problems: published collections.
 - Collection: filterable Problem directory.
 - Problem: the question and current Result or state.
@@ -301,6 +302,23 @@ restates a tab, badge, or status row, remove it.
 Use a normal product header: concise collection-qualified identity, one title or
 question, optional one-sentence context, and up to two actions. Do not use a
 dark hero slab on application routes. Do not lead with a marketing eyebrow.
+
+### Page width
+
+`PageShell` owns the maximum, and a route must not set its own page-level
+measure. The frame is `96rem` for a standard route and `84rem` for a reading
+one, centred; prose inside still sets its own measure per `typeset.css`.
+
+`layout="canvas"` removes the maximum and belongs only to a pan-and-zoom
+instrument — the graph, and the Problem workspace. A ledger, a directory, a
+search result list and a profile are documents, not canvases: uncapped, their
+rows ran the full width of whatever display they opened on.
+
+Both failure modes were live at once. `/account` pinned its sections to
+`max-w-3xl` while its own header ran full width, so one page had two widths and
+sat in the left 45% of a 1920px window; nine ledger routes were declared
+canvases and stretched without limit. A route that looks unfinished on a wide
+display is usually one of these two, not a spacing problem.
 
 ### Problem sections
 
@@ -334,10 +352,21 @@ diagram or repeat the workflow in prose.
 
 ### Editorial site and product brand opening
 
-Problems Home is a direct, single-column activation surface: question-led
-promise, search, actions, and the compact collection list. It does not carry an
-editorial plate. Retained paintings belong to `vela.space`, About, and other
-explicit editorial moments rather than beside the product search.
+Problems Home is a split entry card: the promise, the search, and the actions
+on one side, and the Repository's admitted state — accepted Results on a lane,
+each with the scope it does not settle, over the exact release root — on the
+other. Both halves are real; the second is the working instrument, never a
+screenshot or a mock of one.
+
+Home carries what a catalogue cannot. `/problems` owns browsing, filters and
+the collection directory, and never renders a Result, so Home must not restate
+its headings or its question list — Home once did, and was a weaker copy of the
+page directly beneath it in the sidebar.
+
+It carries no editorial plate. Retained paintings belong to `vela.space`,
+About, and other explicit editorial moments rather than beside the product
+search. The one permitted ground is a masked geometric texture that no reader
+could mistake for data: a line here encodes nothing.
 
 The full long-form composition lives in `apps/www`, outside the Problems shell.
 It preserves the historical continuous folio, margin notes, authored figures,
