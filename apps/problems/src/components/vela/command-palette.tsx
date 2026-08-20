@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Activity01Icon, BookOpen01Icon as BookOpen, CodeIcon as Code2, Database01Icon as Sources, FileCheckIcon as FileCheck2, FileSearchIcon as FileSearch, GitForkIcon as GitFork, Home01Icon, PuzzleIcon, Search01Icon as Search, Shield01Icon as ShieldCheck, Task01Icon as ListTodo, WorkIcon } from "@hugeicons/core-free-icons";
+import { Activity01Icon, BookOpen01Icon as BookOpen, Clock01Icon as Clock, CodeIcon as Code2, Database01Icon as Sources, FileCheckIcon as FileCheck2, FileSearchIcon as FileSearch, GitForkIcon as GitFork, Home01Icon, PuzzleIcon, Search01Icon as Search, Shield01Icon as ShieldCheck, Task01Icon as ListTodo, WorkIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import type { SiteSearchRecord } from "@vela/projection-data";
 import {
@@ -16,6 +16,7 @@ import {
   CommandShortcut,
 } from "@vela/ui/components/command";
 import { JUMP_DESTINATIONS, KeyboardShortcuts } from "@/components/vela/keyboard-shortcuts";
+import { forgetObjects, recentObjects, type RecentObject } from "@/lib/recent-objects";
 import { loadSearchIndex } from "@/lib/search-index";
 import { problemCollectionForPath, problemCollectionRecordLabel, type PublishedProblemCollection } from "@/lib/problem-collections";
 
@@ -58,6 +59,7 @@ export function CommandPaletteProvider({
 }) {
   const [open, setOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const [recents, setRecents] = useState<RecentObject[]>([]);
   const [query, setQuery] = useState("");
   const [searchResult, setSearchResult] = useState<{ query: string; records: SiteSearchRecord[]; error: boolean } | null>(null);
   const router = useRouter();
@@ -90,7 +92,7 @@ export function CommandPaletteProvider({
       const key = event.key.toLowerCase();
       if (key === "k" && (event.metaKey || event.ctrlKey)) {
         event.preventDefault();
-        setOpen((current) => !current);
+        setOpen((current) => { if (!current) setRecents(recentObjects()); return !current; });
         return;
       }
       if (event.metaKey || event.ctrlKey || event.altKey || typing(event.target)) return;
@@ -114,6 +116,7 @@ export function CommandPaletteProvider({
       }
       if (key === "/") {
         event.preventDefault();
+        setRecents(recentObjects());
         setOpen(true);
         return;
       }
@@ -175,7 +178,9 @@ export function CommandPaletteProvider({
       <KeyboardShortcuts open={shortcutsOpen} onOpenChange={setShortcutsOpen} />
       <CommandDialog
           open={open}
-          onOpenChange={setOpen}
+          /* Every path into the palette refreshes the list, including the
+             header button and the context's own `openPalette`. */
+          onOpenChange={(next) => { if (next) setRecents(recentObjects()); setOpen(next); }}
           onOpenChangeComplete={handleOpenChangeComplete}
           title="Search problems.science"
           description="Find a Problem, Result, source, or page"
@@ -225,6 +230,28 @@ export function CommandPaletteProvider({
                     <CommandItem onSelect={() => navigate(`/repositories/${currentRepository.slug}/proposals`)}><HugeiconsIcon icon={ShieldCheck} aria-hidden />Proposed changes</CommandItem>
                     {currentRepository.hasGraph ? <CommandItem onSelect={() => navigate(`/repositories/${currentRepository.slug}/graph`)}><HugeiconsIcon icon={GitFork} aria-hidden />Evidence graph</CommandItem> : null}
                     <CommandItem onSelect={() => navigate(`/repositories/${currentRepository.slug}/reproduce`)}><HugeiconsIcon icon={FileCheck2} aria-hidden />Reproduce snapshot</CommandItem>
+                  </CommandGroup>
+                  <CommandSeparator />
+                </>
+              ) : null}
+              {!hasQuery && recents.length ? (
+                <>
+                  {/* What you were just looking at, first — the convention every
+                      reference product in AGENTS.md shares. Local only: see
+                      lib/recent-objects.ts for why this never leaves the
+                      browser. */}
+                  <CommandGroup heading="Recently opened">
+                    {recents.map((entry) => (
+                      <CommandItem key={entry.href} value={`recent ${entry.title} ${entry.context ?? ""}`} onSelect={() => navigate(entry.href)}>
+                        <HugeiconsIcon icon={Clock} aria-hidden />
+                        <span className="truncate">{entry.title}</span>
+                        {entry.context ? <CommandShortcut>{entry.context}</CommandShortcut> : null}
+                      </CommandItem>
+                    ))}
+                    <CommandItem value="clear recently opened" onSelect={() => { forgetObjects(); setRecents([]); }}>
+                      <HugeiconsIcon icon={Search} aria-hidden />
+                      <span className="text-muted-foreground">Clear recently opened</span>
+                    </CommandItem>
                   </CommandGroup>
                   <CommandSeparator />
                 </>

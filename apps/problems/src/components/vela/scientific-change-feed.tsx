@@ -29,6 +29,21 @@ function plainTransitionSummary(transition: NonNullable<ScientificChange["commit
   return parts.length ? parts.join(" · ") : null;
 }
 
+/* One heading per day, in the order rows already arrive — same shape as the
+   Repository commits ledger. */
+function groupByDay(changes: ScientificChange[]): { label: string; entries: ScientificChange[] }[] {
+  const days: { label: string; entries: ScientificChange[] }[] = [];
+  for (const change of changes) {
+    const label = new Date(change.commit.committed_at).toLocaleDateString("en-GB", {
+      weekday: "long", day: "numeric", month: "long", year: "numeric",
+    });
+    const current = days.at(-1);
+    if (current?.label === label) current.entries.push(change);
+    else days.push({ label, entries: [change] });
+  }
+  return days;
+}
+
 export function ScientificChangeFeed({
   changes,
   compact = false,
@@ -41,8 +56,15 @@ export function ScientificChangeFeed({
   /* Composition adapted from shadcn.io Pro `dashboard-activity-feed`,
      `timeline-filterable`, and `timeline-commit-log`. The rail distinguishes
      state transitions from ordinary repository commits. */
-  return <ol className="relative before:absolute before:bottom-7 before:left-[.8125rem] before:top-7 before:w-px before:bg-border">
-    {changes.map(({ repository, commit }) => {
+  /* Grouped by day, the way `/repositories/<slug>/commits` already groups its
+     own rows. Two chronological lists of the same objects were reading two
+     different ways, and an undated run of "3d ago" is hard to scan for "what
+     happened on the day X landed". Headings are skipped in `compact`, where
+     the feed is a sidebar preview rather than the page. */
+  const days = compact ? null : groupByDay(changes);
+
+  const rows = (entries: ScientificChange[]) => <ol className="relative before:absolute before:bottom-7 before:left-[.8125rem] before:top-7 before:w-px before:bg-border">
+    {entries.map(({ repository, commit }) => {
       const transitionSummary = commit.transition && plainLanguage ? plainTransitionSummary(commit.transition) : null;
       return <li key={`${repository.slug}/${commit.sha}`} className={`${compact ? "relative py-3 pl-10" : "relative py-5 pl-10 sm:grid sm:grid-cols-[7rem_minmax(0,1fr)_auto] sm:gap-4"} vela-object-row rounded-md pe-2`}>
       <span className={`absolute left-0 top-[.8rem] z-10 grid size-7 place-items-center rounded-full border border-background ring-1 ring-border forced-colors:border-2 ${commit.transition ? "bg-status-evidence/15 text-status-evidence" : "bg-muted text-muted-foreground"}`} aria-hidden><HugeiconsIcon aria-hidden icon={commit.transition ? Activity01Icon : GitCommitIcon} className="size-3.5" /></span>
@@ -67,4 +89,12 @@ export function ScientificChangeFeed({
       {!compact ? <code className="mt-2 font-mono text-meta text-muted-foreground sm:mt-0">{commit.sha.slice(0, 10)}</code> : null}
     </li>})}
   </ol>;
+
+  if (!days) return rows(changes);
+  return <div className="space-y-6">
+    {days.map(({ label, entries }) => <section key={label} aria-label={label}>
+      <h3 className="sticky top-0 z-10 bg-background/95 py-1 text-eyebrow text-muted-foreground backdrop-blur supports-[backdrop-filter]:bg-background/75">{label}</h3>
+      {rows(entries)}
+    </section>)}
+  </div>;
 }

@@ -11,7 +11,8 @@ import {
 } from "@/components/vela/problem-overview-reference";
 import { ProblemState, type ProblemResearchView } from "@/components/vela/problem-state";
 import { ProblemWorkspace } from "@/components/vela/problem-workspace";
-import { problemLabel, resolveProblemStatement, statementParagraphs } from "@/lib/problem-statement";
+import { RememberObject } from "@/components/vela/remember-object";
+import { problemLabel, resolveProblemStatement, statementParagraphs, statementPlainText } from "@/lib/problem-statement";
 import { authConfiguration, currentAccount } from "@/lib/auth";
 import { problemFrontierMovement } from "@/lib/frontier-timeline";
 import { scientificProblemState } from "@/lib/scientific-state";
@@ -114,6 +115,9 @@ export async function ProblemPageView({ repository, problem, collectionName, rou
      `layout` alone, which touches the content region and not the frame. */
   return <PageShell as="article" archetype="problem" layout="canvas" className="!pt-2">
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+    {/* Spoken form, not the source TeX: the palette lists this as a name, and
+        the raw statement would print `\mathbb{R}^2` into it. */}
+    <RememberObject href={route} title={statementPlainText(question).slice(0, 120)} context={collectionName} />
     <div className="mt-2">
       <ProblemReferenceHeader state={state} collectionName={collectionName} summary={referenceView === "overview"} />
     </div>
