@@ -6,6 +6,7 @@
     ".": "./src/index.ts",
     "./deployment": "./src/deployment.ts",
     "./release": "./src/release.ts",
+    "./formal-conjectures": "./src/formal-conjectures-collection.ts",
     "./read-contracts": "./src/read-contracts.ts",
     "./refusal": "./src/refusal.ts",
     "./projection-reader": "./src/projection-reader.ts",
