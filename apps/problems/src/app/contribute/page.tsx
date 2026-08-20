@@ -66,7 +66,7 @@ export default async function WorkPage() {
         <div className="min-w-0">
           <div className="flex flex-wrap items-end justify-between gap-3 border-b pb-3">
             <div><p className="text-meta text-muted-foreground">Published collections</p><h2 id="starting-points-heading" className="mt-1 text-title">Starting points</h2></div>
-            <Link href="/problems" className="text-meta font-medium text-primary hover:underline">Browse all Problems</Link>
+            <Link href="/problems" className="inline-flex min-h-6 items-center text-meta font-medium text-primary hover:underline">Browse all Problems</Link>
           </div>
 
           <section aria-labelledby="erdos-starting-points" className="mt-4">

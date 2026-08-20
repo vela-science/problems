@@ -142,7 +142,7 @@ export default async function HomePage() {
       <div className="min-w-0">
         <div className="flex flex-wrap items-end justify-between gap-4 border-b pb-3">
           <h2 id="open-a-question-heading" className="text-title">Problems to explore</h2>
-          <Link href="/problems" className="shrink-0 text-meta font-medium text-primary underline-offset-4 hover:underline">All collections</Link>
+          <Link href="/problems" className="inline-flex min-h-6 shrink-0 items-center text-meta font-medium text-primary underline-offset-4 hover:underline">All collections</Link>
         </div>
         {featuredPreviews.length ? <ul className="mt-2 divide-y" aria-labelledby="open-a-question-heading">
           {featuredPreviews.map(({ discovery, state }) => <ProblemQuestionRow
@@ -166,7 +166,7 @@ export default async function HomePage() {
       <section className="min-w-0" aria-labelledby="latest-results-heading">
         <div className="flex items-end justify-between gap-4 border-b pb-3">
           <h2 id="latest-results-heading" className="text-title">Reviewed Results</h2>
-          <Link href="/updates" className="shrink-0 text-meta font-medium text-primary underline-offset-4 hover:underline">All updates</Link>
+          <Link href="/updates" className="inline-flex min-h-6 shrink-0 items-center text-meta font-medium text-primary underline-offset-4 hover:underline">All updates</Link>
         </div>
         {reviewedResults.length ? <ul className="mt-2 divide-y" aria-labelledby="latest-results-heading">
           {reviewedResults.map(({ discovery, state }) => <HomeResultRow

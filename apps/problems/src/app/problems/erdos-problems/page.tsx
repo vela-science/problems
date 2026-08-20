@@ -189,13 +189,13 @@ function ProblemRows({ problems, statements }: {
                 <span aria-hidden className={`size-1.5 rounded-full ${solved ? "bg-status-progress" : "bg-status-caution"}`} />{record.declared_status}
               </span>
             </TableCell>
-            <TableCell className="hidden align-baseline text-meta text-muted-foreground sm:table-cell">{record.formalized ? "In Lean" : "—"}</TableCell>
+            <TableCell className="hidden align-baseline text-meta text-muted-foreground sm:table-cell">{record.formalized ? "In Lean" : <><span aria-hidden>—</span><span className="sr-only">No formal statement</span></>}</TableCell>
             {/* 1,215 of 1,217 rows said "Not reviewed", so the column spent a
                 fifth of the width restating the default. The two that carry a
                 reviewed Result are the information, and they now say so. */}
             <TableCell className="hidden align-baseline text-meta sm:table-cell">{record.local_standing
               ? <span className="inline-flex items-center gap-1.5 font-medium text-status-progress"><span aria-hidden className="size-1.5 rounded-full bg-status-progress" />{record.local_standing.replaceAll("_", " ")}</span>
-              : <span className="text-muted-foreground/50">—</span>}</TableCell>
+              : <><span aria-hidden className="text-muted-foreground/50">—</span><span className="sr-only">No Result decision</span></>}</TableCell>
             <TableCell className="align-baseline">
               <HugeiconsIcon icon={ArrowRight} aria-hidden className="size-4 text-muted-foreground transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-primary" />
             </TableCell>
@@ -295,7 +295,7 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
         <section className="vela-evidence-surface rounded-xl px-5 py-6 sm:px-7" aria-labelledby="reviewed-evidence"><div className="flex items-center gap-2"><HugeiconsIcon icon={Compass01Icon} aria-hidden className="size-5 text-[var(--status-evidence)]" /><p className="text-eyebrow text-muted-foreground">Reviewed evidence</p></div><h2 id="reviewed-evidence" className="mt-2 text-title">Problems with reviewed Results</h2>{stateProblems.length ? <ProblemRows problems={stateProblems.slice(0, 3)} statements={statements} /> : <div className="py-8"><p className="text-subtitle">No reviewed Result in this scope.</p><p className="mt-2 text-meta text-muted-foreground">Source questions remain discoverable without implying that they were reviewed here.</p></div>}</section>
       </PageSection>
 
-      <PageSection className="vela-history-surface rounded-xl px-5 py-6 sm:px-7" aria-labelledby="state-history"><div className="flex items-end justify-between gap-4"><div><div className="flex items-center gap-2"><HugeiconsIcon icon={Activity01Icon} aria-hidden className="size-5" /><p className="text-eyebrow text-muted-foreground">Recent changes</p></div><h2 id="state-history" className="mt-2 text-title">Latest scientific history</h2></div><Link href="/updates" className="text-meta font-medium underline-offset-4 hover:underline">Full history</Link></div><ScientificChangeFeed changes={activity} compact /></PageSection>
+      <PageSection className="vela-history-surface rounded-xl px-5 py-6 sm:px-7" aria-labelledby="state-history"><div className="flex items-end justify-between gap-4"><div><div className="flex items-center gap-2"><HugeiconsIcon icon={Activity01Icon} aria-hidden className="size-5" /><p className="text-eyebrow text-muted-foreground">Recent changes</p></div><h2 id="state-history" className="mt-2 text-title">Latest scientific history</h2></div><Link href="/updates" className="inline-flex min-h-6 items-center text-meta font-medium underline-offset-4 hover:underline">Full history</Link></div><ScientificChangeFeed changes={activity} compact /></PageSection>
     </PageShell>;
   }
 
@@ -357,7 +357,7 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
       <div>
         <h1 className="text-display">Erdős Problems</h1>
         <p className="mt-1.5 max-w-[62ch] text-compact text-muted-foreground">{catalog.length.toLocaleString()} source-owned questions · {catalog.filter((entry) => entry.record.formalized).length.toLocaleString()} with a formal statement · searchable by statement, number, topic and source status.</p>
-        <div className="mt-4 flex flex-wrap gap-4 text-meta"><Link href="/contribute" className="font-semibold text-primary underline-offset-4 hover:underline">Add a contribution</Link><Link href={{ pathname: COLLECTION_PATH, query: { view: "overview" } }} className="font-semibold text-primary underline-offset-4 hover:underline">Collection details</Link></div>
+        <div className="mt-4 flex flex-wrap items-center gap-4 text-meta [&>a]:inline-flex [&>a]:min-h-6 [&>a]:items-center"><Link href="/contribute" className="font-semibold text-primary underline-offset-4 hover:underline">Add a contribution</Link><Link href={{ pathname: COLLECTION_PATH, query: { view: "overview" } }} className="font-semibold text-primary underline-offset-4 hover:underline">Collection details</Link></div>
       </div>
       <Disclosure className="mt-5 border-t pt-3" summaryClassName="w-fit text-meta font-medium text-muted-foreground hover:text-foreground" summary="Collection coverage">
         <div className="mt-3"><CollectionDistribution problems={catalog} compact /></div>

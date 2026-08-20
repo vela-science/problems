@@ -50,7 +50,7 @@ function Overview({ item, route }: { item: FormalConjectureOccurrence; route: st
       <section aria-labelledby="fc-formal-statement" className="vela-object-surface overflow-hidden">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b bg-muted/20 px-5 py-3">
           <h2 id="fc-formal-statement" className="text-label">Lean declaration</h2>
-          <Link href={`${route}/sources`} className="text-meta font-medium text-primary hover:underline">Open source view</Link>
+          <Link href={`${route}/sources`} className="inline-flex min-h-6 items-center text-meta font-medium text-primary hover:underline">Open source view</Link>
         </div>
         <pre className="overflow-x-auto p-5 text-compact leading-6"><code>{item.formal_statement}</code></pre>
       </section>
@@ -120,7 +120,7 @@ function Sources({ item }: { item: FormalConjectureOccurrence }) {
       </dl>
     </div>
     <div className="min-w-0">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b px-4 py-3"><div className="flex min-w-0 items-center gap-2 text-label"><HugeiconsIcon icon={SourceCodeIcon} aria-hidden className="size-4" /><span className="truncate">{item.declaration}</span></div><a href={item.source_url} className="text-meta font-medium text-primary hover:underline">Open whole file</a></div>
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b px-4 py-3"><div className="flex min-w-0 items-center gap-2 text-label"><HugeiconsIcon icon={SourceCodeIcon} aria-hidden className="size-4" /><span className="truncate">{item.declaration}</span></div><a href={item.source_url} className="inline-flex min-h-6 items-center text-meta font-medium text-primary hover:underline">Open whole file</a></div>
       <p className="border-b bg-muted/15 px-4 py-2 text-micro text-muted-foreground">Exact retained declaration excerpt — not the whole file.</p>
       <pre className="max-h-[36rem] overflow-auto p-4 text-compact leading-6"><code>{item.source_excerpt}</code></pre>
     </div>
