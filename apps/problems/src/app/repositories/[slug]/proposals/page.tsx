@@ -13,6 +13,7 @@ import { RouteTitle } from "@/components/vela/route-title";
 import { ProposalLedger } from "@/components/vela/proposal-ledger";
 import { ProposalSweep } from "@/components/vela/proposal-sweep";
 import { sweepFamily } from "@/lib/claim-shape";
+import { FilterChips } from "@/components/vela/filter-chips";
 
 export const dynamicParams = false;
 
@@ -103,23 +104,19 @@ export default async function ProposalsPage({ params, searchParams }: PageProps<
           <span className="font-mono text-micro tabular-nums text-muted-foreground">
             {reviews.length} proposed {reviews.length === 1 ? "change" : "changes"} · {verifications} {verifications === 1 ? "Check" : "Checks"} · {pending ? `${pending} pending` : "none pending"}
           </span>
-          {present.length > 1 ? (
-            <span className="flex flex-wrap items-center gap-1">
-              <Button nativeButton={false} size="sm" variant={active ? "ghost" : "outline"} aria-current={active ? undefined : "true"} render={<Link href={`/repositories/${slug}/proposals`} />}>All</Button>
-              {present.map(([value, count]) => (
-                <Button
-                  key={value}
-                  nativeButton={false}
-                  size="sm"
-                  variant={active === value ? "outline" : "ghost"}
-                  aria-current={active === value ? "true" : undefined}
-                  render={<Link href={`/repositories/${slug}/proposals?status=${value}`} />}
-                >
-                  {value.replaceAll("_", " ")} {count}
-                </Button>
-              ))}
-            </span>
-          ) : null}
+          {present.length > 1 ? <FilterChips
+            label="Filter proposed changes"
+            chips={[
+              { key: "all", label: "All", active: !active, href: `/repositories/${slug}/proposals` as const },
+              ...present.map(([value, count]) => ({
+                key: value,
+                label: value.replaceAll("_", " "),
+                count,
+                active: active === value,
+                href: `/repositories/${slug}/proposals?status=${value}` as const,
+              })),
+            ]}
+          /> : null}
         </div>
       </div>
 

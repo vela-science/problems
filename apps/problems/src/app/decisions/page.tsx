@@ -7,6 +7,7 @@ import { DecisionStream, type DecisionEntry } from "@/components/vela/decision-s
 import { RouteTitle } from "@/components/vela/route-title";
 import { RelativeTime } from "@/components/vela/relative-time";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@vela/ui/components/empty";
+import { FilterChips } from "@/components/vela/filter-chips";
 
 export const metadata: Metadata = {
   title: "Decisions",
@@ -100,22 +101,13 @@ export default async function DecisionsPage({ searchParams }: PageProps<"/decisi
             : `${decisions.length.toLocaleString()} recorded`}
           {" · "}{accepted.toLocaleString()} accepted
         </span>
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-meta">
-          {[...statuses.map(([value, meta]) => ({ key: "status", value, ...meta, active: status === value })),
-            ...repositoryFacets.map(([value, meta]) => ({ key: "repository", value, ...meta, active: repositorySlug === value }))]
-            .map((chip) => (
-              <Link
-                key={`${chip.key}:${chip.value}`}
-                href={chipHref({ [chip.key]: chip.active ? null : chip.value })}
-                aria-current={chip.active ? "true" : undefined}
-                className={chip.active
-                  ? "rounded border border-foreground/30 px-1.5 py-0.5 font-medium"
-                  : "rounded border border-transparent px-1.5 py-0.5 text-muted-foreground hover:border-border hover:text-foreground"}
-              >
-                {chip.label} <span className="font-mono tabular-nums">{chip.count}</span>
-              </Link>
-            ))}
-        </div>
+        <FilterChips
+          label="Filter decisions"
+          chips={[
+            ...statuses.map(([value, meta]) => ({ key: `status:${value}`, label: meta.label, count: meta.count, active: status === value, href: chipHref({ status: status === value ? null : value }) })),
+            ...repositoryFacets.map(([value, meta]) => ({ key: `repository:${value}`, label: meta.label, count: meta.count, active: repositorySlug === value, href: chipHref({ repository: repositorySlug === value ? null : value }) })),
+          ]}
+        />
       </div>
       <div className="mt-6">
         {visible.length ? (

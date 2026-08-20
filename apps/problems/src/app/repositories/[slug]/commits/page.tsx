@@ -16,6 +16,7 @@ import { StatRow } from "@/components/vela/stat-row";
 import { commitHref } from "@/components/vela/source-file";
 
 import { pageFromSearchParams, queryHref } from "@/lib/query-state";
+import { FilterChips } from "@/components/vela/filter-chips";
 
 export const dynamicParams = false;
 export async function generateStaticParams() {
@@ -90,23 +91,13 @@ export default async function CommitsPage({
         <span className="font-mono text-meta tabular-nums text-muted-foreground">
           {total.toLocaleString()} {total === 1 ? "commit" : "commits"} at {repository.source.commit.slice(0, 12)}
         </span>
-        <div className="flex flex-wrap items-center gap-2 text-meta">
-          <Link
-            href={withParams({ kind: null, page: null })}
-            aria-current={machineOnly ? undefined : "true"}
-            className={machineOnly ? "text-muted-foreground hover:text-foreground" : "font-medium underline underline-offset-4"}
-          >
-            All
-          </Link>
-          <span aria-hidden className="text-muted-foreground/50">·</span>
-          <Link
-            href={withParams({ kind: "protocol", page: null })}
-            aria-current={machineOnly ? "true" : undefined}
-            className={machineOnly ? "font-medium underline underline-offset-4" : "text-muted-foreground hover:text-foreground"}
-          >
-            Written by the protocol <span className="font-mono tabular-nums">{machine.toLocaleString()}</span>
-          </Link>
-        </div>
+        <FilterChips
+          label="Filter commits"
+          chips={[
+            { key: "all", label: "All", active: !machineOnly, href: withParams({ kind: null, page: null }) },
+            { key: "protocol", label: "Written by the protocol", count: machine, active: machineOnly, href: withParams({ kind: "protocol", page: null }) },
+          ]}
+        />
       </div>
 
       {/* Four counts that say what this history is, before the rows. The page

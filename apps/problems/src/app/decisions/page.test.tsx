@@ -101,7 +101,11 @@ describe("the Decision stream", () => {
     const markup = await html();
     expect(markup).toContain("2 recorded");
     expect(markup).toContain("1 accepted");
-    expect(markup).toMatch(/rejected <span[^>]*>1</u);
+    /* The chip's count is its own flex child, so the label and count are
+       adjacent elements rather than one string. What must hold is that the
+       control is named for a reader: `FilterChips` supplies "rejected, 1". */
+    expect(markup).toMatch(/aria-label="rejected, 1"/u);
+    expect(markup).toMatch(/rejected<span[^>]*>1</u);
     expect(markup).toContain("1 withdrawn");
   });
 });

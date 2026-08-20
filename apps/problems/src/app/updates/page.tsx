@@ -6,6 +6,8 @@ import { Button } from "@vela/ui/components/button";
 import { PageHero, PageSection, PageSectionHeader, PageShell } from "@vela/ui/vela/page-shell";
 import { ScientificChangeFeed } from "@/components/vela/scientific-change-feed";
 import { recentScientificChanges } from "@/lib/scientific-state";
+import type { Route } from "next";
+import { FilterChips } from "@/components/vela/filter-chips";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -37,7 +39,16 @@ export default async function UpdatesPage({ searchParams }: { searchParams: Prom
         <div className="text-muted-foreground"><dt className="sr-only">Total updates</dt><dd>{activity.length} total</dd></div>
       </dl>
     </figure>
-    <nav aria-label="Updates views" className="mt-8 flex flex-wrap gap-2">{([ ["all", "All history"], ["transitions", "State changes"], ["commits", "Repository commits"] ] as const).map(([value, label]) => <Button key={value} size="sm" variant={view === value ? "default" : "outline"} nativeButton={false} render={<Link href={value === "all" ? "/updates" : `/updates?view=${value}`} />}>{label}</Button>)}</nav>
+    <FilterChips
+      className="mt-8"
+      label="Updates views"
+      chips={([["all", "All history"], ["transitions", "State changes"], ["commits", "Repository commits"]] as const).map(([value, label]) => ({
+        key: value,
+        label,
+        active: view === value,
+        href: (value === "all" ? "/updates" : `/updates?view=${value}`) as Route,
+      }))}
+    />
     <PageSection aria-labelledby="activity-feed" className="vela-object-surface p-5"><PageSectionHeader><h2 id="activity-feed" className="text-title">Recent updates</h2><span className="font-mono text-meta text-muted-foreground">{filtered.length} updates</span></PageSectionHeader><ScientificChangeFeed changes={filtered} /></PageSection>
   </PageShell>;
 }

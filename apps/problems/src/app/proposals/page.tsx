@@ -7,6 +7,7 @@ import { allRepositories } from "@vela/projection-data";
 import { ProposalLedgerRows, type ProposalEntry } from "@/components/vela/proposal-ledger-rows";
 import { RouteTitle } from "@/components/vela/route-title";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@vela/ui/components/empty";
+import { FilterChips } from "@/components/vela/filter-chips";
 
 export const metadata: Metadata = {
   title: "Proposed changes",
@@ -69,24 +70,20 @@ export default async function ProposalsPage({
         </span>
       </div>
 
-      {statuses.length > 1 ? (
-        <div className="mt-4 flex flex-wrap items-center gap-2">
-          <Button nativeButton={false} size="sm" variant={status ? "outline" : "secondary"} render={<Link href="/proposals" />}>
-            All <span className="ml-1 font-mono tabular-nums text-muted-foreground">{entries.length}</span>
-          </Button>
-          {statuses.map(([value, count]) => (
-            <Button
-              key={value}
-              nativeButton={false}
-              size="sm"
-              variant={status === value ? "secondary" : "outline"}
-              render={<Link href={`/proposals?status=${encodeURIComponent(value)}`} />}
-            >
-              {value.replaceAll("_", " ")} <span className="ml-1 font-mono tabular-nums text-muted-foreground">{count}</span>
-            </Button>
-          ))}
-        </div>
-      ) : null}
+      <FilterChips
+        className="mt-4"
+        label="Filter proposed changes"
+        chips={[
+          { key: "all", label: "All", count: entries.length, active: !status, href: "/proposals" },
+          ...statuses.map(([value, count]) => ({
+            key: value,
+            label: value.replaceAll("_", " "),
+            count,
+            active: status === value,
+            href: `/proposals?status=${encodeURIComponent(value)}` as const,
+          })),
+        ]}
+      />
 
       <div className="mt-6">
         {visible.length ? (
