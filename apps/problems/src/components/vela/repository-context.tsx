@@ -2,7 +2,6 @@ import Link from "next/link";
 import {
   ArrowRight01Icon as ArrowRight,
   GitCommitIcon,
-  InformationCircleIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -157,13 +156,6 @@ export function RepositoryContext({
               <RelativeTime value={latestCommit.committed_at} />
             </p>
           ) : null}
-        </div>
-        <div className="min-w-0 rounded-md bg-muted/45 p-3">
-          <p className="flex items-center gap-1.5 font-medium text-foreground">
-            <HugeiconsIcon icon={InformationCircleIcon} aria-hidden className="size-4" />
-            Source-owned work
-          </p>
-          <p className="mt-1 text-muted-foreground">{repository.status.actions.work.note}</p>
         </div>
       </div>
 

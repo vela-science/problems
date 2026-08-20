@@ -60,8 +60,11 @@ export default async function ProposalsPage({
     <PageShell archetype="default" layout="reading">
       <RouteTitle title="Proposed changes" />
 
+      {/* No visible h2 repeating the page name. `RouteTitle` supplies the h1,
+          the breadcrumb and the sidebar already say "Proposed changes", and a
+          fourth copy made the page's own name its largest text. /decisions
+          removed exactly this and said so; this page had not followed. */}
       <div className="flex flex-wrap items-baseline justify-between gap-3 border-b pb-2">
-        <h2 className="text-subtitle">Proposed changes</h2>
         <span className="font-mono text-micro tabular-nums text-muted-foreground">
           {status
             ? `${visible.length.toLocaleString()} of ${entries.length.toLocaleString()} in this release`

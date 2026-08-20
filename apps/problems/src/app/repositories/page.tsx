@@ -59,7 +59,11 @@ export default async function RepositoriesPage() {
         <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
           <div>
             <h2 id="repository-state-heading" className="text-subtitle">Published repositories</h2>
-            <p className="mt-1 text-meta text-muted-foreground">Open a Repository to inspect current Standing and its exact source.</p>
+            {/* Said once, not once per row. "direct Submission" sat in each
+                row's <dl> beside Pending, which is real per-Repository data, so
+                a literal that is identical everywhere read as a fact that
+                varies. It is a property of the release, so it belongs here. */}
+            <p className="mt-1 text-meta text-muted-foreground">Open a Repository to inspect current Standing and its exact source. Every Repository in this release takes work by direct Submission.</p>
           </div>
           <div className="flex flex-wrap items-center gap-3 text-meta text-muted-foreground" aria-label="State map legend">
             <span className="flex items-center gap-1.5"><span aria-hidden className="size-1.5 rounded-full bg-status-evidence" /> retained evidence</span>
@@ -121,7 +125,6 @@ function RepositoryLedgerRow({ repository, maximumClaims }: { repository: SiteRe
       </div>
 
       <dl className="grid grid-cols-2 gap-3 text-meta md:col-span-2 2xl:col-span-1 2xl:grid-cols-1 2xl:gap-1.5">
-        <div><dt className="text-muted-foreground">Work path</dt><dd className="font-semibold">direct Submission</dd></div>
         <div><dt className="text-muted-foreground">Pending</dt><dd className={repository.status.counts.pending_review ? "font-semibold text-[var(--status-caution)]" : "font-semibold"}>{number.format(repository.status.counts.pending_review)}</dd></div>
       </dl>
 

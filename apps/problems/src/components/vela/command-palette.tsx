@@ -291,6 +291,16 @@ export function CommandPaletteProvider({
                     <CommandItem onSelect={() => navigate(PRODUCT_DOCS_URL)}><HugeiconsIcon icon={BookOpen} aria-hidden />Product docs</CommandItem>
                     <CommandItem onSelect={() => navigate("https://github.com/vela-science/vela")}><HugeiconsIcon icon={Code2} aria-hidden />Source</CommandItem>
                   </CommandGroup>
+                  {/* The trust routes live in the account menu, which signed
+                      out is a plain "Sign in" link. The palette works signed
+                      out, so it is the path that keeps a privacy notice
+                      readable without an account. */}
+                  <CommandGroup heading="About and policies">
+                    <CommandItem onSelect={() => navigate("/privacy")}><HugeiconsIcon icon={BookOpen} aria-hidden />Privacy</CommandItem>
+                    <CommandItem onSelect={() => navigate("/terms")}><HugeiconsIcon icon={BookOpen} aria-hidden />Terms</CommandItem>
+                    <CommandItem onSelect={() => navigate("/accessibility")}><HugeiconsIcon icon={BookOpen} aria-hidden />Accessibility</CommandItem>
+                    <CommandItem onSelect={() => navigate("/contact")}><HugeiconsIcon icon={BookOpen} aria-hidden />Contact</CommandItem>
+                  </CommandGroup>
                 </>
               ) : null}
             </CommandList>

@@ -65,10 +65,14 @@ describe("RepositoryContext", () => {
     expect(screen.getByRole("button", { name: "Clone exact source" })).toBeInTheDocument();
   });
 
-  it("describes direct submission as source-owned work, never zero work", () => {
+  it("never describes direct submission as zero work, and does not restate the note", () => {
     render(<RepositoryContext repository={repository} latestCommit={null} />);
 
-    expect(screen.getByText("Submit bounded evidence directly.")).toBeInTheDocument();
+    /* The hero carried a "Source-owned work" box repeating `work.note`, and the
+       page's own "Contribution path" section states it one screen below with
+       the command beside it. AGENTS.md:98 calls a fact restated next to itself
+       a defect, so the section keeps it and the hero does not. */
+    expect(screen.queryByText("Submit bounded evidence directly.")).toBeNull();
     expect(screen.queryByText(/0 work/u)).toBeNull();
   });
 });

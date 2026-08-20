@@ -91,9 +91,13 @@ export function AccountMenu() {
             Account
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          {/* Also in the sidebar, because these must be reachable signed out. */}
+          {/* The trust routes PRODUCT.md:136 requires. Signed out this menu is a
+              plain "Sign in" link, so the command palette carries the same set
+              — that is the only path a signed-out reader has to them. */}
           <DropdownMenuItem className="min-h-9" render={<Link href="/privacy" prefetch={false} />}>Privacy</DropdownMenuItem>
           <DropdownMenuItem className="min-h-9" render={<Link href="/terms" prefetch={false} />}>Terms</DropdownMenuItem>
+          <DropdownMenuItem className="min-h-9" render={<Link href="/accessibility" prefetch={false} />}>Accessibility</DropdownMenuItem>
+          <DropdownMenuItem className="min-h-9" render={<Link href="/contact" prefetch={false} />}>Contact</DropdownMenuItem>
           <DropdownMenuItem className="min-h-9" render={<Link href="/about" prefetch={false} />}>About</DropdownMenuItem>
           <DropdownMenuItem
             className="min-h-9 w-full"
