@@ -100,6 +100,14 @@ function repositoryRoute(pathname: string) {
   return { slug: parts[1]!, href: `/repositories/${parts[1]}`, section: parts[2] ?? "" };
 }
 
+const INFORMATION_LINKS = [
+  { href: "/about", label: "About" },
+  { href: "/privacy", label: "Privacy" },
+  { href: "/terms", label: "Terms" },
+  { href: "/accessibility", label: "Accessibility" },
+  { href: "/contact", label: "Contact" },
+] as const;
+
 const PRIMARY_DESTINATIONS: SidebarDestination[] = [
   { href: "/", label: "Home", icon: Home01Icon, exact: true },
   { href: "/problems", label: "Problems", icon: PuzzleIcon },
@@ -279,6 +287,32 @@ export function AppSidebar({ problemCollections = [{ namespace: "erdos-problems"
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {/* About, Privacy, Terms, Accessibility and Contact. Removing the site
+            footer left these with one inbound edge each — a nav that only
+            renders on pages already inside the cluster — so the whole policy
+            set hung off a single command-palette item. PRODUCT.md:136 keeps
+            them as trust routes, and a privacy notice has to be reachable
+            without signing in, which the account menu alone cannot do.
+
+            Low emphasis on purpose: small, muted, below the primary action,
+            and hidden when the rail is collapsed to icons. */}
+        {collapsedDesktop ? null : (
+          <div className="border-t border-sidebar-border px-2 py-2">
+            <nav aria-label="About and policies" className="flex flex-wrap gap-x-3 gap-y-1">
+              {INFORMATION_LINKS.map(({ href, label }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={closeMobileNavigation}
+                  className="inline-flex min-h-6 items-center text-micro text-sidebar-foreground/60 underline-offset-4 hover:text-sidebar-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2"
+                >
+                  {label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+        )}
       </SidebarContent>
 
       <SidebarRail />

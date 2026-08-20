@@ -90,6 +90,11 @@ export function AccountMenu() {
             <HugeiconsIcon icon={UserCircle} aria-hidden />
             Account
           </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          {/* Also in the sidebar, because these must be reachable signed out. */}
+          <DropdownMenuItem className="min-h-9" render={<Link href="/privacy" prefetch={false} />}>Privacy</DropdownMenuItem>
+          <DropdownMenuItem className="min-h-9" render={<Link href="/terms" prefetch={false} />}>Terms</DropdownMenuItem>
+          <DropdownMenuItem className="min-h-9" render={<Link href="/about" prefetch={false} />}>About</DropdownMenuItem>
           <DropdownMenuItem
             className="min-h-9 w-full"
             onClick={() => signOutForm.current?.requestSubmit()}
