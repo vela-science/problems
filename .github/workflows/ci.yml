@@ -53,13 +53,18 @@ jobs:
       - name: Lint and tests
         run: bun run lint && bun run test
 
-      # `check` covers typecheck, but nothing here compiled either app, so a
-      # break that only a real build catches stayed green on main: deleting a
+      # `check` covers typecheck, but nothing here compiled an app, so a break
+      # that only a real build catches stayed green on main: deleting a
       # stylesheet whose only importer lives outside `apps/` and `packages/`
-      # broke `@vela/www` without failing a single step. This also runs
-      # `check:public-output`, which needs built output to inspect.
-      - name: Build both apps
-        run: bun run build
+      # broke `@vela/www` without failing a single step.
+      #
+      # Only `@vela/www`. `bun run build` also builds `@vela/problems`, which
+      # reads the live projection database at build time and fails closed
+      # without `VELA_PROJECTION_DATABASE_URL` — CI holds no such credential
+      # and should not. The editorial app is the one that broke this way and
+      # the one that builds from a clean checkout, so it is the one guarded.
+      - name: Build the editorial app
+        run: bun run --filter @vela/brand build && bun run --filter @vela/www build
 
       - name: Patch hygiene
         run: bun run format:check
