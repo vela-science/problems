@@ -78,7 +78,12 @@ function Section({ id, title, description, action, children }: {
   action?: React.ReactNode;
   children: React.ReactNode;
 }) {
-  return <section aria-labelledby={id} className="max-w-3xl">
+  /* No section measure. The page header is full width, so a `max-w-3xl` here
+     put two different widths on one page — the intro rule ran past every
+     section rule beneath it — and left the account sitting in the left 45% of
+     a wide window. The shell owns the frame; prose below keeps its own
+     measure. */
+  return <section aria-labelledby={id} className="min-w-0">
     <div className="flex flex-wrap items-end justify-between gap-4 border-b pb-4">
       <div>
         <h2 id={id} className="text-title">{title}</h2>

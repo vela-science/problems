@@ -3,7 +3,7 @@ import { PageShell } from "@vela/ui/vela/page-shell";
 
 export default function SearchLoading() {
   return (
-    <PageShell archetype="data" layout="canvas"><RouteSkeleton label="Loading search">
+    <PageShell archetype="data"><RouteSkeleton label="Loading search">
       <IntroSkeleton />
       <ToolbarSkeleton controls={4} />
       <LedgerSkeleton rows={6} />

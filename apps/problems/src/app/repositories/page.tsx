@@ -33,7 +33,7 @@ export default async function RepositoriesPage() {
   const repositories = await allRepositories();
   const maximumClaims = Math.max(...repositories.map((repository) => statusClaimCount(repository.status)), 1);
   return (
-    <PageShell archetype="data" layout="canvas" className="flex flex-col gap-6">
+    <PageShell archetype="data" className="flex flex-col gap-6">
       <PageIntro
         title="Repositories"
         /* Counted from what the projection publishes. This read "Four exact Git

@@ -135,7 +135,7 @@ export default async function ClaimsPage({
   const last = (page - 1) * pageSize + result.items.length;
 
   return (
-    <PageShell archetype="data" layout="canvas">
+    <PageShell archetype="data">
       <RouteTitle title="Assertions" scope={repository.status.repository.name} />
 
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">

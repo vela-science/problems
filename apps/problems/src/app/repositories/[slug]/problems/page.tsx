@@ -108,7 +108,7 @@ export default async function ProblemsPage({
   ];
   const rail = liveFacetGroups(groups);
   return (
-    <PageShell archetype="data" layout="canvas">
+    <PageShell archetype="data">
       <RouteTitle title="Problems" scope={repository.status.repository.name} />
       {problemCount > pageSize || q ? (
         <form className="mb-5 flex gap-2" action={`/repositories/${slug}/problems`}>

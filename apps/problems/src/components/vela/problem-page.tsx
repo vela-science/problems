@@ -112,8 +112,12 @@ export async function ProblemPageView({ repository, problem, collectionName, rou
 
   /* The archetype holds still across the tabs — switching surface must not
      repaint the page's ground or move the hero. The Workspace widens through
-     `layout` alone, which touches the content region and not the frame. */
-  return <PageShell as="article" archetype="problem" layout="canvas" className="!pt-2">
+     `layout` alone, which touches the content region and not the frame.
+   * That widening was unconditional, so the four *reading* surfaces — the
+     question, its Results, its Sources, its history — were uncapped too, and
+     ran the full width of whatever display they opened on. Only the workspace
+     is the instrument that wants every pixel. */
+  return <PageShell as="article" archetype="problem" layout={view === "workspace" ? "canvas" : "standard"} className="!pt-2">
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
     {/* Spoken form, not the source TeX: the palette lists this as a name, and
         the raw statement would print `\mathbb{R}^2` into it. */}

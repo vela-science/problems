@@ -69,7 +69,7 @@ export default async function SourcesPage({
   });
 
   return (
-    <PageShell archetype="data" layout="canvas">
+    <PageShell archetype="data">
       <SourceRegistryView
         registry={result}
         filters={{

@@ -81,7 +81,7 @@ export default async function SourcePage({
   if (!id) notFound();
   if (id === formalConjecturesAuditSourceId) {
     const source = formalConjecturesAuditProjection.source;
-    return <PageShell archetype="data" layout="canvas">
+    return <PageShell archetype="data">
       <PageIntro
         title="Formal Conjectures PR audit"
         description="Five exact source-local records retain upstream pull-request state, scoped checks, semantic findings, and artifact availability without importing authority into Math."
@@ -115,7 +115,7 @@ export default async function SourcePage({
   if (result.sources.length !== 1) notFound();
 
   return (
-    <PageShell archetype="data" layout="canvas">
+    <PageShell archetype="data">
       <SourceRecordView
         source={result.sources[0]}
         releaseRoot={result.release_root}

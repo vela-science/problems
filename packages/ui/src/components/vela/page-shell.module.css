@@ -6,10 +6,25 @@
      --muted and --accent. Redefining it as a length here shadowed it for
      every descendant of a page. */
   --vela-page-inset: var(--vela-page-gutter);
+  /* The shell owns maximum width — its own contract says so, and it was set to
+     `none`, which left every route to solve the wide-window case alone. They
+     solved it two incompatible ways: dense ledgers stretched rows the full
+     width of a 2560px display, while `/account` pinned itself to `max-w-3xl`
+     and sat in the left 45% of the frame with its own header rule running
+     wider than its sections. Neither reads as deliberate.
+   * One centered maximum fixes both: routes fill the frame they are given, and
+     the frame stops growing before rows become unscannable. */
+  --vela-page-max: 96rem;
   margin-inline: auto;
   width: 100%;
-  max-width: none;
+  max-width: var(--vela-page-max);
   padding: var(--vela-page-block) var(--vela-page-gutter);
+}
+
+/* Prose sets its own measure per `typeset.css`; the frame only stops the
+   surrounding furniture from drifting apart on a wide display. */
+.page[data-layout="reading"] {
+  --vela-page-max: 84rem;
 }
 
 /* `width: 100%` only. This rule used to add `max-width: none`, which beat the
@@ -22,8 +37,10 @@
   width: 100%;
 }
 
+/* A canvas is the one surface that genuinely wants every pixel: the graph and
+   the work surface are pan-and-zoom instruments, not documents. */
 .page[data-layout="canvas"] {
-  max-width: none;
+  --vela-page-max: none;
 }
 
 .page:has(> .hero) {

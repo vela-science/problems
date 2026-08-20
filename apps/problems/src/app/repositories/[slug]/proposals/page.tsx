@@ -65,7 +65,7 @@ export default async function ProposalsPage({ params, searchParams }: PageProps<
 
   if (!reviews.length) {
     return (
-      <PageShell archetype="data" layout="canvas">
+      <PageShell archetype="data">
         <RouteTitle title="Proposed changes" scope={repository.status.repository.name} />
         <Empty className="border">
           <EmptyHeader>
@@ -95,7 +95,7 @@ export default async function ProposalsPage({ params, searchParams }: PageProps<
   const family = sweepFamily(reviews);
 
   return (
-    <PageShell archetype="data" layout="canvas">
+    <PageShell archetype="data">
       <RouteTitle title="Proposed changes" scope={repository.status.repository.name} />
 
       <div className="mb-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">

@@ -139,7 +139,9 @@ function History({ item }: { item: FormalConjectureOccurrence }) {
 
 export function FormalConjecturePage({ item, route, current }: { item: FormalConjectureOccurrence; route: string; current: ProblemReferenceView }) {
   const collectionHref = "/problems/formal-conjectures";
-  return <PageShell as="article" archetype="problem" layout="canvas" className="!pt-2">
+  /* No workspace on this route — it is a reading surface end to end, so it
+     takes the ordinary capped frame rather than the canvas one. */
+  return <PageShell as="article" archetype="problem" className="!pt-2">
     <header className="mt-2 rounded-lg bg-[var(--vela-ink)] px-5 py-5 text-sidebar-foreground sm:px-7 sm:py-6">
       <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-meta text-sidebar-foreground/75"><Link href={collectionHref} className="hover:text-sidebar-foreground">Formal Conjectures</Link><span aria-hidden className="mx-2">/</span><span>{item.source_family}</span></p><h1 className="mt-3 max-w-[34ch] text-display leading-tight"><HumanText>{item.title}</HumanText></h1><p className="mt-3 max-w-3xl text-compact text-sidebar-foreground/75">Exact formalization occurrence from the upstream source collection.</p></div><Button nativeButton={false} size="sm" render={<a href={item.source_url} />}>Open source <HugeiconsIcon icon={ArrowUpRight01Icon} aria-hidden data-icon="inline-end" /></Button></div>
       <dl className="mt-6 grid gap-px overflow-hidden rounded-md bg-sidebar-foreground/15 sm:grid-cols-3">

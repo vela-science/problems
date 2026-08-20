@@ -58,7 +58,7 @@ export default async function ContributorProfilePage({ params }: { params: Promi
   const { identity } = await params;
   const resolved = await resolveProfile(identity);
   if (!resolved) notFound();
-  return <PageShell archetype="default" layout="canvas" className="py-6 sm:py-8">
+  return <PageShell archetype="default" className="py-6 sm:py-8">
     <PublicPerformerProfile {...resolved} />
   </PageShell>;
 }
