@@ -9,6 +9,7 @@ import { RelativeTime } from "@/components/vela/relative-time";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@vela/ui/components/empty";
 import { FilterChips } from "@/components/vela/filter-chips";
 import { Button } from "@vela/ui/components/button";
+import { WITHDRAWAL_NOTE } from "@/components/vela/proposal-ledger";
 
 export const metadata: Metadata = {
   title: "Decisions",
@@ -155,9 +156,7 @@ export default async function DecisionsPage({ searchParams }: PageProps<"/decisi
                 >
                   {entry.claim || entry.target || entry.proposalId}
                 </Link>
-                <p className="mt-1.5 text-compact text-muted-foreground">
-                  Withdrawn by the producer. No repository authority ruled on it.
-                </p>
+                <p className="mt-1.5 text-compact text-muted-foreground">{WITHDRAWAL_NOTE}</p>
                 {entry.actor ? (
                   <p className="mt-1 min-w-0 truncate font-mono text-micro text-muted-foreground">{entry.actor}</p>
                 ) : null}

@@ -13,9 +13,9 @@ import { RecordFacts, type RecordFact } from "@/components/vela/record-facts";
 import { RecordHeader } from "@/components/vela/record-header";
 import { DecisionBoundary, ProposedStatePreviewSection, ProposedTransition } from "@/components/vela/decision-boundary";
 import { RecordId } from "@/components/vela/record-id";
-import { verificationOutcomeCounts } from "@/components/vela/proposal-ledger";
+import { decisionLabel, proposalTimings, WITHDRAWAL_NOTE, verificationOutcomeCounts } from "@/components/vela/proposal-ledger";
 import { parseCodeParameters, parseSweepWindow } from "@/lib/claim-shape";
-import { formatDate, formatElapsed } from "@/lib/format";
+import { formatDate } from "@/lib/format";
 import { recordTitle } from "@/lib/product-language";
 
 /* A Proposal is a record, so it gets a record's URL.
@@ -72,11 +72,6 @@ function shapeFacts(review: ReviewSummary): RecordFact[] {
   return [];
 }
 
-function decisionLabel(review: ReviewSummary): string {
-  if (review.decision_actor_class === "agent") return "Agent Decision";
-  if (review.decision_actor_class === "human") return "Human Decision";
-  return "Attributed Decision";
-}
 
 export default async function ProposalPage({ params }: PageProps<"/repositories/[slug]/proposals/[proposalId]">) {
   const { slug, proposalId } = await params;
@@ -86,13 +81,7 @@ export default async function ProposalPage({ params }: PageProps<"/repositories/
   const shape = shapeFacts(review);
   const verification = reviewVerification(review);
   const outcomeCounts = verificationOutcomeCounts(review);
-  const passed = (review.verification_records ?? [])
-    .filter((entry) => entry.outcome === "pass" && entry.completed_at)
-    .map((entry) => entry.completed_at!)
-    .sort();
-  const passedIn = formatElapsed(review.created_at, passed[0] ?? null);
-  const decidedIn = formatElapsed(review.created_at, review.reviewed_at);
-  const withdrawn = review.decision_provenance === "producer_withdrawal";
+  const { passedIn, decidedIn, withdrawn } = proposalTimings(review);
   const pending = review.status === "pending_review";
 
   return (
@@ -165,7 +154,7 @@ export default async function ProposalPage({ params }: PageProps<"/repositories/
         </h2>
         <p className="max-w-[85ch] text-body">
           {withdrawn
-            ? "Withdrawn by the producer. No repository authority ruled on it."
+            ? WITHDRAWAL_NOTE
             : pending
               ? "No Decision has been recorded."
               : review.decision_reason || "No Decision reason is retained."}

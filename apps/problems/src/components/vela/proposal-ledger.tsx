@@ -34,7 +34,13 @@ export function proposalStatus(status: string): ProposalStatus {
   }
 }
 
-function decisionLabel(review: ReviewSummary): string {
+/* One home. This was defined byte-identically here and on the Proposal record
+   page, which already imports from this module. */
+/* The same sentence appeared in three files. It is a claim about authority —
+   that nobody ruled on this — so it should read identically everywhere. */
+export const WITHDRAWAL_NOTE = "Withdrawn by the producer. No repository authority ruled on it.";
+
+export function decisionLabel(review: ReviewSummary): string {
   if (review.decision_actor_class === "agent") return "Agent Decision";
   if (review.decision_actor_class === "human") return "Human Decision";
   return "Attributed Decision";
@@ -79,17 +85,26 @@ export function evidenceLine(review: ReviewSummary): string {
 
 /* The producer's own submission time is not retained on every row, so the
    Proposal's creation is the common origin both durations are measured from. */
-export function timingLine(review: ReviewSummary): string | null {
+/* The durations, not their presentation. The ledger joins them into one line;
+   the Proposal record page interleaves them with other metadata segments, and
+   was recomputing both from the same fields rather than importing them. */
+export function proposalTimings(review: ReviewSummary) {
   const passed = (review.verification_records ?? [])
     .filter((record) => record.outcome === "pass" && record.completed_at)
     .map((record) => record.completed_at!)
     .sort();
-  const passedIn = formatElapsed(review.created_at, passed[0] ?? null);
-  const decided = formatElapsed(review.created_at, review.reviewed_at);
-  const withdrawn = review.decision_provenance === "producer_withdrawal";
+  return {
+    passedIn: formatElapsed(review.created_at, passed[0] ?? null),
+    decidedIn: formatElapsed(review.created_at, review.reviewed_at),
+    withdrawn: review.decision_provenance === "producer_withdrawal",
+  };
+}
+
+export function timingLine(review: ReviewSummary): string | null {
+  const { passedIn, decidedIn, withdrawn } = proposalTimings(review);
   const parts = [
     passedIn ? `first pass reported in ${passedIn}` : null,
-    decided && !withdrawn ? `Decision recorded in ${decided}` : null,
+    decidedIn && !withdrawn ? `Decision recorded in ${decidedIn}` : null,
   ].filter(Boolean);
   return parts.length ? parts.join(" · ") : null;
 }
@@ -157,7 +172,7 @@ export function ProposalLedger({
               </p>
               <p className="line-clamp-2 max-w-[72ch] text-compact text-foreground">
                 {withdrawn
-                  ? "Withdrawn by the producer. No repository authority ruled on it."
+                  ? WITHDRAWAL_NOTE
                   : review.decision_reason ?? (pending ? "No Decision has been recorded." : "No Decision reason is retained.")}
               </p>
               {!pending ? (
