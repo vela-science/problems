@@ -21,7 +21,7 @@
  * Capping the paragraph instead left the right side of the box empty and
  * centred the display equation on the paragraph's axis rather than the card's,
  * so the formula sat visibly left of centre. Capping the figure keeps the
- * 44-52rem reading measure (DESIGN.md:237) and lets the equation centre on the
+ * 44-52rem reading measure (DESIGN.md:248) and lets the equation centre on the
  * box a reader actually sees. */
 .statement {
   max-width: 48rem;

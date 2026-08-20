@@ -19,9 +19,9 @@ import { RepositoryMark, repositoryStages } from "@/components/vela/repository-m
 
 export const metadata: Metadata = {
   title: "Repositories",
-  /* No count. The body four lines down was corrected for this today and this
-     was missed — it is the indexed description of the app's root destination,
-     since vercel.json 308s `/` here. A number here is wrong the moment the
+  /* No count. `/` is a real Home page and this is not it: apps/problems's
+     vercel.json redirects only /hubs, /work and /docs, so the claim this
+     comment used to make about a 308 was false. A number here is wrong the moment the
      projection publishes a different set, and metadata is static. */
   description: "The repositories that publish current scientific state to problems.science.",
   alternates: { canonical: "/repositories" },

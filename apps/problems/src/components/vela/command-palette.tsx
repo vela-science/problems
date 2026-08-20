@@ -205,11 +205,15 @@ export function CommandPaletteProvider({
                   {searching ? <p className="px-3 py-2 text-body text-muted-foreground" role="status">Searching published data…</p> : null}
                   {!searching && !searchError && records.length === 0 ? <p className="px-3 py-2 text-body text-muted-foreground" role="status">No published result matches.</p> : null}
                   {searchError ? <p className="px-3 py-2 text-body text-destructive" role="alert">Search is temporarily unavailable.</p> : null}
-                  {records.length === 0 ? (
+                  {/* Always, not only at zero results. The palette shows at
+                      most twelve truncated rows out of as many as 250, and
+                      offering the full view only when nothing matched left a
+                      reader with a dozen hits and no way through. */}
+                  {(
                     <CommandGroup heading="Continue">
                       <CommandItem value={`full search ${normalized}`} onSelect={() => navigate(`/search?q=${encodeURIComponent(normalized)}`)}><HugeiconsIcon icon={Search} aria-hidden />Open full search for “{normalized}”</CommandItem>
                     </CommandGroup>
-                  ) : null}
+                  )}
                 </>
               ) : currentRepository ? (
                 <>

@@ -142,7 +142,16 @@ export function SearchResults({ projectionRoot, searchRoot, collectionRoot, repo
         exists because rank on a scientific record is the one place a reader
         might read position as standing, and that stays true whichever order
         produced it. */}
-    <div className="border-b px-4 py-2 text-meta text-muted-foreground"><span aria-live="polite">{!hasIntent ? "Ready for a query" : records ? (records.length < total ? `Showing ${records.length.toLocaleString()} of ${total.toLocaleString()} results` : `${total.toLocaleString()} results`) : "Verifying search projection…"}</span></div>
+    <div className="border-b px-4 py-2 text-meta text-muted-foreground"><span aria-live="polite">{!hasIntent ? "Ready for a query" : records ? (records.length < total ? `Showing ${records.length.toLocaleString()} of ${total.toLocaleString()} results` : `${total.toLocaleString()} results`) : "Verifying search projection…"}</span>
+      {hasIntent && records ? <p className="mt-1">
+        {/* The comment above this block said "the sentence exists". It did not:
+            results are a fixed concatenation — Formal Conjectures, then the
+            Erdős catalogue, then projection records — and nothing told a reader
+            that, so "Showing 250 of N" read as "the 250 best matches". Order
+            here is not standing. */}
+        Ordered by match, not by standing. A position in this list says nothing about whether a Result was accepted.
+      </p> : null}
+    </div>
     <CommandList className="max-h-[62vh] p-1">
       {!records ? <div className="p-2"><LedgerSkeleton rows={5} /></div> : null}
       {!hasIntent ? <Empty className="min-h-56 border-0"><EmptyHeader><EmptyMedia variant="icon"><HugeiconsIcon aria-hidden icon={Search}  /></EmptyMedia><EmptyTitle>Find a scientific Problem or Result</EmptyTitle><EmptyDescription>Search by question, collection-local number, result, or source. Exact record filters remain available when you need them.</EmptyDescription></EmptyHeader></Empty> : null}

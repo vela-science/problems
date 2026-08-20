@@ -3,8 +3,8 @@
  * This filled the hero with a horizon/stardust wash and, in dark, with
  * midnight — the only route on the site to paint its own slab; every other
  * hero is deliberately transparent (globals.css, "Route leads are ordinary
- * product headers"). DESIGN.md:292 "Do not use a dark hero slab on application
- * routes", and :325 Home "does not carry an editorial plate". */
+ * product headers"). DESIGN.md:303 "Do not use a dark hero slab on application
+ * routes", and :339 Home "does not carry an editorial plate". */
 .hero {
   border-bottom: 0;
   background: transparent;
@@ -24,9 +24,9 @@
 .task { grid-area: task; min-width: 0; }
 .collections { grid-area: collections; min-width: 0; }
 
-/* DESIGN.md:218 puts a page title at 1.75–2.25rem. This ran to 4.5rem, which
-   is editorial-display territory and read as a marketing headline on the
-   product's entry route. */
+/* DESIGN.md:225 names Home the one route allowed 1.75–2.25rem. This ran to
+   4.5rem, which is editorial-display territory and read as a marketing
+   headline on the product's entry route. */
 .title {
   max-width: 22ch;
   font-size: clamp(1.75rem, 3vw, 2.25rem);
@@ -45,7 +45,7 @@
   text-wrap: pretty;
 }
 
-/* An ordinary contained surface: 8px per DESIGN.md:230, the working border,
+/* An ordinary contained surface: 8px per DESIGN.md:239, the working border,
    and no brand tint. Gold and horizon are "never status" and the collection
    list is product furniture. */
 .collectionList {

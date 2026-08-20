@@ -24,9 +24,12 @@ export async function generateMetadata({ params }: PageProps<"/repositories/[slu
     : {};
 }
 
-/* This used to redirect to `/graph?repository=<slug>`, which dropped the repository
-   tab bar and emptied the breadcrumb. The graph now renders inside the repository
-   workspace, scoped to this repository, so the local navigation survives. */
+/* This used to redirect to `/graph?repository=<slug>`, which emptied the
+   breadcrumb. It renders in place instead, so the Repository's own navigation
+   survives — which, until the sidebar gained a Repository group, meant the
+   breadcrumb alone. The "repository tab bar" this comment used to name has
+   never existed in this codebase; `repository-nav.tsx` is on the banned list
+   at scripts/check-problems-design-system.mjs. */
 export default async function RepositoryGraphPage({ params }: PageProps<"/repositories/[slug]/graph">) {
   const { slug } = await params;
   const [repository, manifest] = await Promise.all([repositoryBySlug(slug), projectionManifest()]);
