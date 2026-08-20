@@ -13,6 +13,11 @@
   "cleanUrls": true,
   "redirects": [
     {
+      "source": "/hubs",
+      "destination": "/problems",
+      "permanent": true
+    },
+    {
       "source": "/work",
       "destination": "/contribute",
       "permanent": true
