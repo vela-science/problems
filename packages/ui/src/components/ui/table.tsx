@@ -4,15 +4,27 @@ import * as React from "react"
 
 import { cn } from "#lib/utils"
 
-function Table({ className, ...props }: React.ComponentProps<"table">) {
+/* The scroll container is focusable, because a scroll container that only a
+   mouse can reach is a WCAG 2.1.1 failure: a keyboard user cannot see the
+   columns past the fold. `tabIndex={0}` plus a region role is the pattern
+   already used by hand at `source-corpus-map.tsx:123`; the primitive is what
+   was missing it, across every table on the site.
+
+   `aria-label` is accepted so a caller can name the region; without one the
+   container stays a plain focusable scroller rather than an unnamed landmark. */
+function Table({ className, "aria-label": label, ...props }: React.ComponentProps<"table">) {
   return (
     <div
       data-slot="table-container"
-      className="relative w-full overflow-x-auto"
+      className="relative w-full overflow-x-auto focus-visible:outline-2 focus-visible:outline-offset-2"
+      tabIndex={0}
+      role={label ? "region" : undefined}
+      aria-label={label}
     >
       <table
         data-slot="table"
         className={cn("w-full caption-bottom text-sm", className)}
+        aria-label={label}
         {...props}
       />
     </div>

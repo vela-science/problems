@@ -52,7 +52,6 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     name: repository.status.repository.name,
     pending: repository.status.counts.pending_review,
     hasGraph: Boolean(repository.graph),
-    hasProblems: (repository.graph?.problem_count ?? 0) > 0,
   }));
 
   return (

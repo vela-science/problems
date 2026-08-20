@@ -71,7 +71,7 @@ export function AccountMenu() {
             />
           )}
         >
-          <span aria-hidden className="flex size-7 items-center justify-center rounded-full bg-foreground text-[0.6875rem] font-semibold text-background">
+          <span aria-hidden className="flex size-7 items-center justify-center rounded-full bg-foreground text-micro font-semibold text-background">
             {account.initials}
           </span>
         </DropdownMenuTrigger>

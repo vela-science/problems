@@ -26,7 +26,7 @@ const proposalId = "vpr_7aba66544ffefd99";
 const projectionRoot = `sha256:${"7".repeat(64)}`;
 const searchRoot = `sha256:${"8".repeat(64)}`;
 const collectionRoot = `sha256:${"9".repeat(64)}`;
-const repositories = [{ slug: "formal-conjectures", name: "Formal Conjectures", pending: 0, hasGraph: true, hasProblems: true }];
+const repositories = [{ slug: "formal-conjectures", name: "Formal Conjectures", pending: 0, hasGraph: true }];
 const problemCollections = [{ namespace: "erdos-problems", name: "Erdős Problems" }];
 
 function CommandPaletteProvider(props: Omit<React.ComponentProps<typeof ActualCommandPaletteProvider>, "collectionRoot">) {

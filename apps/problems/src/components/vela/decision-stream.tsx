@@ -124,8 +124,8 @@ export function DecisionStream({ entries }: { entries: DecisionEntry[] }) {
                   <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
                     {entry.actor ? (
                       <span className="flex min-w-0 items-center gap-1.5" title={entry.actor}>
-                        <Avatar className="size-4">
-                          <AvatarFallback className="text-[0.5rem]">{badge ?? "··"}</AvatarFallback>
+                        <Avatar className="size-5">
+                          <AvatarFallback className="text-micro">{badge ?? "··"}</AvatarFallback>
                         </Avatar>
                         <span className="min-w-0 truncate font-mono text-micro text-muted-foreground">{entry.actor}</span>
                       </span>

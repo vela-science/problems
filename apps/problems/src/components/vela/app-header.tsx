@@ -21,7 +21,6 @@ type PublishedRepository = {
   name: string;
   pending: number;
   hasGraph: boolean;
-  hasProblems: boolean;
 };
 
 const sectionTitles: Record<string, string> = {

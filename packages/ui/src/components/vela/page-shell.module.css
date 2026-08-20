@@ -1,16 +1,25 @@
 .page {
   --vela-page-layer: var(--background);
   --vela-page-accent: color-mix(in oklab, var(--vela-color-stardust) 48%, var(--border));
-  --vela-surface-inset: var(--vela-page-gutter);
+  /* Not `--vela-surface-inset`: that name is a COLOUR in the brand layer
+     (tokens.css:90) and `editorial.css` reads it as one for --secondary,
+     --muted and --accent. Redefining it as a length here shadowed it for
+     every descendant of a page. */
+  --vela-page-inset: var(--vela-page-gutter);
   margin-inline: auto;
   width: 100%;
   max-width: none;
   padding: var(--vela-page-block) var(--vela-page-gutter);
 }
 
+/* `width: 100%` only. This rule used to add `max-width: none`, which beat the
+   Tailwind utility on every non-hero child and so *destroyed* any measure a
+   route set for itself: `public-information-page.tsx` asks for `max-w-3xl` and
+   computed to `none`, running 244 characters to the line at 1920px.
+
+   `typeset.css:5` says layout owns measure. Layout was overriding it. */
 .page[data-layout="reading"] > :not(.hero) {
   width: 100%;
-  max-width: none;
 }
 
 .page[data-layout="canvas"] {
@@ -47,7 +56,7 @@
   border-radius: var(--radius-xl);
   background: var(--vela-page-layer);
   padding-block: clamp(2rem, 5vw, 4rem);
-  padding-inline: var(--vela-surface-inset);
+  padding-inline: var(--vela-page-inset);
 }
 
 .heroCompact {

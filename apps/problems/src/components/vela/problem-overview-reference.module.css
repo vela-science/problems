@@ -160,8 +160,6 @@
   line-height: 1.3rem;
 }
 
-.relationshipStrip strong,
-
 .stateMeta {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -261,7 +259,7 @@
 }
 
 @media (forced-colors: active) {
-  .heroRail, .statePanel, .boundFigure, .workList, .rail { border-color: CanvasText; }
+  .heroRail, .statePanel, .rail { border-color: CanvasText; }
   .unresolved { border-color: CanvasText; background: Canvas; }
 }
 

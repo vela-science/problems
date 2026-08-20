@@ -10,7 +10,7 @@ import { ProjectionRootProvider } from "@/components/vela/record-preview";
 import { AccountStateProvider } from "@/components/vela/account-state";
 import type { PublishedProblemCollection } from "@/lib/problem-collections";
 
-type PublishedRepository = { slug: string; name: string; pending: number; hasGraph: boolean; hasProblems: boolean };
+type PublishedRepository = { slug: string; name: string; pending: number; hasGraph: boolean };
 
 export function AppShell({
   children,

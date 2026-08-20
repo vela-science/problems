@@ -40,7 +40,7 @@ function EmptyInspector({ kind }: { kind: "activity" | "discussion" }) {
     <Empty className="min-h-56 border-0 px-3">
       <EmptyHeader>
         <EmptyMedia variant="icon">
-          <HugeiconsIcon icon={discussion ? Note04Icon : Activity01Icon} strokeWidth={1.8} />
+          <HugeiconsIcon aria-hidden icon={discussion ? Note04Icon : Activity01Icon} strokeWidth={1.8} />
         </EmptyMedia>
         <EmptyTitle>{discussion ? "No discussion for this object" : "No activity for this object"}</EmptyTitle>
         <EmptyDescription>

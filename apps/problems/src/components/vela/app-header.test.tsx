@@ -30,7 +30,6 @@ const repositories = [{
   name: "Quantum Codes",
   pending: 0,
   hasGraph: false,
-  hasProblems: false,
 }];
 const problemCollections = [{ namespace: "erdos-problems", name: "Erdős Problems" }];
 

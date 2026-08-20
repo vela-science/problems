@@ -48,7 +48,7 @@ export function HomeResultRow({ state, href, number }: { state: State; href: str
       data-check-outcome={outcome ?? "none"}
       className={`mt-0.5 size-8 rounded-full ${presentation.className}`}
     >
-      <HugeiconsIcon icon={presentation.icon} className="size-4" />
+      <HugeiconsIcon aria-hidden icon={presentation.icon} className="size-4" />
     </ItemMedia>
     <ItemContent>
       <ItemTitle className="line-clamp-none flex-wrap gap-2">

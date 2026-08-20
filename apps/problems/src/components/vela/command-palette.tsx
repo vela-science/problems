@@ -19,7 +19,7 @@ import { JUMP_DESTINATIONS, KeyboardShortcuts } from "@/components/vela/keyboard
 import { loadSearchIndex } from "@/lib/search-index";
 import { problemCollectionForPath, problemCollectionRecordLabel, type PublishedProblemCollection } from "@/lib/problem-collections";
 
-type PublishedRepository = { slug: string; name: string; pending: number; hasGraph: boolean; hasProblems: boolean };
+type PublishedRepository = { slug: string; name: string; pending: number; hasGraph: boolean };
 type CommandContextValue = { open: boolean; setOpen: (open: boolean) => void };
 
 const CommandContext = createContext<CommandContextValue | null>(null);
@@ -216,7 +216,7 @@ export function CommandPaletteProvider({
                   <CommandGroup heading={`Current repository · ${currentRepository.slug}`}>
                     <CommandItem onSelect={() => navigate(`/repositories/${currentRepository.slug}`)}><HugeiconsIcon icon={GitFork} aria-hidden />Overview</CommandItem>
                     <CommandItem onSelect={() => navigate(`/repositories/${currentRepository.slug}/claims`)}><HugeiconsIcon icon={FileSearch} aria-hidden />Assertions</CommandItem>
-                    {currentRepository.hasProblems ? <CommandItem onSelect={() => navigate(`/repositories/${currentRepository.slug}/problems`)}><HugeiconsIcon icon={ListTodo} aria-hidden />Problems</CommandItem> : null}
+                    <CommandItem onSelect={() => navigate(`/repositories/${currentRepository.slug}/problems`)}><HugeiconsIcon icon={ListTodo} aria-hidden />Problems</CommandItem>
                     <CommandItem onSelect={() => navigate(`/repositories/${currentRepository.slug}/contribute`)}><HugeiconsIcon icon={ListTodo} aria-hidden />Contribution handoff</CommandItem>
                     <CommandItem onSelect={() => navigate(`/repositories/${currentRepository.slug}/proposals`)}><HugeiconsIcon icon={ShieldCheck} aria-hidden />Proposed changes</CommandItem>
                     {currentRepository.hasGraph ? <CommandItem onSelect={() => navigate(`/repositories/${currentRepository.slug}/graph`)}><HugeiconsIcon icon={GitFork} aria-hidden />Evidence graph</CommandItem> : null}

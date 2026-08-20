@@ -49,7 +49,12 @@ export function PublicInformationPage({
         <div className="mt-6"><PublicInformationNav current={current} /></div>
       </PageHero>
 
-      <div className={aside ? "grid gap-10 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-start" : "max-w-3xl"}>
+      {/* The measure has to hold in both branches. `max-w-3xl` was on the
+          no-aside branch only, so a page with an aside gave its prose a
+          `minmax(0,1fr)` column and ran 262 characters to the line at 1920px —
+          against the 44-52rem band in DESIGN.md. `typeset.css:5` puts the
+          measure on layout, and this template is that layout. */}
+      <div className={aside ? "grid gap-10 lg:grid-cols-[minmax(0,48rem)_18rem] lg:items-start" : "max-w-3xl"}>
         <div className="space-y-10">{children}</div>
         {aside ? <aside className="rounded-xl border bg-muted/25 p-5 text-meta leading-6 lg:sticky lg:top-6">{aside}</aside> : null}
       </div>

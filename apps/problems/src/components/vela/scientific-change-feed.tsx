@@ -45,7 +45,7 @@ export function ScientificChangeFeed({
     {changes.map(({ repository, commit }) => {
       const transitionSummary = commit.transition && plainLanguage ? plainTransitionSummary(commit.transition) : null;
       return <li key={`${repository.slug}/${commit.sha}`} className={`${compact ? "relative py-3 pl-10" : "relative py-5 pl-10 sm:grid sm:grid-cols-[7rem_minmax(0,1fr)_auto] sm:gap-4"} vela-object-row rounded-md pe-2`}>
-      <span className={`absolute left-0 top-[.8rem] z-10 grid size-7 place-items-center rounded-full border border-background ring-1 ring-border forced-colors:border-2 ${commit.transition ? "bg-status-evidence/15 text-status-evidence" : "bg-muted text-muted-foreground"}`} aria-hidden><HugeiconsIcon icon={commit.transition ? Activity01Icon : GitCommitIcon} className="size-3.5" /></span>
+      <span className={`absolute left-0 top-[.8rem] z-10 grid size-7 place-items-center rounded-full border border-background ring-1 ring-border forced-colors:border-2 ${commit.transition ? "bg-status-evidence/15 text-status-evidence" : "bg-muted text-muted-foreground"}`} aria-hidden><HugeiconsIcon aria-hidden icon={commit.transition ? Activity01Icon : GitCommitIcon} className="size-3.5" /></span>
       {!compact ? <time dateTime={commit.committed_at} title={formatDate(commit.committed_at)} className="text-meta text-muted-foreground">{formatAgo(commit.committed_at)}</time> : null}
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-2">

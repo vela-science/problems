@@ -52,7 +52,7 @@ function Overview({ item, route }: { item: FormalConjectureOccurrence; route: st
           <h2 id="fc-formal-statement" className="text-label">Lean declaration</h2>
           <Link href={`${route}/sources`} className="text-meta font-medium text-primary hover:underline">Open source view</Link>
         </div>
-        <pre className="overflow-x-auto p-5 text-[0.82rem] leading-6"><code>{item.formal_statement}</code></pre>
+        <pre className="overflow-x-auto p-5 text-compact leading-6"><code>{item.formal_statement}</code></pre>
       </section>
       {related.length ? <section aria-labelledby="fc-related" className="border-y py-4">
         <h2 id="fc-related" className="text-label">Related formalizations</h2>
@@ -122,7 +122,7 @@ function Sources({ item }: { item: FormalConjectureOccurrence }) {
     <div className="min-w-0">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b px-4 py-3"><div className="flex min-w-0 items-center gap-2 text-label"><HugeiconsIcon icon={SourceCodeIcon} aria-hidden className="size-4" /><span className="truncate">{item.declaration}</span></div><a href={item.source_url} className="text-meta font-medium text-primary hover:underline">Open whole file</a></div>
       <p className="border-b bg-muted/15 px-4 py-2 text-micro text-muted-foreground">Exact retained declaration excerpt — not the whole file.</p>
-      <pre className="max-h-[36rem] overflow-auto p-4 text-[0.78rem] leading-6"><code>{item.source_excerpt}</code></pre>
+      <pre className="max-h-[36rem] overflow-auto p-4 text-compact leading-6"><code>{item.source_excerpt}</code></pre>
     </div>
   </section>;
 }
@@ -138,7 +138,7 @@ export function FormalConjecturePage({ item, route, current }: { item: FormalCon
   const collectionHref = "/problems/formal-conjectures";
   return <PageShell as="article" archetype="problem" layout="canvas" className="!pt-2">
     <header className="mt-2 rounded-lg bg-[var(--vela-ink)] px-5 py-5 text-sidebar-foreground sm:px-7 sm:py-6">
-      <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-meta text-sidebar-foreground/75"><Link href={collectionHref} className="hover:text-sidebar-foreground">Formal Conjectures</Link><span aria-hidden className="mx-2">/</span><span>{item.source_family}</span></p><h1 className="mt-3 max-w-[34ch] text-[clamp(1.65rem,3.2vw,2.75rem)] leading-[1.08] font-semibold tracking-[-0.035em]"><HumanText>{item.title}</HumanText></h1><p className="mt-3 max-w-3xl text-compact text-sidebar-foreground/75">Exact formalization occurrence from the upstream source collection.</p></div><Button nativeButton={false} size="sm" render={<a href={item.source_url} />}>Open source <HugeiconsIcon icon={ArrowUpRight01Icon} aria-hidden data-icon="inline-end" /></Button></div>
+      <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-meta text-sidebar-foreground/75"><Link href={collectionHref} className="hover:text-sidebar-foreground">Formal Conjectures</Link><span aria-hidden className="mx-2">/</span><span>{item.source_family}</span></p><h1 className="mt-3 max-w-[34ch] text-display leading-tight"><HumanText>{item.title}</HumanText></h1><p className="mt-3 max-w-3xl text-compact text-sidebar-foreground/75">Exact formalization occurrence from the upstream source collection.</p></div><Button nativeButton={false} size="sm" render={<a href={item.source_url} />}>Open source <HugeiconsIcon icon={ArrowUpRight01Icon} aria-hidden data-icon="inline-end" /></Button></div>
       <dl className="mt-6 grid gap-px overflow-hidden rounded-md bg-sidebar-foreground/15 sm:grid-cols-3">
         <div className="bg-sidebar/80 px-4 py-3"><dt className="text-micro text-sidebar-foreground/70">Source category</dt><dd className="mt-1 text-label capitalize">{item.category}</dd></div>
         <div className="bg-sidebar/80 px-4 py-3"><dt className="text-micro text-sidebar-foreground/70">Formal proof</dt><dd className="mt-1 text-label">{item.formal_proof ? "Retained" : "Not retained"}</dd></div>

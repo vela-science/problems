@@ -27,7 +27,7 @@ export function ContributionStepper({ current = 1, heading = "From question to c
         return <li key={step.title} aria-current={active ? "step" : undefined} className="relative grid grid-cols-[2.5rem_minmax(0,1fr)] gap-3 pb-6 last:pb-0 sm:block sm:pb-0 sm:pr-5 last:sm:pr-0">
           {index < steps.length - 1 ? <span aria-hidden className={`absolute bottom-0 left-[1.1875rem] top-10 w-px sm:left-10 sm:right-0 sm:top-[1.1875rem] sm:h-px sm:w-auto ${complete ? "bg-status-progress" : "bg-border"}`} /> : null}
           <span aria-hidden className={`relative z-10 grid size-10 place-items-center rounded-full border forced-colors:border-2 ${active ? "border-status-evidence bg-status-evidence text-background ring-4 ring-status-evidence/10" : complete ? "border-status-progress bg-status-progress text-background" : "border-border bg-background text-muted-foreground"}`}>
-            <HugeiconsIcon icon={step.icon} className="size-4" />
+            <HugeiconsIcon aria-hidden icon={step.icon} className="size-4" />
           </span>
           <span className="min-w-0 sm:mt-4 sm:block">
             <span className="block text-label font-medium">{step.title}</span>
