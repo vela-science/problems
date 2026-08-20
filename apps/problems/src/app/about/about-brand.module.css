@@ -13,11 +13,16 @@
 
 .title {
   max-width: 13ch;
+  /* The editorial register is real and About is one of the routes DESIGN.md
+     names for it — but the size was invented. It ran to 6.5rem (104px) against
+     an `editorial-display` token of 3.5rem, and that token had no generated
+     value until now because it lived only in DESIGN.md's frontmatter, never in
+     vela.tokens.json. It does now, so this reads it. */
   font-family: var(--vela-font-display);
-  font-size: clamp(3rem, 6.5vw, 6.5rem);
-  font-weight: 500;
-  line-height: 0.94;
-  letter-spacing: -0.045em;
+  font-size: var(--text-editorial-display);
+  font-weight: var(--text-editorial-display--font-weight);
+  line-height: var(--text-editorial-display--line-height);
+  letter-spacing: var(--text-editorial-display--letter-spacing);
   text-wrap: balance;
 }
 
@@ -49,8 +54,8 @@
 .copy {
   max-width: 66ch;
   font-family: var(--vela-font-body);
-  font-size: 1.0625rem;
-  line-height: 1.72;
+  font-size: var(--text-editorial-body);
+  line-height: var(--text-editorial-body--line-height);
   color: var(--muted-foreground);
 }
 

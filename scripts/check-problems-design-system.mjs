@@ -145,10 +145,17 @@ for (const file of [
 }
 const workspaceSource = readFileSync(join(problems, "src/components/vela/problem-workspace.tsx"), "utf8");
 /* Workspace is an instrument, not a prose page. Containment and pane borders
-   are useful here: they make the file rail, canvas, and tool rail recognizable.
-   The former blanket border ban forced all three back into an undifferentiated
-   text stack, so the contract now protects the positive composition instead. */
-for (const required of ['aria-label="Public Problem files"', ">Canvas<", 'aria-label="Workspace tools"']) {
+   are useful here: they make the file rail and canvas recognizable. The former
+   blanket border ban forced them back into an undifferentiated text stack, so
+   the contract protects the positive composition instead.
+
+   `aria-label="Workspace tools"` is no longer required. The hosted workspace
+   coordinates — notes, approaches, a contribution draft — and choosing a
+   checkout, running tools and capturing evidence belong to Vela Workbench,
+   which the "Continue locally" handoff opens. A tool rail drawn in the browser
+   advertised an instrument this product does not own, and on an empty
+   workspace two of its three panes were placeholders. */
+for (const required of ['aria-label="Public Problem files"', ">Canvas<"]) {
   if (!workspaceSource.includes(required)) failures.push(`Problem Workspace is missing its recognizable ${required} instrument`);
 }
 

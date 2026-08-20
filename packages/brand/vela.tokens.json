@@ -184,6 +184,42 @@
     }
   },
   "text": {
+    "editorial-display": {
+      "size": {
+        "$value": "3.5rem",
+        "$type": "dimension"
+      },
+      "leading": {
+        "$value": "1.02",
+        "$type": "number"
+      },
+      "weight": {
+        "$value": "500",
+        "$type": "fontWeight"
+      },
+      "tracking": {
+        "$value": "-0.035em",
+        "$type": "dimension"
+      }
+    },
+    "editorial-body": {
+      "size": {
+        "$value": "1.125rem",
+        "$type": "dimension"
+      },
+      "leading": {
+        "$value": "1.72",
+        "$type": "number"
+      },
+      "weight": {
+        "$value": "400",
+        "$type": "fontWeight"
+      },
+      "tracking": {
+        "$value": "0",
+        "$type": "dimension"
+      }
+    },
     "display": {
       "size": {
         "$value": "1.5rem",
