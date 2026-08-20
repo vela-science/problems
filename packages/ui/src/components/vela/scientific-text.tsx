@@ -138,11 +138,44 @@ export function recoverNotation(text: string): Array<{ math: boolean; text: stri
   });
 }
 
+/* Retained source prose is Markdown as well as TeX.
+ *
+ * The upstream docstrings this quotes carry `**bold**` runs and `` `code` ``
+ * spans, and rendering only the mathematics left those delimiters on screen as
+ * literal characters: the first page of the Erdős catalogue alone showed 16
+ * `**` runs and 84 backtick spans, so a reader met `**Erdős Problem 17.** Are
+ * there infinitely many cluster primes` in a product that otherwise typesets
+ * its notation.
+ *
+ * Only the two inline forms that actually occur are handled, and only outside
+ * mathematics — the split has already removed every `$…$` segment, so a
+ * backtick or an asterisk inside a formula never reaches this.
+ *
+ * `(?<!\\)` guards the opening backtick, because a backslash-backtick is the
+ * LaTeX grave accent in the table above and must stay an accent rather than
+ * open a code span. */
+const markdownPattern = /(\*\*[^*\n]+\*\*|(?<!\\)`[^`\n]+`)/u;
+
+function ProseSegment({ text }: { text: string }) {
+  const pieces = text.split(new RegExp(markdownPattern.source, "gu")).filter(Boolean);
+  return <>
+    {pieces.map((piece, index) => {
+      if (piece.length > 4 && piece.startsWith("**") && piece.endsWith("**")) {
+        return <strong key={`${piece}:${index}`}>{plainTextSegment(piece.slice(2, -2))}</strong>;
+      }
+      if (piece.length > 2 && piece.startsWith("`") && piece.endsWith("`")) {
+        return <code key={`${piece}:${index}`} className={styles.code}>{piece.slice(1, -1)}</code>;
+      }
+      return <span key={`${piece}:${index}`}>{plainTextSegment(piece)}</span>;
+    })}
+  </>;
+}
+
 export function ScientificText({ text }: { text: string }) {
   if (!delimitersPair(text)) {
     return <span className={styles.root}>
       {recoverNotation(text).map((span, index) => {
-        if (!span.math) return <span key={index}>{plainTextSegment(span.text)}</span>;
+        if (!span.math) return <ProseSegment key={index} text={span.text} />;
         const markup = katex.renderToString(span.text, {
           output: "mathml", throwOnError: false, trust: false, strict: "ignore", maxExpand: 500, maxSize: 10,
         });
@@ -161,7 +194,7 @@ export function ScientificText({ text }: { text: string }) {
           || (segment.startsWith("\\[") && segment.endsWith("\\]"));
         const inline = (segment.startsWith("$") && segment.endsWith("$"))
           || (segment.startsWith("\\(") && segment.endsWith("\\)"));
-        if (!display && !inline) return <span key={`${segment}:${index}`}>{plainTextSegment(segment)}</span>;
+        if (!display && !inline) return <ProseSegment key={`${segment}:${index}`} text={segment} />;
 
         const source = display ? segment.slice(2, -2) : segment.startsWith("\\(") ? segment.slice(2, -2) : segment.slice(1, -1);
         const markup = katex.renderToString(source, {

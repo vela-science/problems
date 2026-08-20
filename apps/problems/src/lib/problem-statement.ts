@@ -189,6 +189,17 @@ export function statementPlainText(text: string): string {
     : text;
   out = out.replaceAll(/\\cite\{([^}]+)\}/gu, " [$1] ");
 
+  /* Markdown emphasis and inline code carry no sound. The retained docstrings
+     are Markdown as well as TeX, so a spoken name announced "asterisk asterisk
+     Erdős Problem 17 period asterisk asterisk" — 16 emphasis runs and 63 code
+     spans reached the accessible names on the first page of the collection
+     alone. The delimiters go; the words they wrap stay.
+     The backtick is guarded the same way `scientific-text` guards it: a
+     backslash-backtick is the LaTeX grave accent, handled further down. */
+  out = out
+    .replaceAll(/\*\*([^*\n]+)\*\*/gu, "$1")
+    .replaceAll(/(?<!\\)`([^`\n]+)`/gu, "$1");
+
   /* A LaTeX line break and an escaped space are whitespace, not commands. */
   out = out.replaceAll(/\\\\|\\ /gu, ' ');
   /* `\frac{a}{b}` is said as "a over b", and the slash is how it is written.

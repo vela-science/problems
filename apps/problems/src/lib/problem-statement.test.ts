@@ -69,4 +69,15 @@ describe("statementPlainText", () => {
     const prose = "Is there a covering system all of whose moduli are odd?";
     expect(statementPlainText(prose)).toBe(prose);
   });
+  /* The retained docstrings are Markdown as well as TeX, and a spoken name
+     announced "asterisk asterisk Erdős Problem 17 period asterisk asterisk". */
+  it("says the words Markdown wraps, not its delimiters", () => {
+    expect(statementPlainText("**Erdős Problem 17.** Are there infinitely many `cluster primes`?")).toBe(
+      "Erdős Problem 17. Are there infinitely many cluster primes?",
+    );
+  });
+
+  it("keeps a grave accent an accent rather than a code fence", () => {
+    expect(statementPlainText("Erd\\`os and Moser both asked this.")).toBe("Erdos and Moser both asked this.");
+  });
 });

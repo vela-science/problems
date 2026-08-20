@@ -26,3 +26,14 @@
 .display math {
   white-space: nowrap;
 }
+
+/* Inline literal notation quoted from a source docstring. Quiet: it sits inside
+   running prose beside typeset mathematics, so it marks the span as verbatim
+   without competing with the formulae around it. */
+.code {
+  border-radius: 0.25rem;
+  background: var(--muted);
+  padding: 0.05em 0.32em;
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+}

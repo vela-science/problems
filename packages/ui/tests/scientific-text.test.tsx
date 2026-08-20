@@ -75,3 +75,28 @@ describe("ScientificText", () => {
     expect(render("A bound \\[x < y and nothing closes it.")).not.toContain("<math");
   });
 });
+
+describe("ScientificText markdown", () => {
+  test("renders emphasis and inline code the source docstrings carry", () => {
+    const markup = render("**Erdős Problem 17.** Are there infinitely many `cluster primes`?");
+    expect(markup).toContain("<strong>Erdős Problem 17.</strong>");
+    expect(markup).toContain("cluster primes</code>");
+    expect(markup).not.toContain("**");
+    expect(markup).not.toContain("`");
+  });
+
+  test("leaves asterisks and backticks inside mathematics untouched", () => {
+    const markup = render("The product $a * b$ is fixed.");
+    const mathOnly = markup.match(/<math[\s\S]*?<\/math>/gu)?.join("") ?? "";
+    expect(mathOnly).not.toBe("");
+    expect(markup).not.toContain("<strong>");
+  });
+
+  /* A backslash-backtick is the LaTeX grave accent, not a code fence. Reading
+     it as one would swallow the rest of the sentence into a code span. */
+  test("keeps a grave accent an accent", () => {
+    const markup = render("Erd\\`os and Moser both asked this.");
+    expect(markup).not.toContain("<code");
+    expect(markup).toContain("Erdòs");
+  });
+});
