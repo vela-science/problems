@@ -1,0 +1,98 @@
+/* Editorial profile of the same Vela semantic system. Content-specific
+ * composition remains in apps/www; controls, focus, motion and state do not. */
+@import "./product.css";
+
+@custom-variant dark (&:is(.dark *, [data-theme="dark"] *));
+
+@theme inline {
+  --font-display: var(--vela-font-display);
+  --font-body: var(--vela-font-body);
+  --font-sans: var(--vela-font-sans);
+  --font-mono: var(--vela-font-mono);
+  --color-paper-0: var(--background);
+  --color-paper-1: var(--card);
+  --color-ink-1: var(--foreground);
+  --color-ink-2: var(--vela-text-secondary);
+  --color-ink-3: var(--muted-foreground);
+  --color-ink-4: var(--vela-color-light-border-strong);
+  --color-rule-3: var(--border);
+  --color-gold: var(--vela-direction);
+  --color-gold-ink: var(--direction);
+  --color-gold-soft: var(--vela-selection);
+  --color-gold-night: var(--vela-color-stardust);
+  --color-evidence: var(--status-evidence);
+  --color-caution: var(--status-caution);
+  --color-evidence-ink: var(--status-evidence);
+  --color-caution-ink: var(--status-caution);
+  --color-fig-night: var(--vela-color-midnight);
+  --color-fig-night-structure: var(--vela-color-light);
+  --ease-vela: var(--vela-ease-standard);
+  --ease-vela-arrive: var(--vela-ease-enter);
+}
+
+:root {
+  --radius: var(--vela-radius-sm);
+  --background: var(--vela-surface-canvas);
+  --foreground: var(--vela-text-primary);
+  --card: var(--vela-surface-raised);
+  --card-foreground: var(--vela-text-primary);
+  --popover: var(--vela-surface-raised);
+  --popover-foreground: var(--vela-text-primary);
+  --primary: var(--vela-text-primary);
+  --primary-foreground: var(--vela-text-inverse);
+  --secondary: var(--vela-surface-inset);
+  --secondary-foreground: var(--vela-text-primary);
+  --muted: var(--vela-surface-inset);
+  --muted-foreground: var(--vela-text-muted);
+  --accent: var(--vela-surface-inset);
+  --accent-foreground: var(--vela-text-primary);
+  --destructive: var(--vela-status-conflict);
+  --destructive-foreground: var(--vela-text-inverse);
+  --border: var(--vela-border-subtle);
+  --input: var(--vela-border-strong);
+  --ring: var(--vela-color-midnight);
+  --sidebar: var(--vela-surface-canvas);
+  --sidebar-foreground: var(--vela-text-primary);
+  --sidebar-primary: var(--vela-text-primary);
+  --sidebar-primary-foreground: var(--vela-text-inverse);
+  --sidebar-accent: var(--vela-surface-inset);
+  --sidebar-accent-foreground: var(--vela-text-primary);
+  --sidebar-border: var(--vela-border-subtle);
+  --sidebar-ring: var(--vela-color-midnight);
+  --status-evidence: var(--vela-status-evidence);
+  --status-progress: var(--vela-status-progress);
+  --status-caution: var(--vela-status-caution);
+  --status-conflict: var(--vela-status-conflict);
+  --direction: var(--vela-direction);
+  --command: var(--vela-surface-emphasis);
+  --command-foreground: var(--vela-text-inverse);
+  --typeset-font-body: var(--vela-font-body);
+  --typeset-font-heading: var(--vela-font-sans);
+  --typeset-font-mono: var(--vela-font-mono);
+}
+
+.dark,
+[data-theme="dark"] {
+  --background: var(--vela-surface-canvas);
+  --foreground: var(--vela-text-primary);
+  --card: var(--vela-surface-raised);
+  --popover: var(--vela-surface-raised);
+  --primary: var(--vela-text-primary);
+  --primary-foreground: var(--vela-text-inverse);
+  --secondary: var(--vela-surface-inset);
+  --muted: var(--vela-surface-inset);
+  --accent: var(--vela-surface-inset);
+  --border: var(--vela-border-subtle);
+  --input: var(--vela-border-strong);
+  --ring: var(--vela-color-stardust);
+  --sidebar: var(--vela-surface-canvas);
+  --sidebar-accent: var(--vela-surface-inset);
+  --sidebar-border: var(--vela-border-subtle);
+  --sidebar-ring: var(--vela-color-stardust);
+  --status-evidence: var(--vela-status-evidence);
+  --status-progress: var(--vela-status-progress);
+  --status-caution: var(--vela-status-caution);
+  --status-conflict: var(--vela-status-conflict);
+  --direction: var(--vela-direction);
+  --command: var(--vela-surface-emphasis);
+}
