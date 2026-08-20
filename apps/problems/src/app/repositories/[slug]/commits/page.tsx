@@ -181,7 +181,7 @@ export default async function CommitsPage({
                       {delta.comparison_state === "verified" && commit.parent_sha ? (
                         <Link
                           href={`/repositories/${slug}/commits/compare?from=${commit.parent_sha}&to=${commit.sha}`}
-                          className="font-medium underline underline-offset-4"
+                          className="inline-flex min-h-6 items-center font-medium underline underline-offset-4"
                         >
                           Compare exact revisions
                         </Link>
