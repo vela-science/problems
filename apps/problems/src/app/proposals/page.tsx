@@ -4,8 +4,10 @@ import type { Metadata } from "next";
 import { allRepositories } from "@vela/projection-data";
 import { ProposalLedgerRows, type ProposalEntry } from "@/components/vela/proposal-ledger-rows";
 import { RouteTitle } from "@/components/vela/route-title";
-import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@vela/ui/components/empty";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@vela/ui/components/empty";
 import { FilterChips } from "@/components/vela/filter-chips";
+import Link from "next/link";
+import { Button } from "@vela/ui/components/button";
 
 export const metadata: Metadata = {
   title: "Proposed changes",
@@ -92,6 +94,7 @@ export default async function ProposalsPage({
               <EmptyTitle>No proposed change in this release</EmptyTitle>
               <EmptyDescription>No published contribution has been retained as an exact Proposal at this release root.</EmptyDescription>
             </EmptyHeader>
+            <EmptyContent><Button nativeButton={false} variant="outline" size="sm" render={<Link href="/problems" />}>Browse Problems</Button></EmptyContent>
           </Empty>
         )}
       </div>

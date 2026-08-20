@@ -14,6 +14,7 @@ import { publicProblemPath } from "@/lib/problem-routes";
 import { ProblemSourceFacts } from "@/components/vela/problem-source-facts";
 import {
   Empty,
+  EmptyContent,
   EmptyDescription,
   EmptyHeader,
   EmptyTitle,
@@ -184,6 +185,7 @@ export default async function ProblemPage({
                 This problem has no directly related claim record.
               </EmptyDescription>
             </EmptyHeader>
+            <EmptyContent><Button nativeButton={false} variant="outline" size="sm" render={<Link href={`/repositories/${slug}/claims`} />}>Browse this Repository’s Claims</Button></EmptyContent>
           </Empty>
         )}
       </section>

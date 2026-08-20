@@ -6,6 +6,9 @@ import { ScientificChangeFeed } from "@/components/vela/scientific-change-feed";
 import { recentScientificChanges } from "@/lib/scientific-state";
 import type { Route } from "next";
 import { FilterChips } from "@/components/vela/filter-chips";
+import Link from "next/link";
+import { Button } from "@vela/ui/components/button";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@vela/ui/components/empty";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -47,6 +50,15 @@ export default async function UpdatesPage({ searchParams }: { searchParams: Prom
         href: (value === "all" ? "/updates" : `/updates?view=${value}`) as Route,
       }))}
     />
-    <PageSection aria-labelledby="activity-feed" className="vela-object-surface p-5"><PageSectionHeader><h2 id="activity-feed" className="text-title">Recent updates</h2><span className="font-mono text-meta text-muted-foreground">{filtered.length} updates</span></PageSectionHeader><ScientificChangeFeed changes={filtered} /></PageSection>
+    <PageSection aria-labelledby="activity-feed" className="vela-object-surface p-5"><PageSectionHeader><h2 id="activity-feed" className="text-title">Recent updates</h2><span className="font-mono text-meta text-muted-foreground">{filtered.length} updates</span></PageSectionHeader>{filtered.length ? <ScientificChangeFeed changes={filtered} /> : <Empty className="border-0">
+      <EmptyHeader>
+        <EmptyTitle>{view === "all" ? "No update is published in this release" : `No ${view === "transitions" ? "state change" : "repository commit"} is published in this release`}</EmptyTitle>
+        {/* The list rendered an empty <ol> that still painted its connector
+            rail, under a header reading "0 updates" — an absence drawn as if
+            it were a timeline. */}
+        <EmptyDescription>{view === "all" ? "Published history begins when a Repository records its first change." : "Other kinds of update may still be published — clear the filter to see the full history."}</EmptyDescription>
+      </EmptyHeader>
+      {view === "all" ? null : <EmptyContent><Button nativeButton={false} variant="outline" size="sm" render={<Link href="/updates" />}>Show all history</Button></EmptyContent>}
+    </Empty>}</PageSection>
   </PageShell>;
 }

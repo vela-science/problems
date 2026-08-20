@@ -5,7 +5,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { allRepositories, commitsForRepository, repositoryBySlug, transitionSummaryForRepository } from "@vela/projection-data";
 import type { RepositoryCommit } from "@vela/projection-data";
-import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@vela/ui/components/empty";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@vela/ui/components/empty";
 import { Item, ItemContent, ItemGroup } from "@vela/ui/components/item";
 import { LedgerPager } from "@/components/vela/ledger-pager";
 import { RecordId } from "@/components/vela/record-id";
@@ -17,6 +17,7 @@ import { commitHref } from "@/components/vela/source-file";
 
 import { pageFromSearchParams, queryHref } from "@/lib/query-state";
 import { FilterChips } from "@/components/vela/filter-chips";
+import { Button } from "@vela/ui/components/button";
 
 export const dynamicParams = false;
 export async function generateStaticParams() {
@@ -221,6 +222,7 @@ export default async function CommitsPage({
               honest answer rather than an empty repository.
             </EmptyDescription>
           </EmptyHeader>
+          <EmptyContent><Button nativeButton={false} variant="outline" size="sm" render={<Link href={`/repositories/${slug}`} />}>Open Repository overview</Button></EmptyContent>
         </Empty>
       )}
 

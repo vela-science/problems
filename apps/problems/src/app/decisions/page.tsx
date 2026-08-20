@@ -6,8 +6,9 @@ import { allRepositories } from "@vela/projection-data";
 import { DecisionStream, type DecisionEntry } from "@/components/vela/decision-stream";
 import { RouteTitle } from "@/components/vela/route-title";
 import { RelativeTime } from "@/components/vela/relative-time";
-import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@vela/ui/components/empty";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@vela/ui/components/empty";
 import { FilterChips } from "@/components/vela/filter-chips";
+import { Button } from "@vela/ui/components/button";
 
 export const metadata: Metadata = {
   title: "Decisions",
@@ -118,6 +119,9 @@ export default async function DecisionsPage({ searchParams }: PageProps<"/decisi
               <EmptyTitle>No Decision is recorded in this release</EmptyTitle>
               <EmptyDescription>Every published Proposal is still pending, or none has been opened.</EmptyDescription>
             </EmptyHeader>
+            {/* Nothing to clear — this is an empty release, not an empty
+                filter — so the action points at what does exist. */}
+            <EmptyContent><Button nativeButton={false} variant="outline" size="sm" render={<Link href="/proposals" />}>See proposed changes</Button></EmptyContent>
           </Empty>
         )}
       </div>

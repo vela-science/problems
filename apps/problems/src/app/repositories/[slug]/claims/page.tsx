@@ -14,6 +14,7 @@ import {
 import { Button } from "@vela/ui/components/button";
 import {
   Empty,
+  EmptyContent,
   EmptyDescription,
   EmptyHeader,
   EmptyTitle,
@@ -265,6 +266,7 @@ export default async function ClaimsPage({
                   ? "No Claim in this repository matches the current narrowing."
                   : "This repository has admitted no Claim. Nothing has been through a Decision here yet."}</EmptyDescription>
               </EmptyHeader>
+              <EmptyContent><Button nativeButton={false} variant="outline" size="sm" render={<Link href={`/repositories/${slug}/proposals`} />}>See proposed changes</Button></EmptyContent>
             </Empty>
           )}
 

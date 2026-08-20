@@ -9,6 +9,7 @@ import { repositoryBySlug, problemsForRepository } from "@vela/projection-data";
 import { Button } from "@vela/ui/components/button";
 import {
   Empty,
+  EmptyContent,
   EmptyDescription,
   EmptyHeader,
   EmptyTitle,
@@ -192,6 +193,7 @@ export default async function ProblemsPage({
                     : "This repository retains no source-native problem at this release."}
                 </EmptyDescription>
               </EmptyHeader>
+              <EmptyContent><Button nativeButton={false} variant="outline" size="sm" render={<Link href="/problems" />}>Browse every Problem</Button></EmptyContent>
             </Empty>
           )}
           <LedgerPager
