@@ -104,7 +104,6 @@ contract. It does not mean the original block was installed.
 
 | Source items reviewed | Decision | Vela use or reason |
 | --- | --- | --- |
-| `stats-connected-kpi-bar-minimal` | Adapt and catalog | `NetworkFacts` keeps the connected facts strip and removes animation, trends, health colour, and KPI language. |
 | `dashboard-activity-feed`, `timeline-filterable`, `timeline-commit-log` | Adapt locally | `ScientificChangeFeed` uses the rail, type filters, and commit identity while separating scientific transitions from ordinary commits. |
 | `features-radial-hub-satellite-graph` | Adapt locally | `HubMembershipMap` binds every edge to projected membership, removes orbit choreography and fake integrations, and supplies a linear mobile list. |
 | `search-global`, `command-menu-workspace` | Adapt existing search only | Keep the grouped keyboard vocabulary, `Kbd`, and empty-result state; reuse Vela’s FlexSearch/Command owner rather than add static results or a second command primitive. |
