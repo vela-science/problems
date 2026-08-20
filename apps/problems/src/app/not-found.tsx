@@ -1,7 +1,22 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft01Icon as ArrowLeft } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { PageShell } from "@vela/ui/vela/page-shell";
+
+/* Without this the layout default applied, so every 404 sat in the tab and in
+   browser history as a bare "problems.science" — indistinguishable from the
+   site's own front door, which is exactly the moment a reader is trying to work
+   out where they landed.
+
+   `robots` is restated rather than left to Next's automatic not-found
+   `noindex`, because the root layout declares `index, follow` and that default
+   still reaches this head. Without the override the 404 carried two
+   contradictory robots tags; with it, both say noindex. */
+export const metadata: Metadata = {
+  title: "Not found",
+  robots: { index: false, follow: true },
+};
 
 export default function NotFound() {
   return (
