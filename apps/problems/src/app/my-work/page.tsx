@@ -6,6 +6,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { listWorkspaces, type Workspace } from "@vela/activity-data";
 import { Badge } from "@vela/ui/components/badge";
 import { Button } from "@vela/ui/components/button";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@vela/ui/components/empty";
 import { Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemTitle } from "@vela/ui/components/item";
 import { PageShell } from "@vela/ui/vela/page-shell";
 import { Performer } from "@/components/vela/actor";
@@ -57,11 +58,15 @@ export default async function MyWorkPage({ searchParams }: { searchParams: Promi
       <Performer name={account.hosted.displayName} kind="human" detail="Private account" />
     </header>
 
-    {result.status === "unavailable" ? <section aria-labelledby="work-unavailable-heading" className="vela-object-surface p-6">
-      <h2 id="work-unavailable-heading" className="text-title">Your work could not be loaded</h2>
-      <p className="mt-2 max-w-2xl text-body text-muted-foreground">Your sign-in is intact, but saved work is temporarily unavailable. Public Problems and Results are still available.</p>
-      <Button className="mt-5" variant="outline" nativeButton={false} render={<Link href="/problems" />}>Browse Problems</Button>
-    </section> : result.workspaces.length ? <section aria-labelledby="retained-work-heading" className="vela-object-surface overflow-hidden">
+    {result.status === "unavailable" ? <Empty className="border-0">
+      <EmptyHeader>
+        <EmptyTitle>Your work could not be loaded</EmptyTitle>
+        <EmptyDescription>Your sign-in is intact, but saved work is temporarily unavailable. Public Problems and Results are unaffected.</EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent>
+        <Button variant="outline" nativeButton={false} render={<Link href="/problems" />}>Browse Problems</Button>
+      </EmptyContent>
+    </Empty> : result.workspaces.length ? <section aria-labelledby="retained-work-heading" className="vela-object-surface overflow-hidden">
       <div className="flex flex-wrap items-end justify-between gap-3 border-b p-5">
         <div>
           <h2 id="retained-work-heading" className="text-title">Your workspaces</h2>
@@ -106,14 +111,21 @@ export default async function MyWorkPage({ searchParams }: { searchParams: Promi
           <Button className="mt-4" size="sm" variant="outline" nativeButton={false} render={<Link href="/problems" />}>Find a Problem</Button>
         </div>}
       </div> : null}
-    </section> : <section aria-labelledby="empty-work-heading" className="vela-object-surface overflow-hidden sm:grid sm:grid-cols-[minmax(0,1fr)_15rem]">
-      <div className="p-6 sm:p-8">
-        <span className="grid size-10 place-items-center rounded-md bg-accent text-primary"><HugeiconsIcon icon={Folder01Icon} aria-hidden className="size-5" /></span>
-        <h2 id="empty-work-heading" className="mt-5 text-title">No saved work yet</h2>
-        <p className="mt-2 max-w-xl text-body text-muted-foreground">Open a Problem and choose Work to start an approach, note, or Result draft.</p>
-        <div className="mt-5 flex flex-wrap gap-2"><Button nativeButton={false} render={<Link href="/problems" />}>Browse Problems <HugeiconsIcon icon={ArrowRight} aria-hidden data-icon="inline-end" /></Button><Button variant="outline" nativeButton={false} render={<Link href="/import" />}>Connect code</Button></div>
-      </div>
-      <div className="border-t bg-[var(--vela-surface-sunken)] p-5 sm:border-l sm:border-t-0"><p className="text-meta font-semibold">A workspace can hold</p><ul className="mt-3 divide-y text-compact"><li className="py-3">Approaches and Attempts</li><li className="py-3">Research Blocks and notes</li><li className="py-3">Unsigned Result handoffs</li></ul></div>
-    </section>}
+    </section> : <Empty className="border-0">
+      <EmptyHeader>
+        <EmptyMedia variant="icon"><HugeiconsIcon icon={Folder01Icon} aria-hidden /></EmptyMedia>
+        <EmptyTitle>No saved work yet</EmptyTitle>
+        {/* The workspace is reached through a Problem, never created here, so
+            the action is the Problem — not a "new workspace" button this page
+            has no way to honour. */}
+        <EmptyDescription>A workspace opens from a Problem. Choose one, open its Work section, and an approach, note, or Result draft is retained here.</EmptyDescription>
+      </EmptyHeader>
+      {/* `EmptyContent` stacks by default, which is right for one action and
+          wrong for two of equal weight. */}
+      <EmptyContent className="max-w-none flex-row flex-wrap justify-center">
+        <Button nativeButton={false} render={<Link href="/problems" />}>Browse Problems <HugeiconsIcon icon={ArrowRight} aria-hidden data-icon="inline-end" /></Button>
+        <Button variant="outline" nativeButton={false} render={<Link href="/import" />}>Connect code</Button>
+      </EmptyContent>
+    </Empty>}
   </PageShell>;
 }

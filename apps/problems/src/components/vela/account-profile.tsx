@@ -4,7 +4,6 @@ import {
   Github01Icon,
   LinkSquare02Icon,
   Logout01Icon,
-  Mail01Icon,
   SecurityCheckIcon,
   SourceCodeIcon,
   UserCircle02Icon,
@@ -27,7 +26,6 @@ import {
 import { signOutAccount } from "@/app/actions/auth";
 import type { AccountIdentity } from "@/lib/auth";
 import type { PublicProfile } from "@/lib/hosted-account";
-import { formatDate } from "@/lib/format";
 
 type Result<T> = { status: "ready"; value: T } | { status: "unavailable" };
 
@@ -66,186 +64,168 @@ function countLabel(count: number, singular: string, plural = `${singular}s`) {
   return `${count} ${count === 1 ? singular : plural}`;
 }
 
-function SectionHeading({ id, title, description, action }: {
+/* Sections are separated by a rule, not by a raised panel.
+ *
+ * This page carried six `vela-object-surface` cards, two of them holding a
+ * dashed box inside — nested panels and card soup in one screen, both named in
+ * DESIGN.md as things not to do. Its own children, `/account/connections` and
+ * `/account/profile`, already use a flat section with a rule under the
+ * heading; this page was the outlier, so it follows them now. */
+function Section({ id, title, description, action, children }: {
   id: string;
   title: string;
   description: string;
   action?: React.ReactNode;
+  children: React.ReactNode;
 }) {
-  return <div className="flex flex-wrap items-end justify-between gap-3 border-b pb-4">
-    <div>
-      <h2 id={id} className="text-title">{title}</h2>
-      <p className="mt-1 max-w-2xl text-meta text-muted-foreground">{description}</p>
-    </div>
-    {action}
-  </div>;
-}
-
-function EmptyWork() {
-  return <div className="rounded-lg border border-dashed bg-muted/10 p-5">
-    <h3 className="text-subtitle font-medium">Start from a Problem</h3>
-    <p className="mt-2 max-w-xl text-body text-muted-foreground">Choose a question, review what is known, then save an approach or result when you are ready.</p>
-    <Button className="mt-5 min-h-11 sm:min-h-8" nativeButton={false} render={<Link href="/problems" />}>Browse Problems</Button>
-  </div>;
-}
-
-function Workspaces({ result }: { result: AccountProfileData["workspaces"] }) {
-  if (result.status === "unavailable") return <Alert className="my-5">
-    <AlertTitle>Your work could not be loaded</AlertTitle>
-    <AlertDescription>Your session is still active. Public Problems and Results remain available.</AlertDescription>
-  </Alert>;
-  if (!result.value.length) return <EmptyWork />;
-  return <ItemGroup className="divide-y gap-0">
-    {result.value.slice(0, 4).map((workspace) => <Item key={workspace.id} className="rounded-none border-0 px-0 py-4">
-      <ItemMedia variant="icon" className="mt-0.5 size-9 rounded-md bg-muted/60"><HugeiconsIcon icon={WorkIcon} aria-hidden /></ItemMedia>
-      <ItemContent>
-        <ItemTitle className="line-clamp-none flex-wrap">{workspace.name}<Badge variant="secondary">{workspace.role}</Badge></ItemTitle>
-        <ItemDescription>Updated {formatDate(workspace.updatedAt)} · workspace {workspace.slug}</ItemDescription>
-      </ItemContent>
-    </Item>)}
-  </ItemGroup>;
-}
-
-function Codebases({ result }: { result: AccountProfileData["connections"] }) {
-  if (result.status === "unavailable") return <Alert className="my-5">
-    <AlertTitle>Codebase connections are unavailable</AlertTitle>
-    <AlertDescription>Your account remains signed in. Try Connections again before importing private repository work.</AlertDescription>
-  </Alert>;
-  if (!result.value.data.codebases.length) return <div className="rounded-lg border border-dashed bg-muted/10 p-5">
-    <h3 className="text-subtitle font-medium">Bring in an exact Git revision</h3>
-    <p className="mt-2 max-w-xl text-body text-muted-foreground">Inspect a public GitHub URL now, or connect selected repository access first.</p>
-    <Button className="mt-5 min-h-11 sm:min-h-8" variant="outline" nativeButton={false} render={<Link href="/import" />}>Import a codebase</Button>
-  </div>;
-  return <ItemGroup className="divide-y gap-0">
-    {result.value.data.codebases.slice(0, 4).map((codebase) => <Item key={codebase.id} className="group rounded-none border-0 px-0 py-4" render={<Link href={`/codebases/${codebase.id}`} />}>
-      <ItemMedia variant="icon" className="mt-0.5 size-9 rounded-md bg-muted/60"><HugeiconsIcon icon={SourceCodeIcon} aria-hidden /></ItemMedia>
-      <ItemContent>
-        <ItemTitle className="line-clamp-none flex-wrap">{codebase.fullName}<Badge variant="outline">{codebase.visibility}</Badge></ItemTitle>
-        <ItemDescription>{codebase.inspectionStatus.replaceAll("_", " ")} · {codebase.syncState.replaceAll("_", " ")}</ItemDescription>
-      </ItemContent>
-      <ItemActions><HugeiconsIcon icon={ArrowRight} aria-hidden className="size-4 transition-transform duration-150 group-hover:translate-x-0.5" /></ItemActions>
-    </Item>)}
-  </ItemGroup>;
-}
-
-function ConnectionRow({ icon, title, description, status }: {
-  icon: typeof Github01Icon;
-  title: string;
-  description: string;
-  status: React.ReactNode;
-}) {
-  return <div className="grid grid-cols-[2.25rem_minmax(0,1fr)] gap-x-3 border-b py-4 last:border-b-0">
-    <div className="flex size-9 items-center justify-center rounded-md bg-muted/60 text-muted-foreground"><HugeiconsIcon icon={icon} aria-hidden className="size-4" /></div>
-    <div className="min-w-0">
-      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-        <h3 className="text-label font-medium">{title}</h3>
-        {status}
+  return <section aria-labelledby={id} className="max-w-3xl">
+    <div className="flex flex-wrap items-end justify-between gap-4 border-b pb-4">
+      <div>
+        <h2 id={id} className="text-title">{title}</h2>
+        <p className="mt-1 max-w-2xl text-meta text-muted-foreground">{description}</p>
       </div>
-      <p className="mt-1 text-meta text-muted-foreground">{description}</p>
+      {action}
     </div>
-  </div>;
-}
-
-function PublicProfileSummary({ result }: { result: AccountProfileData["publicProfile"] }) {
-  if (result.status === "unavailable") return <Alert>
-    <AlertTitle>Public profile settings are unavailable</AlertTitle>
-    <AlertDescription>Your private account and scientific attribution are unchanged. Try again later.</AlertDescription>
-  </Alert>;
-  const profile = result.value;
-  return <section aria-labelledby="account-public-profile-heading" className="vela-object-surface overflow-hidden">
-    <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
-      <div className="flex min-w-0 items-start gap-3">
-        <div className="flex size-10 shrink-0 items-center justify-center rounded-md bg-primary/8 text-primary"><HugeiconsIcon icon={UserCircle02Icon} aria-hidden className="size-5" /></div>
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <h2 id="account-public-profile-heading" className="text-subtitle font-medium">Public contributor profile</h2>
-            <Badge variant={profile?.visibility === "public" ? "default" : "secondary"}>{profile?.visibility ?? "not created"}</Badge>
-          </div>
-          <p className="mt-1 text-meta text-muted-foreground">{profile ? `problems.science/people/${profile.handle}` : "Choose what, if anything, appears publicly beside exact attribution."}</p>
-        </div>
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {profile ? <Button size="sm" variant="outline" nativeButton={false} render={<Link href={`/people/${profile.handle}`} />}>Preview</Button> : null}
-        <Button size="sm" nativeButton={false} render={<Link href="/account/profile" />}>{profile ? "Edit profile" : "Create profile"}</Button>
-      </div>
-    </div>
+    {children}
   </section>;
 }
 
+/* One row per destination, carrying the state a reader came to check.
+ *
+ * The two lists that used to live here restated `/my-work` — which is in the
+ * sidebar on every page — and `/account/connections`, one click away. Showing
+ * the first four of each meant a reader met the same rows three times, and on
+ * an account with nothing in it met four separate empty boxes saying so.
+ * AGENTS.md: "Treat redundancy as a product defect." The count is the useful
+ * part, so the count is what stays. */
+function DestinationRow({ href, icon, title, state, detail }: {
+  href: string;
+  icon: typeof WorkIcon;
+  title: string;
+  state: React.ReactNode;
+  detail: string;
+}) {
+  return <Item className="vela-object-row rounded-none border-0 px-0 py-5" render={<Link href={href} />}>
+    <ItemMedia variant="icon" className="size-10 rounded-md bg-muted/60"><HugeiconsIcon icon={icon} aria-hidden /></ItemMedia>
+    <ItemContent>
+      <ItemTitle className="line-clamp-none flex-wrap">{title} {state}</ItemTitle>
+      <ItemDescription className="line-clamp-none">{detail}</ItemDescription>
+    </ItemContent>
+    <ItemActions><HugeiconsIcon icon={ArrowRight} aria-hidden className="size-4 text-muted-foreground transition-transform duration-150 group-hover/item:translate-x-0.5" /></ItemActions>
+  </Item>;
+}
+
+function workspaceState(result: AccountProfileData["workspaces"]) {
+  if (result.status === "unavailable") return { badge: <Badge variant="secondary">Unavailable</Badge>, detail: "Your session is intact; saved work could not be read just now." };
+  const count = result.value.length;
+  return {
+    badge: count ? <Badge variant="secondary">{countLabel(count, "workspace")}</Badge> : null,
+    detail: count
+      ? `Most recent: ${result.value[0]?.name ?? "untitled"}`
+      : "No workspace yet. Open a Problem and choose Work to start one.",
+  };
+}
+
+function connectionState(result: AccountProfileData["connections"]) {
+  if (result.status === "unavailable") return { badge: <Badge variant="secondary">Unavailable</Badge>, detail: "Try the Connections page again before importing repository work." };
+  const { githubIdentityConnected, githubAppEnabled, data } = result.value;
+  const live = data.installations.filter((installation) => !installation.suspended);
+  const accessible = data.repositories.filter((repository) => live.some((installation) => installation.installationId === repository.installationId)).length;
+  return {
+    badge: githubIdentityConnected ? <Badge>GitHub linked</Badge> : <Badge variant="secondary">GitHub not linked</Badge>,
+    detail: githubAppEnabled
+      ? `${countLabel(accessible, "selected repository", "selected repositories")} · ${countLabel(data.codebases.length, "retained codebase")}`
+      : "Repository access is not configured in this environment.",
+  };
+}
+
 export function AccountProfile({ account, publicProfile, workspaces, connections }: AccountProfileData) {
-  const connection = connections.status === "ready" ? connections.value : null;
-  const installations = connection?.data.installations ?? [];
-  const accessibleRepositories = connection?.data.repositories.filter((repository) =>
-    installations.some((installation) => installation.installationId === repository.installationId && !installation.suspended),
-  ).length ?? 0;
+  const work = workspaceState(workspaces);
+  const connection = connectionState(connections);
+  const profile = publicProfile.status === "ready" ? publicProfile.value : null;
 
   return <>
-    <header className="vela-object-surface p-5 sm:p-7">
-      <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-        <Avatar className="size-16 bg-primary/8 sm:size-20">
+    <header className="border-b pb-7">
+      <p className="text-eyebrow text-muted-foreground">Private account</p>
+      <div className="mt-3 flex flex-wrap items-center gap-4">
+        <Avatar className="size-14 bg-primary/8">
           <AvatarFallback className="text-title font-medium text-foreground">{account.initials}</AvatarFallback>
         </Avatar>
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0">
           <h1 className="text-display break-words">{account.displayName}</h1>
-          <div className="mt-2 flex min-w-0 flex-wrap items-center gap-2 text-meta text-muted-foreground">
-            <HugeiconsIcon icon={Mail01Icon} aria-hidden className="size-4 shrink-0" />
+          <p className="mt-1 flex min-w-0 flex-wrap items-center gap-2 text-meta text-muted-foreground">
             <span className="truncate">{account.email}</span>
             <Badge variant="outline">Visible only to you</Badge>
-          </div>
-          <p className="mt-3 max-w-2xl text-body text-muted-foreground">Continue saved work, manage code access, and review the identity used to sign in.</p>
-        </div>
-        <div className="flex flex-wrap gap-2 sm:self-end">
-          <Button className="min-h-11 sm:min-h-8" nativeButton={false} render={<Link href="/my-work" />}>My work</Button>
-          <Button className="min-h-11 sm:min-h-8" variant="outline" nativeButton={false} render={<Link href="/account/connections" />}>Manage connections</Button>
+          </p>
         </div>
       </div>
+      <p className="mt-4 max-w-2xl text-body text-muted-foreground">
+        This account signs you in and holds your private work. It never carries scientific authority: each Result keeps its own attribution, and a Decision is made through a Repository.
+      </p>
     </header>
 
-    <div className="grid gap-10 xl:grid-cols-[minmax(0,1fr)_21rem] xl:items-start">
-      <div className="space-y-10">
-        <PublicProfileSummary result={publicProfile} />
+    <Section
+      id="account-public-profile-heading"
+      title="Public contributor profile"
+      description="What, if anything, appears publicly beside exact attribution. Presentation only — never scientific identity or review independence."
+      action={<div className="flex flex-wrap gap-2">
+        {profile ? <Button className="min-h-11 sm:min-h-8" size="sm" variant="outline" nativeButton={false} render={<Link href={`/people/${profile.handle}`} />}>Preview</Button> : null}
+        <Button className="min-h-11 sm:min-h-8" size="sm" nativeButton={false} render={<Link href="/account/profile" />}>{profile ? "Edit profile" : "Create profile"}</Button>
+      </div>}
+    >
+      {publicProfile.status === "unavailable"
+        ? <Alert className="mt-5"><AlertTitle>Public profile settings are unavailable</AlertTitle><AlertDescription>Your private account and scientific attribution are unchanged.</AlertDescription></Alert>
+        : <p className="mt-5 text-body text-muted-foreground">
+            {profile
+              ? <>Published at <span className="font-mono text-foreground">problems.science/people/{profile.handle}</span>, currently <span className="text-foreground">{profile.visibility}</span>.</>
+              : "No public profile has been created. Your work stays attributable without one."}
+          </p>}
+    </Section>
 
-        <section aria-labelledby="account-work-heading" className="vela-object-surface p-5">
-          <SectionHeading id="account-work-heading" title="Continue your work" description="Private workspaces retained for questions you are exploring." action={workspaces.status === "ready" && workspaces.value.length ? <Button className="min-h-11 sm:min-h-7" size="sm" variant="ghost" nativeButton={false} render={<Link href="/my-work" />}>View all</Button> : undefined} />
-          <Workspaces result={workspaces} />
-        </section>
+    <Section
+      id="account-destinations-heading"
+      title="Your work and access"
+      description="Both live on their own pages; this is where they stand."
+    >
+      <ItemGroup className="divide-y gap-0">
+        <DestinationRow href="/my-work" icon={WorkIcon} title="My work" state={work.badge} detail={work.detail} />
+        <DestinationRow href="/account/connections" icon={SourceCodeIcon} title="Connections" state={connection.badge} detail={connection.detail} />
+      </ItemGroup>
+    </Section>
 
-        <section aria-labelledby="account-codebases-heading" className="vela-object-surface p-5">
-          <SectionHeading id="account-codebases-heading" title="Connected codebases" description="Exact revisions you inspected or retained from GitHub." action={<Button className="min-h-11 sm:min-h-7" size="sm" variant="ghost" nativeButton={false} render={<Link href="/import" />}>Import</Button>} />
-          <Codebases result={connections} />
-        </section>
-      </div>
-
-      <aside className="space-y-8" aria-label="Account status and security">
-        <section aria-labelledby="connections-heading" className="vela-object-surface p-4">
-          <div className="flex items-end justify-between gap-3 border-b pb-3">
-            <div>
-              <h2 id="connections-heading" className="text-subtitle font-medium">Connections</h2>
-            </div>
-            <Link href="/account/connections" className="text-meta font-medium underline-offset-4 hover:underline">Manage</Link>
-          </div>
-          <ConnectionRow icon={SecurityCheckIcon} title="WorkOS" description="Current sign-in identity" status={<Badge>Connected</Badge>} />
-          {connection ? <>
-            <ConnectionRow icon={Github01Icon} title="GitHub identity" description="Verified sign-in provider" status={<Badge variant={connection.githubIdentityConnected ? "default" : "secondary"}>{connection.githubIdentityConnected ? "Connected" : "Not linked"}</Badge>} />
-            <ConnectionRow icon={LinkSquare02Icon} title="Repository access" description={connection.githubAppEnabled ? countLabel(accessibleRepositories, "selected repository", "selected repositories") : "Not configured in this environment"} status={<Badge variant="secondary">{countLabel(installations.length, "installation")}</Badge>} />
-          </> : <Alert className="mt-4"><AlertTitle>Connections unavailable</AlertTitle><AlertDescription>Try the detailed Connections page again.</AlertDescription></Alert>}
-        </section>
-
-        <section aria-labelledby="session-heading" className="vela-object-surface p-4">
-          <div className="flex items-start gap-3">
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-md bg-muted/60 text-muted-foreground"><HugeiconsIcon icon={SecurityCheckIcon} aria-hidden className="size-4" /></div>
-            <div className="min-w-0 flex-1">
-              <h2 id="session-heading" className="text-label font-medium">Current session</h2>
-              <p className="mt-1 text-meta text-muted-foreground">Active in this browser. Name and email come from your connected sign-in provider.</p>
-              <p className="mt-2 text-meta text-muted-foreground">Sign-in controls this account; each Result keeps its own scientific attribution.</p>
-              <p className="mt-2 text-meta text-muted-foreground"><Link href="/privacy" className="font-medium text-foreground underline underline-offset-4">How account data is handled</Link></p>
-              <form action={signOutAccount} className="mt-4">
-                <Button className="min-h-11 sm:min-h-7" type="submit" size="sm" variant="outline"><HugeiconsIcon icon={Logout01Icon} aria-hidden />Sign out</Button>
-              </form>
-            </div>
-          </div>
-        </section>
-      </aside>
-    </div>
+    <Section
+      id="session-heading"
+      title="Session and security"
+      description="Signed in on this browser. Name and email come from your connected sign-in provider."
+    >
+      <ItemGroup className="divide-y gap-0">
+        <Item className="rounded-none border-0 px-0 py-5">
+          <ItemMedia variant="icon" className="size-10 rounded-md bg-muted/60"><HugeiconsIcon icon={SecurityCheckIcon} aria-hidden /></ItemMedia>
+          <ItemContent>
+            <ItemTitle className="line-clamp-none flex-wrap">WorkOS sign-in <Badge>Connected</Badge></ItemTitle>
+            <ItemDescription className="line-clamp-none">{account.displayName} · {account.email}</ItemDescription>
+          </ItemContent>
+        </Item>
+        <Item className="rounded-none border-0 px-0 py-5">
+          <ItemMedia variant="icon" className="size-10 rounded-md bg-muted/60"><HugeiconsIcon icon={connections.status === "ready" && connections.value.githubIdentityConnected ? Github01Icon : LinkSquare02Icon} aria-hidden /></ItemMedia>
+          <ItemContent>
+            <ItemTitle className="line-clamp-none flex-wrap">Scientific attribution <Badge variant="outline">Separate</Badge></ItemTitle>
+            <ItemDescription className="line-clamp-none">Signing in controls this account only. It does not confer authorship, review independence, or Repository authority.</ItemDescription>
+          </ItemContent>
+        </Item>
+        <Item className="rounded-none border-0 px-0 py-5">
+          <ItemMedia variant="icon" className="size-10 rounded-md bg-muted/60"><HugeiconsIcon icon={UserCircle02Icon} aria-hidden /></ItemMedia>
+          <ItemContent>
+            <ItemTitle className="line-clamp-none">Account data</ItemTitle>
+            <ItemDescription className="line-clamp-none"><Link href="/privacy" className="font-medium text-foreground underline underline-offset-4">How account data is handled</Link></ItemDescription>
+          </ItemContent>
+          <ItemActions>
+            <form action={signOutAccount}>
+              <Button className="min-h-11 sm:min-h-8" type="submit" size="sm" variant="outline"><HugeiconsIcon icon={Logout01Icon} aria-hidden />Sign out</Button>
+            </form>
+          </ItemActions>
+        </Item>
+      </ItemGroup>
+    </Section>
   </>;
 }

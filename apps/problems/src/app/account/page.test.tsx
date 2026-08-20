@@ -53,8 +53,9 @@ describe("Account page", () => {
     render(await AccountPage());
 
     expect(screen.getByRole("heading", { level: 1, name: "Ada Lovelace" })).toBeVisible();
-    expect(screen.getByRole("heading", { name: "Continue your work" })).toBeVisible();
-    expect(screen.getByRole("heading", { name: "Connected codebases" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Public contributor profile" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Your work and access" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Session and security" })).toBeVisible();
     expect(mocks.workspaces).toHaveBeenCalledWith("activity_01");
     expect(mocks.connections).toHaveBeenCalledWith("activity_01");
     expect(mocks.profile).toHaveBeenCalledWith("activity_01");
