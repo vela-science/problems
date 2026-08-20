@@ -17,7 +17,7 @@ export function PublicInformationNav({ current }: { current: (typeof INFORMATION
       {INFORMATION_ROUTES.map((route) => route.href === current ? (
         <span key={route.href} aria-current="page" className="font-medium text-foreground">{route.label}</span>
       ) : (
-        <Link key={route.href} href={route.href} className="text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
+        <Link key={route.href} href={route.href} className="inline-flex min-h-6 items-center text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
           {route.label}
         </Link>
       ))}

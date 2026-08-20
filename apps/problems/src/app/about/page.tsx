@@ -76,7 +76,7 @@ export default function AboutPage() {
         <p className="mt-4 max-w-[72ch] text-body leading-7 text-muted-foreground">Keeping a contribution, its checks, and a decision on separate axes is a practice other scientific registries also follow, and some present it well. What this site adds is the admitted record behind a Result: the exact source it was scoped to, what each check covered, the named Repository decision that changed state, and every correction since, all replayable from the repository itself.</p>
         <Disclosure className="mt-5 border-t border-border pt-4 text-meta" summaryClassName="font-medium text-foreground" summary="Technical release details">
           <p className="mt-3 max-w-[68ch] text-muted-foreground">The current source revisions, generator version, collection roots, and projection root are published in the exact site manifest.</p>
-          <a href="/.well-known/vela-site.json" className="mt-2 inline-block font-medium text-primary underline underline-offset-4">Open exact release manifest</a>
+          <a href="/.well-known/vela-site.json" className="mt-2 inline-flex min-h-6 items-center font-medium text-primary underline underline-offset-4">Open exact release manifest</a>
         </Disclosure>
       </aside>
     </PageShell>

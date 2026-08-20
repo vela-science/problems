@@ -83,7 +83,7 @@ export function SourceBindings({
           <div className="mt-1 flex min-w-0 flex-wrap gap-x-2 gap-y-1">
             {unbound.map((source) => (
             <span key={source.sourceId} className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-1">
-              <Link className="font-mono underline-offset-2 hover:underline" href={`/sources?repository=${slug}&source=${encodeURIComponent(source.sourceId)}`}>
+              <Link className="inline-flex min-h-6 items-center font-mono underline-offset-2 hover:underline" href={`/sources?repository=${slug}&source=${encodeURIComponent(source.sourceId)}`}>
                 {source.sourceId}
               </Link>
               {source.coverage && source.coverage !== "complete"

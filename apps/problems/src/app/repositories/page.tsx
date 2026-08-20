@@ -91,7 +91,7 @@ function RepositoryLedgerRow({ repository, maximumClaims }: { repository: SiteRe
             className="text-status-progress"
             reached={repositoryStages(repositoryLoop(repository))}
           />
-          <Link href={base} className="text-subtitle underline-offset-4 hover:underline">{repository.status.repository.name}</Link>
+          <Link href={base} className="inline-flex min-h-6 items-center text-subtitle underline-offset-4 hover:underline">{repository.status.repository.name}</Link>
         </div>
         <p className="mt-1.5 line-clamp-2 max-w-[66ch] text-body leading-5 text-muted-foreground">{objective}</p>
       </div>

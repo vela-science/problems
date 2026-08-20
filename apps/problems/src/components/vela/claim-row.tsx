@@ -84,7 +84,7 @@ export function ClaimRow({ claim, href, verified, kindHref }: ClaimRowProps) {
         {/* `break-words`, because a qualified Lean name is one unbroken token —
             `Erdos730.FullDensityTheorem.pairSet_infinite` ran off the right edge
             of a 375px viewport and the rest of the name was simply gone. */}
-        <Link href={href} className={cn("min-w-0 break-words text-body text-foreground hover:underline", key && "font-mono")}>
+        <Link href={href} className={cn("inline-flex min-h-6 min-w-0 items-center break-words text-body text-foreground hover:underline", key && "font-mono")}>
           {lead || <RecordId value={claim.id} copy={false} />}
         </Link>
 
