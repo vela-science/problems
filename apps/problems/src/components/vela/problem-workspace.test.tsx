@@ -53,8 +53,14 @@ describe("Problem Workspace", () => {
     expect(screen.getByRole("heading", { name: "Start a workspace" })).toBeVisible();
     expect(screen.getByRole("link", { name: "Continue locally" })).toBeVisible();
     expect(screen.getByText(/does not clone, switch, upload, or execute/iu)).toBeVisible();
-    expect(screen.getByLabelText("Problem files")).toBeVisible();
-    expect(screen.getByLabelText("Workspace tools")).toBeVisible();
+    /* No Files rail and no "Workspace tools" list. The hosted workspace
+       coordinates — notes, approaches, a contribution draft — and the file and
+       tool work belongs to Workbench, which is what "Continue locally" above
+       hands off to. Drawing an instrument the browser does not own advertised
+       a product that is not this one. */
+    expect(screen.queryByLabelText("Problem files")).toBeNull();
+    expect(screen.queryByLabelText("Workspace tools")).toBeNull();
+    expect(screen.getByText(/Source files and local tools stay in Workbench/iu)).toBeVisible();
     expect(screen.queryByText("account-1")).toBeNull();
   });
 

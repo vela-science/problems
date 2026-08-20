@@ -83,10 +83,26 @@ function EmptyWorkspace({ state, accountId, workbenchHandoff }: { state: State; 
   return <section aria-labelledby="empty-workspace-heading" className="mt-6 min-w-0">
     <header className="flex flex-wrap items-center justify-between gap-3"><div className="flex items-center gap-2"><h2 id="empty-workspace-heading" className="text-title">Workspace</h2><Badge variant="outline">signed in</Badge></div>{workbenchHandoff ? <Button nativeButton={false} size="sm" variant="outline" render={<a href={workbenchHandoff} />}>Continue locally</Button> : null}</header>
     {workbenchHandoff ? <p className="mt-2 text-meta text-muted-foreground">Open this exact Problem, source revision, and authority Repository in Workbench. This handoff does not clone, switch, upload, or execute anything.</p> : null}
-    <div className="vela-object-surface mt-5 overflow-hidden lg:grid lg:min-h-[34rem] lg:grid-cols-[15rem_minmax(0,1fr)_16rem]">
-      <nav aria-label="Problem files" className="border-b bg-[var(--vela-surface-sunken)] p-4 lg:border-b-0 lg:border-r"><p className="text-meta font-semibold">Files</p><Link href={`?view=sources`} className="vela-object-row mt-3 block rounded-md border bg-background p-3"><span className="block truncate text-label font-medium">{sourceTitle}</span><span className="mt-1 block text-micro text-muted-foreground">{sourceCount} retained source records</span></Link></nav>
-      <div className="min-w-0 border-b p-4 lg:border-b-0 lg:p-6"><p className="text-meta font-semibold">Canvas</p><div className="mt-5 rounded-lg border border-dashed bg-muted/10 p-5 sm:p-7"><h3 className="text-subtitle">Start a workspace</h3><p className="mt-1 text-compact text-muted-foreground">Keep notes, Research Blocks, and a contribution draft with this Problem.</p><form action={createWorkspaceAction} className="mt-6 grid gap-4 sm:max-w-lg"><input type="hidden" name="repository" value={state.repositorySlug} /><input type="hidden" name="problem" value={state.problem.problem} /><IdempotencyField /><FormField label="Workspace name" name="name" placeholder="Problem working group" /><FormField label="URL slug" name="slug" placeholder="problem-working-group" /><Button className="w-fit" type="submit">Create workspace</Button></form></div></div>
-      <aside aria-label="Workspace tools" className="bg-[var(--vela-surface-sunken)] p-4 lg:border-l"><p className="text-meta font-semibold">Workspace tools</p><ul className="mt-3 divide-y border-y text-compact"><li className="py-3"><span className="font-medium">Research Blocks</span><span className="block text-micro text-muted-foreground">No items</span></li><li className="py-3"><span className="font-medium">Notes</span><span className="block text-micro text-muted-foreground">No notes</span></li><li className="py-3"><span className="font-medium">Result draft</span><span className="block text-micro text-muted-foreground">Not started</span></li></ul><p className="mt-4 text-micro text-muted-foreground">Account access manages workspace membership only.</p></aside>
+    {/* No Files rail, no Canvas, no "Workspace tools" list.
+        A hosted workspace coordinates: it keeps notes, approaches and a
+        contribution draft beside the Problem. Choosing a checkout, running
+        tools and capturing evidence are Workbench's, and its README draws the
+        line — "problems.science owns shared discovery and coordination".
+        Drawing three columns of instrument the browser does not own advertised
+        a product that is not this one, and two of the three columns were an
+        empty placeholder anyway. */}
+    <div className="vela-object-surface mt-5 overflow-hidden p-5 sm:p-7">
+      <h3 className="text-subtitle">Start a workspace</h3>
+      <p className="mt-1 max-w-[68ch] text-compact text-muted-foreground">Keep notes, approaches and a contribution draft with this Problem. Source files and local tools stay in Workbench; this is where the work is coordinated and handed on.</p>
+      <form action={createWorkspaceAction} className="mt-6 grid gap-4 sm:max-w-lg">
+        <input type="hidden" name="repository" value={state.repositorySlug} />
+        <input type="hidden" name="problem" value={state.problem.problem} />
+        <IdempotencyField />
+        <FormField label="Workspace name" name="name" placeholder="Problem working group" />
+        <FormField label="URL slug" name="slug" placeholder="problem-working-group" />
+        <Button className="w-fit" type="submit">Create workspace</Button>
+      </form>
+      <p className="mt-6 border-t pt-4 text-meta text-muted-foreground">{sourceCount} retained source record{sourceCount === 1 ? "" : "s"} for {sourceTitle} — <Link href="./sources" className="font-medium text-foreground underline underline-offset-4">open Sources</Link>.</p>
     </div>
   </section>;
 }
