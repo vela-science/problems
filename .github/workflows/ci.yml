@@ -53,5 +53,13 @@ jobs:
       - name: Lint and tests
         run: bun run lint && bun run test
 
+      # `check` covers typecheck, but nothing here compiled either app, so a
+      # break that only a real build catches stayed green on main: deleting a
+      # stylesheet whose only importer lives outside `apps/` and `packages/`
+      # broke `@vela/www` without failing a single step. This also runs
+      # `check:public-output`, which needs built output to inspect.
+      - name: Build both apps
+        run: bun run build
+
       - name: Patch hygiene
         run: bun run format:check
