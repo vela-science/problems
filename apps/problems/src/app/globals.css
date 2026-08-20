@@ -30,12 +30,20 @@
     transition: background-color 140ms ease-out, color 140ms ease-out, box-shadow 140ms ease-out;
   }
 
-  .vela-object-row:hover { background: var(--vela-surface-hover); }
   .vela-object-row[aria-selected="true"], .vela-object-row[data-selected="true"] {
     background: var(--vela-surface-selected);
     box-shadow: inset 3px 0 0 var(--primary);
   }
 }
+
+/* Deliberately unlayered, so it wins over Tailwind's utilities layer.
+ *
+ * `Item` ships `[a]:hover:bg-muted`, so an anchor row built from the primitive
+ * hovered neutral grey while every hand-built row beside it hovered the
+ * app's cobalt-tinted `--vela-surface-hover`. Inside `@layer components` this
+ * rule loses to that utility; unlayered it wins, and rows hover the same
+ * colour whether or not they have been moved onto `Item`. */
+.vela-object-row:hover { background: var(--vela-surface-hover); }
 
 @media (prefers-reduced-motion: reduce) {
   .vela-object-row { transition: none; }

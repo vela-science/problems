@@ -148,7 +148,7 @@ export default async function ProposalPage({ params }: PageProps<"/repositories/
 
       {shape.length ? (
         <section className="mt-8" aria-labelledby="shape-heading">
-          <h2 id="shape-heading" className="mb-1 text-eyebrow uppercase text-muted-foreground">Stated parameters</h2>
+          <h2 id="shape-heading" className="mb-1 text-eyebrow text-muted-foreground">Stated parameters</h2>
           <RecordFacts className="max-w-2xl" facts={shape} />
         </section>
       ) : null}

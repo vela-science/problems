@@ -116,10 +116,12 @@ export function WorkspaceInspector({
       </div>
       <nav
         aria-label="Inspector sections"
-        className={cn(
-          "grid border-b p-1",
-          availableTabs.length === 1 ? "grid-cols-1" : availableTabs.length === 2 ? "grid-cols-2" : "grid-cols-3",
-        )}
+        /* `grid-flow-col auto-cols-fr` divides the row evenly however many
+           sections are available, so the count is not re-derived as a ternary
+           over track classes. These stay links with `aria-current`, not a
+           `Tabs` tablist: each section is its own URL, and a control that
+           changes the address is navigation. */
+        className="grid auto-cols-fr grid-flow-col border-b p-1"
       >
         {tabs.filter((tab) => availableTabs.includes(tab.id)).map((tab) => (
           <Link
@@ -156,7 +158,7 @@ export function WorkspaceInspector({
             ) : null}
             {selectedAnchors.length ? (
               <section aria-labelledby="workspace-anchor-heading">
-                <h3 id="workspace-anchor-heading" className="text-eyebrow uppercase text-muted-foreground">
+                <h3 id="workspace-anchor-heading" className="text-eyebrow text-muted-foreground">
                   Scientific anchor
                 </h3>
                 <ul className="mt-2 divide-y">

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from "@vela/ui/components/item";
 import { ScientificText } from "@vela/ui/vela/scientific-text";
 import { formalCoverage, problemLabel, resolveProblemStatement, statementParagraphs, statementPlainText } from "@/lib/problem-statement";
 import type { ScientificProblemState } from "@/lib/scientific-state";
@@ -29,13 +30,19 @@ export function ProblemQuestionRow({ state, href, number, collectionLabel = "Pro
   const name = question ? `${collectionLabel} ${number}: ${statementPlainText(question)}` : `${collectionLabel} ${number}`;
 
   return <li className="min-w-0">
-    <Link href={href} aria-label={actionLabel ? `${actionLabel}: ${name}` : name} className="vela-object-row group -mx-2 flex min-w-0 gap-4 rounded-md px-2 py-4 focus-visible:outline-2 focus-visible:outline-offset-2">
-      <span aria-hidden className="mt-0.5 w-12 shrink-0 font-mono text-meta tabular-nums text-muted-foreground">{`#${number}`}</span>
-      <span className="min-w-0 flex-1">
-        <span className="block max-w-[76ch] text-compact leading-6 group-hover:underline group-hover:decoration-border group-hover:underline-offset-4">
+    <Item
+      className="vela-object-row -mx-2 gap-4 rounded-md px-2 py-4"
+      render={<Link href={href} aria-label={actionLabel ? `${actionLabel}: ${name}` : name} />}
+    >
+      <ItemMedia aria-hidden className="w-12 font-mono text-meta tabular-nums text-muted-foreground">{`#${number}`}</ItemMedia>
+      <ItemContent>
+        {/* The question wraps; `ItemTitle` clamps to one line by default, and a
+            Problem a reader is choosing between is exactly the text that must
+            not be cut off. */}
+        <ItemTitle className="line-clamp-none block max-w-[76ch] text-compact leading-6 group-hover/item:underline group-hover/item:decoration-border group-hover/item:underline-offset-4">
           {question ? <ScientificText text={question} /> : problemLabel(state)}
-        </span>
-        <span className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-meta text-muted-foreground">
+        </ItemTitle>
+        <ItemDescription className="line-clamp-none flex flex-wrap items-center gap-x-3 gap-y-1 text-meta">
           <span className="flex items-center gap-1.5">
             <span aria-hidden className={`size-1.5 rounded-full ${resolved ? "bg-status-progress" : "bg-muted-foreground/45"}`} />
             {status}
@@ -43,12 +50,12 @@ export function ProblemQuestionRow({ state, href, number, collectionLabel = "Pro
           {coverage.declarations ? <span>{coverage.declarations} formal {coverage.declarations === 1 ? "declaration" : "declarations"}</span> : null}
           {reviewed ? <span className="text-status-evidence">{reviewed} reviewed {reviewed === 1 ? "Result" : "Results"}</span> : null}
           {statement ? <span className="truncate">via {statement.sourceLabel}</span> : null}
-        </span>
-      </span>
-      <span className="mt-0.5 flex shrink-0 items-center gap-2 text-meta font-medium text-primary">
+        </ItemDescription>
+      </ItemContent>
+      <ItemActions className="self-start text-meta font-medium text-primary">
         {actionLabel ? <span className="hidden sm:inline">{actionLabel}</span> : null}
-        <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden className={`size-4 transition-[opacity,transform] duration-150 group-hover:translate-x-0.5 ${actionLabel ? "" : "opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100"}`} />
-      </span>
-    </Link>
+        <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden className={`size-4 transition-[opacity,transform] duration-150 group-hover/item:translate-x-0.5 ${actionLabel ? "" : "opacity-0 group-hover/item:opacity-100 group-focus-visible/item:opacity-100"}`} />
+      </ItemActions>
+    </Item>
   </li>;
 }

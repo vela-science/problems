@@ -142,7 +142,7 @@ export default async function FindingPage({ params }: PageProps<"/repositories/[
       {boundSource ? (
         <dl className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-meta text-muted-foreground">
           <div className="flex items-center gap-1.5">
-            <dt className="text-eyebrow uppercase">Source</dt>
+            <dt className="text-eyebrow">Source</dt>
             <dd>
               <Link className="underline underline-offset-2 hover:text-foreground" href={`/sources/${encodeURIComponent(boundSource.binding.source_id)}`}>
                 {boundSource.binding.source_id}
@@ -150,7 +150,7 @@ export default async function FindingPage({ params }: PageProps<"/repositories/[
             </dd>
           </div>
           <div className="flex min-w-0 items-center gap-1.5">
-            <dt className="text-eyebrow uppercase">Source record</dt>
+            <dt className="text-eyebrow">Source record</dt>
             <dd className="min-w-0">
               <Link className="font-mono underline underline-offset-2 [overflow-wrap:anywhere] hover:text-foreground" href={`/sources/${encodeURIComponent(boundSource.binding.source_id)}?q=${encodeURIComponent(boundSource.record.native_id)}`}>
                 {boundSource.record.native_id}
@@ -159,7 +159,7 @@ export default async function FindingPage({ params }: PageProps<"/repositories/[
           </div>
           {sourceLocator ? (
             <div className="flex items-center gap-1.5">
-              <dt className="text-eyebrow uppercase">Published at</dt>
+              <dt className="text-eyebrow">Published at</dt>
               <dd><a className="underline underline-offset-2 hover:text-foreground" href={sourceLocator} rel="noreferrer nofollow" target="_blank">{new URL(sourceLocator).hostname}</a></dd>
             </div>
           ) : null}
@@ -167,7 +167,7 @@ export default async function FindingPage({ params }: PageProps<"/repositories/[
       ) : null}
 
       <section aria-labelledby="assertion-heading">
-        <h2 id="assertion-heading" className="mb-3 text-eyebrow uppercase text-muted-foreground">{structured.fields.length ? "Source-reported record" : "Canonical assertion"}</h2>
+        <h2 id="assertion-heading" className="mb-3 text-eyebrow text-muted-foreground">{structured.fields.length ? "Source-reported record" : "Canonical assertion"}</h2>
         {structured.fields.length ? (
           /* Four structured values, shown as values. Each links into the ledger
              facet it belongs to, so the record's own metadata is navigation. */
@@ -178,7 +178,7 @@ export default async function FindingPage({ params }: PageProps<"/repositories/[
                   <Link className="inline-flex items-center rounded border px-2 py-1 text-micro text-muted-foreground hover:bg-accent hover:text-foreground" href={`/repositories/${slug}/claims?q=${encodeURIComponent(field.value)}`}>{field.value}</Link>
                 ) : (
                   <span className={`inline-flex items-center gap-1.5 rounded border px-2 py-1 text-micro ${field.affirmative ? "text-foreground" : "text-muted-foreground opacity-70"}`}>
-                    <span className="text-eyebrow uppercase text-muted-foreground">{field.label}</span>
+                    <span className="text-eyebrow text-muted-foreground">{field.label}</span>
                     {field.value}
                   </span>
                 )}
@@ -250,7 +250,7 @@ export default async function FindingPage({ params }: PageProps<"/repositories/[
         {context?.groups.length ? <div className="space-y-6">
           {context.groups.map((group) => <section key={group.key} aria-labelledby={`relationship-${group.key.replaceAll(":", "-")}`}>
             <div className="mb-2 flex items-center justify-between gap-3">
-              <h3 id={`relationship-${group.key.replaceAll(":", "-")}`} className="text-label uppercase tracking-wide text-muted-foreground">{relationshipHeading(group)}</h3>
+              <h3 id={`relationship-${group.key.replaceAll(":", "-")}`} className="text-label text-muted-foreground">{relationshipHeading(group)}</h3>
               <span className="font-mono text-meta text-muted-foreground">{group.count}</span>
             </div>
             <ItemGroup className="divide-y">
@@ -409,7 +409,7 @@ function Lineage({ repository, lineage }: { repository: string; lineage: ClaimSt
               Claim saw a green check and never saw what it declined to cover. */}
           {verification.does_not_establish.length ? (
             <div className="mt-2">
-              <p className="text-eyebrow uppercase text-muted-foreground">Does not establish</p>
+              <p className="text-eyebrow text-muted-foreground">Does not establish</p>
               <ul className="mt-1 max-w-3xl list-disc space-y-0.5 pl-5 text-compact text-muted-foreground">
                 {verification.does_not_establish.map((limit) => <li key={limit}>{limit}</li>)}
               </ul>

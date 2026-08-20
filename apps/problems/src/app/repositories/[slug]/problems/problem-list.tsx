@@ -67,7 +67,7 @@ export function ProblemList({
             <ItemContent>
               <div className="flex w-full flex-wrap items-center justify-between gap-x-3 gap-y-1">
                 <span className="flex flex-wrap items-center gap-2">
-                  <span className="text-eyebrow uppercase text-muted-foreground">
+                  <span className="text-eyebrow text-muted-foreground">
                     <span className={problem.declared_status === "open" ? "text-foreground" : undefined}>
                       declared {problem.declared_status}
                     </span>

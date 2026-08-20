@@ -88,9 +88,9 @@ describe("Problem tools", () => {
     expect(screen.getByText("claim chain fidelity")).toBeVisible();
     expect(screen.getByRole("heading", { name: "Linked sources" })).toBeVisible();
     expect(screen.getByRole("complementary", { name: "Result details" })).toBeVisible();
-    expect(screen.getByText("Repository decision")).toBeVisible();
-    expect(screen.getByText("Result source Git")).toBeVisible();
-    expect(screen.getByText("Formal source relationship")).toBeVisible();
+    expect(screen.getByText("Decision here")).toBeVisible();
+    expect(screen.getByText("Source code")).toBeVisible();
+    expect(screen.getByText("Links to formal statements")).toBeVisible();
     expect(screen.queryByRole("heading", { name: "Provenance" })).toBeNull();
     expect(screen.queryByRole("heading", { name: "Other results" })).toBeNull();
     expect(screen.queryByRole("heading", { name: /What can I do/u })).toBeNull();
@@ -118,12 +118,15 @@ describe("Problem tools", () => {
       verification_records: [check],
     }];
     render(<ProblemState state={{ ...state, claims: [claim], reviews } as never} basePath="/problems/erdos-problems/94" />);
-    expect(screen.getByText("Not retained as structured custody")).toBeVisible();
-    expect(screen.getByText(/does not validate their repository or branch and merge status/iu)).toBeVisible();
+    expect(screen.getByText("Not recorded in a checkable form")).toBeVisible();
+    expect(screen.getByText(/does not check that they exist, or that they were merged/iu)).toBeVisible();
     expect(screen.getByText(/Declared independent of agent:producer/iu)).toBeVisible();
     expect(screen.getByText("Same source bytes and provider")).toBeVisible();
     expect(screen.getByText(/unresolved · no authority effect/iu)).toBeVisible();
-    expect(screen.getByText("A source reference does not establish upstream acceptance or Standing.")).toBeVisible();
+    /* Both denials have to survive the plainer wording: a link proves neither
+       that the source project accepted the result, nor that this repository
+       did. Dropping either half would overstate what a link means. */
+    expect(screen.getByText("A link does not mean the source project accepted the result, nor that it was accepted here.")).toBeVisible();
   });
 
   it("keeps the retired map query on the familiar Result surface", () => {
@@ -220,14 +223,14 @@ describe("Problem tools", () => {
 
   it("does not label a superseded correction result as current", () => {
     render(<ProblemState state={{ ...state, currentClaimId: null } as never} basePath="/problems/erdos-problems/321" researchView="timeline" />);
-    expect(screen.getByText("Later version")).toBeVisible();
+    expect(screen.getByText("produced a later version")).toBeVisible();
     expect(screen.queryByText("Current")).toBeNull();
   });
 
   it("does not substitute the Decision performer for a missing Result performer", () => {
     const reviews = [{ ...state.reviews![0]!, producer_package: null }];
     render(<ProblemState state={{ ...state, reviews } as never} basePath="/problems/erdos-problems/321" researchView="timeline" />);
-    expect(screen.getByText("Result performer not retained")).toBeVisible();
+    expect(screen.getByText("Submitter not recorded")).toBeVisible();
     expect(screen.getAllByText("agent:decision")).toHaveLength(1);
   });
 });

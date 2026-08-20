@@ -43,7 +43,7 @@ export function StatRow({ stats, className }: { stats: Stat[]; className?: strin
           key={stat.label}
           className="min-w-0 rounded-lg bg-muted/30 px-3 py-3"
         >
-          <dt className="text-eyebrow uppercase text-muted-foreground">{stat.label}</dt>
+          <dt className="text-eyebrow text-muted-foreground">{stat.label}</dt>
           <dd className="mt-1 flex flex-wrap items-baseline gap-x-1.5">
             <span className="font-mono text-title tabular-nums">{stat.value}</span>
             {stat.from ? (

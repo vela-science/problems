@@ -9,15 +9,12 @@ vi.mock("@/lib/auth", () => ({
   authConfiguration: () => ({ enabled: true }),
 }));
 vi.mock("next/navigation", () => ({ notFound: () => { mocks.notFound(); throw new Error("NOT_FOUND"); } }));
-vi.mock("@/components/vela/link-tabs", () => ({ LinkTabs: ({ tabs }: { tabs: Array<{ key: string; label: string }> }) => <nav>{tabs.map((tab) => <span key={tab.key}>{tab.label}</span>)}</nav> }));
-vi.mock("@/components/vela/problem-summary", () => ({ ProblemAnswerStrip: () => <dl>Answer strip</dl> }));
 vi.mock("@/components/vela/problem-state", () => ({
   ProblemState: ({ researchView }: { researchView: string }) => <section>Public tool: {researchView}</section>,
 }));
 vi.mock("@/components/vela/problem-workspace", () => ({ ProblemWorkspace: () => <section>Workspace surface</section> }));
 vi.mock("@/components/vela/problem-overview-reference", () => ({
-  ProblemReferenceHeader: ({ problemNumber, collectionName }: { problemNumber: string; collectionName: string }) => <header><h1>Exact Problem</h1><span>{collectionName}</span><span>#{problemNumber}</span></header>,
-  ProblemReferenceTabs: ({ current }: { current: string }) => <nav aria-label="Problem sections">{["Overview", "Work", "Results", "Sources", "History"].map((label) => <span key={label} aria-current={current === label.toLowerCase() ? "page" : undefined}>{label}</span>)}</nav>,
+  ProblemReferenceHeader: ({ collectionName }: { collectionName: string }) => <header><h1>Exact Problem</h1><span>{collectionName}</span></header>,
   ProblemOverviewReference: () => <section>Overview surface</section>,
 }));
 
@@ -109,21 +106,21 @@ describe("Problem view addressing", () => {
 
   it("defaults the bare URL to the reference Overview", async () => {
     render(await page({}));
+    /* The surface the URL selects is the assertion. The section names now
+       live in the rail, which this page does not render. */
     expect(screen.getByText("Overview surface")).toBeInTheDocument();
-    expect(screen.getByText("Overview")).toBeInTheDocument();
-    expect(screen.getByText("Results")).toBeInTheDocument();
     expect(screen.queryByText("Research")).toBeNull();
     expect(screen.queryByText("Contributions")).toBeNull();
   });
 
-  /* The heading is now the question, so the page has to say which Problem the
-     question belongs to. The breadcrumb is chrome: it scrolls away, it is
-     absent from print, and a reader who lands deep needs the citable identity
-     beside the statement, not only above it. */
-  it("states its collection-qualified identity beside the question", async () => {
+  /* The identity used to be repeated beside the question as well as in the
+     breadcrumb, on the argument that the breadcrumb scrolls away and does not
+     print. Two identical readings of the same fact, one above the other, cost
+     more than the case they bought: the breadcrumb is the identity now. What
+     still has to survive here is the collection the question belongs to. */
+  it("names the collection the question belongs to", async () => {
     render(await page({}));
     expect(screen.getByText("Erdős Problems")).toBeVisible();
-    expect(screen.getByText("#321")).toBeVisible();
   });
 
   it.each([
@@ -138,7 +135,6 @@ describe("Problem view addressing", () => {
   it("folds the retired Map address into Results", async () => {
     render(await page({ view: "map" }));
     expect(screen.getByText("Public tool: contributions")).toBeInTheDocument();
-    expect(screen.getByText("Results")).toHaveAttribute("aria-current", "page");
   });
 
   it("maps the retired Work address to Workspace", async () => {

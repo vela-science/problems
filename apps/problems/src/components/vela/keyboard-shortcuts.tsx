@@ -17,7 +17,6 @@ export const JUMP_DESTINATIONS = [
   { key: "h", href: "/", label: "Home" },
   { key: "p", href: "/problems", label: "Problems" },
   { key: "w", href: "/contribute", label: "Contribute" },
-  { key: "u", href: "/hubs", label: "Hubs" },
   { key: "a", href: "/updates", label: "Updates" },
   { key: "r", href: "/repositories", label: "Repositories" },
   { key: "s", href: "/sources", label: "Sources" },
@@ -58,12 +57,12 @@ export function KeyboardShortcuts({
           </SheetDescription>
         </SheetHeader>
         <div className="overflow-y-auto px-4 pb-6">
-          <h3 className="mt-2 text-eyebrow uppercase text-muted-foreground">Anywhere</h3>
+          <h3 className="mt-2 text-eyebrow text-muted-foreground">Anywhere</h3>
           <div className="divide-y">
             {SEARCH_KEYS.map((entry) => <Row key={entry.label + entry.keys.join()} {...entry} />)}
           </div>
 
-          <h3 className="mt-6 text-eyebrow uppercase text-muted-foreground">Go to</h3>
+          <h3 className="mt-6 text-eyebrow text-muted-foreground">Go to</h3>
           <div className="divide-y">
             {JUMP_DESTINATIONS.map((entry) => (
               <Row key={entry.key} keys={["g", entry.key]} label={entry.label} />

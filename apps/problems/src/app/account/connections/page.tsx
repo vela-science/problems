@@ -14,6 +14,7 @@ import { listGitHubConnections } from "@vela/activity-data";
 import { Alert, AlertDescription, AlertTitle } from "@vela/ui/components/alert";
 import { Badge } from "@vela/ui/components/badge";
 import { Button } from "@vela/ui/components/button";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@vela/ui/components/empty";
 import { Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemTitle } from "@vela/ui/components/item";
 import { PageShell } from "@vela/ui/vela/page-shell";
 import { currentActivityAccount } from "@/lib/hosted-account";
@@ -57,7 +58,7 @@ export default async function ConnectionsPage({ searchParams }: { searchParams: 
   return <PageShell archetype="default" layout="reading" className="flex flex-col gap-10">
     <header className="border-b pb-7">
       <Link href="/account" className="inline-flex min-h-11 items-center gap-2 text-meta text-muted-foreground underline-offset-4 hover:text-foreground hover:underline sm:min-h-9"><HugeiconsIcon icon={ArrowLeft} aria-hidden className="size-4" />Account</Link>
-      <p className="mt-5 text-eyebrow uppercase text-muted-foreground">Private account</p>
+      <p className="mt-5 text-eyebrow text-muted-foreground">Private account</p>
       <h1 className="mt-2 text-display">Connections</h1>
       <p className="mt-3 max-w-2xl text-body text-muted-foreground">Manage how you sign in and which GitHub repositories problems.science may inspect. Connections never grant scientific authority.</p>
     </header>
@@ -122,7 +123,7 @@ export default async function ConnectionsPage({ searchParams }: { searchParams: 
           {app.enabled ? <ItemActions><Button className="min-h-11 sm:min-h-7" size="sm" variant="ghost" nativeButton={false} render={<a href={`https://github.com/settings/installations/${installation.installationId}`} />}>Manage on GitHub</Button></ItemActions> : null}
         </Item>)}
       </ItemGroup> : <div className="border-b py-8">
-        <p className="text-eyebrow uppercase text-muted-foreground">No selected access</p>
+        <p className="text-eyebrow text-muted-foreground">No selected access</p>
         <p className="mt-2 max-w-xl text-body text-muted-foreground">Public GitHub URLs can still be inspected without an installation. Connect selected access only when you need a private or explicitly chosen repository.</p>
       </div>}
     </section>
@@ -144,10 +145,15 @@ export default async function ConnectionsPage({ searchParams }: { searchParams: 
           </ItemContent>
           <ItemActions><HugeiconsIcon icon={ArrowRight} aria-hidden className="size-4 transition-transform duration-150 group-hover:translate-x-0.5" /></ItemActions>
         </Item>)}
-      </ItemGroup> : <div className="border-b py-8">
-        <p className="text-eyebrow uppercase text-muted-foreground">No codebases retained</p>
-        <p className="mt-2 text-body text-muted-foreground">Import a GitHub URL when you want to inspect and retain one exact revision.</p>
-      </div>}
+      </ItemGroup> : <Empty className="border-b">
+        <EmptyHeader>
+          <EmptyTitle>No codebase is retained</EmptyTitle>
+          <EmptyDescription>Import a GitHub URL when you want to inspect and retain one exact revision.</EmptyDescription>
+        </EmptyHeader>
+        <EmptyContent>
+          <Button nativeButton={false} variant="outline" size="sm" render={<Link href="/import" />}>Import a codebase</Button>
+        </EmptyContent>
+      </Empty>}
     </section>
   </PageShell>;
 }

@@ -31,7 +31,7 @@ export function ProposalEvidence({ review }: { review: ReviewSummary }) {
 
       {requirements.length ? (
         <div className="mb-6">
-          <h3 className="text-eyebrow uppercase text-muted-foreground">Declared by the producer</h3>
+          <h3 className="text-eyebrow text-muted-foreground">Declared by the producer</h3>
           <ol className="mt-1.5 max-w-[85ch] list-decimal space-y-1.5 pl-5 text-compact">
             {requirements.map((requirement) => <li key={requirement}>{requirement}</li>)}
           </ol>

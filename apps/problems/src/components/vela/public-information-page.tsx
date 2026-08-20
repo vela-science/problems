@@ -43,7 +43,7 @@ export function PublicInformationPage({
   return (
     <PageShell as="article" archetype="reading" layout="reading">
       <PageHero density="compact">
-        <p className="text-eyebrow uppercase text-primary">{eyebrow}</p>
+        <p className="text-eyebrow text-primary">{eyebrow}</p>
         <h1 className="mt-3 max-w-4xl text-display text-balance">{title}</h1>
         <p className="mt-3 max-w-[68ch] text-body leading-7 text-muted-foreground">{description}</p>
         <div className="mt-6"><PublicInformationNav current={current} /></div>

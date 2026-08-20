@@ -21,6 +21,8 @@ import { currentReview } from "@/components/vela/problem-provenance";
 import { ProblemQuestionRow } from "@/components/vela/problem-question-row";
 import { discoveredProblems, problemStatePreviews } from "@/lib/scientific-state";
 import { formalConjecturesCollection } from "@vela/projection-data";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@vela/ui/components/empty";
+import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from "@vela/ui/components/item";
 import { ScientificText } from "@vela/ui/vela/scientific-text";
 import styles from "./home-brand.module.css";
 
@@ -109,21 +111,28 @@ export default async function HomePage() {
 
         <div className={styles.collections}>
         <div className={styles.collectionList}>
-          <Link href={COLLECTION_PATH} className="vela-object-row group flex min-w-0 items-center gap-3 px-1 py-3.5 focus-visible:outline-2 focus-visible:outline-offset-2">
-            <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary"><HugeiconsIcon icon={BookOpen01Icon} aria-hidden className="size-4" /></span>
-            <span className="min-w-0 flex-1">
-              <span className="block text-compact font-semibold">Erdős Problems</span>
-              <span className="block text-meta text-muted-foreground">{publishedCount} published Problems</span>
-            </span>
-            <Badge variant="secondary" className="hidden sm:inline-flex">Published collection</Badge>
-            <HugeiconsIcon icon={ArrowRight} aria-hidden className="size-4 shrink-0 text-muted-foreground transition-transform duration-150 group-hover:translate-x-0.5" />
-          </Link>
-          <Link href={FORMAL_COLLECTION_PATH} className="vela-object-row group flex min-w-0 items-center gap-3 px-1 py-3.5 focus-visible:outline-2 focus-visible:outline-offset-2">
-            <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary"><HugeiconsIcon icon={CodeIcon} aria-hidden className="size-4" /></span>
-            <span className="min-w-0 flex-1"><span className="block text-compact font-semibold">Formal Conjectures</span><span className="block text-meta text-muted-foreground">{formalConjecturesCollection.data.items.length} rights-reviewed formalizations</span></span>
-            <Badge variant="secondary" className="hidden sm:inline-flex">Published subset</Badge>
-            <HugeiconsIcon icon={ArrowRight} aria-hidden className="size-4 shrink-0 text-muted-foreground transition-transform duration-150 group-hover:translate-x-0.5" />
-          </Link>
+          <Item className="vela-object-row gap-3 px-1 py-3.5" render={<Link href={COLLECTION_PATH} />}>
+            <ItemMedia className="size-9 rounded-lg bg-primary/10 text-primary"><HugeiconsIcon icon={BookOpen01Icon} aria-hidden className="size-4" /></ItemMedia>
+            <ItemContent>
+              <ItemTitle className="text-compact font-semibold">Erdős Problems</ItemTitle>
+              <ItemDescription className="text-meta">{publishedCount} published Problems</ItemDescription>
+            </ItemContent>
+            <ItemActions>
+              <Badge variant="secondary" className="hidden sm:inline-flex">Published collection</Badge>
+              <HugeiconsIcon icon={ArrowRight} aria-hidden className="size-4 shrink-0 text-muted-foreground transition-transform duration-150 group-hover/item:translate-x-0.5" />
+            </ItemActions>
+          </Item>
+          <Item className="vela-object-row gap-3 px-1 py-3.5" render={<Link href={FORMAL_COLLECTION_PATH} />}>
+            <ItemMedia className="size-9 rounded-lg bg-primary/10 text-primary"><HugeiconsIcon icon={CodeIcon} aria-hidden className="size-4" /></ItemMedia>
+            <ItemContent>
+              <ItemTitle className="text-compact font-semibold">Formal Conjectures</ItemTitle>
+              <ItemDescription className="text-meta">{formalConjecturesCollection.data.items.length} rights-reviewed formalizations</ItemDescription>
+            </ItemContent>
+            <ItemActions>
+              <Badge variant="secondary" className="hidden sm:inline-flex">Published subset</Badge>
+              <HugeiconsIcon icon={ArrowRight} aria-hidden className="size-4 shrink-0 text-muted-foreground transition-transform duration-150 group-hover/item:translate-x-0.5" />
+            </ItemActions>
+          </Item>
         </div>
         </div>
       </div>
@@ -142,8 +151,16 @@ export default async function HomePage() {
             number={discovery.problem} collectionLabel="Erdős problem"
             href={discovery.canonicalPath ?? COLLECTION_PATH}
           />)}
-          {formalConjecturesCollection.data.items.slice(0, 1).map((item) => <li key={item.route_slug} className="min-w-0"><Link href={`${FORMAL_COLLECTION_PATH}/${item.route_slug}`} className="vela-object-row group -mx-2 flex min-w-0 gap-4 rounded-md px-2 py-4"><span aria-hidden className="mt-0.5 grid size-8 shrink-0 place-items-center rounded-md bg-primary/10 text-primary"><HugeiconsIcon icon={CodeIcon} className="size-4" /></span><span className="min-w-0 flex-1"><span className="block max-w-[76ch] text-compact leading-6 group-hover:text-primary"><ScientificText text={item.title} /></span><span className="mt-1.5 block text-meta text-muted-foreground">Formal Conjectures · {item.source_family}</span></span><HugeiconsIcon icon={ArrowRight} aria-hidden className="mt-1 size-4 shrink-0 text-muted-foreground" /></Link></li>)}
-        </ul> : <p className="border-b py-6 text-body text-muted-foreground">No Problem in this release has a retained question to preview.</p>}
+          {formalConjecturesCollection.data.items.slice(0, 1).map((item) => <li key={item.route_slug} className="min-w-0"><Item className="vela-object-row -mx-2 gap-4 rounded-md px-2 py-4" render={<Link href={`${FORMAL_COLLECTION_PATH}/${item.route_slug}`} />}><ItemMedia aria-hidden className="size-8 rounded-md bg-primary/10 text-primary"><HugeiconsIcon icon={CodeIcon} className="size-4" /></ItemMedia><ItemContent><ItemTitle className="line-clamp-none block max-w-[76ch] text-compact leading-6 group-hover/item:text-primary"><ScientificText text={item.title} /></ItemTitle><ItemDescription className="text-meta">Formal Conjectures · {item.source_family}</ItemDescription></ItemContent><ItemActions className="self-start"><HugeiconsIcon icon={ArrowRight} aria-hidden className="mt-1 size-4 text-muted-foreground" /></ItemActions></Item></li>)}
+        </ul> : <Empty className="border-b">
+          <EmptyHeader>
+            <EmptyTitle>No question is ready to preview</EmptyTitle>
+            <EmptyDescription>This release retains no Problem whose source statement can be shown here.</EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Button nativeButton={false} variant="outline" size="sm" render={<Link href="/problems" />}>Browse every Problem</Button>
+          </EmptyContent>
+        </Empty>}
       </div>
 
       <section className="min-w-0" aria-labelledby="latest-results-heading">
@@ -158,7 +175,15 @@ export default async function HomePage() {
             number={discovery.problem}
             href={discovery.canonicalPath ?? COLLECTION_PATH}
           />)}
-        </ul> : <p className="border-b py-6 text-body text-muted-foreground">No reviewed Result is published in this release.</p>}
+        </ul> : <Empty className="border-b">
+          <EmptyHeader>
+            <EmptyTitle>No Result has been accepted here yet</EmptyTitle>
+            <EmptyDescription>Problems remain readable, and their sources remain browsable, before any Result is admitted.</EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Button nativeButton={false} variant="outline" size="sm" render={<Link href="/problems" />}>Browse every Problem</Button>
+          </EmptyContent>
+        </Empty>}
       </section>
     </PageSection>
   </PageShell>;

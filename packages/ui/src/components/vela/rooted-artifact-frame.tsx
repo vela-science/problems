@@ -36,7 +36,7 @@ export function RootedArtifactFrame({
       </header>
       <div className="grid gap-4 px-4 py-4 sm:grid-cols-[minmax(0,1fr)_minmax(10rem,.35fr)]">
         <div className="min-w-0">
-          <p className="text-eyebrow uppercase text-muted-foreground">Content root</p>
+          <p className="text-eyebrow text-muted-foreground">Content root</p>
           <ExactValue className="mt-2" value={artifact.contentRoot} label={`${artifact.kind} content root`} />
         </div>
         <dl className="grid content-start gap-3 border-t pt-4 text-meta sm:border-l sm:border-t-0 sm:pl-4 sm:pt-0">

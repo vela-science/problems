@@ -113,7 +113,7 @@ function RepositoryLedgerRow({ repository, maximumClaims }: { repository: SiteRe
       </div>
 
       <div>
-        <p className="mb-1.5 text-eyebrow uppercase text-muted-foreground">Integrity</p>
+        <p className="mb-1.5 text-eyebrow text-muted-foreground">Integrity</p>
         <div className="flex flex-wrap gap-1.5 lg:flex-col lg:items-start">
           <StatusBadge state={state.replayed ? "replayed" : "strict_blocked"} className={state.replayed ? "border-border bg-muted/50 text-muted-foreground" : undefined}>{state.replayed ? "replay verified" : "replay drift"}</StatusBadge>
           <StatusBadge state={state.strict ? "strict_pass" : "strict_blocked"} className={state.strict ? "border-border bg-muted/50 text-muted-foreground" : undefined}>{state.strict ? "strict pass" : `${number.format(repository.status.integrity.blocker_count)} blockers`}</StatusBadge>

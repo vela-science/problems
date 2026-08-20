@@ -4,9 +4,28 @@ import type { ScientificProblemState } from "@/lib/scientific-state";
 
 type State = NonNullable<ScientificProblemState>;
 
-function strings(value: unknown): string[] {
+/* Some sources retain these fields as a JSON string rather than an array, so
+   a wiki row rendered as `["Codex","GPT-5.2 Thinking"]` and an empty list
+   rendered as a `[]` under a "People" label. The surface only ever showed on
+   a Problem with no current Result, which is why it went unseen. Parse the
+   string form, and treat an empty list as absent rather than as a value. */
+export function activityStrings(value: unknown): string[] {
   if (Array.isArray(value)) return value.filter((entry): entry is string => typeof entry === "string" && entry.trim().length > 0);
-  return typeof value === "string" && value.trim() ? [value.trim()] : [];
+  if (typeof value !== "string" || !value.trim()) return [];
+  const raw = value.trim();
+  if (raw.startsWith("[")) {
+    try {
+      const parsed: unknown = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        return parsed.flatMap((entry) => (typeof entry === "string" ? entry.split(";") : []))
+          .map((entry) => entry.trim())
+          .filter(Boolean);
+      }
+    } catch {
+      /* Not JSON after all; fall through and show the source's own text. */
+    }
+  }
+  return [raw];
 }
 
 function text(value: unknown): string | null {
@@ -31,8 +50,8 @@ export function ProblemActivityRecords({ state }: { state: State }) {
     <ul className="mt-4 divide-y rounded-lg border">
       {entries.map(({ occurrence, record }) => {
         const metadata = record.metadata as Record<string, unknown>;
-        const systems = strings(metadata.ai_systems).concat(strings(metadata.model));
-        const humans = strings(metadata.humans).concat(strings(metadata.human_collaborators));
+        const systems = activityStrings(metadata.ai_systems).concat(activityStrings(metadata.model));
+        const humans = activityStrings(metadata.humans).concat(activityStrings(metadata.human_collaborators));
         const section = text(metadata.section_name) ?? text(metadata.resolution_method) ?? text(metadata.category_label);
         const when = text(metadata.date) ?? text(metadata.year_posed);
         const outcome = text(metadata.outcome_label) ?? text(metadata.resolution) ?? text(metadata.solve_type);
@@ -44,19 +63,19 @@ export function ProblemActivityRecords({ state }: { state: State }) {
           </div>
           <dl className="mt-2 flex flex-wrap gap-x-6 gap-y-1.5">
             {systems.length ? <div className="flex min-w-0 items-center gap-2">
-              <dt className="flex items-center gap-1.5 text-micro uppercase tracking-wide text-muted-foreground">
+              <dt className="flex items-center gap-1.5 text-micro text-muted-foreground">
                 <HugeiconsIcon icon={AiBrain01Icon} strokeWidth={1.8} aria-hidden className="size-3.5" />Machine
               </dt>
               <dd className="min-w-0 text-meta">{systems.join(", ")}</dd>
             </div> : null}
             {humans.length ? <div className="flex min-w-0 items-center gap-2">
-              <dt className="flex items-center gap-1.5 text-micro uppercase tracking-wide text-muted-foreground">
+              <dt className="flex items-center gap-1.5 text-micro text-muted-foreground">
                 <HugeiconsIcon icon={UserMultiple02Icon} strokeWidth={1.8} aria-hidden className="size-3.5" />People
               </dt>
               <dd className="min-w-0 text-meta">{humans.join(", ")}</dd>
             </div> : null}
             {outcome ? <div className="flex min-w-0 items-center gap-2">
-              <dt className="text-micro uppercase tracking-wide text-muted-foreground">Reported outcome</dt>
+              <dt className="text-micro text-muted-foreground">Reported outcome</dt>
               <dd className="min-w-0 text-meta">{outcome}</dd>
             </div> : null}
           </dl>

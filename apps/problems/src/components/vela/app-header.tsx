@@ -8,6 +8,7 @@ import { Toolbar } from "@base-ui/react/toolbar";
 import { Button } from "@vela/ui/components/button";
 import { SidebarTrigger } from "@vela/ui/components/sidebar";
 import { RepositorySwitcher } from "@/components/vela/repository-switcher";
+import { ProblemSwitcher } from "@/components/vela/problem-switcher";
 import { AccountMenu } from "@/components/vela/account-menu";
 import { COMMAND_PALETTE_TRIGGER_ID, useCommandPalette } from "@/components/vela/command-palette";
 import { NotificationCenter } from "@/components/vela/notification-center";
@@ -35,7 +36,6 @@ const globalTitles: Record<string, string> = {
   "/": "Home",
   "/problems": "Problems",
   "/contribute": "Add a contribution",
-  "/hubs": "Hubs",
   "/updates": "Updates",
   "/repositories": "Repositories",
   "/decisions": "Decisions",
@@ -71,23 +71,31 @@ function recordTrailLabel(segment: string) {
  * ran nine pixels under the search trigger, which made its own right edge
  * unclickable. The page a reader is on is the part worth keeping. */
 function headerTrail(pathname: string, repositories: PublishedRepository[], problemCollections: PublishedProblemCollection[]) {
-  const canonicalProblem = pathname.match(/^\/problems\/([^/]+)\/([^/]+)$/u);
+  /* A Problem, with the optional section segment its rail links to. The
+     section is the last crumb, the way it is the last crumb inside any object
+     that owns its own sections. */
+  const canonicalProblem = pathname.match(/^\/problems\/([^/]+)\/([^/]+)(?:\/([^/]+))?$/u);
   if (canonicalProblem) {
     const namespace = canonicalProblem[1];
     const problem = canonicalProblem[2];
+    const view = canonicalProblem[3] ?? null;
     const collection = problemCollections.find((entry) => entry.namespace === namespace);
     return {
       repository: null,
-      section: "Problems",
-      sectionHref: "/problems",
+      section: null,
+      sectionHref: null,
       sectionKey: null,
-      collection: collection ? { name: collection.name, href: `/problems/${collection.namespace}` } : null,
-      record: problem && collection
-        ? collection.recordLabels?.[problem] ?? `${collection.name.replace(/ Problems$/u, " problem")} ${recordTrailLabel(problem)}`
-        : null,
-      compactRecord: problem
-        ? collection?.identifierKind === "slug" ? recordTrailLabel(problem) : `#${recordTrailLabel(problem)}`
-        : null,
+      collection: null,
+      problem: collection && problem ? {
+        collectionName: collection.name,
+        collectionHref: `/problems/${collection.namespace}`,
+        label: collection.identifierKind === "slug" ? recordTrailLabel(problem) : `#${recordTrailLabel(problem)}`,
+        href: `/problems/${namespace}/${problem}`,
+        namespace: namespace!,
+      } : null,
+      record: null,
+      compactRecord: null,
+      view: view ? { label: `${view.charAt(0).toUpperCase()}${view.slice(1)}`, href: `/problems/${namespace}/${problem}/${view}` } : null,
     };
   }
   const collectionMatch = pathname.match(/^\/problems\/([^/]+)$/u);
@@ -101,6 +109,7 @@ function headerTrail(pathname: string, repositories: PublishedRepository[], prob
       collection: null,
       record: collection.name,
       compactRecord: collection.name,
+view: null,
     };
   }
   if (pathname === "/account/profile") return {
@@ -111,6 +120,7 @@ function headerTrail(pathname: string, repositories: PublishedRepository[], prob
     collection: null,
     record: "Public profile",
     compactRecord: "Public profile",
+view: null,
   };
   const contributorMatch = pathname.match(/^\/people\/([^/]+)$/u);
   if (contributorMatch) {
@@ -123,6 +133,7 @@ function headerTrail(pathname: string, repositories: PublishedRepository[], prob
       collection: null,
       record: performerIdFromSegment(identity) ? "Performer" : `@${recordTrailLabel(identity)}`,
       compactRecord: performerIdFromSegment(identity) ? "Performer" : `@${recordTrailLabel(identity)}`,
+view: null,
     };
   }
   const repository = repositories.find(({ slug }) =>
@@ -138,6 +149,7 @@ function headerTrail(pathname: string, repositories: PublishedRepository[], prob
         collection: null,
         record: id ? recordTrailLabel(id) : null,
         compactRecord: null,
+view: null,
       };
     }
     return {
@@ -148,6 +160,7 @@ function headerTrail(pathname: string, repositories: PublishedRepository[], prob
       collection: null,
       record: null,
       compactRecord: null,
+view: null,
     };
   }
   const base = `/repositories/${repository.slug}`;
@@ -166,6 +179,7 @@ function headerTrail(pathname: string, repositories: PublishedRepository[], prob
     collection: null,
     record: named && rest[1] ? recordTrailLabel(rest[1]) : null,
     compactRecord: null,
+view: null,
   };
 }
 
@@ -200,6 +214,15 @@ export function AppHeader({
             section={trail.sectionKey}
           />
         ) : null}
+        {trail.problem ? (
+          <ProblemSwitcher
+            collectionName={trail.problem.collectionName}
+            collectionHref={trail.problem.collectionHref}
+            label={trail.problem.label}
+            collections={problemCollections}
+            namespace={trail.problem.namespace}
+          />
+        ) : null}
         {trail.section ? (
           <>
             {/* Hidden exactly when the crumb to its right is. The section is a
@@ -218,14 +241,6 @@ export function AppHeader({
             )}
           </>
         ) : null}
-        {trail.collection ? (
-          <>
-            <span aria-hidden className="hidden text-muted-foreground/60 sm:inline">/</span>
-            <Link href={trail.collection.href} className="min-w-0 shrink truncate hover:text-foreground hover:underline">
-              {trail.collection.name}
-            </Link>
-          </>
-        ) : null}
         {trail.record ? (
           <>
             {/* A separator needs something on its left. Collapsing the section
@@ -238,7 +253,7 @@ export function AppHeader({
             <span
               aria-hidden
               className={
-                trail.repository || trail.collection || (trail.section && !trail.sectionHref)
+                trail.repository || (trail.section && !trail.sectionHref)
                   ? "text-muted-foreground/60"
                   : "hidden text-muted-foreground/60 sm:inline"
               }
@@ -253,6 +268,12 @@ export function AppHeader({
                 ? <><span className="sm:hidden">{trail.compactRecord}</span><span className="hidden sm:inline">{trail.record}</span></>
                 : trail.record}
             </span>
+          </>
+        ) : null}
+        {trail.view ? (
+          <>
+            <span aria-hidden className="text-muted-foreground/60">/</span>
+            <span className="min-w-0 truncate font-medium text-foreground" aria-current="page">{trail.view.label}</span>
           </>
         ) : null}
       </nav>

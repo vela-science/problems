@@ -23,10 +23,18 @@ export type FileEntry =
 function proofMark(occurrence: Occurrence) {
   const formal = occurrence.formal;
   if (formal?.proof_present && formal.proof_sorry_free) {
-    return { className: "bg-status-progress", label: "proved, no sorry" };
+    return { className: "bg-status-progress", label: "Proved, no gaps" };
   }
-  if (formal?.proof_present) return { className: "bg-status-caution", label: "proof contains sorry" };
-  return { className: "border border-muted-foreground/60", label: "statement only" };
+  if (formal?.proof_present && formal.proof_sorry_free === false) {
+    return { className: "bg-status-caution", label: "Proof has a hole" };
+  }
+  /* A proof is attached and the library recorded nothing about completeness.
+     This used to fall through to "contains sorry", which asserts a hole the
+     source never reported — an unrecorded fact rendered as a defect. */
+  if (formal?.proof_present) {
+    return { className: "bg-muted-foreground/60", label: "Proof attached, completeness not recorded" };
+  }
+  return { className: "border border-muted-foreground/60", label: "Statement only, no proof" };
 }
 
 /* Directory structure, recovered from the module paths the library files its

@@ -47,7 +47,7 @@ export function ProblemSourceCoverage({ coverage }: { coverage: ReviewedProblemS
     <section aria-labelledby="source-coverage-heading" className="@container/source-coverage min-w-0">
       <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-3">
         <div>
-          <p className="text-eyebrow uppercase text-muted-foreground">Reviewed source coverage</p>
+          <p className="text-eyebrow text-muted-foreground">Reviewed source coverage</p>
           <h2 id="source-coverage-heading" className="mt-1 text-title">
             {number.format(coverage.problems.length)} reviewed Problems across {number.format(coverage.sources.length)} exact Sources
           </h2>

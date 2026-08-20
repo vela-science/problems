@@ -79,21 +79,68 @@ export function LeanBlock({ code, path, declaration, chips, actions }: {
   </figure>;
 }
 
-/* The proof facts a formal library declares about one statement, as chips in
- * the file panel's footer. These are the library's own labels; none is a Vela
- * Verification, which is why they render as source facts and never on the
- * Standing axis. */
+/* Whether a statement is actually proved, in one chip.
+ *
+ * These were four independent badges — `proof lean4`, `statement only`,
+ * `sorry-free`, `contains sorry` — in one undifferentiated row, so the fact
+ * that decides whether anything was proved sat in the same grey as the
+ * language the proof was written in. `contains sorry` in particular means the
+ * argument has a hole in it, and it read like a tag.
+ *
+ * The three states are mutually exclusive, so they are one chip, named in
+ * words a reader who does not write Lean can act on. These remain the
+ * library's own labels; none is a Vela Verification, which is why they render
+ * as source facts and never on the Standing axis. */
+export function proofStanding(proofPresent: boolean | null, sorryFree: boolean | null) {
+  if (proofPresent === true && sorryFree === false) {
+    return {
+      key: "holed" as const,
+      label: "Proof has a hole",
+      className: "border-status-caution/50 text-status-caution",
+      detail: "The proof uses `sorry`: part of the argument is written but not proved. Lean accepts the file; it does not accept the theorem.",
+    };
+  }
+  if (proofPresent === true && sorryFree === true) {
+    return {
+      key: "proved" as const,
+      label: "Proved, no gaps",
+      className: "border-status-progress/50 text-status-progress",
+      detail: null,
+    };
+  }
+  if (proofPresent === true) {
+    /* A proof is attached and the library did not say whether it is complete.
+       Saying "proved" here would assert something unrecorded. */
+    return {
+      key: "unrecorded" as const,
+      label: "Proof attached, completeness not recorded",
+      className: "text-muted-foreground",
+      detail: null,
+    };
+  }
+  if (proofPresent === false) {
+    return {
+      key: "statement" as const,
+      label: "Statement only, no proof",
+      className: "text-muted-foreground",
+      detail: null,
+    };
+  }
+  return null;
+}
+
 export function ProofChips({ proofPresent, proofKind, sorryFree, categoryLabel }: {
   proofPresent: boolean | null;
   proofKind: string | null;
   sorryFree: boolean | null;
   categoryLabel: string | null;
 }) {
+  const standing = proofStanding(proofPresent, sorryFree);
   return <>
     {categoryLabel ? <Badge variant="secondary">{categoryLabel}</Badge> : null}
-    {proofPresent === true ? <Badge variant="outline">proof {proofKind ? proofKind.replaceAll("_", " ") : "present"}</Badge> : null}
-    {proofPresent === false ? <Badge variant="outline">statement only</Badge> : null}
-    {sorryFree === true ? <Badge variant="outline">sorry-free</Badge> : null}
-    {sorryFree === false ? <Badge variant="outline" className="text-status-conflict">contains sorry</Badge> : null}
+    {standing ? <Badge variant="outline" className={standing.className}>{standing.label}</Badge> : null}
+    {/* The language stays, demoted: it describes the proof, it does not say
+        whether there is one. */}
+    {proofPresent === true && proofKind ? <Badge variant="outline" className="text-muted-foreground">{proofKind.replaceAll("_", " ")}</Badge> : null}
   </>;
 }

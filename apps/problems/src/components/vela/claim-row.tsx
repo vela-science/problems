@@ -95,7 +95,7 @@ export function ClaimRow({ claim, href, verified, kindHref }: ClaimRowProps) {
                 key={`${field.label}:${field.value}`}
                 className={`inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-micro ${field.affirmative ? "text-foreground" : "text-muted-foreground opacity-70"}`}
               >
-                {field.kind === "tag" ? null : <span className="text-eyebrow uppercase text-muted-foreground">{field.label}</span>}
+                {field.kind === "tag" ? null : <span className="text-eyebrow text-muted-foreground">{field.label}</span>}
                 {field.value}
               </li>
             ))}

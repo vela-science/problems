@@ -80,13 +80,20 @@ describe("current product language", () => {
     expect(sidebar).not.toContain('label: "Hubs"');
     expect(sidebar).not.toContain('label: "Review"');
     /* Search stays in the command control; scientific records and maps are
-       contextual destinations rather than permanent global navigation. */
+       contextual destinations rather than permanent global navigation. The
+       exclusion is scoped to the global spine, because a Problem's own
+       sections legitimately carry some of the same words. */
+    const spine = sidebar.slice(sidebar.indexOf("const PRIMARY_DESTINATIONS"), sidebar.indexOf("export function AppSidebar"));
     for (const label of ["Search", "Research map", "Release details", "Repositories", "Sources", "Assertions", "Proposed changes"]) {
-      expect(sidebar).not.toContain(`label: "${label}"`);
+      expect(spine).not.toContain(`label: "${label}"`);
     }
-    expect(sidebar).not.toContain("function problemSections");
-    expect(source("components/vela/problem-page.tsx")).toContain("<ProblemReferenceTabs");
-    expect(source("components/vela/problem-overview-reference.tsx")).toContain('aria-label="Problem sections"');
+    /* Inside a Problem the rail becomes that Problem's sections rather than
+       site navigation, and the strip of tabs that used to duplicate them under
+       the question is gone. Two controls naming the same five destinations,
+       one above the other, is the confusion this replaced. */
+    expect(sidebar).toContain("PROBLEM_SECTIONS");
+    expect(source("components/vela/problem-page.tsx")).not.toContain("<ProblemReferenceTabs");
+    expect(source("components/vela/problem-overview-reference.tsx")).not.toContain('aria-label="Problem sections"');
     /* The repository tab bar owns section naming; the header carries only the
        ancestor it does not provide. */
     expect(source("components/vela/app-header.tsx")).not.toContain('repositoryCollectionTitles');

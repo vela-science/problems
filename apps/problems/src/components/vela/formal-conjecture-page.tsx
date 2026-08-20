@@ -14,7 +14,9 @@ import { Badge } from "@vela/ui/components/badge";
 import { Button } from "@vela/ui/components/button";
 import { PageShell } from "@vela/ui/vela/page-shell";
 import { ScientificText } from "@vela/ui/vela/scientific-text";
-import { ProblemReferenceTabs, type ProblemReferenceView } from "@/components/vela/problem-overview-reference";
+import { type ProblemReferenceView } from "@/components/vela/problem-overview-reference";
+import { Disclosure } from "@/components/vela/disclosure";
+import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from "@vela/ui/components/item";
 
 function HumanText({ children }: { children: string }) {
   return <ScientificText text={children} />;
@@ -56,10 +58,13 @@ function Overview({ item, route }: { item: FormalConjectureOccurrence; route: st
         <h2 id="fc-related" className="text-label">Related formalizations</h2>
         <ul className="mt-2 divide-y">
           {related.map(({ relation, target }) => <li key={`${relation.kind}:${relation.target}`}>
-            <Link href={`/problems/formal-conjectures/${target!.route_slug}`} className="vela-object-row flex items-center justify-between gap-3 px-2 py-3">
-              <span className="min-w-0"><span className="block text-label"><HumanText>{target!.title}</HumanText></span><span className="mt-0.5 block text-meta capitalize text-muted-foreground">{relation.kind.replaceAll("_", " ")}</span></span>
-              <HugeiconsIcon icon={GitBranchIcon} aria-hidden className="size-4 shrink-0 text-muted-foreground" />
-            </Link>
+            <Item className="vela-object-row gap-3 rounded-none px-2 py-3" render={<Link href={`/problems/formal-conjectures/${target!.route_slug}`} />}>
+              <ItemContent>
+                <ItemTitle className="line-clamp-none block text-label"><HumanText>{target!.title}</HumanText></ItemTitle>
+                <ItemDescription className="text-meta capitalize">{relation.kind.replaceAll("_", " ")}</ItemDescription>
+              </ItemContent>
+              <ItemActions><HugeiconsIcon icon={GitBranchIcon} aria-hidden className="size-4 text-muted-foreground" /></ItemActions>
+            </Item>
           </li>)}
         </ul>
       </section> : null}
@@ -74,14 +79,13 @@ function Overview({ item, route }: { item: FormalConjectureOccurrence; route: st
         <div><dt className="text-muted-foreground">Original question</dt><dd className="mt-0.5"><a href={item.source_locator} className="font-medium text-primary hover:underline">Open {item.source_family} source <HugeiconsIcon icon={ArrowUpRight01Icon} aria-hidden className="inline size-3.5" /></a></dd></div>
         <div><dt className="text-muted-foreground">Question text</dt><dd className="mt-0.5">{item.rights.question_text_license} · {item.rights.attribution}</dd></div>
       </dl>
-      <details className="mt-5 border-t pt-3 text-meta">
-        <summary className="cursor-pointer font-medium">Technical identity</summary>
+      <Disclosure className="mt-5 border-t pt-3 text-meta" summaryClassName="font-medium" summary="Technical identity">
         <dl className="mt-3 space-y-3 text-micro">
           <div><dt className="text-muted-foreground">Declaration</dt><dd className="mt-0.5 break-all font-mono">{item.declaration}</dd></div>
           <div><dt className="text-muted-foreground">Snapshot</dt><dd className="mt-0.5 break-all font-mono">{formalConjecturesCollection.source_snapshot.commit}</dd></div>
           <div><dt className="text-muted-foreground">Occurrence root</dt><dd className="mt-0.5 break-all font-mono">{item.content_root}</dd></div>
         </dl>
-      </details>
+      </Disclosure>
     </aside>
   </div>;
 }
@@ -141,7 +145,6 @@ export function FormalConjecturePage({ item, route, current }: { item: FormalCon
         <div className="bg-sidebar/80 px-4 py-3"><dt className="text-micro text-sidebar-foreground/70">Vela current state</dt><dd className="mt-1 text-label">No Repository Result attached</dd></div>
       </dl>
     </header>
-    <div className="mt-3"><ProblemReferenceTabs route={route} current={current} /></div>
     {current === "overview" ? <Overview item={item} route={route} /> : current === "work" ? <Work item={item} /> : current === "results" ? <Results item={item} /> : current === "sources" ? <Sources item={item} /> : <History item={item} />}
   </PageShell>;
 }

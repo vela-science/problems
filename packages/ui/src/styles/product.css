@@ -54,16 +54,6 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* Featured route statement: fluid at every width, including browser zoom.
- * Ordinary route titles keep the compact product display token. */
-.vela-hero-display {
-  font-size: clamp(2.25rem, 5vw, 4.5rem);
-  line-height: 1.02;
-  letter-spacing: -0.035em;
-  text-wrap: balance;
-  overflow-wrap: anywhere;
-}
-
 /* Semantic section layers create route-level hierarchy without dashboard
  * cards. Each tint is attached to a truthful concept: evidence, direction, or
  * retained history. They never encode scientific status by themselves. */

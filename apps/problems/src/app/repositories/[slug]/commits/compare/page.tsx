@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 function RevisionFacts({ label, revision }: { label: string; revision: RepositoryRevision }) {
   return (
     <section aria-labelledby={`${label.toLowerCase()}-revision`} className="min-w-0 py-4">
-      <h2 id={`${label.toLowerCase()}-revision`} className="text-eyebrow uppercase text-muted-foreground">
+      <h2 id={`${label.toLowerCase()}-revision`} className="text-eyebrow text-muted-foreground">
         {label} revision
       </h2>
       <p className="mt-2 font-mono text-body break-all">{revision.git_commit}</p>
@@ -60,7 +60,7 @@ function ClaimDelta({
       {added.length || removed.length ? (
         <div className="mt-4 grid gap-5 sm:grid-cols-2">
           <div>
-            <p className="text-eyebrow uppercase text-muted-foreground">Entered</p>
+            <p className="text-eyebrow text-muted-foreground">Entered</p>
             {added.length ? (
               <ul className="mt-2 space-y-2">
                 {added.map((id) => <li key={id}><RecordId value={id} prefix={18} /></li>)}
@@ -68,7 +68,7 @@ function ClaimDelta({
             ) : <p className="mt-2 text-meta text-muted-foreground">None</p>}
           </div>
           <div>
-            <p className="text-eyebrow uppercase text-muted-foreground">Left</p>
+            <p className="text-eyebrow text-muted-foreground">Left</p>
             {removed.length ? (
               <ul className="mt-2 space-y-2">
                 {removed.map((id) => <li key={id}><RecordId value={id} prefix={18} /></li>)}
@@ -94,7 +94,7 @@ export default async function RevisionComparePage({
     return (
       <PageShell archetype="default" layout="reading">
         <PageHero density="compact">
-          <p className="text-eyebrow uppercase text-muted-foreground">Exact State history</p>
+          <p className="text-eyebrow text-muted-foreground">Exact State history</p>
           <h1 className="mt-2 text-display">Compare exact revisions</h1>
         </PageHero>
         <Empty className="mt-6 border">
@@ -123,7 +123,7 @@ export default async function RevisionComparePage({
     return (
       <PageShell archetype="default" layout="reading">
         <PageHero density="compact">
-          <p className="text-eyebrow uppercase text-muted-foreground">Exact State history</p>
+          <p className="text-eyebrow text-muted-foreground">Exact State history</p>
           <h1 className="mt-2 text-display">Comparison unavailable</h1>
           <p className="mt-3 max-w-2xl text-body text-muted-foreground">
             Current Core could not strictly replay both states under one Repository identity. Raw Git history remains inspectable, but it is not presented as an exact semantic comparison.
@@ -142,7 +142,7 @@ export default async function RevisionComparePage({
   return (
     <PageShell archetype="default" layout="reading">
       <PageHero density="compact">
-        <p className="text-eyebrow uppercase text-muted-foreground">Exact State history</p>
+        <p className="text-eyebrow text-muted-foreground">Exact State history</p>
         <h1 className="mt-2 text-display">Compare exact revisions</h1>
         <p className="mt-3 max-w-2xl text-body text-muted-foreground">
           A derived comparison of two strict-replayed Repository states. It has no authority effect and does not make a Decision.

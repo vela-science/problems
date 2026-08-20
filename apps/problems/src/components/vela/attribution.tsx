@@ -24,6 +24,39 @@ export interface AttributionRecord extends ReviewProvenanceRecord {
   shared_dependencies?: string[] | null;
 }
 
+/* Independence as one visible marker, beside the outcome it qualifies.
+ *
+ * A check's outcome and its independence are different facts, and only the
+ * outcome was legible: "passed" sat in a badge while what the checker shared
+ * with the work it checked sat in micro-muted prose below. A checker on the
+ * same toolchain and the same bytes cannot see a defect in either, so the
+ * qualification belongs next to the verdict rather than under it. */
+export function checkIndependence(record: AttributionRecord) {
+  const independent = record.independent_of ?? [];
+  const shared = record.shared_dependencies ?? [];
+  /* Declaring independence and disclosing a shared dependency are separate
+     facts and a record may carry both, so the shared case is not "not
+     independent" — it is independent with a stated limit. Labelling it
+     otherwise would contradict a record that names the submitter in
+     `independent_of`. */
+  if (independent.length && shared.length) {
+    return {
+      label: shared.length === 1 ? "Independent · 1 shared" : `Independent · ${shared.length} shared`,
+      className: "border-status-caution/50 text-status-caution",
+    };
+  }
+  if (shared.length) {
+    return {
+      label: shared.length === 1 ? "1 shared dependency" : `${shared.length} shared dependencies`,
+      className: "border-status-caution/50 text-status-caution",
+    };
+  }
+  if (independent.length) {
+    return { label: "Independent", className: "border-status-evidence/50 text-status-evidence" };
+  }
+  return { label: "Independence not declared", className: "text-muted-foreground" };
+}
+
 export function Attribution({ record, producer }: { record: AttributionRecord; producer?: string | null }) {
   const independent = record.independent_of ?? [];
   const shared = record.shared_dependencies ?? [];
@@ -63,7 +96,7 @@ export function AttributionLimits({ limits, heading }: { limits: string[]; headi
   if (!limits.length) return null;
   return (
     <div>
-      <h3 className="text-eyebrow uppercase text-muted-foreground">{heading}</h3>
+      <h3 className="text-eyebrow text-muted-foreground">{heading}</h3>
       <ul className="mt-1.5 max-w-[85ch] list-disc space-y-1.5 pl-5 text-compact text-muted-foreground">
         {limits.map((limit) => <li key={limit}>{limit}</li>)}
       </ul>

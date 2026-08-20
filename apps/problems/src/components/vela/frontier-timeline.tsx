@@ -2,6 +2,7 @@ import { StatusBadge, type StatusTone } from "@vela/ui/vela/status-badge";
 import { RootFact } from "@/components/vela/root-fact";
 import { RecordId } from "@/components/vela/record-id";
 import { formatDate } from "@/lib/format";
+import { Disclosure } from "@/components/vela/disclosure";
 
 /* How the frontier moved: the ordered temporal states a Problem's accepted
  * knowledge passed through, each one a first-layer sentence with the Results
@@ -145,8 +146,7 @@ function Anchors({ anchors }: { anchors: FrontierAnchors }) {
   const events = anchors.event_ids ?? [];
   if (!roots.length && !events.length) return null;
   return (
-    <details className="border-t px-4 py-3 text-meta">
-      <summary className="cursor-pointer font-medium">Technical details</summary>
+    <Disclosure className="border-t px-4 py-3 text-meta" summaryClassName="font-medium" summary="Technical details">
       {roots.length ? (
         <dl className="mt-3 space-y-3">
           {roots.map(([label, value]) => <RootFact key={label} label={label} value={value} />)}
@@ -160,7 +160,7 @@ function Anchors({ anchors }: { anchors: FrontierAnchors }) {
           </ul>
         </div>
       ) : null}
-    </details>
+    </Disclosure>
   );
 }
 
@@ -223,10 +223,9 @@ export function FrontierTimeline({ states, gaps = [] }: { states: FrontierState[
                 <span className="min-w-0">{gap.sentence}</span>
                 {gap.basis ? <BasisChip basis={gap.basis} /> : null}
                 {gap.ref ? (
-                  <details className="min-w-0 basis-full text-meta">
-                    <summary className="cursor-pointer font-medium text-muted-foreground">Exact identity</summary>
+                  <Disclosure className="min-w-0 basis-full text-meta" summaryClassName="font-medium text-muted-foreground" summary="Exact identity">
                     <div className="mt-1"><RecordId value={gap.ref} /></div>
-                  </details>
+                  </Disclosure>
                 ) : null}
               </li>
             ))}

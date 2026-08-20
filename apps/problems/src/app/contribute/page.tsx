@@ -11,6 +11,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { formalConjecturesCollection } from "@vela/projection-data";
 import { Badge } from "@vela/ui/components/badge";
 import { Button } from "@vela/ui/components/button";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@vela/ui/components/empty";
 import {
   InputGroup,
   InputGroupAddon,
@@ -21,6 +22,8 @@ import { PageHero, PageSection, PageShell } from "@vela/ui/vela/page-shell";
 import { ScientificText } from "@vela/ui/vela/scientific-text";
 import { ProblemQuestionRow } from "@/components/vela/problem-question-row";
 import { discoveredProblems, problemStatePreviews } from "@/lib/scientific-state";
+import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from "@vela/ui/components/item";
+import { statementPlainText } from "@/lib/problem-statement";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -80,7 +83,15 @@ export default async function WorkPage() {
                 href={`${discovery.canonicalPath}?view=work`}
                 actionLabel="Open Work"
               />)}
-            </ul> : <p className="px-2 py-5 text-compact text-muted-foreground">No Problem with a retained question is available to start from.</p>}
+            </ul> : <Empty>
+              <EmptyHeader>
+                <EmptyTitle>No Problem has a retained question to start from</EmptyTitle>
+                <EmptyDescription>A starting point needs a source statement. Browse the collection to find one whose source retains its question.</EmptyDescription>
+              </EmptyHeader>
+              <EmptyContent>
+                <Button nativeButton={false} variant="outline" size="sm" render={<Link href="/problems" />}>Browse every Problem</Button>
+              </EmptyContent>
+            </Empty>}
           </section>
 
           {formalCandidate ? <section aria-labelledby="formal-starting-points" className="mt-6">
@@ -89,11 +100,14 @@ export default async function WorkPage() {
               <Link href={FORMAL_COLLECTION} className="text-micro font-medium text-muted-foreground hover:text-foreground">View collection</Link>
             </div>
             <ul aria-labelledby="formal-starting-points"><li>
-              <Link href={`${FORMAL_COLLECTION}/${formalCandidate.route_slug}?view=work`} aria-label={`Open Work: ${formalCandidate.title}`} className="vela-object-row group -mx-2 flex min-w-0 gap-4 rounded-md px-2 py-4 focus-visible:outline-2 focus-visible:outline-offset-2">
-                <span aria-hidden className="mt-0.5 grid size-8 shrink-0 place-items-center rounded-md bg-primary/10 text-primary"><HugeiconsIcon icon={CodeIcon} className="size-4" /></span>
-                <span className="min-w-0 flex-1"><span className="block max-w-[76ch] text-compact leading-6 group-hover:underline group-hover:decoration-border group-hover:underline-offset-4"><ScientificText text={formalCandidate.title} /></span><span className="mt-1.5 flex flex-wrap gap-2 text-meta text-muted-foreground"><span>{formalCandidate.source_family}</span><Badge variant="secondary" className="h-5 capitalize">{formalCandidate.category}</Badge></span></span>
-                <span className="mt-0.5 flex shrink-0 items-center gap-2 text-meta font-medium text-primary"><span className="hidden sm:inline">Open Work</span><HugeiconsIcon icon={ArrowRight} aria-hidden className="size-4 transition-transform duration-150 group-hover:translate-x-0.5" /></span>
-              </Link>
+              <Item className="vela-object-row -mx-2 gap-4 rounded-md px-2 py-4" render={<Link href={`${FORMAL_COLLECTION}/${formalCandidate.route_slug}?view=work`} aria-label={`Open Work: ${statementPlainText(formalCandidate.title)}`} />}>
+                <ItemMedia aria-hidden className="size-8 rounded-md bg-primary/10 text-primary"><HugeiconsIcon icon={CodeIcon} className="size-4" /></ItemMedia>
+                <ItemContent>
+                  <ItemTitle className="line-clamp-none block max-w-[76ch] text-compact leading-6 group-hover/item:underline group-hover/item:decoration-border group-hover/item:underline-offset-4"><ScientificText text={formalCandidate.title} /></ItemTitle>
+                  <ItemDescription className="line-clamp-none flex flex-wrap items-center gap-2 text-meta"><span>{formalCandidate.source_family}</span><Badge variant="secondary" className="h-5 capitalize">{formalCandidate.category}</Badge></ItemDescription>
+                </ItemContent>
+                <ItemActions className="self-start text-meta font-medium text-primary"><span className="hidden sm:inline">Open Work</span><HugeiconsIcon icon={ArrowRight} aria-hidden className="size-4 transition-transform duration-150 group-hover/item:translate-x-0.5" /></ItemActions>
+              </Item>
             </li></ul>
           </section> : null}
         </div>

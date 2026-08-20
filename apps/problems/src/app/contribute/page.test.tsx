@@ -97,7 +97,8 @@ describe("Add contribution", () => {
     reads.previews.mockResolvedValue([]);
     render(await ContributePage());
 
-    expect(screen.getByText("No Problem with a retained question is available to start from.")).toBeVisible();
+    expect(screen.getByText("No Problem has a retained question to start from")).toBeVisible();
+    expect(screen.getByRole("link", { name: "Browse every Problem" })).toHaveAttribute("href", "/problems");
     expect(screen.getByRole("link", { name: "Browse all Problems" })).toHaveAttribute("href", "/problems");
   });
 });

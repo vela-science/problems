@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@vela/ui/components/table";
 import { StatusBadge } from "@vela/ui/vela/status-badge";
 import type { SweepFamily, SweptProposal } from "@/lib/claim-shape";
 
@@ -190,25 +191,25 @@ function SweepTable({
 }) {
   if (!windows.length) return null;
   return (
-    <table className={`w-full text-compact ${className ?? ""}`}>
+    <Table className={`text-compact ${className ?? ""}`}>
       <caption className="sr-only">
         Every Proposal in the bounded sweep, with the parameters its assertion states.
       </caption>
-      <thead className="text-eyebrow uppercase text-muted-foreground">
-        <tr className="border-b">
-          <th scope="col" className="py-2 pr-3 text-left font-normal">Window</th>
-          <th scope="col" className="hidden py-2 pr-3 text-right font-normal md:table-cell">Primes</th>
-          <th scope="col" className="hidden py-2 pr-3 text-right font-normal md:table-cell">Max multiplicity</th>
-          <th scope="col" className="hidden py-2 pr-3 text-right font-normal md:table-cell">Argmax p</th>
-          <th scope="col" className="hidden py-2 pr-3 text-right font-normal md:table-cell">Residue</th>
-          <th scope="col" className="py-2 pr-3 text-left font-normal">Proposal status</th>
-          <th scope="col" className="hidden py-2 text-left font-normal lg:table-cell">Assertion</th>
-        </tr>
-      </thead>
-      <tbody className="divide-y">
+      <TableHeader className="text-eyebrow text-muted-foreground">
+        <TableRow>
+          <TableHead className="py-2 pr-3 text-left font-normal">Window</TableHead>
+          <TableHead className="hidden py-2 pr-3 text-right font-normal md:table-cell">Primes</TableHead>
+          <TableHead className="hidden py-2 pr-3 text-right font-normal md:table-cell">Max multiplicity</TableHead>
+          <TableHead className="hidden py-2 pr-3 text-right font-normal md:table-cell">Argmax p</TableHead>
+          <TableHead className="hidden py-2 pr-3 text-right font-normal md:table-cell">Residue</TableHead>
+          <TableHead className="py-2 pr-3 text-left font-normal">Proposal status</TableHead>
+          <TableHead className="hidden py-2 text-left font-normal lg:table-cell">Assertion</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
         {windows.map((window) => (
-          <tr key={window.proposal_id} className="align-top">
-            <td className="py-2.5 pr-3">
+          <TableRow key={window.proposal_id} className="align-top">
+            <TableCell className="py-2.5 pr-3">
               <Link
                 className="font-mono text-micro tabular-nums underline-offset-2 hover:underline"
                 href={`/repositories/${slug}/proposals/${encodeURIComponent(window.proposal_id)}`}
@@ -222,18 +223,18 @@ function SweepTable({
                 <div className="flex gap-2"><dt>residue</dt><dd>{window.residue}</dd></div>
               </dl>
               <p className="mt-1 text-micro text-muted-foreground lg:hidden">{window.source}</p>
-            </td>
-            <td className="hidden py-2.5 pr-3 text-right font-mono text-micro tabular-nums md:table-cell">{window.primes}</td>
-            <td className="hidden py-2.5 pr-3 text-right font-mono text-micro tabular-nums md:table-cell">{window.multiplicity}</td>
-            <td className="hidden py-2.5 pr-3 text-right font-mono text-micro tabular-nums md:table-cell">{window.argmax}</td>
-            <td className="hidden py-2.5 pr-3 text-right font-mono text-micro tabular-nums md:table-cell">{window.residue}</td>
-            <td className="py-2.5 pr-3">
+            </TableCell>
+            <TableCell className="hidden py-2.5 pr-3 text-right font-mono text-micro tabular-nums md:table-cell">{window.primes}</TableCell>
+            <TableCell className="hidden py-2.5 pr-3 text-right font-mono text-micro tabular-nums md:table-cell">{window.multiplicity}</TableCell>
+            <TableCell className="hidden py-2.5 pr-3 text-right font-mono text-micro tabular-nums md:table-cell">{window.argmax}</TableCell>
+            <TableCell className="hidden py-2.5 pr-3 text-right font-mono text-micro tabular-nums md:table-cell">{window.residue}</TableCell>
+            <TableCell className="py-2.5 pr-3">
               <StatusBadge axis="proposal" state={window.status}>{window.status.replaceAll("_", " ")}</StatusBadge>
-            </td>
-            <td className="hidden py-2.5 text-micro text-muted-foreground lg:table-cell">{window.source}</td>
-          </tr>
+            </TableCell>
+            <TableCell className="hidden py-2.5 text-micro text-muted-foreground lg:table-cell">{window.source}</TableCell>
+          </TableRow>
         ))}
-      </tbody>
-    </table>
+      </TableBody>
+    </Table>
   );
 }

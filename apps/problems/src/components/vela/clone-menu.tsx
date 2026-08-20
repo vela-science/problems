@@ -40,7 +40,7 @@ export function CloneMenu({
       </PopoverTrigger>
       <PopoverContent align="end" className="w-[min(28rem,calc(100vw-2rem))] p-4">
         <div className="flex items-center justify-between gap-3">
-          <h3 className="text-eyebrow uppercase text-muted-foreground">
+          <h3 className="text-eyebrow text-muted-foreground">
             {authenticated ? "Authorized checkout at this release" : "Checkout at this release"}
           </h3>
           <CopyButton compact value={command} label="Copy source checkout commands" />

@@ -57,9 +57,9 @@ export function plainTextSegment(segment: string): string {
    Splitting on delimiters that do not pair makes the tokenizer open maths at
    the wrong dollar and close it at the next one, so "has" is typeset as a
    product of three variables and the rest of the sentence loses its notation.
-   A reader is then looking at a formula the source never wrote. Verbatim text
-   is the honest reading of a broken delimiter — the mistake stays visible and
-   stays the source's. */
+   A reader is then looking at a formula the source never wrote. So a failed
+   pair does not fall through to the tokenizer; it goes to `recoverNotation`,
+   which ignores the delimiters rather than trusting them. */
 function delimitersPair(text: string): boolean {
   const dollars = text.replaceAll("\\$", "").match(/\$/gu)?.length ?? 0;
   if (dollars % 2 !== 0) return false;
@@ -68,9 +68,87 @@ function delimitersPair(text: string): boolean {
   return opens === closes;
 }
 
+/* Recovery for source whose delimiters do not pair.
+ *
+ * Verbatim was the old answer, and it kept the mistake honest but left a
+ * reader looking at `\sum_{n \in A}\frac 1 n = \infty` as literal prose.
+ * This ignores the delimiters entirely — they are known wrong — and instead
+ * marks the spans that are unambiguously notation.
+ *
+ * The rule is deliberately narrow, because the failure to avoid is the one the
+ * old code documented: splitting Erdős 3 at the wrong dollar typesets the
+ * English word "has" as a product of three variables. A token is notation only
+ * if it carries a macro or a sub/superscript. Bare words never qualify. A
+ * lone variable or operator joins a run only when it already sits beside
+ * notation, so `must A contain` stays prose while `= \infty` does not. */
+const NOTATION = /\\[a-zA-Z]+|[_^]/u;
+const JOINABLE = /^[A-Za-z0-9]$|^[=+\-<>≤≥≪≫∈∉⊂⊆∪∩·×→↦]+$/u;
+const TRAILING = /[.,;:?!)\]]+$/u;
+
+export function recoverNotation(text: string): Array<{ math: boolean; text: string }> {
+  const raw = text.replaceAll("\\$", "\u0000").replaceAll("$", "");
+
+  /* Words, not characters — and a brace group is one word however much
+     whitespace it contains. `\sum_{n \in A}` split on spaces leaves
+     `\sum_{n` and `A}`, and KaTeX rejects both. */
+  const words: string[] = [];
+  let depth = 0;
+  for (const piece of raw.split(/\s+/u).filter(Boolean)) {
+    const opens = (piece.match(/\{/gu) ?? []).length;
+    const closes = (piece.match(/\}/gu) ?? []).length;
+    if (depth > 0) words[words.length - 1] += ` ${piece}`;
+    else words.push(piece);
+    depth = Math.max(0, depth + opens - closes);
+  }
+
+  const notation = words.map((word) => NOTATION.test(word));
+  /* Grow each run over neighbours that only make sense beside notation: a lone
+     variable, a digit, an operator. Two passes so a run can reach across one
+     such token, which `= \infty` and `\frac 1 n` both need. */
+  for (let pass = 0; pass < 2; pass += 1) {
+    words.forEach((word, index) => {
+      if (notation[index] || !JOINABLE.test(word.replace(TRAILING, ""))) return;
+      if (notation[index - 1] || notation[index + 1]) notation[index] = true;
+    });
+  }
+
+  /* `tight` marks punctuation that must stay against the span before it. */
+  const spans: Array<{ math: boolean; text: string; tight?: boolean }> = [];
+  const push = (math: boolean, value: string, tight?: boolean) => {
+    if (!value) return;
+    const last = spans.at(-1);
+    if (last && last.math === math) last.text += ` ${value}`;
+    else spans.push({ math, text: value, tight });
+  };
+  words.forEach((word, index) => {
+    if (!notation[index]) return push(false, word.replaceAll("\u0000", "$"));
+    /* Sentence punctuation rides the prose, not the formula. */
+    const trailing = TRAILING.exec(word)?.[0] ?? "";
+    push(true, trailing ? word.slice(0, -trailing.length) : word);
+    if (trailing) push(false, trailing, true);
+  });
+
+  /* Whitespace was consumed by the split; give it back to the prose so the
+     sentence still reads as a sentence around its formulae. */
+  return spans.map((span, index) => {
+    if (span.math) return { math: true, text: span.text };
+    const lead = index > 0 && !span.tight ? " " : "";
+    const tail = index < spans.length - 1 ? " " : "";
+    return { math: false, text: `${lead}${span.text}${tail}` };
+  });
+}
+
 export function ScientificText({ text }: { text: string }) {
   if (!delimitersPair(text)) {
-    return <span className={styles.root}>{plainTextSegment(text)}</span>;
+    return <span className={styles.root}>
+      {recoverNotation(text).map((span, index) => {
+        if (!span.math) return <span key={index}>{plainTextSegment(span.text)}</span>;
+        const markup = katex.renderToString(span.text, {
+          output: "mathml", throwOnError: false, trust: false, strict: "ignore", maxExpand: 500, maxSize: 10,
+        });
+        return <span key={index} className={styles.inline} dangerouslySetInnerHTML={{ __html: markup }} />;
+      })}
+    </span>;
   }
   const segments = text.split(tokenPattern).filter(Boolean);
   return (

@@ -91,7 +91,9 @@ describe("AppSidebar", () => {
   });
 
   it("shows the compact published collections beneath Problems only on that branch", async () => {
-    navigation.pathname = "/problems/erdos-problems/321";
+    /* The collection index, not a Problem page: inside a Problem the rail
+       becomes that Problem's own sections. */
+    navigation.pathname = "/problems/erdos-problems";
     renderSidebar();
     fireEvent.click(screen.getByRole("button", { name: "Open test navigation" }));
 
@@ -99,6 +101,23 @@ describe("AppSidebar", () => {
     expect(screen.getByRole("link", { name: "Erdős Problems" })).toHaveAttribute("href", "/problems/erdos-problems");
     expect(screen.getByRole("link", { name: "Erdős Problems" })).toHaveAttribute("data-active");
     expect(screen.getByRole("link", { name: "Formal Conjectures" })).toHaveAttribute("href", "/problems/formal-conjectures");
+  });
+
+  /* Entire's dominant-object model, which PRODUCT.md names as the reference:
+     within an object the rail stops being site navigation and becomes that
+     object's sections, so the strip of tabs that used to repeat them under the
+     question could go. The way back out has to stay reachable. */
+  it("becomes the Problem's own sections inside a Problem", async () => {
+    navigation.pathname = "/problems/erdos-problems/321";
+    renderSidebar();
+    fireEvent.click(screen.getByRole("button", { name: "Open test navigation" }));
+
+    expect(await screen.findByRole("link", { name: "Overview" })).toHaveAttribute("href", "/problems/erdos-problems/321");
+    for (const [label, view] of [["Work", "work"], ["Results", "results"], ["Sources", "sources"], ["History", "history"]]) {
+      expect(screen.getByRole("link", { name: label })).toHaveAttribute("href", `/problems/erdos-problems/321/${view}`);
+    }
+    expect(screen.getByRole("link", { name: "All problems" })).toHaveAttribute("href", "/problems/erdos-problems");
+    expect(screen.queryByRole("link", { name: "Updates" })).not.toBeInTheDocument();
   });
 
   it("marks exact pages and closes after navigation", async () => {

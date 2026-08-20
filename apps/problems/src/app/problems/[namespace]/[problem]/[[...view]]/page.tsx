@@ -56,7 +56,7 @@ function referenceView(query: ProblemPageQuery): ProblemReferenceView {
   return "overview";
 }
 
-export async function generateMetadata({ params }: PageProps<"/problems/[namespace]/[problem]">): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<"/problems/[namespace]/[problem]/[[...view]]">): Promise<Metadata> {
   const { namespace, problem } = await params;
   const resolved = resolve(namespace, problem);
   if (resolved?.kind === "formal-conjecture") return {
@@ -71,18 +71,23 @@ export async function generateMetadata({ params }: PageProps<"/problems/[namespa
   } : {};
 }
 
-export default async function ProblemPage({ params, searchParams }: PageProps<"/problems/[namespace]/[problem]"> & { searchParams: Promise<ProblemPageQuery> }) {
-  const [{ namespace, problem }, query] = await Promise.all([params, searchParams]);
+export default async function ProblemPage({ params, searchParams }: PageProps<"/problems/[namespace]/[problem]/[[...view]]"> & { searchParams: Promise<ProblemPageQuery> }) {
+  const [{ namespace, problem, view }, query] = await Promise.all([params, searchParams]);
+  /* A section is a path segment, the way Entire addresses one, so the rail can
+     mark the open section from the path alone. `?view=` still resolves: it is
+     how the rest of the product links here today, and how every address
+     already published reaches a section. */
+  const requested: ProblemPageQuery = view?.[0] ? { ...query, view: view[0] } : query;
   const resolved = resolve(namespace, problem);
   if (!resolved) notFound();
-  if (resolved.kind === "formal-conjecture") return <FormalConjecturePage item={resolved.occurrence} route={resolved.route} current={referenceView(query)} />;
+  if (resolved.kind === "formal-conjecture") return <FormalConjecturePage item={resolved.occurrence} route={resolved.route} current={referenceView(requested)} />;
   const { repository, route, entity, collection } = resolved;
   return <ProblemPageView
     repository={repository}
     problem={problem}
     collectionName={collection.name}
     route={route}
-    query={query}
+    query={requested}
     expectedSource={entity ? {
       sourceId: entity.canonical_occurrence.source_id,
       nativeId: entity.canonical_occurrence.native_id,

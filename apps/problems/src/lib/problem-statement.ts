@@ -148,16 +148,83 @@ export function statementParagraphs(statement: ProblemStatement | null): { quest
   return { question: paragraphs[0] ?? "", context: paragraphs.slice(1) };
 }
 
-/* A plain-text reading of a question, for places that need a string rather
- * than typeset notation: a link's accessible name, a document title, a share
- * preview. Screen readers announce a link by its name, and a list of Problems
- * whose names are read as raw formulae is a list nobody can navigate. The
- * typeset mathematics stays on the page for anyone reading it. */
+/* A plain-text reading of a question, for the one place that needs a string
+ * rather than typeset notation: a row link's accessible name.
+ *
+ * Stripping the `$` delimiters alone was not enough. It left the macros inside
+ * them, so a screen reader announced Erdős 94 as "Suppose n points in backslash
+ * mathbb brace R brace caret 2" — the notation became syntax noise in exactly
+ * the string a reader navigates a list by.
+ *
+ * The corpus uses 178 distinct macros, so this is deliberately not a LaTeX
+ * parser. It maps the ones that actually carry meaning in a spoken label to a
+ * single character, unwraps the font and structural commands, and drops the
+ * remaining markup skeleton. `\log`, `\max` and their kind need no entry: with
+ * the backslash gone the command word is already the word you would say. */
+const SPOKEN: Record<string, string> = {
+  leq: "≤", le: "≤", geq: "≥", ge: "≥", ll: "≪", gg: "≫", neq: "≠", equiv: "≡", approx: "≈",
+  in: "∈", notin: "∉", subseteq: "⊆", subset: "⊂", supseteq: "⊇", cup: "∪", cap: "∩",
+  sum: "∑", prod: "∏", sqrt: "√", infty: "∞", to: "→", mapsto: "↦", cdot: "·", times: "×",
+  ldots: "…", cdots: "…", dots: "…", pm: "±", mid: "∣", aleph: "ℵ", emptyset: "∅",
+  alpha: "α", beta: "β", gamma: "γ", delta: "δ", epsilon: "ε", varepsilon: "ε", zeta: "ζ",
+  eta: "η", theta: "θ", lambda: "λ", mu: "μ", nu: "ν", pi: "π", rho: "ρ", sigma: "σ",
+  tau: "τ", phi: "φ", varphi: "φ", chi: "χ", psi: "ψ", omega: "ω", Omega: "Ω", Delta: "Δ",
+  Sigma: "Σ", Gamma: "Γ", Lambda: "Λ", Phi: "Φ", Psi: "Ψ", Theta: "Θ",
+};
+
+/* Commands whose argument is the content and whose name is only presentation. */
+const UNWRAP = /\\(?:mathbb|mathrm|mathcal|mathbf|mathit|mathsf|text|textrm|textit|textbf|operatorname|bm|boldsymbol)\s*\{([^{}]*)\}/gu;
+
 export function statementPlainText(text: string): string {
-  return text
-    .replaceAll(/\$\$([\s\S]+?)\$\$/gu, " $1 ")
-    .replaceAll(/(?<!\\)\$([^$\n]+?)\$/gu, " $1 ")
-    .replaceAll(/\\cite\{([^}]+)\}/gu, " [$1] ")
+  /* Only unwrap `$…$` when the delimiters pair. They do not always: 48
+     statements carry an unescaped currency sign, and against an odd count the
+     pattern marries `$50` to the opening `$` of the next real formula, so the
+     spoken label loses the prize amount altogether. Same gate as
+     `scientific-text`'s `delimitersPair`, for the same reason. */
+  const dollars = (text.replaceAll("\\$", "").match(/\$/gu) ?? []).length;
+  let out = dollars % 2 === 0
+    ? text
+        .replaceAll(/\$\$([\s\S]+?)\$\$/gu, " $1 ")
+        .replaceAll(/(?<!\\)\$([^$\n]+?)\$/gu, " $1 ")
+    : text;
+  out = out.replaceAll(/\\cite\{([^}]+)\}/gu, " [$1] ");
+
+  /* A LaTeX line break and an escaped space are whitespace, not commands. */
+  out = out.replaceAll(/\\\\|\\ /gu, ' ');
+  /* `\frac{a}{b}` is said as "a over b", and the slash is how it is written.
+     The brace-less spelling `\frac 1 n` is in the corpus too. */
+  out = out
+    .replaceAll(/\\d?frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}/gu, '$1/$2')
+    .replaceAll(/\\d?frac\s+(\S)\s+(\S)/gu, '$1/$2');
+  /* Nested font commands unwrap innermost-first, so repeat until stable. */
+  for (let pass = 0; pass < 3 && UNWRAP.test(out); pass += 1) out = out.replace(UNWRAP, "$1");
+  out = out
+    .replaceAll(/\\(?:left|right|big{1,2}|Big{1,2}|displaystyle|limits|nolimits)\b/gu, "")
+    .replaceAll(/\\[lr]vert|\\[lr]floor|\\[lr]ceil/gu, "")
+    /* An escaped delimiter is a literal character, not a command. Without this
+       the command pattern below skips it and the backslash survives into the
+       spoken name — `\{u_1,\ldots\}` announced a stray backslash either side. */
+    .replaceAll(/\\([{}|%&_$#])/gu, "$1")
+    /* Text-mode accents: `Erd\H{o}s`, `Sárk\"ozi`. A spoken label wants the
+       letter, not the diacritic command, and this is not the place to carry a
+       second copy of `scientific-text`'s accent table — that module pulls in
+       KaTeX, which this server lib must not drag into every consumer. Only the
+       unambiguous spellings: punctuation accents, and letter accents braced.
+       `\u` bare would otherwise eat the `u` of `\upsilon`. */
+    .replaceAll(/\\(['"`^~=.])\s*\{?(\w)\}?/gu, "$2")
+    .replaceAll(/\\([HvuckrbdtL])\{(\w)\}/gu, "$2")
+    .replaceAll(/\\([a-zA-Z]+)/gu, (whole, command: string) => SPOKEN[command] ?? ` ${command} `)
+    /* A `$` that survived is either money or a delimiter whose partner the
+       source never wrote. Money is digits that end there — `$50 for` — and a
+       leftover delimiter opens notation, so `$2^n` and `$1/4` do not match.
+       Keeping the first and dropping the second is the difference between
+       "offered 50" and a label that says "dollar A dollar" four times. */
+    .replaceAll(/\$(?!\d[\d,]*(?:\s|$|[.,;)]))/gu, "")
+    /* The markup skeleton: grouping braces, sub/superscript markers, and the
+       spacing primitives. What they carried is already in the text. */
+    .replaceAll(/[{}]|\\[,;!:]|(?<=[^\s])[_^](?=[^\s])/gu, " ")
+    .replaceAll(/[_^]/gu, " ")
     .replaceAll(/\s+/gu, " ")
     .trim();
+  return out;
 }

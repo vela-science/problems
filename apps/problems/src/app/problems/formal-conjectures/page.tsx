@@ -9,6 +9,8 @@ import { Input } from "@vela/ui/components/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@vela/ui/components/select";
 import { PageHero, PageSection, PageShell } from "@vela/ui/vela/page-shell";
 import { ScientificText } from "@vela/ui/vela/scientific-text";
+import { Disclosure } from "@/components/vela/disclosure";
+import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from "@vela/ui/components/item";
 
 export const metadata: Metadata = {
   title: "Formal Conjectures",
@@ -45,12 +47,18 @@ export default async function FormalConjecturesPage({ searchParams }: { searchPa
       </form>
       <div className="mt-6 flex flex-wrap items-baseline justify-between gap-3 border-b pb-2"><h2 id="formal-conjecture-list" className="text-label">Formalized conjecture occurrences</h2><p className="text-meta text-muted-foreground">{items.length} of {formalConjecturesCollection.data.items.length}</p></div>
       {items.length ? <ul className="divide-y">{items.map((item) => <li key={item.route_slug}>
-        <Link href={`/problems/formal-conjectures/${item.route_slug}`} className="vela-object-row group grid gap-3 px-2 py-4 sm:grid-cols-[minmax(0,1fr)_9rem_8rem_1.5rem] sm:items-center">
-          <span className="min-w-0"><span className="block max-w-[78ch] text-compact font-medium leading-6 group-hover:text-primary"><ScientificText text={item.title} /></span><span className="mt-1.5 flex flex-wrap gap-x-2 gap-y-1 text-meta text-muted-foreground"><span className="font-mono text-micro">{item.declaration}</span>{item.group_id ? <><span aria-hidden>·</span><span>{formalConjecturesCollection.data.groups.find(({ id }) => id === item.group_id)?.title}</span></> : null}</span></span>
-          <span className="text-meta">{item.source_family}</span><span className="flex items-center gap-1.5 text-meta"><span aria-hidden className="size-1.5 rounded-full bg-status-caution" />Research open</span><HugeiconsIcon icon={ArrowRight01Icon} aria-hidden className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
-        </Link>
+        <Item className="vela-object-row gap-3 rounded-none px-2 py-4" render={<Link href={`/problems/formal-conjectures/${item.route_slug}`} />}>
+          <ItemContent>
+            <ItemTitle className="line-clamp-none block max-w-[78ch] text-compact font-medium leading-6 group-hover/item:text-primary"><ScientificText text={item.title} /></ItemTitle>
+            <ItemDescription className="line-clamp-none flex flex-wrap gap-x-2 gap-y-1 text-meta"><span className="font-mono text-micro">{item.declaration}</span>{item.group_id ? <><span aria-hidden>·</span><span>{formalConjecturesCollection.data.groups.find(({ id }) => id === item.group_id)?.title}</span></> : null}</ItemDescription>
+          </ItemContent>
+          {/* Fixed bases keep the two aligned columns the grid template gave. */}
+          <ItemActions className="text-meta sm:w-36 sm:justify-start">{item.source_family}</ItemActions>
+          <ItemActions className="gap-1.5 text-meta sm:w-32 sm:justify-start"><span aria-hidden className="size-1.5 rounded-full bg-status-caution" />Research open</ItemActions>
+          <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden className="size-4 shrink-0 text-muted-foreground transition-transform group-hover/item:translate-x-0.5 group-hover/item:text-primary" />
+        </Item>
       </li>)}</ul> : <div className="py-12 text-center"><HugeiconsIcon icon={CodeIcon} aria-hidden className="mx-auto size-6 text-muted-foreground" /><h2 className="mt-3 text-title">No formalized conjectures match</h2><p className="mt-1 text-body text-muted-foreground">Clear the filters or try a declaration or source-family name.</p><Button className="mt-4" variant="outline" nativeButton={false} render={<Link href="/problems/formal-conjectures" />}>Clear filters</Button></div>}
     </PageSection>
-    <PageSection aria-labelledby="collection-boundary" className="border-t pt-5"><div className="flex gap-3"><HugeiconsIcon icon={GitBranchIcon} aria-hidden className="mt-0.5 size-5 shrink-0 text-primary" /><div><h2 id="collection-boundary" className="text-label">Published subset boundary</h2><p className="mt-1 max-w-3xl text-meta text-muted-foreground">{formalConjecturesCollection.selection_policy.exclusions} Source categories and GitHub review status remain attributed upstream facts; they do not establish Vela scientific state.</p><details className="mt-3 text-micro"><summary className="cursor-pointer font-medium">Exact collection identity</summary><dl className="mt-2 space-y-2 text-muted-foreground"><div><dt>Source commit</dt><dd className="break-all font-mono">{formalConjecturesCollection.source_snapshot.commit}</dd></div><div><dt>Collection root</dt><dd className="break-all font-mono">{formalConjecturesCollection.roots.collection_root}</dd></div></dl></details></div></div></PageSection>
+    <PageSection aria-labelledby="collection-boundary" className="border-t pt-5"><div className="flex gap-3"><HugeiconsIcon icon={GitBranchIcon} aria-hidden className="mt-0.5 size-5 shrink-0 text-primary" /><div><h2 id="collection-boundary" className="text-label">Published subset boundary</h2><p className="mt-1 max-w-3xl text-meta text-muted-foreground">{formalConjecturesCollection.selection_policy.exclusions} Source categories and GitHub review status remain attributed upstream facts; they do not establish Vela scientific state.</p><Disclosure className="mt-3 text-micro" summaryClassName="font-medium" summary="Exact collection identity"><dl className="mt-2 space-y-2 text-muted-foreground"><div><dt>Source commit</dt><dd className="break-all font-mono">{formalConjecturesCollection.source_snapshot.commit}</dd></div><div><dt>Collection root</dt><dd className="break-all font-mono">{formalConjecturesCollection.roots.collection_root}</dd></div></dl></Disclosure></div></div></PageSection>
   </PageShell>;
 }

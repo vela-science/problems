@@ -19,6 +19,8 @@ import { Textarea } from "@vela/ui/components/textarea";
 import { RootedArtifactFrame } from "@vela/ui/vela/rooted-artifact-frame";
 import { IdempotencyField } from "@/components/vela/idempotency-field";
 import { currentReview } from "@/components/vela/problem-provenance";
+import { formalFilePath } from "@/components/vela/formal-statement-card";
+import { ProblemActivityRecords } from "@/components/vela/problem-activity-records";
 import type { AccountIdentity } from "@/lib/auth";
 import type { ScientificProblemState } from "@/lib/scientific-state";
 import { problemWorkbenchHandoff } from "@/lib/workbench-handoff";
@@ -46,6 +48,7 @@ import {
   saveSubmissionDraftAction,
   updateAttemptAction,
 } from "@/app/actions/activity";
+import { Disclosure } from "@/components/vela/disclosure";
 
 type State = NonNullable<ScientificProblemState>;
 type Scope = { repository: string; problem: string; workspaceId: string; expectedAnchorRoot: string };
@@ -209,7 +212,7 @@ export function workspaceObjects({ state, activity, workspace, scope, currentAnc
       <li className="border-b p-4 sm:border-b-0"><span className="text-micro font-semibold text-primary">2</span><strong className="mt-2 block text-label">Submit in the Repository</strong><Link className="mt-1 block text-micro text-primary underline underline-offset-4" href={`/repositories/${state.repositorySlug}/contribute`}>Repository instructions</Link></li>
       <li className="border-b p-4 sm:border-b-0"><span className="text-micro font-semibold text-primary">3</span><strong className="mt-2 block text-label">Authority reviews</strong><span className="mt-1 block text-micro text-muted-foreground">A separate Repository Decision accepts or refuses it.</span></li>
       <li className="p-4"><span className="text-micro font-semibold text-primary">4</span><strong className="mt-2 block text-label">Read public state</strong><span className="mt-1 block text-micro"><Link className="text-primary underline underline-offset-4" href={`${basePath}?view=results`}>Results</Link><span aria-hidden> · </span><Link className="text-primary underline underline-offset-4" href={`${basePath}?view=history`}>History</Link></span></li>
-    </ol><details className="mt-5 rounded-lg border px-4 py-3"><summary className="cursor-pointer text-label font-medium">Technical payload details</summary><p className="mt-3"><RecordId value={draft.payloadRoot} /></p><p className="mt-2 text-micro text-muted-foreground"><code>vela.submission.v3</code> · canonical JSON · no server-held key</p></details>{isCurrent(draft) ? null : <StaleActivityNotice />}</div> });
+    </ol><Disclosure className="mt-5 rounded-lg border px-4 py-3" summaryClassName="text-label font-medium" summary="Technical payload details"><p className="mt-3"><RecordId value={draft.payloadRoot} /></p><p className="mt-2 text-micro text-muted-foreground"><code>vela.submission.v3</code> · canonical JSON · no server-held key</p></Disclosure>{isCurrent(draft) ? null : <StaleActivityNotice />}</div> });
   }
 
   return objects;
@@ -265,6 +268,9 @@ export async function ProblemWorkspace({ state, hostedAccount, accountsEnabled =
     const checkCount = review?.verification_records?.length ?? 0;
     const sourceTitle = state.source?.title ?? `Problem ${state.problem.problem}`;
     const sourceCount = state.sources?.occurrences?.length ?? 0;
+    const openStatements = (state.sources?.occurrences ?? []).filter(
+      (occurrence) => occurrence.formal?.category_label?.trim().toLowerCase() === "open",
+    );
     const signInHref = `/sign-in?returnTo=${encodeURIComponent(`${basePath}?view=work`)}`;
     return <section id="add-contribution" aria-labelledby="hosted-workspace-heading" className="mt-6 min-w-0 scroll-mt-16">
       <header className="flex flex-wrap items-center justify-between gap-3"><h2 id="hosted-workspace-heading" className="text-title">Workspace</h2><div className="flex flex-wrap gap-2">{workbenchHandoff ? <Button nativeButton={false} size="sm" variant="outline" render={<a href={workbenchHandoff} />}>Continue locally</Button> : null}{state.locator ? <Button nativeButton={false} size="sm" variant="outline" render={<a href={state.locator} />}>Open source</Button> : null}{accountsEnabled ? <Button nativeButton={false} size="sm" render={<Link href={signInHref} prefetch={false} />}>Sign in to contribute</Button> : <Badge variant="outline">sign-in unavailable</Badge>}</div></header>
@@ -272,8 +278,32 @@ export async function ProblemWorkspace({ state, hostedAccount, accountsEnabled =
       <div className="vela-object-surface mt-5 overflow-hidden lg:grid lg:min-h-[34rem] lg:grid-cols-[15rem_minmax(0,1fr)_16rem]">
         <nav aria-label="Public Problem files" className="border-b bg-[var(--vela-surface-sunken)] p-4 lg:border-b-0 lg:border-r"><p className="text-meta font-semibold">Files</p><Link href={`${basePath}?view=sources`} className="vela-object-row mt-3 block rounded-md border bg-background p-3"><span className="block truncate text-label font-medium">{sourceTitle}</span><span className="mt-1 block text-micro text-muted-foreground">{sourceCount} retained source records</span></Link></nav>
         <div className="min-w-0 border-b p-4 lg:border-b-0 lg:p-6"><div className="flex items-center justify-between gap-3"><p className="text-meta font-semibold">Canvas</p><Badge variant="outline">public preview</Badge></div><ol className="mt-8 grid items-stretch sm:grid-cols-[minmax(7rem,1fr)_2rem_minmax(7rem,1fr)_2rem_minmax(7rem,1fr)]" aria-label="Public workspace context"><li className="rounded-lg border border-status-evidence/35 bg-status-evidence/5 p-4"><span className="text-meta text-muted-foreground">Source</span><strong className="mt-2 block text-label">#{state.problem.problem}</strong></li><li aria-hidden className="grid place-items-center text-muted-foreground">→</li><li className="rounded-lg border border-status-caution/35 bg-status-caution/5 p-4"><span className="text-meta text-muted-foreground">Result</span><strong className="mt-2 block text-label">{claim ? claim.standing.replaceAll("_", " ") : "None"}</strong></li><li aria-hidden className="grid place-items-center text-muted-foreground">→</li><li className="rounded-lg border border-status-progress/35 bg-status-progress/5 p-4"><span className="text-meta text-muted-foreground">Checks</span><strong className="mt-2 block text-label">{checkCount}</strong></li></ol></div>
-        <aside aria-label="Workspace tools" className="bg-[var(--vela-surface-sunken)] p-4 lg:border-l"><p className="text-meta font-semibold">Workspace tools</p><ul className="mt-3 divide-y border-y text-compact"><li className="py-3"><span className="font-medium">Research Blocks</span><span className="block text-micro text-muted-foreground">Sign in to view</span></li><li className="py-3"><span className="font-medium">Notes</span><span className="block text-micro text-muted-foreground">Sign in to view</span></li><li className="py-3"><span className="font-medium">Result draft</span><span className="block text-micro text-muted-foreground">Sign in to start</span></li></ul></aside>
+        {/* What is left to prove, rather than three tiles saying "Sign in to
+            view". This site's promise is a public, read-only map, and a signed-
+            out reader used to learn nothing here about what remains open. The
+            statements are already public on Sources and their counts already
+            public on Overview, so nothing new is disclosed — it simply stops
+            being hidden behind an account. */}
+        <aside aria-label="Open work" className="bg-[var(--vela-surface-sunken)] p-4 lg:border-l">
+          <p className="text-meta font-semibold">Still open</p>
+          {openStatements.length ? <>
+            <p className="mt-1 text-micro text-muted-foreground">{openStatements.length} {openStatements.length === 1 ? "statement the source still marks open" : "statements the source still marks open"}</p>
+            <ul className="mt-3 divide-y border-y">
+              {openStatements.map((occurrence) => <li key={occurrence.occurrence_key} className="py-3">
+                <Link href={formalFilePath(occurrence) ? `${basePath}/sources?file=${encodeURIComponent(formalFilePath(occurrence)!)}&symbol=${encodeURIComponent(occurrence.native_id)}` : `${basePath}/sources`} className="block min-w-0 font-mono text-micro break-words hover:underline">
+                  {occurrence.native_id.split(".").slice(1).join(".") || occurrence.native_id}
+                </Link>
+              </li>)}
+            </ul>
+          </> : <p className="mt-1 text-micro text-muted-foreground">No statement for this Problem is still marked open by its source.</p>}
+          <p className="mt-4 text-micro text-muted-foreground">Notes, Research Blocks and a Result draft need an account. Everything above is public.</p>
+        </aside>
       </div>
+      {/* Who has worked on this, as the sources themselves report it. This
+          existed already but rendered only on Results, and only when a Problem
+          had no current Result — so on a Problem with one, the attribution was
+          never shown anywhere. */}
+      <div className="mt-8"><ProblemActivityRecords state={state} /></div>
     </section>;
   }
   const loaded = await loadWorkspace(state, hostedAccount, selectedWorkspace);

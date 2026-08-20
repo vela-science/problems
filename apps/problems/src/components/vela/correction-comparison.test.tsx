@@ -5,9 +5,19 @@ import { CorrectionComparison } from "@/components/vela/correction-comparison";
 afterEach(cleanup);
 
 describe("CorrectionComparison", () => {
-  test("compares two retained statements behind a closed disclosure", () => {
+  /* Both statements stay available, but they are no longer what the reader
+     meets first: an assertion runs to ninety words and a correction usually
+     revises one clause, so the changed span leads and the full pair sits
+     behind the disclosure. */
+  test("leads with the changed words and keeps both statements behind a closed disclosure", () => {
     render(<CorrectionComparison kind="corrects" before="The original bound holds." after="The corrected bound holds." />);
-    const disclosure = screen.getByText("Compare retained statements").closest("details");
+
+    /* Exactly the words that differ are marked, and nothing else: marking a
+       shared word would report an edit that did not happen. */
+    expect([...document.querySelectorAll("del")].map((node) => node.textContent?.trim())).toEqual(["original"]);
+    expect([...document.querySelectorAll("ins")].map((node) => node.textContent?.trim())).toEqual(["corrected"]);
+
+    const disclosure = screen.getByText("Read both in full").closest("details");
     expect(disclosure).not.toBeNull();
     expect(disclosure).not.toHaveAttribute("open");
     expect(screen.getByLabelText("Statement before change")).toHaveTextContent("The original bound holds.");

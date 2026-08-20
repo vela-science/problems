@@ -83,13 +83,18 @@ when their authors wrote them. Do not rewrite them to match the current system.
   timelines and diffs for change, and canvases for shared work. Do not satisfy
   a route with a succession of question headings, prose sections, disclaimer
   paragraphs, or numbered explanations.
-- Problem navigation is one flat five-tab row: Overview, Work, Results,
-  Sources, History. Overview is a substantive question-first reference screen,
+- Problem navigation is five sections — Overview, Work, Results, Sources,
+  History — scoped in the sidebar under the open Problem, each at its own path
+  segment (`/problems/<namespace>/<problem>/<section>`). It was a flat tab row
+  above the content; the sidebar holds the object the reader is in, so the
+  section list belongs with it rather than repeating the object's identity a
+  second time above the page. The breadcrumb switches Problems; the rail
+  switches sections. Overview is a substantive question-first reference screen,
   not a navigation summary. Work owns mutable coordination; Results owns
   durable outputs; Sources owns files, declarations, and excerpts; History
   owns semantic chronology. The exact map is a contextual action, not a sixth
-  tab. Preserve old query values for shared-link compatibility but emit only
-  the current tab names from internal navigation.
+  section. Preserve old `?view=` query values for shared-link compatibility but
+  emit only path segments from internal navigation.
 - Treat redundancy as a product defect. A fact shown in a state rail, node,
   badge, row, edge, or control is not restated beside it unless the second
   presentation changes interpretation or is the accessible fallback.

@@ -6,6 +6,7 @@ import { Button } from "@vela/ui/components/button";
 import { CopyButton } from "@vela/ui/vela/copy-button";
 import { PageShell } from "@vela/ui/vela/page-shell";
 import { RouteTitle } from "@/components/vela/route-title";
+import { Disclosure } from "@/components/vela/disclosure";
 
 export const dynamicParams = false;
 
@@ -40,14 +41,13 @@ export default async function RepositoryContribution({ params }: PageProps<"/rep
           Checks do not change Standing; only an authorized Repository Decision can do that.
         </p>
 
-        <details className="mt-6 rounded-lg border px-4 py-3">
-          <summary className="cursor-pointer text-label font-medium">Continue locally</summary>
+        <Disclosure className="mt-6 rounded-lg border px-4 py-3" summaryClassName="text-label font-medium" summary="Continue locally">
           <div className="mt-4 flex items-center justify-between gap-3">
-            <h3 className="text-eyebrow uppercase text-muted-foreground">Submission command</h3>
+            <h3 className="text-eyebrow text-muted-foreground">Submission command</h3>
             <CopyButton value={action.command} label="Copy the submission command" />
           </div>
           <pre className="mt-2 overflow-x-auto rounded-md bg-command p-3 text-micro leading-5 text-command-foreground"><code>{action.command}</code></pre>
-        </details>
+        </Disclosure>
 
         <div className="mt-6 flex flex-wrap gap-3">
           <Button nativeButton={false} render={<Link href={`/repositories/${slug}/reproduce`} />}>

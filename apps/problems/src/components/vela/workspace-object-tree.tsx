@@ -156,7 +156,7 @@ export function WorkspaceObjectTree({
             <div className="flex items-center justify-between gap-2 px-2 pb-1.5">
               <h3
                 id={`workspace-group-${group.id}`}
-                className="text-eyebrow uppercase text-muted-foreground"
+                className="text-eyebrow text-muted-foreground"
               >
                 {group.label}
               </h3>

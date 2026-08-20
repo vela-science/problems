@@ -9,6 +9,7 @@ import { exactResultHeadline } from "@/components/vela/problem-overview-referenc
 import { formatDate } from "@/lib/format";
 import type { PublicProfile } from "@/lib/hosted-account";
 import type { PublicPerformerActivity, PublicPerformerKind } from "@/lib/performer-activity";
+import { Disclosure } from "@/components/vela/disclosure";
 
 function initials(name: string, kind: PublicPerformerKind | "account") {
   if (kind === "agent") return "AI";
@@ -58,7 +59,7 @@ function ActivityRows({ activity }: { activity: PublicPerformerActivity[] }) {
           <p className="mt-2 line-clamp-2 text-body text-muted-foreground"><AssertionText text={objectLabel} /></p>
           <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
             <Link href={entry.objectHref} className="inline-flex min-h-11 items-center gap-1 text-meta font-medium text-primary hover:underline sm:min-h-0">Open exact context <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden className="size-3.5" /></Link>
-            {limitations.length ? <details className="text-meta"><summary className="inline-flex min-h-11 cursor-pointer items-center font-medium text-foreground sm:min-h-0">{limitations.length === 1 ? "Role scope" : `${limitations.length} role details`}</summary><ul className="mt-2 space-y-2 text-muted-foreground">{limitations.map(({ role, limitation }, index) => <li key={`${role}:${index}`}><span className="font-medium text-foreground">{role}:</span> {limitation}</li>)}</ul></details> : null}
+            {limitations.length ? <Disclosure className="text-meta" summaryClassName="min-h-11 font-medium text-foreground sm:min-h-0" summary={limitations.length === 1 ? "Role scope" : `${limitations.length} role details`}><ul className="mt-2 space-y-2 text-muted-foreground">{limitations.map(({ role, limitation }, index) => <li key={`${role}:${index}`}><span className="font-medium text-foreground">{role}:</span> {limitation}</li>)}</ul></Disclosure> : null}
           </div>
         </div>
       </article>
@@ -90,7 +91,7 @@ export function PublicPerformerProfile({
       {profile?.affiliation ? <p className="mt-4 text-body font-medium">{profile.affiliation}</p> : null}
       {profile?.bio ? <p className="mt-3 text-body leading-6 text-muted-foreground">{profile.bio}</p> : null}
       {links.length ? <ul className="mt-5 space-y-2">{links.map(([kind, href]) => <li key={kind}><a href={href} rel={kind === "lab" ? "noreferrer" : "me noreferrer"} className="inline-flex max-w-full items-center gap-2 text-meta font-medium text-primary hover:underline"><HugeiconsIcon icon={LinkSquare02Icon} aria-hidden className="size-4 shrink-0" /><span className="truncate capitalize">{kind}</span></a></li>)}</ul> : null}
-      {performer ? <details className="mt-5 text-meta"><summary className="inline-flex min-h-11 cursor-pointer items-center font-medium sm:min-h-0">Exact performer identity</summary><p className="mt-2 break-all font-mono text-micro text-muted-foreground">{performer.id}</p></details> : null}
+      {performer ? <Disclosure className="mt-5 text-meta" summaryClassName="min-h-11 font-medium sm:min-h-0" summary="Exact performer identity"><p className="mt-2 break-all font-mono text-micro text-muted-foreground">{performer.id}</p></Disclosure> : null}
       {profile?.ownerPreview ? <Button className="mt-5 w-full" variant="outline" nativeButton={false} render={<Link href="/account/profile" />}>Edit profile</Button> : null}
     </aside>
     <section className="min-w-0" aria-labelledby="public-activity-heading">

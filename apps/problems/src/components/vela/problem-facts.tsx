@@ -66,21 +66,19 @@ export function standingScopeSentence(state: State): string | null {
   return `Scoped to this Problem's own retained statement and ${references.join(" and ")}.`;
 }
 
-/* The Problem page's facts moved into the hero answer strip
-   (`problem-summary.tsx`); this file keeps the label derivations both it and
-   the Workspace prelude share, plus the discovery-row variant below. The
-   "Contribution path" cell is gone from both surfaces for the reason the
-   directory dropped it: a hard-coded literal that never varied between rows
-   is not a fact about the row. */
+/* This file keeps the label derivations the Workspace prelude and the
+   discovery-row variant below share. The "Contribution path" cell is gone from
+   both surfaces for the reason the directory dropped it: a hard-coded literal
+   that never varied between rows is not a fact about the row. */
 export function ProblemDiscoveryFacts({ problem, className }: { problem: ProblemDiscovery; className?: string }) {
   const standing = problem.record.local_standing ?? "unassessed";
   return <dl className={cn("flex min-w-0 flex-wrap items-center gap-x-5 gap-y-2 text-meta", className)}>
     <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5">
-      <dt className="text-eyebrow uppercase text-muted-foreground">Source status</dt>
+      <dt className="text-eyebrow text-muted-foreground">Source status</dt>
       <dd className="text-label capitalize">{problem.record.declared_status}</dd>
     </div>
     <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5">
-      <dt className="text-eyebrow uppercase text-muted-foreground">Local Standing</dt>
+      <dt className="text-eyebrow text-muted-foreground">Local Standing</dt>
       <dd><StatusBadge state={standing} axis="standing">{localStandingLabel(problem.record.local_standing ? [problem.record.local_standing] : [])}</StatusBadge></dd>
     </div>
   </dl>;

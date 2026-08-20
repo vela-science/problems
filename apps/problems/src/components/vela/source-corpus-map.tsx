@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@vela/ui/components/table";
 import type { ObservedSourceCorpusMap } from "@/lib/scientific-state";
+import { Disclosure } from "@/components/vela/disclosure";
 
 type Corpus = ObservedSourceCorpusMap["corpora"][number];
 type SourceKind = ObservedSourceCorpusMap["inventory"]["source_kinds"][number];
@@ -63,27 +65,25 @@ function SourceKindInventory({ sourceKinds }: { sourceKinds: SourceKind[] }) {
           Record volume by declared Source kind. Segment size is inventory only, never scientific rank.
         </p>
       </div>
-      <div className="min-w-0 overflow-x-auto">
-        <table className="w-full text-left text-meta">
-          <caption className="sr-only">Retained Source kinds</caption>
-          <thead className="text-micro text-muted-foreground">
-            <tr>
-              <th scope="col" className="pb-2 font-medium">Declared kind</th>
-              <th scope="col" className="pb-2 text-right font-medium">Sources</th>
-              <th scope="col" className="pb-2 text-right font-medium">Records</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y">
-            {sourceKinds.map((sourceKind) => (
-              <tr key={sourceKind.source_kind}>
-                <th scope="row" className="py-2 font-normal text-foreground">{words(sourceKind.source_kind)}</th>
-                <td className="py-2 text-right font-mono tabular-nums">{number.format(sourceKind.source_count)}</td>
-                <td className="py-2 text-right font-mono tabular-nums">{number.format(sourceKind.native_record_count)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <Table className="min-w-0 text-left text-meta">
+        <caption className="sr-only">Retained Source kinds</caption>
+        <TableHeader className="text-micro text-muted-foreground">
+          <TableRow>
+            <TableHead className="pb-2 font-medium">Declared kind</TableHead>
+            <TableHead className="pb-2 text-right font-medium">Sources</TableHead>
+            <TableHead className="pb-2 text-right font-medium">Records</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {sourceKinds.map((sourceKind) => (
+            <TableRow key={sourceKind.source_kind}>
+              <TableHead scope="row" className="py-2 font-normal text-foreground">{words(sourceKind.source_kind)}</TableHead>
+              <TableCell className="py-2 text-right font-mono tabular-nums">{number.format(sourceKind.source_count)}</TableCell>
+              <TableCell className="py-2 text-right font-mono tabular-nums">{number.format(sourceKind.native_record_count)}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 }
@@ -92,7 +92,7 @@ function CorpusLane({ corpus }: { corpus: Corpus }) {
   const assignmentLabel = corpus.facet.multi_valued ? "source assignments" : "classified records";
   return (
     <article className="min-w-0 px-4 py-6 sm:px-6">
-      <p className="text-eyebrow uppercase text-muted-foreground">{corpus.role_label}</p>
+      <p className="text-eyebrow text-muted-foreground">{corpus.role_label}</p>
       <div className="mt-2 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
         <h3 className="text-subtitle">
           <Link
@@ -126,6 +126,10 @@ function CorpusLane({ corpus }: { corpus: Corpus }) {
         tabIndex={0}
         className="mt-4 max-h-72 min-w-0 overflow-auto rounded-lg bg-muted/35 focus-visible:outline-2 focus-visible:outline-offset-2"
       >
+        {/* Native, not the `Table` primitive: this scrolls vertically inside a
+            capped height with a sticky header, and the primitive owns its own
+            horizontal-only container, which would nest a second scroller here
+            and drop the cap. */}
         <table className="w-full text-left text-meta">
           <caption className="sr-only">
             {corpus.source_label} complete {corpus.facet.label.toLocaleLowerCase("en-US")}
@@ -164,7 +168,7 @@ export function SourceCorpusMap({ corpus }: { corpus: ObservedSourceCorpusMap })
     <section aria-labelledby="observed-corpora-heading" className="@container/source-corpus min-w-0">
       <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-3">
         <div>
-          <p className="text-eyebrow uppercase text-muted-foreground">Observed corpora</p>
+          <p className="text-eyebrow text-muted-foreground">Observed corpora</p>
           <h2 id="observed-corpora-heading" className="mt-1 text-title">
             {number.format(corpus.inventory.native_record_count)} source-native records across {number.format(corpus.inventory.source_count)} exact Sources
           </h2>
@@ -197,10 +201,11 @@ export function SourceCorpusMap({ corpus }: { corpus: ObservedSourceCorpusMap })
         </div>
       </dl>
 
-      <details className="mt-5 border-t pt-4 text-meta">
-        <summary className="cursor-pointer font-medium text-foreground focus-visible:outline-2 focus-visible:outline-offset-4">
-          All {number.format(corpus.inventory.source_count)} exact Sources and observation roots
-        </summary>
+      <Disclosure
+        className="mt-5 border-t pt-4 text-meta"
+        summaryClassName="font-medium text-foreground"
+        summary={<>All {number.format(corpus.inventory.source_count)} exact Sources and observation roots</>}
+      >
         <div className="mt-4 max-h-96 min-w-0 overflow-auto rounded-lg bg-muted/35">
           <table className="w-full min-w-[44rem] text-left text-meta">
             <caption className="sr-only">All retained Sources in this exact release</caption>
@@ -230,7 +235,7 @@ export function SourceCorpusMap({ corpus }: { corpus: ObservedSourceCorpusMap })
             </tbody>
           </table>
         </div>
-      </details>
+      </Disclosure>
     </section>
   );
 }

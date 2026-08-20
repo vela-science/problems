@@ -1,7 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { ProblemDiscovery } from "@/lib/scientific-state";
-import { HubMembershipMap } from "./hub-membership-map";
 import { ProblemDiscoveryFacts } from "./problem-facts";
 import { ScientificChangeFeed, type ScientificChange } from "./scientific-change-feed";
 
@@ -82,14 +81,6 @@ describe("product compositions", () => {
     const { container } = render(<ScientificChangeFeed changes={removal} />);
     expect(container).toHaveTextContent("State change");
     expect(container.querySelector(".bg-status-progress")).toBeNull();
-  });
-
-  it("uses the radial map only for real Hub membership and keeps a linear mobile list", () => {
-    render(<HubMembershipMap name="Erdős Problems" problems={[problem]} />);
-    const links = screen.getAllByRole("link", { name: /321/u });
-    expect(links).toHaveLength(2);
-    for (const link of links) expect(link).toHaveAttribute("href", "/problems/erdos-problems/321");
-    expect(screen.getByText("coordination only")).toBeVisible();
   });
 
 });

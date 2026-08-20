@@ -120,13 +120,13 @@ describe("Erdős Problems directory", () => {
   it("matches exact identifiers without treating partial text as identity", async () => {
     render(await ErdosProblemsPage({ searchParams: Promise.resolve({ exact_id: "problem:erdos:32" }) }));
     expect(screen.queryByRole("link", { name: /source-native Problem statement/u })).not.toBeInTheDocument();
-    expect(screen.getByText("No Problems match this view.")).toBeInTheDocument();
+    expect(screen.getByText("No Problems match this view")).toBeInTheDocument();
   });
 
   it("filters by the primary Source observation without calling it Problem completeness", async () => {
     render(await ErdosProblemsPage({ searchParams: Promise.resolve({ coverage: "partial" }) }));
     expect(screen.queryByRole("link", { name: /source-native Problem statement/u })).not.toBeInTheDocument();
-    expect(screen.getByText("No Problems match this view.")).toBeInTheDocument();
+    expect(screen.getByText("No Problems match this view")).toBeInTheDocument();
     expect(screen.getByText(/Coverage is source-observation coverage, not Problem completeness/u)).toBeInTheDocument();
   });
 });

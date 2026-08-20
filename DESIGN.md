@@ -24,15 +24,16 @@ colors:
 typography:
   display:
     fontFamily: Geist
-    fontSize: 2.25rem
-    fontWeight: 650
-    lineHeight: 1.15
-    letterSpacing: -0.025em
+    fontSize: 1.5rem
+    fontWeight: 600
+    lineHeight: 1.75rem
+    letterSpacing: -0.02em
   title:
     fontFamily: Geist
-    fontSize: 1.25rem
-    fontWeight: 650
-    lineHeight: 1.35
+    fontSize: 1.125rem
+    fontWeight: 600
+    lineHeight: 1.5rem
+    letterSpacing: -0.01em
   body:
     fontFamily: Geist
     fontSize: 0.875rem
@@ -215,8 +216,17 @@ authored long-form reading. Typography is sentence case. Avoid repeated
 uppercase micro-labels, wide tracking, ornamental type on task controls, and
 display type used as a substitute for hierarchy.
 
-- Page title or Problem question: 1.75–2.25rem, controlled measure, weight 650.
-- Section title: 1–1.25rem, weight 600–650.
+`packages/brand/vela.tokens.json` is the contract for these values (AGENTS.md);
+the frontmatter above restates it and the ramp below describes it. When they
+disagree, the token file is right and the other two are stale.
+
+- Page title or Problem question: 1.5rem, controlled measure, weight 600. This
+  is the `display` token, which 24 route headings use.
+- Home's heading is the single exception, at `clamp(1.75rem, 3vw, 2.25rem)`. It
+  is the front door and carries no plate, slab, or brand fill to do the work
+  instead. No other route may take this size; a larger heading anywhere is an
+  editorial register the product routes do not carry.
+- Section title: 1.125rem, weight 600.
 - Body: 0.875rem at 1.5–1.6 line height.
 - Dense rows and metadata: 0.75–0.8125rem.
 - Exact material: mono 0.75–0.8125rem with horizontal scrolling where needed.
@@ -292,12 +302,16 @@ Use a normal product header: concise collection-qualified identity, one title or
 question, optional one-sentence context, and up to two actions. Do not use a
 dark hero slab on application routes. Do not lead with a marketing eyebrow.
 
-### Tabs
+### Problem sections
 
-Use a familiar border-bottom tab row with a cobalt active indicator. Labels are
-Overview, Work, Results, Sources, and History. Icons may support recognition but
-must not dominate or replace labels. Tabs are not enclosed in a pill container
-and do not become cards on mobile.
+The five Problem sections — Overview, Work, Results, Sources, History — live in
+the sidebar, scoped under the open Problem, with a cobalt active indicator.
+Each is its own path segment, so every section is a real page a reader can link
+to. Icons may support recognition but must not dominate or replace labels.
+
+A border-bottom tab row remains correct for switching *within* one page's
+content, where the panels are not separately addressable. It is not how a
+Problem's sections are reached.
 
 ### Rows and lists
 

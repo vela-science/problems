@@ -16,7 +16,7 @@ const steps = [
 export function ContributionStepper({ current = 1, heading = "From question to contribution" }: { current?: 1 | 2 | 3 | 4; heading?: string }) {
   return <section aria-labelledby="contribution-stepper-heading">
     <div className="flex flex-wrap items-end justify-between gap-3">
-      <div><p className="text-eyebrow uppercase text-muted-foreground">Contribution path</p><h2 id="contribution-stepper-heading" className="mt-1 text-title">{heading}</h2></div>
+      <div><p className="text-eyebrow text-muted-foreground">Contribution path</p><h2 id="contribution-stepper-heading" className="mt-1 text-title">{heading}</h2></div>
       <p className="text-meta text-muted-foreground">Step {current} of {steps.length}</p>
     </div>
     <ol className="mt-6 grid gap-0 sm:grid-cols-4">

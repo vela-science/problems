@@ -7,7 +7,6 @@ import { PageHero, PageShell } from "@vela/ui/vela/page-shell";
 import {
   ProblemOverviewReference,
   ProblemReferenceHeader,
-  ProblemReferenceTabs,
   type ProblemReferenceView,
 } from "@/components/vela/problem-overview-reference";
 import { ProblemState, type ProblemResearchView } from "@/components/vela/problem-state";
@@ -101,7 +100,6 @@ export async function ProblemPageView({ repository, problem, collectionName, rou
      should carry. */
   const statement = resolveProblemStatement(state);
   const question = statementParagraphs(statement).question || problemLabel(state);
-  const collectionHref = route.slice(0, route.lastIndexOf("/"));
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Question",
@@ -117,9 +115,8 @@ export async function ProblemPageView({ repository, problem, collectionName, rou
   return <PageShell as="article" archetype="problem" layout="canvas" className="!pt-2">
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
     <div className="mt-2">
-      <ProblemReferenceHeader state={state} route={route} problemNumber={problem} collectionName={collectionName} collectionHref={collectionHref} />
+      <ProblemReferenceHeader state={state} collectionName={collectionName} summary={referenceView === "overview"} />
     </div>
-    <div className="mt-3"><ProblemReferenceTabs route={route} current={referenceView} /></div>
     {referenceView === "overview" ? <ProblemOverviewReference state={state} route={route} />
       : view === "workspace"
         ? <ProblemWorkspace state={state} hostedAccount={account} accountsEnabled={accountsEnabled} selectedWorkspace={query.workspace} selectedObject={query.object} selectedInspector={query.inspector} mutationError={query.workError} basePath={route} />

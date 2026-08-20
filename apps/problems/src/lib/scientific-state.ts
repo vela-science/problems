@@ -178,35 +178,6 @@ export type ProblemDiscoveryCollection = {
   topics: ProblemDiscoveryTopic[];
 };
 
-export type ProblemDiscoveryHub = {
-  key: string;
-  name: string;
-  domain: { key: string; name: string };
-  problems: ProblemDiscovery[];
-};
-
-export function problemDiscoveryHubs(catalog: ProblemDiscovery[]): ProblemDiscoveryHub[] {
-  const hubs = new Map<string, ProblemDiscoveryHub>();
-  for (const problem of catalog) for (const hub of problem.hubs) {
-    if (!problem.domain) throw new Error(`Profiled Hub ${hub.key} has no explicit scientific area`);
-    const current = hubs.get(hub.key);
-    if (current && (current.name !== hub.name || current.domain.key !== problem.domain.key)) {
-      throw new Error(`Hub ${hub.key} has conflicting explicit discovery semantics`);
-    }
-    const route = `${problem.repository}/${problem.problem}`;
-    if (current?.problems.some((entry) => `${entry.repository}/${entry.problem}` === route)) {
-      throw new Error(`Hub ${hub.key} repeats Problem route ${route}`);
-    }
-    hubs.set(hub.key, {
-      key: hub.key,
-      name: hub.name,
-      domain: problem.domain,
-      problems: [...(current?.problems ?? []), problem],
-    });
-  }
-  return [...hubs.values()].sort((left, right) => left.name.localeCompare(right.name) || left.key.localeCompare(right.key));
-}
-
 export function problemDiscoveryScopeQuery(scope: {
   domain?: string;
   hub?: string;

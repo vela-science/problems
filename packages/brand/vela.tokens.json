@@ -360,7 +360,7 @@
         "$type": "fontWeight"
       },
       "tracking": {
-        "$value": "0.08em",
+        "$value": "0.01em",
         "$type": "dimension"
       }
     }

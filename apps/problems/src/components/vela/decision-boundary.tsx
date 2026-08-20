@@ -2,6 +2,7 @@ import type { DecisionPacketSummary, ProposedStatePreview, ReviewSummary } from 
 import { Alert, AlertDescription, AlertTitle } from "@vela/ui/components/alert";
 import { RecordId } from "@/components/vela/record-id";
 import { RecordPreview } from "@/components/vela/record-preview";
+import { Disclosure } from "@/components/vela/disclosure";
 
 const previewStateCopy: Record<ProposedStatePreview["state"], { title: string; detail: string }> = {
   current: {
@@ -29,7 +30,7 @@ const previewStateCopy: Record<ProposedStatePreview["state"], { title: string; d
 function PreviewRoot({ label, value }: { label: string; value: string }) {
   return (
     <div className="min-w-0">
-      <dt className="text-eyebrow uppercase text-muted-foreground">{label}</dt>
+      <dt className="text-eyebrow text-muted-foreground">{label}</dt>
       <dd className="mt-1"><RecordId value={value} prefix={22} /></dd>
     </div>
   );
@@ -51,11 +52,15 @@ function PreviewRoot({ label, value }: { label: string; value: string }) {
 export function ProposedStatePreviewSection({ preview }: { preview: ProposedStatePreview }) {
   const copy = previewStateCopy[preview.state];
   return (
-    <details className="group/preview mt-10 rounded-xl bg-muted/25 px-5 py-5 sm:px-6">
-      <summary className="cursor-pointer list-none focus-visible:outline-2 focus-visible:outline-offset-4 [&::-webkit-details-marker]:hidden">
+    <Disclosure
+      className="mt-10 rounded-xl bg-muted/25 px-5 py-5 sm:px-6"
+      summaryClassName="items-baseline focus-visible:outline-offset-4"
+      meta={<span className="font-mono text-micro">{preview.state.replaceAll("_", " ")}</span>}
+      chevron={false}
+      summary={
         <span className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
           <span>
-            <span className="block text-eyebrow uppercase text-muted-foreground">Authority effect · none</span>
+            <span className="block text-eyebrow text-muted-foreground">Authority effect · none</span>
             {/* An `h2` inside the summary rather than beside it: `details`
                 exposes no role that takes an accessible name, so the
                 `aria-labelledby` this replaced was inert, and moving the block
@@ -64,16 +69,16 @@ export function ProposedStatePreviewSection({ preview }: { preview: ProposedStat
                 reach the roots. */}
             <h2 className="mt-1 text-subtitle">{copy.title}</h2>
           </span>
-          <span className="font-mono text-micro text-muted-foreground">{preview.state.replaceAll("_", " ")}</span>
         </span>
-      </summary>
+      }
+    >
       <p className="mt-3 max-w-[85ch] text-body text-muted-foreground">{copy.detail}</p>
 
       <dl className="mt-5 grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-4">
         <PreviewRoot label="Preview root" value={preview.preview_root} />
         <PreviewRoot label="Base revision" value={preview.base.revision_root} />
         <div className="min-w-0">
-          <dt className="text-eyebrow uppercase text-muted-foreground">Base Git commit</dt>
+          <dt className="text-eyebrow text-muted-foreground">Base Git commit</dt>
           <dd className="mt-1"><RecordId value={preview.base.git_commit} /></dd>
         </div>
         <PreviewRoot label="Base Repository root" value={preview.base.repository_root} />
@@ -84,7 +89,7 @@ export function ProposedStatePreviewSection({ preview }: { preview: ProposedStat
         </> : null}
         {preview.terminal ? <>
           <div className="min-w-0">
-            <dt className="text-eyebrow uppercase text-muted-foreground">Terminal Git commit</dt>
+            <dt className="text-eyebrow text-muted-foreground">Terminal Git commit</dt>
             <dd className="mt-1"><RecordId value={preview.terminal.git_commit} /></dd>
           </div>
           <PreviewRoot label="Terminal Repository root" value={preview.terminal.repository_root} />
@@ -100,7 +105,7 @@ export function ProposedStatePreviewSection({ preview }: { preview: ProposedStat
       {preview.terminal?.applied_exactly_as_reviewed === true ? (
         <p className="mt-5 text-compact">Applied exactly as reviewed: the predicted and actual Repository roots are identical.</p>
       ) : null}
-    </details>
+    </Disclosure>
   );
 }
 
@@ -128,7 +133,7 @@ function Delta({ label, count, before }: { label: string; count: number; before:
   const change = count - before;
   return (
     <div className="min-w-0">
-      <dt className="text-eyebrow uppercase text-muted-foreground">{label}</dt>
+      <dt className="text-eyebrow text-muted-foreground">{label}</dt>
       <dd className="mt-0.5 font-mono text-body tabular-nums">
         {count.toLocaleString()}
         {change === 0 ? (
@@ -236,7 +241,7 @@ export function DecisionBoundary({ packet }: { packet: DecisionPacketSummary }) 
 
       {packet.limits.length ? (
         <>
-          <h3 className="mt-6 text-eyebrow uppercase text-muted-foreground">What this packet does not establish</h3>
+          <h3 className="mt-6 text-eyebrow text-muted-foreground">What this packet does not establish</h3>
           <ul className="mt-2 space-y-1">
             {packet.limits.map((limit) => (
               <li key={limit} className="max-w-[85ch] text-compact text-muted-foreground">{limit}</li>

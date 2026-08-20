@@ -136,7 +136,7 @@ export default async function CommitsPage({
         <div className="mt-4">
           {groupByDay(items).map((day) => (
             <section key={day.label} aria-label={day.label}>
-              <h2 className="sticky top-0 z-10 flex items-baseline justify-between gap-3 border-b bg-background/95 py-1.5 text-eyebrow uppercase text-muted-foreground backdrop-blur">
+              <h2 className="sticky top-0 z-10 flex items-baseline justify-between gap-3 border-b bg-background/95 py-1.5 text-eyebrow text-muted-foreground backdrop-blur">
                 <span>{day.label}</span>
                 <span className="font-mono tabular-nums">
                   {day.commits.length} {day.commits.length === 1 ? "commit" : "commits"}

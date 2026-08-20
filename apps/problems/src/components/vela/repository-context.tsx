@@ -65,7 +65,7 @@ export function RepositoryContext({
     <PageHero density="compact">
       <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <p className="text-eyebrow uppercase text-muted-foreground">Repository-local scientific state</p>
+          <p className="text-eyebrow text-muted-foreground">Repository-local scientific state</p>
           <h1 className="mt-1.5 min-w-0 text-display [overflow-wrap:anywhere]">
             {repository.status.repository.name}
           </h1>
@@ -103,12 +103,12 @@ export function RepositoryContext({
 
       <dl className="mt-5 grid grid-cols-2 overflow-hidden rounded-lg border md:grid-cols-4">
         <div className="min-w-0 border-b border-r p-3 md:border-b-0">
-          <dt className="text-eyebrow uppercase text-muted-foreground">Standing</dt>
+          <dt className="text-eyebrow text-muted-foreground">Standing</dt>
           <dd className="mt-1 font-mono text-title tabular-nums">{number.format(counts.accepted_claims)}</dd>
           <dd className="mt-1 text-micro text-muted-foreground">accepted Repository-local Claim{counts.accepted_claims === 1 ? "" : "s"}</dd>
         </div>
         <div className="min-w-0 border-b p-3 md:border-b-0 md:border-r">
-          <dt className="text-eyebrow uppercase text-muted-foreground">Integrity</dt>
+          <dt className="text-eyebrow text-muted-foreground">Integrity</dt>
           <dd className="mt-2 flex flex-wrap gap-1.5">
             <StatusBadge
               state={integrity.replayed ? "replayed" : "strict_blocked"}
@@ -125,7 +125,7 @@ export function RepositoryContext({
           </dd>
         </div>
         <div className="min-w-0 border-r p-3">
-          <dt className="text-eyebrow uppercase text-muted-foreground">Activity</dt>
+          <dt className="text-eyebrow text-muted-foreground">Activity</dt>
           <dd className="mt-1 text-meta">
             <span className="font-mono tabular-nums">{number.format(counts.submissions)}</span> published contributions
             <br />
@@ -135,7 +135,7 @@ export function RepositoryContext({
           </dd>
         </div>
         <div className="min-w-0 p-3">
-          <dt className="text-eyebrow uppercase text-muted-foreground">Human authority</dt>
+          <dt className="text-eyebrow text-muted-foreground">Human authority</dt>
           <dd className="mt-1 font-mono text-title tabular-nums">{number.format(loop.decisions)}</dd>
           <dd className="mt-1 text-micro text-muted-foreground">authorized Decision{loop.decisions === 1 ? "" : "s"} retained</dd>
         </div>

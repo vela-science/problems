@@ -47,7 +47,7 @@ export function RecordHeader({
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <p className="text-eyebrow uppercase text-muted-foreground">{kind}</p>
+            <p className="text-eyebrow text-muted-foreground">{kind}</p>
             {state}
           </div>
           <h1

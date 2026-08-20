@@ -114,7 +114,7 @@ export function ProposalLedger({
             className="grid items-start rounded-none px-0 py-5 md:grid-cols-[minmax(0,1.5fr)_minmax(12rem,0.85fr)_minmax(12rem,0.85fr)] md:gap-x-6"
           >
             <ItemContent className="min-w-0 gap-2 md:pr-3">
-              <p className="text-eyebrow uppercase text-muted-foreground">Proposal</p>
+              <p className="text-eyebrow text-muted-foreground">Proposal</p>
               {/* Only the assertion names the record link. Evidence, actor and
                   Decision text remain outside its accessible name. */}
               <p className="max-w-[72ch] text-body text-foreground">
@@ -133,7 +133,7 @@ export function ProposalLedger({
             </ItemContent>
 
             <ItemContent className="mt-4 min-w-0 gap-2 border-t pt-4 md:mt-0 md:border-l md:border-t-0 md:pl-6 md:pt-0">
-              <p className="text-eyebrow uppercase text-muted-foreground">Scoped Verification</p>
+              <p className="text-eyebrow text-muted-foreground">Scoped Verification</p>
               {outcomes.length ? (
                 <div className="flex flex-wrap gap-1.5">
                   {outcomes.map(({ outcome, count }) => (
@@ -152,7 +152,7 @@ export function ProposalLedger({
             </ItemContent>
 
             <ItemContent className="mt-4 min-w-0 gap-2 border-t pt-4 md:mt-0 md:border-l md:border-t-0 md:pl-6 md:pt-0">
-              <p className="text-eyebrow uppercase text-muted-foreground">
+              <p className="text-eyebrow text-muted-foreground">
                 {withdrawn ? "Producer withdrawal" : pending ? "Awaiting Decision" : decisionLabel(review)}
               </p>
               <p className="line-clamp-2 max-w-[72ch] text-compact text-foreground">

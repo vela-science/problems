@@ -12,7 +12,7 @@ describe("Formal Conjectures occurrence page", () => {
     expect(screen.getByText("research open")).toBeVisible();
     expect(screen.getAllByText("Not retained")).toHaveLength(2);
     expect(screen.getByText("No Repository Result attached")).toBeVisible();
-    expect(screen.getByRole("navigation", { name: "Problem sections" })).toBeVisible();
+    /* Sections moved to the rail, which this page does not render. */
     expect(screen.getByText("Open Wikipedia source").closest("a")).toHaveAttribute("href", item.source_locator);
     expect(screen.getByText("Open source", { selector: "a" })).toHaveAttribute("href", item.source_url);
     expect(screen.getByText("Tracked question").parentElement).not.toHaveTextContent("**Oppermann's Conjecture**");

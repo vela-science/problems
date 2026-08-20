@@ -28,14 +28,14 @@ export function WhatIsKnown({ state, basePath }: { state: State; basePath: strin
       <h2 id="known-heading" className="text-title">No current result</h2>
       <p className="mt-2 max-w-[68ch] text-compact text-muted-foreground">
         {retired
-          ? `Earlier Results and their Repository decisions appear below.`
+          ? `Earlier results and the decisions taken on them appear below.`
           : `No reviewed Result is current in ${state.repositoryName}. Retained source material is shown below.`}
       </p>
 
       {lead ? <div className="mt-6 min-w-0 rounded-lg border">
         <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-b px-4 py-2.5">
           <div className="min-w-0">
-            <h3 className="text-micro uppercase tracking-wide text-muted-foreground">Retained declaration</h3>
+            <h3 className="text-micro text-muted-foreground">Retained declaration</h3>
             {leadPath ? <code className="mt-0.5 block truncate font-mono text-meta text-foreground">{leadPath}</code> : null}
           </div>
           <p className="text-meta text-muted-foreground">{lead.source_label}</p>

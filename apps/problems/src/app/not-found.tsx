@@ -9,13 +9,26 @@ export default function NotFound() {
       <p className="font-mono text-meta tracking-[0.01em] text-primary tabular-nums">404 / page not found</p>
       {/* The page's only heading, so it is the page's h1. It was an h2, which
           left every 404 with no top-level heading at all. */}
-      <h1 className="mt-4 max-w-3xl text-display tracking-tight">There is no published page at this address.</h1>
-      <p className="mt-3 max-w-xl text-body leading-6 text-muted-foreground">The link may be incomplete, private, or no longer current. Browse Problems to find the durable collection and Problem address.</p>
+      <h1 className="mt-4 max-w-3xl text-display tracking-tight">Nothing is published at this address.</h1>
+      {/* Absence is a fact this site can state precisely, and saying so is the
+          point. problems.science serves one published release at a time, so
+          "not here" means "not retained by the release this page is serving" —
+          not "missing", and not "private", which the previous wording implied
+          of a read-only public projection. */}
+      <p className="mt-3 max-w-xl text-body leading-6 text-muted-foreground">
+        This site serves one published release, and only what that release retains is reachable. A Problem&rsquo;s address is its collection and its number, and that address does not change between releases.
+      </p>
+      <p className="mt-2 max-w-xl text-body leading-6 text-muted-foreground">
+        If you followed a link here, the address may name something this release does not retain.
+      </p>
       {/* Around twenty `notFound()` call sites land here — an unknown Problem,
           Source, codebase, Claim or commit — and every one of them was sent on
           to the advanced record inspector. Problems is the product's centre
           and the place a reader can start again from. */}
-      <Link href="/problems" className="mt-5 inline-flex h-11 w-fit items-center gap-2 rounded-sm text-body text-primary hover:underline md:h-9"><HugeiconsIcon icon={ArrowLeft} aria-hidden className="size-4" /> Open Problems</Link>
+      <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2">
+        <Link href="/problems" className="inline-flex h-11 w-fit items-center gap-2 rounded-sm text-body text-primary hover:underline md:h-9"><HugeiconsIcon icon={ArrowLeft} aria-hidden className="size-4" /> Open Problems</Link>
+        <p className="text-meta text-muted-foreground">or press <kbd className="rounded border px-1.5 py-0.5 font-mono text-micro">⌘K</kbd> to search</p>
+      </div>
     </PageShell>
   );
 }

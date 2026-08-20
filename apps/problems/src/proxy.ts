@@ -27,6 +27,10 @@ export const config = {
     "/my-work",
     "/people/:path*",
     "/problems/:namespace/:problem",
+    /* A Problem's sections are path segments, and Workspace mode is reachable
+       from any of them, so each has to be covered too — an uncovered section
+       renders the page and then throws out of `withAuth`. */
+    "/problems/:namespace/:problem/:view",
     "/sign-in",
   ],
 };

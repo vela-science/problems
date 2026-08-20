@@ -1,5 +1,11 @@
 import { Button } from "@vela/ui/components/button";
 import { StatusBadge } from "@vela/ui/vela/status-badge";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyTitle,
+} from "@vela/ui/components/empty";
 import { RootFact } from "@/components/vela/root-fact";
 import { RecordId } from "@/components/vela/record-id";
 import { CorrectionComparison } from "@/components/vela/correction-comparison";
@@ -7,6 +13,7 @@ import { FrontierTimeline, type FrontierTimelineData } from "@/components/vela/f
 import { Actor, Performer } from "@/components/vela/actor";
 import { formatDate } from "@/lib/format";
 import type { ScientificProblemState } from "@/lib/scientific-state";
+import { Disclosure } from "@/components/vela/disclosure";
 
 type State = NonNullable<ScientificProblemState>;
 
@@ -46,20 +53,25 @@ export function ProblemHistory({ state, frontier }: {
           <article className="vela-object-surface vela-object-row min-w-0 overflow-hidden">
             <header className="flex flex-wrap items-center justify-between gap-3 border-b bg-muted/20 px-4 py-3">
               {review.producer_package?.producer_actor
-                ? <Performer name={review.producer_package.producer_actor} kind="agent" performerId={review.producer_package.producer_actor} detail="Result performer" />
-                : <p className="text-meta text-muted-foreground">Result performer not retained</p>}
+                ? <Performer name={review.producer_package.producer_actor} kind="agent" performerId={review.producer_package.producer_actor} detail="Submitted by" />
+                : <p className="text-meta text-muted-foreground">Submitter not recorded</p>}
               <time dateTime={review.reviewed_at ?? review.created_at ?? undefined} className="text-meta text-muted-foreground">{formatDate(review.reviewed_at ?? review.created_at)}</time>
             </header>
             <div className="p-4">
               <div className="flex flex-wrap items-center gap-2"><StatusBadge axis="proposal" state={review.status}>{review.status.replaceAll("_", " ")}</StatusBadge>{review.verification_record_count ? <span className="text-meta text-muted-foreground">{review.verification_record_count} {review.verification_record_count === 1 ? "check" : "checks"}</span> : null}</div>
-              <p className="mt-3 text-label font-semibold">{review.status === "accepted" ? "Repository accepted this Result" : `Repository change ${review.status.replaceAll("_", " ")}`}</p>
+              <p className="mt-3 text-label font-semibold">{review.status === "accepted" ? "Accepted here" : `Decision: ${review.status.replaceAll("_", " ")}`}</p>
               {review.claim_retirement ? <p className="mt-1 text-meta text-muted-foreground">The Result was later {review.claim_retirement}.</p> : null}
               {review.reviewed_by ? <div className="mt-3 text-meta text-muted-foreground">Decision recorded by <Actor name={review.reviewed_by} kind={review.decision_actor_class} performerId={review.reviewed_by} className="ms-1 align-middle" /></div> : null}
               <a href={`/repositories/${state.repositorySlug}/proposals/${review.proposal_id}`} className="mt-3 inline-block text-meta font-semibold text-primary underline-offset-4 hover:underline">Open change details <span className="sr-only"><RecordId value={review.proposal_id} copy={false} /></span></a>
             </div>
           </article>
         </li>)}
-      </ol> : <div className="mt-5 rounded-lg border border-dashed p-5"><p className="text-label font-medium">No Result history yet</p><p className="mt-1 text-meta text-muted-foreground">No proposed change is retained for this Problem.</p></div>}
+      </ol> : <Empty className="mt-5 border border-dashed">
+        <EmptyHeader>
+          <EmptyTitle>No result history yet</EmptyTitle>
+          <EmptyDescription>No proposed change is retained for this Problem, so there is nothing to show a decision on.</EmptyDescription>
+        </EmptyHeader>
+      </Empty>}
     </section>
 
     <section aria-labelledby="correction-heading">
@@ -67,14 +79,24 @@ export function ProblemHistory({ state, frontier }: {
       {corrections.length ? <div className="mt-5 space-y-4">{corrections.map(({ claim, relation }) => {
         const predecessor = state.claims.find((candidate) => candidate.id === relation.target_claim_id);
         const isCurrent = claim.id === state.currentClaimId;
-        return <article key={`${claim.id}:${relation.kind}:${relation.target_claim_id}`} className="vela-object-surface overflow-hidden"><div className="grid items-stretch sm:grid-cols-[minmax(0,1fr)_5rem_minmax(0,1fr)]"><div className="p-4"><p className="text-meta font-medium text-muted-foreground">Previous Result</p>{predecessor ? <p className="mt-2 line-clamp-3 text-compact">{predecessor.assertion}</p> : <p className="mt-2 text-compact text-muted-foreground">The {relation.kind === "corrects" ? "corrected" : "superseded"} Result record is not retained in this release.</p>}</div><div className="grid place-items-center border-y bg-muted/20 px-2 py-3 text-center sm:border-x sm:border-y-0"><StatusBadge tone="caution">{relation.kind}</StatusBadge><span aria-hidden className="mt-1 text-muted-foreground">→</span></div><div className="p-4"><p className="text-meta font-medium text-muted-foreground">{isCurrent ? "Current Result" : "Later version"}</p><p className="mt-2 line-clamp-3 text-compact">{claim.assertion}</p></div></div>{predecessor ? <div className="border-t p-4"><CorrectionComparison kind={relation.kind as "corrects" | "supersedes"} before={predecessor.assertion} after={claim.assertion} /></div> : null}<details className="border-t px-4 py-3 text-meta"><summary className="cursor-pointer font-medium">Exact identities</summary><div className="mt-3 flex flex-wrap items-center gap-2"><RecordId value={relation.target_claim_id} /><span aria-hidden>→</span><RecordId value={claim.id} /></div></details></article>;
+        return <article key={`${claim.id}:${relation.kind}:${relation.target_claim_id}`} className="vela-object-surface overflow-hidden">{/* The twin clamped previews that used to sit here were a third rendering
+      of the same two assertions, above a full comparison of them. The diff
+      below says what changed; the panes inside it still hold both in full. */}
+      <div className="flex flex-wrap items-center gap-2 border-b bg-muted/20 px-4 py-3">
+        <StatusBadge tone="caution">{relation.kind}</StatusBadge>
+        <span className="text-meta text-muted-foreground">{isCurrent ? "produced the current Result" : "produced a later version"}</span>
+      </div>{predecessor ? <div className="p-4"><CorrectionComparison kind={relation.kind as "corrects" | "supersedes"} before={predecessor.assertion} after={claim.assertion} /></div> : <div className="p-4"><p className="text-compact text-muted-foreground">The {relation.kind === "corrects" ? "corrected" : "superseded"} Result record is not retained in this release.</p></div>}<Disclosure className="border-t px-4 py-3 text-meta" summaryClassName="font-medium" summary="Exact identities"><div className="mt-3 flex flex-wrap items-center gap-2"><RecordId value={relation.target_claim_id} /><span aria-hidden>→</span><RecordId value={claim.id} /></div></Disclosure></article>;
       })}</div> : <div className="mt-5 rounded-lg border border-dashed p-5"><p className="text-label font-medium">No correction history</p></div>}
     </section>
 
     {frontier ? <FrontierTimeline states={frontier.states} gaps={frontier.gaps} /> : null}
 
-    <details className="group border-y py-1">
-      <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-3 marker:content-none focus-visible:outline-2 focus-visible:outline-offset-2"><span><span aria-hidden className="mr-2 inline-block transition-transform group-open:rotate-90">›</span><span className="text-label font-medium">Technical details</span></span><span className="text-meta text-muted-foreground">Exact roots, source, and retained record identifiers</span></summary>
+    <Disclosure
+      className="border-y py-1"
+      summaryClassName="min-h-14 gap-4 py-3"
+      summary={<span className="text-label font-medium">Technical details</span>}
+      meta="Exact roots, source, and retained record identifiers"
+    >
       <section aria-labelledby="exact-provenance-heading" className="pb-6 pt-3">
       <h2 id="exact-provenance-heading" className="sr-only">Exact provenance</h2>
       <div className="mt-6 grid gap-6 sm:grid-cols-2">
@@ -97,6 +119,6 @@ export function ProblemHistory({ state, frontier }: {
         <Button nativeButton={false} variant="outline" render={<a href={`/problems.json?${new URLSearchParams({ root: state.anchor.projectionReleaseRoot, resolver: state.sources.resolver_root, source: state.source.source_id, native_id: state.source.native_id, kind: state.source.native_kind })}`} />}>Source JSON</Button>
       </div>
       </section>
-    </details>
+    </Disclosure>
   </>;
 }

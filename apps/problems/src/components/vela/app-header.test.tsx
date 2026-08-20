@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { SidebarProvider, useSidebar } from "@vela/ui/components/sidebar";
@@ -8,6 +8,9 @@ const navigation = vi.hoisted(() => ({ pathname: "/repositories" }));
 
 vi.mock("next/navigation", () => ({
   usePathname: () => navigation.pathname,
+  /* The Problem switcher navigates on select rather than rendering links, so
+     the trail now needs a router in this shell. */
+  useRouter: () => ({ push: vi.fn() }),
 }));
 vi.mock("@/components/vela/command-palette", () => ({
   COMMAND_PALETTE_TRIGGER_ID: "vela-command-palette-trigger",
@@ -101,13 +104,18 @@ describe("AppHeader trail", () => {
     expect(screen.getByText("Overview")).toHaveAttribute("aria-current", "page");
   });
 
+  /* The Problem's identity is one control now rather than three crumbs. The
+     old trail spelled `Problems / Erdős Problems / Erdős problem 321`, naming
+     the collection twice and "problem" three times; the switcher carries the
+     collection and the number together and can move between collections. */
   it("keeps a canonical reviewed Problem in the Problem context", () => {
     navigation.pathname = "/problems/erdos-problems/321";
     render(<Shell />);
 
-    expect(screen.getByText("Erdős problem 321").parentElement).toHaveAttribute("aria-current", "page");
-    expect(screen.getByRole("link", { name: "Problems" })).toHaveAttribute("href", "/problems");
-    expect(screen.getByRole("link", { name: "Erdős Problems" })).toHaveAttribute("href", "/problems/erdos-problems");
+    const switcher = screen.getByRole("button", { name: /Erdős Problems #321/u });
+    expect(switcher).toBeVisible();
+    expect(within(switcher).getByText("Erdős Problems")).toBeVisible();
+    expect(within(switcher).getByText("#321")).toBeVisible();
   });
 
   it("names the collection directory between the global entry and its records", () => {
@@ -140,7 +148,10 @@ describe("AppHeader trail", () => {
      1,217 of the 1,253 URLs in the sitemap. A separator is hidden exactly when
      the crumb to its left is. */
   it("hides a separator that would lead the trail on a small viewport", () => {
-    navigation.pathname = "/problems/erdos-problems/321";
+    /* On a Problem the switcher leads the trail and never collapses, so no
+       separator can be orphaned there any more. The concern survives wherever
+       a collapsing crumb still leads: the collection directory. */
+    navigation.pathname = "/problems/erdos-problems";
     const { rerender } = render(<Shell />);
 
     const [collapsing] = screen.getAllByText("/");

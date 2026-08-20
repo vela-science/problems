@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ProblemFacetValue } from "@vela/projection-data";
+import { Disclosure } from "@/components/vela/disclosure";
 
 /* Facet counts double as the collection's distribution: a reader learns the
  * shape of the corpus before filtering it, which a free-text box cannot do
@@ -112,19 +113,18 @@ export function FacetRail({
         };
         return (
           <section key={group.name} className="mb-5 last:mb-0">
-            <h3 className="text-eyebrow uppercase text-muted-foreground">{group.label}</h3>
+            <h3 className="text-eyebrow text-muted-foreground">{group.label}</h3>
             <ul className="mt-2">{(folded.length ? group.values.slice(0, shownValues) : group.values).map(row)}</ul>
+            {/* `py-1.5`, which is what carries this disclosure from 22px to a
+                target that clears 24. It is the control that reveals the other
+                33 subjects, so it is the last one that should be hard to hit. */}
             {folded.length ? (
-              <details>
-                {/* `py-1.5`, which is what carries this disclosure from 22px
-                    to a target that clears 24. It is the control that reveals
-                    the other 33 subjects, so it is the last one that should be
-                    hard to hit. */}
-                <summary className="flex cursor-pointer items-center rounded px-1 py-1.5 text-micro text-muted-foreground hover:text-foreground">
-                  {folded.length.toLocaleString()} more {group.moreLabel}
-                </summary>
+              <Disclosure
+                summaryClassName="justify-start rounded px-1 py-1.5 text-micro text-muted-foreground hover:text-foreground"
+                summary={<>{folded.length.toLocaleString()} more {group.moreLabel}</>}
+              >
                 <ul>{folded.map(row)}</ul>
-              </details>
+              </Disclosure>
             ) : null}
             {group.note ? <p className="mt-2 text-meta text-muted-foreground">{group.note}</p> : null}
           </section>

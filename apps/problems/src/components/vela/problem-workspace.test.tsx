@@ -31,8 +31,13 @@ describe("Problem Workspace", () => {
     expect(screen.getByRole("link", { name: "Sign in to contribute" })).toBeVisible();
     expect(screen.getByRole("link", { name: "Continue locally" })).toHaveAttribute("href", expect.stringMatching(/^vela-workbench:\/\/continue\?/u));
     expect(screen.getByText(/does not clone, switch, upload, or execute/iu)).toBeVisible();
-    expect(screen.getByText("Research Blocks")).toBeVisible();
-    expect(screen.getByText("Notes")).toBeVisible();
+    /* Coordination features are still named, so a signed-out reader knows
+       they exist and what an account is for — but they no longer occupy the
+       panel. What is scientific and public (which statements the source still
+       marks open) is shown; what is coordination stays behind the account. */
+    expect(screen.getByRole("complementary", { name: "Open work" })).toBeVisible();
+    expect(screen.getByText(/need an account/u)).toBeVisible();
+    expect(screen.queryByText("Sign in to view")).not.toBeInTheDocument();
   });
 
   it("offers no dead sign-in when accounts are unavailable", async () => {

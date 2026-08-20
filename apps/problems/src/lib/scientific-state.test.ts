@@ -47,7 +47,7 @@ vi.mock("@vela/projection-data", () => ({
   ),
 }));
 
-import { bindReviewedProblemSourceCoverage, discoveredProblems, observedSourceCorpusMap, problemDiscoveryCollections, problemDiscoveryHubs, problemDiscoveryScopeQuery, problemSourceObservationCoverage, reviewedProblemSourceCoverage, scientificProblemState } from "./scientific-state";
+import { bindReviewedProblemSourceCoverage, discoveredProblems, observedSourceCorpusMap, problemDiscoveryCollections, problemDiscoveryScopeQuery, problemSourceObservationCoverage, reviewedProblemSourceCoverage, scientificProblemState } from "./scientific-state";
 
 const root = (digit: string) => `sha256:${digit.repeat(64)}`;
 
@@ -310,17 +310,7 @@ describe("Problems scientific state", () => {
     expect(reads.problems).toHaveBeenCalledTimes(1);
   });
 
-  it("keys Hubs by explicit identity and retains the complete hierarchy query", () => {
-    const base = {
-      repository: "math", problem: "321", collection: { key: "math", name: "Math" }, field: null, topics: [], theme: "Topic",
-      domain: { key: "mathematics", name: "Mathematics" }, hubs: [{ key: "erdos", name: "Shared label" }],
-      record: { local_standing: null },
-    } as unknown as Awaited<ReturnType<typeof discoveredProblems>>[number];
-    expect(() => problemDiscoveryHubs([
-      base,
-      { ...base, repository: "biology", problem: "321", domain: { key: "biology", name: "Biology" }, hubs: [{ key: "biology-hub", name: "Shared label" }] },
-    ])).not.toThrow();
-    expect(() => problemDiscoveryHubs([base, { ...base, hubs: [{ key: "erdos", name: "Conflicting label" }] }])).toThrow(/repeats Problem route|conflicting/u);
+  it("retains the complete hierarchy in a scope query", () => {
     expect(problemDiscoveryScopeQuery({ domain: "mathematics", hub: "erdos", collection: "math", field: "analytic", topic: "number-theory" })).toEqual({
       domain: "mathematics", hub: "erdos", collection: "math", field: "analytic", topic: "number-theory",
     });

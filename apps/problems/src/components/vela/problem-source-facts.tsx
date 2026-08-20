@@ -31,7 +31,7 @@ export function ProblemSourceFacts({
   return <>
     <dl className={className ?? "flex flex-wrap items-center gap-x-6 gap-y-2 text-meta text-muted-foreground"}>
       <div className="flex items-center gap-1.5">
-        <dt className="text-eyebrow uppercase">Declared status</dt>
+        <dt className="text-eyebrow">Declared status</dt>
         <dd>
           <Link className="underline underline-offset-2 hover:text-foreground" href={ledgerHref("status", record.declared_status)}>
             {record.declared_status}
@@ -39,7 +39,7 @@ export function ProblemSourceFacts({
         </dd>
       </div>
       <div className="flex items-center gap-1.5">
-        <dt className="text-eyebrow uppercase">Formalization</dt>
+        <dt className="text-eyebrow">Formalization</dt>
         <dd>
           {record.formalized && record.lean_url ? (
             <a className="underline underline-offset-2 hover:text-foreground" href={record.lean_url} rel="noreferrer nofollow" target="_blank">formalized</a>
@@ -48,7 +48,7 @@ export function ProblemSourceFacts({
       </div>
       {record.prize ? (
         <div className="flex items-center gap-1.5">
-          <dt className="text-eyebrow uppercase">Prize</dt>
+          <dt className="text-eyebrow">Prize</dt>
           <dd className="font-mono tabular-nums">{record.prize}</dd>
         </div>
       ) : null}
@@ -71,7 +71,7 @@ export function ProblemSourceFacts({
           rather than a stack of chips. */}
       {tags.length ? (
         <div className="flex items-center gap-1.5">
-          <dt className="text-eyebrow uppercase">Subjects</dt>
+          <dt className="text-eyebrow">Subjects</dt>
           <dd className="flex flex-wrap items-center gap-x-2 gap-y-2">
             {tags.map((tag, index) => (
               <span key={tag}>
@@ -84,7 +84,7 @@ export function ProblemSourceFacts({
       ) : null}
       {oeis.length ? (
         <div className="flex items-center gap-1.5">
-          <dt className="text-eyebrow uppercase">OEIS</dt>
+          <dt className="text-eyebrow">OEIS</dt>
           <dd className="font-mono">{oeis.join(" · ")}</dd>
         </div>
       ) : null}
@@ -93,7 +93,7 @@ export function ProblemSourceFacts({
           a `LIMIT 1` read showed one of up to five. */}
       {sourceIds.length ? (
         <div className="flex items-center gap-1.5">
-          <dt className="text-eyebrow uppercase">Sources</dt>
+          <dt className="text-eyebrow">Sources</dt>
           <dd className="flex flex-wrap items-center gap-x-2 gap-y-2">
             {sourceIds.map((sourceId, index) => (
               <span key={sourceId}>
@@ -106,7 +106,7 @@ export function ProblemSourceFacts({
       ) : null}
       {locator ? (
         <div className="flex items-center gap-1.5">
-          <dt className="text-eyebrow uppercase">Statement</dt>
+          <dt className="text-eyebrow">Statement</dt>
           <dd><a className="underline underline-offset-2 hover:text-foreground" href={locator} rel="noreferrer nofollow" target="_blank">{new URL(locator).hostname}</a></dd>
         </div>
       ) : null}

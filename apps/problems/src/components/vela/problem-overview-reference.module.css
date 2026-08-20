@@ -10,57 +10,77 @@
 }
 
 .hero {
-  padding-block: 0.65rem 0;
+  padding-block: 0 0;
 }
 
-.heroTopline {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem 1.5rem;
+/* Retained source material, set as such: reading size, a serif that carries
+   mixed prose and mathematics, and the attribution attached to the quotation
+   rather than floating under it. */
+/* The card is the measure, and the card is capped.
+ *
+ * Capping the paragraph instead left the right side of the box empty and
+ * centred the display equation on the paragraph's axis rather than the card's,
+ * so the formula sat visibly left of centre. Capping the figure keeps the
+ * 44-52rem reading measure (DESIGN.md:237) and lets the equation centre on the
+ * box a reader actually sees. */
+.statement {
+  max-width: 48rem;
+  margin: 1.15rem 0 0;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--ref-line);
+  border-left: 2px solid color-mix(in oklab, var(--ref-cobalt) 55%, var(--ref-line));
+  border-radius: 0 0.5rem 0.5rem 0;
+  background: color-mix(in oklab, var(--card) 60%, var(--background));
 }
 
-.identity {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--ref-muted);
-  font-size: 0.8125rem;
-  font-weight: 550;
-}
-
-.identity a {
-  color: var(--ref-ink);
-  text-underline-offset: 0.2rem;
-}
-
-.identity a:hover { text-decoration: underline; }
-
-.question {
-  max-width: 58rem;
-  margin-top: clamp(1.1rem, 2.4vw, 1.7rem);
-  font-size: clamp(1.65rem, 3vw, 2.4rem);
-  font-weight: 650;
-  line-height: 1.16;
-  letter-spacing: -0.032em;
-  overflow-wrap: anywhere;
+.statement blockquote {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.68;
   text-wrap: pretty;
 }
 
+.statement figcaption {
+  margin-top: 0.8rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid color-mix(in oklab, var(--ref-line) 70%, transparent);
+  color: var(--ref-muted);
+  font-size: 0.75rem;
+}
+
+.statement figcaption span { color: var(--ref-ink); font-weight: 550; }
+
+/* The section-page form of the statement: two lines at reading size, muted,
+   so it captions the section rather than opening it. */
+.questionCompact {
+  margin: 0.55rem 0 0;
+  overflow: hidden;
+  color: var(--ref-muted);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: -0.006em;
+  text-wrap: pretty;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
 .sourceLine {
-  margin-top: 0.75rem;
+  margin-top: 0.6rem;
   color: var(--ref-muted);
   font-size: 0.8125rem;
   line-height: 1.25rem;
 }
 
 .sourceLine span { color: var(--ref-ink); font-weight: 550; }
+.sourceLine a { color: var(--ref-ink); font-weight: 550; text-underline-offset: 0.2rem; }
+.sourceLine a:hover { text-decoration: underline; }
 
 .heroRail {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  margin-top: 1.5rem;
+  margin-top: 0.85rem;
   overflow: hidden;
   border: 1px solid color-mix(in oklab, var(--ref-line) 82%, transparent);
   border-radius: 0.5rem;
@@ -79,68 +99,13 @@
 .heroFact dt { color: var(--ref-muted); font-size: 0.75rem; line-height: 1rem; }
 
 .heroFact dd {
-  display: flex;
   min-width: 0;
-  align-items: center;
-  gap: 0.45rem;
   margin-top: 0.25rem;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  line-height: 1.15rem;
-}
-
-.factQualifier { color: var(--ref-muted); font-weight: 400; }
-
-.statusDot {
-  width: 0.5rem;
-  height: 0.5rem;
-  flex: none;
-  border-radius: 999px;
-  background: var(--muted-foreground);
-}
-
-.statusDot[data-tone="primary"] { background: var(--primary); }
-.statusDot[data-tone="source"] { background: var(--status-progress); }
-.statusDot[data-tone="warning"] { background: var(--status-caution); }
-.statusDot[data-tone="evidence"] { background: var(--status-evidence); }
-
-.tabs {
-  display: flex;
-  gap: 1.25rem;
-  overflow-x: auto;
-  border-bottom: 1px solid var(--ref-line);
-  scrollbar-width: none;
-}
-
-.tabs::-webkit-scrollbar { display: none; }
-
-.tab {
-  position: relative;
-  display: inline-flex;
-  min-height: 2.75rem;
-  flex: 0 0 auto;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  padding: 0 0.15rem;
-  color: var(--ref-muted);
+  color: color-mix(in oklab, var(--ref-ink) 88%, transparent);
   font-size: 0.8125rem;
   font-weight: 550;
-  text-decoration: none;
-}
-
-.tab:hover { color: var(--ref-ink); }
-.tab:focus-visible { border-radius: 0.25rem; outline: 2px solid var(--ref-cobalt); outline-offset: 2px; }
-
-.tab[data-active="true"] { color: var(--ref-ink); }
-.tab[data-active="true"]::after {
-  position: absolute;
-  right: 0;
-  bottom: -1px;
-  left: 0;
-  height: 2px;
-  background: var(--ref-cobalt);
-  content: "";
+  line-height: 1.15rem;
+  overflow-wrap: anywhere;
 }
 
 .overviewGrid {
@@ -155,18 +120,12 @@
 .statePanel {
   overflow: hidden;
   border: 1px solid var(--ref-line);
-  border-radius: 0.625rem;
+  border-radius: 0.5rem;
   background: var(--vela-surface-raised);
   box-shadow: var(--vela-shadow-raised);
 }
 
 .stateBody { padding: clamp(1.1rem, 2.2vw, 1.6rem); }
-
-.stateHeading {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
 
 .resultObjectHeader {
   display: flex;
@@ -195,37 +154,13 @@
   margin-top: 1rem;
   padding: 0.75rem 0.85rem;
   border: 1px solid color-mix(in oklab, var(--status-caution) 32%, var(--ref-line));
-  border-radius: 0.45rem;
+  border-radius: 0.5rem;
   background: color-mix(in oklab, var(--status-caution) 7%, var(--background));
   font-size: 0.8125rem;
   line-height: 1.3rem;
 }
 
-.relationshipStrip {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.6rem;
-  margin-top: 1rem;
-}
-
-.relationshipStrip > a {
-  display: grid;
-  grid-template-columns: 2rem minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 0.65rem;
-  min-width: 0;
-  padding: 0.7rem;
-  border: 1px solid var(--ref-line);
-  border-radius: 0.45rem;
-  background: var(--ref-paper);
-  text-decoration: none;
-}
-
 .relationshipStrip strong,
-.relationshipStrip small { display: block; }
-.relationshipStrip strong { font-size: 0.75rem; line-height: 1rem; }
-.relationshipStrip small { margin-top: 0.15rem; color: var(--ref-muted); font-size: 0.6875rem; line-height: 0.9rem; }
-.relationshipIcon { display: grid; width: 2rem; height: 2rem; place-items: center; border-radius: 0.4rem; }
 
 .stateMeta {
   display: grid;
@@ -250,33 +185,7 @@
   padding-top: 1.5rem;
 }
 
-.sectionHead {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.5rem 1rem;
-}
-
 .sectionTitle { font-size: 1rem; font-weight: 650; letter-spacing: -0.01em; }
-
-.boundFigure {
-  margin-top: 0.9rem;
-  overflow: hidden;
-  border-block: 1px solid var(--ref-line);
-}
-
-.boundRow {
-  display: grid;
-  grid-template-columns: 8rem minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 1rem;
-  min-height: 4.5rem;
-  padding: 0.85rem 0;
-  border-top: 1px solid var(--ref-line);
-}
-
-.boundRow:first-child { border-top: 0; }
 
 .resultGlyph {
   display: grid;
@@ -289,30 +198,10 @@
   color: var(--muted-foreground);
 }
 
-.workList {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin-top: 0.9rem;
-  border-block: 1px solid var(--ref-line);
-}
-
-.workList > div {
-  display: grid;
-  grid-template-columns: 2.5rem minmax(0, 1fr);
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.9rem 0;
-}
-
-.workList > div + div { padding-left: 1rem; border-left: 1px solid var(--ref-line); }
-.workList strong, .workList small { display: block; }
-.workList strong { font-size: 0.8125rem; }
-.workList small { margin-top: 0.15rem; color: var(--ref-muted); font-size: 0.75rem; line-height: 1rem; }
-
 .rail {
   overflow: hidden;
   border: 1px solid var(--ref-line);
-  border-radius: 0.625rem;
+  border-radius: 0.5rem;
   background: color-mix(in oklab, var(--card) 82%, var(--muted));
   box-shadow: 0 1px 2px color-mix(in oklab, var(--foreground) 7%, transparent);
 }
@@ -333,16 +222,12 @@
 .representationIcon { display: grid; width: 1.75rem; height: 1.75rem; place-items: center; color: var(--ref-muted); }
 
 .technical { border-top: 1px solid var(--ref-line); }
-.technical summary {
-  min-height: 2.5rem;
-  cursor: pointer;
-  list-style: none;
+.technicalSummary {
   padding: 0.7rem 0;
   color: var(--ref-cobalt);
   font-size: 0.75rem;
   font-weight: 600;
 }
-.technical summary::-webkit-details-marker { display: none; }
 .technicalBody { border-top: 1px solid var(--ref-line); padding: 0.9rem 0; font-size: 0.8125rem; line-height: 1.4rem; }
 
 @media (max-width: 960px) {
@@ -357,46 +242,32 @@
 }
 
 @media (max-width: 560px) {
-  .heroTopline { align-items: flex-start; }
-  .question { font-size: clamp(1.35rem, 6.15vw, 1.68rem); line-height: 1.18; letter-spacing: -0.025em; }
+  .statement { padding: 0.9rem 1rem; }
+  .statement blockquote { font-size: 0.9375rem; }
   .heroRail { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .heroFact { padding: 0.6rem; }
   .heroFact dt { font-size: 0.6875rem; }
   .heroFact dd { align-items: flex-start; font-size: 0.75rem; line-height: 1rem; }
-  .tabs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; }
-  .tab { min-width: 0; min-height: 3rem; flex-direction: column; gap: 0.15rem; padding: 0.35rem 0.05rem; font-size: 0.67rem; line-height: 1; }
   .stateMeta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .stateMeta > div:nth-child(2) { border-right: 0; }
   .stateMeta > div:nth-child(n + 3) { border-top: 1px solid var(--ref-line); }
-  .relationshipStrip { grid-template-columns: 1fr; }
-  .boundRow { grid-template-columns: 6.5rem minmax(0, 1fr); gap: 0.75rem; }
-  .boundRow > :last-child { grid-column: 2; }
-  .workList { grid-template-columns: 1fr; }
-  .workList > div + div { padding-left: 0; border-top: 1px solid var(--ref-line); border-left: 0; }
   .rail { display: block; }
   .railSection { padding-inline: 0; border-top: 1px solid var(--ref-line); border-left: 0; }
   .railSection:first-child { border-top: 0; }
 }
 
-@media (prefers-reduced-motion: reduce) {
+  @media (prefers-reduced-motion: reduce) {
   .reference *, .reference *::before, .reference *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
 }
 
 @media (forced-colors: active) {
-  .heroRail, .tabs, .statePanel, .boundFigure, .workList, .rail { border-color: CanvasText; }
-  .tab[data-active="true"]::after, .statusDot, .statusDot[data-tone] { background: CanvasText; }
+  .heroRail, .statePanel, .boundFigure, .workList, .rail { border-color: CanvasText; }
   .unresolved { border-color: CanvasText; background: Canvas; }
 }
 
 @media print {
-  .question {
-    max-width: 100%;
-    font-size: 1.8rem;
-    line-height: 1.2;
-    letter-spacing: -0.02em;
-    overflow-wrap: anywhere;
-  }
-  .tabs { display: none; }
+  .statement { max-width: 100%; border-left-width: 1px; break-inside: avoid; }
+  .statement blockquote { max-width: 100%; overflow-wrap: anywhere; }
   .overviewGrid { grid-template-columns: 1fr; }
   .rail { break-inside: avoid; border-top: 1px solid #777; border-left: 0; }
   .technicalBody { display: block; }

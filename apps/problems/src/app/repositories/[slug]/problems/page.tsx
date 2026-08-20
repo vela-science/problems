@@ -130,7 +130,7 @@ export default async function ProblemsPage({
       ) : null}
       {narrowed.length ? (
         <div className="mb-4 flex flex-wrap items-center gap-2">
-          <span className="text-eyebrow uppercase text-muted-foreground">Narrowed to</span>
+          <span className="text-eyebrow text-muted-foreground">Narrowed to</span>
           {narrowed.map((key) => (
             <Button key={key} nativeButton={false} variant="outline" size="sm" render={<Link href={withParams({ [key]: null, page: null })} />}>
               {active[key]!.replaceAll("_", " ")} ×

@@ -51,7 +51,7 @@ export function PageIntro({
                 aria-hidden
                 className={`absolute left-0 top-3.5 size-1.5 rounded-full ${toneFills[signal.tone ?? "neutral"]}`}
               />
-              <dt className="text-eyebrow uppercase text-muted-foreground">
+              <dt className="text-eyebrow text-muted-foreground">
                 {signal.label}
               </dt>
               <dd className="mt-1 min-w-0 break-words text-subtitle">{signal.value}</dd>

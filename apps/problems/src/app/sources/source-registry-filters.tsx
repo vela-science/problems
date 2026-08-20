@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@vela/ui/components/select";
+import { Disclosure } from "@/components/vela/disclosure";
 
 export interface SourceRegistryFilterState {
   query?: string;
@@ -158,13 +159,13 @@ export function SourceRegistryFilters({
           Clear
         </Button>
       ) : null}
-      <details className="group rounded-lg bg-muted/30 px-3 xl:col-span-5" open={advancedFilterCount > 0}>
-        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 py-2 text-compact font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring [&::-webkit-details-marker]:hidden">
-          <span>Advanced filters</span>
-          <span className="text-right text-meta text-muted-foreground">
-            {advancedFilterCount ? `${advancedFilterCount} active` : <><span className="xl:hidden">4 exact filters</span><span className="hidden xl:inline">Exact ID, record kind, source kind, coverage</span></>}
-          </span>
-        </summary>
+      <Disclosure
+        className="rounded-lg bg-muted/30 px-3 xl:col-span-5"
+        open={advancedFilterCount > 0}
+        summaryClassName="py-2 text-compact font-medium"
+        summary="Advanced filters"
+        meta={<span className="text-right">{advancedFilterCount ? `${advancedFilterCount} active` : <><span className="xl:hidden">4 exact filters</span><span className="hidden xl:inline">Exact ID, record kind, source kind, coverage</span></>}</span>}
+      >
         <div className="grid gap-2 bg-background/35 py-3 sm:grid-cols-2 lg:grid-cols-4">
           <InputGroup className="min-w-0">
             <InputGroupAddon>
@@ -232,7 +233,7 @@ export function SourceRegistryFilters({
             </SelectContent>
           </Select>
         </div>
-      </details>
+      </Disclosure>
     </form>
   );
 }

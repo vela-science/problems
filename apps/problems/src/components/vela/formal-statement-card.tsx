@@ -1,7 +1,7 @@
 import { Badge } from "@vela/ui/components/badge";
 import { Button } from "@vela/ui/components/button";
 import { ScientificText } from "@vela/ui/vela/scientific-text";
-import { LeanBlock, ProofChips } from "@/components/vela/lean-block";
+import { LeanBlock, ProofChips, proofStanding } from "@/components/vela/lean-block";
 import type { ProblemSourceOccurrence } from "@vela/projection-data";
 
 /* The authors' own prose, typeset. Docstrings arrive as LaTeX-flavored
@@ -39,6 +39,10 @@ export function FormalStatementCard({ occurrence, showDocstring = true }: {
   const code = occurrence.summary?.trim();
   if (!code) return null;
   const exactBlob = occurrence.locators.find(({ url }) => url?.includes("/blob/"))?.url ?? null;
+  /* Only one standing needs explaining, and it is the consequential one: a
+     proof with a hole in it is the case a reader is most likely to mistake for
+     a proof. The rest speak for themselves in the chip. */
+  const standing = proofStanding(formal?.proof_present ?? null, formal?.proof_sorry_free ?? null);
   return <article className="min-w-0" aria-label={occurrence.native_id}>
     {showDocstring && formal?.docstring ? <Docstring text={formal.docstring} className="mb-4" /> : null}
     <LeanBlock
@@ -58,5 +62,6 @@ export function FormalStatementCard({ occurrence, showDocstring = true }: {
         {formal?.proof_locator ? <a href={formal.proof_locator} className="text-micro underline underline-offset-4">external proof</a> : null}
       </>}
     />
+    {standing?.detail ? <p className="mt-2 text-meta leading-5 text-muted-foreground">{standing.detail}</p> : null}
   </article>;
 }

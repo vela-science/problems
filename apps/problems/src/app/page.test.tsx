@@ -183,7 +183,13 @@ describe("Home", () => {
     reads.previews.mockResolvedValue([]);
     render(await HomePage());
 
-    expect(screen.getByText("No Problem in this release has a retained question to preview.")).toBeVisible();
-    expect(screen.getByText("No reviewed Result is published in this release.")).toBeVisible();
+    expect(screen.getByText("No question is ready to preview")).toBeVisible();
+    expect(screen.getByText("No Result has been accepted here yet")).toBeVisible();
+    /* An absence states its cause and offers the next thing to do; a bare
+       sentence cannot carry the action (DESIGN.md, "concise cause plus one
+       next action"). */
+    const onward = screen.getAllByRole("link", { name: "Browse every Problem" });
+    expect(onward).toHaveLength(2);
+    for (const link of onward) expect(link).toHaveAttribute("href", "/problems");
   });
 });
