@@ -117,8 +117,8 @@ describe("Problem Workspace", () => {
     expect(screen.getByRole("link", { name: "Download unsigned draft" })).toHaveAttribute("href", "/drafts/draft-1/export?workspace=workspace-1");
     expect(screen.getByLabelText("Result handoff")).toBeVisible();
     expect(screen.getByRole("link", { name: "Repository instructions" })).toHaveAttribute("href", "/repositories/math/contribute");
-    expect(screen.getByRole("link", { name: "Results" })).toHaveAttribute("href", "/problems/erdos-problems/321?view=results");
-    expect(screen.getByRole("link", { name: "History" })).toHaveAttribute("href", "/problems/erdos-problems/321?view=history");
+    expect(screen.getByRole("link", { name: "Results" })).toHaveAttribute("href", "/problems/erdos-problems/321/results");
+    expect(screen.getByRole("link", { name: "History" })).toHaveAttribute("href", "/problems/erdos-problems/321/history");
     expect(screen.queryByText(/submission:sign-local/iu)).not.toBeInTheDocument();
   });
 });

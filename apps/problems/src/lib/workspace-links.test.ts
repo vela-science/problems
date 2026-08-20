@@ -33,7 +33,7 @@ describe("My Work Problem links", () => {
     expect(workspaceProblemLinks(workspace, [problem])).toEqual([expect.objectContaining({
       state: "current",
       label: "Erdős Problems · Erdős problem 321",
-      href: "/problems/erdos-problems/321?view=work&workspace=workspace-1",
+      href: "/problems/erdos-problems/321/work?workspace=workspace-1",
     })]);
   });
 
@@ -42,7 +42,7 @@ describe("My Work Problem links", () => {
     earlier.problemContexts[0]!.projectionReleaseRoot = `sha256:${"3".repeat(64)}`;
     expect(workspaceProblemLinks(earlier, [problem])[0]).toMatchObject({
       state: "earlier-release",
-      href: "/problems/erdos-problems/321?view=work&workspace=workspace-1",
+      href: "/problems/erdos-problems/321/work?workspace=workspace-1",
     });
   });
 

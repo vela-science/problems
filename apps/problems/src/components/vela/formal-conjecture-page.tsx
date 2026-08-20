@@ -50,7 +50,7 @@ function Overview({ item, route }: { item: FormalConjectureOccurrence; route: st
       <section aria-labelledby="fc-formal-statement" className="vela-object-surface overflow-hidden">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b bg-muted/20 px-5 py-3">
           <h2 id="fc-formal-statement" className="text-label">Lean declaration</h2>
-          <Link href={`${route}?view=sources`} className="text-meta font-medium text-primary hover:underline">Open source view</Link>
+          <Link href={`${route}/sources`} className="text-meta font-medium text-primary hover:underline">Open source view</Link>
         </div>
         <pre className="overflow-x-auto p-5 text-[0.82rem] leading-6"><code>{item.formal_statement}</code></pre>
       </section>

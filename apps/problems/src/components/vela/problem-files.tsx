@@ -81,7 +81,7 @@ function TreeBranch({ nodes, depth, basePath, selectedPath, activeKey }: {
       return <li key={node.path} role="treeitem" aria-expanded={node.children.length ? true : undefined} aria-selected={open || undefined}>
         {node.entry
           ? <Link
-            href={`${basePath}?view=sources&file=${encodeURIComponent(node.entry.path)}`}
+            href={`${basePath}/sources?file=${encodeURIComponent(node.entry.path)}`}
             aria-current={open ? "page" : undefined}
             style={{ paddingInlineStart: `${0.5 + depth * 0.75}rem` }}
             className={`vela-object-row flex min-h-9 items-center gap-2 rounded-md py-1.5 pe-2 text-compact focus-visible:outline-2 focus-visible:outline-offset-2 ${open ? "bg-accent font-medium text-accent-foreground shadow-sm" : "hover:bg-muted"}`}
@@ -105,7 +105,7 @@ function TreeBranch({ nodes, depth, basePath, selectedPath, activeKey }: {
             const mark = node.entry?.kind === "formal" ? proofMark(record as Occurrence) : null;
             return <li key={key} role="treeitem" aria-selected={active || undefined}>
               <Link
-                href={`${basePath}?view=sources&file=${encodeURIComponent(node.entry!.path)}&symbol=${encodeURIComponent(key)}`}
+                href={`${basePath}/sources?file=${encodeURIComponent(node.entry!.path)}&symbol=${encodeURIComponent(key)}`}
                 aria-current={active ? "location" : undefined}
                 style={{ paddingInlineStart: `${0.75 + (depth + 1) * 0.75}rem` }}
                 className={`vela-object-row flex min-h-8 items-center gap-2 rounded-md py-1 pe-2 focus-visible:outline-2 focus-visible:outline-offset-2 ${active ? "bg-[var(--vela-surface-selected)] font-medium text-foreground shadow-[inset_3px_0_0_var(--primary)]" : "text-muted-foreground hover:bg-muted"}`}

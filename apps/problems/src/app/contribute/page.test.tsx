@@ -86,8 +86,8 @@ describe("Add contribution", () => {
 
     expect(screen.getByRole("heading", { name: "Erdős Problems" })).toBeVisible();
     expect(screen.getByRole("heading", { name: "Formal Conjectures" })).toBeVisible();
-    expect(screen.getByRole("link", { name: /Open Work: Erdős problem 94/iu })).toHaveAttribute("href", "/problems/erdos-problems/94?view=work");
-    expect(container.querySelector('a[href^="/problems/formal-conjectures/"][href$="?view=work"]')).toBeTruthy();
+    expect(screen.getByRole("link", { name: /Open Work: Erdős problem 94/iu })).toHaveAttribute("href", "/problems/erdos-problems/94/work");
+    expect(container.querySelector('a[href^="/problems/formal-conjectures/"][href$="/work"]')).toBeTruthy();
     expect(screen.getByRole("link", { name: /Connect code/iu })).toHaveAttribute("href", "/import");
     expect(screen.getByRole("link", { name: "Browse all Problems" })).toHaveAttribute("href", "/problems");
   });

@@ -55,7 +55,7 @@ describe("My work", () => {
     render(await MyWorkPage({ searchParams: Promise.resolve({ workspace: anchored.id }) }));
     expect(screen.getByRole("link", { name: /Erdős Problems · Erdős problem 321/iu })).toHaveAttribute(
       "href",
-      "/problems/erdos-problems/321?view=work&workspace=workspace-anchored",
+      "/problems/erdos-problems/321/work?workspace=workspace-anchored",
     );
   });
 

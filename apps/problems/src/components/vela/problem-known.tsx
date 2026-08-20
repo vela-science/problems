@@ -44,7 +44,7 @@ export function WhatIsKnown({ state, basePath }: { state: State; basePath: strin
           <FormalStatementCard occurrence={lead} showDocstring={false} />
         </div>
         {declarations.length > 1 ? <footer className="border-t px-4 py-2.5">
-          <Button nativeButton={false} size="sm" variant="ghost" render={<Link href={`${basePath}?view=sources`} />}>
+          <Button nativeButton={false} size="sm" variant="ghost" render={<Link href={`${basePath}/sources`} />}>
             Browse all {declarations.length} declarations
           </Button>
         </footer> : null}
@@ -70,8 +70,8 @@ export function WhatIsKnown({ state, basePath }: { state: State; basePath: strin
     <section aria-labelledby="next-heading">
       <h2 id="next-heading" className="text-title">Continue</h2>
       <div className="mt-4 flex flex-wrap gap-3">
-        <Button nativeButton={false} render={<Link href={`${basePath}?view=work`} />}>Start a contribution</Button>
-        <Button nativeButton={false} variant="outline" render={<Link href={`${basePath}?view=sources`} />}>Browse the source files</Button>
+        <Button nativeButton={false} render={<Link href={`${basePath}/work`} />}>Start a contribution</Button>
+        <Button nativeButton={false} variant="outline" render={<Link href={`${basePath}/sources`} />}>Browse the source files</Button>
         {state.locator ? <Button nativeButton={false} variant="outline" render={<a href={state.locator} />}>Open the collection entry</Button> : null}
       </div>
     </section>

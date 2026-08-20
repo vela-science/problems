@@ -158,8 +158,8 @@ describe("Home", () => {
     expect(container.querySelectorAll('a[href^="/problems/erdos-problems/"]')).toHaveLength(5);
     expect(container.querySelector('a[href^="/problems/formal-conjectures/"]')).toBeTruthy();
     expect(screen.getByRole("heading", { name: "Reviewed Results" })).toBeVisible();
-    expect(screen.getByRole("link", { name: "Open reviewed Result for Erdős problem 94" })).toHaveAttribute("href", "/problems/erdos-problems/94?view=results");
-    expect(screen.getByRole("link", { name: "Open reviewed Result for Erdős problem 321" })).toHaveAttribute("href", "/problems/erdos-problems/321?view=results");
+    expect(screen.getByRole("link", { name: "Open reviewed Result for Erdős problem 94" })).toHaveAttribute("href", "/problems/erdos-problems/94/results");
+    expect(screen.getByRole("link", { name: "Open reviewed Result for Erdős problem 321" })).toHaveAttribute("href", "/problems/erdos-problems/321/results");
     expect(screen.getAllByText("Accepted by Vela Mathematics Program")).toHaveLength(2);
     expect(screen.getByText("It does not establish the full Problem.")).toBeVisible();
     expect(screen.getByText("This is a candidate answer, not a proof of the full Problem.")).toBeVisible();

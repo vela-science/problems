@@ -80,7 +80,7 @@ export default async function WorkPage() {
                 state={state}
                 number={discovery.problem}
                 collectionLabel="Erdős problem"
-                href={`${discovery.canonicalPath}?view=work`}
+                href={`${discovery.canonicalPath}/work`}
                 actionLabel="Open Work"
               />)}
             </ul> : <Empty>
@@ -100,7 +100,7 @@ export default async function WorkPage() {
               <Link href={FORMAL_COLLECTION} className="text-micro font-medium text-muted-foreground hover:text-foreground">View collection</Link>
             </div>
             <ul aria-labelledby="formal-starting-points"><li>
-              <Item className="vela-object-row -mx-2 gap-4 rounded-md px-2 py-4" render={<Link href={`${FORMAL_COLLECTION}/${formalCandidate.route_slug}?view=work`} aria-label={`Open Work: ${statementPlainText(formalCandidate.title)}`} />}>
+              <Item className="vela-object-row -mx-2 gap-4 rounded-md px-2 py-4" render={<Link href={`${FORMAL_COLLECTION}/${formalCandidate.route_slug}/work`} aria-label={`Open Work: ${statementPlainText(formalCandidate.title)}`} />}>
                 <ItemMedia aria-hidden className="size-8 rounded-md bg-primary/10 text-primary"><HugeiconsIcon icon={CodeIcon} className="size-4" /></ItemMedia>
                 <ItemContent>
                   <ItemTitle className="line-clamp-none block max-w-[76ch] text-compact leading-6 group-hover/item:underline group-hover/item:decoration-border group-hover/item:underline-offset-4"><ScientificText text={formalCandidate.title} /></ItemTitle>

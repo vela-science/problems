@@ -53,7 +53,7 @@ export function HomeResultRow({ state, href, number }: { state: State; href: str
     <ItemContent>
       <ItemTitle className="line-clamp-none flex-wrap gap-2">
         <Link
-          href={`${href}?view=results`}
+          href={`${href}/results`}
           aria-label={`Open reviewed Result for Erdős problem ${number}`}
           className="text-compact font-semibold after:absolute after:inset-0 group-hover/item:text-primary focus-visible:outline-2 focus-visible:outline-offset-[-2px]"
         >

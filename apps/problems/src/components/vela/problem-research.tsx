@@ -174,7 +174,7 @@ function CurrentResult({ state, basePath }: { state: State; basePath: string }) 
           <div className="space-y-2 border-t p-4">
             <Button className="w-full" nativeButton={false} size="sm" render={<Link href={`/repositories/${state.repositorySlug}/claims/${encodeURIComponent(claim.id)}`} />}>Open result</Button>
             {review ? <Button className="w-full" nativeButton={false} size="sm" variant="outline" render={<Link href={`/repositories/${state.repositorySlug}/proposals/${review.proposal_id}`} />}>Review and decision</Button> : null}
-            <Button className="w-full" nativeButton={false} size="sm" variant="ghost" render={<Link href={`${basePath}?view=sources`} />}>Browse sources</Button>
+            <Button className="w-full" nativeButton={false} size="sm" variant="ghost" render={<Link href={`${basePath}/sources?`} />}>Browse sources</Button>
           </div>
         </aside>
       </div>

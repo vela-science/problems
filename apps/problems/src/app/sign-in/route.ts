@@ -9,8 +9,17 @@ const allowedReturns = new Set(["/account", "/account/connections", "/account/pr
  * match the canonical route shapes exactly, and only the two query
  * parameters those routes read survive, with their own closed grammars.
  * Anything else — absolute URLs, protocol-relative `//`, backslashes,
- * traversal that normalizes away, unknown params — collapses to /account. */
-const PROBLEM_RETURN_PATH = /^\/(?:problems\/[a-z0-9]+(?:-[a-z0-9]+)*(?:(?:\/[1-9][0-9]*)|(?:\/[a-z][a-z0-9]*(?:-[a-z0-9]+)*))?|repositories\/[a-z0-9]+(?:-[a-z0-9]+)*(?:\/problems\/[1-9][0-9]*)?)$/u;
+ * traversal that normalizes away, unknown params — collapses to /account.
+ *
+ * The section is its own path segment now, so the grammar has to admit one —
+ * as a closed set, never a free segment. Without it every signed-out reader on
+ * `/problems/…/work` landed back on /account, which is the exact stranding
+ * this guard exists to prevent. */
+const PROBLEM_SECTION = "(?:\\/(?:overview|work|results|sources|history))?";
+const PROBLEM_RETURN_PATH = new RegExp(
+  `^\\/(?:problems\\/[a-z0-9]+(?:-[a-z0-9]+)*(?:(?:\\/[1-9][0-9]*)|(?:\\/[a-z][a-z0-9]*(?:-[a-z0-9]+)*))?${PROBLEM_SECTION}|repositories\\/[a-z0-9]+(?:-[a-z0-9]+)*(?:\\/problems\\/[1-9][0-9]*)?)$`,
+  "u",
+);
 
 export function safeReturnTo(requested: string | null): string {
   if (!requested) return "/account";

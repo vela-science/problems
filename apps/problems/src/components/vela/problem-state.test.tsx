@@ -150,7 +150,7 @@ describe("Problem tools", () => {
     const tree = screen.getByRole("navigation", { name: "Problem source paths" });
     expect(within(tree).getByRole("link", { name: /321\.lean/u })).toHaveAttribute(
       "href",
-      expect.stringContaining("view=sources&file="),
+      expect.stringContaining("/sources?file="),
     );
     expect(within(tree).getByRole("link", { name: /erdos_321/u }).getAttribute("href")).not.toContain("%00");
     expect(within(tree).getByRole("heading", { name: "Source providers" })).toBeVisible();
@@ -200,8 +200,8 @@ describe("Problem tools", () => {
     expect(screen.getByRole("heading", { name: "No current result" })).toBeVisible();
     expect(screen.getByText(/No reviewed Result is current/iu)).toBeVisible();
     expect(screen.getByRole("heading", { name: "Retained declaration" })).toBeVisible();
-    expect(screen.getByRole("link", { name: "Start a contribution" })).toHaveAttribute("href", "/problems/erdos-problems/321?view=work");
-    expect(screen.getByRole("link", { name: "Browse the source files" })).toHaveAttribute("href", "/problems/erdos-problems/321?view=sources");
+    expect(screen.getByRole("link", { name: "Start a contribution" })).toHaveAttribute("href", "/problems/erdos-problems/321/work");
+    expect(screen.getByRole("link", { name: "Browse the source files" })).toHaveAttribute("href", "/problems/erdos-problems/321/sources");
     expect(screen.queryByRole("heading", { name: "Other results" })).toBeNull();
   });
 

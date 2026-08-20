@@ -129,7 +129,7 @@ describe("SearchResults", () => {
     expect(screen.queryByText("State")).toBeNull();
     expect(loadSearchIndex).toHaveBeenCalledWith("sha256:test", "sha256:search", "sha256:collection", expect.objectContaining({ kind: "problem", repository: undefined, standing: undefined }));
     await userEvent.click(result);
-    expect(navigation.push).toHaveBeenCalledWith("/problems/erdos-problems/321?view=work");
+    expect(navigation.push).toHaveBeenCalledWith("/problems/erdos-problems/321/work");
     view.unmount();
   });
 

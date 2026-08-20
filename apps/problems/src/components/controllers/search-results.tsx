@@ -33,10 +33,9 @@ const KINDS = ["repository", "claim", "problem", "artifact", "proposal", "verifi
 
 function resultHref(href: string, intent: string | null, kind: string): string {
   if (intent !== "contribute" || kind !== "problem") return href;
+  /* Work is a path segment; any query the result already carried is kept. */
   const [path, query = ""] = href.split("?", 2);
-  const params = new URLSearchParams(query);
-  params.set("view", "work");
-  return `${path}?${params.toString()}`;
+  return query ? `${path}/work?${query}` : `${path}/work`;
 }
 
 function resultStateBadges(record: SiteSearchRecord) {

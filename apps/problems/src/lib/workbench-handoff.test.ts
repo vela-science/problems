@@ -21,7 +21,7 @@ describe("Workbench Problem handoff", () => {
 
   it.each([
     ["symbolic ref", { basePath: "/problems/erdos-problems/321", repositorySlug: "math", sourceRevision: "main", sourceLocators: [sourceLocator] }],
-    ["nested query", { basePath: "/problems/erdos-problems/321?view=work", repositorySlug: "math", sourceRevision: commit, sourceLocators: [sourceLocator] }],
+    ["nested query", { basePath: "/problems/erdos-problems/321/work", repositorySlug: "math", sourceRevision: commit, sourceLocators: [sourceLocator] }],
     ["path traversal", { basePath: "/problems/erdos-problems/../321", repositorySlug: "math", sourceRevision: commit, sourceLocators: [sourceLocator] }],
     ["unknown Repository", { basePath: "/problems/erdos-problems/321", repositorySlug: "unknown", sourceRevision: commit, sourceLocators: [sourceLocator] }],
     ["mismatched source ref", { basePath: "/problems/erdos-problems/321", repositorySlug: "math", sourceRevision: commit, sourceLocators: [`https://github.com/teorth/erdosproblems/blob/${"b".repeat(40)}/data/problems.yaml`] }],

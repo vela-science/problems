@@ -44,12 +44,15 @@ export function workspaceProblemLinks(
       };
     }
     const problem = matches[0];
-    const query = new URLSearchParams({ view: "work", workspace: workspace.id });
+    /* The Work section is a path segment now, not a `?view=` value. The query
+       spelling still resolves for shared links, but internal navigation emits
+       the current form (AGENTS.md). */
+    const query = new URLSearchParams({ workspace: workspace.id });
     return {
       context,
       state: problem.releaseRoot === context.projectionReleaseRoot ? "current" : "earlier-release",
       label: `${problem.collection?.name ?? "Problem collection"} · ${problem.record.label ?? `Problem ${problem.problem}`}`,
-      href: `${problem.canonicalPath}?${query.toString()}`,
+      href: `${problem.canonicalPath}/work?${query.toString()}`,
     };
   });
 }
