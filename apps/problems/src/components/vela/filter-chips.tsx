@@ -60,7 +60,10 @@ export function FilterChips({
         >
           {chip.label}
           {chip.count === undefined ? null : (
-            <span className={cn("font-mono tabular-nums", chip.active ? "text-secondary-foreground/70" : "text-muted-foreground/70")}>
+            /* No opacity. At /70 the count measured 3.38:1 against its chip —
+               below AA for text this size, and the count is the informative
+               half of the control. */
+            <span className={cn("font-mono tabular-nums", chip.active ? "text-secondary-foreground" : "text-muted-foreground")}>
               {chip.count.toLocaleString()}
             </span>
           )}

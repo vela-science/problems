@@ -232,7 +232,7 @@ export function AppHeader({
               <span aria-hidden className={trail.sectionHref ? "hidden text-muted-foreground/60 sm:inline" : "text-muted-foreground/60"}>/</span>
             ) : null}
             {trail.sectionHref ? (
-              <Link href={trail.sectionHref} className="hidden min-w-0 shrink truncate hover:text-foreground hover:underline sm:inline">
+              <Link href={trail.sectionHref} className="hidden min-h-6 min-w-0 shrink items-center truncate hover:text-foreground hover:underline sm:inline-flex">
                 {trail.section}
               </Link>
             ) : (
