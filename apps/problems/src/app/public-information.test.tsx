@@ -18,9 +18,11 @@ describe("public trust surfaces", () => {
     expect(screen.getByText(/scoped review records what it observed/iu)).toBeVisible();
     expect(screen.getByText(/signature proves attribution and integrity, not truth/iu)).toBeVisible();
     expect(screen.getByRole("link", { name: "Browse Problems" })).toHaveAttribute("href", "/problems");
-    expect(screen.getByRole("link", { name: "Read Endless Frontiers" })).toHaveAttribute("href", "https://vela.space/constellations");
     expect(screen.getByRole("link", { name: "Learn about Vela" })).toHaveAttribute("href", "https://vela.space");
-    expect(screen.getByRole("link", { name: "Essay" })).toHaveAttribute("href", "https://vela.space/constellations");
+/* The essay was removed from vela.space on 2026-08-21, so neither the
+       About action nor the information nav offers it any more. */
+    expect(screen.queryByRole("link", { name: "Read Endless Frontiers" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Essay" })).not.toBeInTheDocument();
   });
 
   it("states current privacy, terms, and accessibility boundaries", () => {

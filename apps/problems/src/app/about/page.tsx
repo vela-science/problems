@@ -6,7 +6,7 @@ import { Button } from "@vela/ui/components/button";
 import { PageShell } from "@vela/ui/vela/page-shell";
 import { EditorialPlate } from "@/components/vela/editorial-plate";
 import { PublicInformationNav } from "@/components/vela/public-information-page";
-import atlasPlate from "@editorial/assets/paintings/hero.webp";
+import atlasPlate from "@/assets/hero.webp";
 import styles from "./about-brand.module.css";
 import { Disclosure } from "@/components/vela/disclosure";
 
@@ -29,7 +29,6 @@ export default function AboutPage() {
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Button nativeButton={false} render={<Link href="/problems" />}>Browse Problems <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden data-icon="inline-end" /></Button>
-            <Button nativeButton={false} variant="outline" render={<a href="https://vela.space/constellations" />}>Read Endless Frontiers</Button>
           </div>
         </div>
         <EditorialPlate

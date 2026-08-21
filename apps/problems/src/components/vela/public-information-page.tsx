@@ -4,7 +4,6 @@ import { PageHero, PageSection, PageShell } from "@vela/ui/vela/page-shell";
 
 export const INFORMATION_ROUTES = [
   { href: "/about", label: "About" },
-  { href: "https://vela.space/constellations", label: "Essay" },
   { href: "/privacy", label: "Privacy" },
   { href: "/terms", label: "Terms" },
   { href: "/accessibility", label: "Accessibility" },

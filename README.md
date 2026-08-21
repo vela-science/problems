@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://vela.space/constellations">Endless Frontiers</a> ·
+  <a href="https://vela.space">vela.space</a> ·
   <a href="https://problems.science/problems">Problems</a> ·
   <a href="https://github.com/vela-science/vela">Protocol and CLI</a> ·
   <a href="docs/WEB.md">Web operations</a>
@@ -24,8 +24,7 @@ applications and shared packages.
 | Path | Runtime | Purpose |
 | --- | --- | --- |
 | `apps/problems` | Next.js server application | The research product at `problems.science`: Problems, Results, Sources, Work, History, graph, and contribution flows |
-| `apps/www` | Static Next.js export | The Vela landing and full *Endless Frontiers* essay at `vela.space` |
-| `content/editorial` | Private authored-source package | The full landing, essay, notes, figures, and retained paintings compiled by `apps/www` |
+| `apps/www` | Static Next.js export | The Vela front page at `vela.space`: one screen, with its retained painting |
 | `packages/brand` | TypeScript and CSS | Framework-neutral sail, tokens, fonts, licenses, and deterministic exports |
 | `packages/ui` | React, shadcn, and Base UI | Private shared primitives and stable Vela presentation semantics |
 | `packages/projection-data` | TypeScript | Sole validator and projector for Repository, Problem, search, and graph data |

@@ -1,6 +1,9 @@
 import { permanentRedirect } from "next/navigation";
 
-const ESSAY_URL = "https://vela.space/constellations";
+/* The essay this address was published for was removed from vela.space on
+   2026-08-21. The address itself stays — it is a published URL and something
+   still links to it — so it now lands on the site root rather than on a 404. */
+const ESSAY_URL = "https://vela.space";
 
 type LegacyEssaySearchParams = Record<string, string | string[] | undefined>;
 

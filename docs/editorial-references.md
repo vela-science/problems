@@ -1,7 +1,8 @@
 # Editorial reference ledger
 
 This ledger records outside patterns studied for the retained landing and essay
-sources under `content/editorial`. References
+sources. It is historical: the essay was removed on 2026-08-21 and the source
+now lives in `apps/www/src`. References
 inform composition and interaction; they are not runtime dependencies, copied
 templates, or visual identities.
 

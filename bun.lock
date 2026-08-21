@@ -56,7 +56,6 @@
         "@hugeicons/core-free-icons": "4.2.3",
         "@hugeicons/react": "1.1.9",
         "@vela/brand": "workspace:*",
-        "@vela/editorial-source": "workspace:*",
         "@vela/projection-data": "workspace:*",
         "@vela/ui": "workspace:*",
         "clsx": "^2.1.1",
@@ -79,25 +78,6 @@
         "typescript": "^5",
         "vite-tsconfig-paths": "^6.1.1",
         "vitest": "^4.1.10",
-      },
-    },
-    "content/editorial": {
-      "name": "@vela/editorial-source",
-      "dependencies": {
-        "@hugeicons/core-free-icons": "4.2.3",
-        "@hugeicons/react": "1.1.9",
-        "@vela/brand": "workspace:*",
-        "@vela/projection-data": "workspace:*",
-        "@vela/ui": "workspace:*",
-        "clsx": "^2.1.1",
-        "next": "16.3.0",
-        "react": "19.2.8",
-        "react-dom": "19.2.8",
-      },
-      "devDependencies": {
-        "@types/react": "^19",
-        "@types/react-dom": "^19",
-        "tailwindcss": "4.3.3",
       },
     },
     "packages/activity-data": {
@@ -745,8 +725,6 @@
     "@vela/activity-data": ["@vela/activity-data@workspace:packages/activity-data"],
 
     "@vela/brand": ["@vela/brand@workspace:packages/brand"],
-
-    "@vela/editorial-source": ["@vela/editorial-source@workspace:content/editorial"],
 
     "@vela/problems": ["@vela/problems@workspace:apps/problems"],
 

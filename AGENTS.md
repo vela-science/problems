@@ -9,8 +9,8 @@ applications, one retained editorial source library, and four shared packages:
   `problems.science`,
   combining exact scientific State, non-authoritative Work, and advanced record
   inspection;
-- `apps/www`: the static Vela editorial application at canonical `vela.space`,
-  owning the landing page and the full living essay at `/constellations`;
+- `apps/www`: the static Vela application at canonical `vela.space`, owning the
+  front page, which is its only route;
 - `packages/brand`: framework-neutral tokens, fonts, marks, and licenses;
 - `packages/ui`: shared React UI source built from shadcn `base-nova` on Base
   UI, plus stable Vela presentation semantics;
@@ -31,9 +31,8 @@ accounts remain separate from Vela actor identities.
 
 ## Sources of truth
 
-- Retained paintings and authored essay source: `content/editorial`; `apps/www`
-  compiles this source directly, while Problems may reuse only explicitly
-  reviewed assets and passages
+- Retained paintings: `apps/www/src/assets/paintings`, with their custody record
+  beside them; Problems keeps its own copy of the one plate it reuses
 - Vela editorial routes and shell: `apps/www/src/app`
 - Vela product routes and compositions: `apps/problems/src/app`,
   `apps/problems/src/components`

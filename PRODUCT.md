@@ -11,10 +11,11 @@ version: 2026-08-18-brand-02
 problems.science helps people find scientific problems, understand the evidence
 around them, see active work and durable results, and contribute their own work.
 
-vela.space is the separate read-only Vela editorial home. It introduces the
-project and publishes the complete living *Endless Frontiers* essay at
-`/constellations`. It does not carry product navigation, accounts, scientific
-state, or an embedded copy of Core documentation.
+vela.space is the separate read-only Vela front page. It introduces the project
+in one screen and sends the reader here. It does not carry product navigation,
+accounts, scientific state, or an embedded copy of Core documentation. The
+*Endless Frontiers* essay was published there at `/constellations` and was
+removed on 2026-08-21.
 
 The Problem is the primary public object. The product should be understandable
 without knowing Vela's protocol vocabulary.
@@ -50,21 +51,18 @@ search, contribution flows, account, and settings. These pages prioritize the
 working object, compact attributed rows, files, diffs, checks, and familiar
 controls.
 
-**Editorial and brand register:** `vela.space`, its landing page, and the full
-living *Endless Frontiers* essay, plus restrained identity moments reused by
-Problems where they help orientation. These surfaces may use the retained
-paintings and editorial type. They have their own static shell and do not enter
-the Problems AppShell.
+**Editorial and brand register:** `vela.space` and its front page, plus
+restrained identity moments reused by Problems where they help orientation.
+These surfaces may use the retained paintings and editorial type. They have
+their own static shell and do not enter the Problems AppShell.
 
-The canonical source assets live under `content/editorial/source`. `apps/www`
-compiles those exact authored compositions directly. Problems may reuse selected
-paintings but does not copy or abbreviate the canonical essay. Neither app
-generates replacement art or redraws the sail.
+The front page source is `apps/www/src`, which holds its own retained paintings
+and their custody record. Problems keeps its own copy of the one plate it
+reuses. Neither app generates replacement art or redraws the sail.
 
-The editorial origin is live. Problems links directly to
-`https://vela.space/constellations`; its former `/about/endless-frontiers`
-address is retained only as a permanent cross-origin redirect and is not
-published in the Problems sitemap.
+The editorial origin is live. Problems links to `https://vela.space`; its
+`/about/endless-frontiers` address is retained only as a permanent cross-origin
+redirect to that root, and is not published in the Problems sitemap.
 
 ## People and jobs
 

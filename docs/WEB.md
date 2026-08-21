@@ -10,9 +10,9 @@ Earlier design and migration plans live under `docs/history/`.
   readers across current
   change, direct contribution, communities, and the exact scientific record. Advanced
   records remain available in the same runtime.
-- `vela.space` is the separate static editorial origin compiled by `apps/www`
-  from the canonical source in `content/editorial`. Problems links to the full
-  *Endless Frontiers* folio rather than copying it into the product shell.
+- `vela.space` is the separate static origin compiled by `apps/www` from its
+  own `src`. It publishes one page. The *Endless Frontiers* essay was published
+  there at `/constellations` and was removed on 2026-08-21.
 - Hosted Vela is non-authoritative. The Problems reads a bounded SELECT-only
   projection from Neon. Work mode writes hosted research activity through
   `@vela/activity-data`. Canonical custody remains in Repository Git
@@ -33,8 +33,7 @@ one non-runnable content area:
 
 ```text
 apps/problems        Vela Problems product: Problem State, Work, and Records
-apps/www             static Vela landing and full editorial folio
-content/editorial    canonical retained editorial source compiled by apps/www
+apps/www             static Vela front page, one route
 packages/brand          governed identity, tokens, fonts, and delivery assets
 packages/ui             shared shadcn/Base UI source and Vela presentation semantics
 packages/projection-data  Git-to-Neon projection, validation, search, and manifests

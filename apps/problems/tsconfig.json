@@ -19,8 +19,7 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "@editorial/*": ["../../content/editorial/source/src/*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": [
