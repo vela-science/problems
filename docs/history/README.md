@@ -9,14 +9,21 @@ set:
 
 - `DESIGN.md` — current visual and interaction system
 - `docs/WEB.md` — current product, deployment, and release operations
-- `docs/observatory-provenance.md` — source provenance for the Observatory port
-- `docs/living-systems.md` — maintained editorial interaction ledger
-- `docs/figure-registry.md` and `docs/source-audit.md` — maintained editorial evidence
-- `docs/editorial-references.md` — current outside-pattern decision ledger
+- `docs/design-system.md` — component and token reference
+- `docs/projection-provenance.md` — projection source provenance
+- `docs/editorial-references.md` — outside-pattern decision ledger, cited by
+  name from source comments in both apps and from `THIRD_PARTY_NOTICES.md`
 
-The two dated files still under `docs/plans/` are retained at their durable
-paths because maintained ledgers link to them. Both begin with explicit
-historical status and must not be treated as active work.
+The editorial ledgers this file used to list — `living-systems.md`,
+`figure-registry.md`, `source-audit.md`, `trilogy-doctrine.md` — and the two
+dated files under `docs/plans/` were removed on 2026-08-21. They tracked the
+figures, interactions, citations and revision passes of the *Endless Frontiers*
+essay and the trilogy around it, none of which vela.space publishes any more.
+`docs/observatory-provenance.md` was listed here but had already been removed.
+
+Plans and notes in this directory still name those files. Those references are
+left as written: an archived plan is a record of what was true when it ran, and
+editing it to match the present would make it a worse record.
 
 Do not execute a historical plan without reconciling it against current source,
 manifests, and released product state.

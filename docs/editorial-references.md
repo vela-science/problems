@@ -1,10 +1,14 @@
 # Editorial reference ledger
 
-This ledger records outside patterns studied for the retained landing and essay
-sources. It is historical: the essay was removed on 2026-08-21 and the source
-now lives in `apps/www/src`. References
-inform composition and interaction; they are not runtime dependencies, copied
+This ledger records outside patterns studied for Vela's surfaces. It is active:
+source comments in both apps cite it by name, and `THIRD_PARTY_NOTICES.md`
+points here for the attribution of studied patterns. References inform
+composition and interaction; they are not runtime dependencies, copied
 templates, or visual identities.
+
+Rows about the *Endless Frontiers* essay and the landing bands are kept. The
+pages were removed on 2026-08-21, but a record of what was studied and what was
+rejected does not stop being true when the surface it informed goes away.
 
 | Reference | Adopted | Adapted | Rejected |
 | --- | --- | --- | --- |
