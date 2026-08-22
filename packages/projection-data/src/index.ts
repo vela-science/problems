@@ -72,6 +72,7 @@ export * from "./formal-conjectures-collection";
 export * from "./proposed-state-preview";
 export * from "./registry";
 export * from "./core-integration";
+export * from "./plural-authority";
 
 export type { HashRoot } from "./canonical";
 

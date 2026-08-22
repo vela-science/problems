@@ -1,0 +1,119 @@
+{
+  "schema": "site.plural-authority-registry-source.v1",
+  "authority_effect": "none",
+  "fixture_class": "synthetic_reference",
+  "protocol_source": {
+    "repository": "https://github.com/vela-science/vela.git",
+    "commit": "4685462c44b1f073870f31025ae73d1d8770ce73",
+    "tree": "13c5e0cf2e64be907cee4c0fd740ab0027118e13",
+    "reader": "vela 0.977.3",
+    "reader_sha256": "sha256:3a1173918bdcb887155bab681411bf5e9ff64d925fe1b50369ac37ab020b94ad",
+    "portable_divergence": {
+      "flow_root": "sha256:8a4a2a09d6a84f565fc6d93e834f192367638a9c20681cd857a1ef6cc848009f",
+      "expected_root": "sha256:858019d298f55295fe92989bb23a343ce73b6976338f36c7c637c82272274041",
+      "accept_bundle_root": "sha256:2a92803cdb30e2f16d0f3a9b41fcbc24be39fc9693f7abc6f04f2f261a0dd0ba",
+      "reject_bundle_root": "sha256:144de0583805ef53ea8116c3a6ba65eb7870be48563b85d8b8a0819ecea25c9a"
+    },
+    "correction_conformance": {
+      "input_root": "sha256:74cb6104048b3c390d429ca82117148da91107f67086af47f73bd1228c3cdacd",
+      "expected_root": "sha256:a7d2916e41f86f19e95d0c5440ef7246185aded64a58c38df4d711817803e91d",
+      "projection_root": "sha256:935e084f8c5c45bcee234d2e9752062ba54493aa1b14f731e0efbbb1ecc01df6"
+    }
+  },
+  "portable_submission": {
+    "submission_id": "vsb_f1669cdfa498ff85",
+    "submission_root": "sha256:f1669cdfa498ff85c162bce6173f04b39cdf7620fb198a19b45f6d932302204a",
+    "producer": "agent:independent-js",
+    "claim_id": "vcl_cea6cdb3e9fd02fae86886a0edbe51e5c2fe2d5e00dc7f264d4c3de0f9f2c422",
+    "claim_root": "sha256:e865c5a2aafd459d52d9b1c8a7734104b1e2d8d1c047c5400684f01505f83632",
+    "assertion": "The fixture computation returns 42 for the pinned input."
+  },
+  "repositories": [
+    {
+      "repository_id": "ec5f077d-0c80-4634-9bce-5487301be70b",
+      "name": "Portable divergence accept fixture",
+      "bundle_root": "sha256:2a92803cdb30e2f16d0f3a9b41fcbc24be39fc9693f7abc6f04f2f261a0dd0ba",
+      "git_commit": "887c4daf94605bc5468c91df350d53af1c01b47b",
+      "git_tree": "f16c91239380f2eb9b01133eea0ce98d9f52043d",
+      "repository_root": "sha256:cd9d73e81841bb74802e07de80c07425ecbfbe81156cbfbca11848a885753b31",
+      "replay_projection_root": "sha256:ba89cf9164ab7283d09bbe4551525b728a419c9e267766ac3a40223afff9b8e8",
+      "authority_keyset_root": "sha256:181c3a97138ad589fed69440505a47564345fe476ca7487de4280657391b3c7f",
+      "authority_policy_root": "sha256:6f89ccebc73faa4d46aebb0d1785b8b92d98d0e99974e2e0f429c8eb13c00fad",
+      "ingested_submission_root": "sha256:f1669cdfa498ff85c162bce6173f04b39cdf7620fb198a19b45f6d932302204a",
+      "derived_claim_root": "sha256:e865c5a2aafd459d52d9b1c8a7734104b1e2d8d1c047c5400684f01505f83632",
+      "replay_verified": true,
+      "decision": {
+        "status": "accepted",
+        "performer": "agent:portable-divergence-acceptor",
+        "principal_id": "local:device-sha256:8a83665f3798727f14f92ad0e6c99fdab08ee731d6cd644c131223fd2f4fed2a|uid:501",
+        "decision_record_root": "sha256:20c8b859ffcaeecbdd492fb7ea959c48fe4919f0402822f6aafd92b99ec0742e",
+        "event_root": "sha256:ebbeb3987d2afa070b30b33d70fd97a37af7e7ff5d05dbd1abb061786f5bf306"
+      },
+      "local_standing": "accepted"
+    },
+    {
+      "repository_id": "586046dc-ca38-4875-be25-c6e548437ba5",
+      "name": "Portable divergence reject fixture",
+      "bundle_root": "sha256:144de0583805ef53ea8116c3a6ba65eb7870be48563b85d8b8a0819ecea25c9a",
+      "git_commit": "26b194afba5cea01ed4d632d1d43af019870285f",
+      "git_tree": "b079b1814acfe4e0e4a6c8d3c92122a2a21e73dd",
+      "repository_root": "sha256:a2ff58f7425ea65bf87c0eb96462fc9d2124fd7923bdbd784bfc00e841617e4b",
+      "replay_projection_root": "sha256:83e9488e54cfac87f5fea686f9eefbdf3c3668c73c23ab2252597666f3f5c346",
+      "authority_keyset_root": "sha256:e2f74a7a590939bf22f64cd5124117af3c84d7c5246935b1506395d5e9c5a4b3",
+      "authority_policy_root": "sha256:431131bb3eae63593b8fcbaf821911932bfc09da1e80cf3502a9d5d42ff6aafc",
+      "ingested_submission_root": "sha256:f1669cdfa498ff85c162bce6173f04b39cdf7620fb198a19b45f6d932302204a",
+      "derived_claim_root": "sha256:e865c5a2aafd459d52d9b1c8a7734104b1e2d8d1c047c5400684f01505f83632",
+      "replay_verified": true,
+      "decision": {
+        "status": "rejected",
+        "performer": "agent:portable-divergence-rejector",
+        "principal_id": "local:device-sha256:0d6ba19b62531ccb0deb8804313eca283c69560f66f1b7b8a2c1592ae8c35c6b|uid:501",
+        "decision_record_root": "sha256:e9076c05d044be4eddc48471523d3a1dde7516b26429a6e0854ff991ad38e3b9",
+        "event_root": "sha256:8b8cb83daa6b930b7d059bcac18e330462eb70474d8c0becba6f2a90c9a528fc"
+      },
+      "local_standing": "unassessed"
+    }
+  ],
+  "correction": {
+    "fixture_class": "synthetic_reference",
+    "integration_seam": "replace_with_real_consequential_correction_packet",
+    "shared_predecessor": {
+      "claim_id": "vcl_cea6cdb3e9fd02fae86886a0edbe51e5c2fe2d5e00dc7f264d4c3de0f9f2c422",
+      "claim_root": "sha256:e865c5a2aafd459d52d9b1c8a7734104b1e2d8d1c047c5400684f01505f83632"
+    },
+    "synthetic_successor": {
+      "claim_id": "vcl_1111111111111111111111111111111111111111111111111111111111111111",
+      "claim_root": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+    },
+    "scope": {
+      "complete_claim_set": true,
+      "complete_relation_set": true
+    },
+    "downstream_work": [
+      {
+        "work_id": "synthetic:accept-repository-dependent-analysis",
+        "repository_id": "ec5f077d-0c80-4634-9bce-5487301be70b",
+        "relation": "depends_on_predecessor",
+        "basis_claim_root": "sha256:e865c5a2aafd459d52d9b1c8a7734104b1e2d8d1c047c5400684f01505f83632"
+      },
+      {
+        "work_id": "synthetic:reject-repository-pending-analysis",
+        "repository_id": "586046dc-ca38-4875-be25-c6e548437ba5",
+        "relation": "depends_on_predecessor",
+        "basis_claim_root": "sha256:e865c5a2aafd459d52d9b1c8a7734104b1e2d8d1c047c5400684f01505f83632"
+      },
+      {
+        "work_id": "synthetic:independent-control",
+        "repository_id": "ec5f077d-0c80-4634-9bce-5487301be70b",
+        "relation": "independent_of_predecessor",
+        "basis_claim_root": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+      }
+    ]
+  },
+  "does_not_establish": [
+    "scientific truth or global consensus",
+    "transport of a Decision or Standing between Repositories",
+    "that the synthetic correction occurred in either retained Repository history",
+    "a real accepted dependency cascade or external adoption"
+  ]
+}

@@ -42,6 +42,7 @@
     "activity:submission:sign-local": "bun run --filter @vela/activity-data submission:sign-local --",
     "projection:reconstruct": "bun run --filter @vela/projection-data reconstruct --",
     "projection:verify": "bun run --filter @vela/projection-data verify",
+    "demo:plural-authority": "bun packages/projection-data/scripts/plural-authority-demo.ts",
     "sources:refresh": "bun run --filter @vela/projection-data sources:refresh",
     "sources:verify": "bun run --filter @vela/projection-data sources:verify",
     "test:roots": "bun run --filter @vela/projection-data test && bun run --filter @vela/activity-data test",
