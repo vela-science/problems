@@ -72,11 +72,15 @@ export default function FrontiersPage() {
               <TableCell className="align-top"><StatusBadge state={repository.local_standing}>{repository.local_standing}</StatusBadge></TableCell>
               <TableCell className="max-w-72 whitespace-normal align-top">
                 <p className="font-mono text-micro">{repository.decision.performer}</p>
+                <p className="mt-1 break-all font-mono text-[0.68rem] text-muted-foreground">authority: {repository.decision.principal_id}</p>
                 <div className="mt-1"><RecordId value={repository.decision.decision_record_root} label="Decision record root" /></div>
+                <div className="mt-1"><RecordId value={repository.decision.event_root} label="Decision Event root" /></div>
               </TableCell>
               <TableCell className="align-top">
                 <RecordId value={repository.source.repository_root} label="Repository root" />
-                <p className="mt-1 text-micro text-muted-foreground">replay verified · {repository.source.git_commit.slice(0, 12)}</p>
+                <div className="mt-1"><RecordId value={repository.source.replay_projection_root} label="Vela projection root" /></div>
+                <div className="mt-1"><RecordId value={repository.source.evidence_root} label="Repository evidence root" /></div>
+                <p className="mt-1 text-micro text-muted-foreground">0.977.4 replay verified · {repository.source.git_commit.slice(0, 12)}</p>
               </TableCell>
             </TableRow>)}
           </TableBody>

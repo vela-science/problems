@@ -11,6 +11,8 @@ describe("Frontiers reference demonstration", () => {
     expect(html).toContain("rejected");
     expect(html).toContain("unassessed");
     expect(html).toContain("synthetic reference fixture");
+    expect(html).toContain("authority: local:device-sha256:");
+    expect(html).toContain("0.977.4 replay verified");
     expect(html).toContain("authority effect: none");
     expect(html).toContain("persistence: none");
     expect(html).not.toContain("Global Standing");
