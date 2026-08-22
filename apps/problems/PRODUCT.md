@@ -49,7 +49,7 @@ Below it, use three or four real question rows and the two durable reviewed
 Results. Link once to all Updates. Do not repeat collection analytics, raw
 source activity, availability, or contribution onboarding on Home.
 
-The global sidebar is Home, Problems, signed-in My work, Updates, and a
+The global sidebar is Home, Problems, Frontiers, signed-in My work, Updates, and a
 separate Add contribution action. Header command search owns Search. Research
 map, exact records, and release details remain reachable contextually rather
 than competing in the global spine.

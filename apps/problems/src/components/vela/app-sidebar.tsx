@@ -12,6 +12,7 @@ import {
   BookOpen01Icon,
   Clock01Icon,
   FileCheckIcon,
+  GitForkIcon,
   Home01Icon,
   InboxUploadIcon,
   PuzzleIcon,
@@ -103,6 +104,7 @@ function repositoryRoute(pathname: string) {
 const PRIMARY_DESTINATIONS: SidebarDestination[] = [
   { href: "/", label: "Home", icon: Home01Icon, exact: true },
   { href: "/problems", label: "Problems", icon: PuzzleIcon },
+  { href: "/frontiers", label: "Frontiers", icon: GitForkIcon },
   { href: "/updates", label: "Updates", icon: Activity01Icon },
 ];
 

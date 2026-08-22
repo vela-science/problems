@@ -34,6 +34,7 @@ const sectionTitles: Record<string, string> = {
 const globalTitles: Record<string, string> = {
   "/": "Home",
   "/problems": "Problems",
+  "/frontiers": "Frontiers",
   "/contribute": "Add a contribution",
   "/updates": "Updates",
   "/repositories": "Repositories",

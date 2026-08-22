@@ -11,6 +11,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/problems",
     "/problems/erdos-problems",
     "/problems/formal-conjectures",
+    "/frontiers",
     "/contribute",
     "/updates",
     "/repositories",
