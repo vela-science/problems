@@ -24,11 +24,17 @@ describe("current projection schema", () => {
 
     /* The immutable ledger. Every entry must also state its final shape in
        schema.sql, because reconstruction starts from the clean baseline. */
-    expect(migrations).toEqual(["0001_frontier_edges.sql"]);
+    expect(migrations).toEqual([
+      "0001_frontier_edges.sql",
+      "0002_fc_frontier_census.sql",
+    ]);
     expect(schema).toContain("CREATE SCHEMA IF NOT EXISTS projection");
     expect(schema).toContain("CREATE TABLE IF NOT EXISTS projection.schema_migrations");
     expect(schema).toContain("CREATE TABLE IF NOT EXISTS projection.repositories");
     expect(schema).toContain("CREATE TABLE IF NOT EXISTS projection.repository_revisions");
+    expect(schema).toContain("CREATE TABLE IF NOT EXISTS projection.fc_frontier_snapshots");
+    expect(schema).toContain("CREATE TABLE IF NOT EXISTS projection.fc_frontier_families");
+    expect(schema).toContain("CREATE TABLE IF NOT EXISTS projection.fc_frontier_repairs");
     expect(schema).toContain("proposed_state_preview jsonb");
     expect(schema).toContain("decision_authority_principal_id text");
     expect(schema).toContain("review_method_root text");
