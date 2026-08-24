@@ -5,12 +5,13 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { Badge } from "@vela/ui/components/badge";
 import { Button } from "@vela/ui/components/button";
 import { PageHero, PageSection, PageShell } from "@vela/ui/vela/page-shell";
-import frontier from "./frontier-data.json";
+import { currentFcFrontier } from "@vela/projection-data";
 
-// A derived, disposable projection over the whole upstream corpus, computed
-// from each declaration's axiom closure and type-level sorryAx reachability.
-// It holds no authority and rebuilds from its census; on productization the
-// dataset moves into @vela/projection-data beside the collection it extends.
+// A derived, disposable projection over the whole upstream corpus, read from
+// the projection database's census snapshot (rooted by the SHA-256 of its
+// census file). It holds no authority and rebuilds from its census.
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "The Formal Conjectures Frontier",
@@ -19,43 +20,54 @@ export const metadata: Metadata = {
   alternates: { canonical: "/problems/formal-conjectures/frontier" },
 };
 
-const { totals, authored_declarations, families, top_prove_families, repair_declarations, generated_from } = frontier;
-const settled = totals.kernel + totals.compiler;
-const open = totals.prove + totals.state + totals.repair;
-const pct = (n: number) => `${((n / authored_declarations) * 100).toFixed(1)}%`;
-
-const obligations = [
+const obligationCopy = [
   {
-    key: "prove",
-    n: totals.prove,
+    key: "prove" as const,
     dot: "bg-status-caution",
     title: "Prove — attackable now",
     body: "Fully stated theorems whose only hole is the proof. Any prover, human or machine, can attack these today; a success is a genuine advance.",
   },
   {
-    key: "state",
-    n: totals.state,
+    key: "state" as const,
     dot: "bg-status-progress",
     title: "State — instantiate before proving",
     body: "answer(sorry) declarations whose statement is itself the unknown. They cannot be proved, only instantiated; standard trust reporting cannot tell these apart from provable targets.",
   },
   {
-    key: "repair",
-    n: totals.repair,
+    key: "repair" as const,
     dot: "bg-status-conflict",
     title: "Repair — foundations resting on holes",
     body: "Statements that read complete but quantify over objects defined by choice from a sorried existence lemma. Invisible to source inspection; found only by walking the type's transitive closure.",
   },
 ] as const;
 
-export default function FormalConjecturesFrontierPage() {
+export default async function FormalConjecturesFrontierPage() {
+  const snapshot = await currentFcFrontier();
+  if (!snapshot) {
+    return (
+      <PageShell archetype="problem">
+        <PageHero density="compact" className="vela-product-hero">
+          <h1 className="text-display">The Frontier</h1>
+          <p className="mt-3 max-w-3xl text-body text-muted-foreground">
+            No census snapshot has been ingested yet. Ingest one with
+            projection-data&rsquo;s ingest-fc-frontier script and reload.
+          </p>
+        </PageHero>
+      </PageShell>
+    );
+  }
+  const { totals, authoredDeclarations, familyCount, topProveFamilies, repairDeclarations } = snapshot;
+  const settled = totals.kernel + totals.compiler;
+  const open = totals.prove + totals.state + totals.repair;
+  const pct = (n: number) => `${((n / authoredDeclarations) * 100).toFixed(1)}%`;
+  const obligations = obligationCopy.map((o) => ({ ...o, n: totals[o.key] }));
   return (
     <PageShell archetype="problem">
       <PageHero density="compact" className="vela-product-hero grid gap-6 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-end">
         <div>
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-display">The Frontier</h1>
-            <Badge variant="secondary">Derived view · {authored_declarations.toLocaleString()} declarations</Badge>
+            <Badge variant="secondary">Derived view · {authoredDeclarations.toLocaleString()} declarations</Badge>
           </div>
           <p className="mt-3 max-w-3xl text-body text-muted-foreground">
             Every authored declaration in the upstream corpus, typed by the work it
@@ -72,8 +84,8 @@ export default function FormalConjecturesFrontierPage() {
         <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border bg-border text-meta">
           <div className="bg-card p-4"><dt className="text-muted-foreground">Open obligations</dt><dd className="mt-1 font-medium">{open.toLocaleString()}</dd></div>
           <div className="bg-card p-4"><dt className="text-muted-foreground">Settled results</dt><dd className="mt-1 font-medium">{settled.toLocaleString()}</dd></div>
-          <div className="bg-card p-4"><dt className="text-muted-foreground">Problem families</dt><dd className="mt-1 font-medium">{families.toLocaleString()}</dd></div>
-          <div className="bg-card p-4"><dt className="text-muted-foreground">Lean toolchain</dt><dd className="mt-1 font-mono text-micro">{generated_from.lean_toolchain.replace("leanprover/lean4:", "")}</dd></div>
+          <div className="bg-card p-4"><dt className="text-muted-foreground">Problem families</dt><dd className="mt-1 font-medium">{familyCount.toLocaleString()}</dd></div>
+          <div className="bg-card p-4"><dt className="text-muted-foreground">Lean toolchain</dt><dd className="mt-1 font-mono text-micro">{snapshot.leanToolchain.replace("leanprover/lean4:", "")}</dd></div>
         </dl>
       </PageHero>
 
@@ -116,7 +128,7 @@ export default function FormalConjecturesFrontierPage() {
           <p className="text-meta text-muted-foreground">families by attackable theorems</p>
         </div>
         <ul className="divide-y">
-          {top_prove_families.map((f) => (
+          {topProveFamilies.map((f) => (
             <li key={f.family} className="flex items-baseline justify-between gap-3 px-2 py-3">
               <span className="min-w-0 truncate font-mono text-micro">{f.family}</span>
               <span className="shrink-0 text-meta text-muted-foreground">
@@ -135,7 +147,7 @@ export default function FormalConjecturesFrontierPage() {
           Downstream work here builds on sand until the existence proof lands.
         </p>
         <ul className="mt-3 grid gap-1 font-mono text-micro">
-          {repair_declarations.map((d) => <li key={d} className="truncate">{d}</li>)}
+          {repairDeclarations.map((d) => <li key={d} className="truncate">{d}</li>)}
         </ul>
       </PageSection>
 
@@ -148,8 +160,8 @@ export default function FormalConjecturesFrontierPage() {
           the pinned toolchain.
         </p>
         <dl className="mt-3 grid gap-1 font-mono text-micro text-muted-foreground">
-          <div>corpus {generated_from.corpus} @ {generated_from.commit.slice(0, 12)} (≡ {generated_from.upstream_equivalent})</div>
-          <div>census {generated_from.census} · measured {generated_from.measured_on}</div>
+          <div>corpus {snapshot.corpusRepository} @ {snapshot.corpusCommit.slice(0, 12)}{snapshot.upstreamEquivalent ? ` (≡ ${snapshot.upstreamEquivalent})` : ""}</div>
+          <div>census {snapshot.censusRoot} · measured {snapshot.measuredOn}</div>
         </dl>
       </PageSection>
     </PageShell>

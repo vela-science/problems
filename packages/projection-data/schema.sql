@@ -536,6 +536,47 @@ CREATE INDEX IF NOT EXISTS projection_repository_source_bindings_native_idx
 
 -- Projection grants belong to the stable NOLOGIN permission role. Versioned
 -- runtime logins inherit this role and receive no direct schema or table grant.
+-- Formal Conjectures frontier census: corpus-rooted derived snapshots
+-- (mirrored from migrations/0002_fc_frontier_census.sql).
+CREATE TABLE IF NOT EXISTS projection.fc_frontier_snapshots (
+  census_root text PRIMARY KEY CHECK (census_root ~ '^sha256:[0-9a-f]{64}$'),
+  corpus_repository text NOT NULL CHECK (length(corpus_repository) > 0),
+  corpus_commit text NOT NULL CHECK (corpus_commit ~ '^[0-9a-f]{40}$'),
+  upstream_equivalent text,
+  lean_toolchain text NOT NULL CHECK (length(lean_toolchain) > 0),
+  measured_on date NOT NULL,
+  authored_declarations integer NOT NULL CHECK (authored_declarations > 0),
+  family_count integer NOT NULL CHECK (family_count > 0),
+  prove_count integer NOT NULL CHECK (prove_count >= 0),
+  state_count integer NOT NULL CHECK (state_count >= 0),
+  repair_count integer NOT NULL CHECK (repair_count >= 0),
+  kernel_settled_count integer NOT NULL CHECK (kernel_settled_count >= 0),
+  compiler_settled_count integer NOT NULL CHECK (compiler_settled_count >= 0),
+  ingested_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS projection.fc_frontier_families (
+  census_root text NOT NULL
+    REFERENCES projection.fc_frontier_snapshots(census_root) ON DELETE CASCADE,
+  family text NOT NULL CHECK (length(family) > 0),
+  prove_count integer NOT NULL CHECK (prove_count >= 0),
+  state_count integer NOT NULL CHECK (state_count >= 0),
+  repair_count integer NOT NULL CHECK (repair_count >= 0),
+  kernel_settled_count integer NOT NULL CHECK (kernel_settled_count >= 0),
+  compiler_settled_count integer NOT NULL CHECK (compiler_settled_count >= 0),
+  PRIMARY KEY (census_root, family)
+);
+
+CREATE INDEX IF NOT EXISTS fc_frontier_families_by_prove
+  ON projection.fc_frontier_families (census_root, prove_count DESC, family);
+
+CREATE TABLE IF NOT EXISTS projection.fc_frontier_repairs (
+  census_root text NOT NULL
+    REFERENCES projection.fc_frontier_snapshots(census_root) ON DELETE CASCADE,
+  declaration text NOT NULL CHECK (length(declaration) > 0),
+  PRIMARY KEY (census_root, declaration)
+);
+
 REVOKE ALL ON SCHEMA public FROM vela_projection_reader;
 REVOKE ALL ON ALL TABLES IN SCHEMA public FROM vela_projection_reader;
 REVOKE CREATE ON SCHEMA public FROM vela_projection_reader;
@@ -565,5 +606,8 @@ GRANT SELECT ON TABLE
   projection.source_observations,
   projection.native_records,
   projection.release_sources,
-  projection.repository_source_bindings
+  projection.repository_source_bindings,
+  projection.fc_frontier_snapshots,
+  projection.fc_frontier_families,
+  projection.fc_frontier_repairs
 TO vela_projection_reader;

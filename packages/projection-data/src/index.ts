@@ -62,6 +62,7 @@ export * from "./refusal";
 export * from "./read-contracts";
 export * from "./object-context";
 export * from "./math-sources";
+export * from "./fc-frontier-census";
 export * from "./problem-discovery";
 export * from "./problem-resolution";
 export * from "./problem-public-routes";
