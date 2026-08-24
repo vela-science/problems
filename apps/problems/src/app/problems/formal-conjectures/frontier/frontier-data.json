@@ -1,0 +1,134 @@
+{
+ "generated_from": {
+  "corpus": "williamjblair/formal-conjectures",
+  "commit": "e51535ae2caeab6c7493450a5d86a5a8651fa82d",
+  "upstream_equivalent": "google-deepmind/formal-conjectures@9f5ee773",
+  "lean_toolchain": "leanprover/lean4:v4.27.0",
+  "census": "fc-trust-closure-v2.e51535ae.jsonl",
+  "measured_on": "2026-08-23"
+ },
+ "authored_declarations": 5924,
+ "families": 1055,
+ "totals": {
+  "prove": 2012,
+  "state": 835,
+  "repair": 15,
+  "kernel": 2834,
+  "compiler": 228
+ },
+ "top_prove_families": [
+  {
+   "family": "Wikipedia.Transcendental",
+   "prove": 22,
+   "state": 0,
+   "repair": 0,
+   "kernel": 0,
+   "compiler": 0
+  },
+  {
+   "family": "GreensOpenProblems.14",
+   "prove": 19,
+   "state": 28,
+   "repair": 0,
+   "kernel": 2,
+   "compiler": 0
+  },
+  {
+   "family": "ErdosProblems.91",
+   "prove": 12,
+   "state": 1,
+   "repair": 0,
+   "kernel": 9,
+   "compiler": 0
+  },
+  {
+   "family": "Wikipedia.EllipticCurveRank",
+   "prove": 12,
+   "state": 0,
+   "repair": 0,
+   "kernel": 14,
+   "compiler": 0
+  },
+  {
+   "family": "Paper.MonochromaticQuantumGraph",
+   "prove": 11,
+   "state": 34,
+   "repair": 0,
+   "kernel": 24,
+   "compiler": 0
+  },
+  {
+   "family": "ErdosProblems.5",
+   "prove": 11,
+   "state": 3,
+   "repair": 0,
+   "kernel": 8,
+   "compiler": 0
+  },
+  {
+   "family": "Wikipedia.WallSunSun",
+   "prove": 11,
+   "state": 0,
+   "repair": 0,
+   "kernel": 1,
+   "compiler": 0
+  },
+  {
+   "family": "ErdosProblems.987",
+   "prove": 10,
+   "state": 0,
+   "repair": 0,
+   "kernel": 1,
+   "compiler": 0
+  },
+  {
+   "family": "ErdosProblems.36",
+   "prove": 10,
+   "state": 3,
+   "repair": 0,
+   "kernel": 9,
+   "compiler": 0
+  },
+  {
+   "family": "Wikipedia.MovingSofa",
+   "prove": 10,
+   "state": 0,
+   "repair": 3,
+   "kernel": 13,
+   "compiler": 0
+  },
+  {
+   "family": "ErdosProblems.785",
+   "prove": 9,
+   "state": 1,
+   "repair": 0,
+   "kernel": 3,
+   "compiler": 0
+  },
+  {
+   "family": "ErdosProblems.349",
+   "prove": 9,
+   "state": 3,
+   "repair": 0,
+   "kernel": 1,
+   "compiler": 0
+  }
+ ],
+ "repair_declarations": [
+  "Erdos1055.erdos_1055.variants.erdos_limit",
+  "Erdos1055.erdos_1055.variants.selfridge_limit",
+  "Erdos295.erdos_295.variants.erdos_straus",
+  "Erdos697.erdos_697.parts.i",
+  "Erdos697.erdos_697.parts.ii",
+  "Erdos697.erdos_697.variants.delta_lt",
+  "Erdos961.erdos_961.variants.erdos_upper_bound",
+  "Erdos961.erdos_961.variants.jutila_ramachandra_shorey_upper_bound",
+  "MovingSofa.sofaConstant_eq",
+  "MovingSofa.sofaConstant_eq_volume_gerversSofa",
+  "MovingSofa.volume_eq_sofaConstant_iff_congruent_gerversSofa",
+  "OeisA87719.a_1",
+  "OeisA87719.a_2",
+  "OeisA87719.a_3",
+  "OeisA87719.a_formula"
+ ]
+}
