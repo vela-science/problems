@@ -157,7 +157,7 @@ Vela protocol CLI (Rust) for repository state and replay.
 
 ## Testing instructions
 
-**Live:** https://problems-constellate-dc388081.vercel.app/problems/erdos-problems/321
+**Live:** https://problems.science/problems/erdos-problems/321
 
 **WebMCP:** ChatGPT's in-app browser, or Chrome 149+ with
 `chrome://flags/#enable-webmcp-testing` enabled and restarted.

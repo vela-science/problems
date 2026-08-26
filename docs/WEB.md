@@ -511,14 +511,22 @@ and desktop widths. Stale screenshot binaries are not treated as product truth.
 
 ## Deployment topology
 
-The `constellate-dc388081` Vercel team has one active Vela Web project:
+This repository deploys one Vercel project:
 
 | Project | Application | Production domains |
 | --- | --- | --- |
-| `vela-web-problems` | `apps/problems` | `problems.science` canonical; `www.problems.science` redirects here |
+| `problems` | `apps/problems` | `problems.science` canonical; `www.problems.science` redirects here |
 
-There is no active legacy Vela Vercel project. `prospect` and `snowchild` are
-unrelated and outside this workspace.
+The deployment target is not written down here. `deploy:problems` reads
+`VERCEL_TEAM_ID`, `VERCEL_PROJECT_ID`, `VERCEL_PROJECT_NAME`,
+`VERCEL_GIT_REPO_ID` and `VELA_DEPLOY_REPOSITORY` from the environment, because
+this source is public and a fork running the script would otherwise aim a build
+at someone else's project.
+
+`vela-web-problems` served `problems.science` until 2026-08-26 from the private
+`vela-web` monorepo. It is retained, deployable and domainless as a rollback
+path; it is not part of the current topology. `vela-web-www` still serves
+`vela.space` from that repository and is unaffected.
 
 The Problems's Vercel Functions run in `cle1` (AWS `us-east-2`), alongside
 the qualified Neon projection. Static assets remain globally served by
@@ -531,11 +539,13 @@ From a fresh checkout, one command discovers the configured project and its
 Root Directory:
 
 ```sh
-vercel link --repo --yes --scope constellate-dc388081
+vercel link --project problems --yes --scope "$VERCEL_TEAM_ID"
 ```
 
-Do not run `vercel deploy` from `apps/problems`: the remote Root Directory
-would be applied a second time. The governed production path is the exact Git
+The project's Root Directory is `apps/problems`, and the install and build
+commands in `apps/problems/vercel.json` step back up to the workspace root. Do
+not run `vercel deploy` from `apps/problems`: the remote Root Directory would be
+applied a second time. The governed production path is the exact Git
 deployment request exposed as `bun run deploy:problems`; it requires
 either a narrowly scoped automation token or an authenticated local Vercel CLI,
 derives `VELA_SITE_COMMIT` from the current checkout, and refuses commit or

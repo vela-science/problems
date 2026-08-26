@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <a href="https://problems-constellate-dc388081.vercel.app/problems/erdos-problems/321">Live</a> ·
+  <a href="https://problems.science/problems/erdos-problems/321">Live</a> ·
   <a href="#webmcp-the-agent-interface">WebMCP</a> ·
   <a href="https://github.com/vela-science/vela">Protocol and CLI</a> ·
   <a href="docs/webmcp-challenge.md">Challenge write-up</a> ·
@@ -87,7 +87,7 @@ account requirement.
 WebMCP needs ChatGPT's in-app browser, or Google Chrome 149+ with
 `chrome://flags/#enable-webmcp-testing` enabled and the browser restarted.
 
-Open a Problem — [Erdős 321](https://problems-constellate-dc388081.vercel.app/problems/erdos-problems/321)
+Open a Problem — [Erdős 321](https://problems.science/problems/erdos-problems/321)
 is the one with real corrected history — and ask the agent:
 
 > Why does this Problem's current Result hold the Standing it does?

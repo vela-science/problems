@@ -154,7 +154,7 @@ gates; and the entire user interface.
 
 ## Manual test procedure
 
-1. Open [Erdős 321](https://problems-constellate-dc388081.vercel.app/problems/erdos-problems/321)
+1. Open [Erdős 321](https://problems.science/problems/erdos-problems/321)
    in ChatGPT's in-app browser, or in Chrome 149+ with
    `chrome://flags/#enable-webmcp-testing` enabled and restarted.
 2. Ask: *"Why does this Problem's current Result hold the Standing it does?"*
