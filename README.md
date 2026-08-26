@@ -5,34 +5,125 @@
 </p>
 
 <p align="center">
-  <strong>Vela Web: the living editorial home and the Problems research product.</strong><br>
-  Scientific direction and exact state, without moving the authority boundary into the web.
+  <strong>problems.science — an agent-native workspace for cumulative science.</strong><br>
+  Humans and AI agents work on the same structured scientific state, and neither
+  the browser nor this application can change what science accepts.
 </p>
 
 <p align="center">
-  <a href="https://vela.space">vela.space</a> ·
-  <a href="https://problems.science/problems">Problems</a> ·
+  <a href="https://problems-constellate-dc388081.vercel.app/problems/erdos-problems/321">Live</a> ·
+  <a href="#webmcp-the-agent-interface">WebMCP</a> ·
   <a href="https://github.com/vela-science/vela">Protocol and CLI</a> ·
-  <a href="docs/WEB.md">Web operations</a>
+  <a href="docs/webmcp-challenge.md">Challenge write-up</a> ·
+  <a href="docs/WEB.md">Operations</a>
 </p>
+
+---
+
+## WebMCP: the agent interface
+
+A browser agent on a Problem page does not read the DOM and guess which button
+to press. It calls the operations the product actually has:
+
+```js
+document.modelContext.registerTool({
+  name: "inspect_claim",
+  description: "Read one Claim in full: its assertion and conditions, its "
+    + "Standing, and the lineage behind that Standing …",
+  inputSchema: { type: "object", properties: { claim_id: { type: "string" } } },
+  execute: async ({ claim_id }) => inspectClaim(environment, { claim_id }),
+});
+```
+
+Eight tools are registered on every Problem route.
+
+| Tool | Purpose | R/W |
+| --- | --- | --- |
+| `inspect_problem` | Exact current state: question, current Result, Standing, sources, and the projection roots those facts came from | Read |
+| `inspect_claim` | One Claim's full lineage — Submission, each Verification with what it explicitly does *not* establish, and the attributed Decision | Read |
+| `inspect_history` | Why the system believes what it believes: Proposals, Verifications, Decisions, corrections and supersessions | Read |
+| `search_problems` | Find Problems by text and Standing across the release | Read |
+| `open_approach` | Begin an attributed line of work — one Approach and one Attempt | Write |
+| `attach_evidence` | Attach an artifact by exact content root, with a written rationale | Write |
+| `prepare_submission` | Draft an **unsigned** `vela.submission.v3` proposing a scientific state change | Write |
+| `inspect_candidate` | Read what is pending: payload root, target Claim, signing state | Read |
+
+### The one thing an agent cannot do
+
+`prepare_submission` is the end of the road. It produces an unsigned draft and
+returns, in the tool result itself, that Standing has not moved.
+
+```text
+agent  →  inspect  →  open_approach  →  attach_evidence  →  prepare_submission
+                                                                   │
+                                                          unsigned candidate
+                                        ═══════════ HUMAN BOUNDARY ═══════════
+                                                                   │
+                              local Workbench / vela CLI, user-held key
+                                    submit → verify → decide → replay
+                                                                   │
+                                                   Vela Repository (Git)
+                                                                   │
+                                              projection → Standing moves here
+```
+
+This is not a limitation we apologise for. It is the point. Three independent
+gates fail the build if hosted code tries to cross it: the closed command
+vocabulary in `packages/activity-data/schema/base.sql`, the pinned Server Action
+matrix in `packages/activity-data/tests/governance.test.ts`, and
+`scripts/check-scientific-authority-boundary.mjs`. A fourth,
+`apps/problems/src/webmcp/authority-boundary.test.ts`, reads the agent
+interface as bytes and refuses signing calls, authoritative record names, and
+verb shapes like `recordDecision` that nobody has written yet.
+
+The agent's write tools construct `FormData` and call the **same Server
+Actions** the human forms post to. There is no agent-only code path, which is
+why an agent inherits every guard a person has: the anchor-root check that
+refuses a mutation aimed at state that has moved, the idempotency key, and the
+account requirement.
+
+### Trying it
+
+WebMCP needs ChatGPT's in-app browser, or Google Chrome 149+ with
+`chrome://flags/#enable-webmcp-testing` enabled and the browser restarted.
+
+Open a Problem — [Erdős 321](https://problems-constellate-dc388081.vercel.app/problems/erdos-problems/321)
+is the one with real corrected history — and ask the agent:
+
+> Why does this Problem's current Result hold the Standing it does?
+
+It will call `inspect_claim` and `inspect_history` and answer from retained
+records: a scoped `claim_chain_fidelity` check that explicitly does not
+establish a proof, and a signed Decision by `agent:submission-v3-migration`
+under event `vev_15632b53fb7fd674`, which corrected an earlier Claim.
+
+Append `?webmcp` to any Problem URL to see the registered tools listed in the
+corner for the rest of the session.
+
+### What was built during the WebMCP Challenge
+
+`problems.science` existed before the Submission Period. Everything under
+`apps/problems/src/webmcp/`, the `/api/work` read route, the agent-interface
+tests, and these documents were written during it. `git log` carries the dates;
+[`docs/webmcp-challenge.md`](docs/webmcp-challenge.md) enumerates the split.
+
+---
 
 ## What lives here
 
-Vela Web is one private Bun workspace with two deliberately separate Next.js
-applications and shared packages.
+One Bun workspace: the Problems application and the packages it is built from.
 
 | Path | Runtime | Purpose |
 | --- | --- | --- |
 | `apps/problems` | Next.js server application | The research product at `problems.science`: Problems, Results, Sources, Work, History, graph, and contribution flows |
-| `apps/www` | Static Next.js export | The Vela front page at `vela.space`: one screen, with its retained painting |
 | `packages/brand` | TypeScript and CSS | Framework-neutral sail, tokens, fonts, licenses, and deterministic exports |
-| `packages/ui` | React, shadcn, and Base UI | Private shared primitives and stable Vela presentation semantics |
+| `packages/ui` | React, shadcn, and Base UI | Shared primitives and stable Vela presentation semantics. Application source, never a published package |
 | `packages/projection-data` | TypeScript | Sole validator and projector for Repository, Problem, search, and graph data |
+| `packages/activity-data` | TypeScript and SQL | The only mutable product data. Every row carries `authority_effect = 'none'` |
+| `apps/problems/src/webmcp` | TypeScript | The agent interface. Reads the projection, writes through the human Server Actions |
 
-Both applications share brand assets and eligible React primitives. The
-editorial application is entirely static. The Problems application may own
-hosted account and workspace activity, but neither application can sign,
-accept, or mutate scientific state.
+The application may own hosted account and workspace activity. It cannot sign,
+accept, or mutate scientific state — not from a form, and not from a tool.
 
 Vela follows one product story:
 
