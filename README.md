@@ -146,7 +146,9 @@ The private component catalogue lives in the upstream repository, not here.
 
 ## Licensing
 
-- Code: Apache-2.0 OR MIT, at your option.
+- Code: Apache-2.0 OR MIT, at your option. [`LICENSE`](LICENSE) carries the
+  Apache-2.0 text so hosts and scanners detect one; [`LICENSE-MIT`](LICENSE-MIT)
+  is the other half of the option and is equally in force.
 - Essays and original diagrams: CC BY 4.0.
 - The Vela name and marks: trademark rights reserved.
 - Fonts and third-party components: [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
