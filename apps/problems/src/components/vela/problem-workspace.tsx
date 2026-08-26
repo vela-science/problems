@@ -26,6 +26,7 @@ import type { ScientificProblemState } from "@/lib/scientific-state";
 import { problemWorkbenchHandoff } from "@/lib/workbench-handoff";
 import { FormSelect } from "@/components/vela/form-select";
 import { RecordId } from "@/components/vela/record-id";
+import { CandidateBanner } from "@/components/vela/candidate-banner";
 import { WorkAction } from "@/components/vela/work-action";
 import { WorkspaceShell } from "@/components/vela/workspace-shell";
 import { WorkspaceCrdtNote } from "@/components/vela/workspace-crdt-note";
@@ -344,7 +345,17 @@ export async function ProblemWorkspace({ state, hostedAccount, accountsEnabled =
   if (!anchors.some((anchor) => anchor.root === currentAnchorRoot)) anchors.unshift({ root: currentAnchorRoot, state: "current", fields: [] });
   const audit: WorkspaceAuditEntry[] = activity.audit.map((entry) => ({ sequence: String(entry.sequence), operation: entry.operation, requestRoot: entry.requestRoot, anchorRoot: entry.anchorRoot, subjectKind: entry.subjectKind, subjectId: entry.subjectId }));
   const discussion: WorkspaceDiscussionEntry[] = activity.discussion.map((entry) => ({ id: entry.id, body: entry.body, kind: entry.kind, visibility: entry.visibility, anchorRoot: entry.anchorRoot, approachId: entry.approachId, attemptId: entry.attemptId }));
-  const toolbar = <div><MutationError code={mutationError} /><div className="flex flex-wrap items-start justify-between gap-4"><div className="flex flex-wrap items-center gap-2"><h2 id="workspace-heading" className="text-title">{workspace.name}</h2><Badge variant="outline">{workspace.role}</Badge>{activity.following ? <Badge variant="secondary">following</Badge> : null}</div><div className="flex flex-wrap items-center justify-end gap-2">{workbenchHandoff ? <Button nativeButton={false} size="sm" variant="outline" render={<a href={workbenchHandoff} />}>Continue locally</Button> : null}{workspaces.map((entry) => <Button key={entry.id} nativeButton={false} size="sm" variant={entry.id === workspace.id ? "default" : "outline"} render={<Link href={`${basePath}/work?workspace=${entry.id}`} />}>{entry.name}</Button>)}<form action={followProblemAction}><ScopeFields scope={scope} /><input type="hidden" name="following" value={activity.following ? "false" : "true"} /><Button type="submit" size="sm" variant="outline">{activity.following ? "Unfollow" : "Follow"}</Button></form></div></div>{workbenchHandoff ? <p className="mt-2 text-meta text-muted-foreground">The handoff carries this exact Problem, source revision, and authority Repository. It does not clone, switch, upload, or execute anything.</p> : null}</div>;
+  /* Surfaced above the instrument rather than inside the object tree. A
+     candidate is the one thing in this Workspace that is waiting on a person,
+     and the tree is where you go when you already know it is there. */
+  const candidate = activity.drafts.find((draft) => draft.anchorRoot === currentAnchorRoot) ?? null;
+  const candidateBanner = candidate ? <CandidateBanner
+    draft={{ id: candidate.id, payloadRoot: candidate.payloadRoot, version: candidate.version, updatedAt: candidate.updatedAt }}
+    exportHref={`/drafts/${candidate.id}/export?workspace=${workspace.id}`}
+    workbenchHandoff={workbenchHandoff}
+    target={{ claimId: state.anchor.claimId, standing: state.anchor.claimStanding }}
+  /> : null;
+  const toolbar = <div><MutationError code={mutationError} />{candidateBanner ? <div className="mb-5">{candidateBanner}</div> : null}<div className="flex flex-wrap items-start justify-between gap-4"><div className="flex flex-wrap items-center gap-2"><h2 id="workspace-heading" className="text-title">{workspace.name}</h2><Badge variant="outline">{workspace.role}</Badge>{activity.following ? <Badge variant="secondary">following</Badge> : null}</div><div className="flex flex-wrap items-center justify-end gap-2">{workbenchHandoff ? <Button nativeButton={false} size="sm" variant="outline" render={<a href={workbenchHandoff} />}>Continue locally</Button> : null}{workspaces.map((entry) => <Button key={entry.id} nativeButton={false} size="sm" variant={entry.id === workspace.id ? "default" : "outline"} render={<Link href={`${basePath}/work?workspace=${entry.id}`} />}>{entry.name}</Button>)}<form action={followProblemAction}><ScopeFields scope={scope} /><input type="hidden" name="following" value={activity.following ? "false" : "true"} /><Button type="submit" size="sm" variant="outline">{activity.following ? "Unfollow" : "Follow"}</Button></form></div></div>{workbenchHandoff ? <p className="mt-2 text-meta text-muted-foreground">The handoff carries this exact Problem, source revision, and authority Repository. It does not clone, switch, upload, or execute anything.</p> : null}</div>;
   const canvasNote = <WorkspaceCrdtNote updates={activity.crdtUpdates} scope={scope} action={appendWorkspaceCrdtUpdateAction} />;
   return <WorkspaceShell objects={objects} selectedObject={object} inspectorTab={inspector} anchors={anchors} audit={audit} discussion={discussion} toolbar={toolbar} canvasNote={canvasNote} initialSurface={selectedObject ? "object" : "canvas"} />;
 }
