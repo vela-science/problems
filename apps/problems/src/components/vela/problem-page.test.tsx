@@ -13,6 +13,11 @@ vi.mock("@/components/vela/problem-state", () => ({
   ProblemState: ({ researchView }: { researchView: string }) => <section>Public tool: {researchView}</section>,
 }));
 vi.mock("@/components/vela/problem-workspace", () => ({ ProblemWorkspace: () => <section>Workspace surface</section> }));
+/* Server-only, like `@/lib/scientific-state` above, and given the same
+   treatment. The agent interface has its own suites; this one is about which
+   surface the route resolves to. */
+vi.mock("@/webmcp/build-context", () => ({ buildWebMcpProblemContext: () => ({ schema: "vela.webmcp-problem-context.v1" }) }));
+vi.mock("@/webmcp/register-tools", () => ({ RegisterProblemTools: () => null }));
 vi.mock("@/components/vela/problem-overview-reference", () => ({
   ProblemReferenceHeader: ({ collectionName }: { collectionName: string }) => <header><h1>Exact Problem</h1><span>{collectionName}</span></header>,
   ProblemOverviewReference: () => <section>Overview surface</section>,

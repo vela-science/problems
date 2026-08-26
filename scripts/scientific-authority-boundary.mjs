@@ -27,6 +27,7 @@ const problemsReadRoutes = new Set([
   "apps/problems/src/app/sources.json/route.ts",
   "apps/problems/src/app/problems.json/route.ts",
   "apps/problems/src/app/.well-known/vela-site.json/route.ts",
+  "apps/problems/src/app/api/work/route.ts",
 ]);
 
 const problemsAccountRoute = "apps/problems/src/app/api/account/route.ts";
@@ -53,6 +54,15 @@ const problemsHostedAccount = "apps/problems/src/lib/hosted-account.ts";
 const problemsCodebaseInspection = "apps/problems/src/lib/codebase-inspection.ts";
 const problemsPublicContact = "apps/problems/src/lib/public-contact.ts";
 const problemsTelemetryRoute = "apps/problems/src/app/api/telemetry/route.ts";
+/* The agent interface. `webmcp/tools.ts` calls the same Server Actions the Work
+   forms post to, and `webmcp/build-context.ts` hashes the anchor those actions
+   check against, so both sit inside the Work boundary rather than beside it.
+   `api/work/route.ts` is the read a tool needs to see what it just recorded;
+   the Work section itself renders that server-side and needs no route. */
+const problemsWebMcpTools = "apps/problems/src/webmcp/tools.ts";
+const problemsWebMcpContext = "apps/problems/src/webmcp/build-context.ts";
+const problemsWebMcpRegistration = "apps/problems/src/webmcp/register-tools.tsx";
+const problemsWorkReadRoute = "apps/problems/src/app/api/work/route.ts";
 
 export const PROBLEMS_IDENTITY_FILES = [
   problemsAccountRoute,
@@ -101,6 +111,10 @@ const PROBLEMS_ACTIVITY_FILES = new Set([
   problemsGithubCompletion,
   problemsGithubWebhookRoute,
   problemsTelemetryRoute,
+  problemsWebMcpTools,
+  problemsWebMcpContext,
+  problemsWebMcpRegistration,
+  problemsWorkReadRoute,
 ]);
 
 const ALLOWED_IDENTITY_ACTIONS = new Map([
@@ -150,6 +164,12 @@ function exactProblemsFetch(file, content, fetches) {
     return content.includes("new URLSearchParams({ root: input.root")
       && content.includes("`/api/graph?${params}`")
       && content.includes("fetch(`/api/graph?");
+  }
+  if (file === problemsWebMcpRegistration) {
+    /* One read, its own account's Workspace, no-store, same-origin. Pinned to
+       the exact call so this entry cannot quietly widen into a general fetch. */
+    return content.includes("`/api/work?${params}`")
+      && content.includes('{ cache: "no-store", credentials: "same-origin" }');
   }
   return file === accountState
     && content.includes('fetch("/api/account", { cache: "no-store", credentials: "same-origin" })');

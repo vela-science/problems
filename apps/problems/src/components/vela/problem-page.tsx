@@ -12,6 +12,8 @@ import {
 import { ProblemState, type ProblemResearchView } from "@/components/vela/problem-state";
 import { ProblemWorkspace } from "@/components/vela/problem-workspace";
 import { RememberObject } from "@/components/vela/remember-object";
+import { RegisterProblemTools } from "@/webmcp/register-tools";
+import { buildWebMcpProblemContext } from "@/webmcp/build-context";
 import { problemLabel, resolveProblemStatement, statementParagraphs, statementPlainText } from "@/lib/problem-statement";
 import { authConfiguration, currentAccount } from "@/lib/auth";
 import { problemFrontierMovement } from "@/lib/frontier-timeline";
@@ -122,6 +124,17 @@ export async function ProblemPageView({ repository, problem, collectionName, rou
     {/* Spoken form, not the source TeX: the palette lists this as a name, and
         the raw statement would print `\mathbb{R}^2` into it. */}
     <RememberObject href={route} title={statementPlainText(question).slice(0, 120)} context={collectionName} />
+    {/* The same exact state this page renders, offered to a browser agent as
+        typed operations. Registration is client-side and unregisters on
+        navigation; a browser without WebMCP renders nothing here and the page
+        is unchanged. The write tools reach the Server Actions the Work forms
+        already post to, so an agent has exactly the capabilities a signed-in
+        person has, and no others. */}
+    <RegisterProblemTools
+      context={buildWebMcpProblemContext(state, route, collectionName)}
+      accountsEnabled={accountsEnabled}
+      workspaceId={query.workspace ?? null}
+    />
     <div className="mt-2">
       <ProblemReferenceHeader state={state} collectionName={collectionName} summary={referenceView === "overview"} />
     </div>
