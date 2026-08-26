@@ -19,6 +19,8 @@
   },
   "scripts": {
     "dev:problems": "bun run --filter @vela/problems dev",
+    "dev:demo": "bun scripts/demo/dev.mjs",
+    "demo:seed": "bun scripts/demo/export-seed.mjs",
     "deploy:problems": "VELA_SITE_COMMIT=$(git rev-parse HEAD) bun scripts/deploy-vercel-problems.mjs",
     "release:problems": "bun scripts/release-problems.mjs",
     "lint": "bun run --filter @vela/problems lint",
@@ -53,5 +55,9 @@
     "test": "bun test ./scripts/ && bun run --filter @vela/brand test && bun run --filter @vela/ui test && bun run --filter @vela/projection-data test && bun run --filter @vela/activity-data test && bun run --filter @vela/problems test",
     "build": "bun run --filter @vela/brand build && bun run --filter @vela/projection-data check && bun run --filter @vela/activity-data check && bun run --filter @vela/problems build && bun run check:public-output",
     "format:check": "git diff --check"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
+    "@neondatabase/serverless": "^1.1.0"
   }
 }

@@ -235,6 +235,35 @@ components as a registry, a UI library, or an installable package, which is why
 `@vela/ui` is application source and every workspace manifest stays `private`.
 The private component catalogue lives in the upstream repository, not here.
 
+## Running it locally
+
+No credentials, no database to provision, no Postgres to install:
+
+```bash
+git clone https://github.com/vela-science/problems
+cd problems
+bun install
+bun run dev:demo
+```
+
+Then open <http://localhost:3000/problems/erdos-problems/321>.
+
+`dev:demo` builds both data planes in-process — real schemas, the real role
+topology, and real projected rows exported from a live release — and serves them
+over the same HTTP protocol the application speaks to Neon. There is one
+application code path, not a demo one; the app cannot tell the difference,
+which is the only way this proves anything.
+
+The seed covers every published Problem's reviewed occurrences and the Erdős
+321, 94 and 1 source material. Accounts are absent rather than faked: without
+WorkOS credentials the application already degrades to a fully readable public
+Problems, so the read-only tools work and the write tools explain why they
+cannot. `scripts/demo/export-seed.mjs` regenerates the seed and is for
+maintainers with a reader URL.
+
+To run against a real projection instead, copy `apps/problems/.env.example` to
+`apps/problems/.env.local`, fill it, and use `bun run dev:problems`.
+
 ## Licensing
 
 - Code: Apache-2.0 OR MIT, at your option. [`LICENSE`](LICENSE) carries the
