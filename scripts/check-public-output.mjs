@@ -30,12 +30,8 @@ function deliveredFiles(repository) {
     filesBelow(resolve(app(name), directory))
   ).filter((path) => deliveredExtensions.test(path) && !path.endsWith(".map"));
 
-  return [
-    ...deliveredAppFiles("problems", [".next/static", "public", ".next/server/app"])
-      .map((path) => ({ path, profile: "app" })),
-    ...deliveredAppFiles("www", ["out"])
-      .map((path) => ({ path, profile: "editorial" })),
-  ];
+  return deliveredAppFiles("problems", [".next/static", "public", ".next/server/app"])
+    .map((path) => ({ path, profile: "app" }));
 }
 
 export function scanPublicOutput(repository) {

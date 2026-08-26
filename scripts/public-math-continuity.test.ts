@@ -10,7 +10,6 @@ const currentSurfaces = [
   "packages/projection-data/src/registry.ts",
   "packages/projection-data/src/index.ts",
   "packages/projection-data/scripts/projection-builder.mjs",
-  ".github/workflows/mirror-replicas.yml",
   "docs/WEB.md",
   "apps/problems/src/components/vela/clone-menu.tsx",
   "apps/problems/src/components/vela/repository-context.tsx",

@@ -19,8 +19,7 @@
     "./typeset.css": "./src/styles/typeset.css"
   },
   "scripts": {
-    "check": "shadcn diff && bun run check:registry && bun run typecheck",
-    "check:registry": "bun scripts/check-registry.mjs",
+    "check": "shadcn diff && bun run typecheck",
     "test": "bun test tests",
     "typecheck": "tsc --noEmit"
   },

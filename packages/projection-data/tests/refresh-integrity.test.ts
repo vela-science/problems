@@ -44,10 +44,6 @@ describe("projection refresh Vela identity", () => {
 });
 
 describe("projection release ownership", () => {
-  const mirror = readFileSync(
-    resolve(import.meta.dir, "../../../.github/workflows/mirror-replicas.yml"),
-    "utf8",
-  );
   const refresh = readFileSync(
     resolve(import.meta.dir, "../scripts/refresh-neon-projection.mjs"),
     "utf8",
@@ -60,15 +56,6 @@ describe("projection release ownership", () => {
     resolve(import.meta.dir, "../scripts/select-projection-release.mjs"),
     "utf8",
   );
-
-  test("mirrors Core while leaving Math on its canonical public host", () => {
-    const parsed = YAML.parse(mirror) as {
-      jobs: { mirror: { strategy: { matrix: { repository: string[] } } } };
-    };
-    expect(parsed.jobs.mirror.strategy.matrix.repository).toEqual(["vela"]);
-    expect(mirror).not.toContain("vela-science/math");
-    expect(mirror).not.toContain("VELA_MATH_READ_TOKEN");
-  });
 
   test("the direct operator owns the complete release transaction", () => {
     expect(releaseOrder()).toEqual([

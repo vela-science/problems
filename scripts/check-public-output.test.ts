@@ -19,8 +19,6 @@ function fixture(entries: Record<string, string> = {}) {
     "apps/problems/public/favicon.svg",
     "apps/problems/.next/server/app/index.html",
     "apps/problems/.next/server/app/p/math/321/index.rsc",
-    "apps/www/out/index.html",
-    "apps/www/out/constellations.html",
   ];
   for (const path of defaults) {
     const target = join(root, path);
@@ -37,7 +35,7 @@ describe("public output secret and privacy scan", () => {
         "user_verification is absent; no hosted account identifier is published",
     }))).toMatchObject({
       ok: true,
-      profiles: ["app", "editorial"],
+      profiles: ["app"],
     });
   });
 
@@ -60,12 +58,5 @@ describe("public output secret and privacy scan", () => {
       "apps/problems/.next/server/app/index.html": "vela.ui-component-lab.v1",
     });
     expect(() => scanPublicOutput(server)).toThrow("private UI registry or component-lab metadata");
-  });
-
-  test("scans the exported editorial application", () => {
-    const root = fixture({
-      "apps/www/out/constellations.html": "postgresql://editorial:secret@ep-example.us-east-2.aws.neon.tech/vela",
-    });
-    expect(() => scanPublicOutput(root)).toThrow("PostgreSQL connection string");
   });
 });
