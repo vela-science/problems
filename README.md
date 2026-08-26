@@ -248,6 +248,12 @@ bun run dev:demo
 
 Then open <http://localhost:3000/problems/erdos-problems/321>.
 
+`@swc/helpers` is pinned as a direct dev dependency even though Next already
+depends on it: Bun did not install it transitively, and a clean clone failed on
+its first `next dev` with a module-resolution error that looks like a Next bug
+and is not one. A warm `.next` masks it, which is why it only appears on a
+genuinely fresh machine.
+
 `dev:demo` builds both data planes in-process — real schemas, the real role
 topology, and real projected rows exported from a live release — and serves them
 over the same HTTP protocol the application speaks to Neon. There is one
