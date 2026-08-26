@@ -52,6 +52,27 @@ type ModelContext = {
   registerTool: (tool: ModelContextTool, options?: { signal?: AbortSignal }) => Promise<unknown>;
 };
 
+/* `?webmcp` arms the inspector for the session rather than for the URL.
+ *
+ * Problems navigate client-side and section links carry no query string, so
+ * reading `location.search` at render time made the panel vanish the moment you
+ * moved from Overview to Work — during the one walkthrough it exists for. It is
+ * read on mount, before anything has registered, because by the time tools
+ * exist the query string is usually gone. */
+function armInspector(): boolean {
+  try {
+    if (new URLSearchParams(window.location.search).has("webmcp")) {
+      window.sessionStorage.setItem("vela.webmcp-inspector", "1");
+      return true;
+    }
+    return window.sessionStorage.getItem("vela.webmcp-inspector") === "1";
+  } catch {
+    /* Private windows and blocked site data throw on access rather than
+       returning null. A debug affordance is not worth an exception. */
+    return false;
+  }
+}
+
 function modelContext(): ModelContext | null {
   if (typeof document === "undefined") return null;
   const candidate = (document as unknown as { modelContext?: unknown }).modelContext;
@@ -97,7 +118,10 @@ export function RegisterProblemTools({ context, accountsEnabled, workspaceId }: 
   workspaceId: string | null;
 }) {
   const account = useAccountState();
-  const [registered, setRegistered] = useState<string[]>([]);
+  /* One state object, set once per registration, because the panel needs both
+     halves to agree: a stale `registered` beside a fresh `inspector` would
+     render a list of tools that are no longer there. */
+  const [panel, setPanel] = useState<{ tools: string[]; armed: boolean }>({ tools: [], armed: false });
 
   /* Compared by value, not by identity. The server sends a fresh object on
      every render, so depending on it directly would tear down and re-register
@@ -185,35 +209,39 @@ export function RegisterProblemTools({ context, accountsEnabled, workspaceId }: 
       },
     ];
 
+    /* Read before any await. The query string is still the one the page was
+       opened with here; by the time registration resolves a client-side
+       navigation may already have dropped it. */
+    const armed = armInspector();
+
     let live = true;
     void Promise.all(tools.map((tool) => host.registerTool(tool, { signal: controller.signal })))
-      .then(() => { if (live) setRegistered(tools.map(({ name }) => name)); })
+      .then(() => { if (live) setPanel({ tools: tools.map(({ name }) => name), armed }); })
       /* A browser that exposes the object but rejects the call is a browser
          without working WebMCP. The site is unaffected either way, so this
          stays silent rather than logging on every page load. */
-      .catch(() => { if (live) setRegistered([]); });
+      .catch(() => { if (live) setPanel({ tools: [], armed }); });
 
     return () => {
       live = false;
       controller.abort();
-      setRegistered([]);
+      setPanel({ tools: [], armed });
     };
   }, [stableContext, work]);
 
   /* A registration this page can prove, for the person driving the demo and
      for anyone checking the claim. Off unless asked for, so it costs the
      ordinary reader nothing. */
-  if (!registered.length || typeof window === "undefined") return null;
-  if (!new URLSearchParams(window.location.search).has("webmcp")) return null;
+  if (!panel.armed || !panel.tools.length) return null;
   return (
     <aside
       aria-label="Registered agent tools"
       className="fixed bottom-4 right-4 z-50 max-w-xs rounded-lg border bg-card/95 p-3 text-meta shadow-lg backdrop-blur"
     >
-      <p className="text-eyebrow text-muted-foreground">WebMCP · {registered.length} tools</p>
+      <p className="text-eyebrow text-muted-foreground">WebMCP · {panel.tools.length} tools</p>
       <p className="mt-1 font-mono text-micro break-all text-muted-foreground">{context.anchor_root.slice(0, 26)}…</p>
       <ul className="mt-2 space-y-0.5 font-mono text-micro">
-        {registered.map((name) => <li key={name}>{name}</li>)}
+        {panel.tools.map((name) => <li key={name}>{name}</li>)}
       </ul>
     </aside>
   );

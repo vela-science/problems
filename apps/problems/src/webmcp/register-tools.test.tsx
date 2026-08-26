@@ -46,7 +46,11 @@ function removeModelContext() {
 }
 
 afterEach(() => { removeModelContext(); vi.clearAllMocks(); });
-beforeEach(() => { mocks.account = { status: "signed_in" }; });
+beforeEach(() => {
+  mocks.account = { status: "signed_in" };
+  window.sessionStorage.clear();
+  window.history.replaceState({}, "", "/problems/erdos-problems/321");
+});
 
 describe("tool registration follows the open Problem", () => {
   it("registers the eight tools once", async () => {
@@ -91,6 +95,43 @@ describe("tool registration follows the open Problem", () => {
     await waitFor(() => expect(registered).toHaveLength(8));
     view.unmount();
     await waitFor(() => expect(registered.every(({ aborted }) => aborted)).toBe(true));
+  });
+});
+
+describe("the inspector panel proves what is registered", () => {
+  it("stays hidden unless it is asked for", async () => {
+    const registered = installModelContext();
+    const view = render(<RegisterProblemTools context={context("321")} accountsEnabled workspaceId="ws_1" />);
+    await waitFor(() => expect(registered).toHaveLength(8));
+    expect(view.container.querySelector('aside[aria-label="Registered agent tools"]')).toBeNull();
+  });
+
+  it("lists the registered tools when ?webmcp opened the page", async () => {
+    window.history.replaceState({}, "", "/problems/erdos-problems/321?webmcp");
+    const registered = installModelContext();
+    const view = render(<RegisterProblemTools context={context("321")} accountsEnabled workspaceId="ws_1" />);
+    await waitFor(() => expect(registered).toHaveLength(8));
+    const panel = await waitFor(() => {
+      const node = view.container.querySelector('aside[aria-label="Registered agent tools"]');
+      expect(node).not.toBeNull();
+      return node!;
+    });
+    expect(panel.textContent).toContain("8 tools");
+    expect(panel.textContent).toContain("prepare_submission");
+  });
+
+  it("stays armed after a navigation that drops the query string", async () => {
+    /* The walkthrough moves Overview -> Work, and section links carry no query
+       string. Reading the URL each render made the panel vanish exactly then. */
+    window.history.replaceState({}, "", "/problems/erdos-problems/321?webmcp");
+    installModelContext();
+    const first = render(<RegisterProblemTools context={context("321")} accountsEnabled workspaceId="ws_1" />);
+    await waitFor(() => expect(first.container.querySelector('aside[aria-label="Registered agent tools"]')).not.toBeNull());
+    first.unmount();
+
+    window.history.replaceState({}, "", "/problems/erdos-problems/887/work");
+    const second = render(<RegisterProblemTools context={context("887")} accountsEnabled workspaceId="ws_1" />);
+    await waitFor(() => expect(second.container.querySelector('aside[aria-label="Registered agent tools"]')).not.toBeNull());
   });
 });
 
