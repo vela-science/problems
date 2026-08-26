@@ -44,3 +44,4 @@ apps/www/public/
 # embed another repository in this one.
 /sources/
 .scratch/
+deploy.env
