@@ -135,10 +135,14 @@ production. The archived Problems at `vela-site@34e3f20` supplied product
 anatomy, not a second active implementation. Porting provenance is recorded in
 [`docs/projection-provenance.md`](docs/projection-provenance.md).
 
-The internal Vela registry coordinates private product source. It is not a
-public registry or separately distributed component library. Licensed Tailwind
-Plus adaptations remain within the licensed private product and carry source
-provenance.
+Tailwind Plus and shadcn.io Pro patterns informed some of this application's
+components, and each place that studied one says so in a source comment and in
+[`docs/editorial-references.md`](docs/editorial-references.md). Both licenses
+permit an open-source end product whose primary purpose is not redistributing
+components, which is why this source is public; both forbid shipping the
+components as a registry, a UI library, or an installable package, which is why
+`@vela/ui` is application source and every workspace manifest stays `private`.
+The private component catalogue lives in the upstream repository, not here.
 
 ## Licensing
 

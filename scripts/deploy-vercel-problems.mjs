@@ -8,13 +8,40 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-export const problemsDeploymentTarget = Object.freeze({
-  teamId: "team_ZtvAC9FZByF1L9R25ibMLh3I",
-  projectId: "prj_Be9WMWjLhmfwZg7sAxJUAnCkZ9m7",
-  projectName: "vela-web-problems",
-  repositoryId: 1128958598,
-  repositoryRef: "main",
-});
+/* The deployment target is configuration, not source.
+ *
+ * These five values used to be literals naming one Vercel team, one project,
+ * and one GitHub repository. That was correct while the application lived in a
+ * private monorepo with exactly one deployment, and wrong the moment the source
+ * became public: a fork running `deploy:problems` would aim its build at
+ * someone else's project, and the ids themselves are the first thing a targeted
+ * attempt against that project would need.
+ *
+ * They are read from the environment now, with no fallback, so an unset
+ * variable fails loudly instead of deploying somewhere unintended. */
+function targetString(environment, name) {
+  const value = environment[name];
+  if (typeof value !== "string" || value.length === 0) {
+    throw new Error(`missing required deployment target ${name}`);
+  }
+  return value;
+}
+
+export function problemsDeploymentTargetFrom(environment = process.env) {
+  const read = (name) => targetString(environment, name);
+  const repositoryId = Number(read("VERCEL_GIT_REPO_ID"));
+  if (!Number.isSafeInteger(repositoryId) || repositoryId <= 0) {
+    throw new Error("VERCEL_GIT_REPO_ID must be a positive integer");
+  }
+  return Object.freeze({
+    teamId: read("VERCEL_TEAM_ID"),
+    projectId: read("VERCEL_PROJECT_ID"),
+    projectName: read("VERCEL_PROJECT_NAME"),
+    repositoryId,
+    repositoryRef: environment.VERCEL_GIT_REPO_REF || "main",
+    repositorySlug: read("VELA_DEPLOY_REPOSITORY"),
+  });
+}
 
 const exactCommitPattern = /^[0-9a-f]{40}$/u;
 
@@ -51,22 +78,23 @@ function deploymentHost(value) {
   return host;
 }
 
-export function vercelProblemsDeploymentRequest(commit) {
+export function vercelProblemsDeploymentRequest(commit, environment = process.env) {
   const sha = exactCommit(commit);
+  const target = problemsDeploymentTargetFrom(environment);
   const url = new URL("https://api.vercel.com/v13/deployments");
-  url.searchParams.set("teamId", problemsDeploymentTarget.teamId);
+  url.searchParams.set("teamId", target.teamId);
   url.searchParams.set("forceNew", "1");
 
   return {
     url: url.toString(),
     body: {
-      name: problemsDeploymentTarget.projectName,
-      project: problemsDeploymentTarget.projectId,
+      name: target.projectName,
+      project: target.projectId,
       target: "production",
       gitSource: {
         type: "github",
-        repoId: problemsDeploymentTarget.repositoryId,
-        ref: problemsDeploymentTarget.repositoryRef,
+        repoId: target.repositoryId,
+        ref: target.repositoryRef,
         sha,
       },
     },
@@ -113,17 +141,18 @@ export async function deployVercelProblems({
   if (!environment.VELA_SITE_COMMIT) {
     throw new Error("missing required deployment identity VELA_SITE_COMMIT");
   }
+  const expectedRepository = targetString(environment, "VELA_DEPLOY_REPOSITORY");
   if (
     environment.GITHUB_REPOSITORY
-    && environment.GITHUB_REPOSITORY !== "vela-science/vela-web"
+    && environment.GITHUB_REPOSITORY !== expectedRepository
   ) {
-    throw new Error("exact Problems deployment is restricted to vela-science/vela-web");
+    throw new Error(`exact Problems deployment is restricted to ${expectedRepository}`);
   }
   if (environment.GITHUB_REF && environment.GITHUB_REF !== "refs/heads/main") {
     throw new Error("exact Problems deployment is restricted to refs/heads/main");
   }
 
-  const request = vercelProblemsDeploymentRequest(environment.VELA_SITE_COMMIT);
+  const request = vercelProblemsDeploymentRequest(environment.VELA_SITE_COMMIT, environment);
   const response = await fetchImplementation(request.url, {
     method: "POST",
     headers: {
@@ -173,14 +202,15 @@ export function deployVercelProblemsViaCli({
     environment.VERCEL_GLOBAL_CONFIG,
     "authenticated CLI config directory",
   );
-  if (environment.GITHUB_REPOSITORY && environment.GITHUB_REPOSITORY !== "vela-science/vela-web") {
-    throw new Error("exact Problems deployment is restricted to vela-science/vela-web");
+  const expectedRepository = targetString(environment, "VELA_DEPLOY_REPOSITORY");
+  if (environment.GITHUB_REPOSITORY && environment.GITHUB_REPOSITORY !== expectedRepository) {
+    throw new Error(`exact Problems deployment is restricted to ${expectedRepository}`);
   }
   if (environment.GITHUB_REF && environment.GITHUB_REF !== "refs/heads/main") {
     throw new Error("exact Problems deployment is restricted to refs/heads/main");
   }
 
-  const request = vercelProblemsDeploymentRequest(environment.VELA_SITE_COMMIT);
+  const request = vercelProblemsDeploymentRequest(environment.VELA_SITE_COMMIT, environment);
   const url = new URL(request.url);
   const directory = mkdtempSync(join(tmpdir(), "vela-vercel-request-"));
   const input = join(directory, "deployment.json");

@@ -58,11 +58,11 @@ authority boundary remain project-owned. Zodiak and Gambetta remain licensed
 delivery assets but are no longer selected on current WWW surfaces. New
 references must be added here with a clear adopted/adapted/rejected decision.
 
-The complete licensed archive stays at `~/personal/tailwind-plus` to avoid
-vendoring an unused catalogue. Selected source and adaptations may enter this
-private Vela end product with provenance. They are not published separately as
-a template, component library, or public registry, and source access remains
-within the licensed person or team.
+The complete licensed archive is not vendored here; only the patterns actually
+studied are recorded, with provenance. Selected source and adaptations may
+enter this Vela end product, which both licenses permit for an open-source
+application whose purpose is not redistributing components. They are not
+published separately as a template, component library, or public registry.
 
 **Amended 2026-08-04, Problems application patterns.** Work and Attention
 adapt Tailwind Plus Application UI v4's conventional multi-column shell and

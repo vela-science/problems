@@ -11,13 +11,14 @@ Private shared React source for the Vela design system.
 
 Workspace applications import this package directly through its package
 exports. `components.json` is the only primitive installation configuration.
-`registry.json` is the governed private source catalog, and `lab/catalog.json`
-adds agent-readable review scenarios derived from its item names. Neither is
-exported, served, or copied into an application.
+The governed private source catalog (`registry.json`, `lab/catalog.json`) is
+not part of this repository. A catalogue of components is what the Tailwind Plus
+and shadcn.io Pro licenses forbid publishing; the application that uses those
+components is what they permit.
 
-Licensed Tailwind Plus source may be adapted for Vela end products inside this
-private repository. App-local use is the default. A reused adaptation may enter
-`@vela/ui` with provenance, but it remains tied to the private Vela product and
-is never redistributed separately.
+Licensed Tailwind Plus and shadcn.io Pro source may be adapted for Vela end
+products. App-local use is the default. A reused adaptation may enter
+`@vela/ui` with provenance, but `@vela/ui` is application source: it is never
+published to a package registry or distributed apart from the product.
 
 See [`../../docs/design-system.md`](../../docs/design-system.md).

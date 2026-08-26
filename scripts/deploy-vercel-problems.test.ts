@@ -4,17 +4,28 @@ import { resolve } from "node:path";
 import {
   deployVercelProblems,
   deployVercelProblemsViaCli,
-  problemsDeploymentTarget,
+  problemsDeploymentTargetFrom,
   vercelProblemsDeploymentRequest,
   verifyVercelProblemsDeployment,
 } from "./deploy-vercel-problems.mjs";
 
 const commit = "0123456789abcdef0123456789abcdef01234567";
 
+/* The deployment target is environment configuration now, so the suite supplies
+   its own rather than asserting against whichever project the operator's shell
+   happens to name. */
+const target = {
+  VERCEL_TEAM_ID: "team_fixture",
+  VERCEL_PROJECT_ID: "prj_fixture",
+  VERCEL_PROJECT_NAME: "problems-fixture",
+  VERCEL_GIT_REPO_ID: "1234567",
+  VELA_DEPLOY_REPOSITORY: "vela-science/problems",
+};
+
 function response(overrides: Record<string, unknown> = {}) {
   return {
     id: "dpl_exact",
-    url: "vela-web-problems-exact.vercel.app",
+    url: "problems-exact.vercel.app",
     target: "production",
     gitSource: { sha: commit },
     meta: { githubCommitSha: commit },
@@ -31,30 +42,39 @@ describe("exact Problems Vercel deployment", () => {
   });
 
   test("builds one production request for the exact GitHub commit", () => {
-    const request = vercelProblemsDeploymentRequest(commit);
+    const request = vercelProblemsDeploymentRequest(commit, target);
     const url = new URL(request.url);
 
     expect(url.origin + url.pathname).toBe("https://api.vercel.com/v13/deployments");
-    expect(url.searchParams.get("teamId")).toBe(problemsDeploymentTarget.teamId);
+    expect(url.searchParams.get("teamId")).toBe("team_fixture");
     expect(url.searchParams.get("forceNew")).toBe("1");
     expect(request.body).toEqual({
-      name: "vela-web-problems",
-      project: "prj_Be9WMWjLhmfwZg7sAxJUAnCkZ9m7",
+      name: "problems-fixture",
+      project: "prj_fixture",
       target: "production",
       gitSource: {
         type: "github",
-        repoId: 1128958598,
+        repoId: 1234567,
         ref: "main",
         sha: commit,
       },
     });
   });
 
+  test("refuses to deploy without an explicit target", () => {
+    expect(() => problemsDeploymentTargetFrom({})).toThrow(
+      "missing required deployment target VERCEL_GIT_REPO_ID",
+    );
+    expect(() => problemsDeploymentTargetFrom({ ...target, VERCEL_GIT_REPO_ID: "main" })).toThrow(
+      "VERCEL_GIT_REPO_ID must be a positive integer",
+    );
+  });
+
   test("refuses anything except an exact lowercase commit", () => {
-    expect(() => vercelProblemsDeploymentRequest("main")).toThrow(
+    expect(() => vercelProblemsDeploymentRequest("main", target)).toThrow(
       "exact lowercase 40-character Git SHA",
     );
-    expect(() => vercelProblemsDeploymentRequest(commit.toUpperCase())).toThrow(
+    expect(() => vercelProblemsDeploymentRequest(commit.toUpperCase(), target)).toThrow(
       "exact lowercase 40-character Git SHA",
     );
   });
@@ -62,7 +82,7 @@ describe("exact Problems Vercel deployment", () => {
   test("requires both Vercel commit identities and production target to agree", () => {
     expect(verifyVercelProblemsDeployment(response(), commit)).toEqual({
       deploymentId: "dpl_exact",
-      deploymentUrl: "vela-web-problems-exact.vercel.app",
+      deploymentUrl: "problems-exact.vercel.app",
       commit,
     });
     expect(() => verifyVercelProblemsDeployment(
@@ -85,9 +105,10 @@ describe("exact Problems Vercel deployment", () => {
     let output = "";
     const deployed = await deployVercelProblems({
       environment: {
+        ...target,
         VERCEL_TOKEN: "secret-token-that-must-not-be-output",
         VELA_SITE_COMMIT: commit,
-        GITHUB_REPOSITORY: "vela-science/vela-web",
+        GITHUB_REPOSITORY: "vela-science/problems",
         GITHUB_REF: "refs/heads/main",
         GITHUB_OUTPUT: "/unused/github-output",
       },
@@ -112,11 +133,11 @@ describe("exact Problems Vercel deployment", () => {
       "Content-Type": "application/json",
     });
     expect(JSON.parse(String(requestInit?.body))).toEqual(
-      vercelProblemsDeploymentRequest(commit).body,
+      vercelProblemsDeploymentRequest(commit, target).body,
     );
     expect(output).toBe(
       "deployment_id=dpl_exact\n"
-        + "deployment_url=https://vela-web-problems-exact.vercel.app\n"
+        + "deployment_url=https://problems-exact.vercel.app\n"
         + `deployment_commit=${commit}\n`,
     );
     expect(output).not.toContain("secret-token");
@@ -126,9 +147,10 @@ describe("exact Problems Vercel deployment", () => {
   test("refuses production deployment from any non-main GitHub ref", async () => {
     await expect(deployVercelProblems({
       environment: {
+        ...target,
         VERCEL_TOKEN: "secret-token",
         VELA_SITE_COMMIT: commit,
-        GITHUB_REPOSITORY: "vela-science/vela-web",
+        GITHUB_REPOSITORY: "vela-science/problems",
         GITHUB_REF: "refs/heads/feature",
       },
       fetchImplementation: async () => {
@@ -141,6 +163,7 @@ describe("exact Problems Vercel deployment", () => {
   test("reports a bounded API failure without reflecting response text", async () => {
     await expect(deployVercelProblems({
       environment: {
+        ...target,
         VERCEL_TOKEN: "secret-token",
         VELA_SITE_COMMIT: commit,
       },
@@ -158,8 +181,9 @@ describe("exact Problems Vercel deployment", () => {
     let invocation: any;
     const deployed = deployVercelProblemsViaCli({
       environment: {
+        ...target,
         VELA_SITE_COMMIT: commit,
-        GITHUB_REPOSITORY: "vela-science/vela-web",
+        GITHUB_REPOSITORY: "vela-science/problems",
         GITHUB_REF: "refs/heads/main",
         PATH: process.env.PATH,
         VERCEL_GLOBAL_CONFIG: "/operator/vercel-config",
@@ -172,7 +196,7 @@ describe("exact Problems Vercel deployment", () => {
     expect(deployed.commit).toBe(commit);
     expect(invocation.command).toBe("vercel");
     expect(invocation.args).toContain(
-      "/v13/deployments?teamId=team_ZtvAC9FZByF1L9R25ibMLh3I&forceNew=1",
+      "/v13/deployments?teamId=team_fixture&forceNew=1",
     );
     expect(invocation.args).toContain("--raw");
     expect(invocation.args).toContain("constellate-dc388081");

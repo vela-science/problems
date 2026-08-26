@@ -1,6 +1,6 @@
 # Vela Web operations
 
-This is the current operations contract for the private Vela Web workspace.
+This is the current operations contract for the Problems workspace.
 Earlier design and migration plans live under `docs/history/`.
 
 ## Product boundary
@@ -41,7 +41,7 @@ packages/activity-data  hosted activity schema, authorization, and mutation API
 ```
 
 `packages/brand` is framework-neutral. `packages/ui` is private React source
-shared by eligible Problems interactions and future private Vela applications.
+shared by eligible Problems interactions and future Vela applications.
 Route composition stays app-local. The internal registry is
 product-bound and is never published as a separate UI library; see
 [`design-system.md`](design-system.md).

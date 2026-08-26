@@ -55,10 +55,14 @@ when their authors wrote them. Do not rewrite them to match the current system.
   figures.
 - Do not create a second primitive layer, app-local `components/ui`, copied
   token palette, or parallel icon library.
-- Licensed Tailwind Plus source may be adapted inside this private repository.
-  Record the source and license, normalize interaction through shadcn/Base UI,
-  and keep one-off compositions app-local. Move a composition into `@vela/ui`
-  only after two maintained consumers use a stable version.
+- Licensed Tailwind Plus and shadcn.io Pro source may be adapted for this
+  application. Both licenses permit an open-source end product whose purpose is
+  not redistributing components; they forbid shipping a component registry, a
+  UI library, or a separately installable package. Record the source and
+  license in a comment and in `docs/editorial-references.md`, normalize
+  interaction through shadcn/Base UI, and keep one-off compositions app-local.
+  Move a composition into `@vela/ui` only after two maintained consumers use a
+  stable version.
 - Keep global styles to Tailwind imports, token/profile bridges, base
   typography, accessibility, print, and cross-route requirements. Route
   presentation belongs with the route or component.

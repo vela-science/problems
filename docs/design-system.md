@@ -10,9 +10,9 @@ make evidence and direction legible; it is not a separately published product.
 | Layer | Canonical source | Consumers |
 | --- | --- | --- |
 | Brand | `packages/brand` | All Vela surfaces and exported assets |
-| React primitives and semantics | `packages/ui` | Problems, Problems, eligible www interactions, future private React applications |
-| Product profile | `packages/ui/src/styles/product.css` | Problems, Problems, and future private product surfaces |
-| Exact data | `packages/projection-data` | www, Problems, and Problems State mode |
+| React primitives and semantics | `packages/ui` | Problems, and future Vela React applications |
+| Product profile | `packages/ui/src/styles/product.css` | Problems and future Vela product surfaces |
+| Exact data | `packages/projection-data` | Problems State mode and the machine read routes |
 | Activity data | `packages/activity-data` | Problems Work mode; no visual primitives |
 
 `@vela/brand` is framework-neutral. It owns the DTCG-shaped token source,
@@ -62,32 +62,31 @@ generic primitive.
 and utility aliases at `@vela/ui`; Problems consumes package exports and does
 not create an app-local primitive directory.
 
-### Private source catalog and lab
+### The private source catalog is not part of this repository
 
-`packages/ui/registry.json` is a private source catalog, not a served registry
-and not a source-copy directory. Its items reference canonical `@vela/ui`
-source directly, including reviewed licensed adaptations that are part of the
-private Vela end product. Every entry carries
-owner and maintainers, stability, primitive base, direct dependencies,
-upstream origin and version, license, local modifications, accepted data
-contract, accessibility status, theme and motion support, RTL status, tests,
-visual-review status, security review, review date, and migration state.
-`packages/ui/lab/catalog.json` groups those canonical item names into
-agent-readable scenarios across theme, viewport, motion, and direction. It
-does not duplicate component source or become a visual application. The check
-builds the catalog twice under `RUNNER_TEMP` (or the
-system temporary directory locally), requires byte-stable output, then removes
-it. It also refuses registry schema/provenance markers in application public
-assets, client bundles, or route source. Generated registry output is never
-committed, served, copied into an app, submitted to a public directory, or
-published as a separately reusable library. It also refuses application imports
-of either private catalog and requires every local source import to be present
-in the registry build closure.
+`packages/ui/registry.json` and `packages/ui/lab/` were a private source
+catalog: per-item owner, stability, primitive base, upstream origin and
+version, license, local modifications, accessibility and review status, plus
+agent-readable scenarios across theme, viewport, motion, and direction. A
+`check:registry` gate built the catalogue twice, required byte-stable output,
+refused registry provenance markers in delivered bytes, and required every
+local source import to appear in the registry build closure.
 
-Licensed shadcn.io Pro and Tailwind Plus source may inform private Vela end
-products. Stable reusable adaptations may be catalogued for this private
-repository when their exact item, retrieval version, license, semantic limits,
-and changes are recorded. This does not grant redistribution rights. The
+None of it is here. A catalogue *of components* is the one artefact both the
+Tailwind Plus and shadcn.io Pro licenses name outright, so it stays in the
+private repository rather than being published alongside the application that
+uses the components. The cost is real and worth stating: this repository has no
+automatic check that every local `@vela/ui` import is in a reviewed build
+closure. `bun run check:design-system` still verifies the shadcn/Base UI
+foundation, the shared token and typeset contracts, and the absence of a
+parallel app-local primitive layer.
+
+Licensed shadcn.io Pro and Tailwind Plus source may inform Vela end products.
+Every place that studied one records the exact item, retrieval version,
+license, semantic limits, and changes, in a source comment and in
+`docs/editorial-references.md`. That record is what keeps the licence honest;
+it is not an admission that markup was copied, and it stays in the public
+source for the same reason. This does not grant redistribution rights. The
 adaptations replace Lucide/framer-motion with Hugeicons and the existing
 `motion/react` contract.
 
@@ -161,22 +160,23 @@ text. Add another export only when it:
 Route-specific tables, filters, shells, graph controls, and publication
 layouts remain app-local until reuse is demonstrated.
 
-## Tailwind Plus
+## Tailwind Plus and shadcn.io Pro
 
-The owner has a Tailwind Plus license and the repository is private. Licensed
-components may be copied and modified to build Vela end products, including
-private app-local source.
+The owner holds Tailwind Plus and shadcn.io Pro licenses. Both permit building
+an end product from licensed components, and both permit that end product to be
+open source with public source, so long as redistributing the components is
+clearly not what the product is for. Problems is a scientific workspace, so it
+qualifies, and this repository is public on that basis.
 
-The license does not turn Tailwind Plus derivatives into a separately
-redistributable UI library. Therefore:
+Neither license turns a derivative into a separately redistributable UI
+library. Therefore:
 
-- source access stays within the licensed person or team;
-- a licensed derivative is never exposed through a public registry or
-  published separately from the Vela end product;
+- a derivative is never exposed through a public registry, published to a
+  package registry, or shipped separately from the Vela end product;
 - every adaptation records its source template and the changes made;
 - app-local use is the default;
 - promotion to `@vela/ui` requires real reuse and remains tied to
-  this private Vela product;
+  this Vela product; `@vela/ui` is application source, never a package;
 - interaction should converge on shadcn/Base UI rather than retaining a
   parallel Headless UI, Heroicons, or Motion layer without a demonstrated need.
 
