@@ -24,19 +24,19 @@ const obligationCopy = [
   {
     key: "prove" as const,
     dot: "bg-status-caution",
-    title: "Prove — attackable now",
+    title: "Prove: attackable now",
     body: "Fully stated theorems whose only hole is the proof. Any prover, human or machine, can attack these today; a success is a genuine advance.",
   },
   {
     key: "state" as const,
     dot: "bg-status-progress",
-    title: "State — instantiate before proving",
+    title: "State: instantiate before proving",
     body: "answer(sorry) declarations whose statement is itself the unknown. They cannot be proved, only instantiated; standard trust reporting cannot tell these apart from provable targets.",
   },
   {
     key: "repair" as const,
     dot: "bg-status-conflict",
-    title: "Repair — foundations resting on holes",
+    title: "Repair: foundations resting on holes",
     body: "Statements that read complete but quantify over objects defined by choice from a sorried existence lemma. Invisible to source inspection; found only by walking the type's transitive closure.",
   },
 ] as const;
@@ -71,7 +71,7 @@ export default async function FormalConjecturesFrontierPage() {
           </div>
           <p className="mt-3 max-w-3xl text-body text-muted-foreground">
             Every authored declaration in the upstream corpus, typed by the work it
-            actually asks for — computed from exact state, not read from labels.{" "}
+            actually asks for, computed from exact state rather than read from labels.{" "}
             <span className="font-medium text-foreground">{totals.prove.toLocaleString()} theorems are attackable right now.</span>
           </p>
           <div className="mt-5 flex flex-wrap gap-3">

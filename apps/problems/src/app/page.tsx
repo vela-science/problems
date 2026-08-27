@@ -19,6 +19,7 @@ import {
 } from "@vela/ui/components/input-group";
 import { PageHero, PageSection, PageShell } from "@vela/ui/vela/page-shell";
 import { HomeStatePanel, type StateEntry } from "@/components/vela/home-state-panel";
+import { CollectionCoverageBar, collectionCoverage } from "@/components/vela/collection-coverage-bar";
 import { compactResultLimitation, exactResultHeadline } from "@/components/vela/problem-overview-reference";
 import { currentReview } from "@/components/vela/problem-provenance";
 import { discoveredProblems, problemDiscoveryCollections, problemStatePreviews } from "@/lib/scientific-state";
@@ -154,6 +155,12 @@ export default async function HomePage() {
               <span>{catalog.length.toLocaleString()} published Problems</span>
               <span aria-hidden className="text-muted-foreground/50">·</span>
               <span>{formalCount} rights-reviewed formalizations</span>
+              <span aria-hidden className="text-muted-foreground/50">·</span>
+              {/* The number a newcomer most needs and was least likely to
+                  find. It lived in a collection card halfway down the page,
+                  where "2 with an accepted Result" reads as a detail rather
+                  than as the shape of the whole release. */}
+              <span>{assessed.length} with reviewed evidence</span>
             </p>
 
             <h1 className={styles.title}>Open problems and the evidence around them</h1>
@@ -242,7 +249,13 @@ export default async function HomePage() {
           </div>
           <SectionLink href="/problems">Compare collections</SectionLink>
         </div>
-        <div className="mt-5 grid gap-4 lg:grid-cols-2">
+        {/* A count is skimmed; a proportion is not. Two of 1,217 is the
+            honest shape of this release, and a reader who meets a page of
+            rows with nothing in the Result column deserves to have seen it. */}
+        <div className="mt-5 rounded-lg border p-5">
+          <CollectionCoverageBar coverage={collectionCoverage(catalog)} />
+        </div>
+        <div className="mt-4 grid gap-4 lg:grid-cols-2">
           <CollectionCard
             href={COLLECTION_PATH}
             icon={BookOpen01Icon}

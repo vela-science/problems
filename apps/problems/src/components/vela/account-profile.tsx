@@ -172,7 +172,7 @@ export function AccountProfile({ account, publicProfile, workspaces, connections
     <Section
       id="account-public-profile-heading"
       title="Public contributor profile"
-      description="What, if anything, appears publicly beside exact attribution. Presentation only — never scientific identity or review independence."
+      description="What, if anything, appears publicly beside exact attribution. Presentation only, never scientific identity or review independence."
       action={<div className="flex flex-wrap gap-2">
         {profile ? <Button className="min-h-11 sm:min-h-8" size="sm" variant="outline" nativeButton={false} render={<Link href={`/people/${profile.handle}`} />}>Preview</Button> : null}
         <Button className="min-h-11 sm:min-h-8" size="sm" nativeButton={false} render={<Link href="/account/profile" />}>{profile ? "Edit profile" : "Create profile"}</Button>

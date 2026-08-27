@@ -20,7 +20,7 @@ describe("Formal Conjectures occurrence page", () => {
 
   test("renders a synchronized exact declaration preview without calling it a whole file", () => {
     render(<FormalConjecturePage item={item} route={route} current="sources" />);
-    expect(screen.getByText("Exact retained declaration excerpt — not the whole file.")).toBeVisible();
+    expect(screen.getByText("Exact retained declaration excerpt, not the whole file.")).toBeVisible();
     expect(screen.getByText(item.source_path)).toBeVisible();
     expect(screen.getByText(item.declaration)).toBeVisible();
     expect(screen.getByRole("link", { name: "Open whole file" })).toHaveAttribute("href", item.source_url);

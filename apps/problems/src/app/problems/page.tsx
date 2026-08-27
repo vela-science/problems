@@ -25,7 +25,9 @@ export default async function ProblemsPage(props?: { searchParams?: Promise<Reco
   const erdosCount = erdos?.problemCount ?? catalog.length;
   const fcCount = formalConjecturesCollection.data.items.length;
   const collections = [
-    { name: "Erdős Problems", href: "/problems/erdos-problems", count: erdosCount, icon: Folder01Icon, description: "The source-owned Erdős problem catalogue, with status, evidence, Results, and retained formalizations.", detail: `${erdosCount.toLocaleString()} numbered Problems` },
+    { name: "Erdős Problems", href: "/problems/erdos-problems", count: erdosCount, icon: Folder01Icon, description: "The source-owned Erdős problem catalogue, with status, evidence, Results, and retained formalizations.", /* The chooser's job is to say what is behind each door. "1,217 numbered
+       Problems" invites the reading that 1,217 of them hold something. */
+    detail: `${erdosCount.toLocaleString()} numbered · ${assessed.length} with reviewed evidence` },
     { name: "Formal Conjectures", href: "/problems/formal-conjectures", count: fcCount, icon: CodeIcon, description: "A bounded rights-reviewed subset of exact research-open Lean declaration occurrences from the upstream collection.", detail: `${fcCount} published formalizations` },
   ];
   const structuredData = { "@context": "https://schema.org", "@type": "CollectionPage", name: "Problems", url: "https://problems.science/problems", numberOfItems: collections.length, hasPart: collections.map((collection) => ({ "@type": "CollectionPage", name: collection.name, url: `https://problems.science${collection.href}`, numberOfItems: collection.count })) };

@@ -68,7 +68,7 @@ describe("AppHeader trail", () => {
     navigation.pathname = "/repositories/quantum-codes/claims";
     render(<Shell />);
 
-    expect(screen.getByRole("button", { name: /Switch Repository — currently Quantum Codes/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Switch Repository. Currently Quantum Codes/ })).toBeInTheDocument();
   });
 
   it("shows a global destination without a Repository switcher", () => {

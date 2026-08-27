@@ -131,7 +131,7 @@ function Sources({ item }: { item: FormalConjectureOccurrence }) {
     </div>
     <div className="min-w-0">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b px-4 py-3"><div className="flex min-w-0 items-center gap-2 text-label"><HugeiconsIcon icon={SourceCodeIcon} aria-hidden className="size-4" /><span className="truncate">{item.declaration}</span></div><a href={item.source_url} className="inline-flex min-h-6 items-center text-meta font-medium text-primary hover:underline">Open whole file</a></div>
-      <p className="border-b bg-muted/15 px-4 py-2 text-micro text-muted-foreground">Exact retained declaration excerpt — not the whole file.</p>
+      <p className="border-b bg-muted/15 px-4 py-2 text-micro text-muted-foreground">Exact retained declaration excerpt, not the whole file.</p>
       <pre className="max-h-[36rem] overflow-auto p-4 text-compact leading-6"><code>{item.source_excerpt}</code></pre>
     </div>
   </section>;

@@ -47,7 +47,7 @@ export function RepositorySwitcher({
     <DropdownMenu>
       <DropdownMenuTrigger
         className="flex min-h-11 min-w-0 items-center gap-1 rounded px-1 text-body hover:bg-accent hover:text-foreground md:min-h-8"
-        aria-label={`Switch Repository — currently ${current.name}`}
+        aria-label={`Switch Repository. Currently ${current.name}`}
       >
         <span className="min-w-0 truncate">{current.name}</span>
         <HugeiconsIcon icon={UnfoldMoreIcon} aria-hidden className="size-3.5 shrink-0" />

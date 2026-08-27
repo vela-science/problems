@@ -102,7 +102,7 @@ function EmptyWorkspace({ state, accountId, workbenchHandoff }: { state: State; 
         <FormField label="URL slug" name="slug" placeholder="problem-working-group" />
         <Button className="w-fit" type="submit">Create workspace</Button>
       </form>
-      <p className="mt-6 border-t pt-4 text-meta text-muted-foreground">{sourceCount} retained source record{sourceCount === 1 ? "" : "s"} for {sourceTitle} — <Link href="./sources" className="font-medium text-foreground underline underline-offset-4">open Sources</Link>.</p>
+      <p className="mt-6 border-t pt-4 text-meta text-muted-foreground">{sourceCount} retained source record{sourceCount === 1 ? "" : "s"} for {sourceTitle}. <Link href="./sources" className="font-medium text-foreground underline underline-offset-4">open Sources</Link>.</p>
     </div>
   </section>;
 }

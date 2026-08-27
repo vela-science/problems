@@ -57,7 +57,7 @@ export function ProblemSwitcher({
     <Popover open={open} onOpenChange={(next: boolean) => { setOpen(next); if (!next) setQuery(""); }}>
       <PopoverTrigger
         className="flex min-h-8 min-w-0 items-center gap-1.5 rounded-md px-1.5 py-1 text-body hover:bg-accent hover:text-foreground data-[popup-open]:bg-accent"
-        aria-label={`${collectionName} ${label} — switch Problem or collection`}
+        aria-label={`${collectionName} ${label}. Switch Problem or collection`}
       >
         <span className="hidden min-w-0 shrink truncate text-muted-foreground sm:inline">{collectionName}</span>
         <span aria-hidden className="hidden text-muted-foreground/50 sm:inline">/</span>

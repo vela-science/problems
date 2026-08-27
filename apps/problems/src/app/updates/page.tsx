@@ -56,7 +56,7 @@ export default async function UpdatesPage({ searchParams }: { searchParams: Prom
         {/* The list rendered an empty <ol> that still painted its connector
             rail, under a header reading "0 updates" — an absence drawn as if
             it were a timeline. */}
-        <EmptyDescription>{view === "all" ? "Published history begins when a Repository records its first change." : "Other kinds of update may still be published — clear the filter to see the full history."}</EmptyDescription>
+        <EmptyDescription>{view === "all" ? "Published history begins when a Repository records its first change." : "Other kinds of update may still be published. Clear the filter to see the full history."}</EmptyDescription>
       </EmptyHeader>
       {view === "all" ? null : <EmptyContent><Button nativeButton={false} variant="outline" size="sm" render={<Link href="/updates" />}>Show all history</Button></EmptyContent>}
     </Empty>}</PageSection>
