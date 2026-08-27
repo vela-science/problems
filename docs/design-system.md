@@ -256,8 +256,8 @@ publication compositions stay app-local CSS modules. Shared controls, focus,
 tokens, motion limits, and type sources still come from `@vela/ui` and
 `@vela/brand`.
 
-The front page source is `apps/www/src`, with painting provenance beside the
-plates. The essay it once carried was removed on 2026-08-21.
+The front page source and its painting provenance live outside this repository.
+The essay it once carried was removed on 2026-08-21.
 Problems selectively consumes reviewed paintings and current passages in its
 brand register; the source does not become a second design system or runtime.
 

@@ -2,15 +2,13 @@
 
 ## Product boundary
 
-This private Bun workspace contains two deliberately separate Next.js
-applications, one retained editorial source library, and four shared packages:
+This public Bun workspace contains one Next.js application and four internal
+packages:
 
 - `apps/problems`: the unified Vela product application at canonical
   `problems.science`,
   combining exact scientific State, non-authoritative Work, and advanced record
   inspection;
-- `apps/www`: the static Vela application at canonical `vela.space`, owning the
-  front page, which is its only route;
 - `packages/brand`: framework-neutral tokens, fonts, marks, and licenses;
 - `packages/ui`: shared React UI source built from shadcn `base-nova` on Base
   UI, plus stable Vela presentation semantics;
@@ -31,9 +29,9 @@ accounts remain separate from Vela actor identities.
 
 ## Sources of truth
 
-- Retained paintings: `apps/www/src/assets/paintings`, with their custody record
-  beside them; Problems keeps its own copy of the one plate it reuses
-- Vela editorial routes and shell: `apps/www/src/app`
+- Reviewed Problems-local painting: `apps/problems/src/assets/hero.webp`, with
+  its custody record beside it; the separate `vela.space` surface owns its own
+  assets
 - Vela product routes and compositions: `apps/problems/src/app`,
   `apps/problems/src/components`
 - Brand contract: `packages/brand/vela.tokens.json` and its generated outputs
@@ -77,7 +75,7 @@ when their authors wrote them. Do not rewrite them to match the current system.
   canvas, deep marine navigation, cobalt interaction, and semantic colors for
   real state. Earned editorial and identity moments may reuse the canonical
   sail, first-party watercolor, horizon, constellation, borrowed-light, and
-  long-handoff language on `apps/www`. Constellations must encode exact relationships;
+  long-handoff language on `vela.space`. Constellations must encode exact relationships;
   nautical motifs must clarify orientation or handoff. Never turn product
   controls into themed props or use literal galaxy wallpaper, glass, neon,
   route hero slabs, card soup, or decorative charts.
@@ -110,10 +108,8 @@ when their authors wrote them. Do not rewrite them to match the current system.
 ## Editing workflow
 
 - Use Bun only. Do not add npm, pnpm, Yarn, Turborepo, or app-local lockfiles.
-- Keep `apps/www` static and read-only. It may import current committed release
-  facts and shared brand/UI source; it must not read request state, connect to
-  the projection or activity databases, host identity, or interpret protocol
-  records.
+- Keep `vela.space` outside this workspace. Problems may link to it but must not
+  grow a second editorial application or duplicate its source here.
 - Preserve exact-state semantics and the distinction between Verification and
   acceptance.
 - Preserve the canonical Vela sail unless an approved brand pass replaces it.

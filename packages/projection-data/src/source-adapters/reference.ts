@@ -39,16 +39,34 @@ const projectionSourceAdapterArtifactReferenceV2Schema = z.object({
   }
 });
 
-/* One shape, because only one was ever produced.
- *
- * `artifact.ts` hard-codes v2, every stored release manifest and the live site
- * manifest report v2, and the v1 schema string appeared nowhere on disk except
- * the arm that declared it. A union of one live shape and one that never
- * existed is not compatibility, it is an unexercised branch — and it hid a
- * real defect: `sources:verify` printed `reference.locator`, a field only v1
- * defined, so the value silently dropped out of its own output. */
-export const projectionSourceAdapterArtifactReferenceSchema =
-  projectionSourceAdapterArtifactReferenceV2Schema;
+const projectionSourceAdapterArtifactReferenceV3Schema = z.object({
+  schema: z.literal("vela.projection-source-adapter-artifact-reference.v3"),
+  set_root: hashRootSchema,
+  artifact_root: hashRootSchema,
+  retrieval: z.object({
+    type: z.literal("github_release_asset"),
+    repository: z.literal("vela-science/problems"),
+    release_tag: z.string(),
+    filename: z.string(),
+    authentication: z.literal("none"),
+  }).strict(),
+}).strict().superRefine((value, context) => {
+  if (value.retrieval.release_tag !== projectionSourceAdapterArtifactReleaseTag(value.set_root)) {
+    context.addIssue({ code: "custom", path: ["retrieval", "release_tag"], message: "release tag does not match the set root" });
+  }
+  if (value.retrieval.filename !== projectionSourceAdapterArtifactFilename(value.set_root)) {
+    context.addIssue({ code: "custom", path: ["retrieval", "filename"], message: "filename does not match the set root" });
+  }
+});
+
+/* v2 remains readable because activated historical releases bind its private
+ * `vela-web` locator. New artifacts are v3: the same content-addressed release
+ * asset contract under public Problems custody, with no authentication. This
+ * is history compatibility rather than a fallback: the writer emits only v3. */
+export const projectionSourceAdapterArtifactReferenceSchema = z.union([
+  projectionSourceAdapterArtifactReferenceV3Schema,
+  projectionSourceAdapterArtifactReferenceV2Schema,
+]);
 
 export type ProjectionSourceAdapterArtifactReference = z.infer<
   typeof projectionSourceAdapterArtifactReferenceSchema

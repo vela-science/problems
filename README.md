@@ -136,7 +136,7 @@ Git repository preserves exact Submissions and scoped Verification evidence.
 Neither production nor Verification changes Standing. Only an authorized,
 attributed Decision in that named Repository changes Standing;
 the performer may be human or agent, and deterministic replay
-derives the successor state and current actions. Vela Web provides the
+derives the successor state and current actions. Problems provides the
 read-only map, contribution handoff, and review surfaces.
 
 ```text
@@ -190,7 +190,7 @@ npm, pnpm, Yarn, Turborepo, or per-application lockfiles.
 ```bash
 bun install --frozen-lockfile
 bun run dev:problems     # http://127.0.0.1:4322
-bun run dev:www          # configurable local editorial preview
+bun run dev:demo         # deterministic local Problems data, no credentials
 ```
 
 ## Verify a release candidate

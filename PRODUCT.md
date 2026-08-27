@@ -56,9 +56,9 @@ restrained identity moments reused by Problems where they help orientation.
 These surfaces may use the retained paintings and editorial type. They have
 their own static shell and do not enter the Problems AppShell.
 
-The front page source is `apps/www/src`, which holds its own retained paintings
-and their custody record. Problems keeps its own copy of the one plate it
-reuses. Neither app generates replacement art or redraws the sail.
+The front page and its retained-painting custody live outside this repository.
+Problems keeps its own reviewed copy of the one plate it reuses. Neither
+surface generates replacement art or redraws the sail.
 
 The editorial origin is live. Problems links to `https://vela.space`; its
 `/about/endless-frontiers` address is retained only as a permanent cross-origin

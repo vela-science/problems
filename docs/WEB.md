@@ -10,9 +10,9 @@ Earlier design and migration plans live under `docs/history/`.
   readers across current
   change, direct contribution, communities, and the exact scientific record. Advanced
   records remain available in the same runtime.
-- `vela.space` is the separate static origin compiled by `apps/www` from its
-  own `src`. It publishes one page. The *Endless Frontiers* essay was published
-  there at `/constellations` and was removed on 2026-08-21.
+- `vela.space` is a separate static origin outside this repository. It
+  publishes one page. The *Endless Frontiers* essay was published there at
+  `/constellations` and was removed on 2026-08-21.
 - Hosted Vela is non-authoritative. The Problems reads a bounded SELECT-only
   projection from Neon. Work mode writes hosted research activity through
   `@vela/activity-data`. Canonical custody remains in Repository Git
@@ -28,12 +28,10 @@ the named identity files. The package-direction check keeps
 `@vela/projection-data` independent of mutable activity and limits
 `@vela/activity-data` reuse to exact canonical and read contracts.
 
-The repository is a Bun workspace with six maintained runtime boundaries and
-one non-runnable content area:
+The repository is a Bun workspace with five maintained runtime boundaries:
 
 ```text
 apps/problems        Vela Problems product: Problem State, Work, and Records
-apps/www             static Vela front page, one route
 packages/brand          governed identity, tokens, fonts, and delivery assets
 packages/ui             shared shadcn/Base UI source and Vela presentation semantics
 packages/projection-data  Git-to-Neon projection, validation, search, and manifests
@@ -141,6 +139,33 @@ database in the `vela-problems-projection` Neon project:
 bun run release:problems
 ```
 
+The release transaction acquires every declared public source from the checked
+locks, writes one content-addressed adapter artifact, and retains it as a public
+release asset in `vela-science/problems`. New projection manifests use
+`vela.projection-source-adapter-artifact-reference.v3`; its retrieval contract
+is unauthenticated. Historical v2 manifests remain readable as history but are
+never emitted by the current builder.
+
+A clean public checkout can prepare the same input class without access to
+`vela-web`:
+
+```bash
+bun run sources:refresh -- \
+  --output /tmp/vela-source-adapters \
+  --artifact-directory /tmp
+
+bun run projection:reconstruct -- \
+  --repositories-root /path/containing/public-math-checkout \
+  --vela /path/to/the-digest-verified-released-vela-0.977.6-binary \
+  --source-adapter-artifact /tmp/vela-projection-source-adapters-<root>.json \
+  --production-parity skip \
+  --output /tmp/vela-problems-clean-room.json
+```
+
+The skip is only for a noncanonical preactivation candidate. C1 qualification
+must use the default required production comparison against the SELECT-only
+reader; activation remains a separate operator-controlled stage.
+
 Refresh refuses dirty or unpushed sources, wrong branches or remotes, Vela
 version or released-binary-byte drift, packet drift, missing decision evidence,
 incomplete reviews, root disagreement, and every ambient corpus-drop override.
@@ -174,7 +199,8 @@ table roots, and source roots are identical. After activation, the same operator
 transaction stages any editorial snapshot, requalifies and reconstructs the
 clean local commit, publishes that exact commit, deploys it through Vercel's
 exact Git-SHA API, verifies production, and retains a qualification record.
-The content-addressed source-adapter artifact is retained before activation.
+The content-addressed source-adapter artifact is retained as an unauthenticated
+public release asset in `vela-science/problems` before activation.
 An exact remote lock prevents two operators from interleaving those stages.
 
 Run this transaction immediately after an accepted canonical Math change and

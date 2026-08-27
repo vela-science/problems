@@ -1,8 +1,8 @@
 {
   "schema": "site.vela-schemas.v1",
-  "vela_version": "0.977.3",
-  "vela_tag": "v0.977.3",
-  "vela_commit": "1c1abe8f365f16803fea889bf9280877992a6d02",
+  "vela_version": "0.977.6",
+  "vela_tag": "v0.977.6",
+  "vela_commit": "9ac8e7730bfb63a3b8eb1d2e1d91081c3e703c59",
   "files": [
     {
       "file": "vela-status-v4.schema.json",

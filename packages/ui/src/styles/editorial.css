@@ -1,5 +1,5 @@
 /* Editorial profile of the same Vela semantic system. Content-specific
- * composition remains in apps/www; controls, focus, motion and state do not. */
+ * composition remains on vela.space; controls, focus, motion and state do not. */
 @import "./product.css";
 
 @custom-variant dark (&:is(.dark *, [data-theme="dark"] *));

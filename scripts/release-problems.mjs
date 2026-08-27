@@ -158,7 +158,16 @@ function deriveOperatorEnvironment(scoped) {
 }
 
 function vercelEnvironment(environment) {
-  return environmentFor(environment, ["VERCEL_TOKEN", "VERCEL_GLOBAL_CONFIG"]);
+  return environmentFor(environment, [
+    "VERCEL_TOKEN",
+    "VERCEL_GLOBAL_CONFIG",
+    "VERCEL_TEAM_ID",
+    "VERCEL_PROJECT_ID",
+    "VERCEL_PROJECT_NAME",
+    "VERCEL_GIT_REPO_ID",
+    "VERCEL_GIT_REPO_REF",
+    "VELA_DEPLOY_REPOSITORY",
+  ]);
 }
 
 function run(command, args, { environment = process.env, cwd = root, quiet = false } = {}) {
@@ -180,15 +189,18 @@ function git(args, cwd = root, environment = process.env) {
   return run("git", args, { cwd, environment, quiet: true });
 }
 
-function exactWebCheckout(environment) {
+function exactProblemsCheckout(environment) {
   const safe = githubGitEnvironment(environment);
-  const expectedRemote = "https://github.com/vela-science/vela-web.git";
+  const expectedRemotes = new Set([
+    "https://github.com/vela-science/problems.git",
+    "git@github.com:vela-science/problems.git",
+  ]);
   const head = git(["rev-parse", "HEAD"], root, safe);
   if (git(["branch", "--show-current"], root, safe) !== "main") {
     throw new Error("release requires main");
   }
-  if (git(["remote", "get-url", "origin"], root, safe) !== expectedRemote) {
-    throw new Error("release requires the canonical vela-science/vela-web origin");
+  if (!expectedRemotes.has(git(["remote", "get-url", "origin"], root, safe))) {
+    throw new Error("release requires the canonical vela-science/problems origin");
   }
   if (git(["status", "--porcelain"], root, safe)) {
     throw new Error("release requires a clean worktree");
@@ -346,7 +358,7 @@ export function releaseLookupState({ status, stdout = "", stderr = "" }) {
 function releaseLookup(environment, tag) {
   const safe = githubEnvironment(environment);
   const result = spawnSync(required(environment, "VELA_GITHUB_CLI"), [
-    "api", `repos/vela-science/vela-web/releases/tags/${tag}`, "--include",
+    "api", `repos/vela-science/problems/releases/tags/${tag}`, "--include",
   ], { env: safe, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
   const state = releaseLookupState(result);
   if (state) return state;
@@ -358,7 +370,7 @@ function retainExactFile(environment, { tag, path, target, title, notes }) {
   if (releaseLookup(environment, tag) === "missing") {
     run(required(environment, "VELA_GITHUB_CLI"), [
       "release", "create", tag, path,
-      "--repo", "vela-science/vela-web",
+      "--repo", "vela-science/problems",
       "--target", target,
       "--title", title,
       "--notes", notes,
@@ -369,7 +381,7 @@ function retainExactFile(environment, { tag, path, target, title, notes }) {
   const existing = join(dirname(path), `retained-${basename(path)}`);
   run(required(environment, "VELA_GITHUB_CLI"), [
     "release", "download", tag,
-    "--repo", "vela-science/vela-web",
+    "--repo", "vela-science/problems",
     "--pattern", basename(path),
     "--output", existing,
   ], { environment: safe });
@@ -608,7 +620,7 @@ function deploy(environment, context, field = "deployment") {
     environment: {
       ...safe,
       VELA_SITE_COMMIT: context.siteCommit,
-      GITHUB_REPOSITORY: "vela-science/vela-web",
+      GITHUB_REPOSITORY: "vela-science/problems",
       GITHUB_REF: "refs/heads/main",
     },
   });
@@ -770,7 +782,7 @@ function retainQualification(environment, context) {
 }
 
 const stageDefinitions = Object.freeze([
-  ["exact_checkout", (environment, context) => { context.siteCommit = exactWebCheckout(environment); }],
+  ["exact_checkout", (environment, context) => { context.siteCommit = exactProblemsCheckout(environment); }],
   ["release_lock", (environment, context) => acquireReleaseLock(environment, context)],
   ["static_qualification", (environment) => runStaticQualification(environment)],
   ["neon_production_identity", (environment, context) => { context.neon = verifyNeonProductionBranch(environment); }],

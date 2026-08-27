@@ -1,7 +1,7 @@
 # Problems product provenance
 
-`apps/problems` is a new implementation in the consolidated `vela-web`
-history. The archived `vela-site` repository was studied at commit
+`apps/problems` is the canonical implementation extracted from the historical
+private `vela-web` line. The archived `vela-site` repository was studied at commit
 `34e3f20` for product anatomy: its inset shell, collapsible navigation,
 contextual header, dense ledgers, metadata rail, command palette, and stable
 deep-link behavior.
