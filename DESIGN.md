@@ -160,7 +160,7 @@ accessible behavior. None supplies Vela's ontology or visual brand.
 
 The registers are coordinated, not blended. `apps/problems` workspaces use Entire-like
 dominant objects, GitHub-like files and diffs, and Hugging Face-like discovery.
-The separate `apps/www` landing and living essay own the full editorial register.
+The separate `vela.space` surface owns the full editorial register.
 Problems Home, collection cover moments, meaningful empty states, graph
 orientation, and profile accents may inherit restrained first-party materials.
 Use the canonical sail and retained artwork; do not redraw the mark or generate
@@ -368,7 +368,8 @@ About, and other explicit editorial moments rather than beside the product
 search. The one permitted ground is a masked geometric texture that no reader
 could mistake for data: a line here encodes nothing.
 
-The full long-form composition lives in `apps/www`, outside the Problems shell.
+The full long-form composition lives at `vela.space`, outside this repository
+and the Problems shell.
 It preserves the historical continuous folio, margin notes, authored figures,
 deep links, and time-of-day atmosphere. Product pages may reuse a painting or
 quiet accent, but they do not import the essay layout.

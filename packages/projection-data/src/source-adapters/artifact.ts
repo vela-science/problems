@@ -132,15 +132,15 @@ function artifactReference(
   artifact: ProjectionSourceAdapterArtifact,
 ): ProjectionSourceAdapterArtifactReference {
   return projectionSourceAdapterArtifactReferenceSchema.parse({
-    schema: "vela.projection-source-adapter-artifact-reference.v2",
+    schema: "vela.projection-source-adapter-artifact-reference.v3",
     set_root: artifact.set_root,
     artifact_root: artifact.artifact_root,
     retrieval: {
       type: "github_release_asset",
-      repository: "vela-science/vela-web",
+      repository: "vela-science/problems",
       release_tag: projectionSourceAdapterArtifactReleaseTag(artifact.set_root),
       filename: projectionSourceAdapterArtifactFilename(artifact.set_root),
-      authentication: "required",
+      authentication: "none",
     },
   });
 }

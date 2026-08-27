@@ -49,6 +49,7 @@ import {
   loadProjectionSourceAdapterArtifact,
   writeProjectionSourceAdapterArtifact,
 } from "../src/source-adapters/artifact";
+import { projectionSourceAdapterArtifactReferenceSchema } from "../src/source-adapters/reference";
 import { mathSourceRegistry } from "../src/math-sources";
 import { sha256 } from "../src/canonical";
 
@@ -1937,9 +1938,31 @@ describe("projection refresh source-adapter set", () => {
     expect(reconstructed.artifact.artifact_root).toBe(
       packed.artifact.artifact_root,
     );
+    expect(reconstructed.reference).toMatchObject({
+      schema: "vela.projection-source-adapter-artifact-reference.v3",
+      retrieval: {
+        repository: "vela-science/problems",
+        authentication: "none",
+      },
+    });
     expect(reconstructed.manifest.set_root).toBe(prepared.manifest.set_root);
     expect([...reconstructed.bundles.keys()].sort()).toEqual(
       [...loaded.bundles.keys()].sort(),
     );
   }, 15_000);
+
+  test("retains the historical private v2 reference as read-only history", () => {
+    expect(projectionSourceAdapterArtifactReferenceSchema.parse({
+      schema: "vela.projection-source-adapter-artifact-reference.v2",
+      set_root: `sha256:${"1".repeat(64)}`,
+      artifact_root: `sha256:${"2".repeat(64)}`,
+      retrieval: {
+        type: "github_release_asset",
+        repository: "vela-science/vela-web",
+        release_tag: `source-adapter-set-${"1".repeat(64)}`,
+        filename: `vela-projection-source-adapters-${"1".repeat(64)}.json`,
+        authentication: "required",
+      },
+    }).schema).toBe("vela.projection-source-adapter-artifact-reference.v2");
+  });
 });

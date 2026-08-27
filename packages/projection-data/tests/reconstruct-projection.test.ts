@@ -34,8 +34,10 @@ describe("clean-room production parity", () => {
     expect(() => parseArgs(["--production-manifest", "https://example.test/manifest.json"])).toThrow(
       "unsupported argument --production-manifest",
     );
-    expect(() => parseArgs(["--production-parity", "skip"])).toThrow(
-      "unsupported argument --production-parity",
+    expect(parseArgs(["--production-parity", "skip"]).productionParity).toBe("skip");
+    expect(parseArgs([]).productionParity).toBe("required");
+    expect(() => parseArgs(["--production-parity", "maybe"])).toThrow(
+      "--production-parity must be required or skip",
     );
     expect(() => parseArgs(["--unknown-input", "stale.json"])).toThrow(
       "unsupported argument --unknown-input",

@@ -34,7 +34,7 @@ function manifest(overrides: Record<string, unknown> = {}) {
 
 describe("current projection compatibility", () => {
   test("loads the one exact supported Vela release", () => {
-    expect(normalizeProjectionManifest(manifest()).vela_version).toBe("vela 0.977.3");
+    expect(normalizeProjectionManifest(manifest()).vela_version).toBe("vela 0.977.6");
   });
 
   test("keeps the frontier projection block additive and self-consistent", () => {
@@ -73,7 +73,7 @@ describe("current projection compatibility", () => {
     } catch (error) {
       expect(projectionRefusal(error)).toBe("foreign_manifest");
       expect(error).toBeInstanceOf(Error);
-      expect((error as Error).message).toContain("requires vela 0.977.3");
+      expect((error as Error).message).toContain("requires vela 0.977.6");
       expect((error as Error).message).toContain("serves vela 0.976.1");
       expect((error as Error).message).toContain("SELECT-only exact supported projection");
       expect((error as Error).message).not.toMatch(/postgres(?:ql)?:\/\//u);
