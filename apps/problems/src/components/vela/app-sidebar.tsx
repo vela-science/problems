@@ -11,7 +11,6 @@ import {
   BookOpen01Icon,
   Clock01Icon,
   FileCheckIcon,
-  GitForkIcon,
   Home01Icon,
   InboxUploadIcon,
   PuzzleIcon,
@@ -92,10 +91,19 @@ function repositoryRoute(pathname: string) {
   return { slug: parts[1]!, href: `/repositories/${parts[1]}`, section: parts[2] ?? "" };
 }
 
+/* Frontiers is not in the spine.
+ *
+ * The route serves a Protocol-1 reference demonstration: two authority
+ * histories replayed from frozen Git bundles, with the correction and
+ * downstream work deliberately synthetic. That is a real and useful protocol
+ * artefact, and "Frontiers" is a word scientists read as open questions, so a
+ * primary destination promised a register of unsolved problems and delivered a
+ * fixture. PRODUCT.md puts release and protocol detail under About rather than
+ * in task navigation. The address stays live and reachable — it is published,
+ * and durable URLs do not get to break for a navigation change. */
 const PRIMARY_DESTINATIONS: SidebarDestination[] = [
   { href: "/", label: "Home", icon: Home01Icon, exact: true },
   { href: "/problems", label: "Problems", icon: PuzzleIcon },
-  { href: "/frontiers", label: "Frontiers", icon: GitForkIcon },
   { href: "/updates", label: "Updates", icon: Activity01Icon },
 ];
 

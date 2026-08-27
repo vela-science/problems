@@ -69,6 +69,24 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Protocol and release detail lives here, not in task navigation.
+          Frontiers left the global spine because a primary destination named
+          for open questions delivered a replay fixture; the demonstration is
+          worth keeping and worth labelling as what it is. */}
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Protocol demonstrations.</h2>
+        <div className={styles.copy}>
+          <p>
+            Two authority histories replayed from frozen Git bundles, showing one portable Submission ingested by two
+            Repositories that each reach their own Decision. The correction and downstream work in it are deliberately
+            synthetic, so it demonstrates the protocol rather than reporting scientific state.
+          </p>
+          <p>
+            <Link href="/frontiers" className="font-medium text-primary underline underline-offset-4">Open the Frontiers demonstration</Link>
+          </p>
+        </div>
+      </section>
+
       <aside className={styles.boundary} aria-labelledby="about-boundary-title">
         <h2 id="about-boundary-title" className="text-title">What this site does not claim</h2>
         <p className="mt-3 max-w-[72ch] text-body leading-7 text-muted-foreground">A signature proves attribution and integrity, not truth. A passing check does not accept a Result. An account does not grant scientific authority. Search and browsing help a reader choose what to inspect; problems.science does not read the literature for new results, rank problems, or decide which question deserves attention next.</p>

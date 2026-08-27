@@ -70,10 +70,15 @@ describe("AppSidebar", () => {
     renderSidebar();
     fireEvent.click(screen.getByRole("button", { name: "Open test navigation" }));
 
-    for (const [label, href] of [["Home", "/"], ["Problems", "/problems"], ["Frontiers", "/frontiers"], ["Updates", "/updates"], ["Add contribution", "/contribute"]]) {
+    for (const [label, href] of [["Home", "/"], ["Problems", "/problems"], ["Updates", "/updates"], ["Add contribution", "/contribute"]]) {
       expect(await screen.findByRole("link", { name: label })).toHaveAttribute("href", href);
     }
-    for (const label of ["Search", "Research map", "Release details", "Repositories", "Assertions", "Proposed changes"]) {
+    /* Frontiers serves a replay fixture with deliberately synthetic
+       correction data. A primary destination named for open questions that
+       delivers one is the clearest naming break in the product, so it moved
+       to About with the rest of the protocol and release detail. The route
+       itself stays reachable: it is published. */
+    for (const label of ["Search", "Research map", "Release details", "Repositories", "Assertions", "Proposed changes", "Frontiers"]) {
       expect(screen.queryByRole("link", { name: label })).not.toBeInTheDocument();
     }
     expect(screen.queryByText("Explore")).not.toBeInTheDocument();
@@ -86,7 +91,6 @@ describe("AppSidebar", () => {
 
     expect(await screen.findByRole("link", { name: "Home" })).toHaveAttribute("href", "/");
     expect(screen.getByRole("link", { name: "Problems" })).toHaveAttribute("href", "/problems");
-    expect(screen.getByRole("link", { name: "Frontiers" })).toHaveAttribute("href", "/frontiers");
     expect(screen.getByRole("link", { name: "Updates" })).toHaveAttribute("href", "/updates");
 
     /* The spine stays — a Repository is a provenance surface, not one of the

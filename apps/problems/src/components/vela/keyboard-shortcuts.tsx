@@ -16,7 +16,6 @@ import {
 export const JUMP_DESTINATIONS = [
   { key: "h", href: "/", label: "Home" },
   { key: "p", href: "/problems", label: "Problems" },
-  { key: "f", href: "/frontiers", label: "Frontiers" },
   { key: "w", href: "/contribute", label: "Contribute" },
   { key: "a", href: "/updates", label: "Updates" },
   { key: "r", href: "/repositories", label: "Repositories" },
