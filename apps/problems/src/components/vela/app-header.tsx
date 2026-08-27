@@ -27,7 +27,7 @@ const sectionTitles: Record<string, string> = {
   claims: "Assertions",
   problems: "Problems",
   proposals: "Proposed changes",
-  graph: "Graph",
+  graph: "Research map",
   reproduce: "Reproduce",
 };
 
@@ -42,7 +42,10 @@ const globalTitles: Record<string, string> = {
   "/proposals": "Proposed changes",
   "/sources": "Sources",
   "/search": "Search",
-  "/graph": "Graph",
+  /* The page calls itself the Research map, and so does PRODUCT.md. The trail
+     called it "Graph", so one destination had two names depending on where a
+     reader met it. */
+  "/graph": "Research map",
   "/account": "Account",
   "/my-work": "My work",
   "/about": "About",
