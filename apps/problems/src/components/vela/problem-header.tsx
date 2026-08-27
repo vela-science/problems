@@ -46,12 +46,18 @@ export function ProblemHeader({ state, route, current }: {
     repositoryName: state.repositoryName,
   });
   const counts = sectionCounts(state);
-  const path = route.replace(/^\/problems\//u, "");
 
   return <header className={styles.header}>
+    {/* One row, not two.
+      *
+        Identity, state and actions used to sit in a strip above the title: a
+        copy icon and a badge at one end, a button at the other, and a hand's
+        width of nothing between them. The badge is a property of the Problem
+        and reads as one beside its name; the actions belong on the line they
+        act on. The breadcrumb above carries the collection, so the slug that
+        opened that row is gone with it. */}
     <div className={styles.identity}>
-      <span className={styles.path}>{path}</span>
-      <CopyButton value={`https://problems.science${route}`} label="Copy link to this Problem" compact />
+      <h1 className={styles.title}>{problemLabel(state)}</h1>
       {/* A derived reading, and it says so on the control that explains it.
         * There is no Problem-level Standing in the projection to promote.
         *
@@ -59,9 +65,6 @@ export function ProblemHeader({ state, route, current }: {
         * between "open" and "a source said open", so it has to be reachable by
         * touch and by keyboard, not only by hover. */}
       <Popover>
-        {/* The trigger is its own button with the Badge inside it. Handing
-            `render` a Badge produced a bare span: it looked like a control,
-            carried the label, and could be neither focused nor clicked. */}
         <PopoverTrigger
           className="rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--focus-ring)]"
           aria-label={`${readingBadge(reading)}. How this reading was derived.`}
@@ -73,11 +76,10 @@ export function ProblemHeader({ state, route, current }: {
         </PopoverContent>
       </Popover>
       <div className={styles.actions}>
+        <CopyButton value={`https://problems.science${route}`} label="Copy link to this Problem" compact />
         <Button nativeButton={false} variant="outline" size="sm" render={<Link href={`${route}/work`} />}>Start work</Button>
       </div>
     </div>
-
-    <h1 className={styles.title}>{problemLabel(state)}</h1>
 
     {statement?.form === "prose" && question
       ? <p className={styles.question}><ScientificText text={question} /></p>

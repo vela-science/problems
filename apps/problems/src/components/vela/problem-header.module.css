@@ -18,15 +18,10 @@
 .identity {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.625rem;
   flex-wrap: wrap;
 }
 
-.path {
-  font-family: var(--font-mono, ui-monospace, monospace);
-  font-size: var(--text-meta);
-  color: var(--ph-muted);
-}
 
 .actions {
   display: flex;
@@ -35,7 +30,7 @@
 }
 
 .title {
-  margin: 0.45rem 0 0;
+  margin: 0;
   font-size: 1.1875rem;
   font-weight: 600;
   letter-spacing: -0.022em;
@@ -45,9 +40,18 @@
 /* The question stays on every section, because switching section must not
    move the reader's anchor. It is a caption here, not a quotation: Overview
    carries the retained statement in full with its attribution. */
+/* Wider than a reading measure, deliberately.
+ *
+ * 74ch is right for a passage read line after line. This is a two-line
+ * clamped caption under a title, and capping it there left the band using
+ * about half its width with nothing beside it — and truncating statements
+ * that would otherwise have fit. Nothing belongs in that space: everything
+ * true about a Problem is either its identity here or its answer below, and
+ * filling the gap would mean inventing a fact to fill it. So the caption takes
+ * the room instead of reserving it. */
 .question {
   margin: 0.4rem 0 0;
-  max-width: 74ch;
+  max-width: 104ch;
   font-size: var(--text-compact);
   line-height: 1.55;
   color: var(--ph-muted);

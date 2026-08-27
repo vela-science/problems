@@ -118,16 +118,19 @@ describe("Problem view addressing", () => {
     expect(screen.queryByText("Contributions")).toBeNull();
   });
 
-  /* The collection the question belongs to still has to survive on the page.
+  /* Naming the collection is the breadcrumb's job, and only its job.
    *
-     It used to survive as a fact-rail heading — "Erdős Problems says" — beside
-     three other state facts. The rail went with the redesign, so the page now
-     carries the collection where GitHub and Hugging Face carry it: in the
-     object's own addressable identity, above the title. The display name
-     "Erdős Problems" is the breadcrumb's, which is a different component. */
-  it("names the collection the question belongs to", async () => {
+     It used to be a fact-rail heading — "Erdős Problems says" — beside three
+     other state facts. The rail went with the redesign, and the slug that
+     briefly replaced it (`erdos-problems/321`, above the title) said the same
+     thing the breadcrumb directly above already said, with a switcher that can
+     move between collections. Two renderings of one identity, a hand's width
+     apart, is the redundancy this redesign exists to remove. `app-header`
+     covers the breadcrumb; what this page owes is the Problem's own name. */
+  it("names the Problem and leaves its collection to the breadcrumb", async () => {
     render(await page({}));
-    expect(screen.getByText("erdos-problems/321")).toBeVisible();
+    expect(screen.getByRole("heading", { level: 1 })).toBeVisible();
+    expect(screen.queryByText("erdos-problems/321")).not.toBeInTheDocument();
   });
 
   it.each([
