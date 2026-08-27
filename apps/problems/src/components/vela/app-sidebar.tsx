@@ -1,6 +1,6 @@
 "use client";
 
-import type { ComponentProps } from "react";
+import { useSyncExternalStore, type ComponentProps } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 /* One glyph per destination, and no glyph used twice: Overview and Problems
@@ -8,7 +8,6 @@ import { usePathname } from "next/navigation";
    Sources list, so the rail read as three pairs of the same place. */
 import {
   Activity01Icon,
-  ArrowLeft01Icon,
   BookOpen01Icon,
   Clock01Icon,
   FileCheckIcon,
@@ -25,6 +24,7 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -38,6 +38,7 @@ import {
 } from "@vela/ui/components/sidebar";
 import { BrandMark as VelaMark } from "@vela/ui/vela/brand-mark";
 import { useAccountState } from "@/components/vela/account-state";
+import { recentObjectsServerSnapshot, recentObjectsSnapshot, subscribeRecentObjects } from "@/lib/recent-objects";
 import type { PublishedProblemCollection } from "@/lib/problem-collections";
 
 type SidebarDestination = {
@@ -47,31 +48,21 @@ type SidebarDestination = {
   exact?: boolean;
 };
 
-/* Entire's dominant-object model, which PRODUCT.md names as the reference:
-   inside an object the rail stops being site navigation and becomes that
-   object's own sections. The Problem is the primary public object here, so a
-   Problem page gets the rail rather than a strip of tabs under the question,
-   which competed with the page's own headings for the same job. */
-const PROBLEM_SECTIONS: Array<{ key: string; label: string; icon: SidebarDestination["icon"] }> = [
-  { key: "overview", label: "Overview", icon: BookOpen01Icon },
-  { key: "work", label: "Work", icon: WorkIcon },
-  { key: "results", label: "Results", icon: FileCheckIcon },
-  { key: "sources", label: "Sources", icon: SourceCodeIcon },
-  { key: "history", label: "History", icon: Clock01Icon },
-];
-
-/* `/problems/<collection>/<id>` and its one optional section segment: a
-   Problem page, not the collection index above it. */
-function problemRoute(pathname: string) {
-  const parts = pathname.split("/").filter(Boolean);
-  if (parts.length < 3 || parts.length > 4 || parts[0] !== "problems") return null;
-  return {
-    namespace: parts[1]!,
-    problem: parts[2]!,
-    href: `/problems/${parts[1]}/${parts[2]}`,
-    section: parts[3] ?? "overview",
-  };
-}
+/* The rail moves between objects; the Problem's own header moves between its
+   sections.
+ *
+ * The rail used to carry the five Problem sections, on the reading that inside
+ * a dominant object the rail becomes that object's navigation. In practice the
+ * page then named the same object three times — breadcrumb, rail group, and
+ * the hero above the content — and the section list was the copy a reader had
+ * just used to arrive. GitHub and Hugging Face both settle this the other way:
+ * object identity and its sections live in one header, and the rail is for
+ * getting to a different object. The sections now live in `problem-header`,
+ * where their counts can say where the substance is before the click.
+ *
+ * What the rail gains instead is the list of objects recently opened, which is
+ * the cross-object move it could not previously make without going back out
+ * through the collection index. */
 
 /* A Repository's own sections, shown *under* the product spine rather than in
    place of it. The cluster had no navigation of any kind — its layout is a
@@ -111,11 +102,10 @@ const PRIMARY_DESTINATIONS: SidebarDestination[] = [
 export function AppSidebar({ problemCollections = [{ namespace: "erdos-problems", name: "Erdős Problems", identifierKind: "number" }] }: { problemCollections?: PublishedProblemCollection[] }) {
   const pathname = usePathname();
   const accountState = useAccountState();
-  const problem = problemRoute(pathname);
   const repository = repositoryRoute(pathname);
-  const collectionName = problem
-    ? problemCollections.find((entry) => entry.namespace === problem.namespace)?.name ?? "Problems"
-    : null;
+  /* localStorage, so the server renders the group empty and the client fills
+     it in. That is also exactly what a reader who has opened nothing sees. */
+  const recent = useSyncExternalStore(subscribeRecentObjects, recentObjectsSnapshot, recentObjectsServerSnapshot).slice(0, 5);
   const { isMobile, setOpenMobile, state, toggleSidebar } = useSidebar();
   const collapsedDesktop = !isMobile && state === "collapsed";
   const closeMobileNavigation = () => setOpenMobile(false);
@@ -172,44 +162,7 @@ export function AppSidebar({ problemCollections = [{ namespace: "erdos-problems"
         role={isMobile ? "navigation" : undefined}
         aria-label={isMobile ? "Vela navigation" : undefined}
       >
-        {problem ? <SidebarGroup className="py-1">
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {/* The way back out. Inside an object the rail is the object's,
-                  so leaving it has to be an item rather than an assumption. */}
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  className="h-11 md:h-8"
-                  tooltip={`All of ${collectionName}`}
-                  render={<Link href={`/problems/${problem.namespace}`} onClick={closeMobileNavigation} />}
-                >
-                  <HugeiconsIcon icon={ArrowLeft01Icon} aria-hidden />
-                  <span>All problems</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              {/* Sections are path segments, so the open one is readable from
-                  the path alone. Reading `?view=` here would pull
-                  `useSearchParams` into the shell that every route renders and
-                  force a Suspense boundary on all of them, which is why an
-                  earlier attempt at this rail was removed. */}
-              {PROBLEM_SECTIONS.map(({ key, label, icon: Icon }) => {
-                const href = key === "overview" ? problem.href : `${problem.href}/${key}`;
-                const active = problem.section === key;
-                return <SidebarMenuItem key={key}>
-                  <SidebarMenuButton
-                    className="h-11 md:h-8"
-                    tooltip={label}
-                    isActive={active}
-                    render={<Link href={href} aria-current={active ? "page" : undefined} onClick={closeMobileNavigation} />}
-                  >
-                    <HugeiconsIcon icon={Icon} aria-hidden />
-                    <span>{label}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>;
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup> : <SidebarGroup className="py-1">
+        <SidebarGroup className="py-1">
           <SidebarGroupContent>
             <SidebarMenu>
               {destinations.map(({ href, label, icon: Icon, exact }) => {
@@ -240,7 +193,26 @@ export function AppSidebar({ problemCollections = [{ namespace: "erdos-problems"
               })}
             </SidebarMenu>
           </SidebarGroupContent>
-        </SidebarGroup>}
+        </SidebarGroup>
+
+        {recent.length ? <SidebarGroup className="border-t border-sidebar-border py-1">
+          <SidebarGroupLabel>Recently opened</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {recent.map((object) => <SidebarMenuItem key={object.href}>
+                <SidebarMenuButton
+                  className="h-11 md:h-8"
+                  tooltip={object.context ? `${object.title} · ${object.context}` : object.title}
+                  isActive={pathname === object.href}
+                  render={<Link href={object.href} onClick={closeMobileNavigation} />}
+                >
+                  <HugeiconsIcon icon={PuzzleIcon} aria-hidden />
+                  <span className="truncate">{object.title}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>)}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup> : null}
 
         {repository ? <SidebarGroup className="border-t border-sidebar-border py-1">
           <SidebarGroupContent>

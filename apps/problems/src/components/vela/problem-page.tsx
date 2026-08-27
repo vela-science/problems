@@ -6,15 +6,15 @@ import { Button } from "@vela/ui/components/button";
 import { PageHero, PageShell } from "@vela/ui/vela/page-shell";
 import {
   ProblemOverviewReference,
-  ProblemReferenceHeader,
   type ProblemReferenceView,
 } from "@/components/vela/problem-overview-reference";
+import { ProblemHeader } from "@/components/vela/problem-header";
 import { ProblemState, type ProblemResearchView } from "@/components/vela/problem-state";
 import { ProblemWorkspace } from "@/components/vela/problem-workspace";
 import { RememberObject } from "@/components/vela/remember-object";
 import { RegisterProblemTools } from "@/webmcp/register-tools";
 import { buildWebMcpProblemContext } from "@/webmcp/build-context";
-import { problemLabel, resolveProblemStatement, statementParagraphs, statementPlainText } from "@/lib/problem-statement";
+import { problemLabel, resolveProblemStatement, statementParagraphs } from "@/lib/problem-statement";
 import { authConfiguration, currentAccount } from "@/lib/auth";
 import { problemFrontierMovement } from "@/lib/frontier-timeline";
 import { scientificProblemState } from "@/lib/scientific-state";
@@ -121,9 +121,11 @@ export async function ProblemPageView({ repository, problem, collectionName, rou
      is the instrument that wants every pixel. */
   return <PageShell as="article" archetype="problem" layout={view === "workspace" ? "canvas" : "standard"} className="!pt-2">
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
-    {/* Spoken form, not the source TeX: the palette lists this as a name, and
-        the raw statement would print `\mathbb{R}^2` into it. */}
-    <RememberObject href={route} title={statementPlainText(question).slice(0, 120)} context={collectionName} />
+    {/* The object's name, not its statement. Both the palette and the rail
+        list this as an entry in a narrow column, and a truncated theorem reads
+        as "Suppose n points in R^2 determine a convex poly…" — which identifies
+        nothing. The statement stays searchable through the search index. */}
+    <RememberObject href={route} title={problemLabel(state)} context={collectionName} />
     {/* The same exact state this page renders, offered to a browser agent as
         typed operations. Registration is client-side and unregisters on
         navigation; a browser without WebMCP renders nothing here and the page
@@ -135,9 +137,7 @@ export async function ProblemPageView({ repository, problem, collectionName, rou
       accountsEnabled={accountsEnabled}
       workspaceId={query.workspace ?? null}
     />
-    <div className="mt-2">
-      <ProblemReferenceHeader state={state} collectionName={collectionName} summary={referenceView === "overview"} />
-    </div>
+    <ProblemHeader state={state} route={route} current={referenceView} />
     {referenceView === "overview" ? <ProblemOverviewReference state={state} route={route} />
       : view === "workspace"
         ? <ProblemWorkspace state={state} hostedAccount={account} accountsEnabled={accountsEnabled} selectedWorkspace={query.workspace} selectedObject={query.object} selectedInspector={query.inspector} mutationError={query.workError} basePath={route} />

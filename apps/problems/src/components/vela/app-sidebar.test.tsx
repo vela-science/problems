@@ -111,21 +111,26 @@ describe("AppSidebar", () => {
     expect(screen.getByRole("link", { name: "Formal Conjectures" })).toHaveAttribute("href", "/problems/formal-conjectures");
   });
 
-  /* Entire's dominant-object model, which PRODUCT.md names as the reference:
-     within an object the rail stops being site navigation and becomes that
-     object's sections, so the strip of tabs that used to repeat them under the
-     question could go. The way back out has to stay reachable. */
-  it("becomes the Problem's own sections inside a Problem", async () => {
+  /* The rail keeps the product spine inside a Problem, and the Problem's own
+     header carries its sections.
+   *
+     The rail used to become the Problem's sections. That made the page name
+     the same object three times over — breadcrumb, rail group, hero — and left
+     no way to reach another destination without first leaving the object. The
+     sections moved to `problem-header`, where a count beside each says where
+     the substance is before the reader spends a click on finding out. */
+  it("keeps the product spine inside a Problem and carries no section list", async () => {
     navigation.pathname = "/problems/erdos-problems/321";
     renderSidebar();
     fireEvent.click(screen.getByRole("button", { name: "Open test navigation" }));
 
-    expect(await screen.findByRole("link", { name: "Overview" })).toHaveAttribute("href", "/problems/erdos-problems/321");
-    for (const [label, view] of [["Work", "work"], ["Results", "results"], ["Sources", "sources"], ["History", "history"]]) {
-      expect(screen.getByRole("link", { name: label })).toHaveAttribute("href", `/problems/erdos-problems/321/${view}`);
+    expect(await screen.findByRole("link", { name: "Problems" })).toHaveAttribute("href", "/problems");
+    expect(screen.getByRole("link", { name: "Updates" })).toHaveAttribute("href", "/updates");
+    for (const label of ["Work", "Results", "Sources", "History", "All problems"]) {
+      expect(screen.queryByRole("link", { name: label })).not.toBeInTheDocument();
     }
-    expect(screen.getByRole("link", { name: "All problems" })).toHaveAttribute("href", "/problems/erdos-problems");
-    expect(screen.queryByRole("link", { name: "Updates" })).not.toBeInTheDocument();
+    /* The collection stays one click away, as the open branch under Problems. */
+    expect(screen.getByRole("link", { name: "Erdős Problems" })).toHaveAttribute("href", "/problems/erdos-problems");
   });
 
   it("marks exact pages and closes after navigation", async () => {

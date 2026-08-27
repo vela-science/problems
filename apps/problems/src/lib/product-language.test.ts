@@ -87,12 +87,11 @@ describe("current product language", () => {
     for (const label of ["Search", "Research map", "Release details", "Repositories", "Sources", "Assertions", "Proposed changes"]) {
       expect(spine).not.toContain(`label: "${label}"`);
     }
-    /* Inside a Problem the rail becomes that Problem's sections rather than
-       site navigation, and the strip of tabs that used to duplicate them under
-       the question is gone. Two controls naming the same five destinations,
-       one above the other, is the confusion this replaced. */
-    expect(sidebar).toContain("PROBLEM_SECTIONS");
-    expect(source("components/vela/problem-page.tsx")).not.toContain("<ProblemReferenceTabs");
+    /* One control names the Problem's sections, and it is the Problem's own
+       header. The rail carried them for a while; the page then named the same
+       object three times and offered no way out of it. */
+    expect(sidebar).not.toContain("PROBLEM_SECTIONS");
+    expect(source("components/vela/problem-header.tsx")).toContain('aria-label="Problem sections"');
     expect(source("components/vela/problem-overview-reference.tsx")).not.toContain('aria-label="Problem sections"');
     /* The repository tab bar owns section naming; the header carries only the
        ancestor it does not provide. */

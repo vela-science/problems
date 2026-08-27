@@ -79,3 +79,42 @@ export function forgetObjects(): void {
     /* As above. */
   }
 }
+
+/* A snapshot a component can subscribe to.
+ *
+ * `recentObjects()` builds a new array on every call, which `useSyncExternalStore`
+ * reads as a changed store and re-renders forever. The raw string is the cheap
+ * identity check: the parsed list is rebuilt only when the stored text differs,
+ * so repeat reads return the same reference.
+ *
+ * `storage` fires for other tabs only. Same-tab writes are picked up on the
+ * next render, which for the rail is the next navigation — the moment the list
+ * would change anyway. */
+const EMPTY: RecentObject[] = [];
+let cachedRaw: string | null = null;
+let cachedList: RecentObject[] = EMPTY;
+
+export function recentObjectsSnapshot(): RecentObject[] {
+  if (typeof window === "undefined") return EMPTY;
+  let raw: string | null = null;
+  try {
+    raw = window.localStorage.getItem(KEY);
+  } catch {
+    return EMPTY;
+  }
+  if (raw !== cachedRaw) {
+    cachedRaw = raw;
+    cachedList = recentObjects();
+  }
+  return cachedList;
+}
+
+export function recentObjectsServerSnapshot(): RecentObject[] {
+  return EMPTY;
+}
+
+export function subscribeRecentObjects(onChange: () => void): () => void {
+  if (typeof window === "undefined") return () => {};
+  window.addEventListener("storage", onChange);
+  return () => window.removeEventListener("storage", onChange);
+}

@@ -118,14 +118,16 @@ describe("Problem view addressing", () => {
     expect(screen.queryByText("Contributions")).toBeNull();
   });
 
-  /* The identity used to be repeated beside the question as well as in the
-     breadcrumb, on the argument that the breadcrumb scrolls away and does not
-     print. Two identical readings of the same fact, one above the other, cost
-     more than the case they bought: the breadcrumb is the identity now. What
-     still has to survive here is the collection the question belongs to. */
+  /* The collection the question belongs to still has to survive on the page.
+   *
+     It used to survive as a fact-rail heading — "Erdős Problems says" — beside
+     three other state facts. The rail went with the redesign, so the page now
+     carries the collection where GitHub and Hugging Face carry it: in the
+     object's own addressable identity, above the title. The display name
+     "Erdős Problems" is the breadcrumb's, which is a different component. */
   it("names the collection the question belongs to", async () => {
     render(await page({}));
-    expect(screen.getByText("Erdős Problems")).toBeVisible();
+    expect(screen.getByText("erdos-problems/321")).toBeVisible();
   });
 
   it.each([
