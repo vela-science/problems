@@ -96,10 +96,14 @@ build therefore obtains fresh least-privilege database URLs from Neon instead
 of copying production credentials:
 
 ```bash
-VELA_PROJECTION_DATABASE_URL="$(neonctl connection-string main --project-id lingering-meadow-20929365 --role-name vela_projection_reader_20260813 --database-name vela_projection --pooled --no-color)" \
-VELA_ACTIVITY_DATABASE_URL="$(neonctl connection-string main --project-id lingering-meadow-20929365 --role-name vela_activity_app --database-name vela_activity --pooled --no-color)" \
+VELA_PROJECTION_DATABASE_URL="$(neonctl connection-string main --project-id lingering-meadow-20929365 --role-name vela_projection_reader_20260813 --database-name vela_projection --no-color)" \
+VELA_ACTIVITY_DATABASE_URL="$(neonctl connection-string main --project-id lingering-meadow-20929365 --role-name vela_activity_app --database-name vela_activity --no-color)" \
 bun run --filter @vela/problems build
 ```
+
+Problems uses the Neon serverless HTTP driver, not a long-lived TCP client.
+Use direct Neon hostnames here; a pooled hostname adds no connection-pooling
+benefit to the HTTP transport.
 
 ## Develop
 
@@ -110,8 +114,8 @@ bun install --frozen-lockfile
 PORT=4322 HOST=localhost bun run dev:problems # example; match the staging callback
 bun run --filter @vela/problems typecheck
 bun run --filter @vela/problems test
-VELA_PROJECTION_DATABASE_URL="$(neonctl connection-string main --project-id lingering-meadow-20929365 --role-name vela_projection_reader_20260813 --database-name vela_projection --pooled --no-color)" \
-VELA_ACTIVITY_DATABASE_URL="$(neonctl connection-string main --project-id lingering-meadow-20929365 --role-name vela_activity_app --database-name vela_activity --pooled --no-color)" \
+VELA_PROJECTION_DATABASE_URL="$(neonctl connection-string main --project-id lingering-meadow-20929365 --role-name vela_projection_reader_20260813 --database-name vela_projection --no-color)" \
+VELA_ACTIVITY_DATABASE_URL="$(neonctl connection-string main --project-id lingering-meadow-20929365 --role-name vela_activity_app --database-name vela_activity --no-color)" \
 bun run --filter @vela/problems build
 bun run check:design-system
 ```

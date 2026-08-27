@@ -120,6 +120,12 @@ one explicit shared preview environment rather than a misleading claim of
 per-PR branching. If Git previews are enabled later, replace it with automatic
 branch-per-preview provisioning for both runtime credentials together.
 
+**2026-08-27 correction.** The live Vercel project now has database variables
+only in the Production environment. No Preview-scoped database variable or
+Git-preview binding remains. The persistent Neon `vercel-preview` branch is
+therefore retained only pending deletion approval, not as current runtime
+infrastructure.
+
 ## Package and dependency disposition
 
 - Keep `@vela/projection-data` as the only scientific projection reader and `@vela/activity-data` as the only hosted write surface.
