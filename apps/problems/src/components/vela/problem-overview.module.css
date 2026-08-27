@@ -1,0 +1,199 @@
+/* Overview answers the Problem, and each fact has one home.
+ *
+ * What this replaces: a "Current Result" card whose largest type was the
+ * accepted Claim's statement, a four-fact strip that repeated the card's own
+ * Decision and Checks, a four-row index of the other sections, and a rail of
+ * counts. A reader met an accepted mathematical statement in the biggest type
+ * on the page before meeting the word "open".
+ *
+ * The answer leads and is unframed, because the page's dominant object should
+ * not look like one item in a stack of cards. Everything under it is a panel
+ * of rows, so framing means "these belong together" rather than "here is a
+ * thing". */
+.overview {
+  --ov-line: var(--border);
+  --ov-muted: var(--muted-foreground);
+  display: grid;
+  gap: 1.75rem;
+  align-items: start;
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 64rem) {
+  .overview { grid-template-columns: minmax(0, 1fr) 20rem; gap: 1.75rem; }
+}
+
+.column { display: flex; flex-direction: column; gap: 0.875rem; min-width: 0; }
+.rail { display: flex; flex-direction: column; gap: 0.875rem; min-width: 0; }
+
+/* The answer. Unframed, and the largest type on the page. */
+.answer { padding-bottom: 0.25rem; }
+
+.answerHeadline {
+  margin: 0;
+  font-size: 1.625rem;
+  font-weight: 600;
+  letter-spacing: -0.026em;
+  line-height: 1.18;
+  text-wrap: pretty;
+}
+
+.answerDetail {
+  margin: 0.5rem 0 0;
+  max-width: 62ch;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--foreground);
+}
+
+.panel {
+  background: var(--card);
+  border: 1px solid var(--ov-line);
+  border-radius: 0.4375rem;
+  overflow: hidden;
+}
+
+.panelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.625rem;
+  padding: 0.5rem 0.8125rem;
+  border-bottom: 1px solid var(--ov-line);
+  background: var(--muted);
+}
+
+.kicker {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--ov-muted);
+}
+
+/* The scope instrument.
+ *
+ * The one relation it draws is the one the accepted Claim states about itself:
+ * its scope is strictly narrower than the question. Nesting is that relation,
+ * not a quantity — a reader sees in about a second that the proved region sits
+ * inside an unproved one, which no paragraph achieves. Rendered only when the
+ * Claim declares a limitation; without one there is no containment to assert. */
+.scope { padding: 1.0625rem; }
+
+.scopeOuter {
+  border: 1.5px dashed color-mix(in oklab, var(--status-caution) 55%, var(--border));
+  border-radius: 0.5625rem;
+  padding: 0.875rem;
+  background: color-mix(in oklab, var(--status-caution) 6%, var(--card));
+}
+
+.scopeInner {
+  border: 1.5px solid color-mix(in oklab, var(--status-progress) 55%, var(--border));
+  border-radius: 0.4375rem;
+  padding: 0.8125rem;
+  background: var(--card);
+  margin-top: 0.8125rem;
+}
+
+/* The inset is the containment, and at a phone width an inset also costs
+   reading measure. Narrow screens keep the nesting and drop the indent. */
+@media (min-width: 48rem) {
+  .scopeInner { max-width: 72%; }
+}
+
+.scopeRow { display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; }
+.scopeLabel { font-size: 0.8125rem; font-weight: 600; }
+.scopeOuter .scopeLabel { color: color-mix(in oklab, var(--status-caution) 78%, var(--foreground)); }
+.scopeInner .scopeLabel { color: color-mix(in oklab, var(--status-progress) 78%, var(--foreground)); }
+.scopeText { margin: 0.3125rem 0 0; font-size: 0.8125rem; line-height: 1.55; color: var(--foreground); }
+.scopeGap {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  font-size: 0.78125rem;
+  line-height: 1.5;
+  color: color-mix(in oklab, var(--status-caution) 72%, var(--foreground));
+}
+
+.row {
+  display: grid;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.8125rem;
+  border-bottom: 1px solid color-mix(in oklab, var(--border) 55%, transparent);
+  font-size: 0.8125rem;
+  min-height: 2.75rem;
+}
+.row:last-child { border-bottom: 0; }
+.rowCurrent { background: color-mix(in oklab, var(--accent) 40%, transparent); }
+
+.rowTitle { font-weight: 500; min-width: 0; }
+.rowMeta { font-size: 0.75rem; line-height: 1.45; color: var(--ov-muted); margin-top: 0.1875rem; }
+
+.note {
+  padding: 0.5625rem 0.8125rem;
+  background: var(--muted);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--ov-muted);
+}
+
+.fact {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.625rem;
+  padding: 0.4375rem 0.8125rem;
+  border-bottom: 1px solid color-mix(in oklab, var(--border) 55%, transparent);
+  font-size: 0.78125rem;
+}
+.fact:last-child { border-bottom: 0; }
+.factKey { color: var(--ov-muted); }
+.factValue { font-weight: 500; text-align: right; letter-spacing: -0.005em; }
+.factStack { display: block; }
+.factStack .factValue { text-align: left; margin-top: 0.25rem; }
+
+.absent {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.8125rem;
+  border-bottom: 1px solid color-mix(in oklab, var(--border) 55%, transparent);
+  font-size: 0.75rem;
+  color: var(--ov-muted);
+}
+.absent:last-child { border-bottom: 0; }
+.absentMark { width: 0.4375rem; height: 0.4375rem; border-radius: 50%; background: var(--border); flex: none; }
+
+.exact { font-family: var(--font-mono, ui-monospace, monospace); font-size: 0.6875rem; }
+
+.actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.375rem; }
+
+/* The empty Problem, which is 1,215 of the 1,217 in this collection.
+ *
+ * It used to render the rich page with nothing in it: four state tiles that
+ * all reported absence, an h1 announcing that no result had been accepted, and
+ * a rail of zeroes. The most common screen in the product was built as a
+ * degraded case of its rarest one. It gets its own composition instead. */
+.ladder { display: grid; gap: 0.75rem; padding: 1.125rem 1.0625rem 0.9375rem; position: relative; }
+
+@media (min-width: 48rem) {
+  .ladder { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; }
+  .ladderWire { position: absolute; left: 1.4rem; right: 1.4rem; top: 1.5rem; height: 2px; background: var(--border); }
+}
+
+.stage { padding-right: 0.75rem; position: relative; }
+.stageMark {
+  width: 0.8125rem;
+  height: 0.8125rem;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--background);
+  position: relative;
+  z-index: 1;
+}
+.stageMarkPresent { border-color: var(--status-progress); background: var(--status-progress); }
+.stageLabel { margin-top: 0.6875rem; font-size: 0.78125rem; font-weight: 500; }
+.stageAbsent { color: var(--ov-muted); font-weight: 400; }
+.stageDetail { margin-top: 0.1875rem; font-size: 0.6875rem; line-height: 1.45; color: var(--ov-muted); }

@@ -85,13 +85,16 @@ when their authors wrote them. Do not rewrite them to match the current system.
   a route with a succession of question headings, prose sections, disclaimer
   paragraphs, or numbered explanations.
 - Problem navigation is five sections — Overview, Work, Results, Sources,
-  History — scoped in the sidebar under the open Problem, each at its own path
-  segment (`/problems/<namespace>/<problem>/<section>`). It was a flat tab row
-  above the content; the sidebar holds the object the reader is in, so the
-  section list belongs with it rather than repeating the object's identity a
-  second time above the page. The breadcrumb switches Problems; the rail
-  switches sections. Overview is a substantive question-first reference screen,
-  not a navigation summary. Work owns mutable coordination; Results owns
+  History — carried in the Problem's own header, each at its own path segment
+  (`/problems/<namespace>/<problem>/<section>`), with a count on each saying
+  what that section holds. The list lived in the sidebar for a while, on the
+  reading that the rail should become the object a reader is inside. In
+  practice the page then named the same Problem three times over — breadcrumb,
+  rail group, and the hero above the content — and offered no way to reach
+  another destination without first leaving the object. GitHub and Hugging Face
+  both settle it the other way. The rail moves between objects and keeps the
+  product spine everywhere; the header moves between sections. Overview is a
+  substantive question-first reference screen, not a navigation summary. Work owns mutable coordination; Results owns
   durable outputs; Sources owns files, declarations, and excerpts; History
   owns semantic chronology. The exact map is a contextual action, not a sixth
   section. Preserve old `?view=` query values for shared-link compatibility but

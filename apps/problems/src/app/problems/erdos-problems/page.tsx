@@ -31,6 +31,7 @@ import { ScientificText } from "@vela/ui/vela/scientific-text";
 import { StatementText } from "@/components/vela/statement-text";
 import { paragraphsOf } from "@/lib/problem-statement";
 import { CollectionDistribution } from "@/components/vela/collection-distribution";
+import { CollectionCoverageBar, collectionCoverage } from "@/components/vela/collection-coverage-bar";
 import { isJustTheName } from "@/lib/problem-label";
 import { statementPlainText } from "@/lib/problem-statement";
 import { SourceCorpusMap } from "@/components/vela/source-corpus-map";
@@ -359,7 +360,14 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
         <p className="mt-1.5 max-w-[62ch] text-compact text-muted-foreground">{catalog.length.toLocaleString()} source-owned questions · {catalog.filter((entry) => entry.record.formalized).length.toLocaleString()} with a formal statement · searchable by statement, number, topic and source status.</p>
         <div className="mt-4 flex flex-wrap items-center gap-4 text-meta [&>a]:inline-flex [&>a]:min-h-6 [&>a]:items-center"><Link href="/contribute" className="font-semibold text-primary underline-offset-4 hover:underline">Add a contribution</Link><Link href={{ pathname: COLLECTION_PATH, query: { view: "overview" } }} className="font-semibold text-primary underline-offset-4 hover:underline">Collection details</Link></div>
       </div>
-      <Disclosure className="mt-5 border-t pt-3" summaryClassName="w-fit text-meta font-medium text-muted-foreground hover:text-foreground" summary="Collection coverage">
+      {/* One figure, not five numbers: how much of this collection carries
+          anything. A reader who meets a page of rows with nothing in the
+          Result column should learn that two of 1,217 have evidence here
+          before concluding the product is broken. */}
+      <div className="mt-4 border-t pt-3.5">
+        <CollectionCoverageBar coverage={collectionCoverage(catalog)} />
+      </div>
+      <Disclosure className="mt-4" summaryClassName="w-fit text-meta font-medium text-muted-foreground hover:text-foreground" summary="Full distribution">
         <div className="mt-3"><CollectionDistribution problems={catalog} compact /></div>
       </Disclosure>
     </PageHero>
