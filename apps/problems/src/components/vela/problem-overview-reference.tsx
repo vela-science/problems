@@ -32,6 +32,7 @@ import {
 } from "@vela/ui/components/item";
 import styles from "./problem-overview-reference.module.css";
 import { Disclosure } from "@/components/vela/disclosure";
+import { Problem94TransitionPilot } from "@/components/vela/problem-transition-pilot";
 
 type State = NonNullable<ScientificProblemState>;
 export type ProblemReferenceView = "overview" | "work" | "results" | "sources" | "history";
@@ -138,6 +139,7 @@ export function ProblemReferenceHeader({ state, collectionName, summary = true }
   const coverage = formalCoverage(state);
   const formalTargets = summarizeFormalTargets(state.sources.occurrences);
   const sourceStatus = humanize(state.problem.declared_status, "Not stated");
+  const transitionPilot = state.problem.source_id === "source:erdos-problems" && state.problem.problem === "94";
 
   return <div className={styles.reference}>
     <header className={styles.hero}>
@@ -160,7 +162,7 @@ export function ProblemReferenceHeader({ state, collectionName, summary = true }
         {collectionName.replace(/ Problems$/u, " problem")} {state.problem.problem}
       </h1>
       {summary ? (
-        <figure className={styles.statement}>
+        <figure className={`${styles.statement} ${transitionPilot ? styles.statementPilot : ""}`}>
           <blockquote>
             {statement?.form === "prose" && question ? <ScientificText text={question} /> : state.problem.label}
           </blockquote>
@@ -181,7 +183,7 @@ export function ProblemReferenceHeader({ state, collectionName, summary = true }
 
       {/* One tone across the four facts. A colour per fact read as four
         * independent verdicts, and the reassuring ones were the loud ones. */}
-      {summary ? <dl className={styles.heroRail}>
+      {summary && !transitionPilot ? <dl className={styles.heroRail}>
         <div className={styles.heroFact}>
           <dt>Formal statements</dt>
           <dd className="capitalize">{formalTargets}</dd>
@@ -204,6 +206,9 @@ export function ProblemReferenceHeader({ state, collectionName, summary = true }
 }
 
 export function ProblemOverviewReference({ state, route }: { state: State; route: string }) {
+  if (state.problem.source_id === "source:erdos-problems" && state.problem.problem === "94") {
+    return <Problem94TransitionPilot state={state} route={route} />;
+  }
   const current = state.claims.find((claim) => claim.id === state.currentClaimId) ?? null;
   const review = currentReview(state);
   const checks = review?.verification_records ?? [];

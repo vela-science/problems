@@ -50,6 +50,23 @@
 
 .statement figcaption span { color: var(--ref-ink); font-weight: 550; }
 
+.statementPilot {
+  max-width: 100%;
+  margin-top: 0.75rem;
+  padding-block: 0.85rem;
+  background: color-mix(in oklab, var(--card) 78%, var(--background));
+}
+
+.statementPilot blockquote {
+  font-size: var(--text-subtitle);
+  line-height: 1.5;
+}
+
+.statementPilot figcaption {
+  margin-top: 0.6rem;
+  padding-top: 0.55rem;
+}
+
 /* The section-page form of the statement: two lines at reading size, muted,
    so it captions the section rather than opening it. */
 .questionCompact {
