@@ -18,7 +18,6 @@ import { Label } from "@vela/ui/components/label";
 import { Textarea } from "@vela/ui/components/textarea";
 import { RootedArtifactFrame } from "@vela/ui/vela/rooted-artifact-frame";
 import { IdempotencyField } from "@/components/vela/idempotency-field";
-import { currentReview } from "@/components/vela/problem-provenance";
 import { formalFilePath } from "@/components/vela/formal-statement-card";
 import { ProblemActivityRecords } from "@/components/vela/problem-activity-records";
 import type { AccountIdentity } from "@/lib/auth";
@@ -279,10 +278,6 @@ export async function ProblemWorkspace({ state, hostedAccount, accountsEnabled =
      control: `/sign-in` answers 503, and it is the only thing on the surface.
      Say what the deployment does instead. */
   if (!hostedAccount) {
-    const claims = state.claims ?? [];
-    const claim = claims.find((candidate) => candidate.id === state.currentClaimId) ?? null;
-    const review = currentReview(state);
-    const checkCount = review?.verification_records?.length ?? 0;
     const sourceTitle = state.source?.title ?? `Problem ${state.problem.problem}`;
     const sourceCount = state.sources?.occurrences?.length ?? 0;
     const openStatements = (state.sources?.occurrences ?? []).filter(
@@ -294,7 +289,29 @@ export async function ProblemWorkspace({ state, hostedAccount, accountsEnabled =
       {workbenchHandoff ? <p className="mt-2 text-meta text-muted-foreground">Open this exact Problem, source revision, and authority Repository in Workbench. This handoff does not clone, switch, upload, or execute anything.</p> : null}
       <div className="vela-object-surface mt-5 overflow-hidden lg:grid lg:min-h-[34rem] lg:grid-cols-[15rem_minmax(0,1fr)_16rem]">
         <nav aria-label="Public Problem files" className="border-b bg-[var(--vela-surface-sunken)] p-4 lg:border-b-0 lg:border-r"><p className="text-meta font-semibold">Files</p><Link href={`${basePath}/sources?`} className="vela-object-row mt-3 block rounded-md border bg-background p-3"><span className="block truncate text-label font-medium">{sourceTitle}</span><span className="mt-1 block text-micro text-muted-foreground">{sourceCount} retained source records</span></Link></nav>
-        <div className="min-w-0 border-b p-4 lg:border-b-0 lg:p-6"><div className="flex items-center justify-between gap-3"><p className="text-meta font-semibold">Canvas</p><Badge variant="outline">public preview</Badge></div><ol className="mt-8 grid items-stretch sm:grid-cols-[minmax(7rem,1fr)_2rem_minmax(7rem,1fr)_2rem_minmax(7rem,1fr)]" aria-label="Public workspace context"><li className="rounded-lg border border-status-evidence/35 bg-status-evidence/5 p-4"><span className="text-meta text-muted-foreground">Source</span><strong className="mt-2 block text-label">#{state.problem.problem}</strong></li><li aria-hidden className="grid place-items-center text-muted-foreground">→</li><li className="rounded-lg border border-status-caution/35 bg-status-caution/5 p-4"><span className="text-meta text-muted-foreground">Result</span><strong className="mt-2 block text-label">{claim ? claim.standing.replaceAll("_", " ") : "None"}</strong></li><li aria-hidden className="grid place-items-center text-muted-foreground">→</li><li className="rounded-lg border border-status-progress/35 bg-status-progress/5 p-4"><span className="text-meta text-muted-foreground">Checks</span><strong className="mt-2 block text-label">{checkCount}</strong></li></ol></div>
+        <div className="min-w-0 border-b p-4 lg:border-b-0 lg:p-6">
+          {/* The real work, where a preview of an unusable canvas used to sit.
+            *
+              That cell drew Source → Result → Checks in three tiles under a
+              "public preview" badge: a mock of an interactive surface a
+              signed-out reader cannot use, restating three facts the Problem
+              now states properly twice over — Overview draws the accepted
+              scope against the question, and History derives the whole
+              transition. The attributed activity underneath it was the only
+              thing here a reader could not get elsewhere, and it was below the
+              fold. They swap. */}
+          <div aria-label="Public workspace context">
+            {(state.attributedRecords ?? []).length
+              ? <ProblemActivityRecords state={state} />
+              : <>
+                  <p className="text-meta font-semibold">Reported activity</p>
+                  <p className="mt-2 max-w-[62ch] text-compact text-muted-foreground">
+                    No source records work against this Problem. Coordination that has not reached a Repository
+                    Decision lives here; nothing has yet.
+                  </p>
+                </>}
+          </div>
+        </div>
         {/* What is left to prove, rather than three tiles saying "Sign in to
             view". This site's promise is a public, read-only map, and a signed-
             out reader used to learn nothing here about what remains open. The
@@ -316,11 +333,6 @@ export async function ProblemWorkspace({ state, hostedAccount, accountsEnabled =
           <p className="mt-4 text-micro text-muted-foreground">Notes, Research Blocks and a Result draft need an account. Everything above is public.</p>
         </aside>
       </div>
-      {/* Who has worked on this, as the sources themselves report it. This
-          existed already but rendered only on Results, and only when a Problem
-          had no current Result — so on a Problem with one, the attribution was
-          never shown anywhere. */}
-      <div className="mt-8"><ProblemActivityRecords state={state} /></div>
     </section>;
   }
   const loaded = await loadWorkspace(state, hostedAccount, selectedWorkspace);

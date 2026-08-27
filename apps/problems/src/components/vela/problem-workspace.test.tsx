@@ -27,7 +27,13 @@ describe("Problem Workspace", () => {
     vi.stubEnv("NEXT_PUBLIC_WORKOS_REDIRECT_URI", "http://127.0.0.1:4322/auth/callback");
     render(await ProblemWorkspace({ basePath: "/problems/erdos-problems/321", state, hostedAccount: null }));
     expect(screen.getByRole("heading", { name: "Workspace" })).toBeVisible();
+    /* The centre cell used to draw Source → Result → Checks in three tiles
+       under a "public preview" badge: a mock of a surface a signed-out reader
+       cannot use, restating facts Overview and History now state properly. It
+       carries the attributed activity instead, or says plainly that none is
+       recorded. */
     expect(screen.getByLabelText("Public workspace context")).toBeVisible();
+    expect(screen.queryByText("public preview")).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Sign in to contribute" })).toBeVisible();
     expect(screen.getByRole("link", { name: "Continue locally" })).toHaveAttribute("href", expect.stringMatching(/^vela-workbench:\/\/continue\?/u));
     expect(screen.getByText(/does not clone, switch, upload, or execute/iu)).toBeVisible();

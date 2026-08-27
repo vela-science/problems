@@ -154,8 +154,20 @@ const workspaceSource = readFileSync(join(problems, "src/components/vela/problem
    checkout, running tools and capturing evidence belong to Vela Workbench,
    which the "Continue locally" handoff opens. A tool rail drawn in the browser
    advertised an instrument this product does not own, and on an empty
-   workspace two of its three panes were placeholders. */
-for (const required of ['aria-label="Public Problem files"', ">Canvas<"]) {
+   workspace two of its three panes were placeholders.
+
+   `>Canvas<` is no longer required either, by the same argument one step
+   further. The signed-out view drew a pane headed "Canvas" with a "public
+   preview" badge and three tiles reading Source → Result → Checks: a mock of a
+   surface that reader cannot use, restating three facts the Problem now states
+   properly elsewhere — Overview draws the accepted scope against the question,
+   History derives the whole transition. The real canvas is account-scoped and
+   still renders for a signed-in reader.
+
+   What the contract protects is the three-pane instrument, so the middle pane
+   is required to keep a stable identity rather than a particular heading. It
+   carries the attributed activity, which was previously below the fold. */
+for (const required of ['aria-label="Public Problem files"', 'aria-label="Public workspace context"']) {
   if (!workspaceSource.includes(required)) failures.push(`Problem Workspace is missing its recognizable ${required} instrument`);
 }
 
