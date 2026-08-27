@@ -133,7 +133,7 @@ credential is required or embedded.
 The direct release command checks out each clean declared Repository branch,
 verifies it with the pinned Vela release,
 and writes a content-addressed normalized read model to the `vela_projection`
-database in the `vela-problems-projection` Neon project:
+database in the `vela-problems` Neon project:
 
 ```bash
 bun run release:problems
@@ -549,10 +549,11 @@ The deployment target is not written down here. `deploy:problems` reads
 this source is public and a fork running the script would otherwise aim a build
 at someone else's project.
 
-`vela-web-problems` served `problems.science` until 2026-08-26 from the private
-`vela-web` monorepo. It is retained, deployable and domainless as a rollback
-path; it is not part of the current topology. `vela-web-www` still serves
-`vela.space` from that repository and is unaffected.
+`vela-web-problems` historically served `problems.science` from the private
+`vela-web` monorepo. That Vercel project and the parallel `vela-web-www`
+project were deleted after the direct `problems` and `www` cutovers passed live
+qualification. The archived private repository preserves implementation
+history but is not a deployment or reconstruction dependency.
 
 The Problems's Vercel Functions run in `cle1` (AWS `us-east-2`), alongside
 the qualified Neon projection. Static assets remain globally served by
