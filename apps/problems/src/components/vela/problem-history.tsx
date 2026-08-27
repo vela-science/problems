@@ -14,6 +14,7 @@ import { Actor, Performer } from "@/components/vela/actor";
 import { formatDate } from "@/lib/format";
 import type { ScientificProblemState } from "@/lib/scientific-state";
 import { Disclosure } from "@/components/vela/disclosure";
+import { ProblemTransition } from "@/components/vela/problem-transition";
 
 type State = NonNullable<ScientificProblemState>;
 
@@ -45,6 +46,10 @@ export function ProblemHistory({ state, frontier }: {
 }) {
   const corrections = state.claims.flatMap((claim) => correctionRelations(claim).map((relation) => ({ claim, relation })));
   return <>
+    {/* The loop first, then the events that moved it. A reader arriving at
+        History wants to know where the record stands as much as what changed. */}
+    <ProblemTransition state={state} />
+
     <section aria-labelledby="proposed-changes-heading">
       <div className="flex flex-wrap items-end justify-between gap-3"><div><h2 id="proposed-changes-heading" className="text-title">Result history</h2><p className="mt-1 text-meta text-muted-foreground">Published changes, performers, checks, and later corrections.</p></div>{state.reviews.length ? <span className="text-meta text-muted-foreground">{state.reviews.length} {state.reviews.length === 1 ? "event" : "events"}</span> : null}</div>
       {state.reviews.length ? <ol className="relative mt-6 space-y-0 before:absolute before:bottom-5 before:left-[.9375rem] before:top-5 before:w-px before:bg-border">

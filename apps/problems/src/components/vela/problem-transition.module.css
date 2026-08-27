@@ -1,0 +1,88 @@
+/* The transition, as one figure.
+ *
+ * History led with a list of proposed changes, which answers "what happened"
+ * but not "where does that leave the reader". The source contract names the
+ * whole loop — prior justified state, selected work, Verification, Decision,
+ * Standing, next gap — and a reader had to assemble it from three sections.
+ *
+ * Six stages on one line do it in a glance, and the last one is nearly always
+ * unrecorded. That asymmetry is the honest shape of this release: the loop
+ * does not close, and a figure that stopped at Standing would imply it does. */
+.panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.4375rem;
+  overflow: hidden;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.625rem;
+  padding: 0.5rem 0.8125rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--muted);
+}
+
+.kicker {
+  margin: 0;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.spine {
+  list-style: none;
+  margin: 0;
+  padding: 1.125rem 1.0625rem 0.9375rem;
+  display: grid;
+  gap: 0.875rem;
+  position: relative;
+}
+
+.stage { display: grid; gap: 0.1875rem; position: relative; }
+
+.mark {
+  width: 0.8125rem;
+  height: 0.8125rem;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--background);
+  position: relative;
+  z-index: 1;
+}
+.markRecorded { border-color: var(--status-progress); background: var(--status-progress); }
+.markStanding { border-color: var(--status-caution); background: var(--status-caution); }
+.markAbsent { border-style: dashed; }
+
+.label {
+  margin-top: 0.5rem;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.value { font-size: 0.8125rem; font-weight: 500; line-height: 1.4; letter-spacing: -0.005em; }
+.valueAbsent { font-weight: 400; color: var(--muted-foreground); }
+
+/* One row once there is width for six columns; a stacked list below that,
+   where a horizontal spine would either scroll or shrink past reading size. */
+@media (min-width: 60rem) {
+  .spine { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0; }
+  .stage { padding-right: 0.875rem; }
+  .wire {
+    position: absolute;
+    left: 1.4rem;
+    right: 1.4rem;
+    top: 1.53rem;
+    height: 2px;
+    background: var(--border);
+  }
+}
