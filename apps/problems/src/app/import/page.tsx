@@ -70,7 +70,7 @@ export default async function ImportPage({ searchParams }: { searchParams: Promi
     <ContributionStepper current={2} heading="Connect code to scientific work" />
     {error && <ImportError message={error} />}
     {!account ? <div className="grid gap-5 lg:grid-cols-[minmax(0,.75fr)_minmax(22rem,1.25fr)]"><div className="vela-data-hero rounded-xl p-5"><p className="text-eyebrow text-muted-foreground">Public inspection</p><h2 className="mt-2 text-subtitle">No account required</h2><p className="mt-2 text-body text-muted-foreground">Inspect a public codebase now. Sign in only to save the exact revision.</p>
-      <Button nativeButton={false} render={<Link href="/sign-in?returnTo=/import" />} className="mt-4">Sign in to save this revision</Button></div>
+      <Button nativeButton={false} render={<Link href="/sign-in?returnTo=/import" prefetch={false} />} className="mt-4">Sign in to save this revision</Button></div>
       <form action="/inspect" method="get" className="space-y-4 rounded-xl border bg-card p-5 shadow-sm"><PublicFields /></form></div> : <div className="grid gap-5 lg:grid-cols-2">
       {connections?.repositories.length ? <form action={importCodebase} className="space-y-4 rounded-xl border bg-card p-5 shadow-sm">
         <div><h2 className="text-subtitle font-medium">Selected GitHub codebase</h2><p className="text-body text-muted-foreground">Installation tokens are short lived and never stored.</p></div>

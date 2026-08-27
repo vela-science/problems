@@ -88,7 +88,7 @@ export default async function ConnectionsPage({ searchParams }: { searchParams: 
             <ItemTitle className="line-clamp-none flex-wrap">GitHub identity <Badge variant={identity ? "default" : "secondary"}>{identity ? "Connected" : "Not linked"}</Badge></ItemTitle>
             <ItemDescription className="line-clamp-none">{identity ? "Verified by the sign-in provider and kept separate from repository installation access." : "Use Continue with GitHub to link a verified GitHub identity."}</ItemDescription>
           </ItemContent>
-          {!identity ? <ItemActions><Button className="min-h-11 sm:min-h-7" size="sm" variant="outline" nativeButton={false} render={<Link href="/sign-in?returnTo=/account/connections" />}>Continue with GitHub</Button></ItemActions> : null}
+          {!identity ? <ItemActions><Button className="min-h-11 sm:min-h-7" size="sm" variant="outline" nativeButton={false} render={<Link href="/sign-in?returnTo=/account/connections" prefetch={false} />}>Continue with GitHub</Button></ItemActions> : null}
         </Item>
       </ItemGroup>
     </section>
