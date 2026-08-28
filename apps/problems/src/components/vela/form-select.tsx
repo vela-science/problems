@@ -26,7 +26,7 @@ export function FormSelect({
     <div className="grid gap-1.5">
       <Label htmlFor={id}>{label}</Label>
       <Select name={name} defaultValue={defaultValue ?? options[0]?.value} required items={options}>
-        <SelectTrigger id={id} className="h-11 w-full justify-between">
+        <SelectTrigger id={id} className="w-full justify-between">
           <SelectValue />
         </SelectTrigger>
         <SelectContent align="start">

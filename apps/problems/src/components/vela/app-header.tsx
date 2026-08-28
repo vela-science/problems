@@ -97,6 +97,7 @@ function headerTrail(pathname: string, repositories: PublishedRepository[], prob
       } : null,
       record: null,
       compactRecord: null,
+      recordIsExact: false,
       view: view ? { label: `${view.charAt(0).toUpperCase()}${view.slice(1)}`, href: `/problems/${namespace}/${problem}/${view}` } : null,
     };
   }
@@ -111,6 +112,7 @@ function headerTrail(pathname: string, repositories: PublishedRepository[], prob
       collection: null,
       record: collection.name,
       compactRecord: collection.name,
+      recordIsExact: false,
 view: null,
     };
   }
@@ -122,6 +124,7 @@ view: null,
     collection: null,
     record: "Public profile",
     compactRecord: "Public profile",
+    recordIsExact: false,
 view: null,
   };
   const contributorMatch = pathname.match(/^\/people\/([^/]+)$/u);
@@ -135,6 +138,7 @@ view: null,
       collection: null,
       record: performerIdFromSegment(identity) ? "Performer" : `@${recordTrailLabel(identity)}`,
       compactRecord: performerIdFromSegment(identity) ? "Performer" : `@${recordTrailLabel(identity)}`,
+      recordIsExact: false,
 view: null,
     };
   }
@@ -151,6 +155,7 @@ view: null,
         collection: null,
         record: id ? recordTrailLabel(id) : null,
         compactRecord: null,
+        recordIsExact: true,
 view: null,
       };
     }
@@ -162,6 +167,7 @@ view: null,
       collection: null,
       record: null,
       compactRecord: null,
+      recordIsExact: false,
 view: null,
     };
   }
@@ -181,6 +187,7 @@ view: null,
     collection: null,
     record: named && rest[1] ? recordTrailLabel(rest[1]) : null,
     compactRecord: null,
+    recordIsExact: true,
 view: null,
   };
 }
@@ -197,23 +204,30 @@ export function AppHeader({
   const trail = headerTrail(pathname, repositories, problemCollections);
   return (
     <header className="shrink-0 print:hidden">
-      <Toolbar.Root className="flex min-h-12 min-w-0 flex-wrap items-center gap-1 px-(--vela-page-gutter) py-1 sm:h-12 sm:flex-nowrap sm:py-0">
+      {/* One row at every width. It wrapped below `sm` into three — trigger,
+          trail, controls — because every control in it was forced to 44px by
+          viewport width rather than by pointer, and five 44px squares plus a
+          breadcrumb cannot share 390px. The controls are ordinary 32px buttons
+          now and grow to 44px only where something can tap them, which fits in
+          one row down to 320. */}
+      <Toolbar.Root className="flex min-h-12 min-w-0 flex-nowrap items-center gap-1 px-(--vela-page-gutter) py-1">
       {/* Under `md` the rail is a Sheet that starts closed, and the trigger the
           sidebar owns is inside it — so nothing on screen can open it. This one
           exists only while the rail is off-screen, which is also why it does not
           reintroduce the duplication the sidebar-owned trigger removed: on
           desktop there is exactly one trigger, and it is still the rail's. */}
-      <SidebarTrigger className="size-11 md:hidden" aria-label="Open navigation" />
+      <SidebarTrigger className="size-8 md:hidden" aria-label="Open navigation" />
       {/* The trail names where you are, and its first element is a control
           rather than a link: switching Repository from inside one used to mean
           going back to the list and picking again. The current section is the
           last element and is text, not a link — it is the page you are on. */}
-      {/* A row of its own below `sm`. The toolbar already wraps at that width, but
-          the trail was `flex-1` with `min-w-0`, so it gave up its width to the
-          controls instead of taking the next line: at 320 it held about 8px and
-          rendered `#94` as a sliver — a full row of header height conveying
-          nothing. `basis-full` lets it wrap, and the controls follow. */}
-      <nav aria-label="Breadcrumb" className="flex min-w-0 flex-1 basis-full items-center gap-1.5 overflow-hidden pr-2 text-body text-muted-foreground sm:basis-auto">
+      {/* The flexible element. It took a full row of its own while the controls
+          were 44px wide at every width, which cost a phone 148px of header
+          before any content. With the controls at their real size the trail
+          keeps about 120px at 390 and 50 at 320 — enough for the leaf, which is
+          the crumb worth keeping, and the Problem's own header states the full
+          identity directly beneath. */}
+      <nav aria-label="Breadcrumb" className="flex min-w-0 flex-1 items-center gap-1.5 overflow-hidden pr-2 text-body text-muted-foreground">
         {trail.repository ? (
           <RepositorySwitcher
             current={trail.repository}
@@ -274,8 +288,12 @@ export function AppHeader({
                 A breadcrumb that compresses its own leaf first has the priority
                 backwards. These labels are short — a number and one word — so
                 holding them costs the ancestors, which already truncate. */}
+            {/* Mono is this product's mark for an exact value, so the leaf
+                takes it only when it is one. A collection name, "Public
+                profile" and "Performer" were being set in monospace, which
+                reads as a machine identifier the reader could copy. */}
             <span
-              className="shrink-0 truncate font-mono text-label text-foreground"
+              className={`shrink-0 truncate text-label text-foreground${trail.recordIsExact ? " font-mono" : ""}`}
               aria-current="page"
             >
               {trail.compactRecord && trail.compactRecord !== trail.record
@@ -302,7 +320,7 @@ export function AppHeader({
             id={COMMAND_PALETTE_TRIGGER_ID}
             variant="outline"
             size="sm"
-            className="h-11 min-w-11 gap-2 bg-background px-2.5 text-meta text-muted-foreground shadow-none md:h-8 md:min-w-0"
+            className="gap-2 border-transparent bg-transparent px-2.5 text-meta text-muted-foreground shadow-none sm:border-input sm:bg-background"
             onClick={() => setOpen(true)}
             aria-label="Search or navigate problems.science"
           >
@@ -311,7 +329,7 @@ export function AppHeader({
             <kbd className="hidden font-mono text-meta text-muted-foreground lg:inline">⌘K</kbd>
           </Button>
           <NotificationCenter repositories={repositories} />
-          <ThemeToggle className="size-11 md:size-8" />
+          <ThemeToggle className="size-8" />
           <AccountMenu />
         </div>
       </Toolbar.Root>

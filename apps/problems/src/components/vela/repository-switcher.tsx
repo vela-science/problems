@@ -46,7 +46,7 @@ export function RepositorySwitcher({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="flex min-h-11 min-w-0 items-center gap-1 rounded px-1 text-body hover:bg-accent hover:text-foreground md:min-h-8"
+        className="flex min-h-8 min-w-0 items-center gap-1 rounded px-1 text-body hover:bg-accent hover:text-foreground"
         aria-label={`Switch Repository. Currently ${current.name}`}
       >
         <span className="min-w-0 truncate">{current.name}</span>

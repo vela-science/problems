@@ -38,7 +38,7 @@ export default function NotFound() {
           to the advanced record inspector. Problems is the product's centre
           and the place a reader can start again from. */}
       <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2">
-        <Link href="/problems" className="inline-flex h-11 w-fit items-center gap-2 rounded-sm text-body text-primary hover:underline md:h-9"><HugeiconsIcon icon={ArrowLeft} aria-hidden className="size-4" /> Open Problems</Link>
+        <Link href="/problems" className="inline-flex min-h-8 w-fit items-center gap-2 rounded-sm text-body text-primary hover:underline md:h-9"><HugeiconsIcon icon={ArrowLeft} aria-hidden className="size-4" /> Open Problems</Link>
         <p className="text-meta text-muted-foreground">or press <kbd className="rounded border px-1.5 py-0.5 font-mono text-micro">⌘K</kbd> to search</p>
       </div>
     </PageShell>

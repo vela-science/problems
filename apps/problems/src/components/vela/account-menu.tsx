@@ -43,7 +43,7 @@ export function AccountMenu() {
         prefetch={false}
         className={cn(
           buttonVariants({ variant: "outline", size: "sm" }),
-          "h-11 min-w-11 gap-2 px-2.5 shadow-none md:h-8 md:min-w-0",
+          "gap-2 px-2.5 shadow-none ",
         )}
       >
         <HugeiconsIcon icon={LogIn} aria-hidden className="size-4" />
@@ -66,7 +66,7 @@ export function AccountMenu() {
             <Button
               variant="ghost"
               size="icon-sm"
-              className="size-11 rounded-full md:size-8"
+              className="size-8 rounded-full"
               aria-label={`Open account menu for ${account.displayName}`}
             />
           )}

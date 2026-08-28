@@ -92,9 +92,10 @@ export function SectionNav({ sections, current, label }: {
     {sections.map(({ key, label, href, count }) => <Link
       key={key}
       href={href}
-      /* 44px where the pointer is coarse: this is primary navigation on every
-         Problem, and `globals.css` promotes buttons and inputs but not anchors. */
-      className="group inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-t-md border-b-2 border-transparent px-2.5 text-compact text-muted-foreground hover:bg-muted hover:text-foreground pointer-coarse:h-11 aria-[current=page]:border-primary aria-[current=page]:font-semibold aria-[current=page]:text-foreground"
+      /* `min-h-9` rather than `h-9`: an anchor is not a control slot, so it
+         opts into the touch target the way every other non-control does, and
+         `globals.css` promotes the minimum on a coarse pointer. */
+      className="group inline-flex min-h-9 items-center gap-1.5 whitespace-nowrap rounded-t-md border-b-2 border-transparent px-2.5 text-compact text-muted-foreground hover:bg-muted hover:text-foreground aria-[current=page]:border-primary aria-[current=page]:font-semibold aria-[current=page]:text-foreground"
       aria-current={current === key ? "page" : undefined}
     >
       {label}

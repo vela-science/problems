@@ -85,7 +85,7 @@ export default async function SourcePage({
       <PageIntro
         title="Formal Conjectures PR audit"
         description="Five exact source-local records retain upstream pull-request state, scoped checks, semantic findings, and artifact availability without importing authority into Math."
-        actions={<Button className="min-h-11" nativeButton={false} variant="outline" render={<a href={formalConjecturesAuditProjection.math_projection.public_locator} />}>Exact Math artifact</Button>}
+        actions={<Button nativeButton={false} variant="outline" render={<a href={formalConjecturesAuditProjection.math_projection.public_locator} />}>Exact Math artifact</Button>}
         signals={[
           { label: "Inventory", value: "5 / 5", detail: "complete closed set", tone: "evidence" },
           { label: "Adapter", value: "9 / 9", detail: "shared conformance contract", tone: "evidence" },

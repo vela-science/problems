@@ -6,7 +6,7 @@ describe("Sheet", () => {
     const source = readFileSync(new URL("../src/components/ui/sheet.tsx", import.meta.url), "utf8");
 
     expect(source).toMatch(/data-slot="sheet-close"[\s\S]*?size="icon-lg"/u);
-    expect(source).toMatch(/data-slot="sheet-close"[\s\S]*?className="absolute top-3 right-3 size-11"/u);
+    expect(source).toMatch(/data-slot="sheet-close"[\s\S]*?className="absolute top-3 right-3 size-8"/u);
     expect(source).not.toMatch(/data-slot="sheet-close"[\s\S]*?size="icon-sm"/u);
   });
 });

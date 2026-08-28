@@ -212,7 +212,7 @@ export function SourceRecordView({
       </div>
 
       <Collapsible className="mt-8 rounded-lg border">
-        <CollapsibleTrigger className="flex min-h-11 w-full items-center justify-between gap-3 px-3 py-2 text-left text-compact font-medium">
+        <CollapsibleTrigger className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-compact font-medium">
           Source metadata
           <span className="text-meta text-muted-foreground">observation, coverage, identity, and rights</span>
         </CollapsibleTrigger>
@@ -377,7 +377,7 @@ export function SourceRecordView({
       </p>
 
       <Collapsible className="mt-6 rounded-lg border">
-        <CollapsibleTrigger className="flex min-h-11 w-full items-center justify-between gap-3 px-3 py-2 text-left text-compact font-medium">
+        <CollapsibleTrigger className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-compact font-medium">
           Exact roots
           <span className="text-meta text-muted-foreground">
             {observation ? 8 : 4} values

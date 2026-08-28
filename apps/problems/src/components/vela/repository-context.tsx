@@ -172,7 +172,7 @@ export function RepositoryContext({
       </div>
 
       <Collapsible className="mt-3 rounded-lg border">
-        <CollapsibleTrigger className="flex min-h-11 w-full items-center justify-between gap-3 px-3 py-2 text-left text-compact font-medium">
+        <CollapsibleTrigger className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-compact font-medium">
           Exact Repository source and roots
           <span className="font-mono text-micro text-muted-foreground">{roots.length + 4} values</span>
         </CollapsibleTrigger>

@@ -127,14 +127,14 @@ export function AppSidebar({ problemCollections = [{ namespace: "erdos-problems"
               onClick={closeMobileNavigation}
               /* Same box as a menu button, so the glyph sits on the icon
                  column every row below it uses. */
-              className="inline-flex size-11 shrink-0 items-center justify-center rounded-md p-1 hover:bg-sidebar-accent md:size-8"
+              className="inline-flex size-8 shrink-0 items-center justify-center rounded-md p-1 hover:bg-sidebar-accent"
             >
               <VelaMark profile="micro" size={22} />
             </Link>
           )}
           {collapsedDesktop ? null : (
             <SidebarTrigger
-              className="ml-auto size-11 shrink-0 md:size-8"
+              className="ml-auto size-8 shrink-0"
               aria-label={isMobile ? "Close navigation" : "Collapse navigation"}
             />
           )}
@@ -153,7 +153,7 @@ export function AppSidebar({ problemCollections = [{ namespace: "erdos-problems"
                 const current = pathname === href;
                 return <SidebarMenuItem key={href}>
                   <SidebarMenuButton
-                    className="h-11 md:h-8"
+                    className="h-8"
                     tooltip={label}
                     isActive={active}
                     render={<Link href={href} aria-current={current ? "page" : undefined} onClick={closeMobileNavigation} />}
@@ -184,7 +184,7 @@ export function AppSidebar({ problemCollections = [{ namespace: "erdos-problems"
             <SidebarMenu>
               {recent.map((object) => <SidebarMenuItem key={object.href}>
                 <SidebarMenuButton
-                  className="h-11 md:h-8"
+                  className="h-8"
                   tooltip={object.context ? `${object.title} · ${object.context}` : object.title}
                   isActive={pathname === object.href}
                   render={<Link href={object.href} onClick={closeMobileNavigation} />}
@@ -202,7 +202,7 @@ export function AppSidebar({ problemCollections = [{ namespace: "erdos-problems"
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  className="h-11 bg-sidebar-primary text-sidebar-primary-foreground hover:bg-[color-mix(in_oklch,var(--sidebar-primary),var(--foreground)_14%)] hover:text-sidebar-primary-foreground md:h-9"
+                  className="bg-sidebar-primary text-sidebar-primary-foreground hover:bg-[color-mix(in_oklch,var(--sidebar-primary),var(--foreground)_14%)] hover:text-sidebar-primary-foreground md:h-9"
                   tooltip="Add contribution"
                   isActive={pathname === "/contribute"}
                   render={<Link href="/contribute" aria-current={pathname === "/contribute" ? "page" : undefined} onClick={closeMobileNavigation} />}

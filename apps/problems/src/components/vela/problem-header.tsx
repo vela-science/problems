@@ -59,7 +59,7 @@ export function ProblemHeader({ state, route, current }: {
         and reads as one beside its name; the actions belong on the line they
         act on. The breadcrumb above carries the collection, so the slug that
         opened that row is gone with it. */}
-    <div className="flex flex-wrap items-center gap-2.5">
+    <div className="flex flex-wrap items-center gap-x-2.5 gap-y-3">
       {/* The identity is a label when a question can be the title, and becomes
           the title itself when none is retained — never a negation. Promoting
           "No written statement is retained" to the h1 would make the page
@@ -122,8 +122,8 @@ export function ProblemHeader({ state, route, current }: {
       * more than a few lines of scroll, and the question is the one thing on
       * this page that is never redundant. */}
     {hasQuestion
-      ? <h1 className="mt-1.5 max-w-[104ch] text-statement font-normal leading-[1.4] tracking-[-0.01em] text-foreground text-pretty"><ScientificText text={question} /></h1>
-      : <p className="mt-1.5 text-body leading-normal text-muted-foreground">No written statement is retained for this problem.</p>}
+      ? <h1 className="mt-3 max-w-[104ch] text-statement font-normal leading-[1.4] tracking-[-0.01em] text-foreground text-pretty md:mt-2"><ScientificText text={question} /></h1>
+      : <p className="mt-3 text-body leading-normal text-muted-foreground md:mt-2">No written statement is retained for this problem.</p>}
 
     <SectionNav
       label="Problem sections"

@@ -48,8 +48,10 @@ describe("audit fixes", () => {
       expect(styles).toContain(cue);
     }
     /* Primary navigation, so it meets the touch target on a coarse pointer.
-       `globals.css` promotes buttons and inputs; these are anchors. */
-    expect(nav).toContain("pointer-coarse:h-11");
+       An anchor is not a control slot, so it opts in with a minimum and
+       `globals.css` promotes it — one policy, not a per-component variant. */
+    expect(nav).toContain("min-h-9");
+    expect(nav).not.toContain("pointer-coarse:");
   });
 
   /* An accepted partial Result must never read as resolution of the headline

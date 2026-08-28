@@ -1,4 +1,5 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
@@ -19,6 +20,17 @@ vi.mock("@/components/vela/record-preview", () => ({
 }));
 
 import { AppShell } from "@/components/vela/app-shell";
+
+/* Every authored component, so a cross-cutting policy can be held across all of
+   them rather than at the handful of call sites someone remembered. */
+function componentSources(directory = "src"): Array<{ path: string; source: string }> {
+  return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const path = join(directory, entry.name);
+    if (entry.isDirectory()) return componentSources(path);
+    if (!/\.tsx?$/u.test(entry.name) || /\.test\./u.test(entry.name)) return [];
+    return [{ path, source: readFileSync(path, "utf8") }];
+  });
+}
 
 describe("AppShell accessibility boundary", () => {
   it("keeps the responsive sidebar independent of Problem query state", () => {
@@ -90,11 +102,25 @@ describe("AppShell accessibility boundary", () => {
     expect(globals).not.toContain('html[data-sidebar-state="collapsed"]');
   });
 
+  /* One policy, keyed to the pointer, in one file.
+   *
+   * It was written three ways — this block, a `pointer-coarse:` utility on the
+   * section nav, and sixty-five viewport-width classes across twenty-six files.
+   * The width-keyed copy inflated every control in a narrow *mouse* window,
+   * which is what wrapped the application bar into three rows and spent 148px
+   * of a 390px screen before any content. This test now fails if a second
+   * spelling comes back. */
   it("keeps primary controls touch-sized without inflating pointer-dense layouts", () => {
     const globals = readFileSync("src/app/globals.css", "utf8");
     expect(globals).toContain("@media (pointer: coarse)");
-    expect(globals).toContain('[data-slot="button"] { min-width: 2.75rem; min-height: 2.75rem; }');
-    expect(globals).toContain('[data-slot="input"], [data-slot="select-trigger"] { min-height: 2.75rem; }');
+    expect(globals).toContain('[data-slot="select-trigger"] { min-width: 2.75rem; min-height: 2.75rem; }');
+    expect(globals).toContain('[data-slot="input"], [data-slot="textarea"], [data-slot="command-input"] { min-height: 2.75rem; }');
+    expect(globals).toContain(".min-h-6, .min-h-7, .min-h-8, .min-h-9 { min-height: 2.75rem; }");
+
+    const widthKeyed = /\b(?:max-)?(?:sm|md|lg):?min-[hw]-11\b|\bsize-11 (?:sm|md):|\bh-11 (?:sm|md):|pointer-coarse:/u;
+    for (const file of componentSources()) {
+      expect(file.source, `${file.path} re-declares the touch target by viewport width`).not.toMatch(widthKeyed);
+    }
   });
 
   it("uses the shared compact hero for collection, record, and Repository openers", () => {

@@ -54,12 +54,12 @@ function ActivityRows({ activity }: { activity: PublicPerformerActivity[] }) {
           <time className="text-meta text-muted-foreground" dateTime={occurredAt ?? undefined}>{formatDate(occurredAt)}</time>
         </div>
         <div className="p-4">
-          <Link href={entry.problemHref} className="inline-flex min-h-11 items-center text-meta font-medium text-primary hover:underline sm:min-h-0">{entry.collectionLabel}</Link>
+          <Link href={entry.problemHref} className="inline-flex min-h-8 items-center text-meta font-medium text-primary hover:underline">{entry.collectionLabel}</Link>
           <h3 className="mt-1 text-subtitle font-medium"><Link href={entry.problemHref} className="hover:underline"><AssertionText text={entry.problemLabel} /></Link></h3>
           <p className="mt-2 text-body text-muted-foreground"><AssertionText text={objectLabel} /></p>
           <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
-            <Link href={entry.objectHref} className="inline-flex min-h-11 items-center gap-1 text-meta font-medium text-primary hover:underline sm:min-h-0">Open exact context <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden className="size-3.5" /></Link>
-            {limitations.length ? <Disclosure className="text-meta" summaryClassName="min-h-11 font-medium text-foreground sm:min-h-0" summary={limitations.length === 1 ? "Role scope" : `${limitations.length} role details`}><ul className="mt-2 space-y-2 text-muted-foreground">{limitations.map(({ role, limitation }, index) => <li key={`${role}:${index}`}><span className="font-medium text-foreground">{role}:</span> {limitation}</li>)}</ul></Disclosure> : null}
+            <Link href={entry.objectHref} className="inline-flex min-h-8 items-center gap-1 text-meta font-medium text-primary hover:underline">Open exact context <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden className="size-3.5" /></Link>
+            {limitations.length ? <Disclosure className="text-meta" summaryClassName="min-h-8 font-medium text-foreground" summary={limitations.length === 1 ? "Role scope" : `${limitations.length} role details`}><ul className="mt-2 space-y-2 text-muted-foreground">{limitations.map(({ role, limitation }, index) => <li key={`${role}:${index}`}><span className="font-medium text-foreground">{role}:</span> {limitation}</li>)}</ul></Disclosure> : null}
           </div>
         </div>
       </article>
@@ -90,7 +90,7 @@ export function PublicPerformerProfile({
     {profile?.visibility === "unlisted" ? <Badge variant="outline">Unlisted</Badge> : null}
   </div>;
   const exactIdentity = performer
-    ? <Disclosure className="text-meta" summaryClassName="min-h-11 font-medium sm:min-h-0" summary="Exact performer identity"><p className="mt-2 break-all font-mono text-micro text-muted-foreground">{performer.id}</p></Disclosure>
+    ? <Disclosure className="text-meta" summaryClassName="min-h-8 font-medium" summary="Exact performer identity"><p className="mt-2 break-all font-mono text-micro text-muted-foreground">{performer.id}</p></Disclosure>
     : null;
 
   const activityPanel = <section className="min-w-0" aria-labelledby="public-activity-heading">

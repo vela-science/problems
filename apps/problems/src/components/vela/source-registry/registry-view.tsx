@@ -140,7 +140,7 @@ export function SourceRegistryView({
             <ItemDescription className="line-clamp-none">Five exact source records · public Apache-2.0 custody · no automatic Verification, Decision, or Standing effect</ItemDescription>
           </ItemContent>
           <ItemActions>
-            <Button className="min-h-11" nativeButton={false} variant="outline" render={<Link href="/sources/source%3Aformal-conjectures-pr-audit" />}>Inspect {formalConjecturesAuditProjection.records.length} records</Button>
+            <Button nativeButton={false} variant="outline" render={<Link href="/sources/source%3Aformal-conjectures-pr-audit" />}>Inspect {formalConjecturesAuditProjection.records.length} records</Button>
           </ItemActions>
         </Item>
       </section>
@@ -240,7 +240,7 @@ export function SourceRegistryView({
         </ItemGroup>
 
         <Collapsible className="mt-4 rounded-lg border">
-          <CollapsibleTrigger className="flex min-h-11 w-full items-center justify-between gap-3 px-3 py-2 text-left text-compact font-medium">
+          <CollapsibleTrigger className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-compact font-medium">
             Inventory roots
             <span className="text-meta text-muted-foreground">
               3 values

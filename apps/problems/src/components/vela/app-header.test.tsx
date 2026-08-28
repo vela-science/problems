@@ -221,6 +221,6 @@ describe("AppHeader navigation access", () => {
   it("leaves the desktop header to the rail's own trigger", () => {
     const header = readFileSync("src/components/vela/app-header.tsx", "utf8");
 
-    expect(header).toContain('<SidebarTrigger className="size-11 md:hidden"');
+    expect(header).toContain('<SidebarTrigger className="size-8 md:hidden"');
   });
 });

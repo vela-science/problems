@@ -52,7 +52,7 @@ export function NotificationCenter({ repositories }: { repositories: PublishedRe
             type="button"
             variant="ghost"
             size="icon"
-            className="relative size-11 md:size-8"
+            className="relative size-8"
             aria-label={pendingCount ? `Notifications, ${pendingCount} pending` : "Notifications"}
           />
         }

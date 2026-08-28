@@ -31,11 +31,15 @@ export function CopyButton({
   const control = (
     <Button
       type="button"
-      variant="outline"
+      /* Ghost, not outline. An outline says "find me"; this sits at a fixed
+         place beside the value it copies, so its position already teaches it,
+         and a bordered square repeated beside every root on a Problem page is
+         five boxes of chrome saying one thing. */
+      variant="ghost"
       size={compact ? "icon-sm" : "sm"}
       onClick={copy}
       aria-label={stateLabel}
-      className={compact ? "bg-transparent max-md:min-h-11 max-md:min-w-11" : "bg-transparent"}
+      className={compact ? "bg-transparent " : "bg-transparent"}
     >
       {state === "success" ? <HugeiconsIcon icon={Check} aria-hidden /> : <HugeiconsIcon icon={Copy} aria-hidden />}
       {compact ? null : stateLabel}

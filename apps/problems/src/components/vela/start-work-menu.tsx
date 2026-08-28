@@ -48,7 +48,7 @@ export function StartWorkMenu({ workbenchHandoff, sourceLocator }: {
   return (
     <Popover>
       <PopoverTrigger
-        render={<Button variant="outline" size="sm" aria-label="Other ways to work on this Problem" />}
+        render={<Button variant="ghost" size="sm" aria-label="Other ways to work on this Problem" />}
       >
         <HugeiconsIcon icon={ArrowDown01Icon} aria-hidden className="size-4" />
       </PopoverTrigger>

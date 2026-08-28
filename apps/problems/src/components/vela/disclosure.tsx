@@ -14,7 +14,7 @@ import { cn } from "@vela/ui/lib/utils";
  * `::-webkit-details-marker` — and the tree carried them in different
  * combinations, so some disclosures showed a browser triangle and some did
  * not. They live here once, with the chevron that replaces them. */
-const SUMMARY = "flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 marker:content-none focus-visible:outline-2 focus-visible:outline-offset-2 [&::-webkit-details-marker]:hidden";
+const SUMMARY = "flex min-h-8 cursor-pointer list-none items-center justify-between gap-3 marker:content-none focus-visible:outline-2 focus-visible:outline-offset-2 [&::-webkit-details-marker]:hidden";
 
 export function Disclosure({
   summary,

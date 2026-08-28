@@ -22,7 +22,7 @@ export default async function AccountPublicProfilePage() {
 
   return <PageShell archetype="default" layout="reading" className="flex flex-col gap-8">
     <header className="border-b pb-6">
-      <Link href="/account" className="inline-flex min-h-11 items-center gap-2 text-meta text-muted-foreground underline-offset-4 hover:text-foreground hover:underline sm:min-h-9"><HugeiconsIcon icon={ArrowLeft01Icon} aria-hidden className="size-4" />Account</Link>
+      <Link href="/account" className="inline-flex min-h-8 items-center gap-2 text-meta text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"><HugeiconsIcon icon={ArrowLeft01Icon} aria-hidden className="size-4" />Account</Link>
       <h1 className="mt-4 text-display">Public profile</h1>
       <p className="mt-3 max-w-2xl text-body text-muted-foreground">Choose a public name, links, and visibility.</p>
     </header>

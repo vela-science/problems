@@ -63,15 +63,15 @@ function AuditRecord({ record }: { record: FormalConjecturesAuditRecord }) {
     </div>
 
     <div className="mt-5 flex flex-wrap items-center gap-3">
-      <Button className="min-h-11" nativeButton={false} variant="outline" render={<a href={record.pull_request.url} />}>Open upstream PR</Button>
+      <Button nativeButton={false} variant="outline" render={<a href={record.pull_request.url} />}>Open upstream PR</Button>
       {/* An unaddressable Problem gets no link rather than a link that
           resolves to nothing. */}
-      {problemPath ? <Button className="min-h-11" nativeButton={false} variant="ghost" render={<Link href={problemPath} />}>Open Problem {record.problem_ref!.problem_number}</Button> : null}
+      {problemPath ? <Button nativeButton={false} variant="ghost" render={<Link href={problemPath} />}>Open Problem {record.problem_ref!.problem_number}</Button> : null}
       <span className="font-mono text-micro text-muted-foreground">head {record.head.commit_oid.slice(0, 10)}</span>
     </div>
 
     <Collapsible className="group/audit mt-5">
-      <CollapsibleTrigger className="flex min-h-11 items-center gap-2 text-left text-label focus-visible:outline-2 focus-visible:outline-offset-4">
+      <CollapsibleTrigger className="flex items-center gap-2 text-left text-label focus-visible:outline-2 focus-visible:outline-offset-4">
         <span>Exact source roots</span>
         <HugeiconsIcon icon={ArrowDown01Icon} aria-hidden className="size-4 transition-transform duration-200 group-data-open/audit:rotate-180" />
       </CollapsibleTrigger>
@@ -116,8 +116,8 @@ export function FormalConjecturesAudit({
         <RootFact label="Adapter profile" value={formalConjecturesAuditProjection.conformance.profile_root} />
         <RootFact label="Adapter contract" value={formalConjecturesAuditProjection.conformance.contract_root} />
       </div>
-      <div className="mt-4"><Button className="min-h-11" nativeButton={false} variant="outline" render={<a href={formalConjecturesAuditProjection.math_projection.public_locator} />}>Inspect exact Math projection</Button></div>
-      {!completeInventory ? <div className="mt-3"><Button className="min-h-11" nativeButton={false} variant="ghost" render={<Link href="/sources/source%3Aformal-conjectures-pr-audit" />}>View complete five-record source audit</Button></div> : null}
+      <div className="mt-4"><Button nativeButton={false} variant="outline" render={<a href={formalConjecturesAuditProjection.math_projection.public_locator} />}>Inspect exact Math projection</Button></div>
+      {!completeInventory ? <div className="mt-3"><Button nativeButton={false} variant="ghost" render={<Link href="/sources/source%3Aformal-conjectures-pr-audit" />}>View complete five-record source audit</Button></div> : null}
     </div>
   </section>;
 }

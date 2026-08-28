@@ -178,8 +178,8 @@ export function AccountProfile({ account, publicProfile, workspaces, connections
       title="Public contributor profile"
       description="What, if anything, appears publicly beside exact attribution."
       action={<div className="flex flex-wrap gap-2">
-        {profile ? <Button className="min-h-11 sm:min-h-8" size="sm" variant="outline" nativeButton={false} render={<Link href={`/people/${profile.handle}`} />}>Preview</Button> : null}
-        <Button className="min-h-11 sm:min-h-8" size="sm" nativeButton={false} render={<Link href="/account/profile" />}>{profile ? "Edit profile" : "Create profile"}</Button>
+        {profile ? <Button className="min-h-8" size="sm" variant="outline" nativeButton={false} render={<Link href={`/people/${profile.handle}`} />}>Preview</Button> : null}
+        <Button className="min-h-8" size="sm" nativeButton={false} render={<Link href="/account/profile" />}>{profile ? "Edit profile" : "Create profile"}</Button>
       </div>}
     >
       {publicProfile.status === "unavailable"
@@ -212,7 +212,7 @@ export function AccountProfile({ account, publicProfile, workspaces, connections
       title="Session"
       description="Signed in on this browser."
       action={<form action={signOutAccount}>
-        <Button className="min-h-11 sm:min-h-8" type="submit" size="sm" variant="outline"><HugeiconsIcon icon={Logout01Icon} aria-hidden />Sign out</Button>
+        <Button className="min-h-8" type="submit" size="sm" variant="outline"><HugeiconsIcon icon={Logout01Icon} aria-hidden />Sign out</Button>
       </form>}
     >
       <ItemGroup className="divide-y gap-0">
