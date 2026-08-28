@@ -10,6 +10,7 @@ import {
   Activity01Icon,
   Home01Icon,
   PuzzleIcon,
+  Telescope01Icon,
   WorkIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -92,7 +93,11 @@ export function AppSidebar({ problemCollections = [{ namespace: "erdos-problems"
   const closeMobileNavigation = () => setOpenMobile(false);
   const destinations: SidebarDestination[] = PRIMARY_DESTINATIONS.flatMap((destination) => (
     accountState.status === "signed_in" && destination.href === "/updates"
-      ? [{ href: "/workspaces", label: "Workspaces", icon: WorkIcon }, destination]
+      ? [
+        { href: "/workspaces", label: "Workspaces", icon: WorkIcon },
+        { href: "/watching", label: "Watching", icon: Telescope01Icon },
+        destination,
+      ]
       : [destination]
   ));
 

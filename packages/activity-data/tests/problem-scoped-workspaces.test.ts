@@ -1,15 +1,17 @@
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { sqlStatements } from "../scripts/sql-statements.mjs";
 
 const repositoryRoot = resolve(import.meta.dirname, "../../..");
 const read = (path: string) => readFileSync(resolve(repositoryRoot, path), "utf8");
 
 describe("problem-scoped Workspace discovery", () => {
   test("lists only member Workspaces anchored to the exact Repository and Problem", () => {
-    const migration = read("packages/activity-data/schema/problem-workspaces.sql");
-    expect(sqlStatements(migration)).toHaveLength(4);
+    /* `workspace-contexts.sql`, not the `problem-workspaces.sql` this test was
+       written against. That file defined the same function and was superseded in
+       full here, purely because "w" sorts after "p"; it has been deleted, and
+       these assertions moved to the definition that actually runs. */
+    const migration = read("packages/activity-data/schema/workspace-contexts.sql");
     expect(migration).toContain("CREATE OR REPLACE FUNCTION activity_api.list_problem_workspaces");
     expect(migration).toContain("m.account_id = p_account_id");
     expect(migration).toContain("a.workspace_id = w.id");

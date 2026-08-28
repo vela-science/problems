@@ -13,6 +13,7 @@ import {
   type CreateAttemptInput,
   type CreateWorkspaceInput,
   type FollowProblemInput,
+  type FollowedProblem,
   type ForkApproachInput,
   type HostedAccountInput,
   type ProblemActivity,
@@ -40,7 +41,7 @@ import {
   type PilotTelemetryReceipt,
   type PilotTelemetryRecord,
 } from "./pilot-telemetry";
-import { parseCrdtUpdates, parseProblemActivity as parseProblemActivityResponse } from "./problem-activity";
+import { parseCrdtUpdates, parseFollowedProblems, parseProblemActivity as parseProblemActivityResponse } from "./problem-activity";
 
 type JsonRecord = Record<string, unknown>;
 
@@ -316,6 +317,21 @@ export async function listWorkspaces(accountId: string): Promise<Workspace[]> {
     const result = rows[0]?.result;
     if (!Array.isArray(result)) throw new Error("workspace list response must be an array");
     return result.map((workspace) => workspaceFrom(workspace, true));
+  } catch (error) {
+    throw activityDatabaseError(error);
+  }
+}
+
+/* What this account watches, everywhere. The read is account-scoped in SQL and
+   guarded by the same membership join as every other activity read; a follow in
+   a workspace this account has been removed from stops being visible here. */
+export async function listFollowedProblems(accountId: string): Promise<FollowedProblem[]> {
+  try {
+    const rows = await activitySql().query(
+      "SELECT activity_api.list_followed_problems($1::uuid) AS result",
+      [accountId],
+    );
+    return parseFollowedProblems(rows[0]?.result);
   } catch (error) {
     throw activityDatabaseError(error);
   }

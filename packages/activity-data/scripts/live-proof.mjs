@@ -14,6 +14,7 @@ import {
   followProblem,
   forkApproach,
   getProblemActivity,
+  listFollowedProblems,
   listWorkspaces,
   publicProfileByHandle,
   publicProfileForPerformer,
@@ -434,6 +435,28 @@ const historicalAfterCurrentUnfollow = await getProblemActivity({
 });
 if (!historicalAfterCurrentUnfollow.following) throw new Error("current unfollow erased historical following");
 
+/* The other direction of the same records: what this account watches, read
+   without naming a Problem. Right here accountA follows only the historical
+   anchor — the current one was just unfollowed — so the list must return that
+   one Problem, carry the anchor of the state actually followed, and stay
+   invisible to an account that follows nothing. */
+const watchedByA = await listFollowedProblems(accountA.id);
+const watchedHere = watchedByA.filter((entry) => (
+  entry.anchor.repositoryId === anchor.repositoryId && entry.anchor.problemId === anchor.problemId
+));
+if (watchedHere.length !== 1) throw new Error("followed Problem list did not collapse to one row per Problem");
+if (watchedHere[0].anchor.root !== historicalAnchorRoot) {
+  throw new Error("followed Problem list did not report the earliest followed anchor");
+}
+if (watchedHere[0].anchor.projectionReleaseRoot !== historicalAnchor.projectionReleaseRoot) {
+  throw new Error("followed Problem list lost the exact release root the follow was made at");
+}
+if (watchedHere[0].workspaceId !== workspaceA.id) throw new Error("followed Problem list reported the wrong Workspace");
+const watchedByB = await listFollowedProblems(accountB.id);
+if (watchedByB.some((entry) => entry.workspaceId === workspaceA.id)) {
+  throw new Error("followed Problem list crossed a tenant boundary");
+}
+
 const payload = {
   schema: "vela.submission.v3",
   identity: {
@@ -493,6 +516,38 @@ const catalogResults = await ownerTransaction((transaction) => [transaction.quer
     AND table_name='workspace_crdt_updates' AND column_name='update_bytes')::integer
     AS bounded_crdt_byte_columns
   FROM information_schema.columns WHERE table_schema='activity'`)]);
+/* Every API function the application can call, and nothing else can.
+ *
+ * PostgreSQL grants EXECUTE to PUBLIC on a newly created function by default,
+ * so a schema fragment that creates one and revokes nothing opens it to every
+ * role in the database. The reverse mistake is quieter and was the one worth
+ * catching: `base.sql` grants across the whole schema, but it runs first, so a
+ * fragment that forgets its own grant creates a function the app role cannot
+ * execute — and nothing fails until a page 500s in production.
+ *
+ * `no-duplicate-definitions.test.ts` reads the same property out of the SQL
+ * source. This reads it out of the database that actually serves traffic. */
+const [functionPrivileges] = await migratorSql.query(`
+  SELECT
+    count(*)::integer AS total,
+    count(*) FILTER (WHERE NOT has_function_privilege('vela_activity_app', p.oid, 'EXECUTE'))::integer
+      AS app_cannot_execute,
+    count(*) FILTER (WHERE has_function_privilege('public', p.oid, 'EXECUTE'))::integer
+      AS public_can_execute,
+    count(*) FILTER (WHERE NOT p.prosecdef)::integer AS not_security_definer
+  FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+  WHERE n.nspname = 'activity_api'`);
+if (!functionPrivileges || Number(functionPrivileges.total) === 0) {
+  throw new Error("activity_api exposes no functions");
+}
+if (
+  Number(functionPrivileges.app_cannot_execute) !== 0
+  || Number(functionPrivileges.public_can_execute) !== 0
+  || Number(functionPrivileges.not_security_definer) !== 0
+) {
+  throw new Error(`activity_api function privileges failed: ${JSON.stringify(functionPrivileges)}`);
+}
+
 const catalogRows = catalogResults.at(-1);
 const catalog = catalogRows?.[0];
 if (!catalog) throw new Error("activity catalog probe returned no row");
@@ -591,6 +646,9 @@ console.log(JSON.stringify({
   optimisticVersioningProved: true,
   profilePrivacyRenameCollisionDeletionProved: true,
   exactAnchorFollowingProved: true,
+  followedProblemListProved: true,
+  apiFunctions: Number(functionPrivileges.total),
+  apiFunctionPrivilegesProved: true,
   appBaseTablesDenied: true,
   problemsWriteDenied: true,
   authoritySecretColumns: 0,

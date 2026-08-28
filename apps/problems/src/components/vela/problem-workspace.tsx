@@ -20,15 +20,18 @@ import { RootedArtifactFrame } from "@vela/ui/vela/rooted-artifact-frame";
 import { IdempotencyField } from "@/components/vela/idempotency-field";
 import { formalFilePath } from "@/components/vela/formal-statement-card";
 import { ProblemActivityRecords } from "@/components/vela/problem-activity-records";
+import { ContributionPath } from "@/components/vela/contribution-path";
 import type { AccountIdentity } from "@/lib/auth";
 import type { ScientificProblemState } from "@/lib/scientific-state";
 import { problemWorkbenchHandoff } from "@/lib/workbench-handoff";
 import { FormSelect } from "@/components/vela/form-select";
 import { RecordId } from "@/components/vela/record-id";
+import { formatDate } from "@/lib/format";
 import { CandidateBanner } from "@/components/vela/candidate-banner";
 import { Reach } from "@/components/vela/reach";
 import { WorkAction } from "@/components/vela/work-action";
 import { problemReachCaption, problemReachStops } from "@/lib/problem-reach";
+import { problemWatch, problemWatchSentence, type ProblemWatch } from "@/lib/problem-watch";
 import { WorkspaceShell } from "@/components/vela/workspace-shell";
 import { WorkspaceCrdtNote } from "@/components/vela/workspace-crdt-note";
 import type {
@@ -110,6 +113,59 @@ function FormField({ label, name, placeholder, required = true, value, type = "t
 
 function StaleActivityNotice() {
   return <Alert className="mt-5 bg-muted/30"><AlertTitle>Earlier activity anchor</AlertTitle><AlertDescription>This record remains readable, but controls are unavailable because its exact Problem or Repository anchor is no longer current. Start a new Approach from the current Problem instead of silently editing historical context.</AlertDescription></Alert>;
+}
+
+/* The exact field names the record uses, not the TypeScript property names the
+   comparison happens to be written in. A reader who copies `problem_record_root`
+   out of here can find it in the projection; `problemRecordRoot` exists nowhere
+   but this codebase. */
+const anchorFieldNames: Record<string, string> = {
+  repositoryId: "repository_id",
+  repositoryRoot: "repository_root",
+  sourceCommit: "source_commit",
+  sourceTree: "source_tree",
+  projectionReleaseRoot: "projection_release_root",
+  problemId: "problem_id",
+  problemRecordRoot: "problem_record_root",
+  sourceObservationRoot: "source_observation_root",
+  claimId: "claim_id",
+  claimRoot: "claim_root",
+  claimStanding: "claim_standing",
+};
+
+/* The watch, firing.
+ *
+ * A follow binds to one exact anchor and never migrates, so a followed root
+ * that is no longer current is the product's own way of saying the record moved
+ * while this reader was away. Until now the surface discarded that and drew an
+ * unpressed Follow button, which read as "you are not watching this" — the
+ * opposite of the truth.
+ *
+ * Acknowledging is the ordinary Follow command against the current anchor, so
+ * this introduces no new record type and no notification store. The reader
+ * presses Follow and is now watching the state they have just been shown. */
+function WatchNotice({ watch, scope }: { watch: ProblemWatch; scope: Scope }) {
+  const fields = "fields" in watch.moved ? watch.moved.fields : [];
+  return <Alert className="mb-5 bg-muted/30">
+    <AlertTitle>This record moved since you started watching</AlertTitle>
+    <AlertDescription>
+      <p>{problemWatchSentence(watch)}</p>
+      <p className="mt-2 text-meta text-muted-foreground">
+        Watching since {formatDate(watch.since)}. {fields.length
+          ? <>Changed: <span className="font-mono text-micro">{fields.map((field) => anchorFieldNames[field] ?? field).join(" ")}</span>.</>
+          : null}
+      </p>
+      <p className="mt-2 text-meta text-muted-foreground">
+        Reaching a stage is not a question being answered. A Repository accepting a Claim is a separate act, and this
+        notice never reports one.
+      </p>
+      <form action={followProblemAction} className="mt-3">
+        <ScopeFields scope={scope} />
+        <input type="hidden" name="following" value="true" />
+        <Button type="submit" size="sm" variant="outline">Watch the current state</Button>
+      </form>
+    </AlertDescription>
+  </Alert>;
 }
 
 function EmptyWorkspace({ state, accountId, workbenchHandoff }: { state: State; accountId: string; workbenchHandoff?: string | null }) {
@@ -364,7 +420,8 @@ export async function ProblemWorkspace({ state, hostedAccount, accountsEnabled =
               transition. The attributed activity underneath it was the only
               thing here a reader could not get elsewhere, and it was below the
               fold. They swap. */}
-          <div aria-label="Public workspace context">
+          <ContributionPath accountsEnabled={accountsEnabled} />
+          <div aria-label="Public workspace context" className="mt-8">
             {(state.attributedRecords ?? []).length
               ? <ProblemActivityRecords state={state} />
               : <>
@@ -394,7 +451,6 @@ export async function ProblemWorkspace({ state, hostedAccount, accountsEnabled =
               </li>)}
             </ul>
           </> : <p className="mt-1 text-micro text-muted-foreground">No statement for this Problem is still marked open by its source.</p>}
-          <p className="mt-4 text-micro text-muted-foreground">Notes, Research Blocks and a Result draft need an account. Everything above is public.</p>
         </aside>
       </div>
     </section>;
@@ -425,13 +481,17 @@ export async function ProblemWorkspace({ state, hostedAccount, accountsEnabled =
      candidate is the one thing in this Workspace that is waiting on a person,
      and the tree is where you go when you already know it is there. */
   const candidate = activity.drafts.find((draft) => draft.anchorRoot === currentAnchorRoot) ?? null;
+  /* Read once, here, rather than inside the notice: it is a second exact
+     projection read at the followed release root, and a component that performs
+     it on render would do so on every branch that never draws the notice. */
+  const watch = await problemWatch(state, activity);
   const candidateBanner = candidate ? <CandidateBanner
     draft={{ id: candidate.id, payloadRoot: candidate.payloadRoot, version: candidate.version, updatedAt: candidate.updatedAt }}
     exportHref={`/drafts/${candidate.id}/export?workspace=${workspace.id}`}
     workbenchHandoff={workbenchHandoff}
     target={{ claimId: state.anchor.claimId, standing: state.anchor.claimStanding }}
   /> : null;
-  const toolbar = <div><MutationError code={mutationError} /><MutationDone code={mutationDone} />{candidateBanner ? <div className="mb-5">{candidateBanner}</div> : null}<div className="flex flex-wrap items-start justify-between gap-4"><div className="flex flex-wrap items-center gap-2"><h2 id="workspace-heading" className="text-title">{workspace.name}</h2><Badge variant="outline">{workspace.role}</Badge>{activity.following ? <Badge variant="secondary">following</Badge> : null}</div><div className="flex flex-wrap items-center justify-end gap-2">{workbenchHandoff ? <Button nativeButton={false} size="sm" variant="outline" render={<a href={workbenchHandoff} />}>Continue locally</Button> : null}{workspaces.map((entry) => <Button key={entry.id} nativeButton={false} size="sm" variant={entry.id === workspace.id ? "default" : "outline"} render={<Link href={`${basePath}/work?workspace=${entry.id}`} />}>{entry.name}</Button>)}<form action={followProblemAction}><ScopeFields scope={scope} /><input type="hidden" name="following" value={activity.following ? "false" : "true"} /><Button type="submit" size="sm" variant="outline">{activity.following ? "Unfollow" : "Follow"}</Button></form></div></div>{workbenchHandoff ? <p className="mt-2 text-meta text-muted-foreground">The handoff carries this exact Problem, source revision, and authority Repository. It does not clone, switch, upload, or execute anything.</p> : null}<div className="mt-5"><Reach stops={problemReachStops(state)} endpoint="The question" caption={problemReachCaption(state)} /></div></div>;
+  const toolbar = <div><MutationError code={mutationError} /><MutationDone code={mutationDone} />{watch ? <WatchNotice watch={watch} scope={scope} /> : null}{candidateBanner ? <div className="mb-5">{candidateBanner}</div> : null}<div className="flex flex-wrap items-start justify-between gap-4"><div className="flex flex-wrap items-center gap-2"><h2 id="workspace-heading" className="text-title">{workspace.name}</h2><Badge variant="outline">{workspace.role}</Badge>{activity.following ? <Badge variant="secondary">following</Badge> : null}</div><div className="flex flex-wrap items-center justify-end gap-2">{workbenchHandoff ? <Button nativeButton={false} size="sm" variant="outline" render={<a href={workbenchHandoff} />}>Continue locally</Button> : null}{workspaces.map((entry) => <Button key={entry.id} nativeButton={false} size="sm" variant={entry.id === workspace.id ? "default" : "outline"} render={<Link href={`${basePath}/work?workspace=${entry.id}`} />}>{entry.name}</Button>)}<form action={followProblemAction}><ScopeFields scope={scope} /><input type="hidden" name="following" value={activity.following ? "false" : "true"} /><Button type="submit" size="sm" variant="outline">{activity.following ? "Unfollow" : "Follow"}</Button></form></div></div>{workbenchHandoff ? <p className="mt-2 text-meta text-muted-foreground">The handoff carries this exact Problem, source revision, and authority Repository. It does not clone, switch, upload, or execute anything.</p> : null}<div className="mt-5"><Reach stops={problemReachStops(state)} endpoint="The question" caption={problemReachCaption(state)} /></div></div>;
   const canvasNote = <WorkspaceCrdtNote updates={activity.crdtUpdates} scope={scope} action={appendWorkspaceCrdtUpdateAction} />;
   return <WorkspaceShell objects={objects} selectedObject={object} inspectorTab={inspector} anchors={anchors} audit={audit} discussion={discussion} toolbar={toolbar} canvasNote={canvasNote} initialSurface={selectedObject ? "object" : "canvas"} />;
 }

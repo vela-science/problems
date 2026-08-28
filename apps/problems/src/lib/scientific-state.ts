@@ -509,3 +509,79 @@ export const problemStatementIndex = unstable_cache(
 export function problemStatementKey(problem: ProblemDiscovery): string | null {
   return problem.collection ? `${problem.collection.key}:${problem.problem}` : null;
 }
+
+export type ProblemNeighbourhood = {
+  /** Topics this Problem's own source files it under, with the size of each. */
+  topics: Array<{ key: string; name: string; problemCount: number; href: string }>;
+  /** Questions under a shared Topic whose record carries a Repository-local Standing. */
+  recorded: Array<{ problem: string; label: string; path: string; standing: string }>;
+  /** How many other questions share a Topic with this one at all. */
+  total: number;
+  /** The filtered directory holding all of them. */
+  href: string;
+};
+
+/* Where a Problem sits, read off the taxonomy its own source filed.
+ *
+ * This is an exact relation, not a similarity score. The source wrote these
+ * Topic keys onto these Problems; the projection retains them; this reads them
+ * back and nothing else. There is no ranking, no computed relatedness, and no
+ * ordering by anything but the source's own identifier — PRODUCT.md scores Vela
+ * absent on discovery and allocation deliberately, and a "problems you might
+ * like" list is precisely what that boundary forbids.
+ *
+ * The neighbours worth naming are the ones that carry a Standing. Listing them
+ * in the source's own order instead put six consecutive problem numbers on the
+ * page, each reading "No record", which is what 1,215 of 1,217 say: a list
+ * whose every row carries the same non-fact. Filtering to a retained Standing
+ * is still an exact filter on a projected field, the same one the directory
+ * offers — and where a topic has none, saying so is itself the most useful
+ * sentence on the page, because it means the frontier here is empty. */
+export async function problemNeighbourhood(
+  state: { problem: { problem: string; node_id: string }; repositorySlug: string },
+  collectionPath: string,
+  limit = 6,
+): Promise<ProblemNeighbourhood | null> {
+  const catalog = await discoveredProblems();
+  const self = catalog.find((entry) =>
+    entry.repository === state.repositorySlug && entry.problem === state.problem.problem);
+  if (!self?.topics.length) return null;
+
+  const keys = new Set(self.topics.map(({ key }) => key));
+  const counts = new Map<string, number>();
+  const recorded: ProblemNeighbourhood["recorded"] = [];
+  let total = 0;
+  for (const entry of catalog) {
+    if (!entry.topics.some(({ key }) => keys.has(key))) continue;
+    for (const { key } of entry.topics) if (keys.has(key)) counts.set(key, (counts.get(key) ?? 0) + 1);
+    if (entry.problem === self.problem && entry.repository === self.repository) continue;
+    total += 1;
+    if (!entry.canonicalPath || !entry.record.local_standing) continue;
+    recorded.push({
+      problem: entry.problem,
+      label: entry.record.label,
+      path: entry.canonicalPath,
+      standing: entry.record.local_standing,
+    });
+  }
+  /* The source's own identifier order. Numeric where the source numbers its
+     Problems, so 94 does not sort between 940 and 941. */
+  recorded.sort((left, right) => {
+    const leftNumber = Number(left.problem);
+    const rightNumber = Number(right.problem);
+    return Number.isFinite(leftNumber) && Number.isFinite(rightNumber)
+      ? leftNumber - rightNumber
+      : left.problem.localeCompare(right.problem);
+  });
+
+  const topics = self.topics
+    .map(({ key, name }) => ({ key, name, problemCount: counts.get(key) ?? 0, href: `${collectionPath}?topic=${encodeURIComponent(key)}` }))
+    .sort((left, right) => right.problemCount - left.problemCount || left.name.localeCompare(right.name));
+
+  return {
+    topics,
+    recorded: recorded.slice(0, limit),
+    total,
+    href: topics[0] ? topics[0].href : collectionPath,
+  };
+}

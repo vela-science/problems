@@ -1,38 +1,11 @@
-import { afterEach, describe, expect, test } from "bun:test";
-import { execFileSync } from "node:child_process";
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
-import { createServer } from "node:net";
-import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
+import { describe, expect, test } from "bun:test";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { PILOT_TELEMETRY_SIGNALS, pilotTelemetryRecord } from "../src/pilot-telemetry";
+import { withActivityPostgres } from "./activity-postgres";
 
 const packageRoot = resolve(import.meta.dirname, "..");
 const read = (path: string) => readFileSync(resolve(packageRoot, path), "utf8");
-const temporaryRoots: string[] = [];
-
-function command(name: string, args: string[]) {
-  return execFileSync(name, args, {
-    encoding: "utf8",
-    stdio: ["ignore", "pipe", "pipe"],
-    env: { ...process.env, LC_ALL: "C" },
-  });
-}
-
-async function availablePort(): Promise<number> {
-  return new Promise((resolvePort, reject) => {
-    const server = createServer();
-    server.once("error", reject);
-    server.listen(0, "127.0.0.1", () => {
-      const address = server.address();
-      if (!address || typeof address === "string") return reject(new Error("failed to allocate PostgreSQL port"));
-      server.close((error) => error ? reject(error) : resolvePort(address.port));
-    });
-  });
-}
-
-afterEach(() => {
-  for (const path of temporaryRoots.splice(0)) rmSync(path, { recursive: true, force: true });
-});
 
 const INSTALL_ID = "a".repeat(32);
 const record = (overrides: Record<string, unknown> = {}) => ({
@@ -99,37 +72,8 @@ describe("pilot telemetry wire contract", () => {
 
 describe("pilot telemetry activity schema", () => {
   test("applies from the clean schema and enforces vocabulary, dedupe, window, retention, and both admission bounds", async () => {
-    const pgBin = process.env.PG_BIN_DIR ?? command("pg_config", ["--bindir"]).trim();
-    const port = await availablePort();
-    const tempRoot = mkdtempSync(join(tmpdir(), "vela-pilot-telemetry-"));
-    temporaryRoots.push(tempRoot);
-    const data = join(tempRoot, "postgres");
-    const log = join(tempRoot, "postgres.log");
-    command(join(pgBin, "initdb"), [
-      "--pgdata", data, "--username", "postgres", "--auth", "trust", "--no-locale", "--no-instructions",
-    ]);
-    command(join(pgBin, "pg_ctl"), [
-      "--pgdata", data, "--log", log,
-      "--options", `-h 127.0.0.1 -p ${port} -k ${tempRoot} -c statement_timeout=5s`,
-      "--wait", "start",
-    ]);
-    const base = `postgres://postgres@127.0.0.1:${port}`;
-    const admin = `${base}/postgres?sslmode=disable`;
-    const database = `${base}/vela_activity?sslmode=disable`;
-    const psql = (url: string, statement: string) => command(join(pgBin, "psql"), [
-      url, "--set", "ON_ERROR_STOP=1", "--tuples-only", "--no-align", "--command", statement,
-    ]).trim();
-    const applyFile = (path: string) => command(join(pgBin, "psql"), [
-      database, "--set", "ON_ERROR_STOP=1", "--single-transaction", "--file", resolve(packageRoot, path),
-    ]);
-
-    try {
-      command(join(pgBin, "psql"), [admin, "--set", "ON_ERROR_STOP=1", "--file", resolve(packageRoot, "roles.sql")]);
-      psql(admin, "CREATE DATABASE vela_activity");
-      psql(database, "GRANT CREATE ON DATABASE vela_activity TO vela_activity_owner");
-      for (const fragment of ["base.sql", "pilot-telemetry.sql"]) applyFile(`schema/${fragment}`);
-
-      const call = (recordId: string, signal: string, occurredAt: string, stageMs: string) => psql(database, `
+    await withActivityPostgres("pilot-telemetry", ({ psql }) => {
+      const call = (recordId: string, signal: string, occurredAt: string, stageMs: string) => psql(`
         SELECT activity_api.record_pilot_telemetry(
           '${INSTALL_ID}', '${recordId}', '${signal}', '${occurredAt}'::timestamptz, ${stageMs}
         )::text
@@ -147,26 +91,26 @@ describe("pilot telemetry activity schema", () => {
       expect(() => call("2".repeat(32), "transcript_uploaded", now, "NULL")).toThrow(/closed vocabulary/iu);
       expect(() => call("3".repeat(32), "check_completed", "2020-01-01T00:00:00Z", "NULL")).toThrow(/accepted window/iu);
       expect(() => call("4".repeat(32), "check_completed", now, "86400001")).toThrow(/out of bounds/iu);
-      expect(() => psql(database, `SELECT activity_api.record_pilot_telemetry(
+      expect(() => psql(`SELECT activity_api.record_pilot_telemetry(
         'not-an-install-id', '${"5".repeat(32)}', 'check_completed', now(), NULL)`)).toThrow(/identifiers are invalid/iu);
 
       /* Retention is a property of the write path itself. */
-      psql(database, `UPDATE activity.pilot_telemetry SET received_at = now() - interval '91 days'
+      psql(`UPDATE activity.pilot_telemetry SET received_at = now() - interval '91 days'
         WHERE client_record_id = '${first}'`);
       expect(JSON.parse(call("6".repeat(32), "readback_completed", now, "NULL")).stored).toBe(true);
-      expect(psql(database, `SELECT count(*) FROM activity.pilot_telemetry WHERE client_record_id = '${first}'`)).toBe("0");
+      expect(psql(`SELECT count(*) FROM activity.pilot_telemetry WHERE client_record_id = '${first}'`)).toBe("0");
 
       /* The application role executes the API but never touches the table. */
-      expect(psql(database, `SELECT has_function_privilege('vela_activity_app',
+      expect(psql(`SELECT has_function_privilege('vela_activity_app',
         'activity_api.record_pilot_telemetry(text,text,text,timestamptz,bigint)', 'EXECUTE')`)).toBe("t");
-      expect(psql(database, `SELECT has_table_privilege('vela_activity_app',
+      expect(psql(`SELECT has_table_privilege('vela_activity_app',
         'activity.pilot_telemetry', 'SELECT,INSERT,UPDATE,DELETE')`)).toBe("f");
 
       /* The per-install budget bounds an honest client that keeps one
          install_id. Rows are seeded directly so the branch is reached without
          5,000 round trips. */
-      psql(database, "DELETE FROM activity.pilot_telemetry");
-      psql(database, `INSERT INTO activity.pilot_telemetry
+      psql("DELETE FROM activity.pilot_telemetry");
+      psql(`INSERT INTO activity.pilot_telemetry
         (install_id, client_record_id, signal, occurred_at)
         SELECT '${INSTALL_ID}', md5(i::text), 'problem_opened', now()
         FROM generate_series(1, 5000) AS i`);
@@ -175,25 +119,23 @@ describe("pilot telemetry activity schema", () => {
       /* A different install_id is unaffected, which is exactly why the
          per-install budget is not a global bound: install_id is client-minted
          and an attacker rotates it. */
-      expect(JSON.parse(psql(database, `SELECT activity_api.record_pilot_telemetry(
+      expect(JSON.parse(psql(`SELECT activity_api.record_pilot_telemetry(
         '${"c".repeat(32)}', '${"8".repeat(32)}', 'problem_opened', now(), NULL)::text`)).stored).toBe(true);
 
       /* The global ceiling is the bound that holds against rotation. */
-      psql(database, "DELETE FROM activity.pilot_telemetry");
-      psql(database, `INSERT INTO activity.pilot_telemetry
+      psql("DELETE FROM activity.pilot_telemetry");
+      psql(`INSERT INTO activity.pilot_telemetry
         (install_id, client_record_id, signal, occurred_at, received_at)
         SELECT md5(i::text), md5(('r' || i)::text), 'problem_opened', now(), now()
         FROM generate_series(1, 50000) AS i`);
-      expect(() => psql(database, `SELECT activity_api.record_pilot_telemetry(
+      expect(() => psql(`SELECT activity_api.record_pilot_telemetry(
         '${"d".repeat(32)}', '${"9".repeat(32)}', 'problem_opened', now(), NULL)`))
         .toThrow(/ingestion ceiling is reached/iu);
       /* The ceiling reads the trailing hour, so it releases as rows age out of
          the window rather than latching permanently. */
-      psql(database, "UPDATE activity.pilot_telemetry SET received_at = now() - interval '2 hours'");
-      expect(JSON.parse(psql(database, `SELECT activity_api.record_pilot_telemetry(
+      psql("UPDATE activity.pilot_telemetry SET received_at = now() - interval '2 hours'");
+      expect(JSON.parse(psql(`SELECT activity_api.record_pilot_telemetry(
         '${"d".repeat(32)}', '${"9".repeat(32)}', 'problem_opened', now(), NULL)::text`)).stored).toBe(true);
-    } finally {
-      command(join(pgBin, "pg_ctl"), ["--pgdata", data, "--wait", "stop"]);
-    }
+    });
   }, 60_000);
 });

@@ -165,3 +165,44 @@
  * since the Reach track replaced the stage ladder, that composition carries the
  * same instrument the answered reading carries, at the same breakpoint, from
  * one container query rather than from a viewport media query here. */
+
+/* The source's own filing, as chips over the sibling list.
+ *
+ * Chips, because a Topic is an address a reader can travel to and the count is
+ * the size of what is on the other side. Not a badge row: these are links, and
+ * they carry the app's ordinary interactive treatment rather than a status
+ * colour, because none of them reports state. */
+.topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  padding: 0.8125rem 0.8125rem 0.6875rem;
+  border-bottom: 1px solid color-mix(in oklab, var(--border) 55%, transparent);
+}
+
+.topic {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4375rem;
+  min-height: 1.75rem;
+  padding: 0 0.5625rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--background);
+  font-size: var(--text-meta);
+  color: var(--foreground);
+  transition: background-color 140ms ease-out, border-color 140ms ease-out;
+}
+.topic:hover { background: var(--vela-surface-hover); border-color: color-mix(in oklab, var(--primary) 38%, var(--border)); }
+.topicCount { color: var(--ov-muted); font-variant-numeric: tabular-nums; }
+
+/* A sibling row is a whole link, so it takes the row's own hover ground rather
+   than an underline on the label alone. */
+.siblingRow { grid-template-columns: minmax(0, 1fr) auto; }
+.siblingRow:hover { background: var(--vela-surface-hover); }
+
+.noteLink { color: var(--foreground); font-weight: 500; text-decoration: underline; text-underline-offset: 0.2em; }
+
+@media (prefers-reduced-motion: reduce) {
+  .topic { transition: none; }
+}

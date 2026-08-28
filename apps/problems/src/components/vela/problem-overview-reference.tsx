@@ -1,4 +1,4 @@
-import type { ScientificProblemState } from "@/lib/scientific-state";
+import type { ProblemNeighbourhood, ScientificProblemState } from "@/lib/scientific-state";
 import { ProblemOverview } from "@/components/vela/problem-overview";
 
 type State = NonNullable<ScientificProblemState>;
@@ -79,6 +79,10 @@ export function dominantCheckOutcome(checks: Array<{ outcome: string }>) {
  * `problemReading` from the Claim's own declared scope, the scope figure from
  * the limitation the Claim states about itself — and the hardcoded copy is
  * gone with the pilot. */
-export function ProblemOverviewReference({ state, route }: { state: State; route: string }) {
-  return <ProblemOverview state={state} route={route} />;
+export function ProblemOverviewReference({ state, route, neighbourhood }: {
+  state: State;
+  route: string;
+  neighbourhood?: ProblemNeighbourhood | null;
+}) {
+  return <ProblemOverview state={state} route={route} neighbourhood={neighbourhood} />;
 }

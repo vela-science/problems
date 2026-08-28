@@ -11,7 +11,9 @@ import { problemReachCaption, problemReachStops } from "@/lib/problem-reach";
 import { currentReview } from "@/components/vela/problem-provenance";
 import { formatDate } from "@/lib/format";
 import { problemReading } from "@/lib/problem-reading";
-import type { ScientificProblemState } from "@/lib/scientific-state";
+import { problemOpening } from "@/lib/problem-opening";
+import { activityStrings } from "@/components/vela/problem-activity-records";
+import type { ProblemNeighbourhood, ScientificProblemState } from "@/lib/scientific-state";
 import { exactResultHeadline, exactResultLimitation } from "@/components/vela/problem-overview-reference";
 import styles from "./problem-overview.module.css";
 
@@ -57,7 +59,11 @@ function claimLineage(claims: Array<{ id: string; record?: unknown }>) {
   return { replaces, replacedBy };
 }
 
-export function ProblemOverview({ state, route }: { state: State; route: string }) {
+export function ProblemOverview({ state, route, neighbourhood }: {
+  state: State;
+  route: string;
+  neighbourhood?: ProblemNeighbourhood | null;
+}) {
   const claims = state.claims ?? [];
   const current = claims.find((claim) => claim.id === state.currentClaimId) ?? null;
   const review = currentReview(state);
@@ -99,6 +105,10 @@ export function ProblemOverview({ state, route }: { state: State; route: string 
           </div>
         </section>
 
+        <OpeningPanel state={state} route={route} />
+
+        {neighbourhood ? <NeighbourhoodPanel neighbourhood={neighbourhood} /> : null}
+
         <p className={styles.answerDetail}>
           Work happens in a Vela Repository, not on this page. When a Repository accepts a Result against this question,
           its Decision and evidence project here with their scope and authority intact.
@@ -111,6 +121,7 @@ export function ProblemOverview({ state, route }: { state: State; route: string 
 
       <aside className={styles.rail} aria-label="Problem facts">
         <ProblemFacts state={state} lastSourceUpdate={lastSourceUpdate} />
+        <ReportedActivityPanel state={state} route={route} />
         <ExactPanel state={state} />
       </aside>
     </div>;
@@ -328,4 +339,101 @@ function ExactPanel({ state }: { state: State }) {
       </p>
     </div>
   </Disclosure>;
+}
+
+/* The stage this record has not reached, and what reaching it takes.
+ *
+ * The empty Problem is the most-opened screen in the product and had the least
+ * on it: an identity, a locator, and a track saying the record goes no further.
+ * A reader willing to help could not learn what helping would consist of. This
+ * says it, derived from the same reach axis drawn above, and its last stage is
+ * deliberately one this site cannot perform. */
+function OpeningPanel({ state, route }: { state: State; route: string }) {
+  const opening = problemOpening(state, route);
+  if (!opening) return null;
+  return <section className={styles.panel} aria-labelledby="opening-heading">
+    <div className={styles.panelHead}>
+      <span className={styles.kicker} id="opening-heading">What this record is missing</span>
+      <span className={styles.kicker}>{opening.stage}</span>
+    </div>
+    <div className={styles.scope}>
+      <p className={styles.scopeText} style={{ marginTop: 0, fontWeight: 500 }}>{opening.missing}</p>
+      <p className={styles.scopeText}>{opening.step}</p>
+      {opening.action ? <div className={styles.actions}>
+        <Button nativeButton={false} size="sm" variant="outline" render={<a href={opening.action.href} />}>{opening.action.label}</Button>
+      </div> : null}
+    </div>
+  </section>;
+}
+
+/* Where this Problem sits, in its source's own filing.
+ *
+ * Every Topic here was written onto this Problem by the source that owns it.
+ * Nothing is computed, scored or ranked, and the siblings are in the source's
+ * own identifier order — a "problems you might like" list is exactly what the
+ * product's claims boundary forbids, and the difference between that and this
+ * is that this one asserts no judgement about any of them. */
+function NeighbourhoodPanel({ neighbourhood }: { neighbourhood: ProblemNeighbourhood }) {
+  return <section className={styles.panel} aria-labelledby="neighbourhood-heading">
+    <div className={styles.panelHead}>
+      <span className={styles.kicker} id="neighbourhood-heading">Where the source files it</span>
+      <span className={styles.kicker}>{neighbourhood.total} share a topic</span>
+    </div>
+    <div className={styles.topics}>
+      {neighbourhood.topics.map((topic) => <Link key={topic.key} href={topic.href} className={styles.topic}>
+        <span>{topic.name}</span>
+        <span className={styles.topicCount}>{topic.problemCount}</span>
+      </Link>)}
+    </div>
+    {neighbourhood.recorded.length ? <>
+      {neighbourhood.recorded.map((sibling) => <Link key={sibling.path} href={sibling.path} className={`${styles.row} ${styles.siblingRow}`}>
+        <span className={styles.rowTitle}>{sibling.label}</span>
+        <span className={styles.rowMeta} style={{ marginTop: 0, textAlign: "right" }}>{humanize(sibling.standing)}</span>
+      </Link>)}
+      <div className={styles.note}>
+        Questions under these topics that carry a Repository Standing.{" "}
+        <Link href={neighbourhood.href} className={styles.noteLink}>Browse the topic</Link> for the rest.
+      </div>
+    </> : <div className={styles.note}>
+      {/* The most useful sentence available on a page like this, and it is a
+          plain count rather than a judgement: nothing under these topics has
+          been decided anywhere in this release. */}
+      No question under these topics carries a Repository Standing in this release.{" "}
+      <Link href={neighbourhood.href} className={styles.noteLink}>Browse the topic</Link>.
+    </div>}
+  </section>;
+}
+
+/* Who has touched this question, where a source reports it.
+ *
+ * The Work tab already counts these records and renders them in full. The count
+ * is not the fact a reader wants on an otherwise-empty page — a bare "3" says
+ * nothing, and "Codex, GPT-5.2 Thinking" says who. Human and machine performers
+ * are weighted the same, and none of this carries Standing. */
+function ReportedActivityPanel({ state, route }: { state: State; route: string }) {
+  const entries = state.attributedRecords ?? [];
+  if (!entries.length) return null;
+  const performers = new Map<string, string>();
+  for (const { occurrence, record } of entries) {
+    const metadata = record.metadata as Record<string, unknown>;
+    for (const name of activityStrings(metadata.ai_systems).concat(
+      activityStrings(metadata.model),
+      activityStrings(metadata.humans),
+      activityStrings(metadata.human_collaborators),
+    )) if (!performers.has(name)) performers.set(name, occurrence.source_label);
+  }
+  if (!performers.size) return null;
+  return <section className={styles.panel}>
+    <div className={styles.panelHead}>
+      <span className={styles.kicker}>Reported activity</span>
+      <span className={styles.kicker}>{entries.length} {entries.length === 1 ? "record" : "records"}</span>
+    </div>
+    {[...performers].slice(0, 6).map(([name, source]) => <div key={name} className={styles.fact}>
+      <span className={styles.factKey}>{source}</span>
+      <span className={styles.factValue}>{name}</span>
+    </div>)}
+    <div className={styles.note}>
+      Source-reported attribution, not reviewed here. <Link href={`${route}/work`} className={styles.noteLink}>The records</Link> carry what each one says.
+    </div>
+  </section>;
 }

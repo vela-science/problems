@@ -39,6 +39,13 @@ const problemsProfileAction = "apps/problems/src/app/actions/profile.ts";
 const problemsActivityDraftRoute = "apps/problems/src/app/drafts/[id]/export/route.ts";
 const problemsActivityWorkspace = "apps/problems/src/components/vela/problem-workspace.tsx";
 const problemsWorkspacesPage = "apps/problems/src/app/workspaces/page.tsx";
+/* Watching reads follows and derives what moved by comparing two exact
+   projections. It reads the activity plane and writes nothing to it: there is
+   no watch command, no notification record, and no unread state — a follow is
+   already an activity record, and everything the page says is derived at read
+   time from the anchor that follow retained. */
+const problemsWatchingPage = "apps/problems/src/app/watching/page.tsx";
+const problemsWatchDerivation = "apps/problems/src/lib/problem-watch.ts";
 const problemsAuthLibrary = "apps/problems/src/lib/auth.ts";
 const problemsIdentityProxy = "apps/problems/src/proxy.ts";
 const problemsGithubApp = "apps/problems/src/lib/github-app.ts";
@@ -103,6 +110,8 @@ const PROBLEMS_ACTIVITY_FILES = new Set([
   problemsActivityDraftRoute,
   problemsActivityWorkspace,
   problemsWorkspacesPage,
+  problemsWatchingPage,
+  problemsWatchDerivation,
   problemsImportAction,
   problemsConnectionsPage,
   problemsImportPage,

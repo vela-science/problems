@@ -261,6 +261,15 @@ Hosted Problems may mutate account, shared workspace, follow, approach,
 attempt, note, discussion, assignment, artifact metadata, provider-neutral
 session reference, and unsigned draft data through `@vela/activity-data`.
 
+A follow binds to one exact anchor and never migrates to a later one, so a new
+release cannot silently inherit a reader's follow of a state they have not seen.
+`/watching` reads that invariant in the other direction: a followed root that is
+no longer current is the record having moved, and the page says how far it now
+reaches by comparing the two exact states. It reports reach and nothing else. It
+does not rank, digest, aggregate across Problems, or say a question was
+answered, and there is no notification record behind it — what a watch says is
+derived at read time from the anchor the follow already retained.
+
 Hosted Problems cannot sign for a user, issue a Vela Event or Decision, change
 Standing, hold a Repository authority key, run local code, access a local file
 system, manage secrets, or control Entire sessions. Scientific-state reads are

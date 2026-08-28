@@ -17,7 +17,7 @@ import { buildWebMcpProblemContext } from "@/webmcp/build-context";
 import { problemLabel, resolveProblemStatement, statementParagraphs } from "@/lib/problem-statement";
 import { authConfiguration, currentAccount } from "@/lib/auth";
 import { problemFrontierMovement } from "@/lib/frontier-timeline";
-import { scientificProblemState } from "@/lib/scientific-state";
+import { problemNeighbourhood, scientificProblemState } from "@/lib/scientific-state";
 import { structuredDataScript } from "@/lib/structured-data";
 
 export type ProblemPageQuery = { view?: string; file?: string; symbol?: string; workspace?: string; object?: string; inspector?: string; workError?: string; workDone?: string };
@@ -105,6 +105,13 @@ export async function ProblemPageView({ repository, problem, collectionName, rou
      least one verified state-change edge. Everywhere else the value is
      undefined and History renders exactly what it rendered before. */
   const frontier = view === "timeline" ? await problemFrontierMovement(state) : undefined;
+  /* Read only for the Problems that need it. A Problem with an accepted Result
+     has its own composition and does not draw the source's filing; the 1,215
+     that hold identity and a locator do, and they are the reason this exists.
+     The catalogue read behind it is cached at the release root. */
+  const neighbourhood = referenceView === "overview" && !state.currentClaimId
+    ? await problemNeighbourhood(state, route.slice(0, route.lastIndexOf("/")))
+    : null;
   /* A deployment without the four WorkOS variables serves `/sign-in` as a 503.
      The Workspace needs to know that, because otherwise the only control it
      offers is one that cannot work. */
@@ -162,7 +169,7 @@ export async function ProblemPageView({ repository, problem, collectionName, rou
       workspaceId={query.workspace ?? null}
     />
     <ProblemHeader state={state} route={route} current={referenceView} />
-    {referenceView === "overview" ? <ProblemOverviewReference state={state} route={route} />
+    {referenceView === "overview" ? <ProblemOverviewReference state={state} route={route} neighbourhood={neighbourhood} />
       : view === "workspace"
         ? <ProblemWorkspace state={state} hostedAccount={account} accountsEnabled={accountsEnabled} selectedWorkspace={query.workspace} selectedObject={query.object} selectedInspector={query.inspector} mutationError={query.workError} mutationDone={query.workDone} basePath={route} />
         : <ProblemState state={state} basePath={route} researchView={view as ProblemResearchView} selectedFile={query.file} selectedDeclaration={query.symbol} frontier={frontier} />}

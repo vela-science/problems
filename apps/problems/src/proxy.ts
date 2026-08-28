@@ -46,10 +46,16 @@ export const config = {
     "/account/:path*",
     "/api/github/:path*",
     "/api/account",
+    /* `/api/work` reads a session and was never listed, so a signed-out caller
+       got a 500 out of `withAuth` where the route's own first branch answers
+       401. It is the agent surface's work read, so the caller most likely to
+       meet it is the one least able to interpret it. */
+    "/api/work",
     "/auth/callback",
     "/drafts/:id/export",
     "/codebases/:path*",
     "/import",
+    "/watching",
     "/workspaces",
     "/people/:path*",
     "/problems/:namespace/:problem",

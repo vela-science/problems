@@ -362,6 +362,39 @@ sat in the left 45% of a 1920px window; nine ledger routes were declared
 canvases and stretched without limit. A route that looks unfinished on a wide
 display is usually one of these two, not a spacing problem.
 
+### The empty Problem
+
+1,215 of the 1,217 Problems in this release hold identity and a source locator
+and nothing else, so the screen a reader is most likely to open is the one with
+the least on it. Overview's no-record composition therefore carries three things
+past the reach track, all of them read off the record rather than invented:
+
+- **What this record is missing** — the first reach stage the record has not
+  got to, and what acquiring it takes. Its last stage is deliberately one this
+  site cannot perform: a Decision is a Repository act with a signature behind
+  it, and a page offering a button for it would be lying about where authority
+  lives. This describes one record. It never compares two, because
+  `PRODUCT.md` scores Vela absent on discovery and allocation deliberately.
+- **Where the source files it** — the Topic keys the source wrote onto this
+  Problem, with the size of each, and the questions under those Topics that
+  carry a Repository Standing. An exact relation, never a similarity score.
+  Listing the neighbours in the source's own identifier order instead put six
+  consecutive problem numbers on the page, each reading "No record"; where a
+  topic has no Standing at all, saying so is the most useful sentence
+  available, because it means the frontier there is empty.
+- **Reported activity**, in the rail — who a source says has touched the
+  question. The section tab already counts these records; a bare count is not
+  the fact a reader wants on an empty page, and a name is.
+
+### Watching
+
+A watch speaks the reach axis and no other language. `Reach advanced to
+Decision` reuses the vocabulary the reader has already seen on Overview, on Work
+and in the rail; a watch that summarised, scored or digested would be a second
+ontology for the same fact. It may never render reaching Decision as a question
+being answered — that is a Repository accepting a Claim, which is a different
+sentence and never becomes this one.
+
 ### Problem sections
 
 The five Problem sections — Overview, Work, Results, Sources, History — live in

@@ -202,6 +202,41 @@ idempotency, version-conflict, append-only audit, and plane-independence tests.
 Use the fixed Neon `main` branch and the separate `vela_activity` database. Do
 not create a Neon branch for routine work.
 
+**A file under `packages/activity-data/schema/` is desired state, not a step in
+a history.** `scripts/schema.mjs` re-applies every `*.sql` there on every
+migrate, in `readdir().sort()` order, so a function written in two fragments
+does not layer: the alphabetically later file wins and the earlier definition is
+dead code that still reads as authoritative. Three functions were in that state
+— `get_problem_activity` and `list_workspaces` each written twice, and every
+line of `problem-workspaces.sql` superseded by `workspace-contexts.sql` because
+"w" sorts after "p". Define each function once.
+`tests/no-duplicate-definitions.test.ts` fails the build otherwise, and also
+asserts that a fragment grants execute on what it creates and revokes from
+PUBLIC — `base.sql`'s schema-wide grant runs first and cannot reach a function a
+later fragment has not created yet.
+
+**Prove SQL against Neon, not a throwaway local cluster.**
+`bun run --filter @vela/activity-data db:live-proof` drives the real
+`vela_activity` database with two accounts and cleans up after itself; it is
+where a new read function's tenancy and semantics belong. The connection string
+comes from the authenticated Neon CLI rather than a checked-out credential:
+
+```bash
+neonctl connection-string main --project-id <vela-problems>   --role-name vela_activity_migrator --database-name vela_activity
+```
+
+`tests/activity-postgres.ts` remains for constraint-level facts that would mean
+writing throwaway rows to a real database to observe — a CHECK rejecting a
+value, a byte cap, a trigger. It applies the same fragment list `schema.mjs`
+does, so a suite cannot test a database shape that is not the deployed one.
+
+**A page or route that reads the hosted session must be in the `proxy.ts`
+matcher.** An uncovered one renders and then throws out of `withAuth`, so the
+reader gets a 500 where the page's own code says redirect. `/api/work` answered
+500 in production for exactly this reason. `src/lib/auth-matcher.test.ts` reads
+the requirement off the app tree rather than a hand-written list, so a new route
+cannot escape it.
+
 Use the in-app Browser for responsive, keyboard, interaction, and visual QA,
 against a local production build (`next start`) rather than `dev`. Drive it
 through the harness's own browser tools; no separate automation stack is

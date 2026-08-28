@@ -7,6 +7,7 @@ import {
   type ActivityCrdtUpdate,
   type ActivityDiscussionEntry,
   type ActivitySubmissionDraft,
+  type FollowedProblem,
   type HashRoot,
   type ProblemActivity,
   type StoredScientificAnchor,
@@ -224,6 +225,7 @@ export function parseProblemActivity(value: unknown, currentAnchorRoot: HashRoot
   return {
     anchors: result.anchors.map(anchorFrom),
     following: followsCurrentAnchor(followedAnchorRoots, currentAnchorRoot),
+    followedAnchorRoots,
     approaches: recordArray(result.approaches, "approaches").map(approachFrom),
     attempts: recordArray(result.attempts, "attempts").map(attemptFrom),
     discussion: recordArray(result.discussion, "discussion").map(discussionFrom),
@@ -232,4 +234,17 @@ export function parseProblemActivity(value: unknown, currentAnchorRoot: HashRoot
     crdtUpdates: result.crdtUpdates === undefined ? [] : parseCrdtUpdates(result.crdtUpdates),
     audit: recordArray(result.audit, "audit").map(auditFrom),
   };
+}
+
+export function parseFollowedProblems(value: unknown): FollowedProblem[] {
+  if (!Array.isArray(value)) throw new Error("followed problem list response must be an array");
+  return value.map((item) => {
+    const row = record(item, "followed problem");
+    return {
+      workspaceId: text(row.workspace_id, "followed problem workspace_id"),
+      workspaceName: text(row.workspace_name, "followed problem workspace_name"),
+      followedAt: text(row.followed_at, "followed problem followed_at"),
+      anchor: anchorFrom(row.anchor),
+    };
+  });
 }

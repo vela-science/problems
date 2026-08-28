@@ -314,7 +314,17 @@ export type ActivityCrdtUpdate = {
 
 export type ProblemActivity = {
   anchors: StoredScientificAnchor[];
+  /** True only for a follow on the exact current anchor. See `followsCurrentAnchor`. */
   following: boolean;
+  /* Every anchor of this Problem this account follows, current or historical.
+   *
+   * `following` answers "is this exact state followed" and deliberately says
+   * nothing about an older one — a release must never silently inherit a follow
+   * of a state the reader has not seen. That invariant is what makes this array
+   * worth keeping: a followed root that is not the current root is not a lost
+   * follow, it is the record having moved since the reader started watching,
+   * which is the only thing a watch has ever needed to say. */
+  followedAnchorRoots: HashRoot[];
   approaches: ActivityApproach[];
   attempts: ActivityAttempt[];
   discussion: ActivityDiscussionEntry[];
@@ -322,6 +332,20 @@ export type ProblemActivity = {
   drafts: ActivitySubmissionDraft[];
   crdtUpdates: ActivityCrdtUpdate[];
   audit: ActivityAuditEntry[];
+};
+
+/* One Problem this account watches, and the exact state it started watching at.
+ *
+ * The anchor is the whole record: it fixes the projection release, the
+ * Repository root, the source commit and tree, and the Problem's own record
+ * root as they stood when the follow was made. Everything a watch reports is
+ * derived by comparing that against the current projection at read time, so
+ * this store holds no notification, no digest, and no unread state. */
+export type FollowedProblem = {
+  workspaceId: string;
+  workspaceName: string;
+  followedAt: string;
+  anchor: StoredScientificAnchor;
 };
 
 export function followsCurrentAnchor(

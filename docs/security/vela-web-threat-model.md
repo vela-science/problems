@@ -421,7 +421,7 @@ membership. Any cell not explicitly allowed is denied.
 | `packages/activity-data/src/draft-submission.ts` | Closed schema and canonical unsigned bytes | TM-004, TM-011 |
 | `packages/activity-data/src/local-signing.ts` | Sole allowed signing implementation and key-match check | TM-003, TM-004 |
 | `packages/activity-data/schema/base.sql`; `current-anchor-read.sql` | Current clean tenant policy, `SECURITY DEFINER` functions, audit, versions, exact-current reads, and grants | TM-001, TM-002, TM-004, TM-007, TM-008 |
-| `packages/activity-data/schema/problem-workspaces.sql`; `workspace-crdt.sql` | Problem-scoped activity and one bounded, rooted, exact-anchor Loro update stream with no authority effect | TM-001, TM-002, TM-004, TM-007, TM-008, TM-010, TM-012 |
+| `packages/activity-data/schema/workspace-contexts.sql`; `workspace-crdt.sql`; `followed-problems.sql` | Problem-scoped activity, one bounded, rooted, exact-anchor Loro update stream with no authority effect, and the membership-scoped read of what an account follows | TM-001, TM-002, TM-004, TM-007, TM-008, TM-010, TM-012 |
 | `packages/activity-data/roles.sql` | Defines the non-login owner and least-privilege login roles | TM-008 |
 | `packages/activity-data/database-privileges.sql` | Enforces database-level cross-plane isolation | TM-008 |
 | `packages/activity-data/scripts/live-proof.mjs` | Proves exact Problem-scoped create/fork/retry/audit plus tenant, privacy, export, role, and plane independence | TM-001, TM-002, TM-004, TM-005, TM-007, TM-008 |

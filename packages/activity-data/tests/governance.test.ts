@@ -77,11 +77,16 @@ describe("Workspace implementation permission matrix", () => {
 
   test("binds tenant reads, private-note visibility, and unsigned export to membership", () => {
     const initial = read("packages/activity-data/schema/base.sql");
+    /* One home, not two. This used to assert the private-note clause in both
+       `base.sql` and `current-anchor-read.sql`, because `get_problem_activity`
+       was written in both — and only the second took effect, since every
+       fragment is re-applied on every migrate in filename order. Asserting the
+       clause on a dead copy proved nothing about the deployed function. */
     const currentRead = read("packages/activity-data/schema/current-anchor-read.sql");
-    for (const sql of [initial, currentRead]) {
-      expect(sql).toContain("PERFORM activity.require_membership(p_account_id, p_workspace_id)");
-      expect(sql).toContain("x.visibility='workspace' OR x.author_account_id=p_account_id");
-    }
+    expect(initial).not.toContain("CREATE OR REPLACE FUNCTION activity_api.get_problem_activity");
+    expect(currentRead).toContain("PERFORM activity.require_membership(p_account_id, p_workspace_id)");
+    expect(currentRead).toContain("x.visibility='workspace' OR x.author_account_id=p_account_id");
+    expect(initial).toContain("PERFORM activity.require_membership(p_account_id, p_workspace_id)");
     expect(initial).toContain("CREATE OR REPLACE FUNCTION activity_api.export_submission_draft");
     const exportFunction = initial.slice(initial.indexOf("CREATE OR REPLACE FUNCTION activity_api.export_submission_draft"));
     expect(exportFunction).toContain("PERFORM activity.require_membership(p_account_id, p_workspace_id)");
