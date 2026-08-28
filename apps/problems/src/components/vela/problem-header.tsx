@@ -76,7 +76,7 @@ export function ProblemHeader({ state, route, current }: {
         * touch and by keyboard, not only by hover. */}
       <Popover>
         <PopoverTrigger
-          className="rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--focus-ring)]"
+          className="inline-flex min-h-6 items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--focus-ring)]"
           aria-label={`${readingBadge(reading)}. How this reading was derived.`}
         >
           <Badge variant="outline" className="cursor-pointer">{readingBadge(reading)}</Badge>

@@ -388,7 +388,7 @@ export async function ProblemWorkspace({ state, hostedAccount, accountsEnabled =
             <p className="mt-1 text-micro text-muted-foreground">{openStatements.length} {openStatements.length === 1 ? "statement the source still marks open" : "statements the source still marks open"}</p>
             <ul className="mt-3 divide-y border-y">
               {openStatements.map((occurrence) => <li key={occurrence.occurrence_key} className="py-3">
-                <Link href={formalFilePath(occurrence) ? `${basePath}/sources?file=${encodeURIComponent(formalFilePath(occurrence)!)}&symbol=${encodeURIComponent(occurrence.native_id)}` : `${basePath}/sources`} className="block min-w-0 font-mono text-micro break-words hover:underline">
+                <Link href={formalFilePath(occurrence) ? `${basePath}/sources?file=${encodeURIComponent(formalFilePath(occurrence)!)}&symbol=${encodeURIComponent(occurrence.native_id)}` : `${basePath}/sources`} className="block min-h-6 min-w-0 py-0.5 font-mono text-micro break-words hover:underline">
                   {occurrence.native_id.split(".").slice(1).join(".") || occurrence.native_id}
                 </Link>
               </li>)}
