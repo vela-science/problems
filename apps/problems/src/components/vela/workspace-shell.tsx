@@ -134,7 +134,7 @@ export function WorkspaceShell({
         <TabsTrigger value="object">Selected object</TabsTrigger>
       </TabsList>
     </div>
-    <TabsContent value="canvas" className="m-0 min-w-0 overflow-hidden bg-muted/10 print:overflow-visible">
+    <TabsContent value="canvas" className="vela-working-ground m-0 min-w-0 overflow-hidden print:overflow-visible">
       {canvasNote}
       <WorkspaceCanvas objects={objects} selectedId={selectedObject.id} onSelect={selectCanvasObject} />
     </TabsContent>

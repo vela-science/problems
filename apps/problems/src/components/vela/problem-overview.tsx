@@ -6,11 +6,11 @@ import { Badge } from "@vela/ui/components/badge";
 import { Button } from "@vela/ui/components/button";
 import { AssertionText } from "@/components/vela/assertion-text";
 import { Disclosure } from "@/components/vela/disclosure";
-import { Reach, type ReachStop } from "@/components/vela/reach";
+import { Reach } from "@/components/vela/reach";
+import { problemReachCaption, problemReachStops } from "@/lib/problem-reach";
 import { currentReview } from "@/components/vela/problem-provenance";
 import { formatDate } from "@/lib/format";
 import { problemReading } from "@/lib/problem-reading";
-import { resolveProblemStatement, statementParagraphs } from "@/lib/problem-statement";
 import type { ScientificProblemState } from "@/lib/scientific-state";
 import { exactResultHeadline, exactResultLimitation } from "@/components/vela/problem-overview-reference";
 import styles from "./problem-overview.module.css";
@@ -63,8 +63,6 @@ export function ProblemOverview({ state, route }: { state: State; route: string 
   const review = currentReview(state);
   const checks = review?.verification_records ?? [];
   const reading = problemReading({ currentAssertion: current?.assertion ?? null, repositoryName: state.repositoryName });
-  const statement = resolveProblemStatement(state);
-  const { question } = statementParagraphs(statement);
   const established = current ? exactResultHeadline(current.assertion) : null;
   const limitation = current ? exactResultLimitation(current.assertion) : null;
   const formal = state.sources?.occurrences?.filter((occurrence) => occurrence.formal) ?? [];
@@ -72,24 +70,10 @@ export function ProblemOverview({ state, route }: { state: State; route: string 
   const lastSourceUpdate = metadataString(state, "status_last_update");
   const lineage = claimLineage(claims);
 
-  /* The reach axis, derived once and drawn once. Both readings of a Problem
-     measure the same five stages against the same terminal, so the derivation
-     sits above the branch rather than being written twice in two shapes. */
-  const reachStops: ReachStop[] = [
-    /* Both branches of a ternary here read "Retained", so it decided nothing.
-       The source identity is retained whenever this stage renders, which is
-       always — that is what makes it stage one. */
-    { label: "Source", reached: true, detail: state.problem.source_id.replace(/^source:/u, "") },
-    { label: "Statement", reached: Boolean(question), detail: question ? "Retained" : "Not retained" },
-    { label: "Formal", reached: formal.length > 0, detail: formal.length ? `${formal.length} retained` : "None associated" },
-    { label: "Work", reached: checks.length > 0, detail: checks.length ? `${checks.length} check${checks.length === 1 ? "" : "s"}` : "None recorded" },
-    { label: "Decision", reached: Boolean(review), detail: review ? humanize(review.status) : "None here" },
-  ];
-  const reachCaption = !review
-    ? "No Repository has decided on this question here, so the record stops short of it."
-    : limitation
-      ? "The accepted scope sits inside the question, and does not reach it."
-      : "The accepted Claim records no limitation on its own scope, so this page cannot say how far it reaches.";
+  /* Both readings of a Problem measure the same axis, and so does Work, so the
+     derivation lives in one module rather than in each surface that draws it. */
+  const reachStops = problemReachStops(state);
+  const reachCaption = problemReachCaption(state);
 
   /* Nothing has been accepted here. That is the state of 1,215 of the 1,217
      Erdős Problems in this release, so it gets a composition of its own rather

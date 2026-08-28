@@ -85,6 +85,32 @@
     background: var(--status-progress);
   }
 
+  /* A working surface, not a reading surface.
+   *
+   * The Work canvas painted a flat 10% muted wash, so a shared workspace and a
+   * published Result page were made of the same material. The dot grid is the
+   * one convention every canvas tool shares, and it costs one background
+   * image. Dropped under forced colours, where a decorative grid is noise. */
+  .vela-working-ground {
+    background-color: var(--vela-surface-sunken);
+    background-image: radial-gradient(circle, var(--border) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+
+  @media (forced-colors: active) {
+    .vela-working-ground { background-image: none; }
+  }
+
+  /* The unsigned boundary, drawn. This product cannot sign or submit, and a
+     draft that looks like every other retained record says the opposite. It is
+     the only dashed panel in the Work section, which is what makes the dash
+     mean something rather than decorate. */
+  .vela-unsigned-panel {
+    border: 1.5px dashed var(--border);
+    border-radius: calc(var(--radius) + 0.1875rem);
+    background: var(--vela-surface-sunken);
+  }
+
   .vela-object-surface {
     border: 1px solid var(--border);
     /* 10px against the 7px control radius. A card and the buttons inside it

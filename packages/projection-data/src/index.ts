@@ -1568,6 +1568,12 @@ export type ProblemSourceCoverage = {
   resolution_namespace: string;
   label: string;
   source_role: ProblemResolutionCandidateSource["source_role"];
+  /* What this Source is permitted to retain, as its own registry entry
+     declares it — not what it happened to retain for one Problem. A Source
+     with `summary` retention and no statement here has retained nothing for
+     this Problem; a `locator_only` Source will never retain one for any. Those
+     are different facts, and counting occurrences cannot tell them apart. */
+  statement_retention: ProblemResolutionCandidateSource["statement_retention"];
   source_occurrences: number;
   reviewed_occurrences: number;
   statement_occurrences: number;
@@ -1667,6 +1673,7 @@ export async function nativeProblemSourceRead(input: {
       resolution_namespace: source.resolution_namespace,
       label: source.label,
       source_role: source.source_role,
+      statement_retention: source.statement_retention,
       source_occurrences: occurrences.length,
       reviewed_occurrences: occurrences.filter(({ occurrence_key }) => reviewedOccurrenceKeys.has(occurrence_key)).length,
       statement_occurrences: resolution.statements.filter(({ source_id }) => source_id === source.source_id).length,

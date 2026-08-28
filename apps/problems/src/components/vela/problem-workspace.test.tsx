@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { ScientificProblemState } from "@/lib/scientific-state";
 
@@ -9,12 +9,12 @@ import { EmptyHostedWorkspace, ProblemWorkspace, workspaceObjects } from "./prob
 const state = {
   repositorySlug: "math",
   repositoryName: "Math",
-  problem: { problem: "321" },
+  problem: { problem: "321", source_id: "source:erdos-problems" },
   source: {
     native_revision: "a".repeat(40),
     locators: [{ url: `https://github.com/teorth/erdosproblems/blob/${"a".repeat(40)}/data/problems.yaml` }],
   },
-  anchor: { sourceCommit: "a".repeat(40) },
+  anchor: { sourceCommit: "a".repeat(40), sourceTree: "b".repeat(40), repositoryRoot: `sha256:${"c".repeat(64)}` },
 } as unknown as NonNullable<ScientificProblemState>;
 const anchorRoot = `sha256:${"1".repeat(64)}` as const;
 const workspace = { id: "workspace-1", name: "Problem 321", version: 1 } as unknown as Parameters<typeof workspaceObjects>[0]["workspace"];
@@ -132,5 +132,44 @@ describe("Problem Workspace", () => {
     expect(screen.getByRole("link", { name: "Results" })).toHaveAttribute("href", "/problems/erdos-problems/321/results");
     expect(screen.getByRole("link", { name: "History" })).toHaveAttribute("href", "/problems/erdos-problems/321/history");
     expect(screen.queryByText(/submission:sign-local/iu)).not.toBeInTheDocument();
+  });
+
+  /* The one thing in a Workspace this product cannot carry any further is the
+     draft, and the dash is where that is said without a sentence. It has to
+     stay the only dashed panel here, or the dash stops meaning anything. */
+  it("draws the unsigned boundary on the draft and nowhere else", () => {
+    const activity = {
+      approaches: [{
+        id: "approach-1", title: "A direction", summary: "Retained.", state: "open",
+        anchorRoot, version: 1, authorityEffect: "none", parentApproachId: null,
+      }],
+      attempts: [], artifacts: [],
+      drafts: [{ id: "draft-1", payloadRoot: `sha256:${"8".repeat(64)}`, anchorRoot, version: 1 }],
+    } as unknown as Parameters<typeof workspaceObjects>[0]["activity"];
+    const objects = workspaceObjects({ state, activity, workspace, scope, currentAnchorRoot: anchorRoot, basePath: "/problems/erdos-problems/321" });
+
+    const draft = render(<>{objects.find(({ id }) => id === "draft:draft-1")!.content}</>);
+    expect(draft.container.querySelectorAll(".vela-unsigned-panel")).toHaveLength(1);
+    /* The web app cannot sign, so it never offers to. */
+    expect(screen.queryByRole("button", { name: /^submit/iu })).not.toBeInTheDocument();
+    cleanup();
+
+    for (const id of ["workspace", "approach:approach-1", "codebase:math"]) {
+      const other = render(<>{objects.find((object) => object.id === id)!.content}</>);
+      expect(other.container.querySelector(".vela-unsigned-panel")).toBeNull();
+      cleanup();
+    }
+  });
+
+  /* Work is where someone decides whether to add to a record, so it shows how
+     far that record already is — from the same derivation Overview draws, not
+     a second one that could disagree with it. */
+  it("shows how far the record reaches inside the Work rail", async () => {
+    render(await ProblemWorkspace({ basePath: "/problems/erdos-problems/321", state, hostedAccount: null }));
+    const rail = screen.getByRole("navigation", { name: "Public Problem files" });
+    expect(within(rail).getByText("Source")).toBeVisible();
+    expect(within(rail).getByText("Decision")).toBeVisible();
+    expect(within(rail).getByText("The question")).toBeVisible();
+    expect(within(rail).getByText("Not reached")).toBeVisible();
   });
 });

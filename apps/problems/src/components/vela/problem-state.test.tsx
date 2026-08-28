@@ -65,10 +65,15 @@ const state = {
   }],
   source: { source_id: "source:erdos-problems", native_id: "erdos:321", native_kind: "problem", title: "Erdős problem", content_root: root("5") },
   sources: {
+    coverage: [
+      { source_id: "source:erdos-problems", resolution_namespace: "erdos", label: "Erdős Problems", source_role: "problem_catalog", statement_retention: "locator_only", source_occurrences: 1, reviewed_occurrences: 1, statement_occurrences: 1 },
+      { source_id: "source:formal-conjectures", resolution_namespace: "erdos", label: "Formal Conjectures", source_role: "formal_statement_library", statement_retention: "summary", source_occurrences: 1, reviewed_occurrences: 1, statement_occurrences: 1 },
+      { source_id: "source:plby-lean-proofs", resolution_namespace: "erdos", label: "PLBY Lean proofs", source_role: "proof_manifest", statement_retention: "none", source_occurrences: 0, reviewed_occurrences: 0, statement_occurrences: 0 },
+    ],
     occurrences: [occurrence],
     statements: [
-      { statement_id: "s-formal", occurrence_key: occurrence.occurrence_key, source_id: occurrence.source_id, statement_form: "formal", text: occurrence.summary, locator_url: "https://example.test/blob/321.lean" },
-      { statement_id: "s1", occurrence_key: "source:erdos-problems\0problem\0erdos:321", source_id: "source:erdos-problems", statement_form: "prose", text: "How quickly does the extremal quantity grow?", locator_url: "https://example.test/problem-321" },
+      { statement_id: "s-formal", occurrence_key: occurrence.occurrence_key, source_id: occurrence.source_id, statement_form: "formal", text: occurrence.summary, locator_url: "https://example.test/blob/321.lean", row_root: root("a") },
+      { statement_id: "s1", occurrence_key: "source:erdos-problems\0problem\0erdos:321", source_id: "source:erdos-problems", statement_form: "prose", text: "How quickly does the extremal quantity grow?", locator_url: "https://example.test/problem-321", row_root: root("b") },
     ],
   },
   anchor: { repositoryRoot: root("6"), projectionReleaseRoot: root("7"), sourceCommit: "8".repeat(40) },
@@ -161,15 +166,53 @@ describe("Problem tools", () => {
     expect(screen.getByText("1 of 1")).toBeVisible();
   });
 
+  /* Retention is the Source's declared policy, not a count of what it happened
+     to retain here — otherwise a consulted Source that came back empty is
+     indistinguishable from one that never retains anything. */
+  it("names what each Source may retain, including one that observed nothing", () => {
+    render(<ProblemState state={state} basePath="/problems/erdos-problems/321" researchView="files" />);
+    const tree = screen.getByRole("navigation", { name: "Problem source paths" });
+    expect(within(tree).getByText("statement retained")).toBeVisible();
+    expect(within(tree).getByText("locator only")).toBeVisible();
+    expect(within(tree).getByText("PLBY Lean proofs")).toBeVisible();
+    expect(within(tree).getByText("not observed here")).toBeVisible();
+  });
+
+  /* The middle pane shows someone else's file. The right pane is where this
+     site says what it does and does not conclude from it, and the two fields
+     that carry that are the record's own. */
+  it("states the record's own boundary beside the file it is showing", () => {
+    render(<ProblemState state={state} basePath="/problems/erdos-problems/321" researchView="files" />);
+    const inspector = screen.getByRole("complementary", { name: "Selected source record" });
+    expect(within(inspector).getByText("Statement identity")).toBeVisible();
+    expect(within(inspector).getByText("Not established")).toBeVisible();
+    expect(within(inspector).getByText("Authority effect")).toBeVisible();
+    expect(within(inspector).getByText("None")).toBeVisible();
+    /* Category and proof are two facts, so the pane prints two. "Open" is what
+       the library files the declaration under; whether a proof is attached is a
+       separate field, and the fixture has none. */
+    expect(within(inspector).getByText("Open")).toBeVisible();
+    expect(within(inspector).getByText("None attached")).toBeVisible();
+  });
+
+  /* A proof can be attached and still carry a `sorry`. That is the state most
+     easily misread as "solved", so it gets its own words. */
+  it("separates an attached proof with a hole from one without", () => {
+    const holed = { ...occurrence, formal: { ...occurrence.formal, proof_present: true, proof_sorry_free: false } };
+    render(<ProblemState state={{ ...state, sources: { ...state.sources, occurrences: [holed] } } as never} basePath="/problems/erdos-problems/321" researchView="files" />);
+    const inspector = screen.getByRole("complementary", { name: "Selected source record" });
+    expect(within(inspector).getByText("Attached, has a hole")).toBeVisible();
+  });
+
   it("fails closed to retained source text when no file bytes or declaration exist", () => {
-    render(<ProblemState state={{ ...state, sources: { occurrences: [], statements: state.sources.statements } } as never} basePath="/problems/erdos-problems/321" researchView="files" />);
+    render(<ProblemState state={{ ...state, sources: { coverage: state.sources.coverage, occurrences: [], statements: state.sources.statements } } as never} basePath="/problems/erdos-problems/321" researchView="files" />);
     expect(screen.getByText(/retained source excerpt/iu)).toBeVisible();
     expect(screen.getByText("How quickly does the extremal quantity grow?")).toBeVisible();
     expect(screen.getByRole("link", { name: "Open exact source location" })).toHaveAttribute("href", "https://example.test/problem-321");
   });
 
   it("does not preview a declaration whose text was not retained", () => {
-    render(<ProblemState state={{ ...state, sources: { occurrences: [occurrence], statements: [] } } as never} basePath="/problems/erdos-problems/321" researchView="files" />);
+    render(<ProblemState state={{ ...state, sources: { coverage: state.sources.coverage, occurrences: [occurrence], statements: [] } } as never} basePath="/problems/erdos-problems/321" researchView="files" />);
     expect(screen.getByText(/formal occurrence/iu)).toBeVisible();
     expect(screen.getByText("Preview unavailable")).toBeVisible();
     expect(screen.getByText(/not retained for display/iu)).toBeVisible();
@@ -178,7 +221,7 @@ describe("Problem tools", () => {
 
   it("does not send a selected occurrence to the collection fallback", () => {
     const occurrenceWithoutLocator = { ...occurrence, locators: [] };
-    render(<ProblemState state={{ ...state, sources: { occurrences: [occurrenceWithoutLocator], statements: [] } } as never} basePath="/problems/erdos-problems/321" researchView="files" />);
+    render(<ProblemState state={{ ...state, sources: { coverage: state.sources.coverage, occurrences: [occurrenceWithoutLocator], statements: [] } } as never} basePath="/problems/erdos-problems/321" researchView="files" />);
     expect(screen.getByText(/formal occurrence/iu)).toBeVisible();
     expect(screen.queryByRole("link", { name: "Open selected source" })).toBeNull();
   });
