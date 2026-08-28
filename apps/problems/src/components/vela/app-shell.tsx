@@ -41,6 +41,21 @@ export function AppShell({
             className="h-svh min-w-0 overflow-y-hidden print:block print:h-auto print:overflow-visible print:bg-background"
             style={{ "--sidebar-width": "12.5rem", "--sidebar-width-icon": "3rem" } as CSSProperties}
           >
+            {/* Inside the shell, not beside it.
+              *
+                It lived in `layout.tsx` as a sibling of this wrapper, and when
+                a modal opens Base UI marks the wrapper `aria-hidden`. The skip
+                link was outside that, so while the command palette was open a
+                screen reader could still reach "Skip to content" — one control
+                leaking out of a modal that otherwise contains everything. It is
+                still the first focusable element in the document, because this
+                is the first thing the shell renders. */}
+            <a
+              href="#main-content"
+              className="sr-only z-100 bg-background px-4 py-3 text-body focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+            >
+              Skip to content
+            </a>
             <AppSidebar problemCollections={problemCollections} />
             <SidebarInset
               className="min-w-0 md:shadow-[0_12px_40px_-28px_color-mix(in_oklab,var(--foreground)_38%,transparent)] print:m-0 print:overflow-visible print:rounded-none"

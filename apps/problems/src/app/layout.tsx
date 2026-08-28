@@ -68,12 +68,6 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <Script id="vela-theme" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body suppressHydrationWarning>
-        <a
-          href="#main-content"
-          className="sr-only z-100 bg-background px-4 py-3 text-body focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
-        >
-          Skip to content
-        </a>
         <AppShell
           publishedRepositories={publishedRepositories}
           problemCollections={publishedProblemCollections}

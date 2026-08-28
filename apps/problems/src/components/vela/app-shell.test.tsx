@@ -74,6 +74,14 @@ describe("AppShell accessibility boundary", () => {
     expect(screen.getAllByRole("main")).toHaveLength(1);
     /* The app bar is a sibling of the content, not inside it. */
     expect(target!.querySelector("header")).toBeNull();
+    /* The skip link is the first focusable element and lives inside the shell.
+       As a sibling of the shell it sat outside the `aria-hidden` a modal puts
+       on the wrapper, so an open command palette leaked one reachable control.
+       Inside, it is still first in the document and now covered. */
+    const skip = screen.getByRole("link", { name: "Skip to content" });
+    expect(skip).toHaveAttribute("href", "#main-content");
+    expect(skip.compareDocumentPosition(main) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(document.querySelector(".group\\/sidebar-wrapper")?.contains(skip) ?? skip.parentElement !== document.body).toBeTruthy();
     expect(document.querySelector("header")).not.toBeNull();
     expect(target).toHaveTextContent("Published state");
     target!.focus();
@@ -124,6 +132,17 @@ describe("AppShell accessibility boundary", () => {
     const widthKeyed = /\b(?:max-)?(?:sm|md|lg):?min-[hw]-11\b|\bsize-11 (?:sm|md):|\bh-11 (?:sm|md):|pointer-coarse:/u;
     for (const file of componentSources()) {
       expect(file.source, `${file.path} re-declares the touch target by viewport width`).not.toMatch(widthKeyed);
+    }
+  });
+
+  /* A positive tabindex pulls an element to the front of the whole document's
+     tab order, which is why a single one anywhere breaks focus order
+     everywhere. A keyboard pass over eight routes found none; this keeps it
+     that way without needing the pass repeated. */
+  it("never lifts an element out of the document tab order", () => {
+    for (const file of componentSources()) {
+      const positive = file.source.match(/tabIndex=\{\s*[1-9]\d*\s*\}|tabindex="[1-9]\d*"/gu);
+      expect(positive, `${file.path} sets a positive tabindex`).toBeNull();
     }
   });
 
