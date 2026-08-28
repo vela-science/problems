@@ -58,7 +58,10 @@ export function FormalStatementCard({ occurrence, showDocstring = true }: {
           categoryLabel={formal?.category_label ?? null}
         />
         {occurrence.relation_kind ? <Badge variant="outline">{relationLabels[occurrence.relation_kind] ?? occurrence.relation_kind.replaceAll("_", " ")}</Badge> : null}
-        {occurrence.occurrence_status === "canonical_anchor" ? <Badge variant="outline">canonical occurrence</Badge> : null}
+        {/* What the status means, not the status. `canonical_anchor` is the
+            record this Problem is held by; a reader meeting the word
+            "occurrence" for the first time learns nothing from it. */}
+        {occurrence.occurrence_status === "canonical_anchor" ? <Badge variant="outline">held by this record</Badge> : null}
         {formal?.proof_locator ? <a href={formal.proof_locator} className="inline-flex min-h-6 items-center text-micro underline underline-offset-4">external proof</a> : null}
       </>}
     />

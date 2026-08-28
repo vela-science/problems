@@ -36,6 +36,16 @@ vi.mock("@/lib/scientific-state", () => ({
 }));
 vi.mock("@/components/vela/problem-facts", () => ({ ProblemDiscoveryFacts: () => <div>Problem facts</div> }));
 vi.mock("@/components/vela/source-corpus-map", () => ({ SourceCorpusMap: () => <div>Source corpus</div> }));
+/* The filter selects navigate rather than submit, so the page now renders a
+   client component that reads the router. The directory's own assertions are
+   about markup, not navigation, so the hooks are stubbed rather than driven. */
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: () => {}, replace: () => {}, refresh: () => {} }),
+  usePathname: () => "/problems/erdos-problems",
+  useSearchParams: () => new URLSearchParams(),
+  notFound: () => { throw new Error("NOT_FOUND"); },
+}));
+
 vi.mock("@/components/vela/problem-source-coverage", () => ({ ProblemSourceCoverage: () => <div>Source coverage</div> }));
 vi.mock("@/components/vela/scientific-change-feed", () => ({ ScientificChangeFeed: () => <div>State history</div> }));
 

@@ -88,8 +88,13 @@ describe("Problem Overview, on the Problem the source contract pins", () => {
 
     expect(html).toContain("Verification did not accept the Claim.");
     expect(html).toContain("agent:submission-v3-cleanup-decision");
-    expect(html).toContain("Problem Standing");
-    expect(html).toContain("Not recorded");
+    /* The third axis reads as a sentence now: "Problem Standing: Not recorded"
+       required knowing both that a Problem carries a Standing of its own and
+       that it is separate from the Result accepted above it. The record's own
+       field stays underneath for anyone who needs to cite it. */
+    expect(html).toContain("The question itself");
+    expect(html).toContain("No Repository has ruled on it");
+    expect(html).toContain("problem_standing: not_recorded");
     /* The "Not recorded in this release" panel is gone. Its last entry, "A
        recorded next discriminator", was pushed on every Problem in the release
        — the transition spine already reports that same absence as its final

@@ -25,7 +25,6 @@ import {
   TableRow,
 } from "@vela/ui/components/table";
 import { Input } from "@vela/ui/components/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@vela/ui/components/select";
 import { PageHero, PageSection, PageSectionHeader, PageShell } from "@vela/ui/vela/page-shell";
 import { ScientificText } from "@vela/ui/vela/scientific-text";
 import { StatementText } from "@/components/vela/statement-text";
@@ -38,6 +37,8 @@ import { structuredDataScript } from "@/lib/structured-data";
 import { SourceCorpusMap } from "@/components/vela/source-corpus-map";
 import { ProblemSourceCoverage } from "@/components/vela/problem-source-coverage";
 import { LedgerPager } from "@/components/vela/ledger-pager";
+import { FilterSelect } from "@/components/vela/directory-filter";
+import { DirectorySelection, SelectProblem, SelectionBar } from "@/components/vela/directory-selection";
 import { ScientificChangeFeed } from "@/components/vela/scientific-change-feed";
 import { Disclosure } from "@/components/vela/disclosure";
 import {
@@ -154,6 +155,7 @@ function ProblemRows({ problems, statements }: {
     <Table>
       <TableHeader>
         <TableRow className="hover:bg-transparent">
+          <TableHead className="w-8"><span className="sr-only">Select</span></TableHead>
           <TableHead className="w-14">Number</TableHead>
           <TableHead>Question</TableHead>
           <TableHead className="hidden w-28 @2xl/directory:table-cell">Source says</TableHead>
@@ -176,6 +178,9 @@ function ProblemRows({ problems, statements }: {
           const rowName = statementPlainText(question || readableLabel);
           const solved = ["solved", "proved", "disproved"].includes(record.declared_status);
           return <TableRow key={`${problem.repository}/${problem.problem}`} className="group relative">
+            <TableCell className="align-baseline pe-0">
+              <SelectProblem problem={problem.problem} path={problem.canonicalPath ?? "/problems"} label={rowName} />
+            </TableCell>
             <TableCell className="align-baseline font-mono text-meta tabular-nums text-muted-foreground">#{problem.problem}</TableCell>
             <TableCell className="max-w-0 align-baseline whitespace-normal">
               {/* One stretched link per row: a table row cannot be wrapped in an
@@ -419,21 +424,24 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
     <form action={COLLECTION_PATH} className="mt-6" aria-label="Filter Erdős Problems">
       <div className="vela-object-surface grid gap-3 p-3 sm:grid-cols-2 xl:grid-cols-[minmax(15rem,1fr)_repeat(3,minmax(9rem,.35fr))_auto]">
         <label className="relative block"><span className="sr-only">Search Problems</span><HugeiconsIcon icon={Search01Icon} aria-hidden className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /><Input className="pl-9" name="q" maxLength={200} defaultValue={query.q?.slice(0, 200)} placeholder="Number, Topic, or statement" /></label>
-        <label><span className="sr-only">Scientific area</span><Select name="domain" defaultValue={selectedDomain} items={selectItems("All scientific areas", domains)}><SelectTrigger aria-label="Scientific area" className="w-full"><SelectValue /></SelectTrigger><SelectContent align="start"><SelectItem value="all">All scientific areas</SelectItem>{domains.map(([key, label]) => <SelectItem key={key} value={key}>{label}</SelectItem>)}</SelectContent></Select></label>
-        <label><span className="sr-only">Source status</span><Select name="status" defaultValue={status} items={selectItems("All source statuses", statuses.map((value) => [value, optionLabel(value)]))}><SelectTrigger aria-label="Source status" className="w-full"><SelectValue /></SelectTrigger><SelectContent align="start"><SelectItem value="all">All source statuses</SelectItem>{statuses.map((value) => <SelectItem key={value} value={value}>{optionLabel(value)}</SelectItem>)}</SelectContent></Select></label>
-        <label><span className="sr-only">Sort Problems</span><Select name="sort" defaultValue={sort} items={{ number: "Problem number", reviewed: "Reviewed Results first", sources: "Most sources", status: "Source status" }}><SelectTrigger aria-label="Sort Problems" className="w-full"><SelectValue /></SelectTrigger><SelectContent align="start"><SelectItem value="number">Problem number</SelectItem><SelectItem value="reviewed">Reviewed Results first</SelectItem><SelectItem value="sources">Most sources</SelectItem><SelectItem value="status">Source status</SelectItem></SelectContent></Select></label>
-        <Button type="submit" className="sm:col-span-2 xl:col-span-1">Filter</Button>
+        <FilterSelect label="Scientific area" name="domain" value={selectedDomain} items={selectItems("All scientific areas", domains)} />
+        <FilterSelect label="Source status" name="status" value={status} items={selectItems("All source statuses", statuses.map((value) => [value, optionLabel(value)]))} />
+        <FilterSelect label="Sort Problems" name="sort" value={sort} items={{ number: "Problem number", reviewed: "Reviewed Results first", sources: "Most sources", status: "Source status" }} />
+        {/* Only where scripting is off. The selects navigate on change and the
+            text field submits on Enter, so with JavaScript this button exists
+            to confirm a choice the reader already made. */}
+        <noscript><Button type="submit" className="w-full">Filter</Button></noscript>
       </div>
       <Disclosure className="mt-3" open={advancedActive} summaryClassName="text-label font-medium" summary="More filters">
         <div className="grid gap-3 pb-2 pt-2 sm:grid-cols-2 xl:grid-cols-4">
-          <label><span className="sr-only">Coordination Hub</span><Select name="hub" defaultValue={selectedHub} items={selectItems("All coordination Hubs", hubs)}><SelectTrigger aria-label="Coordination Hub" className="w-full"><SelectValue /></SelectTrigger><SelectContent align="start"><SelectItem value="all">All coordination Hubs</SelectItem>{hubs.map(([key, label]) => <SelectItem key={key} value={key}>{label}</SelectItem>)}</SelectContent></Select></label>
-          {fields.length ? <label><span className="sr-only">Field</span><Select name="field" defaultValue={selectedField} items={selectItems("All Fields", fields)}><SelectTrigger aria-label="Field" className="w-full"><SelectValue /></SelectTrigger><SelectContent align="start"><SelectItem value="all">All Fields</SelectItem>{fields.map(([key, label]) => <SelectItem key={key} value={key}>{label}</SelectItem>)}</SelectContent></Select></label> : null}
-          <label><span className="sr-only">Source Topic</span><Select name="topic" defaultValue={selectedTopic} items={selectItems("All source Topics", topics)}><SelectTrigger aria-label="Source Topic" className="w-full"><SelectValue /></SelectTrigger><SelectContent align="start"><SelectItem value="all">All source Topics</SelectItem>{topics.map(([key, label]) => <SelectItem key={key} value={key}>{label}</SelectItem>)}</SelectContent></Select></label>
-          <label><span className="sr-only">Observed Source occurrence</span><Select name="source" defaultValue={source} items={selectItems("Any observed Source", sources.map((value) => [value, value]))}><SelectTrigger aria-label="Observed Source occurrence" className="w-full"><SelectValue /></SelectTrigger><SelectContent align="start"><SelectItem value="all">Any observed Source</SelectItem>{sources.map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select></label>
-          <label><span className="sr-only">Current Repository</span><Select name="repository" defaultValue={repository} items={selectItems("Any current Repository", repositories.map((value) => [value, value]))}><SelectTrigger aria-label="Current Repository" className="w-full"><SelectValue /></SelectTrigger><SelectContent align="start"><SelectItem value="all">Any current Repository</SelectItem>{repositories.map((value) => <SelectItem key={value} value={value}>{value}</SelectItem>)}</SelectContent></Select></label>
-          <label><span className="sr-only">Formalization</span><Select name="formalized" defaultValue={formalized} items={selectItems("Any formalization state", [["yes", "Formalized"], ["no", "Not formalized"]])}><SelectTrigger aria-label="Formalization" className="w-full"><SelectValue /></SelectTrigger><SelectContent align="start"><SelectItem value="all">Any formalization state</SelectItem><SelectItem value="yes">Formalized</SelectItem><SelectItem value="no">Not formalized</SelectItem></SelectContent></Select></label>
-          <label><span className="sr-only">Source observation coverage</span><Select name="coverage" defaultValue={coverage} items={selectItems("Any source observation coverage", [["complete", "Complete source observation"], ["partial", "Partial source observation"], ["unobserved", "Source unobserved"]])}><SelectTrigger aria-label="Source observation coverage" className="w-full"><SelectValue /></SelectTrigger><SelectContent align="start"><SelectItem value="all">Any source observation coverage</SelectItem><SelectItem value="complete">Complete source observation</SelectItem><SelectItem value="partial">Partial source observation</SelectItem><SelectItem value="unobserved">Source unobserved</SelectItem></SelectContent></Select></label>
-          <label><span className="sr-only">Result decision</span><Select name="standing" defaultValue={standing} items={selectItems("Any Result decision", standings.map((value) => [value, value === "none" ? "Not reviewed here" : optionLabel(value)]))}><SelectTrigger aria-label="Result decision" className="w-full"><SelectValue /></SelectTrigger><SelectContent align="start"><SelectItem value="all">Any Result decision</SelectItem>{standings.map((value) => <SelectItem key={value} value={value}>{value === "none" ? "Not reviewed here" : optionLabel(value)}</SelectItem>)}</SelectContent></Select></label>
+          <FilterSelect label="Coordination Hub" name="hub" value={selectedHub} items={selectItems("All coordination Hubs", hubs)} />
+          {fields.length ? <FilterSelect label="Field" name="field" value={selectedField} items={selectItems("All Fields", fields)} /> : null}
+          <FilterSelect label="Source Topic" name="topic" value={selectedTopic} items={selectItems("All source Topics", topics)} />
+          <FilterSelect label="Observed Source occurrence" name="source" value={source} items={selectItems("Any observed Source", sources.map((value) => [value, value]))} />
+          <FilterSelect label="Current Repository" name="repository" value={repository} items={selectItems("Any current Repository", repositories.map((value) => [value, value]))} />
+          <FilterSelect label="Formalization" name="formalized" value={formalized} items={selectItems("Any formalization state", [["yes", "Formalized"], ["no", "Not formalized"]])} />
+          <FilterSelect label="Source observation coverage" name="coverage" value={coverage} items={selectItems("Any source observation coverage", [["complete", "Complete source observation"], ["partial", "Partial source observation"], ["unobserved", "Source unobserved"]])} />
+          <FilterSelect label="Result decision" name="standing" value={standing} items={selectItems("Any Result decision", standings.map((value) => [value, value === "none" ? "Not reviewed here" : optionLabel(value)]))} />
           <label className="sm:col-span-2"><span className="sr-only">Exact Problem identifier</span><Input name="exact_id" maxLength={256} defaultValue={exactId} placeholder="Exact number, native ID, Claim ID, entity ID, or canonical path" /></label>
         </div>
         <p className="pb-2 text-meta text-muted-foreground">Coverage is source-observation coverage, not Problem completeness. <Link href={{ pathname: COLLECTION_PATH, query: { view: "overview" } }} className="font-medium text-foreground underline-offset-4 hover:underline">Inspect coverage</Link></p>
@@ -459,7 +467,10 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
         </p>
         {pageCount > 1 ? <p className="font-mono text-meta tabular-nums text-muted-foreground">{page}/{pageCount}</p> : null}
       </div>
-      <ProblemRows problems={visibleProblems} statements={statements} />
+      <DirectorySelection>
+        <SelectionBar collectionName="Erdős problem" />
+        <ProblemRows problems={visibleProblems} statements={statements} />
+      </DirectorySelection>
       <LedgerPager page={page} pages={pageCount} label="Erdős Problem pages" hrefFor={(next) => ({ pathname: COLLECTION_PATH, query: { ...retainedQuery, page: next } }) as never} />
     </section>
   </PageShell>;

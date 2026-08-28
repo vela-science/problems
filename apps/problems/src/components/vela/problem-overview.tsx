@@ -250,7 +250,16 @@ export function ProblemOverview({ state, route }: { state: State; route: string 
           <span className={styles.factKey}>Decided by</span>
           <span className={`${styles.factValue} ${styles.exact}`}>{review.reviewed_by}</span>
         </div> : null}
-        <div className={styles.fact}><span className={styles.factKey}>Problem Standing</span><span className={styles.factValue} style={{ fontWeight: 400 }}>Not recorded</span></div>
+        {/* The sentence, then the field. "Problem Standing: Not recorded" is
+            two pieces of protocol in four words: that a Problem carries a
+            Standing of its own, and that it is separate from the Result just
+            accepted above. Both facts matter, and neither survives the reader
+            not already knowing them. */}
+        <div className={styles.factStack}>
+          <span className={styles.factKey}>The question itself</span>
+          <span className={styles.factValue} style={{ fontWeight: 400 }}>No Repository has ruled on it</span>
+          <span className={styles.exact}>problem_standing: not_recorded</span>
+        </div>
       </section>
 
       <ProblemFacts state={state} lastSourceUpdate={lastSourceUpdate} openFormal={openFormal.length} formal={formal.length} />
@@ -297,7 +306,7 @@ function ExactPanel({ state }: { state: State }) {
     { label: "Projection", value: state.anchor.projectionReleaseRoot },
     { label: "Source commit", value: state.anchor.sourceCommit },
   ];
-  return <Disclosure className={styles.panel} summary="Exact roots" meta="Record identity">
+  return <Disclosure className={styles.panel} summary="Exact roots" meta="What this page read">
     <div>
       {roots.map(({ label, value }) => <div key={label} className={`${styles.fact} ${styles.factStack}`}>
         <span className={styles.factKey}>{label}</span>
