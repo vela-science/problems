@@ -59,12 +59,10 @@ export function Reach({ stops, endpoint, caption }: {
           <li key={stop.label} className="relative min-w-0 pb-4 pl-6 @lg/reach:pt-5 @lg/reach:pr-4 @lg/reach:pb-0 @lg/reach:pl-0">
             <span aria-hidden className={`${segment} ${travelled(index) ? "bg-primary" : "bg-border"}`} />
             {index === furthest
-              ? <BrandMark
-                  profile="micro"
-                  size={16}
-                  className="absolute -left-1 top-0.5 text-primary @lg/reach:-top-1"
-                  style={{ "--vela-mark-accent": "var(--muted-foreground)" } as React.CSSProperties}
-                />
+              /* Starlight hull, gold waterline: the mark carries the brand's
+                 own accent at the one size where gold cannot be read as a
+                 control. Its two parts separate without an override. */
+              ? <BrandMark profile="micro" size={16} className="absolute -left-1 top-0.5 text-primary @lg/reach:-top-1" />
               : <span aria-hidden className={`${dot} ${stop.reached ? "border-primary bg-primary" : "border-border bg-card"}`} />}
             <span className="block truncate text-micro font-medium text-foreground">{stop.label}</span>
             <span className="block truncate text-micro text-muted-foreground">{stop.detail}</span>

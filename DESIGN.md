@@ -197,6 +197,22 @@ a rail that stayed deep marine in light mode made the light product a light
 page bolted to a dark chrome — the one place the two themes disagreed about
 what the application is made of.
 
+The mark keeps the brand's gold. Stardust is on the sail, in the exported
+marks, and in the identity approval, and for a while problems.science was the
+only Vela surface not using it. The sail's waterline takes it through
+`--vela-mark-accent`, which resolves to the brand's light-context gold on paper
+and to stardust on dark, so the mark reads as a gold-and-starlight object
+wherever it appears while the interface around it stays one accent.
+
+Gold is deliberately confined to that glyph. `--status-caution` is already a
+gold, and on paper the two are inseparable: a gold legible as text needs
+`L <= 0.56` and light caution sits at `L 0.496`, so they compete for one narrow
+band. At sixteen pixels on a mark, gold can be neither a control nor a badge,
+which is the one place the collision cannot happen. A palette pass on
+2026-08-28 mocked stardust as the interface accent and rejected it for exactly
+this reason: the direction only worked under a rule that the accent may never
+be a word, and a rule like that is a defect rather than a constraint.
+
 Starlight means interaction, selection, and focus. It is Gamma Velorum's
 blue-white, `oklch(0.796 0.105 254)` on dark and `oklch(0.554 0.2 260)` on
 paper, and it replaced a stock cobalt. The light value is darkened from the
