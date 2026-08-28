@@ -55,8 +55,8 @@ function ActivityRows({ activity }: { activity: PublicPerformerActivity[] }) {
         </div>
         <div className="p-4">
           <Link href={entry.problemHref} className="inline-flex min-h-11 items-center text-meta font-medium text-primary hover:underline sm:min-h-0">{entry.collectionLabel}</Link>
-          <h3 className="mt-1 line-clamp-2 text-subtitle font-medium"><Link href={entry.problemHref} className="hover:underline"><AssertionText text={entry.problemLabel} /></Link></h3>
-          <p className="mt-2 line-clamp-2 text-body text-muted-foreground"><AssertionText text={objectLabel} /></p>
+          <h3 className="mt-1 text-subtitle font-medium"><Link href={entry.problemHref} className="hover:underline"><AssertionText text={entry.problemLabel} /></Link></h3>
+          <p className="mt-2 text-body text-muted-foreground"><AssertionText text={objectLabel} /></p>
           <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
             <Link href={entry.objectHref} className="inline-flex min-h-11 items-center gap-1 text-meta font-medium text-primary hover:underline sm:min-h-0">Open exact context <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden className="size-3.5" /></Link>
             {limitations.length ? <Disclosure className="text-meta" summaryClassName="min-h-11 font-medium text-foreground sm:min-h-0" summary={limitations.length === 1 ? "Role scope" : `${limitations.length} role details`}><ul className="mt-2 space-y-2 text-muted-foreground">{limitations.map(({ role, limitation }, index) => <li key={`${role}:${index}`}><span className="font-medium text-foreground">{role}:</span> {limitation}</li>)}</ul></Disclosure> : null}
@@ -80,23 +80,57 @@ export function PublicPerformerProfile({
   const name = profile?.displayName ?? performer?.name ?? "Unknown performer";
   const kind: PublicPerformerKind | "account" = performer?.kind ?? "account";
   const links = profile ? Object.entries(profile.links) : [];
+
+  const avatar = <Avatar className={`${profile ? "size-20" : "size-14"} shrink-0 ${kind === "agent" ? "rounded-xl bg-primary/10" : "bg-primary/8"}`}>
+    <AvatarFallback className={kind === "agent" ? "rounded-xl text-label font-semibold text-primary" : "text-title"}>{initials(name, kind)}</AvatarFallback>
+  </Avatar>;
+  const badges = <div className="flex flex-wrap gap-2">
+    <Badge>{performerKindLabel(kind)}</Badge>
+    {profile?.ownerPreview ? <Badge variant="secondary">Private preview</Badge> : null}
+    {profile?.visibility === "unlisted" ? <Badge variant="outline">Unlisted</Badge> : null}
+  </div>;
+  const exactIdentity = performer
+    ? <Disclosure className="text-meta" summaryClassName="min-h-11 font-medium sm:min-h-0" summary="Exact performer identity"><p className="mt-2 break-all font-mono text-micro text-muted-foreground">{performer.id}</p></Disclosure>
+    : null;
+
+  const activityPanel = <section className="min-w-0" aria-labelledby="public-activity-heading">
+    <div className="mb-5 flex flex-wrap items-end justify-between gap-3 border-b pb-4"><div><h2 id="public-activity-heading" className="text-title">Public activity</h2><p className="mt-1 text-meta text-muted-foreground">Exact Results, Decisions, and advisory checks. Each role remains distinct.</p></div>{activity.length ? <span className="text-meta text-muted-foreground">{activity.length} attributed {activity.length === 1 ? "role" : "roles"}</span> : null}</div>
+    <ActivityRows activity={activity} />
+  </section>;
+
+  /* A performer with no hosted profile gets a header, not a rail.
+   *
+   * The rail is 17rem wide and exists to hold a bio, an affiliation and
+   * declared links. A bare performer — which is what every attributed identity
+   * in the record actually is — has none of those, so the rail held an avatar,
+   * a name, one badge and a disclosure: 172px of content in a 272px column,
+   * beside an activity list that had been clamped to two lines a block. The
+   * page truncated its only real content to protect a column that was empty. */
+  if (!profile) return <div className="flex flex-col gap-8">
+    {/* No aria-label: inside `<main>` a `<header>` is generic, so a label on it
+        names nothing. The h1 names this page, exactly as on /account. */}
+    <header className="flex flex-wrap items-center gap-4 border-b pb-6">
+      {avatar}
+      <div className="min-w-0">
+        <h1 className="break-words text-display">{name}</h1>
+        <div className="mt-2 flex flex-wrap items-center gap-3">{badges}{exactIdentity}</div>
+      </div>
+    </header>
+    {activityPanel}
+  </div>;
+
   return <div className="grid gap-8 lg:grid-cols-[17rem_minmax(0,1fr)] lg:items-start">
     <aside className="lg:sticky lg:top-16" aria-label="Contributor identity">
-      <Avatar className={`size-20 ${kind === "agent" ? "rounded-xl bg-primary/10" : "bg-primary/8"}`}>
-        <AvatarFallback className={kind === "agent" ? "rounded-xl text-label font-semibold text-primary" : "text-title"}>{initials(name, kind)}</AvatarFallback>
-      </Avatar>
+      {avatar}
       <h1 className="mt-4 break-words text-display">{name}</h1>
-      <div className="mt-2 flex flex-wrap gap-2"><Badge>{performerKindLabel(kind)}</Badge>{profile?.ownerPreview ? <Badge variant="secondary">Private preview</Badge> : null}{profile?.visibility === "unlisted" ? <Badge variant="outline">Unlisted</Badge> : null}</div>
-      {profile ? <p className="mt-3 text-meta text-muted-foreground">Account presentation; scientific attribution is linked only from exact performer records.</p> : null}
-      {profile?.affiliation ? <p className="mt-4 text-body font-medium">{profile.affiliation}</p> : null}
-      {profile?.bio ? <p className="mt-3 text-body leading-6 text-muted-foreground">{profile.bio}</p> : null}
-      {links.length ? <ul className="mt-5 space-y-2">{links.map(([kind, href]) => <li key={kind}><a href={href} rel={kind === "lab" ? "noreferrer" : "me noreferrer"} className="inline-flex max-w-full items-center gap-2 text-meta font-medium text-primary hover:underline"><HugeiconsIcon icon={LinkSquare02Icon} aria-hidden className="size-4 shrink-0" /><span className="truncate capitalize">{kind}</span></a></li>)}</ul> : null}
-      {performer ? <Disclosure className="mt-5 text-meta" summaryClassName="min-h-11 font-medium sm:min-h-0" summary="Exact performer identity"><p className="mt-2 break-all font-mono text-micro text-muted-foreground">{performer.id}</p></Disclosure> : null}
-      {profile?.ownerPreview ? <Button className="mt-5 w-full" variant="outline" nativeButton={false} render={<Link href="/account/profile" />}>Edit profile</Button> : null}
+      <div className="mt-2">{badges}</div>
+      <p className="mt-3 text-meta text-muted-foreground">Account presentation; scientific attribution is linked only from exact performer records.</p>
+      {profile.affiliation ? <p className="mt-4 text-body font-medium">{profile.affiliation}</p> : null}
+      {profile.bio ? <p className="mt-3 text-body leading-6 text-muted-foreground">{profile.bio}</p> : null}
+      {links.length ? <ul className="mt-5 space-y-2">{links.map(([linkKind, href]) => <li key={linkKind}><a href={href} rel={linkKind === "lab" ? "noreferrer" : "me noreferrer"} className="inline-flex max-w-full items-center gap-2 text-meta font-medium text-primary hover:underline"><HugeiconsIcon icon={LinkSquare02Icon} aria-hidden className="size-4 shrink-0" /><span className="truncate capitalize">{linkKind}</span></a></li>)}</ul> : null}
+      {exactIdentity ? <div className="mt-5">{exactIdentity}</div> : null}
+      {profile.ownerPreview ? <Button className="mt-5 w-full" variant="outline" nativeButton={false} render={<Link href="/account/profile" />}>Edit profile</Button> : null}
     </aside>
-    <section className="min-w-0" aria-labelledby="public-activity-heading">
-      <div className="mb-5 flex flex-wrap items-end justify-between gap-3 border-b pb-4"><div><h2 id="public-activity-heading" className="text-title">Public activity</h2><p className="mt-1 text-meta text-muted-foreground">Exact Results, Decisions, and advisory checks. Each role remains distinct.</p></div>{activity.length ? <span className="text-meta text-muted-foreground">{activity.length} attributed {activity.length === 1 ? "role" : "roles"}</span> : null}</div>
-      <ActivityRows activity={activity} />
-    </section>
+    {activityPanel}
   </div>;
 }
