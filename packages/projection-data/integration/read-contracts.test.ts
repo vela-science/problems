@@ -97,22 +97,27 @@ describeProjection("root-bound Problems read contracts", () => {
       limit: 5000,
     });
     /* A node with at least one edge, because a node's relationships are what
-       this reads. An isolated node is a legitimate graph and a useless probe. */
+       this reads. An isolated node is a legitimate graph and a useless probe.
+       The canvas contract names these `source` and `target` — the read aliases
+       `source_id AS source` deliberately. This destructured the column names
+       instead, so both were `undefined`, no node ever matched, and the whole
+       assertion below skipped on a release carrying 22 nodes and 20 connected
+       edges. A probe that cannot fail is worse than no probe. */
     const connected = canvas.nodes.find(({ id }) => canvas.edges.some(
-      ({ source_id, target_id }) => source_id === id || target_id === id,
+      ({ source, target }) => source === id || target === id,
     ));
-    if (!connected) {
-      console.info("skipped: the release publishes no connected graph node");
-      return;
-    }
+    /* No `if (!connected) return` guard: the manifest already said this
+       repository publishes graph nodes, so an unconnected canvas is a
+       regression to report, not a shape to tolerate. */
+    expect(connected).toBeDefined();
     const graph = await graphRead({
       root: manifest.release_root,
       repository: handleFor(withGraph.repository_id),
       view: "node",
       lens: "all",
-      node: connected.id,
+      node: connected!.id,
     });
-    expect(graph.selected?.id).toBe(connected.id);
+    expect(graph.selected?.id).toBe(connected!.id);
     expect(graph.neighbors.length).toBeGreaterThan(0);
   });
 

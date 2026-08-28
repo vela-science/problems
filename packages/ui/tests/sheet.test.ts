@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test } from "bun:test";
 
 describe("Sheet", () => {
   test("keeps its standard close affordance at the 44px interaction floor", () => {

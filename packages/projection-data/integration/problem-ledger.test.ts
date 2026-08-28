@@ -99,7 +99,8 @@ describeProjection("what the Problem ledger reads off a Source record", () => {
     }
     const split = facets.status.reduce((sum, status) => sum + (status.parts?.[0]?.count ?? 0), 0);
     const formalization = facets.formalization.find((value) => value.value === "formalized");
-    expect(split).toBe(formalization?.count);
+    expect(formalization).toBeDefined();
+    expect(split).toBe(formalization!.count);
   }, wholeCorpus);
 
   /* The tail of the record: the fields beside the status, each read from its

@@ -49,7 +49,7 @@ describeDatabase("Math Source Registry database boundary", () => {
     );
     expect(registry.next_cursor).not.toBeNull();
     expect(registry.sources.every(({ observation }) => (
-      observation.observation_root.startsWith("sha256:")
+      observation?.observation_root.startsWith("sha256:") ?? false
     ))).toBe(true);
   });
 
@@ -153,10 +153,15 @@ describeDatabase("Math Source Registry database boundary", () => {
   });
 
   test("keeps Erdős 887 on its exact source occurrence", async () => {
-    const ledger = await problemsForRepository("math", { q: "887", limit: 10 });
+    /* Both reads pinned to one release. `ledger.release_root` was read off a
+       result that has no such field, so the detail read received `undefined`
+       and fell back to whatever the current release happened to be — the
+       release-pinned consistency this test is named for was never asserted. */
+    const root = (await projectionManifest()).release_root;
+    const ledger = await problemsForRepository("math", { q: "887", limit: 10, root });
     const problem = ledger.items.find(({ problem }) => problem === "887");
     expect(problem).toBeDefined();
-    const detail = await problemDetail("math", "887", ledger.release_root);
+    const detail = await problemDetail("math", "887", root);
     expect(detail).toBeDefined();
     expect(problem!.node_id).toBe("erdos:887");
   });

@@ -17,10 +17,10 @@
   },
   "include": [
     "src/**/*.ts",
-    "tests/**/*.ts"
+    "tests/**/*.ts",
+    "integration/**/*.ts"
   ],
   "exclude": [
-    "node_modules",
-    "integration"
+    "node_modules"
   ]
 }

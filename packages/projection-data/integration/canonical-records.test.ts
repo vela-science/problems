@@ -71,6 +71,7 @@ describeDatabase("Core-authenticated records retain exact source bindings", () =
     expect(claim?.source_path).toBe(
       `records/claims/sha256/${claim!.root!.replace("sha256:", "")}.json`,
     );
-    expect(sha256(canonicalJson(claim!.record))).toBe(claim!.root);
+    expect(claim!.root).toBeDefined();
+    expect(sha256(canonicalJson(claim!.record))).toBe(claim!.root!);
   });
 });

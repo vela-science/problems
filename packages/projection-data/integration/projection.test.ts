@@ -88,8 +88,9 @@ describeProjection("Neon Problems projection", () => {
          shown. It must also be a declared one — a published locator nobody
          declares is how a reader gets sent somewhere the projection was not
          built from. */
-      expect(repository?.source.remote).toBe(primaryRemote(source));
-      expect(source.remotes).toContain(repository?.source.remote);
+      expect(repository).toBeDefined();
+      expect(repository!.source.remote).toBe(primaryRemote(source));
+      expect(source.remotes).toContain(repository!.source.remote);
       expect(repository?.source.commit).toMatch(/^[0-9a-f]{40}$/u);
       expect(repository?.status.roots.repository).toMatch(/^sha256:[0-9a-f]{64}$/u);
       expect(repository?.status.roots.origin).toMatch(/^sha256:[0-9a-f]{64}$/u);
