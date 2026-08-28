@@ -37,7 +37,7 @@ origin and this application must not grow a second editorial surface, so the
 product explains itself through the surfaces that carry real state: a Problem's
 own Overview, `/decisions`, and `/repositories/{slug}/reproduce`. Privacy,
 Terms, Accessibility, and Contact remain compact institutional surfaces,
-reachable from the rail. Exact-record and Repository routes are durable
+reachable from the footer at the end of every page. Exact-record and Repository routes are durable
 contextual destinations, not primary navigation.
 
 ## Home
