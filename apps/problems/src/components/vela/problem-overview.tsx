@@ -42,10 +42,13 @@ function metadataString(state: State, key: string) {
  *
  * What this release does not carry at all belongs in one release-level note,
  * not restated on every Problem. */
-function absences(state: State, checks: Array<{ outcome: string }>) {
+function absences(state: State) {
   const entries: string[] = [];
   if (!metadataString(state, "next_discriminator")) entries.push("A recorded next discriminator");
-  if (!checks.length) entries.push("Any retained check");
+  /* "Any retained check" used to sit here too, on `!checks.length` — the same
+     condition the stage ladder already reports as "Work and checks / None
+     recorded", in the same viewport. Removing four unconditional constants
+     left a fifth that was a straight duplicate. */
   return entries;
 }
 
@@ -115,7 +118,7 @@ export function ProblemOverview({ state, route }: { state: State; route: string 
 
       <aside className={styles.rail} aria-label="Problem facts">
         <ProblemFacts state={state} lastSourceUpdate={lastSourceUpdate} />
-        <AbsencePanel entries={absences(state, checks)} />
+        <AbsencePanel entries={absences(state)} />
         <ExactPanel state={state} />
       </aside>
     </div>;
@@ -250,7 +253,7 @@ export function ProblemOverview({ state, route }: { state: State; route: string 
       </section>
 
       <ProblemFacts state={state} lastSourceUpdate={lastSourceUpdate} openFormal={openFormal.length} formal={formal.length} />
-      <AbsencePanel entries={absences(state, checks)} />
+      <AbsencePanel entries={absences(state)} />
       <ExactPanel state={state} />
     </aside>
   </div>;

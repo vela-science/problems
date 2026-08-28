@@ -2,13 +2,12 @@
  * deep marine navigation, and cobalt interaction. Semantic colours remain
  * independent and are used only for real state. */
 :root {
-  --vela-ink: oklch(0.205 0.025 255); --vela-ink-soft: oklch(0.34 0.022 255);
-  --vela-cobalt: oklch(0.53 0.2 258); --vela-cobalt-soft: oklch(0.94 0.035 258);
-  --vela-paper: oklch(0.985 0.003 255); --vela-paper-strong: oklch(1 0 0);
+  /* Only tokens with a `.dark` counterpart below. Nine light-only brand colours
+     were removed: eight had no consumer, and `--vela-cobalt-soft` had one that
+     it broke — `/graph`'s chooser painted near-white on a dark page, body text
+     at 1.66:1. `check:design-system` now fails on light-only-with-consumer. */
   --vela-surface-raised: oklch(0.998 0.002 255); --vela-surface-sunken: oklch(0.962 0.008 255);
   --vela-surface-hover: oklch(0.95 0.022 258); --vela-surface-selected: oklch(0.925 0.045 258); --vela-shadow-raised: 0 1px 2px oklch(0.18 0.03 255 / 0.07), 0 10px 28px oklch(0.18 0.03 255 / 0.05);
-  --vela-coral: oklch(0.58 0.2 28); --vela-amber: oklch(0.7 0.14 78);
-  --vela-mint: oklch(0.57 0.14 152);
   --vela-page-gutter: clamp(1rem, 2.5vw, 2rem);
   --vela-page-block: clamp(1.25rem, 3vw, 2rem);
   --vela-page-section: clamp(2rem, 4vw, 3rem);

@@ -214,6 +214,33 @@ for (const app of [problems]) {
   }
 }
 
+/* A brand colour defined on `:root` with no `.dark` value is a dark-mode defect
+ * waiting for a consumer, and one had already found it: `--vela-cobalt-soft`
+ * was light-only and painted `/graph`'s chooser as a 622x1069 near-white slab
+ * across a dark page, body text at 1.66:1. Eight sibling tokens had no dark
+ * value either and survived only because nothing used them yet.
+ *
+ * Lengths are theme-independent by nature, so only colour-valued tokens count.
+ * A token with no consumer is not a failure here — it is dead weight the
+ * inventory should remove — so this fails on the combination that actually
+ * breaks a page: defined light-only, and used. */
+const themeRoot = themeCss.slice(0, themeCss.indexOf(".dark"));
+const themeDark = themeCss.slice(themeCss.indexOf(".dark"));
+const colourValue = /oklch\(|lab\(|rgb\(|#[0-9a-f]{3,8}/iu;
+const appSources = [join(problems, "src"), join(ui, "src")];
+const readAll = (dir) => readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+  const full = join(dir, entry.name);
+  if (entry.isDirectory()) return readAll(full);
+  return /\.(tsx?|css)$/u.test(entry.name) && !full.endsWith("styles/theme.css") ? [readFileSync(full, "utf8")] : [];
+});
+const allSource = appSources.flatMap(readAll).join("\n");
+for (const [, name, value] of themeRoot.matchAll(/(--vela-[a-z0-9-]+):\s*([^;]+);/gu)) {
+  if (!colourValue.test(value)) continue;
+  if (themeDark.includes(`${name}:`)) continue;
+  if (!new RegExp(`var\\(${name}[),]`, "u").test(allSource)) continue;
+  failures.push(`${name} is a light-only colour token with a consumer: give it a .dark value or retire it`);
+}
+
 if (failures.length) {
   console.error(["Vela design-system check failed:", ...failures.map((failure) => `- ${failure}`)].join("\n"));
   process.exit(1);
