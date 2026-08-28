@@ -4,7 +4,7 @@ import { Button } from "@vela/ui/components/button";
 import { CopyButton } from "@vela/ui/vela/copy-button";
 import { ScientificText } from "@vela/ui/vela/scientific-text";
 import { Popover, PopoverContent, PopoverTrigger } from "@vela/ui/components/popover";
-import { ProblemSectionNav } from "@/components/vela/problem-section-nav";
+import { SectionNav } from "@/components/vela/section-nav";
 import { problemReading, readingBadge, readingBasis } from "@/lib/problem-reading";
 import { problemLabel, resolveProblemStatement, statementParagraphs } from "@/lib/problem-statement";
 import type { ScientificProblemState } from "@/lib/scientific-state";
@@ -108,7 +108,8 @@ export function ProblemHeader({ state, route, current }: {
       ? <h1 className={`${styles.question} ${current === "overview" ? "" : styles.questionClamped}`}><ScientificText text={question} /></h1>
       : <p className={styles.questionAbsent}>No written statement is retained for this problem.</p>}
 
-    <ProblemSectionNav
+    <SectionNav
+      label="Problem sections"
       current={current}
       sections={SECTIONS.map(({ key, label }) => ({
         key,

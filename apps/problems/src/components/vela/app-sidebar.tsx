@@ -8,13 +8,9 @@ import { usePathname } from "next/navigation";
    Sources list, so the rail read as three pairs of the same place. */
 import {
   Activity01Icon,
-  BookOpen01Icon,
-  Clock01Icon,
-  FileCheckIcon,
   Home01Icon,
   InboxUploadIcon,
   PuzzleIcon,
-  SourceCodeIcon,
   WorkIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -70,27 +66,6 @@ type SidebarDestination = {
    palette. Additive, because `app-sidebar.test.tsx` fixes the deliberate rule
    that a Repository keeps the global spine: it is a provenance surface, not one
    of the five primary destinations in PRODUCT.md. */
-const REPOSITORY_SECTIONS: Array<{ key: string; label: string; icon: SidebarDestination["icon"] }> = [
-  { key: "", label: "Overview", icon: BookOpen01Icon },
-  /* Not "Problems": the spine above already has a link by that name pointing at
-     the whole product. This is the Repository's own ledger, which is what its
-     page calls it. */
-  { key: "problems", label: "Problem ledger", icon: PuzzleIcon },
-  { key: "claims", label: "Assertions", icon: FileCheckIcon },
-  { key: "proposals", label: "Proposed changes", icon: WorkIcon },
-  { key: "commits", label: "Commits", icon: Clock01Icon },
-  { key: "reproduce", label: "Reproduce", icon: SourceCodeIcon },
-];
-
-/* `/repositories/<slug>` plus one optional section segment. A deeper path — a
-   Claim or Proposal record — keeps the group and marks no section, because it
-   sits under a section rather than beside one. */
-function repositoryRoute(pathname: string) {
-  const parts = pathname.split("/").filter(Boolean);
-  if (parts.length < 2 || parts[0] !== "repositories") return null;
-  return { slug: parts[1]!, href: `/repositories/${parts[1]}`, section: parts[2] ?? "" };
-}
-
 /* Frontiers is not in the spine.
  *
  * The route serves a Protocol-1 reference demonstration: two authority
@@ -110,7 +85,6 @@ const PRIMARY_DESTINATIONS: SidebarDestination[] = [
 export function AppSidebar({ problemCollections = [{ namespace: "erdos-problems", name: "Erdős Problems", identifierKind: "number" }] }: { problemCollections?: PublishedProblemCollection[] }) {
   const pathname = usePathname();
   const accountState = useAccountState();
-  const repository = repositoryRoute(pathname);
   /* localStorage, so the server renders the group empty and the client fills
      it in. That is also exactly what a reader who has opened nothing sees. */
   const recent = useSyncExternalStore(subscribeRecentObjects, recentObjectsSnapshot, recentObjectsServerSnapshot).slice(0, 5);
@@ -218,28 +192,6 @@ export function AppSidebar({ problemCollections = [{ namespace: "erdos-problems"
                   <span className="truncate">{object.title}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>)}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup> : null}
-
-        {repository ? <SidebarGroup className="border-t border-sidebar-border py-1">
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {REPOSITORY_SECTIONS.map(({ key, label, icon: Icon }) => {
-                const href = key ? `${repository.href}/${key}` : repository.href;
-                const active = repository.section === key;
-                return <SidebarMenuItem key={key || "overview"}>
-                  <SidebarMenuButton
-                    className="h-11 md:h-8"
-                    tooltip={`${repository.slug} · ${label}`}
-                    isActive={active}
-                    render={<Link href={href} aria-current={active ? "page" : undefined} onClick={closeMobileNavigation} />}
-                  >
-                    <HugeiconsIcon icon={Icon} aria-hidden />
-                    <span>{label}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>;
-              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup> : null}

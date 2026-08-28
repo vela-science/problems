@@ -91,11 +91,15 @@ describe("current product language", () => {
        header. The rail carried them for a while; the page then named the same
        object three times and offered no way out of it. */
     expect(sidebar).not.toContain("PROBLEM_SECTIONS");
-    /* The row lives in `problem-section-nav.tsx` now: keeping the open section
-       scrolled into view needs a client boundary, and the header is a server
-       component. The header still owns it — it renders nothing else. */
-    expect(source("components/vela/problem-header.tsx")).toContain("<ProblemSectionNav");
-    expect(source("components/vela/problem-section-nav.tsx")).toContain('aria-label="Problem sections"');
+    /* One row component for every object with sections. Keeping the open
+       section scrolled into view needs a client boundary and both headers are
+       server components, so the row is its own file — shared, not copied. */
+    expect(source("components/vela/problem-header.tsx")).toContain("<SectionNav");
+    expect(source("components/vela/problem-header.tsx")).toContain('label="Problem sections"');
+    expect(source("components/vela/repository-section-nav.tsx")).toContain("<SectionNav");
+    expect(source("components/vela/repository-section-nav.tsx")).toContain('label="Repository sections"');
+    /* The rail no longer carries any object's sections. */
+    expect(sidebar).not.toContain("REPOSITORY_SECTIONS");
     expect(source("components/vela/problem-overview-reference.tsx")).not.toContain('aria-label="Problem sections"');
     /* The repository tab bar owns section naming; the header carries only the
        ancestor it does not provide. */

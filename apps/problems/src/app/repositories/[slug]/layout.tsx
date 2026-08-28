@@ -1,4 +1,5 @@
 import { allRepositories } from "@vela/projection-data";
+import { RepositorySectionNav } from "@/components/vela/repository-section-nav";
 import { RepositoryRouteScope } from "./repository-route-scope";
 
 // Prebuild the registry's published repository shells while allowing rooted
@@ -21,6 +22,10 @@ export default async function RepositoryWorkspaceLayout({
 
   return (
     <div className="min-w-0">
+      {/* The Repository's sections, in the Repository's header — the same rule
+          a Problem follows. They were in the sidebar, which gave two object
+          types two navigation models and a reader nothing to predict from. */}
+      <RepositorySectionNav slug={slug} />
       <RepositoryRouteScope slug={slug}>{children}</RepositoryRouteScope>
     </div>
   );
