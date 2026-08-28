@@ -74,9 +74,15 @@ describe("global Problems entry", () => {
       .toBeTruthy();
   });
 
-  it("keeps global search on the global collection entry", async () => {
+  it("opens on its own content, with no header band and no second search", async () => {
     render(await ProblemsPage({ searchParams: Promise.resolve({}) }));
-    expect(screen.getByRole("textbox", { name: "Search all Problems" })).toHaveAttribute("name", "q");
-    expect(screen.getByRole("button", { name: "Search" })).toBeInTheDocument();
+    /* The band said "Problems" — which the breadcrumb and the rail both say —
+       badged a count of the two collections listed directly beneath it, and
+       explained what a directory is. The search went with it: the app header
+       carries a global search on every route, and this one reached nothing the
+       collections below do not. The page begins with its content. */
+    expect(screen.queryByRole("textbox", { name: "Search all Problems" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Search" })).toBeNull();
+    expect(screen.getByRole("heading", { level: 2, name: "Published collections" })).toBeVisible();
   });
 });

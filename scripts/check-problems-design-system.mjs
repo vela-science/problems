@@ -70,6 +70,18 @@ if (!productCss.includes('@import "./foundation.css"')) failures.push("@vela/ui 
    The forced-colors rule is the one that keeps a focus ring visible when
    box-shadow is dropped; it went missing once already, on eight of twelve
    focusable elements. */
+/* An object's header must not change shape between that object's own sections.
+   `layout="canvas"` removes the page maximum, and the Problem header is a
+   sibling of the section inside the same shell — so opening Work widened the
+   tab row by 176px and moved it 88px left at 1920. The shell restores the frame
+   for anything marked as an object header; both halves have to stay. */
+const shellCss = readFileSync(join(ui, "src/components/vela/page-shell.module.css"), "utf8");
+if (!shellCss.includes('[data-layout="canvas"] > [data-vela-object-header]')) {
+  failures.push("page-shell must restore the standard frame for an object header inside a canvas layout");
+}
+if (!readFileSync(join(root, "apps/problems/src/components/vela/problem-header.tsx"), "utf8").includes("data-vela-object-header")) {
+  failures.push("the Problem header must mark itself as an object header, or a canvas section reshapes it");
+}
 const foundationCss = readFileSync(join(ui, "src/styles/foundation.css"), "utf8");
 if (!/@media \(forced-colors: active\)/u.test(foundationCss)) failures.push("foundation.css must keep the forced-colors focus rule");
 for (const [name, css] of [["theme", themeCss], ["product", productCss]]) {

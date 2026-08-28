@@ -51,7 +51,11 @@ export function ProblemHeader({ state, route, current }: {
   const counts = sectionCounts(state);
   const hasQuestion = statement?.form === "prose" && Boolean(question);
 
-  return <header className={styles.header}>
+  /* Marked so the shell can hold the header at the standard frame when the open
+     section takes the canvas. The header belongs to the Problem, not to the
+     section under it, and must not change shape as a reader moves between the
+     Problem's own five tabs. */
+  return <header data-vela-object-header className={styles.header}>
     {/* One row, not two.
       *
         Identity, state and actions used to sit in a strip above the title: a

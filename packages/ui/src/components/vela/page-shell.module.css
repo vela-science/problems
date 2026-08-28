@@ -42,6 +42,36 @@
   --vela-page-max: none;
 }
 
+/* An object's header keeps its measure when one of its sections takes the
+   canvas.
+ *
+ * The Problem workspace is a canvas by decision, and the Problem's header — its
+ * identity, its question, its five section tabs — is a sibling of the section
+ * inside the same shell. So opening Work removed the page maximum from the
+ * header too: at 1920 the tab row jumped from 1472px to 1648px and shifted 88px
+ * left, which made the one element meant to be constant across the five
+ * sections the most visibly variable thing on the page.
+ *
+ * The header opts back into the standard frame. `width` restores the bleed the
+ * header's own negative margins provide — without it, `margin-inline: auto`
+ * cancels them and the header ends up narrower than the section it heads. */
+.page[data-layout="canvas"] > [data-vela-object-header] {
+  /* The frame the header would have had if its section were not a canvas: the
+     page's own border box, capped at the standard maximum. */
+  --vela-object-header-frame: min(calc(100% + 2 * var(--vela-page-gutter)), 96rem);
+  width: var(--vela-object-header-frame);
+  /* Computed, not `auto`. A percentage margin resolves against the containing
+     block, so this centres the frame and then re-applies the header's own
+     one-gutter bleed. `margin-inline: auto` cannot do it: when the width
+     exceeds the containing block — which it does at every width below the cap —
+     auto resolves to zero and the header slides one gutter to the right. */
+  margin-inline: calc(
+    (100% + 2 * var(--vela-page-gutter) - var(--vela-object-header-frame)) / 2
+    - var(--vela-page-gutter)
+  );
+}
+
+
 .page:has(> .hero) {
   padding-block-start: min(var(--vela-page-gutter), 0.5rem);
 }

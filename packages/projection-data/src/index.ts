@@ -2693,6 +2693,70 @@ function sourceCoversRepository(coverage: unknown, slug: string): boolean {
    detail page at all. */
 /* Still eight parameters in both shapes, because the facet aggregations below
    share this predicate and pass exactly eight. */
+/* A Problem's statement is not on the Problem's own row.
+ *
+ * The catalogue record is `erdos:94 / "Erdős problem 94"` with no summary, so
+ * `n.search_document` — built from `native_id || title || summary` — has no
+ * statement text in it. The question a reader actually types is retained on a
+ * *different* native record, by whichever source declares
+ * `statement_retention: "summary"`, and the two are joined only by a resolved
+ * problem number.
+ *
+ * The consequence was that `/search?q=convex` returned nothing while the
+ * collection ledger returned fifteen, on a page that advertises itself as
+ * searchable by statement. Reading the wording of a question is the first thing
+ * this product asks anyone to do.
+ *
+ * This matches those retained docstrings for the same Problem. It is a read, so
+ * it needs no reprojection: the bytes were always there, on a row the query did
+ * not look at.
+ *
+ * The source lists are built from `problem-resolution.v1.json` rather than
+ * written here, so adding a retaining source does not silently leave its
+ * statements unsearchable. They are interpolated rather than bound because the
+ * facet aggregations below share this predicate and pass exactly eight
+ * parameters; every value is checked against a strict pattern first, and none
+ * of it is user input. */
+const retainedStatementLiteral = (value: string) => {
+  if (!/^[a-z0-9][a-z0-9:_-]*$/u.test(value)) {
+    throw new Error(`problem resolution source id is not a safe SQL literal: ${value}`);
+  }
+  return `'${value}'`;
+};
+
+const RETAINED_STATEMENT_SQL = (() => {
+  const retaining = problemResolutionConfig.candidate_sources
+    .filter((source) => source.statement_retention === "summary");
+  const byNumber = retaining.filter((source) => source.number_extraction.kind === "metadata_integer");
+  const byNativeId = retaining.filter((source) => source.number_extraction.kind === "erdos_formal_native_id");
+  if (!byNumber.length && !byNativeId.length) return "FALSE";
+  const list = (sources: typeof retaining) =>
+    sources.map(({ source_id }) => retainedStatementLiteral(source_id)).join(", ");
+  /* The resolved Problem number for a retained statement, by the same rule
+     `candidateProblemIdentity` applies in TypeScript. */
+  const resolvedNumber = [
+    byNumber.length ? `WHEN stmt.source_id IN (${list(byNumber)}) THEN stmt.metadata ->> 'problem_number'` : "",
+    byNativeId.length ? `WHEN stmt.source_id IN (${list(byNativeId)}) THEN substring(stmt.native_id from '^Erdos([1-9][0-9]*)')` : "",
+  ].filter(Boolean).join("\n            ");
+  /* Uncorrelated on purpose. Written as an `EXISTS` correlated on the candidate
+     row's number, this re-ran a 19,827-row scan once per Problem and the query
+     never returned. Pinned to `$1` instead, it is one scan whose result the
+     planner reuses for every row — the same 571ms whether the ledger is testing
+     one Problem or all 1,217. */
+  return `${PROBLEM_NUMBER_SQL} IN (
+        SELECT CASE
+            ${resolvedNumber}
+          END
+        FROM projection.release_sources stmt_source
+        JOIN projection.native_records stmt
+          ON stmt.observation_root = stmt_source.observation_root AND stmt.source_id = stmt_source.source_id
+        WHERE stmt_source.release_root = $1
+          AND stmt.source_id IN (${list(retaining)})
+          AND to_tsvector('simple', coalesce(stmt.metadata ->> 'docstring', ''))
+              @@ websearch_to_tsquery('simple', $4)
+      )`;
+})();
+
 const problemWhere = (exact: boolean) => `rs.release_root = $1 AND fr.repository_id = $2 AND primary_profile.source_role = 'problem_catalog'
       AND (sd.coverage -> 'repository_slugs') ? $3
       AND ($4 = '' OR ${exact
@@ -2700,7 +2764,8 @@ const problemWhere = (exact: boolean) => `rs.release_root = $1 AND fr.repository
         : `CASE WHEN $4 ~ '^[0-9]+$'
             THEN ${PROBLEM_NUMBER_SQL} LIKE $4 || '%'
             ELSE (${PROBLEM_NUMBER_SQL} = $4
-                  OR n.search_document @@ websearch_to_tsquery('simple', $4)) END`})
+                  OR n.search_document @@ websearch_to_tsquery('simple', $4)
+                  OR ${RETAINED_STATEMENT_SQL}) END`})
       AND ($5 = '' OR ${PROBLEM_STATUS_SQL} = $5)
       AND ($6 = '' OR CASE WHEN ${PROBLEM_FORMALIZED_SQL} THEN 'formalized' ELSE 'not formalized' END = $6)
       AND ($7 = '' OR $7 = ANY(${PROBLEM_TAGS_SQL}))
