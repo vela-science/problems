@@ -28,7 +28,6 @@ product: problems.science application
 | `/workspaces` | Private work continuity | Open saved work |
 | `/account` | Identity, connections, and session | Manage or continue |
 | `/people/{handle-or-id}` | Public contributor attribution | Open exact activity context |
-| `/about` | Current product explanation and vision | Understand the boundary or open the essay |
 
 About is the living bridge between product and editorial registers. The full
 vision essay lives at `https://vela.space/constellations`. Privacy, Terms,

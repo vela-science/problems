@@ -25,15 +25,7 @@
   background: var(--muted);
 }
 
-.kicker {
-  margin: 0;
-  font-family: var(--font-mono, ui-monospace, monospace);
-  font-size: var(--text-micro);
-  font-weight: 500;
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
-  color: var(--muted-foreground);
-}
+.kicker { composes: vela-panel-label from global; }
 
 .spine {
   list-style: none;

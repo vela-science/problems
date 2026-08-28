@@ -15,15 +15,7 @@
   background: var(--muted);
 }
 
-.kicker {
-  margin: 0;
-  font-family: var(--font-mono, ui-monospace, monospace);
-  font-size: var(--text-micro);
-  font-weight: 500;
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
-  color: var(--ap-muted);
-}
+.kicker { composes: vela-panel-label from global; }
 
 /* Stacked on a phone, side by side once there is room for two columns and the
    crossing between them. The crossing keeps its meaning either way: the arrow

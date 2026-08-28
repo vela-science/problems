@@ -85,20 +85,13 @@ when their authors wrote them. Do not rewrite them to match the current system.
   a route with a succession of question headings, prose sections, disclaimer
   paragraphs, or numbered explanations.
 - Problem navigation is five sections — Overview, Work, Results, Sources,
-  History — carried in the Problem's own header, each at its own path segment
-  (`/problems/<namespace>/<problem>/<section>`), with a count on each saying
-  what that section holds. The list lived in the sidebar for a while, on the
-  reading that the rail should become the object a reader is inside. In
-  practice the page then named the same Problem three times over — breadcrumb,
-  rail group, and the hero above the content — and offered no way to reach
-  another destination without first leaving the object. GitHub and Hugging Face
-  both settle it the other way. The rail moves between objects and keeps the
-  product spine everywhere; the header moves between sections. Overview is a
-  substantive question-first reference screen, not a navigation summary. Work owns mutable coordination; Results owns
-  durable outputs; Sources owns files, declarations, and excerpts; History
-  owns semantic chronology. The exact map is a contextual action, not a sixth
-  section. A section has one name and one address: the retired `?view=`,
-  `?mode=` and `?research=` spellings no longer resolve.
+  History — each at its own path segment
+  (`/problems/<namespace>/<problem>/<section>`), carried in the Problem's own
+  header with a count on each. `DESIGN.md` is the authority for that
+  composition and carries the reasoning, the type ramp, and the requirement
+  that a scrolling section row keep the open tab visible with a continuation
+  cue. A section has one name and one address: the retired `?view=`, `?mode=`
+  and `?research=` spellings no longer resolve.
 - Treat redundancy as a product defect. A fact shown in a state rail, node,
   badge, row, edge, or control is not restated beside it unless the second
   presentation changes interpretation or is the accessible fallback.

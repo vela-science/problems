@@ -68,14 +68,7 @@
   background: var(--muted);
 }
 
-.kicker {
-  font-family: var(--font-mono, ui-monospace, monospace);
-  font-size: var(--text-micro);
-  font-weight: 500;
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
-  color: var(--ov-muted);
-}
+.kicker { composes: vela-panel-label from global; }
 
 /* The scope instrument.
  *

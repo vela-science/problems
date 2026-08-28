@@ -29,12 +29,11 @@ search, rows, files, results, or controls.
 | Research map | canvas + synchronized list | exact retained nodes and edges |
 | Updates | grouped activity | actor, event, object, time, context |
 | Search | command results + filters | human labels, collection identity, exact detail |
-| Contribute | task form + stepper | Problem, scope, evidence, preview, handoff |
+| Contribute | Problem chooser | Problem, scope, evidence, preview, handoff |
 | Import | repository identity + status | GitHub access and exact revision |
 | Workspaces | workspace rows | real private work and state |
 | Account | profile + grouped settings | WorkOS, GitHub, workspaces, session |
 | Contributor profile | identity rail + attributed activity | exact role, Problem, Result/check context |
-| About | watercolor opening + concise product boundary | vision essay, public loop, exact release detail |
 | Endless Frontiers | continuous long-form folio | retained paintings, citations, route back to Problems |
 
 ## Calibration surfaces
@@ -65,8 +64,10 @@ targets, no current Result, partial sources, and corrected history.
 ### Home
 
 Use one concise heading, one sentence, a prominent search field, and two
-actions. Use the retained opening watercolor as the only first-viewport image,
-beside the task column on wide screens and after it on narrow screens. Place
+actions. No promise bullets: the state panel beside them is the evidence, and
+success and evidence colours encode real state only. Root DESIGN.md forbids a
+painting on Home, so the first viewport carries the graph-paper ground rather
+than the retained watercolor. Place
 one compact published-collections list close to search. Follow with three
 or four question rows and the two durable reviewed Results. Keep one small link
 to all Updates. Remove raw update feeds, Home collection charts, marketing
@@ -89,8 +90,9 @@ the dominant object. More filters remain disclosed until needed.
 
 ### Problem
 
-Use collection-qualified identity, the complete question, Start work, and Open
-source in one header. A compact state strip separates formal targets,
+The question is the header's `h1`, at the `statement` step, unclamped on
+Overview. Collection-qualified identity sits above it as a label, with the
+reading badge, copy link and Start work on that line. There is no state strip:
 source-attributed status, Repository decision on a contribution, and checks.
 Tabs use a border-bottom row with no enclosing card.
 

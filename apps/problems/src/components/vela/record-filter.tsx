@@ -44,7 +44,12 @@ export function RecordFilter({
       <SelectTrigger
         aria-label={variant === "bar" ? `Filter by ${label.toLowerCase()}` : label}
         size={variant === "bar" ? "sm" : undefined}
-        className={variant === "bar" ? "w-36" : "w-full min-w-40"}
+        /* `min-w-40` was a 160px floor inside a 125px column at 320px, so each
+           of the four filter selects lost 35px inside an `overflow-hidden`
+           row: the value was cut, not scrollable. The label above names the
+           control and the value truncates, so the floor bought nothing it did
+           not also break. */
+        className={variant === "bar" ? "w-36" : "w-full min-w-0"}
       >
         <SelectValue placeholder={label} />
       </SelectTrigger>

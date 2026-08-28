@@ -4,7 +4,6 @@ import type { Route } from "next";
 import {
   ArrowRight01Icon as ArrowRight,
   BookOpen01Icon,
-  CheckmarkCircle01Icon,
   CodeIcon,
   Search01Icon as Search,
 } from "@hugeicons/core-free-icons";
@@ -54,14 +53,6 @@ const FORMAL_COLLECTION_PATH = "/problems/formal-conjectures";
  * working instrument on the right — over the masked SVG ground from
  * `hero-centered-line-grid-bg`. Both blocks fill their instrument with
  * invented data; every value here is read from the projection. */
-
-/* What this place does, in three lines a newcomer can check on the page. Not a
-   restatement of the lead: each names something the instrument beside it shows. */
-const PROMISES = [
-  "Every Problem keeps its exact sources",
-  "Every Result names what it does not settle",
-  "Every Decision is attributable and replayable",
-];
 
 function SectionLink({ href, children, label }: { href: Route; children: React.ReactNode; label?: string }) {
   return <Link
@@ -168,13 +159,18 @@ export default async function HomePage() {
               Find a scientific question, read what is known, and add a result.
             </p>
 
-            <ul className="mt-6 space-y-2.5">
-              {PROMISES.map((promise) => <li key={promise} className="flex items-start gap-2.5">
-                <HugeiconsIcon icon={CheckmarkCircle01Icon} aria-hidden className="mt-0.5 size-4 shrink-0 text-status-progress" />
-                <span className="text-meta text-foreground">{promise}</span>
-              </li>)}
-            </ul>
+            {/* Three green check-circles used to assert "Every Result names
+                what it does not settle" and two more promises here. The same
+                glyph in the same `--status-progress` means "this Verification
+                check passed" about three hundred pixels down the same screen,
+                and DESIGN.md is explicit that success and evidence colours
+                encode real state only. A promise is not state, and a product
+                whose whole claim is that a check's meaning is bounded by its
+                scope should not spend the check's own glyph on marketing.
 
+                The instrument beside them already proves all three: it names
+                the Problem, its Result, that Result's scope, and who decided.
+                The claim was redundant with its own evidence. */}
             <form action="/search" method="get" aria-label="Find a problem" className="mt-7">
               <label htmlFor="home-problem-search" className="sr-only">Find a problem</label>
               <InputGroup className="h-13 border-input bg-[var(--vela-surface-raised)] shadow-[var(--vela-shadow-raised)] focus-within:border-primary">

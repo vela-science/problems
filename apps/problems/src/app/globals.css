@@ -47,6 +47,21 @@
     color: color-mix(in oklab, var(--primary) 74%, var(--foreground));
   }
 
+  /* A panel's label. It was defined verbatim three times — in
+     `problem-overview`, `problem-transition` and `account-planes` — as 10px
+     mono, uppercase, 0.11em tracking, and used twelve times on one screen with
+     bare counts among them, so `CLAIMS` and `2` competed as two tracked
+     all-caps labels in a single row.
+   *
+     DESIGN.md says it twice: "Avoid repeated uppercase micro-labels, wide
+     tracking" and "Labels should normally be ordinary sentence case text."
+     One definition, sentence case, and the tracking gone. */
+  .vela-panel-label {
+    font-size: var(--text-meta);
+    font-weight: 500;
+    color: var(--muted-foreground);
+  }
+
   .vela-object-surface {
     border: 1px solid var(--border);
     border-radius: calc(var(--radius) + 0.25rem);
