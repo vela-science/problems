@@ -98,7 +98,6 @@ export function AccountMenu() {
           <DropdownMenuItem className="min-h-9" render={<Link href="/terms" prefetch={false} />}>Terms</DropdownMenuItem>
           <DropdownMenuItem className="min-h-9" render={<Link href="/accessibility" prefetch={false} />}>Accessibility</DropdownMenuItem>
           <DropdownMenuItem className="min-h-9" render={<Link href="/contact" prefetch={false} />}>Contact</DropdownMenuItem>
-          <DropdownMenuItem className="min-h-9" render={<Link href="/about" prefetch={false} />}>About</DropdownMenuItem>
           <DropdownMenuItem
             className="min-h-9 w-full"
             onClick={() => signOutForm.current?.requestSubmit()}

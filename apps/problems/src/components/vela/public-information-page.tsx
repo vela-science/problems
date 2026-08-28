@@ -2,8 +2,10 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { PageHero, PageSection, PageShell } from "@vela/ui/vela/page-shell";
 
+/* `/about` is gone. PRODUCT.md names vela.space as the editorial origin and
+   says Problems must not grow a second editorial surface; the About page was
+   that surface. */
 export const INFORMATION_ROUTES = [
-  { href: "/about", label: "About" },
   { href: "/privacy", label: "Privacy" },
   { href: "/terms", label: "Terms" },
   { href: "/accessibility", label: "Accessibility" },

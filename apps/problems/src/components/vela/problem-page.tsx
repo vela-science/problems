@@ -68,9 +68,16 @@ export async function ProblemPageView({ repository, problem, collectionName, rou
           not reinterpret an older release.
         </AlertDescription>
       </Alert>
+      {/* The refusal explains itself. This offered "Why reads fail closed"
+          pointing at `/about#scientific-state` — an anchor that did not exist,
+          so it landed at the top of an essay, mid-error, off the task. */}
+      <p className="mt-4 max-w-3xl text-body text-muted-foreground">
+        The reader fails closed rather than guessing: a projection it cannot
+        verify might answer with a different release&apos;s state, and a wrong
+        scientific answer is worse than none.
+      </p>
       <div className="mt-5 flex flex-wrap gap-3">
         <Button nativeButton={false} render={<Link href="/problems" />}>Open Problems</Button>
-        <Button nativeButton={false} variant="outline" render={<Link href="/about#scientific-state" />}>Why reads fail closed</Button>
       </div>
     </PageShell>;
   }

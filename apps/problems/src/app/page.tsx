@@ -278,7 +278,7 @@ export default async function HomePage() {
       <p className="max-w-3xl text-body text-muted-foreground">
         A Submission is producer input and a check is one scoped report. Neither changes what
         this place holds to be true.{" "}
-        <Link href="/about" className="font-medium text-foreground underline underline-offset-4">
+        <Link href="/decisions" className="font-medium text-foreground underline underline-offset-4">
           How a Result is accepted
         </Link>
       </p>

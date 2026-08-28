@@ -275,7 +275,6 @@ export function CommandPaletteProvider({
                     {problemCollections.map((collection) => <CommandItem key={collection.namespace} onSelect={() => navigate(`/problems/${collection.namespace}`)}><HugeiconsIcon icon={PuzzleIcon} aria-hidden />{collection.name}</CommandItem>)}
                     <CommandItem onSelect={() => navigate("/contribute")}><HugeiconsIcon icon={WorkIcon} aria-hidden />Contribute</CommandItem>
                     <CommandItem onSelect={() => navigate("/updates")}><HugeiconsIcon icon={Activity01Icon} aria-hidden />Updates</CommandItem>
-                    <CommandItem onSelect={() => navigate("/about")}><HugeiconsIcon icon={BookOpen} aria-hidden />About problems.science</CommandItem>
                   </CommandGroup>
                   <CommandSeparator />
                   <CommandGroup heading="Provenance">

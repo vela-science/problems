@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import { Activity01Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { PageHero, PageSection, PageSectionHeader, PageShell } from "@vela/ui/vela/page-shell";
+import { PageSection, PageSectionHeader, PageShell } from "@vela/ui/vela/page-shell";
 import { ScientificChangeFeed } from "@/components/vela/scientific-change-feed";
 import { recentScientificChanges } from "@/lib/scientific-state";
 import type { Route } from "next";
@@ -9,6 +7,7 @@ import { FilterChips } from "@/components/vela/filter-chips";
 import Link from "next/link";
 import { Button } from "@vela/ui/components/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@vela/ui/components/empty";
+import { RouteTitle } from "@/components/vela/route-title";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -27,7 +26,11 @@ export default async function UpdatesPage({ searchParams }: { searchParams: Prom
   const commits = activity.length - transitions;
 
   return <PageShell archetype="history">
-    <PageHero className="vela-history-hero grid gap-7 lg:grid-cols-[minmax(0,1fr)_23rem] lg:items-end"><div><div className="flex items-center gap-3"><span className="grid size-9 place-items-center rounded-md bg-accent text-primary"><HugeiconsIcon icon={Activity01Icon} aria-hidden className="size-5" /></span><h1 className="text-display">Updates</h1></div><p className="mt-3 max-w-2xl text-body text-muted-foreground">Scientific changes and the repository updates that produced them.</p></div><p className="text-meta text-muted-foreground">Drafts and notes remain in your workspaces until they become a published Result.</p></PageHero>
+    {/* The hero carried two descriptions: the route's own, and an unrelated
+        note about drafts in a 23rem right column competing with it. The app
+        header already names the route, so this follows the pattern the ledger
+        routes already use — the heading stays for the outline, the band goes. */}
+    <RouteTitle title="Updates" />
     <figure className="mt-6 border-y py-5" aria-labelledby="updates-composition-heading">
       <figcaption id="updates-composition-heading" className="text-label font-medium">What changed in this published history</figcaption>
       <div className="mt-3 flex h-2 overflow-hidden rounded-full bg-muted forced-colors:border" aria-hidden>

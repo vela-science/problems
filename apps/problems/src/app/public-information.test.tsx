@@ -1,6 +1,5 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import AboutPage from "./about/page";
 import AccessibilityPage from "./accessibility/page";
 import ContactPage from "./contact/page";
 import PrivacyPage from "./privacy/page";
@@ -12,19 +11,6 @@ afterEach(() => {
 });
 
 describe("public trust surfaces", () => {
-  it("explains the product without granting checks or signatures scientific authority", () => {
-    render(<AboutPage />);
-    expect(screen.getByRole("heading", { level: 1, name: /Science should remember the route/ })).toBeVisible();
-    expect(screen.getByText(/scoped review records what it observed/iu)).toBeVisible();
-    expect(screen.getByText(/signature proves attribution and integrity, not truth/iu)).toBeVisible();
-    expect(screen.getByRole("link", { name: "Browse Problems" })).toHaveAttribute("href", "/problems");
-    expect(screen.getByRole("link", { name: "Learn about Vela" })).toHaveAttribute("href", "https://vela.space");
-/* The essay was removed from vela.space on 2026-08-21, so neither the
-       About action nor the information nav offers it any more. */
-    expect(screen.queryByRole("link", { name: "Read Endless Frontiers" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Essay" })).not.toBeInTheDocument();
-  });
-
   it("states current privacy, terms, and accessibility boundaries", () => {
     const { rerender } = render(<PrivacyPage />);
     expect(screen.getByText(/read-only contents and metadata access/iu)).toBeVisible();

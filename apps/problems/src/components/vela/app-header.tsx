@@ -48,7 +48,6 @@ const globalTitles: Record<string, string> = {
   "/graph": "Research map",
   "/account": "Account",
   "/workspaces": "Workspaces",
-  "/about": "About",
   "/privacy": "Privacy",
   "/terms": "Terms",
   "/accessibility": "Accessibility",

@@ -31,7 +31,9 @@ describe("public sitemap", () => {
     expect(urls).toContain("https://problems.science/problems/formal-conjectures/wikipedia-oppermann-conjecture");
     expect(urls).not.toContain("https://problems.science/p/math/321");
     expect(urls).not.toContain("https://problems.science/repositories/math/problems/321");
-    for (const route of ["about", "privacy", "terms", "accessibility", "contact"]) {
+    /* `about` is not here: the page is gone. PRODUCT.md names vela.space as the
+       editorial origin, and Problems must not carry a second editorial surface. */
+    for (const route of ["privacy", "terms", "accessibility", "contact"]) {
       expect(urls).toContain(`https://problems.science/${route}`);
     }
     expect(urls).not.toContain("https://problems.science/about/endless-frontiers");

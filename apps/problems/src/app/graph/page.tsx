@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { GitForkIcon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { allRepositories, projectionManifest } from "@vela/projection-data";
 import { RepositoryGraph } from "@/components/controllers/repository-graph";
 import { ToolbarSkeleton } from "@/components/vela/route-skeleton";
 import { Skeleton } from "@vela/ui/components/skeleton";
-import { PageHero, PageShell } from "@vela/ui/vela/page-shell";
+import { PageShell } from "@vela/ui/vela/page-shell";
+import { RouteTitle } from "@/components/vela/route-title";
 
 /* Not "complete". TERMINOLOGY.md bans that word unqualified, and it was
    unqualified over a graph holding zero nodes. */
@@ -20,10 +19,7 @@ export default async function GraphIndexPage() {
      subject repositories were consolidated, so only the fallback ever ran. */
   const first = graphed[0];
   return <PageShell archetype="data" layout="canvas" className="flex flex-col gap-6">
-    <PageHero density="compact" className="vela-data-hero">
-      <div className="flex items-center gap-3"><span className="grid size-9 place-items-center rounded-md bg-accent text-primary"><HugeiconsIcon icon={GitForkIcon} aria-hidden className="size-5" /></span><h1 className="text-display">Research map</h1></div>
-      <p className="mt-2 max-w-2xl text-body text-muted-foreground">Choose a Problem or Result to see only the retained sources, checks, decisions, and correction links around it.</p>
-    </PageHero>
+    <RouteTitle title="Research map" />
     <section className="vela-object-surface overflow-hidden" aria-label="Research topology"><Suspense fallback={<div role="status" aria-label="Loading graph controls"><div className="border-b p-4"><ToolbarSkeleton controls={4} /></div><Skeleton className="h-[34rem] w-full rounded-none" /></div>}><RepositoryGraph root={manifest.release_root} initialRepository={first?.slug ?? ""} repositories={graphed.map((repository) => repository.slug)} /></Suspense></section>
   </PageShell>;
 }
