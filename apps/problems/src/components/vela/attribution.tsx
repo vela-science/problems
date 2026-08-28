@@ -63,7 +63,14 @@ export function Attribution({ record, producer }: { record: AttributionRecord; p
   return (
     <div className="min-w-0">
       <ReviewProvenance record={record} />
-      <p className="mt-1 text-micro text-muted-foreground">
+      {/* `meta`, not `micro`. DESIGN.md floors body-adjacent text at 12-13px
+          and scopes `micro` to metadata; this is not metadata. "Declared
+          independent of X. Produced by Y." and the disclosure below it are the
+          sentences that separate a meaningful check from a circular one — the
+          product's whole claim is that a check's meaning is bounded by its
+          declared scope, and that scope was set smaller than the hashes beside
+          it. */}
+      <p className="mt-1 text-meta text-muted-foreground">
         {independent.length
           ? `Declared independent of ${independent.join(", ")}.`
           : shared.length
@@ -78,10 +85,10 @@ export function Attribution({ record, producer }: { record: AttributionRecord; p
           needs the specific dependency rather than a summary. */}
       {shared.length ? (
         <div className="mt-1">
-          <p className="text-micro text-muted-foreground">
+          <p className="text-meta text-muted-foreground">
             {shared.length === 1 ? "Discloses one shared dependency" : `Discloses ${shared.length} shared dependencies`} with the work it checks:
           </p>
-          <ul className="mt-1 list-disc space-y-0.5 pl-4 text-micro text-muted-foreground">
+          <ul className="mt-1 list-disc space-y-0.5 pl-4 text-meta text-muted-foreground">
             {shared.map((dependency) => <li key={dependency}>{dependency}</li>)}
           </ul>
         </div>

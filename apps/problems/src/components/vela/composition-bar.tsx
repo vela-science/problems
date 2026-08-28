@@ -57,7 +57,10 @@ export function CompositionBar({
     ...segments.filter((segment) => segment.count > 0),
     ...(unaccounted > 0 ? [{ label: "not classified", count: unaccounted }] : []),
   ];
-  if (!parts.length) return null;
+  /* Two segments minimum. With one, the bar is a full-width block above a
+     legend naming the only value — a chart of a number, which is the metric
+     tile this component exists to replace. */
+  if (parts.length < 2) return null;
   const fill = (segment: CompositionSegment) => (
     !divided && segment.tone ? toneFills[segment.tone] : "bg-muted-foreground/45"
   );

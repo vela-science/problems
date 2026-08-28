@@ -31,29 +31,25 @@ export default async function UpdatesPage({ searchParams }: { searchParams: Prom
         header already names the route, so this follows the pattern the ledger
         routes already use — the heading stays for the outline, the band goes. */}
     <RouteTitle title="Updates" />
-    <figure className="mt-6 border-y py-5" aria-labelledby="updates-composition-heading">
-      <figcaption id="updates-composition-heading" className="text-label font-medium">What changed in this published history</figcaption>
-      <div className="mt-3 flex h-2 overflow-hidden rounded-full bg-muted forced-colors:border" aria-hidden>
-        {transitions ? <span className="bg-status-evidence" style={{ width: `${activity.length ? (transitions / activity.length) * 100 : 0}%` }} /> : null}
-        {commits ? <span className="bg-muted-foreground/45" style={{ width: `${activity.length ? (commits / activity.length) * 100 : 0}%` }} /> : null}
-      </div>
-      <dl className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-meta">
-        <div className="flex items-center gap-2"><span aria-hidden className="size-2 rounded-full bg-status-evidence forced-colors:border" /><dt>Scientific state changes</dt><dd className="font-mono text-muted-foreground">{transitions}</dd></div>
-        <div className="flex items-center gap-2"><span aria-hidden className="size-2 rounded-full bg-muted-foreground/45 forced-colors:border" /><dt>Repository updates</dt><dd className="font-mono text-muted-foreground">{commits}</dd></div>
-        <div className="text-muted-foreground"><dt className="sr-only">Total updates</dt><dd>{activity.length} total</dd></div>
-      </dl>
-    </figure>
+    {/* One partition, once. A bar plus legend stated 19 / 33 / 52, then these
+        chips offered the same three sets, then the section header counted them
+        a third time — with the legend calling the 33 "Repository updates" and
+        the chip calling them "Repository commits", so a reader had to work out
+        that two names meant one set. `FilterChips` already takes a `count`,
+        which is the whole figure's information in the control that acts on it.
+        GitHub settles this the same way: `Open 3 / Closed 12` *is* the filter. */}
     <FilterChips
-      className="mt-8"
+      className="mt-6"
       label="Updates views"
-      chips={([["all", "All history"], ["transitions", "State changes"], ["commits", "Repository commits"]] as const).map(([value, label]) => ({
+      chips={([["all", "All history", activity.length], ["transitions", "State changes", transitions], ["commits", "Repository commits", commits]] as const).map(([value, label, count]) => ({
         key: value,
         label,
+        count,
         active: view === value,
         href: (value === "all" ? "/updates" : `/updates?view=${value}`) as Route,
       }))}
     />
-    <PageSection aria-labelledby="activity-feed" className="vela-object-surface p-5"><PageSectionHeader><h2 id="activity-feed" className="text-title">Recent updates</h2><span className="font-mono text-meta text-muted-foreground">{filtered.length} updates</span></PageSectionHeader>{filtered.length ? <ScientificChangeFeed changes={filtered} /> : <Empty className="border-0">
+    <PageSection aria-labelledby="activity-feed" className="vela-object-surface p-5"><PageSectionHeader><h2 id="activity-feed" className="text-title">Recent updates</h2></PageSectionHeader>{filtered.length ? <ScientificChangeFeed changes={filtered} /> : <Empty className="border-0">
       <EmptyHeader>
         <EmptyTitle>{view === "all" ? "No update is published in this release" : `No ${view === "transitions" ? "state change" : "repository commit"} is published in this release`}</EmptyTitle>
         {/* The list rendered an empty <ol> that still painted its connector

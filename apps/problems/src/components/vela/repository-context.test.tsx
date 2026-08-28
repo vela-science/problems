@@ -50,10 +50,15 @@ describe("RepositoryContext", () => {
   it("keeps Standing, integrity, activity, and human authority on separate visible axes", () => {
     render(<RepositoryContext repository={repository} latestCommit={null} />);
 
-    for (const label of ["Standing", "Integrity", "Activity", "Human authority"]) {
+    /* Three axes in the strip, not four. The `Standing` tile rendered the same
+       number and unit phrase as the "What currently Stands" section 150px
+       below, both visible in one viewport, so the section keeps it and the
+       tile is gone. */
+    for (const label of ["Integrity", "Activity", "Human authority"]) {
       expect(screen.getByText(label)).toBeInTheDocument();
     }
-    expect(screen.getByText("accepted Repository-local Claim")).toBeInTheDocument();
+    expect(screen.queryByText("Standing")).not.toBeInTheDocument();
+    expect(screen.queryByText("accepted Repository-local Claim")).not.toBeInTheDocument();
     expect(screen.getByText("7").closest("dd")).toHaveTextContent("Checks");
     expect(screen.getByText("replay verified").closest("[data-axis]")).toHaveAttribute("data-axis", "integrity");
   });

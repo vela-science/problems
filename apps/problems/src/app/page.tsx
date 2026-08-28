@@ -238,10 +238,12 @@ export default async function HomePage() {
       <section aria-labelledby="collections-heading" className="min-w-0">
         <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b pb-3">
           <div className="min-w-0">
+            {/* The heading labels the two cards below it. The sentence that
+                followed — "Collection names qualify local identifiers;
+                inclusion does not determine scientific truth." — is rendered
+                verbatim by `/problems`, which owns these collections; Home
+                linked there in the same row. */}
             <h2 id="collections-heading" className="text-title">Published collections</h2>
-            <p className="mt-1.5 max-w-2xl text-meta text-muted-foreground">
-              Collection names qualify local identifiers; inclusion does not determine scientific truth.
-            </p>
           </div>
           <SectionLink href="/problems">Compare collections</SectionLink>
         </div>

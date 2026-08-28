@@ -113,13 +113,12 @@ export function RepositoryContext({
         * mono figures as the largest thing on the page, above the heading that
         * answers what actually Stands. The numbers keep their weight relative
         * to their labels and stop competing with the page. */}
-      <dl className="mt-5 grid grid-cols-2 overflow-hidden rounded-lg border md:grid-cols-4">
+      {/* Three cells, not four. The fourth was `Standing / N / accepted
+          Repository-local Claims`, and "What currently Stands" renders the same
+          number with the same unit phrase about 150px below, both visible at
+          768x900 without scrolling. A section of its own outranks a tile. */}
+      <dl className="mt-5 grid grid-cols-2 overflow-hidden rounded-lg border md:grid-cols-3">
         <div className="min-w-0 border-b border-r p-3 md:border-b-0">
-          <dt className="text-eyebrow text-muted-foreground">Standing</dt>
-          <dd className="mt-1 font-mono text-compact font-semibold tabular-nums">{number.format(counts.accepted_claims)}</dd>
-          <dd className="mt-1 text-micro text-muted-foreground">accepted Repository-local Claim{counts.accepted_claims === 1 ? "" : "s"}</dd>
-        </div>
-        <div className="min-w-0 border-b p-3 md:border-b-0 md:border-r">
           <dt className="text-eyebrow text-muted-foreground">Integrity</dt>
           <dd className="mt-2 flex flex-wrap gap-1.5">
             <StatusBadge
