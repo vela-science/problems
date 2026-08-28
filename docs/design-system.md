@@ -264,8 +264,8 @@ brand register; the source does not become a second design system or runtime.
 ### Problems
 
 - Geist for interface text
-- IBM Plex Mono for identifiers and exact values
-- neutral light-first surfaces with equivalent dark mode
+- Geist Mono, with tabular figures, for identifiers and exact values
+- one cool blue-black neutral family across page, rail and card in both themes
 - tables, Item groups, Sheets, and disclosures before card grids
 - stable inset workbench shell
 - exact status expressed through label, shape or icon, and color
@@ -275,7 +275,7 @@ data contracts are domain-specific. It must include an equivalent record view.
 
 ### Problems
 
-- the same Geist and IBM Plex Mono product typography as the Problems
+- the same Geist and Geist Mono product typography as the Problems
 - one explicit State or Work mode on each Problem page
 - exact scientific state rendered with the Problems's labels and roots
 - editable activity presented as a separate workbench layer

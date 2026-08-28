@@ -154,7 +154,7 @@ export function ProblemFiles({ state, basePath, entries, selected, activeRecord,
 
   return <section aria-labelledby="research-files-heading" className="min-w-0">
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <div><h2 id="research-files-heading" className="text-title">Sources</h2><p className="mt-1 text-meta text-muted-foreground">Browse retained paths and inspect the exact material available for this Problem.</p></div>
+      <div><h2 id="research-files-heading" className="text-title">Sources</h2><p className="mt-1 text-meta text-muted-foreground">Everything below is the source&apos;s own material, retained exactly. None of it is this Problem&apos;s state here.</p></div>
       <div className="flex flex-wrap items-center gap-3">
         <p className="text-meta text-muted-foreground">
           {state.sources.statements.length} retained {state.sources.statements.length === 1 ? "statement" : "statements"}

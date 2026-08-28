@@ -38,8 +38,8 @@ search, rows, files, results, or controls.
 ## Calibration surfaces
 
 Home, both collection directories, Erdős Problem 321, and an exact Formal
-Conjectures occurrence are the initial system checkpoint. They establish the neutral canvas, marine navigation,
-cobalt interaction, normal product headers, directory density, question-first
+Conjectures occurrence are the initial system checkpoint. They establish the neutral canvas, a rail that
+follows the theme, starlight interaction, normal product headers, directory density, question-first
 Problem identity, border-bottom tabs, current Result composition, and compact
 metadata rail. They are not demo-specific implementations.
 

@@ -30,7 +30,7 @@ function highlightLine(line: string, lineKey: string): ReactNode[] {
     const start = match.index;
     if (start > last) parts.push(line.slice(last, start));
     if (token.startsWith("/-") || token.startsWith("--")) {
-      parts.push(<span key={`${lineKey}:${start}`} className="text-muted-foreground/80 italic">{token}</span>);
+      parts.push(<span key={`${lineKey}:${start}`} className="text-muted-foreground italic">{token}</span>);
     } else if (token.startsWith("\"")) {
       parts.push(<span key={`${lineKey}:${start}`} className="text-status-evidence">{token}</span>);
     } else if (token === "sorry") {

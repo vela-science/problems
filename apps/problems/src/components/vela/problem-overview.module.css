@@ -82,10 +82,10 @@
 .scope { padding: 1.0625rem; }
 
 .scopeOuter {
-  border: 1.5px dashed color-mix(in oklab, var(--status-caution) 55%, var(--border));
+  border: 1.5px dashed var(--border);
   border-radius: 0.5625rem;
   padding: 0.875rem;
-  background: color-mix(in oklab, var(--status-caution) 6%, var(--card));
+  background: var(--vela-surface-sunken);
 }
 
 .scopeInner {
@@ -104,17 +104,9 @@
 
 .scopeRow { display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; }
 .scopeLabel { font-size: var(--text-compact); font-weight: 600; }
-.scopeOuter .scopeLabel { color: color-mix(in oklab, var(--status-caution) 78%, var(--foreground)); }
+.scopeOuter .scopeLabel { color: var(--muted-foreground); }
 .scopeInner .scopeLabel { color: color-mix(in oklab, var(--status-progress) 78%, var(--foreground)); }
 .scopeText { margin: 0.3125rem 0 0; font-size: var(--text-compact); line-height: 1.55; color: var(--foreground); }
-.scopeGap {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.75rem;
-  font-size: var(--text-compact);
-  line-height: 1.5;
-  color: color-mix(in oklab, var(--status-caution) 72%, var(--foreground));
-}
 
 .row {
   display: grid;
@@ -169,17 +161,7 @@
  * It used to render the rich page with nothing in it: four state tiles that
  * all reported absence, an h1 announcing that no result had been accepted, and
  * a rail of zeroes. The most common screen in the product was built as a
- * degraded case of its rarest one. It gets its own composition instead. */
-.ladder { display: grid; gap: 0.75rem; padding: 1.125rem 1.0625rem 0.9375rem; position: relative; }
-
-@media (min-width: 48rem) {
-  .ladder { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; }
-  .ladderWire { position: absolute; left: 1.4rem; right: 1.4rem; top: 1.5rem; height: 2px; background: var(--border); }
-}
-
-.stage { padding-right: 0.75rem; position: relative; }
-.stageMark { composes: vela-stage-mark from global; }
-.stageMarkPresent { composes: vela-stage-mark-reached from global; }
-.stageLabel { margin-top: 0.6875rem; font-size: var(--text-compact); font-weight: 500; }
-.stageAbsent { color: var(--ov-muted); font-weight: 400; }
-.stageDetail { margin-top: 0.1875rem; font-size: var(--text-micro); line-height: 1.45; color: var(--ov-muted); }
+ * degraded case of its rarest one. It gets its own composition instead — and
+ * since the Reach track replaced the stage ladder, that composition carries the
+ * same instrument the answered reading carries, at the same breakpoint, from
+ * one container query rather than from a viewport media query here. */

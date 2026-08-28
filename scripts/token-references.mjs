@@ -38,6 +38,7 @@ const scanned = [
    Keep this list short and cite the injector for each entry. */
 const external = new Set([
   "--font-geist-sans", // geist/font/sans, applied via GeistSans.variable
+  "--font-geist-mono", // geist/font/mono, applied via GeistMono.variable
   // Tailwind's own container scale, emitted by `@import "tailwindcss"`.
   // Tailwind Plus Protocol centres its prose against it; this gate reads
   // source rather than the generated stylesheet, so it cannot see it.

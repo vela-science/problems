@@ -11,7 +11,12 @@
   html { @apply bg-background font-sans; min-width: 320px; color-scheme: light; text-rendering: optimizeLegibility; }
   body { @apply min-h-svh bg-background text-sm text-foreground; }
 
+  /* Every mono run in this product is an exact value a reader compares down a
+     column — counts, roots, byte lengths, line numbers. Proportional figures
+     make those columns ragged, so mono carries tabular figures wherever it is
+     used, not only inside a code element. */
   code, pre, kbd, samp { @apply font-mono; }
+  code, pre, kbd, samp, .font-mono { font-variant-numeric: tabular-nums; }
   ::selection { background: color-mix(in oklab, var(--primary) 24%, transparent); color: var(--foreground); }
   :focus-visible { outline-color: var(--focus-ring); }
   * { scrollbar-color: color-mix(in oklab, var(--muted-foreground) 42%, transparent) transparent; }
@@ -82,7 +87,10 @@
 
   .vela-object-surface {
     border: 1px solid var(--border);
-    border-radius: calc(var(--radius) + 0.25rem);
+    /* 10px against the 7px control radius. A card and the buttons inside it
+       read as one family when the card's corner is a little softer than the
+       control's; the old pair was 6 and 10, which read as two systems. */
+    border-radius: calc(var(--radius) + 0.1875rem);
     background: var(--vela-surface-raised);
     box-shadow: var(--vela-shadow-raised);
   }

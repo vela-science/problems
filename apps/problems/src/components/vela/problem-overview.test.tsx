@@ -105,8 +105,17 @@ describe("Problem Overview, on the Problem the source contract pins", () => {
     const html = renderToStaticMarkup(<ProblemOverview state={empty} route="/problems/erdos-problems/2" />);
 
     expect(html).toContain("Nothing has been recorded here yet.");
-    expect(html).toContain("What exists for this question");
     expect(html).not.toContain("Scope of what is proved");
     expect(html).not.toContain("No result has been accepted here yet.");
+
+    /* Both readings of a Problem draw the same reach track, so the empty one is
+       measured against the same instrument rather than a ladder of its own. The
+       terminal is never reached here: an open Problem is one whose question has
+       not been answered, and a filled endpoint would say otherwise. */
+    expect(html).toContain("How far the record reaches");
+    expect(html).toContain("2 of 5 stages");
+    expect(html).toContain("The question");
+    expect(html).toContain("Not reached");
+    expect(html).toContain("No Repository has decided on this question here, so the record stops short of it.");
   });
 });

@@ -202,7 +202,7 @@ export function AppSidebar({ problemCollections = [{ namespace: "erdos-problems"
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  className="h-11 bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90 hover:text-sidebar-primary-foreground md:h-9"
+                  className="h-11 bg-sidebar-primary text-sidebar-primary-foreground hover:bg-[color-mix(in_oklch,var(--sidebar-primary),var(--foreground)_14%)] hover:text-sidebar-primary-foreground md:h-9"
                   tooltip="Add contribution"
                   isActive={pathname === "/contribute"}
                   render={<Link href="/contribute" aria-current={pathname === "/contribute" ? "page" : undefined} onClick={closeMobileNavigation} />}
@@ -234,7 +234,7 @@ export function AppSidebar({ problemCollections = [{ namespace: "erdos-problems"
                 key={route.href}
                 href={route.href}
                 onClick={closeMobileNavigation}
-                className="inline-flex min-h-8 items-center rounded text-sidebar-foreground/70 hover:text-sidebar-foreground hover:underline"
+                className="inline-flex min-h-8 items-center rounded text-muted-foreground hover:text-sidebar-foreground hover:underline"
               >{route.label}</Link>)}
             </footer>
           </SidebarGroupContent>

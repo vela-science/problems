@@ -71,9 +71,13 @@ when their authors wrote them. Do not rewrite them to match the current system.
   references for files, diffs, checks, history, tabs, breadcrumbs, and
   collection discovery. Borrow task conventions, not brand skins or
   ontologies.
-- Use two deliberate applications and registers. Dense Problems routes use a neutral application
-  canvas, deep marine navigation, cobalt interaction, and semantic colors for
-  real state. Earned editorial and identity moments may reuse the canonical
+- Use two deliberate applications and registers. Dense Problems routes use one
+  cool blue-black neutral family for page, rail and card, shared by both
+  themes; starlight interaction; and semantic colors for real state. Starlight
+  is Gamma Velorum's blue-white — the star the product is named for — and it
+  replaced a stock cobalt. The rail follows the theme rather than staying deep
+  marine in both, which is what made the light product a light page bolted to a
+  dark chrome. Earned editorial and identity moments may reuse the canonical
   sail, first-party watercolor, horizon, constellation, borrowed-light, and
   long-handoff language on `vela.space`. Constellations must encode exact relationships;
   nautical motifs must clarify orientation or handoff. Never turn product

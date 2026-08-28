@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { CopyButton } from "@vela/ui/vela/copy-button";
-import { ArrowUp01Icon, CheckmarkCircle01Icon, MinusSignCircleIcon } from "@hugeicons/core-free-icons";
+import { CheckmarkCircle01Icon, MinusSignCircleIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Badge } from "@vela/ui/components/badge";
 import { Button } from "@vela/ui/components/button";
 import { AssertionText } from "@/components/vela/assertion-text";
 import { Disclosure } from "@/components/vela/disclosure";
+import { Reach, type ReachStop } from "@/components/vela/reach";
 import { currentReview } from "@/components/vela/problem-provenance";
 import { formatDate } from "@/lib/format";
 import { problemReading } from "@/lib/problem-reading";
@@ -71,21 +72,29 @@ export function ProblemOverview({ state, route }: { state: State; route: string 
   const lastSourceUpdate = metadataString(state, "status_last_update");
   const lineage = claimLineage(claims);
 
+  /* The reach axis, derived once and drawn once. Both readings of a Problem
+     measure the same five stages against the same terminal, so the derivation
+     sits above the branch rather than being written twice in two shapes. */
+  const reachStops: ReachStop[] = [
+    /* Both branches of a ternary here read "Retained", so it decided nothing.
+       The source identity is retained whenever this stage renders, which is
+       always — that is what makes it stage one. */
+    { label: "Source", reached: true, detail: state.problem.source_id.replace(/^source:/u, "") },
+    { label: "Statement", reached: Boolean(question), detail: question ? "Retained" : "Not retained" },
+    { label: "Formal", reached: formal.length > 0, detail: formal.length ? `${formal.length} retained` : "None associated" },
+    { label: "Work", reached: checks.length > 0, detail: checks.length ? `${checks.length} check${checks.length === 1 ? "" : "s"}` : "None recorded" },
+    { label: "Decision", reached: Boolean(review), detail: review ? humanize(review.status) : "None here" },
+  ];
+  const reachCaption = !review
+    ? "No Repository has decided on this question here, so the record stops short of it."
+    : limitation
+      ? "The accepted scope sits inside the question, and does not reach it."
+      : "The accepted Claim records no limitation on its own scope, so this page cannot say how far it reaches.";
+
   /* Nothing has been accepted here. That is the state of 1,215 of the 1,217
      Erdős Problems in this release, so it gets a composition of its own rather
      than the rich page with its values removed. */
   if (reading.kind === "no-record") {
-    const stages = [
-      /* Both branches of a ternary here read "Retained", so it decided
-         nothing. The source identity is retained whenever this stage renders,
-         which is always — that is what makes it stage one. */
-      { label: "Source identity", present: true, detail: `Retained from ${state.problem.source_id.replace(/^source:/u, "")}` },
-      { label: "Statement text", present: Boolean(question), detail: question ? "Retained" : "Not retained" },
-      { label: "Formal declaration", present: formal.length > 0, detail: formal.length ? `${formal.length} retained` : "None associated" },
-      { label: "Work and checks", present: checks.length > 0, detail: checks.length ? `${checks.length} retained` : "None recorded" },
-      { label: "Decision", present: Boolean(review), detail: review ? humanize(review.status) : "No Repository has decided" },
-    ];
-    const present = stages.filter((stage) => stage.present).length;
     return <div className={styles.overview}>
       <div className={styles.column}>
         <div className={styles.answer}>
@@ -98,16 +107,11 @@ export function ProblemOverview({ state, route }: { state: State; route: string 
 
         <section className={styles.panel} aria-labelledby="exists-heading">
           <div className={styles.panelHead}>
-            <span className={styles.kicker} id="exists-heading">What exists for this question</span>
-            <span className={styles.kicker}>{present} of {stages.length} stages</span>
+            <span className={styles.kicker} id="exists-heading">How far the record reaches</span>
+            <span className={styles.kicker}>{reachStops.filter((stop) => stop.reached).length} of {reachStops.length} stages</span>
           </div>
-          <div className={styles.ladder}>
-            <div className={styles.ladderWire} aria-hidden />
-            {stages.map((stage) => <div key={stage.label} className={styles.stage}>
-              <div className={`${styles.stageMark} ${stage.present ? styles.stageMarkPresent : ""}`} />
-              <div className={`${styles.stageLabel} ${stage.present ? "" : styles.stageAbsent}`}>{stage.label}</div>
-              <div className={styles.stageDetail}>{stage.detail}</div>
-            </div>)}
+          <div className={styles.scope}>
+            <Reach stops={reachStops} endpoint="The question" caption={reachCaption} />
           </div>
         </section>
 
@@ -137,7 +141,19 @@ export function ProblemOverview({ state, route }: { state: State; route: string 
           : <p className={styles.answerDetail}>The accepted Claim records no limitation on its own scope, so this page cannot say what it leaves open.</p>}
       </div>
 
-      {/* Scope, drawn only where the Claim asserts the containment itself. */}
+      <section className={styles.panel} aria-labelledby="reach-heading">
+        <div className={styles.panelHead}>
+          <span className={styles.kicker} id="reach-heading">How far the record reaches</span>
+          <span className={styles.kicker}>{reachStops.filter((stop) => stop.reached).length} of {reachStops.length} stages</span>
+        </div>
+        <div className={styles.scope}>
+          <Reach stops={reachStops} endpoint="The question" caption={reachCaption} />
+        </div>
+      </section>
+
+      {/* The containment figure carries what the track cannot: the two
+          statements themselves, and which one sits inside the other. Drawn only
+          where the Claim asserts the containment itself. */}
       {limitation ? <section className={styles.panel} aria-labelledby="scope-heading">
         <div className={styles.panelHead}>
           <span className={styles.kicker} id="scope-heading">Scope of what is proved</span>
@@ -161,12 +177,6 @@ export function ProblemOverview({ state, route }: { state: State; route: string 
               </div>
               {established ? <p className={styles.scopeText}><AssertionText text={established} /></p> : null}
             </div>
-            {/* Not the limitation sentence again: the answer above already
-                carries it, and the figure's job is the relation. */}
-            <p className={styles.scopeGap}>
-              <HugeiconsIcon icon={ArrowUp01Icon} aria-hidden className="mt-0.5 size-4 shrink-0" />
-              <span>The accepted scope sits inside the question, and does not reach it.</span>
-            </p>
           </div>
         </div>
       </section> : null}

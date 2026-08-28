@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import Script from "next/script";
 import { allRepositories, compositeSearchRoot, formalConjecturesCollectionRoot, projectionManifest } from "@vela/projection-data";
@@ -62,7 +63,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   }));
 
   return (
-    <html lang="en" data-theme="light" data-contrast="standard" className={GeistSans.variable} suppressHydrationWarning>
+    <html lang="en" data-theme="light" data-contrast="standard" className={`${GeistSans.variable} ${GeistMono.variable}`} suppressHydrationWarning>
       <head>
         <Script id="vela-theme" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

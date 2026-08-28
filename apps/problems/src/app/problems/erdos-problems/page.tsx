@@ -211,7 +211,7 @@ function ProblemRows({ problems, statements }: {
                     single comprehension error this product says it must never
                     cause. The columns carry their attribution in a header; these
                     chips have to carry it themselves. */}
-                <span><span className="text-muted-foreground/80">Source says</span> <span className="capitalize">{record.declared_status}</span></span><span>{record.formalized ? "Formalized" : "No formal declaration"}</span>{record.local_standing ? <span>Result here {record.local_standing.replaceAll("_", " ")}</span> : null}
+                <span><span className="text-muted-foreground">Source says</span> <span className="capitalize">{record.declared_status}</span></span><span>{record.formalized ? "Formalized" : "No formal declaration"}</span>{record.local_standing ? <span>Result here {record.local_standing.replaceAll("_", " ")}</span> : null}
               </span>
             </TableCell>
             <TableCell className="hidden align-baseline text-meta capitalize @2xl/directory:table-cell">

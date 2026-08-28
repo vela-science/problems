@@ -1,17 +1,17 @@
 ---
-version: beta-brand-02
+version: beta-brand-03
 name: Vela Two-Application Design System
 description: A familiar scientific product at problems.science and a separate living editorial folio at vela.space, joined by one brand.
 colors:
-  background: "oklch(0.985 0.003 255)"
-  surface: "oklch(0.992 0.004 86)"
-  surface-subtle: "oklch(0.965 0.006 255)"
-  foreground: "oklch(0.205 0.025 255)"
-  muted-foreground: "oklch(0.46 0.018 255)"
-  navigation: "oklch(0.19 0.045 255)"
-  primary: "oklch(0.53 0.20 258)"
-  primary-subtle: "oklch(0.94 0.035 258)"
-  border: "oklch(0.885 0.009 255)"
+  background: "oklch(0.9884 0.0016 260)"
+  surface: "oklch(0.9973 0.0013 260)"
+  surface-subtle: "oklch(0.9543 0.0074 261)"
+  foreground: "oklch(0.19 0.027 261)"
+  muted-foreground: "oklch(0.52 0.031 260)"
+  navigation: "oklch(0.9729 0.0029 264)"
+  primary: "oklch(0.554 0.2 260)"
+  primary-subtle: "oklch(0.9586 0.0183 258)"
+  border: "oklch(0.905 0.013 260)"
   success: "oklch(0.57 0.14 152)"
   warning: "oklch(0.70 0.14 78)"
   error: "oklch(0.58 0.20 28)"
@@ -45,10 +45,11 @@ typography:
     fontWeight: 400
     lineHeight: 1.5
   exact:
-    fontFamily: IBM Plex Mono
+    fontFamily: Geist Mono
     fontSize: 0.75rem
     fontWeight: 400
     lineHeight: 1.5
+    fontVariantNumeric: tabular-nums
   editorial-display:
     fontFamily: Zodiak
     fontSize: 3.5rem
@@ -61,8 +62,8 @@ typography:
     fontWeight: 400
     lineHeight: 1.72
 rounded:
-  control: "0.375rem"
-  panel: "0.5rem"
+  control: "0.4375rem"
+  panel: "0.625rem"
   pill: "999px"
 spacing:
   xs: "0.25rem"
@@ -140,9 +141,9 @@ components:
 ## Overview
 
 The visual system is one brand with two applications and two registers. Its workspaces play a
-modern research product straight: neutral canvas, deep marine navigation,
-cobalt interaction, semantic state colors, sans typography, and recognizable
-instruments. Its editorial moments are unmistakably Vela: retained watercolor,
+modern research product straight: one cool blue-black neutral family, a rail
+that follows the theme, starlight interaction, semantic state colors, sans
+typography, and recognizable instruments. Its editorial moments are unmistakably Vela: retained watercolor,
 open horizon, the canonical sail, paper light, and the long handoff from one
 researcher to the next.
 
@@ -189,16 +190,24 @@ surfaces link to `https://vela.space` itself.
 
 ### Canvas and color
 
-Light mode is a cool near-white application canvas. Raised working surfaces
-(`--card`) ship as `oklch(1 0 0)`, not the warm `surface` token in this file's
-frontmatter: the warm tint was specified and never adopted, and the shipped
-white is the decision of record. The frontmatter value remains the brand
-surface for editorial use.
-The sidebar is deep marine. Cobalt means interaction, selection, and focus.
-Success, warning, error, and evidence colors encode real state only.
+One neutral family, cool and blue-black, carries page, rail and card in both
+themes. Light mode is a near-white canvas with raised working surfaces a shade
+above it; the sidebar is a step below the page rather than a dark slab, because
+a rail that stayed deep marine in light mode made the light product a light
+page bolted to a dark chrome — the one place the two themes disagreed about
+what the application is made of.
 
-Dark mode derives the same hierarchy: deep neutral canvas, slightly raised
-neutral surfaces, lighter cobalt, and the same semantic meanings. It is not a
+Starlight means interaction, selection, and focus. It is Gamma Velorum's
+blue-white, `oklch(0.796 0.105 254)` on dark and `oklch(0.554 0.2 260)` on
+paper, and it replaced a stock cobalt. The light value is darkened from the
+drawn `#1F6FEB`, which measured 4.51:1 against the card and passed the 4.5
+floor only by rounding. Success, warning, error, and evidence colors encode
+real state only, and no warm hue is used for anything else: the containment
+figure's outer region was gold, which read as a caution state that "not
+established here" is not.
+
+Dark mode derives the same hierarchy: deeper canvas, slightly raised neutral
+surfaces, brighter starlight, and the same semantic meanings. It is not a
 space theme. Product workspaces avoid atmospheric effects and decoration that
 competes with data. Brand surfaces use retained watercolor and open-sky imagery
 with deliberate contrast, responsive crops, stable layout, and useful
@@ -215,8 +224,11 @@ Everything else relies on typography, spacing, alignment, and fine rules.
 
 ### Typography
 
-Use Geist for the product and IBM Plex Mono for hashes, paths, revisions, code,
-and tabular numerals. Use Zodiak for earned brand display and Gambetta for
+Use Geist for the product and Geist Mono for hashes, paths, revisions, code,
+and exact values, with tabular figures wherever mono appears: every mono run
+here is a value a reader compares down a column. IBM Plex Mono stays the
+editorial mono, which is what keeps the two registers distinct rather than
+blurred. Use Zodiak for earned brand display and Gambetta for
 authored long-form reading. Typography is sentence case. Avoid repeated
 uppercase micro-labels, wide tracking, ornamental type on task controls, and
 display type used as a substitute for hierarchy.
@@ -242,7 +254,9 @@ when the enclosed value varies and helps scanning.
 
 ### Shape, borders, and elevation
 
-Controls use a 6px radius; contained working surfaces use 8px. Pills are for
+Controls use a 7px radius; contained working surfaces use 10px — a card's
+corner a little softer than the controls inside it, so the two read as one
+family. The earlier pair, 6px and 10px, read as two systems. Pills are for
 tags, statuses, and avatars, not general layout. Prefer a border, inset neutral
 background, or whitespace over a shadow. Menus and floating inspectors may use
 one restrained shadow. Do not nest framed panels unless the inner boundary is a
@@ -464,7 +478,7 @@ projection fails closed with a concise configuration message, not a raw overlay.
 - Hover: subtle neutral or primary-subtle background; never layout movement.
 - Focus: 2px high-contrast focus ring with offset.
 - Active: pressed control contrast, not scale animation.
-- Selected: primary-subtle background, cobalt edge or indicator, and
+- Selected: primary-subtle background, starlight edge or indicator, and
   `aria-current` or selected semantics.
 - Loading: stable skeleton geometry and retained page title.
 - Empty: concise cause plus one next action.

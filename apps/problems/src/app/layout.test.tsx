@@ -4,6 +4,7 @@ import { isValidElement } from "react";
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("geist/font/sans", () => ({ GeistSans: { variable: "font-geist" } }));
+vi.mock("geist/font/mono", () => ({ GeistMono: { variable: "font-geist-mono" } }));
 vi.mock("@vela/projection-data", () => ({
   allRepositories: async () => [],
   compositeSearchRoot: () => "sha256:search",
