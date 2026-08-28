@@ -9,8 +9,8 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { Alert, AlertDescription, AlertTitle } from "@vela/ui/components/alert";
 import { Button } from "@vela/ui/components/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@vela/ui/components/command";
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@vela/ui/components/empty";
-import { ScientificText } from "@vela/ui/vela/scientific-text";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@vela/ui/components/empty";
+import { LazyScientificText } from "@/components/vela/lazy-scientific-text";
 import { StatusBadge } from "@vela/ui/vela/status-badge";
 import { RecordFilter } from "@/components/vela/record-filter";
 import { LedgerSkeleton } from "@/components/vela/route-skeleton";
@@ -97,6 +97,14 @@ export function SearchResults({ projectionRoot, searchRoot, collectionRoot, repo
   const filtered = contributionIntent
     ? Boolean(query || collection !== "all")
     : Boolean(query || repository !== "all" || collection !== "all" || kind !== "all" || standing !== "all");
+  /* The empty state used to advise "remove a filter" with no filter set, and
+     "try a broader query" for a word that cannot be broadened. The two cases
+     have different causes and only one of them is the reader's to fix: a
+     Problem's written statement is retained by its source and is not in this
+     index, which is why wording from the question can return nothing here and
+     15 rows in the collection ledger. Naming that is the same honesty the
+     "Does not establish" blocks practise. */
+  const narrowed = [collection, repository, kind, standing].some((value) => value !== "all");
   const filterDefinitions = contributionIntent ? ([
     ["Collection", collection, ["all", ...problemCollections.map(({ namespace }) => namespace)], "collection"],
   ] as const) : ([
@@ -151,11 +159,20 @@ export function SearchResults({ projectionRoot, searchRoot, collectionRoot, repo
             here is not standing. */}
         Ordered by match, not by standing. A position in this list says nothing about whether a Result was accepted.
       </p> : null}
+      {/* A bound with no way past it is a dead end. The API refuses to mint a
+          cursor here on purpose — the page is a fixed concatenation of three
+          differently-ordered sources, and one keyset cannot honestly span them —
+          so the recovery is not a pager but the ledger, which does page through
+          every Problem in a single order. Saying so is the difference between a
+          bound and a wall. */}
+      {hasIntent && records && records.length < total ? <p className="mt-1">
+        This view is bounded to the strongest matches. Narrow it with a filter, or <Link href={query ? `/problems/erdos-problems?q=${encodeURIComponent(query)}` : "/problems/erdos-problems"} className="font-medium text-foreground underline underline-offset-4">open the Erdős ledger</Link>, which pages through every Problem.
+      </p> : null}
     </div>
     <CommandList className="max-h-[62vh] p-1">
       {!records ? <div className="p-2"><LedgerSkeleton rows={5} /></div> : null}
       {!hasIntent ? <Empty className="min-h-56 border-0"><EmptyHeader><EmptyMedia variant="icon"><HugeiconsIcon aria-hidden icon={Search}  /></EmptyMedia><EmptyTitle>Find a scientific Problem or Result</EmptyTitle><EmptyDescription>Search by question, collection-local number, result, or source. Exact record filters remain available when you need them.</EmptyDescription></EmptyHeader></Empty> : null}
-      {hasIntent && records ? <CommandEmpty><Empty className="border-0"><EmptyHeader><EmptyMedia variant="icon"><HugeiconsIcon aria-hidden icon={Search}  /></EmptyMedia><EmptyTitle>No matching records</EmptyTitle><EmptyDescription>Try a broader query or remove a filter.</EmptyDescription></EmptyHeader></Empty></CommandEmpty> : null}
+      {hasIntent && records ? <CommandEmpty><Empty className="border-0"><EmptyHeader><EmptyMedia variant="icon"><HugeiconsIcon aria-hidden icon={Search}  /></EmptyMedia><EmptyTitle>No matching records</EmptyTitle><EmptyDescription>{narrowed ? "Every filter is combined, so narrowing on several at once can leave nothing. Clear one and try again." : "This index matches identifiers, titles and Result assertions. A Problem’s written statement is retained by its source rather than carried here, so wording from the question itself may not match."}</EmptyDescription></EmptyHeader>{narrowed ? null : <EmptyContent><Button nativeButton={false} variant="outline" size="sm" render={<Link href={query ? `/problems/erdos-problems?q=${encodeURIComponent(query)}` : "/problems/erdos-problems"} />}>Search Erdős statements</Button></EmptyContent>}</Empty></CommandEmpty> : null}
       {hasIntent && records?.length ? <CommandGroup heading={intent === "contribute" ? "Choose a Problem" : "Published records"}>{records.map((record) => {
         const heading = recordHeading(record);
         const problem = record.kind === "problem" ? problemCollectionForPath(record.href, problemCollections) : null;
@@ -169,7 +186,7 @@ export function SearchResults({ projectionRoot, searchRoot, collectionRoot, repo
                 `\cite{ErGr80}` as source, because this surface was the one
                 place that did not use ScientificText. */}
             <p className="line-clamp-2 text-body leading-5 font-medium">
-              {heading ? <ScientificText text={heading} /> : <span className="font-mono text-meta">{record.id}</span>}
+              {heading ? <LazyScientificText text={heading} /> : <span className="font-mono text-meta">{record.id}</span>}
             </p>
             <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-micro text-muted-foreground">
               <span>{problem?.problem ? problemCollectionRecordLabel(problem) : record.repository}</span>

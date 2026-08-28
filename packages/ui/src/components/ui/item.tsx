@@ -176,7 +176,14 @@ function ItemDescription({ className, ...props }: React.ComponentProps<"p">) {
     <p
       data-slot="item-description"
       className={cn(
-        "line-clamp-2 text-left text-sm leading-normal font-normal text-muted-foreground group-data-[size=xs]/item:text-xs [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary",
+        /* `overflow-wrap: anywhere`, because descriptions here carry exact
+        identifiers. `line-clamp-2` gives the vertical overflow an ellipsis and
+        gives the horizontal none: a 64-character commit hash is one unbreakable
+        token, so on the graph chooser 547px of text sat in a 164px box and
+        roughly 380px of a hash was cut with no ellipsis, no title and no
+        scroll — a truncated hash that looks whole. Wrapping lets the clamp do
+        the truncating, which is the part that shows an ellipsis. */
+        "line-clamp-2 text-left text-sm leading-normal font-normal text-muted-foreground [overflow-wrap:anywhere] group-data-[size=xs]/item:text-xs [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary",
         className
       )}
       {...props}

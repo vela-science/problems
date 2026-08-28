@@ -4,14 +4,28 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef } from "react";
 import styles from "./problem-header.module.css";
 
-export type ProblemSectionLink = {
+export type SectionLink = {
   key: string;
   label: string;
   href: string;
-  count: number;
+  /* Optional: a count is shown where one is cheap and real. A Problem's
+     sections carry them because the page already holds those records; a
+     Repository's do not, because each section fetches its own and a count in
+     the header would mean a second read of every ledger on every route. The
+     rule is that sections live in the object's header, not that they must be
+     counted. */
+  count?: number;
 };
 
-/* The section row, made usable on a phone.
+/* One section row, for every object that has sections.
+ *
+ * Problems and Repositories each had their own model — Problem sections in the
+ * object's header, Repository sections in the sidebar — with nothing a reader
+ * could predict from. One rule now: the rail moves between objects, an object's
+ * header moves between its sections. This is that header row, and it is shared
+ * rather than copied.
+ *
+ * Made usable on a phone.
  *
  * Measured at 375px on `/problems/erdos-problems/94/history`: the row was
  * 339px wide over 441px of tabs, scrollLeft 0, with `scrollbar-width: none`.
@@ -27,9 +41,11 @@ export type ProblemSectionLink = {
  *
  * Two things, therefore: the open section is scrolled into view on mount, and
  * the row fades at whichever edge has more behind it. */
-export function ProblemSectionNav({ sections, current }: {
-  sections: ProblemSectionLink[];
+export function SectionNav({ sections, current, label }: {
+  sections: SectionLink[];
   current: string;
+  /** Names the row for a screen reader: "Problem sections", "Repository sections". */
+  label: string;
 }) {
   const navigation = useRef<HTMLElement | null>(null);
 
@@ -69,7 +85,7 @@ export function ProblemSectionNav({ sections, current }: {
   return <nav
     ref={navigation}
     className={styles.tabs}
-    aria-label="Problem sections"
+    aria-label={label}
     data-overflow="none"
     onScroll={syncOverflow}
   >
@@ -80,7 +96,7 @@ export function ProblemSectionNav({ sections, current }: {
       aria-current={current === key ? "page" : undefined}
     >
       {label}
-      {count > 0 ? <span className={styles.count}>{count}</span> : null}
+      {count ? <span className={styles.count}>{count}</span> : null}
     </Link>)}
   </nav>;
 }

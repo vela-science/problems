@@ -113,6 +113,12 @@
 @media (pointer: coarse) {
   [data-slot="button"] { min-width: 2.75rem; min-height: 2.75rem; }
   [data-slot="input"], [data-slot="select-trigger"] { min-height: 2.75rem; }
+  /* Anything that already declared a deliberate touch height gets the real
+     one. `min-h-6` action links measured 24px and `min-h-8` topic chips 32px,
+     against the 44px this block already gives buttons and inputs. Scoped to
+     elements that opted into a minimum, so inline links inside a paragraph
+     keep their line box. */
+  .min-h-6, .min-h-8 { min-height: 2.75rem; }
 }
 
 /* Route leads are ordinary product headers. The sidebar carries the deep marine

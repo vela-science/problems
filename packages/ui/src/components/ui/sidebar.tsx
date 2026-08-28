@@ -269,22 +269,33 @@ function SidebarTrigger({
       {...props}
     >
       <HugeiconsIcon icon={SidebarLeftIcon} strokeWidth={2} />
-      <span className="sr-only">Toggle Sidebar</span>
+      {/* Only when the caller has not named the control. An `aria-label` wins
+          over element content, so where one is passed — this app passes "Open
+          navigation" / "Collapse navigation", which say what the control will
+          do — this span was text in the DOM that no reader ever heard, and that
+          find-in-page and text extraction still turned up. */}
+      {props["aria-label"] ? null : <span className="sr-only">Toggle Sidebar</span>}
     </Button>
   )
 }
 
 function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
-  const { toggleSidebar } = useSidebar()
+  const { state, toggleSidebar } = useSidebar()
+  /* A pointer-only handle, and not a second entry in the accessibility tree.
+     It performs exactly what the named trigger beside it performs, is already
+     out of the tab order, and answered to "Toggle Sidebar" while the trigger
+     said "Collapse navigation" — so assistive technology met two controls where
+     the product has one action. The visible `title` still serves the mouse. */
+  const label = state === "collapsed" ? "Open navigation" : "Collapse navigation"
 
   return (
     <button
       data-sidebar="rail"
       data-slot="sidebar-rail"
-      aria-label="Toggle Sidebar"
+      aria-hidden
       tabIndex={-1}
       onClick={toggleSidebar}
-      title="Toggle Sidebar"
+      title={label}
       className={cn(
         "absolute inset-y-0 z-20 hidden w-4 transition-[background-color,transform] ease-linear group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:start-1/2 after:w-[2px] hover:after:bg-sidebar-border sm:flex ltr:-translate-x-1/2 rtl:-translate-x-1/2",
         "in-data-[side=left]:cursor-w-resize in-data-[side=right]:cursor-e-resize",
@@ -299,9 +310,19 @@ function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
   )
 }
 
-function SidebarInset({ className, ...props }: React.ComponentProps<"main">) {
+/* A frame, not the main landmark.
+ *
+ * Upstream renders this as `<main>`, which put the app bar — breadcrumb,
+ * command palette, notifications, appearance, Sign in — inside `main`, left the
+ * real content region an unnamed `div`, and meant "skip to main" landed a
+ * screen-reader user on the chrome. The product also had no `banner`, because a
+ * `<header>` nested in `<main>` gets no landmark role at all.
+ *
+ * The frame is a `div` here and the application names `<main>` on the content
+ * region itself, which is what the skip link has always targeted. */
+function SidebarInset({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <main
+    <div
       data-slot="sidebar-inset"
       className={cn(
         "relative flex w-full flex-1 flex-col bg-background transition-[margin,border-radius,box-shadow] duration-200 ease-out md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2",

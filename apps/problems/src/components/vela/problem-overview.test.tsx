@@ -90,7 +90,12 @@ describe("Problem Overview, on the Problem the source contract pins", () => {
     expect(html).toContain("agent:submission-v3-cleanup-decision");
     expect(html).toContain("Problem Standing");
     expect(html).toContain("Not recorded");
-    expect(html).toContain("Not recorded in this release");
+    /* The "Not recorded in this release" panel is gone. Its last entry, "A
+       recorded next discriminator", was pushed on every Problem in the release
+       — the transition spine already reports that same absence as its final
+       stage, in the same viewport — so the panel had no per-page content left
+       to carry. The fact survives; the second telling of it does not. */
+    expect(html).not.toContain("Not recorded in this release");
   });
 
   /* Every Problem is reachable by the same component, so the composition that

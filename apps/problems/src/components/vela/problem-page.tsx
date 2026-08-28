@@ -18,6 +18,7 @@ import { problemLabel, resolveProblemStatement, statementParagraphs } from "@/li
 import { authConfiguration, currentAccount } from "@/lib/auth";
 import { problemFrontierMovement } from "@/lib/frontier-timeline";
 import { scientificProblemState } from "@/lib/scientific-state";
+import { structuredDataScript } from "@/lib/structured-data";
 
 export type ProblemPageQuery = { view?: string; file?: string; symbol?: string; workspace?: string; object?: string; inspector?: string; workError?: string };
 export type ExpectedProblemSource = {
@@ -130,7 +131,7 @@ export async function ProblemPageView({ repository, problem, collectionName, rou
      ran the full width of whatever display they opened on. Only the workspace
      is the instrument that wants every pixel. */
   return <PageShell as="article" archetype="problem" layout={view === "workspace" ? "canvas" : "standard"} className="!pt-2">
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredDataScript(structuredData) }} />
     {/* The object's name, not its statement. Both the palette and the rail
         list this as an entry in a narrow column, and a truncated theorem reads
         as "Suppose n points in R^2 determine a convex poly…" — which identifies

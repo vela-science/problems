@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CopyButton } from "@vela/ui/vela/copy-button";
 import { ArrowUp01Icon, CheckmarkCircle01Icon, MinusSignCircleIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Badge } from "@vela/ui/components/badge";
@@ -28,28 +29,31 @@ function metadataString(state: State, key: string) {
   return typeof value === "string" && value.trim() ? value.trim() : null;
 }
 
-/* Absences the projection actually asserts, not a list of everything a reader
-   might wish for. Each line here is a field that is null, an array that is
-   empty, or a record kind this release does not carry.
+/* What a Claim replaced, and what replaced it.
  *
- * The comment was true of two entries and false of four. "Problem-level
- * Standing", "Related Problems", "Literature or consensus coverage" and "Human
- * identity behind the named performers" were unconditional pushes — identical
- * on all 1,217 pages, so the panel carried zero per-page information while
- * occupying the rail as though it were state. Worse, "Problem-level Standing"
- * duplicated the facts panel directly above it, which renders
- * `Problem Standing → Not recorded` in the same viewport.
+ * Two Results on Erdős 94 render byte-identical — the same assertion, the same
+ * evidence count — separated only by a standing badge, so a reader cannot
+ * answer "why is there a second one?" without opening both. The record already
+ * carries the answer: a `supersedes` or `corrects` relation naming the Claim it
+ * replaced. In a product about lineage, lineage was the missing column.
  *
- * What this release does not carry at all belongs in one release-level note,
- * not restated on every Problem. */
-function absences(state: State) {
-  const entries: string[] = [];
-  if (!metadataString(state, "next_discriminator")) entries.push("A recorded next discriminator");
-  /* "Any retained check" used to sit here too, on `!checks.length` — the same
-     condition the stage ladder already reports as "Work and checks / None
-     recorded", in the same viewport. Removing four unconditional constants
-     left a fifth that was a straight duplicate. */
-  return entries;
+ * Read in both directions, because a row needs whichever end it is on. */
+function claimLineage(claims: Array<{ id: string; record?: unknown }>) {
+  const replaces = new Map<string, string>();
+  const replacedBy = new Map<string, string>();
+  for (const claim of claims) {
+    const record = claim.record && typeof claim.record === "object" ? claim.record as { relations?: unknown } : null;
+    const relations = Array.isArray(record?.relations) ? record.relations : [];
+    for (const candidate of relations) {
+      if (!candidate || typeof candidate !== "object") continue;
+      const relation = candidate as { kind?: unknown; target_claim_id?: unknown };
+      if (!["corrects", "supersedes"].includes(String(relation.kind))) continue;
+      if (typeof relation.target_claim_id !== "string") continue;
+      replaces.set(claim.id, relation.target_claim_id);
+      replacedBy.set(relation.target_claim_id, claim.id);
+    }
+  }
+  return { replaces, replacedBy };
 }
 
 export function ProblemOverview({ state, route }: { state: State; route: string }) {
@@ -65,6 +69,7 @@ export function ProblemOverview({ state, route }: { state: State; route: string 
   const formal = state.sources?.occurrences?.filter((occurrence) => occurrence.formal) ?? [];
   const openFormal = formal.filter((occurrence) => occurrence.formal?.category_label?.toLowerCase() === "open");
   const lastSourceUpdate = metadataString(state, "status_last_update");
+  const lineage = claimLineage(claims);
 
   /* Nothing has been accepted here. That is the state of 1,215 of the 1,217
      Erdős Problems in this release, so it gets a composition of its own rather
@@ -118,7 +123,6 @@ export function ProblemOverview({ state, route }: { state: State; route: string 
 
       <aside className={styles.rail} aria-label="Problem facts">
         <ProblemFacts state={state} lastSourceUpdate={lastSourceUpdate} />
-        <AbsencePanel entries={absences(state)} />
         <ExactPanel state={state} />
       </aside>
     </div>;
@@ -187,7 +191,10 @@ export function ProblemOverview({ state, route }: { state: State; route: string 
           <div className={styles.rowTitle}>
             <AssertionText text={exactResultHeadline(claim.assertion) ?? claim.assertion} />
             <div className={styles.rowMeta}>
+              {claim.created ? <>{formatDate(claim.created)} · </> : null}
               {claim.evidence_count ?? 0} {claim.evidence_count === 1 ? "evidence item" : "evidence items"}
+              {lineage.replaces.has(claim.id) ? " · replaces an earlier Result" : ""}
+              {lineage.replacedBy.has(claim.id) ? " · replaced by a later Result" : ""}
               {claim.id === state.currentClaimId ? " · current" : ""}
             </div>
           </div>
@@ -218,7 +225,7 @@ export function ProblemOverview({ state, route }: { state: State; route: string 
           <div className={styles.rowTitle}>
             {sentenceCase(humanize(check.property, "Scope not recorded"))}
             {check.does_not_establish?.length
-              ? <div className={styles.rowMeta}>Does not establish: {check.does_not_establish.join("; ")}</div>
+              ? <div className={styles.rowMeta}>Does not establish: {check.does_not_establish.join(" ")}</div>
               : null}
           </div>
           <span className="text-right text-[0.78125rem] capitalize">{humanize(check.outcome)}</span>
@@ -253,7 +260,6 @@ export function ProblemOverview({ state, route }: { state: State; route: string 
       </section>
 
       <ProblemFacts state={state} lastSourceUpdate={lastSourceUpdate} openFormal={openFormal.length} formal={formal.length} />
-      <AbsencePanel entries={absences(state)} />
       <ExactPanel state={state} />
     </aside>
   </div>;
@@ -286,29 +292,26 @@ function ProblemFacts({ state, lastSourceUpdate, openFormal, formal }: {
   </section>;
 }
 
-/* Nothing to say is a reason not to draw a panel. With the four constants
-   removed, a Problem carrying a next discriminator and a check has no absences
-   left to report, and an empty bordered panel headed "Not recorded" is the
-   inventory-of-nothing shape this page is trying to stop being. */
-function AbsencePanel({ entries }: { entries: string[] }) {
-  if (!entries.length) return null;
-  return <section className={styles.panel}>
-    <div className={styles.panelHead}>
-      <span className={styles.kicker}>Not recorded in this release</span>
-      <span className={styles.kicker}>{entries.length}</span>
-    </div>
-    {entries.map((entry) => <div key={entry} className={styles.absent}>
-      <span className={styles.absentMark} aria-hidden />{entry}
-    </div>)}
-  </section>;
-}
-
 function ExactPanel({ state }: { state: State }) {
+  /* Copy controls, because these are the values a reader takes somewhere else.
+     The panel printed three 64-character roots with no way to lift one: the
+     reproduce runbook has copy buttons on every command, and the identity panel
+     — the reason to trust any of it — had none. Selecting the row by hand also
+     took the label with the value, which is what `factStack` was hiding. */
+  const roots = [
+    { label: "Problem record", value: state.anchor.problemRecordRoot },
+    { label: "Projection", value: state.anchor.projectionReleaseRoot },
+    { label: "Source commit", value: state.anchor.sourceCommit },
+  ];
   return <Disclosure className={styles.panel} summary="Exact roots" meta="Record identity">
     <div>
-      <div className={`${styles.fact} ${styles.factStack}`}><span className={styles.factKey}>Problem record</span><span className={`${styles.factValue} ${styles.exact} break-all`}>{state.anchor.problemRecordRoot}</span></div>
-      <div className={`${styles.fact} ${styles.factStack}`}><span className={styles.factKey}>Projection</span><span className={`${styles.factValue} ${styles.exact} break-all`}>{state.anchor.projectionReleaseRoot}</span></div>
-      <div className={`${styles.fact} ${styles.factStack}`}><span className={styles.factKey}>Source commit</span><span className={`${styles.factValue} ${styles.exact} break-all`}>{state.anchor.sourceCommit}</span></div>
+      {roots.map(({ label, value }) => <div key={label} className={`${styles.fact} ${styles.factStack}`}>
+        <span className={styles.factKey}>{label}</span>
+        <span className={`${styles.factValue} ${styles.exact} break-all`}>
+          {value}
+          {value ? <CopyButton compact value={String(value)} label={`Copy ${label.toLowerCase()}`} /> : null}
+        </span>
+      </div>)}
     </div>
   </Disclosure>;
 }

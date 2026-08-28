@@ -23,7 +23,7 @@
   --secondary: oklch(0.955 0.007 255); --secondary-foreground: var(--foreground);
   --muted: oklch(0.958 0.006 255); --muted-foreground: oklch(0.46 0.018 255);
   --accent: oklch(0.94 0.035 258); --accent-foreground: oklch(0.24 0.07 258);
-  --destructive: oklch(0.496 0.124 16); --destructive-foreground: oklch(1 0 0);
+  --destructive: oklch(0.496 0.124 16);
   --border: oklch(0.885 0.009 255);
   --input: oklch(0.64 0.018 255);
   --focus-ring: oklch(0.23 0.14 258); --ring: var(--focus-ring);
@@ -51,13 +51,13 @@
   --secondary: oklch(0.25 0.022 255); --secondary-foreground: var(--foreground);
   --muted: oklch(0.235 0.018 255); --muted-foreground: oklch(0.72 0.014 255);
   --accent: oklch(0.31 0.07 258); --accent-foreground: var(--foreground);
-  --destructive: oklch(0.682 0.122 13); --destructive-foreground: oklch(0.178 0.004 260);
+  --destructive: oklch(0.682 0.122 13);
   --border: oklch(0.34 0.024 255);
   --input: oklch(0.56 0.022 255);
   --focus-ring: oklch(0.96 0.03 259);
   --sidebar: oklch(0.13 0.03 255); --sidebar-foreground: var(--foreground);
   --sidebar-accent: oklch(0.275 0.065 258); --sidebar-accent-foreground: var(--foreground);
-  --status-evidence: var(--vela-color-evidence); --status-progress: var(--vela-color-progress);
+  --status-evidence: var(--vela-color-dark-evidence); --status-progress: var(--vela-color-progress);
   --status-caution: var(--vela-color-caution); --status-conflict: var(--vela-color-dark-conflict);
   --direction: var(--primary);
   --command: oklch(0.298 0.006 260);
@@ -79,7 +79,12 @@
   --border: oklch(0.53 0.006 260);
   --input: oklch(0.34 0.006 260);
   --focus-ring: oklch(0.16 0.04 258);
+  /* High contrast turns the rail near-white, so its ink must turn with it. It
+     did not: every item in the rail sat at 1.05:1 and focus at 2.03:1. A ground
+     is never redefined without its paired ink. */
   --sidebar: oklch(0.955 0.002 260); --sidebar-accent: oklch(0.88 0.004 260);
+  --sidebar-foreground: var(--foreground); --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: var(--border); --sidebar-ring: var(--focus-ring);
   --command: oklch(0.12 0.004 260);
   color-scheme: light;
 }

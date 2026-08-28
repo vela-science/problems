@@ -3,6 +3,10 @@
 import { useEffect, useMemo } from "react";
 import { MultiDirectedGraph } from "graphology";
 import { SigmaContainer, useRegisterEvents } from "@react-sigma/core";
+/* The instrument's stylesheet belongs to the instrument. In the root layout it
+   was on every route, and this module is already loaded through `dynamic`, so
+   the CSS now travels in the same lazy chunk as the map that needs it. */
+import "@react-sigma/core/lib/style.css";
 import { velaTokens } from "@vela/brand/tokens";
 import { stateTones, type StatusTone } from "@vela/ui/vela/status-badge";
 import type { GraphClientEdge, GraphClientNode } from "@/lib/graph-client";

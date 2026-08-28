@@ -152,19 +152,13 @@
 .factKey { color: var(--ov-muted); }
 .factValue { font-weight: 500; text-align: right; letter-spacing: -0.005em; }
 .factStack { display: block; }
-.factStack .factValue { text-align: left; margin-top: 0.25rem; }
-
-.absent {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.375rem 0.8125rem;
-  border-bottom: 1px solid color-mix(in oklab, var(--border) 55%, transparent);
-  font-size: var(--text-meta);
-  color: var(--ov-muted);
-}
-.absent:last-child { border-bottom: 0; }
-.absentMark { width: 0.4375rem; height: 0.4375rem; border-radius: 50%; background: var(--border); flex: none; }
+/* `display: block`, or the stack does not stack. The row becomes a block, but
+   the value stayed inline, so `margin-top` was inert and the label and the value
+   rendered on one baseline with a measured 0px gap between them: "Decided
+   byagent:submission-v3-cleanup-decision", "Problem recordsha256:caba…". That is
+   the exact-identity panel, which is the page's credibility surface, and it also
+   meant selecting the row copied the label welded to the value. */
+.factStack .factValue { display: block; text-align: left; margin-top: 0.25rem; }
 
 .exact { font-family: var(--font-mono, ui-monospace, monospace); font-size: var(--text-micro); }
 

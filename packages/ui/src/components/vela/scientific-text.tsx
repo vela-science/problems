@@ -171,14 +171,38 @@ function ProseSegment({ text }: { text: string }) {
   </>;
 }
 
+/* Math that will not parse is shown as its own source, in readable type.
+ *
+ * `throwOnError: false` hands back KaTeX's error markup instead: the raw TeX in
+ * a hardcoded `#cc0000` at the inherited size, which on a dark canvas measured
+ * 2.91:1 and is not theme-aware at all. The source is the honest thing to show
+ * — a Problem statement whose notation the source mistyped still has to be
+ * readable, and this product does not silently repair source text — so it is
+ * rendered verbatim in the same marker used for quoted notation, and named as
+ * unparsed for a screen reader rather than left as bare red source. */
+function renderMath(source: string, display: boolean) {
+  try {
+    return katex.renderToString(source, {
+      displayMode: display,
+      output: "mathml",
+      throwOnError: true,
+      trust: false,
+      strict: "ignore",
+      maxExpand: 500,
+      maxSize: 10,
+    });
+  } catch {
+    return null;
+  }
+}
+
 export function ScientificText({ text }: { text: string }) {
   if (!delimitersPair(text)) {
     return <span className={styles.root}>
       {recoverNotation(text).map((span, index) => {
         if (!span.math) return <ProseSegment key={index} text={span.text} />;
-        const markup = katex.renderToString(span.text, {
-          output: "mathml", throwOnError: false, trust: false, strict: "ignore", maxExpand: 500, maxSize: 10,
-        });
+        const markup = renderMath(span.text, false);
+        if (!markup) return <code key={index} className={styles.code}><span className="sr-only">Unparsed notation: </span>{span.text}</code>;
         return <span key={index} className={styles.inline} dangerouslySetInnerHTML={{ __html: markup }} />;
       })}
     </span>;
@@ -197,15 +221,8 @@ export function ScientificText({ text }: { text: string }) {
         if (!display && !inline) return <ProseSegment key={`${segment}:${index}`} text={segment} />;
 
         const source = display ? segment.slice(2, -2) : segment.startsWith("\\(") ? segment.slice(2, -2) : segment.slice(1, -1);
-        const markup = katex.renderToString(source, {
-          displayMode: display,
-          output: "mathml",
-          throwOnError: false,
-          trust: false,
-          strict: "ignore",
-          maxExpand: 500,
-          maxSize: 10,
-        });
+        const markup = renderMath(source, display);
+        if (!markup) return <code key={`${segment}:${index}`} className={styles.code}><span className="sr-only">Unparsed notation: </span>{source}</code>;
         return <span key={`${segment}:${index}`} className={display ? styles.display : styles.inline} tabIndex={display ? 0 : undefined} dangerouslySetInnerHTML={{ __html: markup }} />;
       })}
     </span>

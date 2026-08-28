@@ -29,7 +29,7 @@ describe("audit fixes", () => {
      `scrollbar-width: none` and `scrollLeft: 0`, so the open section sat
      entirely off-screen and nothing was marked current. */
   it("scrolls the open Problem section into view and cues the overflow", () => {
-    const nav = source("components/vela/problem-section-nav.tsx");
+    const nav = source("components/vela/section-nav.tsx");
     expect(nav).toContain("scrollLeft");
     expect(nav).toContain('aria-current="page"');
     expect(nav).toContain("dataset.overflow");

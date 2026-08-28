@@ -59,7 +59,7 @@ describe("AppHeader trail", () => {
     navigation.pathname = "/repositories/quantum-codes/claims";
     render(<Shell />);
 
-    const section = screen.getByText("Assertions");
+    const section = screen.getByText("Claims");
     expect(section).toHaveAttribute("aria-current", "page");
     expect(section.closest("a")).toBeNull();
   });

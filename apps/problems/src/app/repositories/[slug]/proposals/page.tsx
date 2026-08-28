@@ -64,7 +64,7 @@ export default async function ProposalsPage({ params, searchParams }: PageProps<
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent className="flex-row flex-wrap justify-center gap-2">
-            <Button nativeButton={false} variant="outline" size="sm" render={<Link href={`/repositories/${slug}/claims`} />}>Assertions</Button>
+            <Button nativeButton={false} variant="outline" size="sm" render={<Link href={`/repositories/${slug}/claims`} />}>Claims</Button>
             <Button nativeButton={false} variant="outline" size="sm" render={<Link href={`/repositories/${slug}/reproduce`} />}>Reproduce</Button>
           </EmptyContent>
         </Empty>

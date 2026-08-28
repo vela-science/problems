@@ -8,13 +8,9 @@ import { usePathname } from "next/navigation";
    Sources list, so the rail read as three pairs of the same place. */
 import {
   Activity01Icon,
-  BookOpen01Icon,
-  Clock01Icon,
-  FileCheckIcon,
   Home01Icon,
   InboxUploadIcon,
   PuzzleIcon,
-  SourceCodeIcon,
   WorkIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -37,6 +33,7 @@ import {
 } from "@vela/ui/components/sidebar";
 import { BrandMark as VelaMark } from "@vela/ui/vela/brand-mark";
 import { useAccountState } from "@/components/vela/account-state";
+import { INFORMATION_ROUTES } from "@/components/vela/public-information-page";
 import { recentObjectsServerSnapshot, recentObjectsSnapshot, subscribeRecentObjects } from "@/lib/recent-objects";
 import type { PublishedProblemCollection } from "@/lib/problem-collections";
 
@@ -70,27 +67,6 @@ type SidebarDestination = {
    palette. Additive, because `app-sidebar.test.tsx` fixes the deliberate rule
    that a Repository keeps the global spine: it is a provenance surface, not one
    of the five primary destinations in PRODUCT.md. */
-const REPOSITORY_SECTIONS: Array<{ key: string; label: string; icon: SidebarDestination["icon"] }> = [
-  { key: "", label: "Overview", icon: BookOpen01Icon },
-  /* Not "Problems": the spine above already has a link by that name pointing at
-     the whole product. This is the Repository's own ledger, which is what its
-     page calls it. */
-  { key: "problems", label: "Problem ledger", icon: PuzzleIcon },
-  { key: "claims", label: "Assertions", icon: FileCheckIcon },
-  { key: "proposals", label: "Proposed changes", icon: WorkIcon },
-  { key: "commits", label: "Commits", icon: Clock01Icon },
-  { key: "reproduce", label: "Reproduce", icon: SourceCodeIcon },
-];
-
-/* `/repositories/<slug>` plus one optional section segment. A deeper path — a
-   Claim or Proposal record — keeps the group and marks no section, because it
-   sits under a section rather than beside one. */
-function repositoryRoute(pathname: string) {
-  const parts = pathname.split("/").filter(Boolean);
-  if (parts.length < 2 || parts[0] !== "repositories") return null;
-  return { slug: parts[1]!, href: `/repositories/${parts[1]}`, section: parts[2] ?? "" };
-}
-
 /* Frontiers is not in the spine.
  *
  * The route serves a Protocol-1 reference demonstration: two authority
@@ -110,7 +86,6 @@ const PRIMARY_DESTINATIONS: SidebarDestination[] = [
 export function AppSidebar({ problemCollections = [{ namespace: "erdos-problems", name: "Erdős Problems", identifierKind: "number" }] }: { problemCollections?: PublishedProblemCollection[] }) {
   const pathname = usePathname();
   const accountState = useAccountState();
-  const repository = repositoryRoute(pathname);
   /* localStorage, so the server renders the group empty and the client fills
      it in. That is also exactly what a reader who has opened nothing sees. */
   const recent = useSyncExternalStore(subscribeRecentObjects, recentObjectsSnapshot, recentObjectsServerSnapshot).slice(0, 5);
@@ -222,28 +197,6 @@ export function AppSidebar({ problemCollections = [{ namespace: "erdos-problems"
           </SidebarGroupContent>
         </SidebarGroup> : null}
 
-        {repository ? <SidebarGroup className="border-t border-sidebar-border py-1">
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {REPOSITORY_SECTIONS.map(({ key, label, icon: Icon }) => {
-                const href = key ? `${repository.href}/${key}` : repository.href;
-                const active = repository.section === key;
-                return <SidebarMenuItem key={key || "overview"}>
-                  <SidebarMenuButton
-                    className="h-11 md:h-8"
-                    tooltip={`${repository.slug} · ${label}`}
-                    isActive={active}
-                    render={<Link href={href} aria-current={active ? "page" : undefined} onClick={closeMobileNavigation} />}
-                  >
-                    <HugeiconsIcon icon={Icon} aria-hidden />
-                    <span>{label}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>;
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup> : null}
-
         <SidebarGroup className="mt-auto border-t border-sidebar-border py-2">
           <SidebarGroupContent>
             <SidebarMenu>
@@ -259,6 +212,31 @@ export function AppSidebar({ problemCollections = [{ namespace: "erdos-problems"
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Privacy, Terms, Accessibility and Contact were reachable only through
+            the command palette and the signed-in account menu, so a signed-out
+            visitor had no visible path to any of them — and a touch user has no
+            ⌘K to fall back on. They sit in the rail because it is the one piece
+            of chrome on every route. Hidden when the rail is collapsed to icons,
+            where a row of four words cannot render.
+
+            A `footer` rather than a `nav`: this is the product's `contentinfo`,
+            the landmark the shell had none of, and its ancestors here are plain
+            frames so the role applies. Verified by role rather than assumed — a
+            `footer` scoped to a `nav`, `aside` or `section` would silently be no
+            landmark at all. */}
+        <SidebarGroup className="border-t border-sidebar-border py-1 group-data-[collapsible=icon]:hidden">
+          <SidebarGroupContent>
+            <footer aria-label="Policies" className="flex flex-wrap items-center gap-x-3 px-2 text-micro">
+              {INFORMATION_ROUTES.map((route) => <Link
+                key={route.href}
+                href={route.href}
+                onClick={closeMobileNavigation}
+                className="inline-flex min-h-8 items-center rounded text-sidebar-foreground/70 hover:text-sidebar-foreground hover:underline"
+              >{route.label}</Link>)}
+            </footer>
           </SidebarGroupContent>
         </SidebarGroup>
 

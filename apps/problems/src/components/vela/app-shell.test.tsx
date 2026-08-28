@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 
 vi.mock("@vela/ui/components/sidebar", () => ({
   SidebarProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  SidebarInset: (props: React.ComponentProps<"main">) => <main {...props} />,
+  SidebarInset: (props: React.ComponentProps<"div">) => <div {...props} />,
 }));
 vi.mock("@vela/ui/components/tooltip", () => ({
   TooltipProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
@@ -48,17 +48,21 @@ describe("AppShell accessibility boundary", () => {
       </AppShell>,
     );
 
-    /* The target is the content, not the frame around it. `#main-content` sat
-       on the `main` element, whose first child is the app bar — so the skip
-       link landed the reader before the breadcrumb, command palette,
-       notifications, appearance control and Sign in, and skipped nothing. */
+    /* The skip-link target and the `main` landmark are the same element.
+       They were not: `main` was the frame, whose first child is the app bar, so
+       the skip link landed the reader before the breadcrumb, command palette,
+       notifications, appearance control and Sign in and skipped nothing — and
+       a `<header>` nested inside `main` gets no `banner` role, so the product
+       had no banner either. One `main`, and it is the content. */
     const main = screen.getByRole("main");
     const target = document.getElementById("main-content");
     expect(target).not.toBeNull();
     expect(target).toHaveAttribute("tabindex", "-1");
-    expect(main).not.toHaveAttribute("id", "main-content");
-    expect(main.contains(target)).toBe(true);
+    expect(main).toBe(target);
+    expect(screen.getAllByRole("main")).toHaveLength(1);
+    /* The app bar is a sibling of the content, not inside it. */
     expect(target!.querySelector("header")).toBeNull();
+    expect(document.querySelector("header")).not.toBeNull();
     expect(target).toHaveTextContent("Published state");
     target!.focus();
     expect(target).toHaveFocus();

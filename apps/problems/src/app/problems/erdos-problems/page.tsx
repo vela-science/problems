@@ -34,6 +34,7 @@ import { CollectionDistribution } from "@/components/vela/collection-distributio
 import { CollectionCoverageBar, collectionCoverage } from "@/components/vela/collection-coverage-bar";
 import { isJustTheName } from "@/lib/problem-label";
 import { statementPlainText } from "@/lib/problem-statement";
+import { structuredDataScript } from "@/lib/structured-data";
 import { SourceCorpusMap } from "@/components/vela/source-corpus-map";
 import { ProblemSourceCoverage } from "@/components/vela/problem-source-coverage";
 import { LedgerPager } from "@/components/vela/ledger-pager";
@@ -130,18 +131,34 @@ function ProblemRows({ problems, statements }: {
    * own horizontal scroll container, which DESIGN.md:424 requires of wide
    * material — "within their own instrument, never the document".
    *
-   * The narrow columns stay `hidden sm:table-cell` rather than forcing a phone
-   * to scroll sideways; their values ride the compact line under the question,
-   * as they did before. */
-  return <div className="vela-object-surface mt-3 overflow-hidden">
+   * The narrow columns reveal on the *container's* width, not the viewport's.
+   * Keyed to `sm:` they appeared at a 640px viewport, but the rail takes ~250px
+   * before this table sees any of it: at 768 the four state columns claimed
+   * 343px and left the question 60px, so the page's own subject got 12% of the
+   * width. Below the threshold their values ride the compact line under the
+   * question instead, which is the same switch seen from the other side.
+   *
+   * The question cell is `max-w-0` so it flexes into whatever the fixed columns
+   * leave, and `whitespace-normal` because `TableCell` ships `nowrap`: with the
+   * overflow guard below, `nowrap` clipped the statement mid-formula on 18 of
+   * 48 rows at 1440 and every row at 375, with no ellipsis, which traded a
+   * layout bug for a silent data-loss one. Wrapping lets the
+   * `overflow-wrap: anywhere` this codebase already sets do the work, and only
+   * an unbreakable formula reaches the guard. The measure and overflow guard sit
+   * on a span inside the anchor
+   * rather than on the anchor: an `overflow-hidden` anchor would clip its own
+   * `after:inset-0`, and the stretched link is the row's click target. Without
+   * that guard a single unbreakable KaTeX box set a 1333px min-content floor in
+   * a 1166px container and pushed the state columns out of view. */
+  return <div className="vela-object-surface @container/directory mt-3 overflow-hidden">
     <Table>
       <TableHeader>
         <TableRow className="hover:bg-transparent">
           <TableHead className="w-14">Number</TableHead>
           <TableHead>Question</TableHead>
-          <TableHead className="hidden w-28 sm:table-cell">Source says</TableHead>
-          <TableHead className="hidden w-24 sm:table-cell">Formal</TableHead>
-          <TableHead className="hidden w-32 sm:table-cell">Result here</TableHead>
+          <TableHead className="hidden w-28 @2xl/directory:table-cell">Source says</TableHead>
+          <TableHead className="hidden w-24 @2xl/directory:table-cell">Formal</TableHead>
+          <TableHead className="hidden w-32 @2xl/directory:table-cell">Result here</TableHead>
           <TableHead className="w-8"><span className="sr-only">Open</span></TableHead>
         </TableRow>
       </TableHeader>
@@ -160,14 +177,14 @@ function ProblemRows({ problems, statements }: {
           const solved = ["solved", "proved", "disproved"].includes(record.declared_status);
           return <TableRow key={`${problem.repository}/${problem.problem}`} className="group relative">
             <TableCell className="align-baseline font-mono text-meta tabular-nums text-muted-foreground">#{problem.problem}</TableCell>
-            <TableCell className="min-w-0 align-baseline">
+            <TableCell className="max-w-0 align-baseline whitespace-normal">
               {/* One stretched link per row: a table row cannot be wrapped in an
                   anchor, and a link per cell would put six of them in the tab
                   order for one destination. */}
               <Link
                 aria-label={rowName}
                 href={problem.canonicalPath ?? "/problems"}
-                className="block max-w-[74ch] text-label leading-snug after:absolute after:inset-0 group-hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-[-2px]"
+                className="block text-label leading-snug after:absolute after:inset-0 group-hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-[-2px]"
               >
                 {/* A Problem with no retained statement used to show its own name
                     — "Erdős problem 2" — in the Question column, which reads as a
@@ -175,28 +192,40 @@ function ProblemRows({ problems, statements }: {
                     absence. Testing the field is not enough: these rows carry the
                     generated name as their label, so the test is whether the text
                     on offer IS the name. */}
-                {question
-                  ? <ScientificText text={question} />
-                  : isJustTheName(readableLabel, problem.problem)
-                    ? <span className="text-muted-foreground">No statement retained &mdash; open to read what the source holds</span>
-                    : <StatementText statement={kind === "formal" ? readableLabel : record.statement || readableLabel} kind={kind === "formal" ? "label" : kind} className="text-label" />}
+                <span className="block max-w-[74ch] overflow-hidden">
+                  {question
+                    ? <ScientificText text={question} />
+                    : isJustTheName(readableLabel, problem.problem)
+                      ? <span className="text-muted-foreground">No statement retained &mdash; open to read what the source holds</span>
+                      : <StatementText statement={kind === "formal" ? readableLabel : record.statement || readableLabel} kind={kind === "formal" ? "label" : kind} className="text-label" />}
+                </span>
               </Link>
-              <span className="mt-1.5 flex flex-wrap gap-x-2 text-meta text-muted-foreground sm:hidden">
-                <span className="capitalize">{record.declared_status}</span><span>{record.formalized ? "Formalized" : "No formal declaration"}</span>{record.local_standing ? <span>Result {record.local_standing.replaceAll("_", " ")}</span> : null}
+              <span className="mt-1.5 flex flex-wrap gap-x-2 text-meta text-muted-foreground @2xl/directory:hidden">
+                {/* "Source says", because the column header that said it is
+                    hidden here. Above the breakpoint the source's word sits
+                    under a `Source says` heading with `Result here` beside it;
+                    below it, the heading is gone and the word rendered bare —
+                    while the site's own value on the same line kept its
+                    `Result` prefix. So a phone showed "proved · Result
+                    accepted" with only one of the two attributed, which is the
+                    single comprehension error this product says it must never
+                    cause. The columns carry their attribution in a header; these
+                    chips have to carry it themselves. */}
+                <span><span className="text-muted-foreground/80">Source says</span> <span className="capitalize">{record.declared_status}</span></span><span>{record.formalized ? "Formalized" : "No formal declaration"}</span>{record.local_standing ? <span>Result here {record.local_standing.replaceAll("_", " ")}</span> : null}
               </span>
             </TableCell>
-            <TableCell className="hidden align-baseline text-meta capitalize sm:table-cell">
+            <TableCell className="hidden align-baseline text-meta capitalize @2xl/directory:table-cell">
               <span className="inline-flex items-center gap-1.5">
                 <span aria-hidden className={`size-1.5 rounded-full ${solved ? "bg-status-progress" : "bg-status-caution"}`} />{record.declared_status}
               </span>
             </TableCell>
-            <TableCell className="hidden align-baseline text-meta text-muted-foreground sm:table-cell">{record.formalized ? "In Lean" : <><span aria-hidden>—</span><span className="sr-only">No formal statement</span></>}</TableCell>
+            <TableCell className="hidden align-baseline text-meta text-muted-foreground @2xl/directory:table-cell">{record.formalized ? "In Lean" : <><span aria-hidden>—</span><span className="sr-only">No formal statement</span></>}</TableCell>
             {/* 1,215 of 1,217 rows said "Not reviewed", so the column spent a
                 fifth of the width restating the default. The two that carry a
                 reviewed Result are the information, and they now say so. */}
-            <TableCell className="hidden align-baseline text-meta sm:table-cell">{record.local_standing
+            <TableCell className="hidden align-baseline text-meta @2xl/directory:table-cell">{record.local_standing
               ? <span className="inline-flex items-center gap-1.5 font-medium text-status-progress"><span aria-hidden className="size-1.5 rounded-full bg-status-progress" />{record.local_standing.replaceAll("_", " ")}</span>
-              : <><span aria-hidden className="text-muted-foreground/50">—</span><span className="sr-only">No Result decision</span></>}</TableCell>
+              : <><span aria-hidden className="text-muted-foreground">—</span><span className="sr-only">No Result decision</span></>}</TableCell>
             <TableCell className="align-baseline">
               <HugeiconsIcon icon={ArrowRight} aria-hidden className="size-4 text-muted-foreground transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-primary" />
             </TableCell>
@@ -265,7 +294,7 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
       .sort((left, right) => right.topic.problemCount - left.topic.problemCount || left.topic.name.localeCompare(right.topic.name));
 
     return <PageShell archetype="problem">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionStructuredData) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredDataScript(collectionStructuredData) }} />
       <PageHero className="vela-route-hero grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,.42fr)] lg:items-end">
         <div><h1 className="text-display">Erdős Problems</h1><p className="typeset typeset-compact mt-4 max-w-2xl text-muted-foreground">Browse this source-owned collection by topic, then inspect each question, its evidence, prior work, and current Repository state.</p><div className="mt-6 flex flex-wrap gap-3"><Button nativeButton={false} render={<Link href={{ pathname: COLLECTION_PATH, query: { view: "all", ...scopeQuery() } }} />}>Open collection directory <HugeiconsIcon icon={ArrowRight} aria-hidden data-icon="inline-end" /></Button><Button nativeButton={false} variant="outline" render={<Link href="/contribute" />}>Add a contribution</Button></div></div>
         <div className="vela-evidence-surface rounded-xl px-5 py-5"><p className="text-eyebrow text-muted-foreground">Collection scope</p><p className="mt-2 text-title">{catalog.length.toLocaleString()} Erdős problems</p><p className="mt-2 text-meta text-muted-foreground">This source profile organizes the collection into {new Set(catalog.flatMap(({ topics }) => topics.map(({ key }) => key))).size} source-owned Topics. Supporting sources remain evidence attached to each Problem.</p><div className="mt-4 flex flex-wrap gap-2">{domains.map(([key, name]) => <Link key={key} href={{ pathname: COLLECTION_PATH, query: { domain: key } }} className="rounded-full bg-background/70 px-3 py-1.5 text-meta font-medium hover:bg-background">Area · {name}</Link>)}</div></div>
@@ -315,6 +344,22 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
   const sort = ["number", "status", "sources", "reviewed"].includes(query.sort ?? "") ? query.sort! : "number";
   const sourceCoverageByRoute = sourceCorpora ? problemSourceObservationCoverage(sourceCorpora, catalog) : null;
   const requestedPage = Number.parseInt(query.page ?? "1", 10);
+  /* What is currently narrowing the list, in the reader's words, so the reset
+     appears whenever anything is set rather than for two of the ten. */
+  const narrowing = [
+    ["Area", selectedDomain !== "all" ? domains.find(([key]) => key === selectedDomain)?.[1] : null],
+    ["Hub", selectedHub !== "all" ? hubs.find(([key]) => key === selectedHub)?.[1] : null],
+    ["Search", query.q?.trim() ? query.q.trim().slice(0, 40) : null],
+    ["Source says", status !== "all" ? status : null],
+    ["Result here", standing !== "all" ? standing.replaceAll("_", " ") : null],
+    ["Source", source !== "all" ? source : null],
+    ["Repository", repository !== "all" ? repository : null],
+    ["Formal", formalized !== "all" ? (formalized === "yes" ? "in Lean" : "no declaration") : null],
+    ["Coverage", coverage !== "all" ? coverage : null],
+    ["Exact id", exactId || null],
+    ["Sort", sort !== "number" ? sort : null],
+  ].flatMap(([label, value]) => value ? [{ label: label as string, value: String(value) }] : []);
+
   const problems = scopedCatalog.filter((problem) => {
     const text = [problem.problem, problem.field?.name ?? "", ...problem.topics.map(({ name }) => name), problem.collection?.name ?? "", ...problem.hubs.map(({ name }) => name), problem.theme, problem.record.statement, ...problem.record.tags].join(" ").toLocaleLowerCase();
     if (q && !text.includes(q)) return false;
@@ -347,7 +392,7 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
   const advancedActive = selectedHub !== "all" || selectedField !== "all" || selectedTopic !== "all" || standing !== "all" || source !== "all" || repository !== "all" || formalized !== "all" || coverage !== "all" || Boolean(exactId);
 
   return <PageShell archetype="problem">
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionStructuredData) }} />
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredDataScript(collectionStructuredData) }} />
     {/* A list page's job is the list. The hero used to take most of the first
         screen for a title the breadcrumb already carries and a coverage panel
         of five numbers nobody acts on — the same pattern as the four-tile
@@ -393,7 +438,15 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
         </div>
         <p className="pb-2 text-meta text-muted-foreground">Coverage is source-observation coverage, not Problem completeness. <Link href={{ pathname: COLLECTION_PATH, query: { view: "overview" } }} className="font-medium text-foreground underline-offset-4 hover:underline">Inspect coverage</Link></p>
       </Disclosure>
-      {(selectedDomain !== "all" || selectedHub !== "all") ? <div className="flex flex-wrap gap-2 border-t border-border/70 pt-3 text-meta"><span className="text-muted-foreground">Active scope:</span>{selectedDomain !== "all" ? <Badge variant="secondary">Area · {domains.find(([key]) => key === selectedDomain)?.[1]}</Badge> : null}{selectedHub !== "all" ? <Badge variant="secondary">Hub · {hubs.find(([key]) => key === selectedHub)?.[1]}</Badge> : null}<Link href={COLLECTION_PATH} className="font-medium underline-offset-4 hover:underline">Clear filters</Link></div> : null}
+      {/* Every filter that narrows, not two of them.
+          *
+          * The row was gated on `selectedDomain`/`selectedHub`, so eight of the
+          * ten controls could narrow 1,217 Problems to a handful and never
+          * reveal a way back — and the one filter that did reveal it, Scientific
+          * area, has exactly two options in this release, so it cannot narrow
+          * anything. A reader who arrived on a shared link had no Back to use
+          * either. */}
+      {narrowing.length ? <div className="flex flex-wrap items-center gap-2 border-t border-border/70 pt-3 text-meta"><span className="text-muted-foreground">Active scope:</span>{narrowing.map(({ label, value }) => <Badge key={label} variant="secondary">{label} &middot; {value}</Badge>)}<Link href={COLLECTION_PATH} className="font-medium underline-offset-4 hover:underline">Clear filters</Link></div> : null}
     </form>
     {/* The count is a fact about the rows, so it sits with them in one line
         rather than under an h2 naming the page's own content. */}

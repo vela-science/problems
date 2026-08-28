@@ -1,6 +1,5 @@
 .page {
   --vela-page-layer: var(--background);
-  --vela-page-accent: color-mix(in oklab, var(--vela-color-stardust) 48%, var(--border));
   /* Not `--vela-surface-inset`: that name is a COLOUR in the brand layer
      (tokens.css:90) and `editorial.css` reads it as one for --secondary,
      --muted and --accent. Redefining it as a length here shadowed it for
@@ -49,22 +48,18 @@
 
 .page[data-archetype="problem"] {
   --vela-page-layer: var(--vela-layer-problem);
-  --vela-page-accent: color-mix(in oklab, var(--status-evidence) 58%, var(--border));
 }
 
 .page[data-archetype="work"] {
   --vela-page-layer: var(--vela-layer-work);
-  --vela-page-accent: color-mix(in oklab, var(--direction) 62%, var(--border));
 }
 
 .page[data-archetype="reading"] {
   --vela-page-layer: var(--vela-layer-reading);
-  --vela-page-accent: color-mix(in oklab, var(--vela-color-stardust) 48%, var(--border));
 }
 
 .page[data-archetype="history"] {
   --vela-page-layer: var(--vela-layer-history);
-  --vela-page-accent: color-mix(in oklab, var(--muted-foreground) 42%, var(--border));
 }
 
 .hero {

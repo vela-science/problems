@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { SidebarProvider, useSidebar } from "@vela/ui/components/sidebar";
@@ -55,6 +56,17 @@ afterEach(() => {
 });
 
 describe("AppSidebar", () => {
+  /* The policy links are the product's only `contentinfo`. The shell has no
+     other footer, so if this stops being a `footer` — or gains a `nav`,
+     `aside` or `section` ancestor — the landmark disappears silently. */
+  it("carries the policy links as the contentinfo landmark", () => {
+    const source = readFileSync("src/components/vela/app-sidebar.tsx", "utf8");
+    expect(source).toContain('<footer aria-label="Policies"');
+    for (const label of ["Privacy", "Terms", "Accessibility", "Contact"]) {
+      expect(source).toContain(label);
+    }
+  });
+
   it("uses one declared desktop state without a second persistence layer", () => {
     Object.defineProperty(window, "innerWidth", { configurable: true, value: 1024 });
     const first = render(<SidebarProvider defaultOpen={false}><DesktopState /></SidebarProvider>);
@@ -78,7 +90,7 @@ describe("AppSidebar", () => {
        delivers one is the clearest naming break in the product, so it moved
        to About with the rest of the protocol and release detail. The route
        itself stays reachable: it is published. */
-    for (const label of ["Search", "Research map", "Release details", "Repositories", "Assertions", "Proposed changes", "Frontiers"]) {
+    for (const label of ["Search", "Research map", "Release details", "Repositories", "Claims", "Proposed changes", "Frontiers"]) {
       expect(screen.queryByRole("link", { name: label })).not.toBeInTheDocument();
     }
     expect(screen.queryByText("Explore")).not.toBeInTheDocument();
@@ -93,13 +105,14 @@ describe("AppSidebar", () => {
     expect(screen.getByRole("link", { name: "Problems" })).toHaveAttribute("href", "/problems");
     expect(screen.getByRole("link", { name: "Updates" })).toHaveAttribute("href", "/updates");
 
-    /* The spine stays — a Repository is a provenance surface, not one of the
-       five primary destinations, so it does not take the rail a Problem takes.
-       Its sections are now offered *beneath* the spine rather than not at all:
-       eight routes used to be reachable only from the command palette. */
-    expect(screen.getByRole("link", { name: "Assertions" })).toHaveAttribute("href", "/repositories/erdos/claims");
-    expect(screen.getByRole("link", { name: "Commits" })).toHaveAttribute("href", "/repositories/erdos/commits");
-    expect(screen.getByRole("link", { name: "Assertions" })).toHaveAttribute("aria-current", "page");
+    /* The rail carries the spine and nothing else. A Repository's sections
+       moved to the Repository's own header, which is the rule a Problem
+       already followed — two object types had two navigation models and a
+       reader had nothing to predict from. The rail moves between objects; an
+       object's header moves between its sections. */
+    for (const section of ["Claims", "Commits", "Problem ledger", "Proposed changes", "Reproduce"]) {
+      expect(screen.queryByRole("link", { name: section })).not.toBeInTheDocument();
+    }
   });
 
   it("shows the compact published collections beneath Problems only on that branch", async () => {

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 
-const mocks = vi.hoisted(() => ({ reviewed: vi.fn(), view: vi.fn(), notFound: vi.fn() }));
+const mocks = vi.hoisted(() => ({ reviewed: vi.fn(), view: vi.fn(), notFound: vi.fn(), state: vi.fn() }));
 
 vi.mock("@vela/projection-data", () => ({
   canonicalProblemPath: (repository: string, problem: string) => (
@@ -20,6 +20,10 @@ vi.mock("@vela/projection-data", () => ({
     title: "Oppermann's Conjecture",
   } : null,
 }));
+/* `generateMetadata` asks the projection whether the release retains the
+   Problem, because the address alone cannot say. Server-only in the real
+   module, so it is mocked here like the other reads. */
+vi.mock("@/lib/scientific-state", () => ({ scientificProblemState: mocks.state }));
 vi.mock("@/components/vela/problem-page", () => ({
   ProblemPageView: (props: Record<string, unknown>) => { mocks.view(props); return <div>Problem</div>; },
 }));
@@ -37,7 +41,34 @@ const open = (namespace: string, problem: string, query: Record<string, string> 
   ProblemPage({ params: Promise.resolve({ namespace, problem }), searchParams: Promise.resolve(query as never) });
 
 describe("the canonical Problem address", () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.clearAllMocks(); mocks.state.mockResolvedValue({ problem: "94" }); });
+
+  /* A 404 that names a Problem is the product inventing a record.
+     `/problems/erdos-problems/888888` served a correct 404 whose tab, history
+     entry and bookmark all read "Erdős problem 888888", because the address
+     resolves on pattern alone. Metadata now asks what the release retains. */
+  it("does not title a Problem the release does not retain", async () => {
+    mocks.state.mockResolvedValue(null);
+    const metadata = await generateMetadata({ params: Promise.resolve({ namespace: "erdos-problems", problem: "888888" }) } as never);
+    expect(metadata.title).toBe("Not found");
+    expect(metadata.robots).toEqual({ index: false, follow: true });
+    expect(metadata.alternates).toBeUndefined();
+  });
+
+  it("titles a Problem the release does retain", async () => {
+    const metadata = await generateMetadata({ params: Promise.resolve({ namespace: "erdos-problems", problem: "94" }) } as never);
+    expect(metadata.title).toBe("Erdős problem 94");
+    expect(metadata.alternates).toEqual({ canonical: "/problems/erdos-problems/94" });
+  });
+
+  /* A refusal is the page's to surface through its error boundary; metadata
+     must not turn one into a claim that nothing is published here. */
+  it("does not report a projection refusal as an absent Problem", async () => {
+    mocks.state.mockRejectedValue(new Error("projection unavailable"));
+    const metadata = await generateMetadata({ params: Promise.resolve({ namespace: "erdos-problems", problem: "94" }) } as never);
+    expect(metadata.title).toBeUndefined();
+    expect(metadata.robots).toBeUndefined();
+  });
 
   /* A reviewed Problem keeps the stronger guarantee: the record on screen is
      checked against the exact occurrence a reviewer pinned. */

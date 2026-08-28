@@ -49,13 +49,26 @@ test("primary foreground pairs pass WCAG AA", () => {
   assert.ok(contrast("#F7F6F2", "#111827") >= 7);
   assert.ok(contrast("#081224", "#F7F6F2") >= 7);
   assert.ok(contrast(tokens.color.context.dark.conflict.$value, "#081224") >= 4.5);
-  for (const surface of ["#F7F6F2", tokens.color.context.light.surfaceInset.$value, tokens.color.context.light.surfaceRaised.$value]) {
-    assert.ok(contrast(tokens.color.context.light.textMuted.$value, surface) >= 4.5);
-    for (const status of ["evidence", "progress", "caution", "conflict"]) {
-      assert.ok(contrast(tokens.color.context.light[status].$value, surface) >= 4.5);
-    }
+  /* The brand owns its two canvases and the status hues tuned for them; it no
+     longer owns surfaces. `surfaceInset`, `surfaceRaised` and `textMuted` were
+     part of a semantic layer that `@vela/ui`'s theme.css defined a second time
+     and, importing later, always won — so this asserted contrast against values
+     the product never painted. The surviving canvas is asserted here; the live
+     surfaces are guarded in `check:design-system` and measured against every
+     rendered text node in the route sweep. */
+  for (const status of ["evidence", "progress", "caution", "conflict"]) {
+    assert.ok(contrast(tokens.color.context.light[status].$value, "#F7F6F2") >= 4.5);
   }
-  assert.notEqual(tokens.color.context.light.surfaceRaised.$value.toLowerCase(), "#ffffff");
+  /* The dark canvas, which nothing checked. `evidence` shipped at 4.19:1 on the
+     raised dark surface for six chips on every Problem history — the light half
+     was asserted here and the dark half was not, so the token that had no
+     dark-context variant was the one that failed. A status colour is only a
+     status colour if it can be read on the ground it is painted on. */
+  const darkGround = "#19252E";
+  for (const status of ["evidence", "progress", "caution", "conflict"]) {
+    const value = tokens.color.context.dark[status]?.$value ?? tokens.color.semantic[status].$value;
+    assert.ok(contrast(value, darkGround) >= 4.5, `${status} is ${contrast(value, darkGround).toFixed(2)}:1 on the dark surface`);
+  }
   assert.match(editorialFonts, /font-family: "Gambetta";[\s\S]*?gambetta-300-700-latin\.woff2/u);
   assert.match(editorialFonts, /font-family: "Gambetta";[\s\S]*?gambetta-italic-300-700-latin\.woff2/u);
   assert.match(editorialFonts, /font-family: "Zodiak";[\s\S]*?zodiak-100-900-latin\.woff2/u);
@@ -77,7 +90,10 @@ test("status semantics are never represented as an unlabelled palette", () => {
   for (const name of ["evidence", "progress", "caution", "conflict"]) {
     assert.match(css, new RegExp(`--vela-color-${name}:`));
   }
-  assert.match(css, /@media \(forced-colors: active\)/u);
+  /* The forced-colors block moved out with the semantic layer: it set only
+     `--vela-focus` and the two border tokens, all three now gone, while the
+     live rule lives in `@vela/ui`'s foundation.css and is asserted by
+     `check:design-system`. */
 });
 
 test("identity masters and deterministic delivery exports are complete", () => {

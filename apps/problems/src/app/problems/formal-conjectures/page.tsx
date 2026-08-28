@@ -11,6 +11,7 @@ import { PageHero, PageSection, PageShell } from "@vela/ui/vela/page-shell";
 import { ScientificText } from "@vela/ui/vela/scientific-text";
 import { Disclosure } from "@/components/vela/disclosure";
 import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from "@vela/ui/components/item";
+import { structuredDataScript } from "@/lib/structured-data";
 
 export const metadata: Metadata = {
   title: "Formal Conjectures",
@@ -20,6 +21,16 @@ export const metadata: Metadata = {
 
 type Query = { q?: string; family?: string };
 const families = [...new Set(formalConjecturesCollection.data.items.map(({ source_family }) => source_family))].sort();
+
+/* A group is context only when it says something the title has not. Several
+   occurrences are the sole member of a group named after them, so appending it
+   unconditionally rendered "Oppermann's Conjecture · Oppermann.oppermann_conjecture
+   · Oppermann's Conjecture" — the row's own title, printed twice, two fields
+   apart. */
+function groupTitle(item: { group_id?: string | null; title: string }) {
+  const title = formalConjecturesCollection.data.groups.find(({ id }) => id === item.group_id)?.title;
+  return title && title !== item.title ? title : null;
+}
 
 export default async function FormalConjecturesPage({ searchParams }: { searchParams: Promise<Query> }) {
   const query = await searchParams;
@@ -34,7 +45,7 @@ export default async function FormalConjecturesPage({ searchParams }: { searchPa
   const structuredData = { "@context": "https://schema.org", "@type": "CollectionPage", name: formalConjecturesCollection.name, url: "https://problems.science/problems/formal-conjectures", numberOfItems: formalConjecturesCollection.data.items.length, isPartOf: { "@type": "CollectionPage", name: "Problems", url: "https://problems.science/problems" } };
 
   return <PageShell archetype="problem">
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredDataScript(structuredData) }} />
     <PageHero density="compact" className="vela-route-hero grid gap-6 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-end">
       <div><div className="flex flex-wrap items-center gap-3"><h1 className="text-display">Formal Conjectures</h1><Badge variant="secondary">Published subset · 7</Badge></div><p className="mt-3 max-w-3xl text-body text-muted-foreground">Exact formalized conjecture occurrences from the upstream repository. This release includes seven rights-reviewed <span className="font-medium text-foreground">research open</span> declarations; it is not the whole repository.</p><div className="mt-5 flex flex-wrap gap-3"><Button nativeButton={false} render={<a href={formalConjecturesCollection.source_snapshot.repository} />}>Open upstream repository <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden data-icon="inline-end" /></Button><Button nativeButton={false} variant="outline" render={<Link href="/contribute" />}>Add a Result</Button></div></div>
       <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border bg-border text-meta"><div className="bg-card p-4"><dt className="text-muted-foreground">Lean toolchain</dt><dd className="mt-1 font-mono text-micro">{formalConjecturesCollection.source_snapshot.lean_toolchain.replace("leanprover/lean4:", "")}</dd></div><div className="bg-card p-4"><dt className="text-muted-foreground">Source families</dt><dd className="mt-1 font-medium">{families.length}</dd></div><div className="col-span-2 bg-card p-4"><dt className="text-muted-foreground">Exact revision</dt><dd className="mt-1 font-mono text-micro">{formalConjecturesCollection.source_snapshot.commit.slice(0, 12)}</dd></div></dl>
@@ -50,7 +61,7 @@ export default async function FormalConjecturesPage({ searchParams }: { searchPa
         <Item className="vela-object-row gap-3 rounded-none px-2 py-4" render={<Link href={`/problems/formal-conjectures/${item.route_slug}`} />}>
           <ItemContent>
             <ItemTitle className="line-clamp-none block max-w-[78ch] text-compact font-medium leading-6 group-hover/item:text-primary"><ScientificText text={item.title} /></ItemTitle>
-            <ItemDescription className="line-clamp-none flex flex-wrap gap-x-2 gap-y-1 text-meta"><span className="font-mono text-micro">{item.declaration}</span>{item.group_id ? <><span aria-hidden>·</span><span>{formalConjecturesCollection.data.groups.find(({ id }) => id === item.group_id)?.title}</span></> : null}</ItemDescription>
+            <ItemDescription className="line-clamp-none flex flex-wrap gap-x-2 gap-y-1 text-meta"><span className="font-mono text-micro">{item.declaration}</span>{groupTitle(item) ? <><span aria-hidden>·</span><span>{groupTitle(item)}</span></> : null}</ItemDescription>
           </ItemContent>
           {/* Fixed bases keep the two aligned columns the grid template gave. */}
           <ItemActions className="text-meta sm:w-36 sm:justify-start">{item.source_family}</ItemActions>

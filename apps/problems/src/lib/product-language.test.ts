@@ -1,5 +1,5 @@
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { readdirSync, readFileSync } from "node:fs";
+import { join, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { stateAxesByWord } from "@vela/ui/vela/status-badge";
 import { kindLabel, recordHeading, recordTitle, stateAxis, stateLabel, stateOptionGroups } from "./product-language";
@@ -84,25 +84,52 @@ describe("current product language", () => {
        exclusion is scoped to the global spine, because a Problem's own
        sections legitimately carry some of the same words. */
     const spine = sidebar.slice(sidebar.indexOf("const PRIMARY_DESTINATIONS"), sidebar.indexOf("export function AppSidebar"));
-    for (const label of ["Search", "Research map", "Release details", "Repositories", "Sources", "Assertions", "Proposed changes"]) {
+    for (const label of ["Search", "Research map", "Release details", "Repositories", "Sources", "Claims", "Proposed changes"]) {
       expect(spine).not.toContain(`label: "${label}"`);
     }
     /* One control names the Problem's sections, and it is the Problem's own
        header. The rail carried them for a while; the page then named the same
        object three times and offered no way out of it. */
     expect(sidebar).not.toContain("PROBLEM_SECTIONS");
-    /* The row lives in `problem-section-nav.tsx` now: keeping the open section
-       scrolled into view needs a client boundary, and the header is a server
-       component. The header still owns it — it renders nothing else. */
-    expect(source("components/vela/problem-header.tsx")).toContain("<ProblemSectionNav");
-    expect(source("components/vela/problem-section-nav.tsx")).toContain('aria-label="Problem sections"');
+    /* One row component for every object with sections. Keeping the open
+       section scrolled into view needs a client boundary and both headers are
+       server components, so the row is its own file — shared, not copied. */
+    expect(source("components/vela/problem-header.tsx")).toContain("<SectionNav");
+    expect(source("components/vela/problem-header.tsx")).toContain('label="Problem sections"');
+    expect(source("components/vela/repository-section-nav.tsx")).toContain("<SectionNav");
+    expect(source("components/vela/repository-section-nav.tsx")).toContain('label="Repository sections"');
+    /* The rail no longer carries any object's sections. */
+    expect(sidebar).not.toContain("REPOSITORY_SECTIONS");
     expect(source("components/vela/problem-overview-reference.tsx")).not.toContain('aria-label="Problem sections"');
     /* The repository tab bar owns section naming; the header carries only the
        ancestor it does not provide. */
     expect(source("components/vela/app-header.tsx")).not.toContain('repositoryCollectionTitles');
     expect(source("app/repositories/[slug]/claims/page.tsx")).toContain(
-      'RouteTitle title="Assertions"',
+      'RouteTitle title="Claims"',
     );
+  });
+
+  /* One noun per object on the Repository plane. "Assertions" and "Claims" both
+     named the same ledger — in the section control, the route title and the app
+     header — while the URL, the `vcl_` prefix and every row said Claim. Claim is
+     one of the four primitives this product exists to teach, so the split was
+     teaching the reader that there were two objects. */
+  it("names the Repository ledger with one noun", () => {
+    /* Scoped to three files, this passed while the command palette, the
+       Proposals page and the ledger's own count still said Assertions. The
+       object's name is a product-wide fact, so the check is too. `assertion`
+       stays available as the name of a Claim's *field* — `AssertionText`,
+       `parseSourceAssertion`, "Assertion kind" — which is a different thing
+       from the object and is why this looks for the object's spellings only. */
+    const root = resolve(process.cwd());
+    const files = readdirSync(join(root, "src"), { recursive: true, encoding: "utf8" })
+      .filter((file) => /\.tsx?$/u.test(file) && !file.includes(".test."));
+    const offenders = files.filter((file) => {
+      const text = readFileSync(join(root, "src", file), "utf8");
+      return />Assertions</u.test(text) || /"Assertions"/u.test(text) || /\bassertions"\s*:/u.test(text)
+        || /\? "assertion" : "assertions"/u.test(text);
+    });
+    expect(offenders).toEqual([]);
   });
 
   it("uses reader-facing contribution labels while preserving exact protocol kinds in provenance", () => {

@@ -90,7 +90,12 @@ function CurrentResult({ state, basePath }: { state: State; basePath: string }) 
 
       <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_19rem]">
         <div className="min-w-0 p-5 sm:p-7">
-          <p className="line-clamp-4 max-w-[78ch] text-[clamp(1.05rem,1.5vw,1.25rem)] leading-8"><AssertionText text={claim.assertion} /></p>
+          {/* Unclamped. This is the accepted Result's own assertion — the subject of
+              the page — and `line-clamp-4` cut a 782-character assertion at four
+              lines with no expand control and no link to the full text beside
+              it. An ellipsis is not a reading of exact scientific state. The
+              measure already caps the line length; the card has the height. */}
+          <p className="max-w-[78ch] text-[clamp(1.05rem,1.5vw,1.25rem)] leading-8"><AssertionText text={claim.assertion} /></p>
           {review?.producer_package?.submitted_at ? <p className="mt-5 text-meta text-muted-foreground">Submitted <time dateTime={review.producer_package.submitted_at}>{formatDate(review.producer_package.submitted_at)}</time></p> : null}
 
           <section aria-labelledby="checks-heading" className="mt-8">
@@ -123,7 +128,7 @@ function CurrentResult({ state, basePath }: { state: State; basePath: string }) 
                       most likely to assume away, so it is stated rather than
                       disclosed. A pass that is silent about its limits reads
                       as a pass without any. */}
-                  {check.does_not_establish?.length ? <p className="mt-2 max-w-[72ch] rounded-md bg-status-caution/8 px-2.5 py-2 text-micro leading-5 text-muted-foreground"><span className="font-medium text-foreground">Does not establish:</span> {check.does_not_establish.join("; ")}</p> : null}
+                  {check.does_not_establish?.length ? <p className="mt-2 max-w-[72ch] rounded-md bg-status-caution/8 px-2.5 py-2 text-micro leading-5 text-muted-foreground"><span className="font-medium text-foreground">Does not establish:</span> {check.does_not_establish.join(" ")}</p> : null}
                 </ItemContent>
                 {/* A Badge is `shrink-0 whitespace-nowrap`, and these two are
                     long ("Independent · 1 shared"). Beside the content on a

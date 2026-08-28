@@ -5,7 +5,6 @@ import { allRepositories, compositeSearchRoot, formalConjecturesCollectionRoot, 
 import { AppShell } from "@/components/vela/app-shell";
 import { authConfiguration } from "@/lib/auth";
 import { publishedProblemCollections } from "@/lib/published-problem-collections";
-import "@react-sigma/core/lib/style.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -16,7 +15,15 @@ export const metadata: Metadata = {
   },
   description: "Find scientific problems, understand the current evidence, and contribute work.",
   alternates: { canonical: "/" },
-  icons: { icon: "/favicon.svg" },
+  /* A PNG beside the SVG, and an apple-touch-icon. With only the SVG declared,
+     every fresh browser still asked for `/favicon.ico` and got the app's 404 —
+     the one 4xx the product served. Both files are the brand package's own
+     exports rather than new artwork. */
+  icons: {
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }, { url: "/favicon.png", type: "image/png", sizes: "32x32" }],
+    shortcut: "/favicon.png",
+    apple: "/apple-touch-icon.png",
+  },
   robots: { index: true, follow: true },
 };
 
