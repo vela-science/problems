@@ -78,7 +78,7 @@ describe("AppSidebar", () => {
        delivers one is the clearest naming break in the product, so it moved
        to About with the rest of the protocol and release detail. The route
        itself stays reachable: it is published. */
-    for (const label of ["Search", "Research map", "Release details", "Repositories", "Assertions", "Proposed changes", "Frontiers"]) {
+    for (const label of ["Search", "Research map", "Release details", "Repositories", "Claims", "Proposed changes", "Frontiers"]) {
       expect(screen.queryByRole("link", { name: label })).not.toBeInTheDocument();
     }
     expect(screen.queryByText("Explore")).not.toBeInTheDocument();
@@ -98,7 +98,7 @@ describe("AppSidebar", () => {
        already followed — two object types had two navigation models and a
        reader had nothing to predict from. The rail moves between objects; an
        object's header moves between its sections. */
-    for (const section of ["Assertions", "Commits", "Problem ledger", "Proposed changes", "Reproduce"]) {
+    for (const section of ["Claims", "Commits", "Problem ledger", "Proposed changes", "Reproduce"]) {
       expect(screen.queryByRole("link", { name: section })).not.toBeInTheDocument();
     }
   });

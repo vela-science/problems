@@ -84,7 +84,7 @@ describe("current product language", () => {
        exclusion is scoped to the global spine, because a Problem's own
        sections legitimately carry some of the same words. */
     const spine = sidebar.slice(sidebar.indexOf("const PRIMARY_DESTINATIONS"), sidebar.indexOf("export function AppSidebar"));
-    for (const label of ["Search", "Research map", "Release details", "Repositories", "Sources", "Assertions", "Proposed changes"]) {
+    for (const label of ["Search", "Research map", "Release details", "Repositories", "Sources", "Claims", "Proposed changes"]) {
       expect(spine).not.toContain(`label: "${label}"`);
     }
     /* One control names the Problem's sections, and it is the Problem's own
@@ -105,8 +105,23 @@ describe("current product language", () => {
        ancestor it does not provide. */
     expect(source("components/vela/app-header.tsx")).not.toContain('repositoryCollectionTitles');
     expect(source("app/repositories/[slug]/claims/page.tsx")).toContain(
-      'RouteTitle title="Assertions"',
+      'RouteTitle title="Claims"',
     );
+  });
+
+  /* One noun per object on the Repository plane. "Assertions" and "Claims" both
+     named the same ledger — in the section control, the route title and the app
+     header — while the URL, the `vcl_` prefix and every row said Claim. Claim is
+     one of the four primitives this product exists to teach, so the split was
+     teaching the reader that there were two objects. */
+  it("names the Repository ledger with one noun", () => {
+    for (const file of [
+      "components/vela/repository-section-nav.tsx",
+      "components/vela/app-header.tsx",
+      "app/repositories/[slug]/claims/page.tsx",
+    ]) {
+      expect(source(file)).not.toContain('"Assertions"');
+    }
   });
 
   it("uses reader-facing contribution labels while preserving exact protocol kinds in provenance", () => {

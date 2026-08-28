@@ -24,7 +24,7 @@ type PublishedRepository = {
 };
 
 const sectionTitles: Record<string, string> = {
-  claims: "Assertions",
+  claims: "Claims",
   problems: "Problems",
   proposals: "Proposed changes",
   graph: "Research map",

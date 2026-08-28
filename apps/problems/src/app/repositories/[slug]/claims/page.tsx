@@ -136,7 +136,7 @@ export default async function ClaimsPage({
 
   return (
     <PageShell archetype="data">
-      <RouteTitle title="Assertions" scope={repository.status.repository.name} />
+      <RouteTitle title="Claims" scope={repository.status.repository.name} />
 
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
         {/* Range-of-total phrasing adapted from Tailwind Plus (licensed for this

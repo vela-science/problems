@@ -26,7 +26,11 @@ const SECTIONS: Array<{ key: string; label: string }> = [
      whole product. This is the Repository's own ledger, which is what its page
      calls it. */
   { key: "problems", label: "Problem ledger" },
-  { key: "claims", label: "Assertions" },
+  /* Claim is one of the four primitives this product teaches, and it is what
+     the URL, the `vcl_` record prefix, the ledger's own heading and every row
+     on the page already say. This control used to give the same object a
+     second name, which taught the reader that there were two objects. */
+  { key: "claims", label: "Claims" },
   { key: "proposals", label: "Proposed changes" },
   { key: "commits", label: "Commits" },
   { key: "reproduce", label: "Reproduce" },
