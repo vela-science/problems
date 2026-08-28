@@ -23,10 +23,19 @@
 }
 
 
+/* `margin-left: auto` only once the row is wide enough to hold everything.
+ *
+ * At 375px the title and badge fill the first line, so the actions wrapped to
+ * a second line and `auto` pushed them to the right edge — a copy button and
+ * "Start work" alone against a hand's width of nothing. Wrapped, they belong
+ * at the start of their line like any other wrapped flex content. */
 .actions {
   display: flex;
   gap: 0.45rem;
-  margin-left: auto;
+}
+
+@media (min-width: 48rem) {
+  .actions { margin-left: auto; }
 }
 
 .title {
@@ -72,6 +81,28 @@
 
 .tabs::-webkit-scrollbar { display: none; }
 
+/* The continuation cue DESIGN.md asks for. `data-overflow` is set by
+   `problem-section-nav.tsx` from the row's own scroll position, so the fade
+   appears on whichever side still has tabs behind it and disappears when the
+   row fits. The gradient is a mask: the values are alpha, not colour. */
+.tabs[data-overflow="end"] {
+  mask-image: linear-gradient(to right, rgb(0 0 0 / 1) calc(100% - 2.25rem), rgb(0 0 0 / 0) 100%);
+}
+
+.tabs[data-overflow="start"] {
+  mask-image: linear-gradient(to right, rgb(0 0 0 / 0) 0, rgb(0 0 0 / 1) 2.25rem);
+}
+
+.tabs[data-overflow="both"] {
+  mask-image: linear-gradient(
+    to right,
+    rgb(0 0 0 / 0) 0,
+    rgb(0 0 0 / 1) 2.25rem,
+    rgb(0 0 0 / 1) calc(100% - 2.25rem),
+    rgb(0 0 0 / 0) 100%
+  );
+}
+
 .tab {
   display: inline-flex;
   align-items: center;
@@ -84,6 +115,13 @@
   letter-spacing: -0.005em;
   color: var(--ph-muted);
   white-space: nowrap;
+}
+
+/* Primary navigation on every Problem, so it meets the touch target where the
+   pointer is coarse. `globals.css` already does this for buttons, inputs and
+   select triggers; these are anchors, so they were never covered. */
+@media (pointer: coarse) {
+  .tab { height: 2.75rem; }
 }
 
 .tab:hover {

@@ -171,7 +171,7 @@ export default async function CommitsPage({
                         ) : <span className="text-muted-foreground">unchanged</span>}
                         {delta.pending_removed.length ? (
                           <>
-                            <span aria-hidden className="text-muted-foreground/50">·</span>
+                            <span aria-hidden className="text-muted-foreground">·</span>
                             <span className="text-muted-foreground">
                               {delta.pending_removed.length} left review
                             </span>
@@ -195,13 +195,13 @@ export default async function CommitsPage({
                     {commit.machine ? (
                       <>
                         <span className="font-mono">protocol</span>
-                        <span aria-hidden className="text-muted-foreground/50">·</span>
+                        <span aria-hidden className="text-muted-foreground">·</span>
                       </>
                     ) : null}
                     <Actor name={commit.author_name} kind={commit.machine ? "agent" : "human"} />
-                    <span aria-hidden className="text-muted-foreground/50">·</span>
+                    <span aria-hidden className="text-muted-foreground">·</span>
                     <RecordId value={commit.sha} prefix={12} copy={false} />
-                    <span aria-hidden className="text-muted-foreground/50">·</span>
+                    <span aria-hidden className="text-muted-foreground">·</span>
                     <span>{commit.changed_paths.length.toLocaleString()} {commit.changed_paths.length === 1 ? "path" : "paths"}</span>
                   </p>
                 </ItemContent>

@@ -70,7 +70,7 @@ export function LeanBlock({ code, path, declaration, chips, actions }: {
     <pre className="overflow-x-auto px-0 py-3 text-compact leading-6" tabIndex={0}>
       <code className="grid font-mono">
         {lines.map((line, index) => <span key={index} className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 px-3 hover:bg-muted/25">
-          <span aria-hidden className="select-none text-right tabular-nums text-muted-foreground/60" style={{ minWidth: `${gutter}ch` }}>{index + 1}</span>
+          <span aria-hidden className="select-none text-right tabular-nums text-muted-foreground" style={{ minWidth: `${gutter}ch` }}>{index + 1}</span>
           <span className="whitespace-pre">{highlightLine(line, String(index))}</span>
         </span>)}
       </code>

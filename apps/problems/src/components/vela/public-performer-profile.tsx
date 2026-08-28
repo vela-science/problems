@@ -81,8 +81,8 @@ export function PublicPerformerProfile({
   const kind: PublicPerformerKind | "account" = performer?.kind ?? "account";
   const links = profile ? Object.entries(profile.links) : [];
 
-  const avatar = <Avatar className={`${profile ? "size-20" : "size-14"} shrink-0 ${kind === "agent" ? "rounded-xl bg-primary/10" : "bg-primary/8"}`}>
-    <AvatarFallback className={kind === "agent" ? "rounded-xl text-label font-semibold text-primary" : "text-title"}>{initials(name, kind)}</AvatarFallback>
+  const avatar = <Avatar className={`${profile ? "size-20" : "size-14"} shrink-0 ${kind === "agent" ? "rounded-xl vela-machine-mark" : "bg-primary/8"}`}>
+    <AvatarFallback className={kind === "agent" ? "rounded-xl text-label font-semibold" : "text-title"}>{initials(name, kind)}</AvatarFallback>
   </Avatar>;
   const badges = <div className="flex flex-wrap gap-2">
     <Badge>{performerKindLabel(kind)}</Badge>

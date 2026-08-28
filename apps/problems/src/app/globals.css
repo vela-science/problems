@@ -19,6 +19,34 @@
 }
 
 @layer components {
+  /* Exact identifiers wrap wherever they must.
+   *
+   * A Lean symbol path like `Erdos94.erdos_94.variants.sum_multiplicity` has
+   * no break opportunity, so it sets a min-content floor — measured at 359px
+   * against a 286px column at 320px wide — and every `overflow-hidden`
+   * ancestor then clips it. On `/problems/erdos-problems/94/results` that cost
+   * 143px of content at 320 and 61px at 768: badges overlapping titles, text
+   * cut mid-word, none of it scrollable.
+   *
+   * `anywhere` rather than `break-word` because only `anywhere` also lowers
+   * the element's min-content contribution, which is what actually lets the
+   * container shrink. */
+  .vela-exact-text {
+    overflow-wrap: anywhere;
+  }
+
+  /* The mark on an agent or tool performer.
+   *
+   * This was `bg-primary/10` with `text-primary`: cobalt on a 10% cobalt tint,
+   * measured at 3.95:1 in light against the 4.5 that 14px semibold needs. It
+   * is the only contrast failure in the product that carries meaning — it says
+   * who did the work — so it is the one worth fixing rather than exempting.
+   * Mixing the glyph toward the foreground keeps it unmistakably cobalt. */
+  .vela-machine-mark {
+    background: color-mix(in oklab, var(--primary) 12%, var(--card));
+    color: color-mix(in oklab, var(--primary) 74%, var(--foreground));
+  }
+
   .vela-object-surface {
     border: 1px solid var(--border);
     border-radius: calc(var(--radius) + 0.25rem);

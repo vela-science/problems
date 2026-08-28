@@ -186,9 +186,16 @@ export function ProblemOverview({ state, route }: { state: State; route: string 
             aria-hidden
             className={check.outcome === "pass" ? "size-4 text-status-progress" : "size-4 text-muted-foreground"}
           />
+          {/* The row used to print `check.property` twice — once sentence-cased
+              as the title, then again under it as "Scope: …". Same string, no
+              second reading. What a check does not establish is the fact worth
+              adding here, and it is the one a reader is most likely to assume
+              away; where the record has none, the title stands alone. */}
           <div className={styles.rowTitle}>
             {sentenceCase(humanize(check.property, "Scope not recorded"))}
-            <div className={styles.rowMeta}>Scope: {humanize(check.property, "not recorded")}</div>
+            {check.does_not_establish?.length
+              ? <div className={styles.rowMeta}>Does not establish: {check.does_not_establish.join("; ")}</div>
+              : null}
           </div>
           <span className="text-right text-[0.78125rem] capitalize">{humanize(check.outcome)}</span>
         </div>) : <div className={styles.note}>No check is retained for this Problem.</div>}

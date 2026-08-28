@@ -146,7 +146,7 @@ export function ClaimRow({ claim, href, verified, kindHref }: ClaimRowProps) {
             lead ? <RecordId key="id" value={claim.id} label="Assertion identifier" /> : null,
           ].filter(Boolean).map((fact, index) => (
             <span key={(fact as { key: string }).key} className="inline-flex items-center gap-1.5">
-              {index > 0 ? <span aria-hidden className="text-muted-foreground/50">·</span> : null}
+              {index > 0 ? <span aria-hidden className="text-muted-foreground">·</span> : null}
               {fact}
             </span>
           ))}

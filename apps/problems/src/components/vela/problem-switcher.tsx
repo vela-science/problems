@@ -60,7 +60,7 @@ export function ProblemSwitcher({
         aria-label={`${collectionName} ${label}. Switch Problem or collection`}
       >
         <span className="hidden min-w-0 shrink truncate text-muted-foreground sm:inline">{collectionName}</span>
-        <span aria-hidden className="hidden text-muted-foreground/50 sm:inline">/</span>
+        <span aria-hidden className="hidden text-muted-foreground sm:inline">/</span>
         <span className="min-w-0 truncate font-mono text-label text-foreground">{label}</span>
         <HugeiconsIcon icon={UnfoldMoreIcon} aria-hidden className="size-3.5 shrink-0 text-muted-foreground" />
       </PopoverTrigger>

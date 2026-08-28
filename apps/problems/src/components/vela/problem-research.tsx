@@ -125,7 +125,13 @@ function CurrentResult({ state, basePath }: { state: State; basePath: string }) 
                       as a pass without any. */}
                   {check.does_not_establish?.length ? <p className="mt-2 max-w-[72ch] rounded-md bg-status-caution/8 px-2.5 py-2 text-micro leading-5 text-muted-foreground"><span className="font-medium text-foreground">Does not establish:</span> {check.does_not_establish.join("; ")}</p> : null}
                 </ItemContent>
-                <ItemActions className="flex-col items-end gap-1.5">
+                {/* A Badge is `shrink-0 whitespace-nowrap`, and these two are
+                    long ("Independent · 1 shared"). Beside the content on a
+                    narrow row they took the width and left the check's own
+                    title and attribution in a 35px column. `Item` already
+                    wraps, so below `sm` the badges take their own line and the
+                    content gets the row back. */}
+                <ItemActions className="w-full flex-row flex-wrap justify-start gap-1.5 sm:w-auto sm:flex-col sm:items-end">
                   <Badge variant={check.outcome === "pass" ? "default" : "outline"}>{outcomeLabel(check.outcome)}</Badge>
                   <Badge variant="outline" className={independence.className}>{independence.label}</Badge>
                 </ItemActions>
@@ -149,7 +155,7 @@ function CurrentResult({ state, basePath }: { state: State; basePath: string }) 
                 <ItemMedia variant="icon" className="mt-0.5 size-8 rounded-md bg-status-evidence/10 text-status-evidence"><HugeiconsIcon icon={SourceCodeIcon} aria-hidden /></ItemMedia>
                 <ItemContent>
                   <ItemTitle className="line-clamp-none">{occurrence?.source_label ?? binding.source_id}</ItemTitle>
-                  <ItemDescription className="line-clamp-none font-mono text-micro">{binding.native_id}</ItemDescription>
+                  <ItemDescription className="vela-exact-text line-clamp-none font-mono text-micro">{binding.native_id}</ItemDescription>
                   <p className="text-micro text-muted-foreground">{sourceRelationLabel(binding.relation_kind)} · {humanize(binding.translation_disposition, "mapping not resolved")} · no authority effect</p>
                 </ItemContent>
                 <ItemActions><span className="hidden text-micro text-muted-foreground sm:inline">{sourceRelationLabel(binding.relation_kind)}</span></ItemActions>

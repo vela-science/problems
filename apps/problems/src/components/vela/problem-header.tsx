@@ -4,6 +4,7 @@ import { Button } from "@vela/ui/components/button";
 import { CopyButton } from "@vela/ui/vela/copy-button";
 import { ScientificText } from "@vela/ui/vela/scientific-text";
 import { Popover, PopoverContent, PopoverTrigger } from "@vela/ui/components/popover";
+import { ProblemSectionNav } from "@/components/vela/problem-section-nav";
 import { problemReading, readingBadge, readingBasis } from "@/lib/problem-reading";
 import { problemLabel, resolveProblemStatement, statementParagraphs } from "@/lib/problem-statement";
 import type { ScientificProblemState } from "@/lib/scientific-state";
@@ -85,21 +86,14 @@ export function ProblemHeader({ state, route, current }: {
       ? <p className={styles.question}><ScientificText text={question} /></p>
       : <p className={styles.question}>No written statement is retained for this problem.</p>}
 
-    <nav className={styles.tabs} aria-label="Problem sections">
-      {SECTIONS.map(({ key, label }) => {
-        const href = key === "overview" ? route : `${route}/${key}`;
-        const active = current === key;
-        const count = key === "overview" ? 0 : counts[key];
-        return <Link
-          key={key}
-          href={href}
-          className={styles.tab}
-          aria-current={active ? "page" : undefined}
-        >
-          {label}
-          {count > 0 ? <span className={styles.count}>{count}</span> : null}
-        </Link>;
-      })}
-    </nav>
+    <ProblemSectionNav
+      current={current}
+      sections={SECTIONS.map(({ key, label }) => ({
+        key,
+        label,
+        href: key === "overview" ? route : `${route}/${key}`,
+        count: key === "overview" ? 0 : counts[key],
+      }))}
+    />
   </header>;
 }

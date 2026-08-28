@@ -233,7 +233,7 @@ export function AppHeader({
                 collapses below `sm`; the plain span stays, and so must the
                 separator before it. */}
             {trail.repository ? (
-              <span aria-hidden className={trail.sectionHref ? "hidden text-muted-foreground/60 sm:inline" : "text-muted-foreground/60"}>/</span>
+              <span aria-hidden className={trail.sectionHref ? "hidden text-muted-foreground sm:inline" : "text-muted-foreground"}>/</span>
             ) : null}
             {trail.sectionHref ? (
               <Link href={trail.sectionHref} className="hidden min-h-6 min-w-0 shrink items-center truncate hover:text-foreground hover:underline sm:inline-flex">
@@ -257,8 +257,8 @@ export function AppHeader({
               aria-hidden
               className={
                 trail.repository || (trail.section && !trail.sectionHref)
-                  ? "text-muted-foreground/60"
-                  : "hidden text-muted-foreground/60 sm:inline"
+                  ? "text-muted-foreground"
+                  : "hidden text-muted-foreground sm:inline"
               }
             >
               /
@@ -275,7 +275,7 @@ export function AppHeader({
         ) : null}
         {trail.view ? (
           <>
-            <span aria-hidden className="text-muted-foreground/60">/</span>
+            <span aria-hidden className="text-muted-foreground">/</span>
             <span className="min-w-0 truncate font-medium text-foreground" aria-current="page">{trail.view.label}</span>
           </>
         ) : null}

@@ -53,15 +53,23 @@ export function HomeStatePanel({ entries, repositoryName, root, openCount }: {
           because nothing is retained after the last Decision. */}
       <span aria-hidden className="absolute bottom-8 left-[27px] top-7 w-px bg-border" />
 
+      {/* "Result accepted", not "accepted", and no success colour on the node.
+          A green dot beside `Erdős problem 94` followed by the bare word
+          `accepted` parses at a glance as the Problem being solved — which is
+          the one reading this product exists to prevent, and the only place it
+          was undefended. The Problem page refuses it four ways; Home said the
+          correcting `Scope:` line third and in `text-micro`. What is accepted
+          is a Result, so the label says so, and the node uses the evidence
+          token rather than the semantic success token. */}
       {entries.map((entry) => <li key={entry.number} className="relative min-w-0">
-        <span aria-hidden className="absolute -left-6 top-1 size-[11px] rounded-full bg-status-progress ring-2 ring-card" />
+        <span aria-hidden className="absolute -left-6 top-1 size-[11px] rounded-full bg-[var(--status-evidence)] ring-2 ring-card" />
         <Link
           href={entry.href}
           className="group/entry block min-w-0 rounded-md focus-visible:outline-2 focus-visible:outline-offset-2"
         >
           <span className="flex flex-wrap items-baseline gap-x-2">
             <span className="text-compact font-semibold group-hover/entry:text-primary">Erdős problem {entry.number}</span>
-            <span className="text-micro text-muted-foreground">accepted{entry.reviewedAt ? ` · ${formatDate(entry.reviewedAt)}` : ""}</span>
+            <span className="text-micro text-muted-foreground">Result accepted{entry.reviewedAt ? ` · ${formatDate(entry.reviewedAt)}` : ""}</span>
           </span>
           <span className="mt-1 block text-meta leading-6 text-foreground">
             <AssertionText text={entry.headline} />

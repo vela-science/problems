@@ -62,9 +62,9 @@ export function ProposalLedgerRows({ entries }: { entries: ProposalEntry[] }) {
                 {entry.status.replaceAll("_", " ")}
               </StatusBadge>
               <span>{entry.repositoryName}</span>
-              <span aria-hidden className="text-muted-foreground/50">·</span>
+              <span aria-hidden className="text-muted-foreground">·</span>
               <span className="font-mono">{entry.kind}</span>
-              <span aria-hidden className="text-muted-foreground/50">·</span>
+              <span aria-hidden className="text-muted-foreground">·</span>
               <RecordId value={entry.proposalId} prefix={14} copy={false} />
             </div>
 

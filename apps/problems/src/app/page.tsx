@@ -150,17 +150,17 @@ export default async function HomePage() {
 
         <div className={styles.grid}>
           <div className="min-w-0">
+            {/* Two facts, not three. "{n} with reviewed evidence" was added
+                here when it had no other home; the coverage bar below now
+                states the same number against its denominator, which is the
+                stronger telling, so this one is a restatement five lines
+                above it. The separators dropped their opacity modifier: at
+                `/50` they measured 2.23:1 in light and 2.73:1 in dark. */}
             <p className={styles.pill}>
               <span aria-hidden className="size-1.5 rounded-full bg-status-progress" />
               <span>{catalog.length.toLocaleString()} published Problems</span>
-              <span aria-hidden className="text-muted-foreground/50">·</span>
+              <span aria-hidden className="text-muted-foreground">·</span>
               <span>{formalCount} rights-reviewed formalizations</span>
-              <span aria-hidden className="text-muted-foreground/50">·</span>
-              {/* The number a newcomer most needs and was least likely to
-                  find. It lived in a collection card halfway down the page,
-                  where "2 with an accepted Result" reads as a detail rather
-                  than as the shape of the whole release. */}
-              <span>{assessed.length} with reviewed evidence</span>
             </p>
 
             <h1 className={styles.title}>Open problems and the evidence around them</h1>
@@ -261,7 +261,7 @@ export default async function HomePage() {
             icon={BookOpen01Icon}
             name="Erdős Problems"
             badge="Published collection"
-            detail={`${catalog.length.toLocaleString()} numbered Problems · ${assessed.length} with an accepted Result`}
+            detail={`${catalog.length.toLocaleString()} numbered Problems`}
           />
           <CollectionCard
             href={FORMAL_COLLECTION_PATH}

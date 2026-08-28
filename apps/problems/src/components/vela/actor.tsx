@@ -47,8 +47,8 @@ export function Actor({
   const machine = isMachine(kind);
   const initials = actorInitials(name, machine);
   const content = <>
-    <Avatar className={cn("size-5", machine && "rounded-md bg-primary/10 text-primary")}>
-      <AvatarFallback className={cn("text-micro", machine && "rounded-md bg-primary/10 font-semibold text-primary")}>{initials}</AvatarFallback>
+    <Avatar className={cn("size-5", machine && "rounded-md vela-machine-mark")}>
+      <AvatarFallback className={cn("text-micro", machine && "rounded-md vela-machine-mark font-semibold")}>{initials}</AvatarFallback>
     </Avatar>
     <span className="min-w-0 truncate">{name}</span>
   </>;
@@ -77,8 +77,8 @@ export function Performer({
   if (!name) return null;
   const machine = isMachine(kind);
   const content = <>
-    <Avatar className={cn("size-8 shrink-0", machine && "rounded-md bg-primary/10 text-primary")}>
-      <AvatarFallback className={cn("text-micro font-semibold", machine && "rounded-md bg-primary/10 text-primary")}>{actorInitials(name, machine)}</AvatarFallback>
+    <Avatar className={cn("size-8 shrink-0", machine && "rounded-md vela-machine-mark")}>
+      <AvatarFallback className={cn("text-micro font-semibold", machine && "rounded-md vela-machine-mark")}>{actorInitials(name, machine)}</AvatarFallback>
     </Avatar>
     <span className="min-w-0">
       <span className="block truncate text-compact font-semibold">{name}</span>
