@@ -59,6 +59,16 @@ test("primary foreground pairs pass WCAG AA", () => {
   for (const status of ["evidence", "progress", "caution", "conflict"]) {
     assert.ok(contrast(tokens.color.context.light[status].$value, "#F7F6F2") >= 4.5);
   }
+  /* The dark canvas, which nothing checked. `evidence` shipped at 4.19:1 on the
+     raised dark surface for six chips on every Problem history — the light half
+     was asserted here and the dark half was not, so the token that had no
+     dark-context variant was the one that failed. A status colour is only a
+     status colour if it can be read on the ground it is painted on. */
+  const darkGround = "#19252E";
+  for (const status of ["evidence", "progress", "caution", "conflict"]) {
+    const value = tokens.color.context.dark[status]?.$value ?? tokens.color.semantic[status].$value;
+    assert.ok(contrast(value, darkGround) >= 4.5, `${status} is ${contrast(value, darkGround).toFixed(2)}:1 on the dark surface`);
+  }
   assert.match(editorialFonts, /font-family: "Gambetta";[\s\S]*?gambetta-300-700-latin\.woff2/u);
   assert.match(editorialFonts, /font-family: "Gambetta";[\s\S]*?gambetta-italic-300-700-latin\.woff2/u);
   assert.match(editorialFonts, /font-family: "Zodiak";[\s\S]*?zodiak-100-900-latin\.woff2/u);

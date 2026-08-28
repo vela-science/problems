@@ -201,7 +201,17 @@ function ProblemRows({ problems, statements }: {
                 </span>
               </Link>
               <span className="mt-1.5 flex flex-wrap gap-x-2 text-meta text-muted-foreground @2xl/directory:hidden">
-                <span className="capitalize">{record.declared_status}</span><span>{record.formalized ? "Formalized" : "No formal declaration"}</span>{record.local_standing ? <span>Result {record.local_standing.replaceAll("_", " ")}</span> : null}
+                {/* "Source says", because the column header that said it is
+                    hidden here. Above the breakpoint the source's word sits
+                    under a `Source says` heading with `Result here` beside it;
+                    below it, the heading is gone and the word rendered bare —
+                    while the site's own value on the same line kept its
+                    `Result` prefix. So a phone showed "proved · Result
+                    accepted" with only one of the two attributed, which is the
+                    single comprehension error this product says it must never
+                    cause. The columns carry their attribution in a header; these
+                    chips have to carry it themselves. */}
+                <span><span className="text-muted-foreground/80">Source says</span> <span className="capitalize">{record.declared_status}</span></span><span>{record.formalized ? "Formalized" : "No formal declaration"}</span>{record.local_standing ? <span>Result here {record.local_standing.replaceAll("_", " ")}</span> : null}
               </span>
             </TableCell>
             <TableCell className="hidden align-baseline text-meta capitalize @2xl/directory:table-cell">

@@ -27,6 +27,7 @@ const primitives = {
   "color-light-caution": tokens.color.context.light.caution.$value,
   "color-light-conflict": tokens.color.context.light.conflict.$value,
   "color-light-direction": tokens.color.context.light.direction.$value,
+  "color-dark-evidence": tokens.color.context.dark.evidence.$value,
   "color-dark-conflict": tokens.color.context.dark.conflict.$value,
   "font-display": tokens.font.display.$value,
   "font-body": tokens.font.body.$value,

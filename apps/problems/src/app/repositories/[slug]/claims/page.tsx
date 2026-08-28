@@ -144,7 +144,7 @@ export default async function ClaimsPage({
         <span className="font-mono text-micro tabular-nums text-muted-foreground">
           {pages > 1
             ? `Showing ${first.toLocaleString()}–${last.toLocaleString()} of ${result.total.toLocaleString()}`
-            : `${result.total.toLocaleString()} ${result.total === 1 ? "assertion" : "assertions"}`}
+            : `${result.total.toLocaleString()} ${result.total === 1 ? "claim" : "claims"}`}
         </span>
 
         {searchable ? (

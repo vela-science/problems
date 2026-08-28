@@ -1,5 +1,5 @@
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { readdirSync, readFileSync } from "node:fs";
+import { join, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { stateAxesByWord } from "@vela/ui/vela/status-badge";
 import { kindLabel, recordHeading, recordTitle, stateAxis, stateLabel, stateOptionGroups } from "./product-language";
@@ -115,13 +115,21 @@ describe("current product language", () => {
      one of the four primitives this product exists to teach, so the split was
      teaching the reader that there were two objects. */
   it("names the Repository ledger with one noun", () => {
-    for (const file of [
-      "components/vela/repository-section-nav.tsx",
-      "components/vela/app-header.tsx",
-      "app/repositories/[slug]/claims/page.tsx",
-    ]) {
-      expect(source(file)).not.toContain('"Assertions"');
-    }
+    /* Scoped to three files, this passed while the command palette, the
+       Proposals page and the ledger's own count still said Assertions. The
+       object's name is a product-wide fact, so the check is too. `assertion`
+       stays available as the name of a Claim's *field* — `AssertionText`,
+       `parseSourceAssertion`, "Assertion kind" — which is a different thing
+       from the object and is why this looks for the object's spellings only. */
+    const root = resolve(process.cwd());
+    const files = readdirSync(join(root, "src"), { recursive: true, encoding: "utf8" })
+      .filter((file) => /\.tsx?$/u.test(file) && !file.includes(".test."));
+    const offenders = files.filter((file) => {
+      const text = readFileSync(join(root, "src", file), "utf8");
+      return />Assertions</u.test(text) || /"Assertions"/u.test(text) || /\bassertions"\s*:/u.test(text)
+        || /\? "assertion" : "assertions"/u.test(text);
+    });
+    expect(offenders).toEqual([]);
   });
 
   it("uses reader-facing contribution labels while preserving exact protocol kinds in provenance", () => {

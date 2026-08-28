@@ -21,6 +21,7 @@ export const velaTokens = {
   "color-light-caution": "#805A16",
   "color-light-conflict": "#9C3F4A",
   "color-light-direction": "#846315",
+  "color-dark-evidence": "#5A9692",
   "color-dark-conflict": "#D97783",
   "font-display": "Zodiak, Georgia, serif",
   "font-body": "Gambetta, Georgia, serif",

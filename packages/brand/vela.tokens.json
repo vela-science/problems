@@ -106,6 +106,10 @@
         }
       },
       "dark": {
+        "evidence": {
+          "$value": "#5A9692",
+          "$type": "color"
+        },
         "conflict": {
           "$value": "#D97783",
           "$type": "color"

@@ -57,7 +57,7 @@
   --focus-ring: oklch(0.96 0.03 259);
   --sidebar: oklch(0.13 0.03 255); --sidebar-foreground: var(--foreground);
   --sidebar-accent: oklch(0.275 0.065 258); --sidebar-accent-foreground: var(--foreground);
-  --status-evidence: var(--vela-color-evidence); --status-progress: var(--vela-color-progress);
+  --status-evidence: var(--vela-color-dark-evidence); --status-progress: var(--vela-color-progress);
   --status-caution: var(--vela-color-caution); --status-conflict: var(--vela-color-dark-conflict);
   --direction: var(--primary);
   --command: oklch(0.298 0.006 260);

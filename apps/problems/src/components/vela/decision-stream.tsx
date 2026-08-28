@@ -113,8 +113,15 @@ export function DecisionStream({ entries }: { entries: DecisionEntry[] }) {
                     <RelativeTime className="shrink-0 text-micro text-muted-foreground" value={entry.recordedAt} />
                   </div>
 
+                  {/* `vela-exact-text`, because these assertions open with an
+                      unbreakable commit hash ("At lean-proofs commit 4233443…").
+                      Nothing could wrap it, so the line ran to 547px inside a
+                      244px column at 320 and was clipped mid-hash — no ellipsis,
+                      no scroll, no copy, and no signal that the string was
+                      incomplete. A truncated hash that looks whole is the one
+                      failure an exact-state product cannot ship. */}
                   <Link
-                    className="mt-1 block text-body underline-offset-2 hover:underline"
+                    className="vela-exact-text mt-1 block text-body underline-offset-2 hover:underline"
                     href={`/repositories/${entry.repository}/proposals/${encodeURIComponent(entry.proposalId)}`}
                   >
                     {entry.claim || entry.target || entry.proposalId}
@@ -149,9 +156,15 @@ export function DecisionStream({ entries }: { entries: DecisionEntry[] }) {
                     ) : null}
                     <RecordId value={entry.proposalId} copy={false} />
                   </div>
+                  {/* Through `RecordId`, the way the Proposal ledger renders the
+                      same field. Raw, it printed a 92-character principal in
+                      full — including a trailing `uid:501`, a local POSIX uid on
+                      a published page — with no truncation and no copy control,
+                      while its sibling surface truncated to 20 and kept the
+                      exact value in `sr-only`. One field, one rendering. */}
                   {entry.authorityPrincipalId ? (
                     <p className="mt-1 font-mono text-micro text-muted-foreground">
-                      Repository authority {entry.authorityPrincipalId}
+                      Repository authority <RecordId value={entry.authorityPrincipalId} prefix={20} copy={false} />
                     </p>
                   ) : null}
                 </div>

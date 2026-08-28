@@ -224,7 +224,7 @@ export function CommandPaletteProvider({
                 <>
                   <CommandGroup heading={`Current repository · ${currentRepository.slug}`}>
                     <CommandItem onSelect={() => navigate(`/repositories/${currentRepository.slug}`)}><HugeiconsIcon icon={GitFork} aria-hidden />Overview</CommandItem>
-                    <CommandItem onSelect={() => navigate(`/repositories/${currentRepository.slug}/claims`)}><HugeiconsIcon icon={FileSearch} aria-hidden />Assertions</CommandItem>
+                    <CommandItem onSelect={() => navigate(`/repositories/${currentRepository.slug}/claims`)}><HugeiconsIcon icon={FileSearch} aria-hidden />Claims</CommandItem>
                     <CommandItem onSelect={() => navigate(`/repositories/${currentRepository.slug}/problems`)}><HugeiconsIcon icon={ListTodo} aria-hidden />Problems</CommandItem>
                     <CommandItem onSelect={() => navigate(`/repositories/${currentRepository.slug}/contribute`)}><HugeiconsIcon icon={ListTodo} aria-hidden />Contribution handoff</CommandItem>
                     <CommandItem onSelect={() => navigate(`/repositories/${currentRepository.slug}/proposals`)}><HugeiconsIcon icon={ShieldCheck} aria-hidden />Proposed changes</CommandItem>

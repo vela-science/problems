@@ -81,7 +81,13 @@ describe("the Decision stream", () => {
     expect(markup).toContain("Human performer");
     expect(markup).toContain("Agent performer");
     expect(markup).toContain("entire:checkpoint:01KZSESSION");
-    expect(markup).toContain("Repository authority local:repository-authority");
+    /* The principal renders through `RecordId` now, as it already did on the
+       Proposal ledger: the exact value in `sr-only`, a 20-character handle
+       visible. Raw, this line printed a 92-character principal ending in a
+       local POSIX uid. The label and the exact value are both still here — they
+       are simply no longer one run of text. */
+    expect(markup).toContain("Repository authority");
+    expect(markup).toContain('<span class="sr-only">local:repository-authority</span>');
   });
 
   /* A withdrawal is the producer taking its own Proposal back. Listed on the
