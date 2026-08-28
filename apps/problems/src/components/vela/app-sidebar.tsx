@@ -9,7 +9,6 @@ import { usePathname } from "next/navigation";
 import {
   Activity01Icon,
   Home01Icon,
-  InboxUploadIcon,
   PuzzleIcon,
   WorkIcon,
 } from "@hugeicons/core-free-icons";
@@ -33,7 +32,6 @@ import {
 } from "@vela/ui/components/sidebar";
 import { BrandMark as VelaMark } from "@vela/ui/vela/brand-mark";
 import { useAccountState } from "@/components/vela/account-state";
-import { INFORMATION_ROUTES } from "@/components/vela/public-information-page";
 import { recentObjectsServerSnapshot, recentObjectsSnapshot, subscribeRecentObjects } from "@/lib/recent-objects";
 import type { PublishedProblemCollection } from "@/lib/problem-collections";
 
@@ -196,49 +194,6 @@ export function AppSidebar({ problemCollections = [{ namespace: "erdos-problems"
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup> : null}
-
-        <SidebarGroup className="mt-auto border-t border-sidebar-border py-2">
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  className="bg-sidebar-primary text-sidebar-primary-foreground hover:bg-[color-mix(in_oklch,var(--sidebar-primary),var(--foreground)_14%)] hover:text-sidebar-primary-foreground md:h-9"
-                  tooltip="Add contribution"
-                  isActive={pathname === "/contribute"}
-                  render={<Link href="/contribute" aria-current={pathname === "/contribute" ? "page" : undefined} onClick={closeMobileNavigation} />}
-                >
-                  <HugeiconsIcon icon={InboxUploadIcon} aria-hidden />
-                  <span>Add contribution</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Privacy, Terms, Accessibility and Contact were reachable only through
-            the command palette and the signed-in account menu, so a signed-out
-            visitor had no visible path to any of them — and a touch user has no
-            ⌘K to fall back on. They sit in the rail because it is the one piece
-            of chrome on every route. Hidden when the rail is collapsed to icons,
-            where a row of four words cannot render.
-
-            A `footer` rather than a `nav`: this is the product's `contentinfo`,
-            the landmark the shell had none of, and its ancestors here are plain
-            frames so the role applies. Verified by role rather than assumed — a
-            `footer` scoped to a `nav`, `aside` or `section` would silently be no
-            landmark at all. */}
-        <SidebarGroup className="border-t border-sidebar-border py-1 group-data-[collapsible=icon]:hidden">
-          <SidebarGroupContent>
-            <footer aria-label="Policies" className="flex flex-wrap items-center gap-x-3 px-2 text-micro">
-              {INFORMATION_ROUTES.map((route) => <Link
-                key={route.href}
-                href={route.href}
-                onClick={closeMobileNavigation}
-                className="inline-flex min-h-8 items-center rounded text-muted-foreground hover:text-sidebar-foreground hover:underline"
-              >{route.label}</Link>)}
-            </footer>
-          </SidebarGroupContent>
-        </SidebarGroup>
 
       </SidebarContent>
 

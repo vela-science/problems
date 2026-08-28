@@ -75,7 +75,11 @@ describe("current product language", () => {
     for (const label of ["Home", "Problems", "Updates", "Workspaces"]) {
       expect(sidebar).toContain(`label: "${label}"`);
     }
-    expect(sidebar).toContain("Add contribution");
+    /* Contribution is contextual, not a permanent slab in the rail: a Problem
+       offers "Start work", Home offers the entry, and the command palette
+       carries it. A global button that opens a page asking which Problem you
+       meant was the loudest thing in the chrome on every route. */
+    expect(sidebar).not.toContain("Add contribution");
     expect(sidebar).toContain("Erdős Problems");
     expect(sidebar).not.toContain('label: "Hubs"');
     expect(sidebar).not.toContain('label: "Review"');

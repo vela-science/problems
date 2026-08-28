@@ -56,15 +56,29 @@ afterEach(() => {
 });
 
 describe("AppSidebar", () => {
-  /* The policy links are the product's only `contentinfo`. The shell has no
-     other footer, so if this stops being a `footer` — or gains a `nav`,
-     `aside` or `section` ancestor — the landmark disappears silently. */
-  it("carries the policy links as the contentinfo landmark", () => {
+  /* The rail navigates the product and nothing else.
+   *
+     Four legal links and a filled contribution button used to sit under the nav
+     items, because the rail was the only chrome on every route. They read as
+     leftovers there. The policy links moved to the end of the page, which is
+     where a reader looks for them, and this holds the rail to navigation so
+     they cannot drift back. */
+  it("keeps the rail to navigation, with no policy strip or contribution slab", () => {
     const source = readFileSync("src/components/vela/app-sidebar.tsx", "utf8");
-    expect(source).toContain('<footer aria-label="Policies"');
-    for (const label of ["Privacy", "Terms", "Accessibility", "Contact"]) {
-      expect(source).toContain(label);
-    }
+    expect(source).not.toContain('aria-label="Policies"');
+    expect(source).not.toContain("Add contribution");
+    expect(source).not.toContain("INFORMATION_ROUTES");
+  });
+
+  /* The policy links are the product's only `contentinfo`. They are a sibling
+     of `main`, not inside it: a `footer` scoped to `main` is a generic element
+     and the landmark would disappear silently. */
+  it("carries the policy links as the contentinfo landmark on the shell", () => {
+    const source = readFileSync("src/components/vela/app-shell.tsx", "utf8");
+    expect(source).toContain('<footer\n                  aria-label="Policies"');
+    expect(source).toContain("INFORMATION_ROUTES.map");
+    /* Inside the scroller, after `main`, and `main` must close first. */
+    expect(source.indexOf("</main>")).toBeLessThan(source.indexOf('aria-label="Policies"'));
   });
 
   it("uses one declared desktop state without a second persistence layer", () => {
@@ -82,7 +96,7 @@ describe("AppSidebar", () => {
     renderSidebar();
     fireEvent.click(screen.getByRole("button", { name: "Open test navigation" }));
 
-    for (const [label, href] of [["Home", "/"], ["Problems", "/problems"], ["Updates", "/updates"], ["Add contribution", "/contribute"]]) {
+    for (const [label, href] of [["Home", "/"], ["Problems", "/problems"], ["Updates", "/updates"]]) {
       expect(await screen.findByRole("link", { name: label })).toHaveAttribute("href", href);
     }
     /* Frontiers serves a replay fixture with deliberately synthetic

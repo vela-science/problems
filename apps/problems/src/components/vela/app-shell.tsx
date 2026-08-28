@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import type { CSSProperties } from "react";
 import { SidebarInset, SidebarProvider } from "@vela/ui/components/sidebar";
 import { TooltipProvider } from "@vela/ui/components/tooltip";
@@ -8,6 +9,7 @@ import { AppHeader } from "@/components/vela/app-header";
 import { CommandPaletteProvider } from "@/components/vela/command-palette";
 import { ProjectionRootProvider } from "@/components/vela/record-preview";
 import { AccountStateProvider } from "@/components/vela/account-state";
+import { INFORMATION_ROUTES } from "@/components/vela/public-information-page";
 import type { PublishedProblemCollection } from "@/lib/problem-collections";
 
 type PublishedRepository = { slug: string; name: string; pending: number; hasGraph: boolean };
@@ -59,13 +61,36 @@ export function AppShell({
                   the thing every route actually renders into — unnamed. Two
                   facts, one element: what the skip link targets and what `main`
                   means are the same region. */}
-              <main
-                id="main-content"
-                tabIndex={-1}
-                className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain print:h-auto print:overflow-visible"
-              >
-                {children}
-              </main>
+              {/* The scroller is the frame; `main` and the policy footer are
+                  siblings inside it.
+                *
+                  The links used to sit in the navigation rail, pinned under the
+                  nav items, because that was the only chrome on every route and
+                  a signed-out visitor otherwise had no visible path to Privacy
+                  or Terms at all — ⌘K does not exist on a phone. But a rail is
+                  for navigating the product, and four legal links at the bottom
+                  of it read as leftovers.
+                *
+                  They belong at the end of the page, which is where a reader
+                  looks for them. Keeping them a sibling of `main` rather than
+                  inside it is what preserves the `contentinfo` landmark: a
+                  `footer` scoped to `main` is a generic element, and this is
+                  the product's only one. */}
+              <div className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain print:h-auto print:overflow-visible">
+                <main id="main-content" tabIndex={-1} className="min-w-0">
+                  {children}
+                </main>
+                <footer
+                  aria-label="Policies"
+                  className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t px-(--vela-page-gutter) py-4 text-micro print:hidden"
+                >
+                  {INFORMATION_ROUTES.map((route) => <Link
+                    key={route.href}
+                    href={route.href}
+                    className="inline-flex min-h-6 items-center rounded text-muted-foreground hover:text-foreground hover:underline"
+                  >{route.label}</Link>)}
+                </footer>
+              </div>
             </SidebarInset>
           </SidebarProvider>
         </CommandPaletteProvider>

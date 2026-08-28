@@ -123,7 +123,13 @@ Primary navigation:
 - Problems
 - Workspaces when signed in
 - Updates
-- Add contribution as a visually separate action
+
+The rail navigates the product and carries nothing else. Contribution is
+contextual rather than a permanent action in it: a Problem offers **Start
+work**, Home offers the entry, and the command palette carries `/contribute`.
+A global button that opens a page asking which Problem you meant was the
+loudest element in the chrome on every route, and it was answering a question
+the reader had usually already answered by arriving somewhere.
 
 The product mark also returns Home. Search belongs to the header command
 control. Research map is contextual and command-searchable. Release details
@@ -132,7 +138,11 @@ About route: `vela.space` is the editorial origin and this application must not
 grow a second editorial surface, so the product explanation lives in the
 surfaces that carry it — a Problem's own state, `/decisions`, and
 `/repositories/<slug>/reproduce`. Privacy, Terms, Accessibility, and Contact
-remain compact Problems trust routes, reachable from the rail.
+remain compact Problems trust routes. They sit in a footer at the end of the
+page, which is where a reader looks for them and which keeps the navigation
+rail to navigation. That footer is the product's only `contentinfo`, so it
+stays a sibling of `main` rather than a child of it: a `footer` scoped to
+`main` is a generic element and the landmark would vanish silently.
 
 The canonical Problem modes are:
 
