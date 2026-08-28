@@ -228,7 +228,15 @@ Use Geist for the product and Geist Mono for hashes, paths, revisions, code,
 and exact values, with tabular figures wherever mono appears: every mono run
 here is a value a reader compares down a column. IBM Plex Mono stays the
 editorial mono, which is what keeps the two registers distinct rather than
-blurred. Use Zodiak for earned brand display and Gambetta for
+blurred.
+
+Geist Mono costs about 70 KB over the wire on every product route, and the two
+faces together about 138 KB. It adds no file to `public/assets/fonts`, because
+it arrives through Next's package integration rather than the governed
+editorial profile — but "no delivered file" is not "no cost", and the audit of
+2026-08-28 corrected that claim. Subsetting it would mean vendoring the file
+into the delivery profile the budget check governs, which is a larger change
+than the saving justifies; the cost is accepted and recorded here instead. Use Zodiak for earned brand display and Gambetta for
 authored long-form reading. Typography is sentence case. Avoid repeated
 uppercase micro-labels, wide tracking, ornamental type on task controls, and
 display type used as a substitute for hierarchy.

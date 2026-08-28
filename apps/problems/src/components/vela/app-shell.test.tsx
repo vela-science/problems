@@ -113,9 +113,13 @@ describe("AppShell accessibility boundary", () => {
   it("keeps primary controls touch-sized without inflating pointer-dense layouts", () => {
     const globals = readFileSync("src/app/globals.css", "utf8");
     expect(globals).toContain("@media (pointer: coarse)");
-    expect(globals).toContain('[data-slot="select-trigger"] { min-width: 2.75rem; min-height: 2.75rem; }');
-    expect(globals).toContain('[data-slot="input"], [data-slot="textarea"], [data-slot="command-input"] { min-height: 2.75rem; }');
-    expect(globals).toContain(".min-h-6, .min-h-7, .min-h-8, .min-h-9 { min-height: 2.75rem; }");
+    /* 2rem, not 2.75rem: WCAG 2.5.8 (AA) asks 1.5rem, and promoting every
+       control to the 2.5.5 (AAA) 2.75rem made a header a row of slabs. Typing
+       targets keep a taller floor because a field is never packed against a
+       sibling. */
+    expect(globals).toContain('[data-slot="tooltip-trigger"] { min-width: 2rem; min-height: 2rem; }');
+    expect(globals).toContain('[data-slot="input"], [data-slot="textarea"], [data-slot="command-input"] { min-height: 2.5rem; }');
+    expect(globals).toContain(".min-h-6, .min-h-7, .min-h-8, .min-h-9 { min-height: 2rem; }");
 
     const widthKeyed = /\b(?:max-)?(?:sm|md|lg):?min-[hw]-11\b|\bsize-11 (?:sm|md):|\bh-11 (?:sm|md):|pointer-coarse:/u;
     for (const file of componentSources()) {

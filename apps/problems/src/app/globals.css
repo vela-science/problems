@@ -125,9 +125,12 @@
     transition: background-color 140ms ease-out, color 140ms ease-out, box-shadow 140ms ease-out;
   }
 
+  /* Selection is the tinted ground and a hairline in the accent, not a 3px
+     side stripe. The stripe read clearly, but it is a coloured rail on a list
+     row — and the ground beside it was already saying the same thing. */
   .vela-object-row[aria-selected="true"], .vela-object-row[data-selected="true"] {
     background: var(--vela-surface-selected);
-    box-shadow: inset 3px 0 0 var(--primary);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--primary) 42%, transparent);
   }
 }
 
@@ -144,22 +147,31 @@
   .vela-object-row { transition: none; }
 }
 
-/* The touch-target policy, in one place and keyed to the pointer.
+/* The touch-target policy, in one place.
  *
  * It was written three ways: here, as `pointer-coarse:` utilities on the
- * section nav, and as sixty-five viewport-width classes — `size-11 md:size-8`,
- * `min-h-11 sm:min-h-8`, `max-md:min-h-11` — across twenty-six files. Width is
- * the wrong signal: a narrow desktop window is not a finger. The width-keyed
- * copy is also what wrapped the application bar into three rows at 390px,
- * spending 148px of a phone screen before any content, because every control in
- * it was 44px wide whether or not anything could tap it.
+ * section nav, and as sixty-five viewport-width classes across twenty-six
+ * files. Width is the wrong signal — a narrow desktop window is not a finger —
+ * and the width-keyed copy wrapped the application bar into three rows at
+ * 390px, spending 148px of a phone screen before any content.
  *
- * Controls are promoted by their slot, so a new button needs no ceremony.
- * Everything else opts in by declaring a deliberate minimum, which is what
- * keeps an inline link inside a paragraph on its own line box. */
+ * The one number is 2rem, not 2.75rem, and that is a deliberate step down from
+ * where this started. 2.75rem is WCAG 2.5.5, which is AAA; 2.5.8 is the AA
+ * criterion and asks for 1.5rem. Promoting every control to 44px on touch made
+ * a Problem's header a row of slabs — three controls beside a title, each as
+ * tall as the title itself — and a toolbar of 44px squares is not more usable
+ * for being larger, it is just louder. 2rem clears AA with a third to spare,
+ * matches the size these controls already are on a desktop, and means the
+ * product has one control size rather than two.
+ *
+ * Only typing targets keep a taller floor: a text field is never packed
+ * against a sibling, so height there costs nothing and buys real comfort.
+ *
+ * Controls are promoted by their slot — named rather than matched by suffix,
+ * because `select-scroll-up-button` ends in "button" and is a 6px arrow inside
+ * a popup. Everything else opts in by declaring a minimum, which keeps an
+ * inline link inside a paragraph on its own line box. */
 @media (pointer: coarse) {
-  /* Named, not matched by suffix: `select-scroll-up-button` ends in "button"
-     and is a 6px arrow inside a popup, and `button-group-separator` is a rule. */
   [data-slot="button"],
   [data-slot="sidebar-trigger"],
   [data-slot="sidebar-menu-button"],
@@ -169,10 +181,10 @@
   [data-slot="dialog-trigger"],
   [data-slot="sheet-trigger"],
   [data-slot="tabs-trigger"],
-  [data-slot="tooltip-trigger"],
-  [data-slot="select-trigger"] { min-width: 2.75rem; min-height: 2.75rem; }
-  [data-slot="input"], [data-slot="textarea"], [data-slot="command-input"] { min-height: 2.75rem; }
-  .min-h-6, .min-h-7, .min-h-8, .min-h-9 { min-height: 2.75rem; }
+  [data-slot="tooltip-trigger"] { min-width: 2rem; min-height: 2rem; }
+  [data-slot="select-trigger"] { min-height: 2.5rem; }
+  [data-slot="input"], [data-slot="textarea"], [data-slot="command-input"] { min-height: 2.5rem; }
+  .min-h-6, .min-h-7, .min-h-8, .min-h-9 { min-height: 2rem; }
 }
 
 /* Route leads are ordinary product headers. The sidebar carries the deep marine

@@ -69,9 +69,43 @@ const ATTEMPT_TRANSITIONS: Record<string, Array<{ value: string; label: string }
   paused: [{ value: "running", label: "Running" }, { value: "abandoned", label: "Abandoned" }],
 };
 
+/* An exact value typed by hand needs the shape stated, not hinted.
+ *
+ * A 64-character Ed25519 key and a `sha256:` root were plain text fields whose
+ * only guidance was a placeholder, and a placeholder disappears the moment you
+ * start typing. One wrong character produced a draft that failed validation
+ * later, after the reader believed it was saved — the highest-error-rate input
+ * in the product had the least support in it.
+ *
+ * `pattern` refuses the submit at the browser, the hint stays visible while
+ * typing and is bound with `aria-describedby`, and mono with no autocorrect
+ * stops a phone keyboard from capitalising a hex digit. */
+const EXACT_FORMATS: Record<string, { pattern: string; hint: string }> = {
+  publicKey: { pattern: "[0-9a-f]{64}", hint: "64 lowercase hex characters, no prefix." },
+  contentRoot: { pattern: "sha256:[0-9a-f]{64}", hint: "sha256: followed by 64 lowercase hex characters." },
+};
+
 function FormField({ label, name, placeholder, required = true, value, type = "text" }: { label: string; name: string; placeholder?: string; required?: boolean; value?: string; type?: string }) {
   const id = `${name}-${value ?? placeholder ?? "field"}`.toLowerCase().replace(/[^a-z0-9_-]+/gu, "-").replace(/^-+|-+$/gu, "");
-  return <div className="grid gap-1.5"><Label htmlFor={id}>{label}</Label><Input id={id} name={name} placeholder={placeholder} required={required} defaultValue={value} type={type} /></div>;
+  const exact = EXACT_FORMATS[name];
+  return <div className="grid gap-1.5">
+    <Label htmlFor={id}>{label}</Label>
+    <Input
+      id={id}
+      name={name}
+      placeholder={placeholder}
+      required={required}
+      defaultValue={value}
+      type={type}
+      pattern={exact?.pattern}
+      aria-describedby={exact ? `${id}-format` : undefined}
+      autoCapitalize={exact ? "off" : undefined}
+      autoCorrect={exact ? "off" : undefined}
+      spellCheck={exact ? false : undefined}
+      className={exact ? "font-mono" : undefined}
+    />
+    {exact ? <p id={`${id}-format`} className="text-meta text-muted-foreground">{exact.hint}</p> : null}
+  </div>;
 }
 
 function StaleActivityNotice() {
@@ -118,6 +152,29 @@ function ActivityUnavailable({ code }: { code: ActivityDataError["code"] | "unkn
   return <Alert variant="destructive" className="mt-8"><AlertTitle>Workspace unavailable</AlertTitle><AlertDescription>{message} Reload the page or choose another Workspace.</AlertDescription></Alert>;
 }
 
+/* The counterpart to `MutationError`. A save that only reports its failures
+   asks the reader to infer success from the page redrawing, which is the one
+   inference this product should never ask for. Named per operation, because
+   "Saved" does not say what now exists. */
+const MUTATION_DONE: Record<string, string> = {
+  approach: "Approach saved to this Workspace.",
+  attempt: "Attempt started.",
+  "attempt-state": "Attempt state updated.",
+  note: "Entry added.",
+  canvas: "Canvas update saved.",
+  evidence: "Research Block retained by its exact root.",
+  draft: "Unsigned draft validated and saved. It still needs signing in your local tool.",
+};
+
+function MutationDone({ code }: { code?: string }) {
+  const message = code ? MUTATION_DONE[code] : null;
+  if (!message) return null;
+  return <Alert className="mb-4 border-[color-mix(in_oklab,var(--status-progress)_45%,var(--border))] bg-[color-mix(in_oklab,var(--status-progress)_7%,transparent)]">
+    <AlertTitle>Saved</AlertTitle>
+    <AlertDescription>{message} Scientific state is unchanged: a Repository Decision is what moves it.</AlertDescription>
+  </Alert>;
+}
+
 function MutationError({ code }: { code?: string }) {
   if (!code) return null;
   const title = code === "conflict" ? "A newer version is available" : "Workspace action refused";
@@ -148,7 +205,7 @@ function AddNoteForm({ scope, approachId, attemptId }: { scope: Scope; approachI
 
 function ResearchBlockForm({ scope, attempts }: { scope: Scope; attempts: ProblemActivity["attempts"] }) {
   if (!attempts.length) return <Alert className="bg-muted/30"><AlertTitle>Start an Attempt first</AlertTitle><AlertDescription>A new Research Block must name the exact Attempt that produced it.</AlertDescription></Alert>;
-  return <form action={attachArtifactAction} className="grid gap-4 sm:grid-cols-2"><ScopeFields scope={scope} /><div className="sm:col-span-2"><FormSelect label="Producing Attempt" name="attemptId" options={attempts.map((attempt) => ({ value: attempt.id, label: attempt.title }))} /><p className="mt-1.5 text-meta text-muted-foreground">The selected Attempt supplies this evidence&apos;s Problem and approach scope; no internal scope label is required.</p></div><FormSelect label="Evidence type" name="kind" options={[{ value: "proof", label: "Proof or proof attempt" }, { value: "computation", label: "Computation" }, { value: "dataset", label: "Dataset" }, { value: "review", label: "Review" }, { value: "negative-result", label: "Negative result" }, { value: "correction", label: "Correction" }, { value: "other", label: "Other bounded evidence" }]} /><FormField label="Artifact reference path" name="path" placeholder="artifacts/result.json" /><div className="sm:col-span-2"><FormField label="SHA-256 root" name="contentRoot" placeholder="sha256:…" /></div><FormField label="Locator" name="locator" placeholder="Optional external locator" required={false} /><FormField label="Media type" name="mediaType" placeholder="application/json" required={false} /><FormField label="Byte size" name="byteSize" placeholder="Optional" required={false} type="number" /><Button className="w-fit self-end" type="submit">Retain evidence reference</Button></form>;
+  return <form action={attachArtifactAction} className="grid gap-4 sm:grid-cols-2"><ScopeFields scope={scope} /><div className="sm:col-span-2"><FormSelect label="Producing Attempt" name="attemptId" options={attempts.map((attempt) => ({ value: attempt.id, label: attempt.title }))} /><p className="mt-1.5 text-meta text-muted-foreground">The selected Attempt supplies this evidence&apos;s Problem and approach scope; no internal scope label is required.</p></div><FormSelect label="Evidence type" name="kind" options={[{ value: "proof", label: "Proof or proof attempt" }, { value: "computation", label: "Computation" }, { value: "dataset", label: "Dataset" }, { value: "review", label: "Review" }, { value: "negative-result", label: "Negative result" }, { value: "correction", label: "Correction" }, { value: "other", label: "Other bounded evidence" }]} /><FormField label="Artifact reference path" name="path" placeholder="artifacts/result.json" /><div className="sm:col-span-2"><FormField label="SHA-256 root" name="contentRoot" /></div><FormField label="Locator" name="locator" placeholder="Optional external locator" required={false} /><FormField label="Media type" name="mediaType" placeholder="application/json" required={false} /><FormField label="Byte size" name="byteSize" placeholder="Optional" required={false} type="number" /><Button className="w-fit self-end" type="submit">Retain evidence reference</Button></form>;
 }
 
 function DraftForm({ scope, state, artifacts, drafts }: { scope: Scope; state: State; artifacts: ProblemActivity["artifacts"]; drafts: ProblemActivity["drafts"] }) {
@@ -158,7 +215,7 @@ function DraftForm({ scope, state, artifacts, drafts }: { scope: Scope; state: S
      named a draft to update — so the object tree grew one near-duplicate per
      save with no way to tell which was current. */
   const draft = drafts[0] ?? null;
-  return <form action={saveSubmissionDraftAction} className="grid gap-4 sm:grid-cols-2"><ScopeFields scope={scope} />{draft ? <><input type="hidden" name="draftId" value={draft.id} /><input type="hidden" name="expectedVersion" value={draft.version} /><p className="text-meta text-muted-foreground sm:col-span-2">Saving revises the existing unsigned draft (v{draft.version}) for this anchor.</p></> : null}<div className="sm:col-span-2"><FormSelect label="Research Block" name="researchBlockId" options={artifacts.map((artifact) => ({ value: artifact.id, label: artifact.path }))} /></div><FormField label="Vela agent actor ID" name="actorId" placeholder="agent:my-research-agent" /><FormField label="Ed25519 public key (hex)" name="publicKey" placeholder="64 lowercase hex characters" /><FormSelect label="Requested change" name="requestedChange" options={[{ value: "add_claim", label: "Add Claim" }, ...(state.anchor.claimId ? [{ value: "correct_claim", label: "Correct bound Claim" }, { value: "supersede_claim", label: "Supersede bound Claim" }, { value: "retract_claim", label: "Retract bound Claim" }] : [])]} /><FormSelect label="Claim type" name="claimType" options={[{ value: "theoretical", label: "Theoretical" }, { value: "computational", label: "Computational" }, { value: "empirical", label: "Empirical" }, { value: "negative", label: "Negative" }, { value: "contradiction", label: "Contradiction" }]} /><div className="sm:col-span-2"><Label htmlFor="draft-assertion">Claim assertion</Label><Textarea id="draft-assertion" name="assertion" required placeholder="The exact assertion this Submission proposes" /></div><FormField label="Condition" name="condition" placeholder="Optional explicit condition" required={false} /><FormSelect label="Replayability" name="replayability" options={[{ value: "exact", label: "Exact" }, { value: "bounded", label: "Bounded" }, { value: "approximate", label: "Approximate" }, { value: "unavailable", label: "Unavailable" }, { value: "unknown", label: "Unknown" }]} /><FormField label="Caveat" name="caveat" placeholder="What this does not establish" /><FormField label="Producer check" name="checkMethod" placeholder="lake build" /><FormSelect label="Check outcome" name="checkOutcome" options={[{ value: "pass", label: "Pass" }, { value: "fail", label: "Fail" }, { value: "error", label: "Error" }, { value: "skipped", label: "Skipped" }, { value: "unknown", label: "Unknown" }]} /><div className="sm:col-span-2"><FormField label="Verification requirement" name="verificationRequirement" placeholder="Independent statement-fidelity review" /></div><Button className="w-fit sm:col-span-2" type="submit">Validate and save unsigned draft</Button></form>;
+  return <form action={saveSubmissionDraftAction} className="grid gap-4 sm:grid-cols-2"><ScopeFields scope={scope} />{draft ? <><input type="hidden" name="draftId" value={draft.id} /><input type="hidden" name="expectedVersion" value={draft.version} /><p className="text-meta text-muted-foreground sm:col-span-2">Saving revises the existing unsigned draft (v{draft.version}) for this anchor.</p></> : null}<div className="sm:col-span-2"><FormSelect label="Research Block" name="researchBlockId" options={artifacts.map((artifact) => ({ value: artifact.id, label: artifact.path }))} /></div><FormField label="Vela agent actor ID" name="actorId" placeholder="agent:my-research-agent" /><FormField label="Ed25519 public key" name="publicKey" /><FormSelect label="Requested change" name="requestedChange" options={[{ value: "add_claim", label: "Add Claim" }, ...(state.anchor.claimId ? [{ value: "correct_claim", label: "Correct bound Claim" }, { value: "supersede_claim", label: "Supersede bound Claim" }, { value: "retract_claim", label: "Retract bound Claim" }] : [])]} /><FormSelect label="Claim type" name="claimType" options={[{ value: "theoretical", label: "Theoretical" }, { value: "computational", label: "Computational" }, { value: "empirical", label: "Empirical" }, { value: "negative", label: "Negative" }, { value: "contradiction", label: "Contradiction" }]} /><div className="sm:col-span-2"><Label htmlFor="draft-assertion">Claim assertion</Label><Textarea id="draft-assertion" name="assertion" required placeholder="The exact assertion this Submission proposes" /></div><FormField label="Condition" name="condition" placeholder="Optional explicit condition" required={false} /><FormSelect label="Replayability" name="replayability" options={[{ value: "exact", label: "Exact" }, { value: "bounded", label: "Bounded" }, { value: "approximate", label: "Approximate" }, { value: "unavailable", label: "Unavailable" }, { value: "unknown", label: "Unknown" }]} /><FormField label="Caveat" name="caveat" placeholder="What this does not establish" /><FormField label="Producer check" name="checkMethod" placeholder="lake build" /><FormSelect label="Check outcome" name="checkOutcome" options={[{ value: "pass", label: "Pass" }, { value: "fail", label: "Fail" }, { value: "error", label: "Error" }, { value: "skipped", label: "Skipped" }, { value: "unknown", label: "Unknown" }]} /><div className="sm:col-span-2"><FormField label="Verification requirement" name="verificationRequirement" placeholder="Independent statement-fidelity review" /></div><Button className="w-fit sm:col-span-2" type="submit">Validate and save unsigned draft</Button></form>;
 }
 
 export function EmptyHostedWorkspace({ state, accountId, workbenchHandoff }: { state: State; accountId: string; workbenchHandoff?: string | null }) {
@@ -184,7 +241,7 @@ export function workspaceObjects({ state, activity, workspace, scope, currentAnc
     meta: `${activity.approaches.length} approaches · ${activity.attempts.length} attempts · ${activity.artifacts.length} Research Blocks`,
     version: workspace.version,
     anchorRoot: currentAnchorRoot,
-    content: <div><div className="flex flex-wrap items-center gap-2"><h2 className="text-title">{workspace.name}</h2><Badge variant="outline">shared workspace</Badge></div><dl className="mt-5 grid overflow-hidden rounded-lg border bg-[var(--vela-surface-sunken)] sm:grid-cols-3"><div className="px-4 py-3"><dt className="text-meta text-muted-foreground">Approaches</dt><dd className="mt-1 font-mono text-subtitle">{activity.approaches.length}</dd></div><div className="border-t px-4 py-3 sm:border-l sm:border-t-0"><dt className="text-meta text-muted-foreground">Attempts</dt><dd className="mt-1 font-mono text-subtitle">{activity.attempts.length}</dd></div><div className="border-t px-4 py-3 sm:border-l sm:border-t-0"><dt className="text-meta text-muted-foreground">Research Blocks</dt><dd className="mt-1 font-mono text-subtitle">{activity.artifacts.length}</dd></div></dl><div className="mt-6 grid gap-3"><WorkAction title="New approach" description="Name a research direction."><NewApproachForm scope={scope} /></WorkAction><WorkAction title="Add note" description="Add reasoning to this workspace."><AddNoteForm scope={scope} /></WorkAction><WorkAction title="Attach evidence" description="Link an Attempt result by exact root."><ResearchBlockForm scope={scope} attempts={activity.attempts.filter(isCurrent)} /></WorkAction><WorkAction title="Prepare local handoff" description="Export an unsigned payload for your local tool."><DraftForm scope={scope} state={state} artifacts={activity.artifacts.filter(isCurrent)} drafts={activity.drafts.filter(isCurrent)} /></WorkAction></div></div>,
+    content: <div><div className="flex flex-wrap items-center gap-2"><h2 className="text-title">{workspace.name}</h2><Badge variant="outline">shared workspace</Badge></div><dl className="mt-5 grid overflow-hidden rounded-lg border bg-[var(--vela-surface-sunken)] sm:grid-cols-3"><div className="px-4 py-3"><dt className="text-meta text-muted-foreground">Approaches</dt><dd className="mt-1 font-mono text-subtitle">{activity.approaches.length}</dd></div><div className="border-t px-4 py-3 sm:border-l sm:border-t-0"><dt className="text-meta text-muted-foreground">Attempts</dt><dd className="mt-1 font-mono text-subtitle">{activity.attempts.length}</dd></div><div className="border-t px-4 py-3 sm:border-l sm:border-t-0"><dt className="text-meta text-muted-foreground">Research Blocks</dt><dd className="mt-1 font-mono text-subtitle">{activity.artifacts.length}</dd></div></dl><div className="mt-6 grid gap-3"><WorkAction title="New approach" description="Name a research direction."><NewApproachForm scope={scope} /></WorkAction><WorkAction title="Add note" description="Add reasoning to this workspace."><AddNoteForm scope={scope} /></WorkAction><WorkAction title="Attach evidence" description="Record a file an Attempt produced, by its exact content root. Vela calls one a Research Block."><ResearchBlockForm scope={scope} attempts={activity.attempts.filter(isCurrent)} /></WorkAction><WorkAction title="Prepare local handoff" description="Export an unsigned payload for your local tool."><DraftForm scope={scope} state={state} artifacts={activity.artifacts.filter(isCurrent)} drafts={activity.drafts.filter(isCurrent)} /></WorkAction></div></div>,
     detail: <p className="text-meta text-muted-foreground">Shared activity only. Scientific state changes through a repository Decision.</p>,
   });
 
@@ -269,7 +326,7 @@ async function loadWorkspace(state: State, hostedAccount: AccountIdentity, selec
   }
 }
 
-export async function ProblemWorkspace({ state, hostedAccount, accountsEnabled = true, selectedWorkspace, selectedObject, selectedInspector, mutationError, basePath }: { state: State; hostedAccount: AccountIdentity | null; accountsEnabled?: boolean; selectedWorkspace?: string; selectedObject?: string; selectedInspector?: string; mutationError?: string; basePath: string }) {
+export async function ProblemWorkspace({ state, hostedAccount, accountsEnabled = true, selectedWorkspace, selectedObject, selectedInspector, mutationError, mutationDone, basePath }: { state: State; hostedAccount: AccountIdentity | null; accountsEnabled?: boolean; selectedWorkspace?: string; selectedObject?: string; selectedInspector?: string; mutationError?: string; mutationDone?: string; basePath: string }) {
   const workbenchHandoff = problemWorkbenchHandoff({
     basePath,
     repositorySlug: state.repositorySlug,
@@ -296,7 +353,7 @@ export async function ProblemWorkspace({ state, hostedAccount, accountsEnabled =
               narrow, so the track draws in its vertical form. */}
           <p className="mt-6 text-meta font-semibold">Reach</p>
           <div className="mt-3"><Reach stops={problemReachStops(state)} endpoint="The question" caption={problemReachCaption(state)} /></div></nav>
-        <div className="vela-working-ground min-w-0 border-b p-4 lg:border-b-0 lg:p-6">
+        <div className="min-w-0 border-b bg-[var(--vela-surface-sunken)] p-4 lg:border-b-0 lg:p-6">
           {/* The real work, where a preview of an unusable canvas used to sit.
             *
               That cell drew Source → Result → Checks in three tiles under a
@@ -374,7 +431,7 @@ export async function ProblemWorkspace({ state, hostedAccount, accountsEnabled =
     workbenchHandoff={workbenchHandoff}
     target={{ claimId: state.anchor.claimId, standing: state.anchor.claimStanding }}
   /> : null;
-  const toolbar = <div><MutationError code={mutationError} />{candidateBanner ? <div className="mb-5">{candidateBanner}</div> : null}<div className="flex flex-wrap items-start justify-between gap-4"><div className="flex flex-wrap items-center gap-2"><h2 id="workspace-heading" className="text-title">{workspace.name}</h2><Badge variant="outline">{workspace.role}</Badge>{activity.following ? <Badge variant="secondary">following</Badge> : null}</div><div className="flex flex-wrap items-center justify-end gap-2">{workbenchHandoff ? <Button nativeButton={false} size="sm" variant="outline" render={<a href={workbenchHandoff} />}>Continue locally</Button> : null}{workspaces.map((entry) => <Button key={entry.id} nativeButton={false} size="sm" variant={entry.id === workspace.id ? "default" : "outline"} render={<Link href={`${basePath}/work?workspace=${entry.id}`} />}>{entry.name}</Button>)}<form action={followProblemAction}><ScopeFields scope={scope} /><input type="hidden" name="following" value={activity.following ? "false" : "true"} /><Button type="submit" size="sm" variant="outline">{activity.following ? "Unfollow" : "Follow"}</Button></form></div></div>{workbenchHandoff ? <p className="mt-2 text-meta text-muted-foreground">The handoff carries this exact Problem, source revision, and authority Repository. It does not clone, switch, upload, or execute anything.</p> : null}<div className="mt-5"><Reach stops={problemReachStops(state)} endpoint="The question" caption={problemReachCaption(state)} /></div></div>;
+  const toolbar = <div><MutationError code={mutationError} /><MutationDone code={mutationDone} />{candidateBanner ? <div className="mb-5">{candidateBanner}</div> : null}<div className="flex flex-wrap items-start justify-between gap-4"><div className="flex flex-wrap items-center gap-2"><h2 id="workspace-heading" className="text-title">{workspace.name}</h2><Badge variant="outline">{workspace.role}</Badge>{activity.following ? <Badge variant="secondary">following</Badge> : null}</div><div className="flex flex-wrap items-center justify-end gap-2">{workbenchHandoff ? <Button nativeButton={false} size="sm" variant="outline" render={<a href={workbenchHandoff} />}>Continue locally</Button> : null}{workspaces.map((entry) => <Button key={entry.id} nativeButton={false} size="sm" variant={entry.id === workspace.id ? "default" : "outline"} render={<Link href={`${basePath}/work?workspace=${entry.id}`} />}>{entry.name}</Button>)}<form action={followProblemAction}><ScopeFields scope={scope} /><input type="hidden" name="following" value={activity.following ? "false" : "true"} /><Button type="submit" size="sm" variant="outline">{activity.following ? "Unfollow" : "Follow"}</Button></form></div></div>{workbenchHandoff ? <p className="mt-2 text-meta text-muted-foreground">The handoff carries this exact Problem, source revision, and authority Repository. It does not clone, switch, upload, or execute anything.</p> : null}<div className="mt-5"><Reach stops={problemReachStops(state)} endpoint="The question" caption={problemReachCaption(state)} /></div></div>;
   const canvasNote = <WorkspaceCrdtNote updates={activity.crdtUpdates} scope={scope} action={appendWorkspaceCrdtUpdateAction} />;
   return <WorkspaceShell objects={objects} selectedObject={object} inspectorTab={inspector} anchors={anchors} audit={audit} discussion={discussion} toolbar={toolbar} canvasNote={canvasNote} initialSurface={selectedObject ? "object" : "canvas"} />;
 }

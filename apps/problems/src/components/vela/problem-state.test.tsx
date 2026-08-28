@@ -184,10 +184,14 @@ describe("Problem tools", () => {
   it("states the record's own boundary beside the file it is showing", () => {
     render(<ProblemState state={state} basePath="/problems/erdos-problems/321" researchView="files" />);
     const inspector = screen.getByRole("complementary", { name: "Selected source record" });
-    expect(within(inspector).getByText("Statement identity")).toBeVisible();
-    expect(within(inspector).getByText("Not established")).toBeVisible();
-    expect(within(inspector).getByText("Authority effect")).toBeVisible();
-    expect(within(inspector).getByText("None")).toBeVisible();
+    /* The sentence leads; the record's own field names stay underneath it. A
+       reader should not have to know the protocol before the page will tell
+       them what it concludes. */
+    expect(within(inspector).getByText("What this site concludes")).toBeVisible();
+    expect(within(inspector).getByText(/Retaining a source.s file does not make its claim/u)).toBeVisible();
+    expect(within(inspector).getByText("statement_identity")).toBeVisible();
+    expect(within(inspector).getByText("not_established")).toBeVisible();
+    expect(within(inspector).getByText("authority_effect")).toBeVisible();
     /* Category and proof are two facts, so the pane prints two. "Open" is what
        the library files the declaration under; whether a proof is attached is a
        separate field, and the fixture has none. */

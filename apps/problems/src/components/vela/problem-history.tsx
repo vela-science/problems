@@ -67,7 +67,7 @@ export function ProblemHistory({ state, frontier }: {
               <p className="mt-3 text-label font-semibold">{review.status === "accepted" ? "Accepted here" : `Decision: ${review.status.replaceAll("_", " ")}`}</p>
               {review.claim_retirement ? <p className="mt-1 text-meta text-muted-foreground">The Result was later {review.claim_retirement}.</p> : null}
               {review.reviewed_by ? <div className="mt-3 text-meta text-muted-foreground">Decision recorded by <Actor name={review.reviewed_by} kind={review.decision_actor_class} performerId={review.reviewed_by} className="ms-1 align-middle" /></div> : null}
-              <a href={`/repositories/${state.repositorySlug}/proposals/${review.proposal_id}`} className="mt-3 inline-block text-meta font-semibold text-primary underline-offset-4 hover:underline">Open change details <span className="sr-only"><RecordId value={review.proposal_id} copy={false} /></span></a>
+              <a href={`/repositories/${state.repositorySlug}/proposals/${review.proposal_id}`} className="mt-3 inline-flex min-h-6 items-center text-meta font-semibold text-primary underline-offset-4 hover:underline">Open change details <span className="sr-only"><RecordId value={review.proposal_id} copy={false} /></span></a>
             </div>
           </article>
         </li>)}

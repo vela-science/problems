@@ -133,7 +133,7 @@ function TreeBranch({ nodes, depth, basePath, selectedPath, activeKey }: {
                 href={`${basePath}/sources?file=${encodeURIComponent(node.entry!.path)}&symbol=${encodeURIComponent(key)}`}
                 aria-current={active ? "location" : undefined}
                 style={{ paddingInlineStart: `${0.75 + (depth + 1) * 0.75}rem` }}
-                className={`vela-object-row flex min-h-8 items-center gap-2 rounded-md py-1 pe-2 focus-visible:outline-2 focus-visible:outline-offset-2 ${active ? "bg-[var(--vela-surface-selected)] font-medium text-foreground shadow-[inset_3px_0_0_var(--primary)]" : "text-muted-foreground hover:bg-muted"}`}
+                className={`vela-object-row flex min-h-8 items-center gap-2 rounded-md py-1 pe-2 focus-visible:outline-2 focus-visible:outline-offset-2 ${active ? "bg-[var(--vela-surface-selected)] font-medium text-foreground shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--primary)_42%,transparent)]" : "text-muted-foreground hover:bg-muted"}`}
               >
                 {mark ? <span aria-hidden className={`size-1.5 shrink-0 rounded-full ${mark.className}`} /> : null}
                 <span className="min-w-0 flex-1 truncate font-mono text-micro">{label}</span>
@@ -296,14 +296,24 @@ export function ProblemFiles({ state, basePath, entries, selected, activeRecord,
           <p className="mt-2 text-compact">{standing.label}</p>
           <p className="mt-1 text-micro text-muted-foreground">{standing.note}</p>
 
-          {/* The record's own fields, not this page's summary of them. A Lean
-              file with a complete proof in it still carries these two values,
-              and printing them where the proof is being read is the only place
-              the distinction lands. */}
-          <dl className="mt-4 grid gap-2 border-t pt-4">
-            <Fact term="Statement identity" detail="Not established" />
-            <Fact term="Authority effect" detail="None" />
-          </dl>
+          {/* Meaning first, field names second.
+              These two values carry the most important boundary on the page and
+              they were also its hardest phrases: "Statement identity: Not
+              established" asks a reader to already know the protocol before it
+              will tell them anything. The sentence says what it means; the
+              record's own fields stay underneath, in mono, because they are
+              exact values a reader may need to cite. */}
+          <div className="mt-4 border-t pt-4">
+            <h3 className="text-meta font-semibold">What this site concludes</h3>
+            <p className="mt-1.5 text-compact text-muted-foreground">
+              Nothing. Retaining a source&apos;s file does not make its claim this Problem&apos;s state here, however
+              complete the proof inside it looks. Only a Repository Decision does that.
+            </p>
+            <dl className="mt-3 grid gap-1.5">
+              <Fact term="statement_identity" detail="not_established" mono />
+              <Fact term="authority_effect" detail="none" mono />
+            </dl>
+          </div>
 
           <h3 className="mt-5 text-meta font-semibold">Exact identity</h3>
           <dl className="mt-2.5 grid gap-3">
@@ -328,10 +338,10 @@ export function ProblemFiles({ state, basePath, entries, selected, activeRecord,
   </section>;
 }
 
-function Fact({ term, detail }: { term: string; detail: string }) {
+function Fact({ term, detail, mono = false }: { term: string; detail: string; mono?: boolean }) {
   return <div className="flex items-baseline justify-between gap-3">
-    <dt className="shrink-0 text-micro text-muted-foreground">{term}</dt>
-    <dd className="min-w-0 text-end text-compact">{detail}</dd>
+    <dt className={`shrink-0 text-micro text-muted-foreground${mono ? " font-mono" : ""}`}>{term}</dt>
+    <dd className={`min-w-0 text-end ${mono ? "font-mono text-micro text-muted-foreground" : "text-compact"}`}>{detail}</dd>
   </div>;
 }
 

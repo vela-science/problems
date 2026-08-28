@@ -123,7 +123,13 @@ async function problemActivity(scope: MutationScope) {
   });
 }
 
-async function runWorkspaceMutation(scope: MutationScope, operation: () => Promise<unknown>) {
+/* Failure said exactly what went wrong; success said nothing at all, and the
+   reader inferred a save from the page re-rendering. The one moment that
+   deserves confirmation had no feedback. `done` travels the same way
+   `workError` already does rather than introducing a second mechanism. */
+type WorkDone = "approach" | "attempt" | "attempt-state" | "note" | "canvas" | "evidence" | "draft";
+
+async function runWorkspaceMutation(scope: MutationScope, done: WorkDone, operation: () => Promise<unknown>) {
   let errorCode: ReturnType<typeof safeWorkspaceErrorCode> = null;
   try {
     await operation();
@@ -131,10 +137,10 @@ async function runWorkspaceMutation(scope: MutationScope, operation: () => Promi
     errorCode = safeWorkspaceErrorCode(error);
     if (!errorCode) throw error;
   }
-  if (errorCode) {
-    redirect(`${returnTo(scope.target.repository, scope.target.problem, scope.target.workspaceId)}&workError=${errorCode}`);
-  }
+  const destination = returnTo(scope.target.repository, scope.target.problem, scope.target.workspaceId);
+  if (errorCode) redirect(`${destination}&workError=${errorCode}`);
   refresh(scope.target.repository, scope.target.problem);
+  if (destination) redirect(`${destination}&workDone=${done}`);
 }
 
 export async function createWorkspaceAction(form: FormData) {
@@ -173,19 +179,18 @@ export async function followProblemAction(form: FormData) {
 
 export async function createApproachAction(form: FormData) {
   const scope = await mutationContext(form);
-  await createApproach(scope.context, {
+  await runWorkspaceMutation(scope, "approach", () => createApproach(scope.context, {
     anchor: scope.anchor,
     title: text(form, "title", 200),
     summary: text(form, "summary"),
-  }, scope.command);
-  refresh(scope.target.repository, scope.target.problem);
+  }, scope.command));
 }
 
 export async function forkApproachAction(form: FormData) {
   const scope = await mutationContext(form);
   const sourceApproachId = text(form, "approachId", 64);
   const sourceVersion = expectedVersion(form);
-  await runWorkspaceMutation(scope, async () => {
+  await runWorkspaceMutation(scope, "approach", async () => {
     requireCurrentApproach(await problemActivity(scope), sourceApproachId, scope.anchorRoot, sourceVersion);
     return forkApproach(scope.context, {
       sourceApproachId,
@@ -199,7 +204,7 @@ export async function forkApproachAction(form: FormData) {
 export async function createAttemptAction(form: FormData) {
   const scope = await mutationContext(form);
   const approachId = text(form, "approachId", 64);
-  await runWorkspaceMutation(scope, async () => {
+  await runWorkspaceMutation(scope, "attempt", async () => {
     const activity = await problemActivity(scope);
     requireCurrentApproach(activity, approachId, scope.anchorRoot);
     return createAttempt(scope.context, {
@@ -213,7 +218,7 @@ export async function updateAttemptAction(form: FormData) {
   const scope = await mutationContext(form);
   const attemptId = text(form, "attemptId", 64);
   const version = expectedVersion(form);
-  await runWorkspaceMutation(scope, async () => {
+  await runWorkspaceMutation(scope, "attempt-state", async () => {
     requireCurrentAttempt(await problemActivity(scope), attemptId, scope.anchorRoot, version);
     return updateAttempt(scope.context, attemptId, version, {
       state: text(form, "state", 24) as "planned" | "running" | "paused" | "completed" | "failed" | "abandoned",
@@ -223,20 +228,19 @@ export async function updateAttemptAction(form: FormData) {
 
 export async function addDiscussionAction(form: FormData) {
   const scope = await mutationContext(form);
-  await addDiscussionEntry(scope.context, {
+  await runWorkspaceMutation(scope, "note", () => addDiscussionEntry(scope.context, {
     anchor: scope.anchor,
     approachId: optionalText(form, "approachId", 64),
     attemptId: optionalText(form, "attemptId", 64),
     kind: text(form, "kind", 16) as "comment" | "note",
     visibility: text(form, "visibility", 16) as "workspace" | "private",
     body: text(form, "body"),
-  }, scope.command);
-  refresh(scope.target.repository, scope.target.problem);
+  }, scope.command));
 }
 
 export async function appendWorkspaceCrdtUpdateAction(form: FormData) {
   const scope = await mutationContext(form);
-  await runWorkspaceMutation(scope, () => appendWorkspaceCrdtUpdate(scope.context, {
+  await runWorkspaceMutation(scope, "canvas", () => appendWorkspaceCrdtUpdate(scope.context, {
     anchor: scope.anchor,
     documentName: "canvas",
     updateRoot: text(form, "updateRoot", 71) as `sha256:${string}`,
@@ -250,7 +254,7 @@ export async function attachArtifactAction(form: FormData) {
   const byteSizeValue = optionalText(form, "byteSize", 32);
   const byteSize = byteSizeValue === null ? null : Number(byteSizeValue);
   if (byteSize !== null && (!Number.isSafeInteger(byteSize) || byteSize < 0)) throw new Error("byteSize is invalid");
-  await runWorkspaceMutation(scope, async () => {
+  await runWorkspaceMutation(scope, "evidence", async () => {
     const activity = await problemActivity(scope);
     requireCurrentAttempt(activity, attemptId, scope.anchorRoot);
     return attachArtifact(scope.context, {
@@ -313,7 +317,7 @@ export async function saveSubmissionDraftAction(form: FormData) {
      named the draft, so every save minted a sibling. */
   const draftId = optionalText(form, "draftId", 64);
   const expectedVersion = draftId ? Number(text(form, "expectedVersion", 16)) : undefined;
-  await runWorkspaceMutation(scope, () => saveSubmissionDraft(scope.context, {
+  await runWorkspaceMutation(scope, "draft", () => saveSubmissionDraft(scope.context, {
     anchor: scope.anchor,
     payload,
     draftId: draftId ?? undefined,

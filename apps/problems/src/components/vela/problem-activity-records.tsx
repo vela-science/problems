@@ -79,7 +79,7 @@ export function ProblemActivityRecords({ state }: { state: State }) {
               <dd className="min-w-0 text-meta">{outcome}</dd>
             </div> : null}
           </dl>
-          {locator ? <a href={locator} className="mt-2 inline-block text-meta text-muted-foreground underline underline-offset-4 hover:text-foreground">Open the source record</a> : null}
+          {locator ? <a href={locator} className="mt-2 inline-flex min-h-6 items-center text-meta text-muted-foreground underline underline-offset-4 hover:text-foreground">Open the source record</a> : null}
         </li>;
       })}
     </ul>

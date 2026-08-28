@@ -52,7 +52,7 @@ export function Actor({
     </Avatar>
     <span className="min-w-0 truncate">{name}</span>
   </>;
-  if (performerId) return <Link href={`/people/${performerProfileSegment(performerId)}`} className={cn("inline-flex min-w-0 items-center gap-1.5 hover:underline", className)} title={name} aria-label={name}>{content}</Link>;
+  if (performerId) return <Link href={`/people/${performerProfileSegment(performerId)}`} className={cn("inline-flex min-h-6 min-w-0 items-center gap-1.5 hover:underline", className)} title={name} aria-label={name}>{content}</Link>;
 
   return (
     <span className={cn("inline-flex min-w-0 items-center gap-1.5", className)} title={name}>

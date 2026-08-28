@@ -20,7 +20,7 @@ import { problemFrontierMovement } from "@/lib/frontier-timeline";
 import { scientificProblemState } from "@/lib/scientific-state";
 import { structuredDataScript } from "@/lib/structured-data";
 
-export type ProblemPageQuery = { view?: string; file?: string; symbol?: string; workspace?: string; object?: string; inspector?: string; workError?: string };
+export type ProblemPageQuery = { view?: string; file?: string; symbol?: string; workspace?: string; object?: string; inspector?: string; workError?: string; workDone?: string };
 export type ExpectedProblemSource = {
   sourceId: string;
   nativeId: string;
@@ -164,7 +164,7 @@ export async function ProblemPageView({ repository, problem, collectionName, rou
     <ProblemHeader state={state} route={route} current={referenceView} />
     {referenceView === "overview" ? <ProblemOverviewReference state={state} route={route} />
       : view === "workspace"
-        ? <ProblemWorkspace state={state} hostedAccount={account} accountsEnabled={accountsEnabled} selectedWorkspace={query.workspace} selectedObject={query.object} selectedInspector={query.inspector} mutationError={query.workError} basePath={route} />
+        ? <ProblemWorkspace state={state} hostedAccount={account} accountsEnabled={accountsEnabled} selectedWorkspace={query.workspace} selectedObject={query.object} selectedInspector={query.inspector} mutationError={query.workError} mutationDone={query.workDone} basePath={route} />
         : <ProblemState state={state} basePath={route} researchView={view as ProblemResearchView} selectedFile={query.file} selectedDeclaration={query.symbol} frontier={frontier} />}
   </PageShell>;
 }

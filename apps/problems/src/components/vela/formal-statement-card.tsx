@@ -59,7 +59,7 @@ export function FormalStatementCard({ occurrence, showDocstring = true }: {
         />
         {occurrence.relation_kind ? <Badge variant="outline">{relationLabels[occurrence.relation_kind] ?? occurrence.relation_kind.replaceAll("_", " ")}</Badge> : null}
         {occurrence.occurrence_status === "canonical_anchor" ? <Badge variant="outline">canonical occurrence</Badge> : null}
-        {formal?.proof_locator ? <a href={formal.proof_locator} className="text-micro underline underline-offset-4">external proof</a> : null}
+        {formal?.proof_locator ? <a href={formal.proof_locator} className="inline-flex min-h-6 items-center text-micro underline underline-offset-4">external proof</a> : null}
       </>}
     />
     {standing?.detail ? <p className="mt-2 text-meta leading-5 text-muted-foreground">{standing.detail}</p> : null}

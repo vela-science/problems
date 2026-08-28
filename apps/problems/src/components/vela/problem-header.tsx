@@ -122,7 +122,10 @@ export function ProblemHeader({ state, route, current }: {
       * more than a few lines of scroll, and the question is the one thing on
       * this page that is never redundant. */}
     {hasQuestion
-      ? <h1 className="mt-3 max-w-[104ch] text-statement font-normal leading-[1.4] tracking-[-0.01em] text-foreground text-pretty md:mt-2"><ScientificText text={question} /></h1>
+      /* One step down below `sm`. At 390 the statement ran seven lines and
+         216px, which pushed the section tabs under the fold on the most common
+         phone width. The question is still the largest thing on the page. */
+      ? <h1 className="mt-3 max-w-[104ch] text-title font-normal leading-[1.45] tracking-[-0.01em] text-foreground text-pretty sm:text-statement sm:leading-[1.4] md:mt-2"><ScientificText text={question} /></h1>
       : <p className="mt-3 text-body leading-normal text-muted-foreground md:mt-2">No written statement is retained for this problem.</p>}
 
     <SectionNav
