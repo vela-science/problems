@@ -51,14 +51,21 @@ export function AppShell({
                   `#main-content` was on `SidebarInset`, whose first child is
                   the app bar — so "Skip to content" landed the reader *before*
                   the breadcrumb, command palette, notifications, appearance
-                  control and Sign in. It skipped nothing. */}
-              <div
+                  control and Sign in. It skipped nothing.
+
+                  This is also the `main` landmark. It used to sit on the frame,
+                  which put the app bar inside `main`, suppressed the `banner`
+                  role on `AppHeader`'s own `<header>`, and left this region —
+                  the thing every route actually renders into — unnamed. Two
+                  facts, one element: what the skip link targets and what `main`
+                  means are the same region. */}
+              <main
                 id="main-content"
                 tabIndex={-1}
                 className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain print:h-auto print:overflow-visible"
               >
                 {children}
-              </div>
+              </main>
             </SidebarInset>
           </SidebarProvider>
         </CommandPaletteProvider>

@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { SidebarProvider, useSidebar } from "@vela/ui/components/sidebar";
@@ -55,6 +56,17 @@ afterEach(() => {
 });
 
 describe("AppSidebar", () => {
+  /* The policy links are the product's only `contentinfo`. The shell has no
+     other footer, so if this stops being a `footer` — or gains a `nav`,
+     `aside` or `section` ancestor — the landmark disappears silently. */
+  it("carries the policy links as the contentinfo landmark", () => {
+    const source = readFileSync("src/components/vela/app-sidebar.tsx", "utf8");
+    expect(source).toContain('<footer aria-label="Policies"');
+    for (const label of ["Privacy", "Terms", "Accessibility", "Contact"]) {
+      expect(source).toContain(label);
+    }
+  });
+
   it("uses one declared desktop state without a second persistence layer", () => {
     Object.defineProperty(window, "innerWidth", { configurable: true, value: 1024 });
     const first = render(<SidebarProvider defaultOpen={false}><DesktopState /></SidebarProvider>);

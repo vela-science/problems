@@ -273,6 +273,11 @@ const PAIRS = [
   ["muted", "muted-foreground"], ["accent", "accent-foreground"],
   ["sidebar", "sidebar-foreground"], ["sidebar-accent", "sidebar-accent-foreground"],
   ["sidebar-primary", "sidebar-primary-foreground"],
+  /* `destructive-foreground` has no consumer today: shadcn's destructive
+     surfaces set their own ink. Deleting it would leave a live ground with no
+     defined ink, which is the shape this check exists to reject, so the pair is
+     kept and held to the same rule as the rest. */
+  ["destructive", "destructive-foreground"],
 ];
 const blockOf = (selector) => {
   const escaped = selector.replace(/[.*+?^${}()|[\]\\]/gu, (character) => `\\${character}`);

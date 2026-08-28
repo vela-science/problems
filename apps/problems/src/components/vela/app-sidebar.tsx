@@ -219,19 +219,24 @@ export function AppSidebar({ problemCollections = [{ namespace: "erdos-problems"
             the command palette and the signed-in account menu, so a signed-out
             visitor had no visible path to any of them — and a touch user has no
             ⌘K to fall back on. They sit in the rail because it is the one piece
-            of chrome on every route and the shell carries no footer landmark by
-            decision. Hidden when the rail is collapsed to icons, where a row of
-            four words cannot render. */}
+            of chrome on every route. Hidden when the rail is collapsed to icons,
+            where a row of four words cannot render.
+
+            A `footer` rather than a `nav`: this is the product's `contentinfo`,
+            the landmark the shell had none of, and its ancestors here are plain
+            frames so the role applies. Verified by role rather than assumed — a
+            `footer` scoped to a `nav`, `aside` or `section` would silently be no
+            landmark at all. */}
         <SidebarGroup className="border-t border-sidebar-border py-1 group-data-[collapsible=icon]:hidden">
           <SidebarGroupContent>
-            <nav aria-label="Policies" className="flex flex-wrap items-center gap-x-3 px-2 text-micro">
+            <footer aria-label="Policies" className="flex flex-wrap items-center gap-x-3 px-2 text-micro">
               {INFORMATION_ROUTES.map((route) => <Link
                 key={route.href}
                 href={route.href}
                 onClick={closeMobileNavigation}
                 className="inline-flex min-h-8 items-center rounded text-sidebar-foreground/70 hover:text-sidebar-foreground hover:underline"
               >{route.label}</Link>)}
-            </nav>
+            </footer>
           </SidebarGroupContent>
         </SidebarGroup>
 

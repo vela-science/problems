@@ -159,6 +159,15 @@ export function SearchResults({ projectionRoot, searchRoot, collectionRoot, repo
             here is not standing. */}
         Ordered by match, not by standing. A position in this list says nothing about whether a Result was accepted.
       </p> : null}
+      {/* A bound with no way past it is a dead end. The API refuses to mint a
+          cursor here on purpose — the page is a fixed concatenation of three
+          differently-ordered sources, and one keyset cannot honestly span them —
+          so the recovery is not a pager but the ledger, which does page through
+          every Problem in a single order. Saying so is the difference between a
+          bound and a wall. */}
+      {hasIntent && records && records.length < total ? <p className="mt-1">
+        This view is bounded to the strongest matches. Narrow it with a filter, or <Link href={query ? `/problems/erdos-problems?q=${encodeURIComponent(query)}` : "/problems/erdos-problems"} className="font-medium text-foreground underline underline-offset-4">open the Erdős ledger</Link>, which pages through every Problem.
+      </p> : null}
     </div>
     <CommandList className="max-h-[62vh] p-1">
       {!records ? <div className="p-2"><LedgerSkeleton rows={5} /></div> : null}

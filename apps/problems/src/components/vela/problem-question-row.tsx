@@ -43,9 +43,21 @@ export function ProblemQuestionRow({ state, href, number, collectionLabel = "Pro
           {question ? <ScientificText text={question} /> : problemLabel(state)}
         </ItemTitle>
         <ItemDescription className="line-clamp-none flex flex-wrap items-center gap-x-3 gap-y-1 text-meta">
+          {/* "Source says", because that is what this word is.
+              *
+              * It rendered as a bare `solved` behind a green dot — the same
+              * `status-progress` token the badge uses for an accepted Standing —
+              * so Erdős 321 read "● solved" on this row while its own page reads
+              * Open, "Source reports: Solved", and "A source report is not this
+              * Problem's state here". The collection table has always headed
+              * this column "Source says" and kept "Result here" beside it; the
+              * Problem rail says "Source reports". This row dropped the label
+              * and kept the colour, which is the one combination that states the
+              * opposite of the product's thesis. The label is the fix, and it is
+              * the table's own wording. */}
           <span className="flex items-center gap-1.5">
             <span aria-hidden className={`size-1.5 rounded-full ${resolved ? "bg-status-progress" : "bg-muted-foreground/45"}`} />
-            {status}
+            <span className="text-muted-foreground">Source says</span> {status}
           </span>
           {coverage.declarations ? <span>{coverage.declarations} formal {coverage.declarations === 1 ? "declaration" : "declarations"}</span> : null}
           {reviewed ? <span className="text-status-evidence">{reviewed} reviewed {reviewed === 1 ? "Result" : "Results"}</span> : null}
