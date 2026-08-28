@@ -208,7 +208,12 @@ export function AppHeader({
           rather than a link: switching Repository from inside one used to mean
           going back to the list and picking again. The current section is the
           last element and is text, not a link — it is the page you are on. */}
-      <nav aria-label="Breadcrumb" className="flex min-w-0 flex-1 items-center gap-1.5 overflow-hidden pr-2 text-body text-muted-foreground">
+      {/* A row of its own below `sm`. The toolbar already wraps at that width, but
+          the trail was `flex-1` with `min-w-0`, so it gave up its width to the
+          controls instead of taking the next line: at 320 it held about 8px and
+          rendered `#94` as a sliver — a full row of header height conveying
+          nothing. `basis-full` lets it wrap, and the controls follow. */}
+      <nav aria-label="Breadcrumb" className="flex min-w-0 flex-1 basis-full items-center gap-1.5 overflow-hidden pr-2 text-body text-muted-foreground sm:basis-auto">
         {trail.repository ? (
           <RepositorySwitcher
             current={trail.repository}
@@ -262,8 +267,15 @@ export function AppHeader({
             >
               /
             </span>
+            {/* `shrink-0` on the leaf. Every segment carried `min-w-0 truncate`
+                and shrank equally, so at 320 the row spent its width on the
+                ancestors and left the part that says where you are as a sliver:
+                "History" rendered 4.9px of the 47px it needs, `#94` 0px of 22.
+                A breadcrumb that compresses its own leaf first has the priority
+                backwards. These labels are short — a number and one word — so
+                holding them costs the ancestors, which already truncate. */}
             <span
-              className="min-w-0 truncate font-mono text-label text-foreground"
+              className="shrink-0 truncate font-mono text-label text-foreground"
               aria-current="page"
             >
               {trail.compactRecord && trail.compactRecord !== trail.record
@@ -272,10 +284,16 @@ export function AppHeader({
             </span>
           </>
         ) : null}
+        {/* The section segment drops below `sm`, where the whole breadcrumb has
+            about 48px to work with: holding both left `#94` at 0 of the 22px it
+            needs. The Problem's own section row sits directly beneath this and
+            marks the open section with `aria-current`, so at that width the
+            segment restates what is already on screen while crowding out the
+            one thing that is not. */}
         {trail.view ? (
           <>
-            <span aria-hidden className="text-muted-foreground">/</span>
-            <span className="min-w-0 truncate font-medium text-foreground" aria-current="page">{trail.view.label}</span>
+            <span aria-hidden className="hidden text-muted-foreground sm:inline">/</span>
+            <span className="hidden shrink-0 font-medium text-foreground sm:inline" aria-current="page">{trail.view.label}</span>
           </>
         ) : null}
       </nav>
