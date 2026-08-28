@@ -3,7 +3,7 @@
 import { createContext, useContext, useState } from "react";
 import type { SiteSearchRecord } from "@vela/projection-data";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@vela/ui/components/hover-card";
-import { ScientificText } from "@vela/ui/vela/scientific-text";
+import { LazyScientificText } from "@/components/vela/lazy-scientific-text";
 import { StatusBadge } from "@vela/ui/vela/status-badge";
 import { kindLabel, recordHeading, stateBadge } from "@/lib/product-language";
 import { loadSearchIndex } from "@/lib/search-index";
@@ -75,7 +75,7 @@ export function RecordPreview({ id, children }: { id: string; children: React.Re
             </div>
             <p className="mt-1.5 line-clamp-4 text-compact">
               {recordHeading(state.record)
-                ? <ScientificText text={recordHeading(state.record)!} />
+                ? <LazyScientificText text={recordHeading(state.record)!} />
                 : <span className="font-mono text-micro">{state.record.id}</span>}
             </p>
             <div className="mt-2">

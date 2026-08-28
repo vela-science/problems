@@ -1,7 +1,6 @@
 /* Shared interaction foundation for every Vela React surface. */
 @layer base {
   * { border-color: var(--border); outline-color: color-mix(in oklab, var(--ring) 50%, transparent); }
-  ::selection { background: var(--vela-selection); }
   :where(a, button, summary, input, select, textarea, [tabindex]):focus-visible {
     outline: 2px solid var(--ring);
     outline-offset: 3px;

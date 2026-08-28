@@ -10,7 +10,7 @@ import { Alert, AlertDescription, AlertTitle } from "@vela/ui/components/alert";
 import { Button } from "@vela/ui/components/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@vela/ui/components/command";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@vela/ui/components/empty";
-import { ScientificText } from "@vela/ui/vela/scientific-text";
+import { LazyScientificText } from "@/components/vela/lazy-scientific-text";
 import { StatusBadge } from "@vela/ui/vela/status-badge";
 import { RecordFilter } from "@/components/vela/record-filter";
 import { LedgerSkeleton } from "@/components/vela/route-skeleton";
@@ -177,7 +177,7 @@ export function SearchResults({ projectionRoot, searchRoot, collectionRoot, repo
                 `\cite{ErGr80}` as source, because this surface was the one
                 place that did not use ScientificText. */}
             <p className="line-clamp-2 text-body leading-5 font-medium">
-              {heading ? <ScientificText text={heading} /> : <span className="font-mono text-meta">{record.id}</span>}
+              {heading ? <LazyScientificText text={heading} /> : <span className="font-mono text-meta">{record.id}</span>}
             </p>
             <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-micro text-muted-foreground">
               <span>{problem?.problem ? problemCollectionRecordLabel(problem) : record.repository}</span>

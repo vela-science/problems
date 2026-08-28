@@ -43,14 +43,12 @@ ${primitiveLines.join("\n")}
 
 
   --vela-direction: var(--vela-color-light-direction);
-  --vela-selection: color-mix(in srgb, var(--vela-color-stardust) 24%, transparent);
   color-scheme: light;
 }
 
 [data-theme="dark"],
 .dark {
   --vela-direction: var(--vela-color-stardust);
-  --vela-selection: color-mix(in srgb, var(--vela-color-stardust) 24%, transparent);
   color-scheme: dark;
 }
 `;

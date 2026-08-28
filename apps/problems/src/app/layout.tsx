@@ -5,7 +5,6 @@ import { allRepositories, compositeSearchRoot, formalConjecturesCollectionRoot, 
 import { AppShell } from "@/components/vela/app-shell";
 import { authConfiguration } from "@/lib/auth";
 import { publishedProblemCollections } from "@/lib/published-problem-collections";
-import "@react-sigma/core/lib/style.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
