@@ -262,7 +262,7 @@ Every route has one visually dominant object.
 
 ## Shell and navigation
 
-The sidebar owns Home, Problems, signed-in My work, Updates, and one visually
+The sidebar owns Home, Problems, signed-in Workspaces, Updates, and one visually
 separate Add contribution action. Show the small set of published collections
 as compact children of Problems only where that branch is relevant. Search belongs
 to the header command control; maps, exact records, and release details stay
@@ -431,7 +431,7 @@ exact provider-neutral Workbench v1 handoff; it is rendered only when every
 required public Problem, Repository, and full Git-ref field is available. The
 canvas shows only explicit retained relationships and always has a list fallback.
 
-My work uses linked object rows with selected state and an adjacent workspace
+Workspaces uses linked object rows with selected state and an adjacent workspace
 detail. Exact Problem anchors lead back to Work; missing anchors use a compact
 recovery state. Unsigned drafts use a four-stage handoff rail from local tool to
 Repository review to public Result, not a private shell command.

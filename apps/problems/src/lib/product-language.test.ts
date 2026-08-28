@@ -72,7 +72,7 @@ describe("current product language", () => {
 
   it("separates the user-intent product navigation from contextual scientific records", () => {
     const sidebar = source("components/vela/app-sidebar.tsx");
-    for (const label of ["Home", "Problems", "Updates", "My work"]) {
+    for (const label of ["Home", "Problems", "Updates", "Workspaces"]) {
       expect(sidebar).toContain(`label: "${label}"`);
     }
     expect(sidebar).toContain("Add contribution");

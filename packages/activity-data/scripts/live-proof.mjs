@@ -265,7 +265,7 @@ if (
   || listedWorkspaceA.problemContexts[0]?.problemId !== anchor.problemId
   || listedWorkspaceA.problemContexts[0]?.anchorRoot !== currentAnchorRoot
 ) {
-  throw new Error(`My Work context summary lost exact anchor identity: ${JSON.stringify(listedWorkspaceA?.problemContexts)}`);
+  throw new Error(`Workspaces context summary lost exact anchor identity: ${JSON.stringify(listedWorkspaceA?.problemContexts)}`);
 }
 const [listedWorkspaceB] = (await listWorkspaces(accountB.id)).filter(({ id }) => id === workspaceB.id);
 if (!listedWorkspaceB || listedWorkspaceB.problemContexts.length !== 0) {

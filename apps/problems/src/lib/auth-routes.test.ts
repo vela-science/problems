@@ -44,7 +44,7 @@ describe("account routes", () => {
       '"/drafts/:id/export"',
       '"/codebases/:path*"',
       '"/import"',
-      '"/my-work"',
+      '"/workspaces"',
       '"/people/:path*"',
       '"/sign-in"',
     ]) {

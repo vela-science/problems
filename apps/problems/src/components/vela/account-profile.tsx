@@ -97,7 +97,7 @@ function Section({ id, title, description, action, children }: {
 
 /* One row per destination, carrying the state a reader came to check.
  *
- * The two lists that used to live here restated `/my-work` — which is in the
+ * The two lists that used to live here restated `/workspaces` — which is in the
  * sidebar on every page — and `/account/connections`, one click away. Showing
  * the first four of each meant a reader met the same rows three times, and on
  * an account with nothing in it met four separate empty boxes saying so.
@@ -193,7 +193,7 @@ export function AccountProfile({ account, publicProfile, workspaces, connections
       description="Both live on their own pages; this is where they stand."
     >
       <ItemGroup className="divide-y gap-0">
-        <DestinationRow href="/my-work" icon={WorkIcon} title="My work" state={work.badge} detail={work.detail} />
+        <DestinationRow href="/workspaces" icon={WorkIcon} title="Workspaces" state={work.badge} detail={work.detail} />
         <DestinationRow href="/account/connections" icon={SourceCodeIcon} title="Connections" state={connection.badge} detail={connection.detail} />
       </ItemGroup>
     </Section>

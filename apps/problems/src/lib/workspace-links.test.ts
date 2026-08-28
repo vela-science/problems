@@ -28,7 +28,7 @@ const problem = {
   record: { node_id: "erdos:321", label: "Erdős problem 321" },
 } as ProblemDiscovery;
 
-describe("My Work Problem links", () => {
+describe("Workspaces Problem links", () => {
   it("opens only an exact Repository and Problem match", () => {
     expect(workspaceProblemLinks(workspace, [problem])).toEqual([expect.objectContaining({
       state: "current",

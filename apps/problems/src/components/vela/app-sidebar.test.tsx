@@ -148,16 +148,16 @@ describe("AppSidebar", () => {
     await waitFor(() => expect(screen.getByLabelText("Mobile navigation state")).toHaveTextContent("closed"));
   });
 
-  it("shows My work only for a signed-in account", async () => {
+  it("shows Workspaces only for a signed-in account", async () => {
     const signedOut = renderSidebar();
     fireEvent.click(screen.getByRole("button", { name: "Open test navigation" }));
-    expect(screen.queryByRole("link", { name: "My work" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Workspaces" })).not.toBeInTheDocument();
     signedOut.unmount();
 
     account.state = { status: "signed_in", account: { displayName: "Ada", email: "ada@example.test", initials: "AD" } };
     renderSidebar();
     fireEvent.click(screen.getByRole("button", { name: "Open test navigation" }));
-    expect(await screen.findByRole("link", { name: "My work" })).toHaveAttribute("href", "/my-work");
+    expect(await screen.findByRole("link", { name: "Workspaces" })).toHaveAttribute("href", "/workspaces");
   });
 
   it("keeps the collapse control beside the logo home affordance", async () => {

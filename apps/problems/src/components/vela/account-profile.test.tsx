@@ -56,14 +56,14 @@ describe("AccountProfile", () => {
   });
 
   /* The page used to preview the first four workspaces and the first four
-     codebases, restating `/my-work` — which is in the sidebar on every page —
+     codebases, restating `/workspaces` — which is in the sidebar on every page —
      and `/account/connections`. It now carries one row each with the count,
      which is the part a reader came to check. */
   it("carries a count per destination rather than repeating its rows", () => {
     render(<AccountProfile {...data()} />);
 
-    const work = screen.getByRole("link", { name: /My work/u });
-    expect(work).toHaveAttribute("href", "/my-work");
+    const work = screen.getByRole("link", { name: /Workspaces/u });
+    expect(work).toHaveAttribute("href", "/workspaces");
     expect(work).toHaveTextContent("1 workspace");
     expect(work).toHaveTextContent("Prime gaps");
 
@@ -94,7 +94,7 @@ describe("AccountProfile", () => {
     expect(screen.getAllByText("Unavailable").length).toBe(2);
     expect(screen.getByText(/saved work could not be read just now/iu)).toBeVisible();
     /* Both destinations stay reachable — a read failure is not a dead end. */
-    expect(screen.getByRole("link", { name: /My work/u })).toHaveAttribute("href", "/my-work");
+    expect(screen.getByRole("link", { name: /Workspaces/u })).toHaveAttribute("href", "/workspaces");
     expect(screen.getByRole("button", { name: "Sign out" })).toBeVisible();
   });
 });

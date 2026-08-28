@@ -119,7 +119,7 @@ export function AppSidebar({ problemCollections = [{ namespace: "erdos-problems"
   const closeMobileNavigation = () => setOpenMobile(false);
   const destinations: SidebarDestination[] = PRIMARY_DESTINATIONS.flatMap((destination) => (
     accountState.status === "signed_in" && destination.href === "/updates"
-      ? [{ href: "/my-work", label: "My work", icon: WorkIcon }, destination]
+      ? [{ href: "/workspaces", label: "Workspaces", icon: WorkIcon }, destination]
       : [destination]
   ));
 

@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { authConfiguration } from "@/lib/auth";
 
-const allowedReturns = new Set(["/account", "/account/connections", "/account/profile", "/import", "/my-work"]);
+/* `/my-work` is the retired name for `/workspaces`. It stays allowed because a
+   sign-in link minted before the rename still carries it; the return lands on
+   the permanent redirect rather than being dropped to the default. */
+const allowedReturns = new Set(["/account", "/account/connections", "/account/profile", "/import", "/my-work", "/workspaces"]);
 
 /* A Problem or repository address may also round-trip, so signing in from a
  * Workspace returns to that Workspace instead of stranding the reader on

@@ -31,7 +31,7 @@ search, rows, files, results, or controls.
 | Search | command results + filters | human labels, collection identity, exact detail |
 | Contribute | task form + stepper | Problem, scope, evidence, preview, handoff |
 | Import | repository identity + status | GitHub access and exact revision |
-| My work | workspace rows | real private work and state |
+| Workspaces | workspace rows | real private work and state |
 | Account | profile + grouped settings | WorkOS, GitHub, workspaces, session |
 | Contributor profile | identity rail + attributed activity | exact role, Problem, Result/check context |
 | About | watercolor opening + concise product boundary | vision essay, public loop, exact release detail |

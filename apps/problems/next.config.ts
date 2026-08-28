@@ -11,6 +11,14 @@ const { version } = JSON.parse(readFileSync(resolve(repository, "package.json"),
 const localProjectionQualification = Boolean(process.env.VELA_NEON_FETCH_ENDPOINT);
 
 const nextConfig: NextConfig = {
+  /* `/my-work` was the route's name until it was renamed to `/workspaces`.
+     Signed-in readers have it bookmarked and it is linked from account
+     surfaces, so it keeps resolving permanently rather than 404ing. The query
+     string carries through, which is what makes a saved link to one workspace
+     still open that workspace. */
+  async redirects() {
+    return [{ source: "/my-work", destination: "/workspaces", permanent: true }];
+  },
   allowedDevOrigins: ["127.0.0.1"],
   devIndicators: { position: "bottom-right" },
   deploymentId: deploymentIdForEnvironment(process.env),

@@ -26,7 +26,8 @@ product: problems.science application
 | `/search` | Cross-product results | Open the named object |
 | `/contribute` | Problem chooser and code handoff | Search or open Work |
 | `/import` | Exact GitHub revision | Inspect or connect code |
-| `/my-work` | Private work continuity | Open saved work |
+| `/workspaces` | Private work continuity | Open saved work |
+| `/my-work` | Retired name for `/workspaces` | Permanent redirect |
 | `/account` | Identity, connections, and session | Manage or continue |
 | `/people/{handle-or-id}` | Public contributor attribution | Open exact activity context |
 | `/about` | Current product explanation and vision | Understand the boundary or open the essay |
@@ -49,7 +50,7 @@ Below it, use three or four real question rows and the two durable reviewed
 Results. Link once to all Updates. Do not repeat collection analytics, raw
 source activity, availability, or contribution onboarding on Home.
 
-The global sidebar is Home, Problems, Frontiers, signed-in My work, Updates, and a
+The global sidebar is Home, Problems, signed-in Workspaces, Updates, and a
 separate Add contribution action. Header command search owns Search. Research
 map, exact records, and release details remain reachable contextually rather
 than competing in the global spine.
@@ -105,7 +106,7 @@ drafts through `@vela/activity-data`. It cannot access local files, execute
 research code, control agent sessions, sign, issue a Decision, or change
 scientific state.
 
-Every My work row opens its workspace. An exact retained scientific anchor may
+Every Workspaces row opens its workspace. An exact retained scientific anchor may
 continue to that Problem's Work surface; an older unanchored workspace stays
 readable but is never matched to a Problem by its title. Continue locally
 opens the reviewed Workbench v1 handoff with the canonical public Problem URL,
@@ -131,7 +132,7 @@ scientific attribution.
 ## Acceptance matrix
 
 Verify Home, Problems, collection, Problems 4/94/321/887 across all five modes,
-Research map, Updates, Search, Contribute, Import, My work, Account, 404,
+Research map, Updates, Search, Contribute, Import, Workspaces, Account, 404,
 loading, empty, error, and degraded states. Use the real local production build
 in the in-app Browser at desktop, 390px, 320px, 200% zoom, keyboard, touch,
 forced colors, reduced motion, and print.

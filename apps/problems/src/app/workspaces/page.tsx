@@ -17,7 +17,7 @@ import { workspaceProblemLinks } from "@/lib/workspace-links";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
-  title: "My work",
+  title: "Workspaces",
   description: "Your private workspaces and saved work on scientific Problems.",
   robots: { index: false, follow: false },
 };
@@ -34,9 +34,9 @@ async function loadWorkspaces(accountId: string): Promise<WorkspacesResult> {
   }
 }
 
-export default async function MyWorkPage({ searchParams }: { searchParams: Promise<{ workspace?: string | string[] }> }) {
+export default async function WorkspacesPage({ searchParams }: { searchParams: Promise<{ workspace?: string | string[] }> }) {
   const account = await currentActivityAccount();
-  if (!account) redirect("/sign-in?returnTo=/my-work");
+  if (!account) redirect("/sign-in?returnTo=/workspaces");
   const result = await loadWorkspaces(account.activity.id);
   const query = await searchParams;
   const selectedId = typeof query.workspace === "string" ? query.workspace : undefined;
@@ -52,10 +52,13 @@ export default async function MyWorkPage({ searchParams }: { searchParams: Promi
   return <PageShell archetype="default" layout="reading" className="flex flex-col gap-8">
     <header className="flex flex-wrap items-start justify-between gap-5 border-b pb-7">
       <div>
-        <h1 className="text-display">My work</h1>
-        <p className="mt-2 max-w-2xl text-body text-muted-foreground">Workspaces, research objects, and drafts you can continue.</p>
+        <h1 className="text-display">Workspaces</h1>
+        <p className="mt-2 max-w-2xl text-body text-muted-foreground">Research objects and drafts you can continue. Private to your account, and never scientific state.</p>
       </div>
-      <Performer name={account.hosted.displayName} kind="human" detail="Private account" />
+      <div className="flex flex-wrap items-center gap-4">
+        <Performer name={account.hosted.displayName} kind="human" detail="Private account" />
+        <Button variant="outline" nativeButton={false} render={<Link href="/problems" />}>Find a Problem</Button>
+      </div>
     </header>
 
     {result.status === "unavailable" ? <Empty className="border-0">
@@ -66,20 +69,13 @@ export default async function MyWorkPage({ searchParams }: { searchParams: Promi
       <EmptyContent>
         <Button variant="outline" nativeButton={false} render={<Link href="/problems" />}>Browse Problems</Button>
       </EmptyContent>
-    </Empty> : result.workspaces.length ? <section aria-labelledby="retained-work-heading" className="vela-object-surface overflow-hidden">
-      <div className="flex flex-wrap items-end justify-between gap-3 border-b p-5">
-        <div>
-          <h2 id="retained-work-heading" className="text-title">Your workspaces</h2>
-          <p className="mt-1 text-meta text-muted-foreground">Open a workspace to continue its retained Problem context and research objects.</p>
-        </div>
-        <Button variant="outline" nativeButton={false} render={<Link href="/problems" />}>Find a Problem</Button>
-      </div>
+    </Empty> : result.workspaces.length ? <section aria-label="Your workspaces" className="vela-object-surface overflow-hidden">
       <ItemGroup className="p-3">
         {result.workspaces.map((workspace) => <Item
           key={workspace.id}
           className="vela-object-row rounded-md px-2"
           variant={workspace.id === selected?.id ? "muted" : "default"}
-          render={<Link href={`/my-work?workspace=${encodeURIComponent(workspace.id)}`} aria-current={workspace.id === selected?.id ? "page" : undefined} />}
+          render={<Link href={`/workspaces?workspace=${encodeURIComponent(workspace.id)}`} aria-current={workspace.id === selected?.id ? "page" : undefined} />}
         >
           <ItemContent>
             <ItemTitle>{workspace.name}<Badge variant="secondary">{workspace.role}</Badge></ItemTitle>

@@ -42,7 +42,7 @@ describe("AccountMenu", () => {
 
     await user.click(await screen.findByRole("button", { name: "Open account menu for Ada Lovelace" }));
     expect(await screen.findByText("ada@example.org")).toBeInTheDocument();
-    expect(screen.getByRole("menuitem", { name: "My work" })).toHaveAttribute("href", "/my-work");
+    expect(screen.getByRole("menuitem", { name: "Workspaces" })).toHaveAttribute("href", "/workspaces");
     expect(screen.getByRole("menuitem", { name: "Account" })).toHaveAttribute("href", "/account");
     const signOut = screen.getByRole("menuitem", { name: "Sign out" });
     expect(signOut).toHaveAttribute("type", "button");

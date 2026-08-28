@@ -24,7 +24,7 @@ export const config = {
     "/drafts/:id/export",
     "/codebases/:path*",
     "/import",
-    "/my-work",
+    "/workspaces",
     "/people/:path*",
     "/problems/:namespace/:problem",
     /* A Problem's sections are path segments, and Workspace mode is reachable

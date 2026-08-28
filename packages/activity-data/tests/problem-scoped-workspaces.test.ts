@@ -31,7 +31,7 @@ describe("problem-scoped Workspace discovery", () => {
     expect(workspace).not.toContain("const workspaces = await listWorkspaces(account.id)");
   });
 
-  test("summarizes only retained exact anchor identities for My Work navigation", () => {
+  test("summarizes only retained exact anchor identities for Workspaces navigation", () => {
     const migration = read("packages/activity-data/schema/workspace-contexts.sql");
     expect(migration).toContain("DISTINCT ON (a.repository_id, a.problem_id)");
     expect(migration).toContain("a.projection_release_root");

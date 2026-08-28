@@ -123,7 +123,7 @@ Primary navigation:
 
 - Home
 - Problems
-- My work when signed in
+- Workspaces when signed in
 - Updates
 - Add contribution as a visually separate action
 
@@ -229,7 +229,7 @@ automatic readback.
 
 ### Resume work and manage identity
 
-My work lists real account-scoped workspaces and attempts. Every workspace row
+Workspaces lists real account-scoped workspaces and attempts. Every workspace row
 opens. Exact retained anchors may continue to the relevant Problem; unanchored
 legacy work remains honest rather than being matched by its name. Account is a private
 hub for WorkOS identity, GitHub access, connected codebases, workspaces, and

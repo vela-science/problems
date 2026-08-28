@@ -38,7 +38,7 @@ const problemsActivityAction = "apps/problems/src/app/actions/activity.ts";
 const problemsProfileAction = "apps/problems/src/app/actions/profile.ts";
 const problemsActivityDraftRoute = "apps/problems/src/app/drafts/[id]/export/route.ts";
 const problemsActivityWorkspace = "apps/problems/src/components/vela/problem-workspace.tsx";
-const problemsMyWorkPage = "apps/problems/src/app/my-work/page.tsx";
+const problemsWorkspacesPage = "apps/problems/src/app/workspaces/page.tsx";
 const problemsAuthLibrary = "apps/problems/src/lib/auth.ts";
 const problemsIdentityProxy = "apps/problems/src/proxy.ts";
 const problemsGithubApp = "apps/problems/src/lib/github-app.ts";
@@ -102,7 +102,7 @@ const PROBLEMS_ACTIVITY_FILES = new Set([
   problemsProfileAction,
   problemsActivityDraftRoute,
   problemsActivityWorkspace,
-  problemsMyWorkPage,
+  problemsWorkspacesPage,
   problemsImportAction,
   problemsConnectionsPage,
   problemsImportPage,

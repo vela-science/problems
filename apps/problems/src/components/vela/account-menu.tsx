@@ -83,8 +83,8 @@ export function AccountMenu() {
             </DropdownMenuLabel>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem className="min-h-9" render={<Link href="/my-work" prefetch={false} />}>
-            My work
+          <DropdownMenuItem className="min-h-9" render={<Link href="/workspaces" prefetch={false} />}>
+            Workspaces
           </DropdownMenuItem>
           <DropdownMenuItem className="min-h-9" render={<Link href="/account" prefetch={false} />}>
             <HugeiconsIcon icon={UserCircle} aria-hidden />

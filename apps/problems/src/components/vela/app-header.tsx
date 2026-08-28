@@ -47,7 +47,7 @@ const globalTitles: Record<string, string> = {
      reader met it. */
   "/graph": "Research map",
   "/account": "Account",
-  "/my-work": "My work",
+  "/workspaces": "Workspaces",
   "/about": "About",
   "/privacy": "Privacy",
   "/terms": "Terms",
