@@ -334,6 +334,22 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
   const sort = ["number", "status", "sources", "reviewed"].includes(query.sort ?? "") ? query.sort! : "number";
   const sourceCoverageByRoute = sourceCorpora ? problemSourceObservationCoverage(sourceCorpora, catalog) : null;
   const requestedPage = Number.parseInt(query.page ?? "1", 10);
+  /* What is currently narrowing the list, in the reader's words, so the reset
+     appears whenever anything is set rather than for two of the ten. */
+  const narrowing = [
+    ["Area", selectedDomain !== "all" ? domains.find(([key]) => key === selectedDomain)?.[1] : null],
+    ["Hub", selectedHub !== "all" ? hubs.find(([key]) => key === selectedHub)?.[1] : null],
+    ["Search", query.q?.trim() ? query.q.trim().slice(0, 40) : null],
+    ["Source says", status !== "all" ? status : null],
+    ["Result here", standing !== "all" ? standing.replaceAll("_", " ") : null],
+    ["Source", source !== "all" ? source : null],
+    ["Repository", repository !== "all" ? repository : null],
+    ["Formal", formalized !== "all" ? (formalized === "yes" ? "in Lean" : "no declaration") : null],
+    ["Coverage", coverage !== "all" ? coverage : null],
+    ["Exact id", exactId || null],
+    ["Sort", sort !== "number" ? sort : null],
+  ].flatMap(([label, value]) => value ? [{ label: label as string, value: String(value) }] : []);
+
   const problems = scopedCatalog.filter((problem) => {
     const text = [problem.problem, problem.field?.name ?? "", ...problem.topics.map(({ name }) => name), problem.collection?.name ?? "", ...problem.hubs.map(({ name }) => name), problem.theme, problem.record.statement, ...problem.record.tags].join(" ").toLocaleLowerCase();
     if (q && !text.includes(q)) return false;
@@ -412,7 +428,15 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
         </div>
         <p className="pb-2 text-meta text-muted-foreground">Coverage is source-observation coverage, not Problem completeness. <Link href={{ pathname: COLLECTION_PATH, query: { view: "overview" } }} className="font-medium text-foreground underline-offset-4 hover:underline">Inspect coverage</Link></p>
       </Disclosure>
-      {(selectedDomain !== "all" || selectedHub !== "all") ? <div className="flex flex-wrap gap-2 border-t border-border/70 pt-3 text-meta"><span className="text-muted-foreground">Active scope:</span>{selectedDomain !== "all" ? <Badge variant="secondary">Area · {domains.find(([key]) => key === selectedDomain)?.[1]}</Badge> : null}{selectedHub !== "all" ? <Badge variant="secondary">Hub · {hubs.find(([key]) => key === selectedHub)?.[1]}</Badge> : null}<Link href={COLLECTION_PATH} className="font-medium underline-offset-4 hover:underline">Clear filters</Link></div> : null}
+      {/* Every filter that narrows, not two of them.
+          *
+          * The row was gated on `selectedDomain`/`selectedHub`, so eight of the
+          * ten controls could narrow 1,217 Problems to a handful and never
+          * reveal a way back — and the one filter that did reveal it, Scientific
+          * area, has exactly two options in this release, so it cannot narrow
+          * anything. A reader who arrived on a shared link had no Back to use
+          * either. */}
+      {narrowing.length ? <div className="flex flex-wrap items-center gap-2 border-t border-border/70 pt-3 text-meta"><span className="text-muted-foreground">Active scope:</span>{narrowing.map(({ label, value }) => <Badge key={label} variant="secondary">{label} &middot; {value}</Badge>)}<Link href={COLLECTION_PATH} className="font-medium underline-offset-4 hover:underline">Clear filters</Link></div> : null}
     </form>
     {/* The count is a fact about the rows, so it sits with them in one line
         rather than under an h2 naming the page's own content. */}

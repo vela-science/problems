@@ -12,6 +12,7 @@ import { FormalConjecturePage } from "@/components/vela/formal-conjecture-page";
 import type { ProblemReferenceView } from "@/components/vela/problem-overview-reference";
 import { statementPlainText } from "@/lib/problem-statement";
 import { publishedProblemCollections } from "@/lib/published-problem-collections";
+import { scientificProblemState } from "@/lib/scientific-state";
 
 export const dynamic = "force-dynamic";
 
@@ -49,6 +50,11 @@ function resolve(namespace: string, problem: string) {
   return { kind: "repository-problem" as const, repository, route, entity, collection };
 }
 
+/* Mirrors `app/not-found.tsx`, which restates `robots` rather than leaving it
+   to Next's automatic not-found metadata, because the automatic one emits a
+   contradictory pair. */
+const NOT_FOUND_METADATA = { title: "Not found", robots: { index: false, follow: true } } as const;
+
 function referenceView(query: ProblemPageQuery): ProblemReferenceView {
   const view = query.view ?? "";
   return view === "work" || view === "results" || view === "sources" || view === "history" ? view : "overview";
@@ -70,11 +76,28 @@ export async function generateMetadata({ params }: PageProps<"/problems/[namespa
       alternates: { canonical: resolved.route },
     };
   }
-  return resolved ? {
+  if (!resolved) return NOT_FOUND_METADATA;
+  /* `resolve` proves the address is well formed, not that the release retains a
+     Problem at it. It pattern-matches the namespace and the number, so
+     `/problems/erdos-problems/888888` resolved happily while the page below
+     called `notFound()` — the response was a correct 404 whose tab, history
+     entry and bookmark all read "Erdős problem 888888", and whose robots tag
+     flipped to `index, follow` after hydration. A product that publishes only
+     what a release retains cannot name a Problem that it does not.
+
+     The read is the same cached one the page performs, so asking here costs
+     nothing beyond the first call. A refusal is left to the page and its error
+     boundary; only a confirmed absence changes the metadata. */
+  try {
+    if (!(await scientificProblemState(resolved.repository, problem))) return NOT_FOUND_METADATA;
+  } catch {
+    return {};
+  }
+  return {
     title: `${resolved.collection.name.replace(/ Problems$/u, " problem")} ${problem}`,
     description: `Read what is known, check prior work, and inspect exact evidence for ${resolved.collection.name.replace(/ Problems$/u, " problem")} ${problem}.`,
     alternates: { canonical: resolved.route },
-  } : {};
+  };
 }
 
 export default async function ProblemPage({ params, searchParams }: PageProps<"/problems/[namespace]/[problem]/[[...view]]"> & { searchParams: Promise<ProblemPageQuery> }) {

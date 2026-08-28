@@ -11,7 +11,13 @@ const buttonVariants = cva(
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/80",
         outline:
-          "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+          /* `border-input`, not `border-border`. An outline button's edge is the
+           only thing that says where the control is, so WCAG 1.4.11 asks 3:1 of
+           it. `--border` is the divider token and measures 1.36:1 on the light
+           page — it was already `--input` in dark, which is the token that
+           exists for exactly this and measures 3.33:1 light. Rules and dividers
+           keep `--border`; controls state their own boundary. */
+          "border-input bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:bg-input/30 dark:hover:bg-input/50",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_5%)] aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
         ghost:

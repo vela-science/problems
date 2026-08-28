@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CopyButton } from "@vela/ui/vela/copy-button";
 import { ArrowUp01Icon, CheckmarkCircle01Icon, MinusSignCircleIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Badge } from "@vela/ui/components/badge";
@@ -292,11 +293,25 @@ function ProblemFacts({ state, lastSourceUpdate, openFormal, formal }: {
 }
 
 function ExactPanel({ state }: { state: State }) {
+  /* Copy controls, because these are the values a reader takes somewhere else.
+     The panel printed three 64-character roots with no way to lift one: the
+     reproduce runbook has copy buttons on every command, and the identity panel
+     — the reason to trust any of it — had none. Selecting the row by hand also
+     took the label with the value, which is what `factStack` was hiding. */
+  const roots = [
+    { label: "Problem record", value: state.anchor.problemRecordRoot },
+    { label: "Projection", value: state.anchor.projectionReleaseRoot },
+    { label: "Source commit", value: state.anchor.sourceCommit },
+  ];
   return <Disclosure className={styles.panel} summary="Exact roots" meta="Record identity">
     <div>
-      <div className={`${styles.fact} ${styles.factStack}`}><span className={styles.factKey}>Problem record</span><span className={`${styles.factValue} ${styles.exact} break-all`}>{state.anchor.problemRecordRoot}</span></div>
-      <div className={`${styles.fact} ${styles.factStack}`}><span className={styles.factKey}>Projection</span><span className={`${styles.factValue} ${styles.exact} break-all`}>{state.anchor.projectionReleaseRoot}</span></div>
-      <div className={`${styles.fact} ${styles.factStack}`}><span className={styles.factKey}>Source commit</span><span className={`${styles.factValue} ${styles.exact} break-all`}>{state.anchor.sourceCommit}</span></div>
+      {roots.map(({ label, value }) => <div key={label} className={`${styles.fact} ${styles.factStack}`}>
+        <span className={styles.factKey}>{label}</span>
+        <span className={`${styles.factValue} ${styles.exact} break-all`}>
+          {value}
+          {value ? <CopyButton compact value={String(value)} label={`Copy ${label.toLowerCase()}`} /> : null}
+        </span>
+      </div>)}
     </div>
   </Disclosure>;
 }
