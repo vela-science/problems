@@ -215,7 +215,7 @@ function ProblemRows({ problems, statements }: {
                 reviewed Result are the information, and they now say so. */}
             <TableCell className="hidden align-baseline text-meta @2xl/directory:table-cell">{record.local_standing
               ? <span className="inline-flex items-center gap-1.5 font-medium text-status-progress"><span aria-hidden className="size-1.5 rounded-full bg-status-progress" />{record.local_standing.replaceAll("_", " ")}</span>
-              : <><span aria-hidden className="text-muted-foreground/50">—</span><span className="sr-only">No Result decision</span></>}</TableCell>
+              : <><span aria-hidden className="text-muted-foreground">—</span><span className="sr-only">No Result decision</span></>}</TableCell>
             <TableCell className="align-baseline">
               <HugeiconsIcon icon={ArrowRight} aria-hidden className="size-4 text-muted-foreground transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-primary" />
             </TableCell>
