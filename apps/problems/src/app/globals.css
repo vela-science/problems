@@ -62,6 +62,24 @@
     color: var(--muted-foreground);
   }
 
+  /* The stage dot on a progress spine. `problem-overview` and
+     `problem-transition` each drew it, byte-identical, along with its
+     "reached" variant. */
+  .vela-stage-mark {
+    width: 0.8125rem;
+    height: 0.8125rem;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--background);
+    position: relative;
+    z-index: 1;
+  }
+
+  .vela-stage-mark-reached {
+    border-color: var(--status-progress);
+    background: var(--status-progress);
+  }
+
   .vela-object-surface {
     border: 1px solid var(--border);
     border-radius: calc(var(--radius) + 0.25rem);

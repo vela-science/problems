@@ -23,7 +23,9 @@
   .overview { grid-template-columns: minmax(0, 1fr) 20rem; gap: 1.75rem; }
 }
 
-.column { display: flex; flex-direction: column; gap: 0.875rem; min-width: 0; }
+/* One stack, two grid tracks. `.column` and `.rail` had identical bodies; what
+   distinguishes them is the grid template above, not their own rules. */
+.column,
 .rail { display: flex; flex-direction: column; gap: 0.875rem; min-width: 0; }
 
 /* The answer. Unframed, and the largest type on the page. */
@@ -182,16 +184,8 @@
 }
 
 .stage { padding-right: 0.75rem; position: relative; }
-.stageMark {
-  width: 0.8125rem;
-  height: 0.8125rem;
-  border-radius: 50%;
-  border: 2px solid var(--border);
-  background: var(--background);
-  position: relative;
-  z-index: 1;
-}
-.stageMarkPresent { border-color: var(--status-progress); background: var(--status-progress); }
+.stageMark { composes: vela-stage-mark from global; }
+.stageMarkPresent { composes: vela-stage-mark-reached from global; }
 .stageLabel { margin-top: 0.6875rem; font-size: var(--text-compact); font-weight: 500; }
 .stageAbsent { color: var(--ov-muted); font-weight: 400; }
 .stageDetail { margin-top: 0.1875rem; font-size: var(--text-micro); line-height: 1.45; color: var(--ov-muted); }

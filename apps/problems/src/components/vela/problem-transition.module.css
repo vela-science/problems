@@ -38,16 +38,8 @@
 
 .stage { display: grid; gap: 0.1875rem; position: relative; }
 
-.mark {
-  width: 0.8125rem;
-  height: 0.8125rem;
-  border-radius: 50%;
-  border: 2px solid var(--border);
-  background: var(--background);
-  position: relative;
-  z-index: 1;
-}
-.markRecorded { border-color: var(--status-progress); background: var(--status-progress); }
+.mark { composes: vela-stage-mark from global; }
+.markRecorded { composes: vela-stage-mark-reached from global; }
 .markStanding { border-color: var(--status-caution); background: var(--status-caution); }
 .markAbsent { border-style: dashed; }
 
