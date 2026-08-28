@@ -164,9 +164,16 @@ export function ProblemOverview({ state, route }: { state: State; route: string 
         </div>
       </section> : null}
 
-      <section className={styles.panel} aria-labelledby="claims-heading">
+      {/* "Results", not "Claims". These are the same `state.claims` records the
+          section tab above calls Results, and `kindLabel` in product-language
+          already maps `claim` to `Result` for every other reader-facing
+          surface. One record wearing two ontological nouns is the worst
+          available slip in a product whose thesis is that Claim, Verification,
+          Decision and Standing are separate axes — a reader cannot tell
+          whether the difference is vocabulary or substance. */}
+      <section className={styles.panel} aria-labelledby="results-heading">
         <div className={styles.panelHead}>
-          <span className={styles.kicker} id="claims-heading">Claims</span>
+          <span className={styles.kicker} id="results-heading">Results</span>
           <span className={styles.kicker}>{claims.length}</span>
         </div>
         {claims.map((claim) => <div
