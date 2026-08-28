@@ -60,8 +60,14 @@ describe("global Problems entry", () => {
   it("publishes two honest collections and collection-qualified starting points", async () => {
     expect(metadata.alternates).toEqual({ canonical: "/problems" });
     const view = render(await ProblemsPage({ searchParams: Promise.resolve({}) }));
+    /* The route names itself for a screen reader only. The visible band that
+       used to say "Problems" restated the breadcrumb and the rail, and its
+       "2 published collections" badge counted the section directly beneath it,
+       which lists those two collections by name. */
     expect(view.container.querySelector("h1")).toHaveTextContent("Problems");
-    expect(screen.getByText("2 published collections")).toBeInTheDocument();
+    expect(view.container.querySelector("h1")).toHaveClass("sr-only");
+    expect(screen.queryByText("2 published collections")).toBeNull();
+    expect(screen.getByRole("heading", { level: 2, name: "Published collections" })).toBeVisible();
     expect(screen.getAllByText("Erdős Problems")[0]?.closest("a")).toHaveAttribute("href", "/problems/erdos-problems");
     expect(screen.getAllByText("Formal Conjectures")[0]?.closest("a")).toHaveAttribute("href", "/problems/formal-conjectures");
     expect([...view.container.querySelectorAll("a")].find((link) => link.getAttribute("href") === "/problems/erdos-problems/321"))

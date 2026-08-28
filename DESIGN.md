@@ -166,9 +166,10 @@ orientation, and profile accents may inherit restrained first-party materials.
 Use the canonical sail and retained artwork; do not redraw the mark or generate
 substitutes.
 
-The former Problems essay route is a compatibility redirect, not a third
-register. Product surfaces link directly to the canonical folio at
-`https://vela.space/constellations`.
+There is no Problems essay route and no third register. `/about` and
+`/about/endless-frontiers` were removed, and the *Endless Frontiers* folio was
+withdrawn from `vela.space` on 2026-08-21; neither address resolves. Product
+surfaces link to `https://vela.space` itself.
 
 ### Functional motif grammar
 
@@ -294,9 +295,8 @@ key, focus, and active-tab visibility. Do not hide later modes with no cue.
 - History: semantic chronology and diffs.
 - Graph: exact relationship canvas with synchronized list fallback.
 - Account: person, connections, work continuity, and security actions.
-- Problems About: concise product explanation and a cross-domain route to Vela.
-- Vela landing and essay: authored argument, orientation, and a direct route
-  into Problems.
+- Vela landing: authored argument, orientation, and a direct route into
+  Problems. It is the only editorial surface; Problems has no About route.
 
 Supporting content should not compete with that object. If a section merely
 restates a tab, badge, or status row, remove it.
@@ -374,9 +374,8 @@ the collection directory, and never renders a Result, so Home must not restate
 its headings or its question list — Home once did, and was a weaker copy of the
 page directly beneath it in the sidebar.
 
-It carries no editorial plate. Retained paintings belong to `vela.space`,
-About, and other explicit editorial moments rather than beside the product
-search. The one permitted ground is a masked geometric texture that no reader
+It carries no editorial plate. Retained paintings belong to `vela.space` and
+other explicit editorial moments rather than beside the product search. The one permitted ground is a masked geometric texture that no reader
 could mistake for data: a line here encodes nothing.
 
 The full long-form composition lives at `vela.space`, outside this repository
@@ -387,11 +386,17 @@ quiet accent, but they do not import the essay layout.
 
 ### Problem header and Overview
 
-The complete question is the title. A compact metadata line qualifies the
-collection, source, and number. Put Start work and Open source at the right when
-space permits. Below the question, use a single readable status strip for
-formal target, source-attributed status, Repository decision on a contribution,
-and check coverage. Do not repeat these axes in Overview.
+The complete question is the title, unclamped on Overview. A compact identity
+label qualifies the collection and number above it, on a line that also carries
+the reading badge, copy link, Start work, and the exits — Continue locally and
+Open source — that take the Problem into the reader's own tools.
+
+There is no status strip below the question. The axes it once held — the
+source's own reported status, the Repository's Decision on a contribution, and
+check coverage — live in Overview's rail, where each is labelled with whose fact
+it is. A strip repeating them under the question would state the same four
+things twice on one screen, and would put the source's word and this site's
+state side by side with nothing distinguishing them.
 
 Overview is not navigation. Its dominant object is the current Result or honest
 current-state absence, including scope and limitations. Supporting content may
@@ -489,7 +494,7 @@ document.
 - Keep exact scientific data reachable without making it the headline.
 - Let empty space support hierarchy, not compensate for missing structure.
 - Use the canonical sail, retained paintings, horizon, and borrowed-light
-  language at earned Home, About, collection-cover, graph-orientation, and
+  language at earned Home, collection-cover, graph-orientation, and
   meaningful transition moments.
 - Let constellation lines represent exact retained relationships only; let
   authored paintings remain clearly atmospheric.

@@ -1,0 +1,79 @@
+# problems.science
+
+> Open scientific problems, and exactly what has been established about each one.
+> The site publishes a read-only projection of scientific state held in Vela
+> Repository Git repositories: Claims, the Verifications that checked them, the
+> attributed Decisions that accepted them, and the Standing that follows. A
+> source's report and this site's own state are separate facts and are always
+> labelled as such.
+
+Most Problems hold no accepted Result. That is the honest state of the
+catalogue, not a gap in the page: 1,215 of 1,217 published Problems are held by
+identity and source locator alone, and their pages say so rather than inferring
+a status.
+
+## Reading state correctly
+
+- A **Claim** is an assertion recorded against a Problem.
+- A **Verification** is one scoped check. It reports what it covered and what it
+  explicitly does not establish. A passing check is not acceptance.
+- A **Decision** is an attributed act by one Repository authority.
+- **Standing** is what that Repository currently admits, after replaying its
+  Decisions. It is always Repository-local — never "true".
+- A source's `declared_status` ("solved", "proved") is the source's word, shown
+  under "Source says". It is not this site's state.
+
+## Agent interface
+
+Problem pages register typed tools on `document.modelContext` (WebMCP). An agent
+driving the page gets a bounded context packet (`vela.webmcp-problem-context.v1`)
+and these operations:
+
+- `inspect_problem` — the Problem's current state, Claims, sources, and the exact
+  projection roots those facts came from. Call first; other tools take its ids. Read-only.
+- `inspect_claim` — one Claim in full, with the lineage behind its Standing and what
+  each Verification did *not* establish. Read-only.
+- `inspect_history` — the ordered Proposals, Verifications and Decisions, plus
+  correction and supersession relations. Read-only.
+- `search_problems` — locate related or comparable Problems before proposing
+  anything. Read-only.
+- `open_approach` — begin an attributed line of work. Writes hosted Work, which
+  carries no scientific authority. Requires sign-in.
+- `attach_evidence` — attach an artifact by its exact content root with a written
+  rationale. Bytes are not uploaded. Requires sign-in.
+- `prepare_submission` — draft a Submission and leave it **unsigned**. Requires sign-in.
+- `inspect_candidate` — read the unsigned drafts prepared in this Workspace.
+
+### The boundary, which is enforced rather than promised
+
+`prepare_submission` is the furthest an agent in a browser can go. This
+application holds no signing key and cannot sign for anyone. An agent can never
+issue a Decision, change a Standing, or sign a Submission — a test reads the
+agent interface as bytes and fails the build on any shape that would.
+
+A human takes the unsigned draft to a local tool, signs it with a key only they
+hold, and submits it to the Repository. Verification and an attributed Decision
+there decide whether Standing moves.
+
+There is no remote MCP server. An agent that is not driving a page can read the
+machine-readable documents below, but has no write path.
+
+## Machine-readable
+
+- [/problems.json](https://problems.science/problems.json): published Problems, root-labelled
+- [/sources.json](https://problems.science/sources.json): source records, root-labelled
+- [/.well-known/vela-site.json](https://problems.science/.well-known/vela-site.json): deployment manifest and exact release root
+- [/sitemap.xml](https://problems.science/sitemap.xml)
+
+Every projection read is pinned to an exact release root and fails closed on an
+incompatible manifest. Responses carry `X-Vela-Projection-Root`.
+
+## Routes
+
+- [/problems](https://problems.science/problems): collections and directory
+- [/problems/erdos-problems/94](https://problems.science/problems/erdos-problems/94): a Problem with an accepted Result whose scope does not reach the question
+- [/problems/erdos-problems/2](https://problems.science/problems/erdos-problems/2): the dominant case — identity and source locator, nothing established here
+- [/decisions](https://problems.science/decisions): attributed Repository Decisions
+- [/repositories/math/reproduce](https://problems.science/repositories/math/reproduce): pinned commands to replay Repository state, and what success does not prove
+- [/contribute](https://problems.science/contribute): how work returns
+- [/accessibility](https://problems.science/accessibility): conformance and known limits

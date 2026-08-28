@@ -34,7 +34,6 @@ search, rows, files, results, or controls.
 | Workspaces | workspace rows | real private work and state |
 | Account | profile + grouped settings | WorkOS, GitHub, workspaces, session |
 | Contributor profile | identity rail + attributed activity | exact role, Problem, Result/check context |
-| Endless Frontiers | continuous long-form folio | retained paintings, citations, route back to Problems |
 
 ## Calibration surfaces
 
@@ -73,15 +72,6 @@ or four question rows and the two durable reviewed Results. Keep one small link
 to all Updates. Remove raw update feeds, Home collection charts, marketing
 banners, repeated onboarding labels, and duplicated coverage explanations.
 
-### About and essay
-
-About may leave the standard policy-page composition. It uses one strong
-watercolor opening, a concise explanation of Problem, Result, source, and
-Repository-local state, and a visible route to *Endless Frontiers*. The essay
-keeps the application shell but uses editorial display and body type, a 65–72ch
-measure, authored paintings, inline citations, and calm section pacing. It does
-not restore the retired site masthead or footer.
-
 ### Collection
 
 Use a normal identity header. Put the compact source-status distribution beside
@@ -92,8 +82,10 @@ the dominant object. More filters remain disclosed until needed.
 
 The question is the header's `h1`, at the `statement` step, unclamped on
 Overview. Collection-qualified identity sits above it as a label, with the
-reading badge, copy link and Start work on that line. There is no state strip:
-source-attributed status, Repository decision on a contribution, and checks.
+reading badge, copy link, Start work, and the Continue locally / Open source
+exits on that line. There is no state strip below the question: the source's
+reported status, the Repository's Decision, and check coverage are labelled
+facts in Overview's rail, not an unattributed row.
 Tabs use a border-bottom row with no enclosing card.
 
 Overview leads with the current Result or an honest absence. Show its unresolved

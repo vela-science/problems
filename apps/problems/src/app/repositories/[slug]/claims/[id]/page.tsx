@@ -18,6 +18,8 @@ import { claimNeighbours,
 } from "@vela/projection-data";
 import { StatusBadge } from "@vela/ui/vela/status-badge";
 import { ExactValue } from "@vela/ui/vela/exact-value";
+import { CopyButton } from "@vela/ui/vela/copy-button";
+import { Disclosure } from "@/components/vela/disclosure";
 import { ScientificText } from "@vela/ui/vela/scientific-text";
 import { claimTitle, formatDate } from "@/lib/format";
 import { FacetLink } from "@/components/vela/facet-link";
@@ -95,6 +97,12 @@ export default async function FindingPage({ params }: PageProps<"/repositories/[
   });
   const sourceLocator = boundSource?.record.locators.find((entry) => entry.url)?.url ?? null;
   const ledger = `/repositories/${slug}/claims`;
+  const citation = [
+    repository.status.repository.name,
+    `Claim ${claim.id}`,
+    claim.root,
+    `https://problems.science/repositories/${slug}/claims/${claim.id}`,
+  ].filter(Boolean).join(". ");
   const stateRoots = statusStateRoots(repository.status);
   const standingView = buildClaimStandingView(claim, repository.reviews);
   /* Every scoped check bound to this Claim, across its Proposals, ordered by
@@ -316,6 +324,28 @@ export default async function FindingPage({ params }: PageProps<"/repositories/[
           </section>
           <Item variant="outline" className="items-start"><ItemMedia variant="icon"><HugeiconsIcon icon={FileCheck2} aria-hidden /></ItemMedia><ItemContent><ItemTitle>Reproduce the source snapshot</ItemTitle><ItemDescription>Replay establishes the exact record and checks. It does not add scientific authority.</ItemDescription></ItemContent><ItemActions className="basis-full justify-end sm:basis-auto"><Button nativeButton={false} variant="outline" render={<Link href={`/repositories/${repository.slug}/reproduce`} />}>Reproduce <HugeiconsIcon icon={ArrowRight} aria-hidden data-icon="inline-end" /></Button></ItemActions></Item>
           {repository.graph ? <Button nativeButton={false} variant="outline" render={<Link href={`/graph?repository=${repository.slug}&lens=research&node=${encodeURIComponent(claim.id)}`} />}>Inspect graph neighborhood <HugeiconsIcon icon={ArrowRight} aria-hidden data-icon="inline-end" /></Button> : null}
+          {/* A citation that names a record, not a truth.
+            *
+            * The page carried nothing to take away: a reader who wanted to
+            * refer to this Result elsewhere had to assemble an address, an id
+            * and a root by hand from three separate controls. The record root
+            * is what makes the reference exact — it identifies these bytes,
+            * not whatever this Claim later becomes — so it is the part the
+            * citation is built around.
+            *
+            * It states the Repository that accepted it, because Standing is
+            * Repository-local and a citation that omits whose Standing it is
+            * would assert more than the record does. */}
+          <Disclosure className="rounded-lg border px-3 py-2" summary="Cite this Result" summaryClassName="text-compact font-medium">
+            <p className="mt-2 text-meta text-muted-foreground">
+              The record root identifies these exact bytes. A later correction or supersession
+              produces a different record, so this reference does not silently follow the Claim.
+            </p>
+            <div className="mt-2 flex items-start gap-2">
+              <p className="min-w-0 flex-1 break-all font-mono text-micro leading-5">{citation}</p>
+              <CopyButton compact value={citation} label="Copy citation" />
+            </div>
+          </Disclosure>
         </div>
 
         <aside aria-labelledby="claim-facts-heading">

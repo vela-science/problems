@@ -16,10 +16,13 @@ product: problems.science application
 | `/problems/erdos-problems/{number}` | Question and current state | Read Overview |
 | `/problems/formal-conjectures` | Rights-reviewed formalization subset | Open a formalization |
 | `/problems/formal-conjectures/{occurrence}` | Exact declaration occurrence | Read Overview or Sources |
-| `/work` | Canvas, files, and research objects | Continue work |
-| `/results` | Durable outputs and checks | Open a Result |
-| `/sources` | File browser and exact preview | Select a source |
-| `/history` | Chronology and correction diffs | Open an event |
+| `/problems/{namespace}/{problem}/work` | Canvas, files, and research objects | Continue work |
+| `/problems/{namespace}/{problem}/results` | Durable outputs and checks | Open a Result |
+| `/problems/{namespace}/{problem}/sources` | File browser and exact preview | Select a source |
+| `/problems/{namespace}/{problem}/history` | Chronology and correction diffs | Open an event |
+| `/sources/{id}` | One exact source record | Follow it back to a Claim |
+| `/decisions` | Attributed Repository Decisions | Open the Proposal behind one |
+| `/repositories/{slug}` | A Repository and its ledgers | Open Problems, Claims, or Reproduce |
 | `/graph` | Exact relationship canvas | Choose a Problem or Result |
 | `/updates` | Meaningful published changes | Open affected context |
 | `/search` | Cross-product results | Open the named object |
@@ -29,11 +32,13 @@ product: problems.science application
 | `/account` | Identity, connections, and session | Manage or continue |
 | `/people/{handle-or-id}` | Public contributor attribution | Open exact activity context |
 
-About is the living bridge between product and editorial registers. The full
-vision essay lives at `https://vela.space/constellations`. Privacy, Terms,
-Accessibility, and Contact remain compact institutional surfaces. Exact-record
-and Repository routes are durable contextual destinations, not primary
-navigation.
+There is no About route and no essay route. `vela.space` is the editorial
+origin and this application must not grow a second editorial surface, so the
+product explains itself through the surfaces that carry real state: a Problem's
+own Overview, `/decisions`, and `/repositories/{slug}/reproduce`. Privacy,
+Terms, Accessibility, and Contact remain compact institutional surfaces,
+reachable from the rail. Exact-record and Repository routes are durable
+contextual destinations, not primary navigation.
 
 ## Home
 

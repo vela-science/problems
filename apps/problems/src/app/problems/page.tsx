@@ -3,10 +3,10 @@ import Link from "next/link";
 import { ArrowRight01Icon, CodeIcon, Folder01Icon, Search01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { formalConjecturesCollection } from "@vela/projection-data";
-import { Badge } from "@vela/ui/components/badge";
 import { Button } from "@vela/ui/components/button";
 import { Input } from "@vela/ui/components/input";
-import { PageHero, PageSection, PageSectionHeader, PageShell } from "@vela/ui/vela/page-shell";
+import { PageSection, PageSectionHeader, PageShell } from "@vela/ui/vela/page-shell";
+import { RouteTitle } from "@/components/vela/route-title";
 import { ScientificText } from "@vela/ui/vela/scientific-text";
 import { ProblemQuestionRow } from "@/components/vela/problem-question-row";
 import { discoveredProblems, problemDiscoveryCollections, problemStatePreviews } from "@/lib/scientific-state";
@@ -35,10 +35,13 @@ export default async function ProblemsPage(props?: { searchParams?: Promise<Reco
 
   return <PageShell archetype="problem">
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredDataScript(structuredData) }} />
-    <PageHero density="compact" className="vela-route-hero grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,.42fr)] lg:items-end">
-      <div><div className="flex flex-wrap items-center gap-3"><h1 className="text-display">Problems</h1><Badge variant="secondary">2 published collections</Badge></div><p className="mt-3 max-w-2xl text-body text-muted-foreground">Find a scientific question, inspect what is known, and follow its exact sources and Results.</p></div>
-      <form action="/search" className="vela-object-surface flex items-center gap-2 p-2"><label className="relative min-w-0 flex-1"><span className="sr-only">Search all Problems</span><HugeiconsIcon icon={Search01Icon} aria-hidden className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /><Input name="q" className="h-11 border-0 bg-transparent pl-9 shadow-none" placeholder="Search across collections…" /></label><Button type="submit">Search</Button></form>
-    </PageHero>
+    {/* No header band. It carried "Problems" — which the breadcrumb and the rail
+        both already say — a badge counting two published collections directly
+        above the section that lists those two collections by name, and a
+        sentence describing what a directory is. Three restatements and no fact.
+        The search stays, because it is a control rather than a caption. */}
+    <RouteTitle title="Problems" />
+    <form action="/search" className="vela-object-surface mt-2 flex items-center gap-2 p-2 lg:max-w-lg"><label className="relative min-w-0 flex-1"><span className="sr-only">Search all Problems</span><HugeiconsIcon icon={Search01Icon} aria-hidden className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /><Input name="q" className="h-11 border-0 bg-transparent pl-9 shadow-none" placeholder="Search across collections…" /></label><Button type="submit">Search</Button></form>
     <PageSection aria-labelledby="published-collections" className="pt-6">
       <PageSectionHeader><div><h2 id="published-collections" className="text-title">Published collections</h2><p className="mt-1 text-meta text-muted-foreground">Collection names qualify local identifiers; inclusion does not determine scientific truth.</p></div></PageSectionHeader>
       <div className="mt-3 overflow-hidden rounded-lg border bg-card"><ul className="divide-y">{collections.map((collection) => <li key={collection.href}><Item className="vela-object-row gap-4 rounded-none px-4 py-5" render={<Link href={collection.href} />}><ItemMedia className="size-10 rounded-md bg-primary/10 text-primary"><HugeiconsIcon icon={collection.icon} aria-hidden className="size-5" /></ItemMedia><ItemContent><ItemTitle className="line-clamp-none block text-title group-hover/item:text-primary">{collection.name}</ItemTitle><ItemDescription className="max-w-3xl text-meta">{collection.description}</ItemDescription></ItemContent>{/* A fixed basis, not a flex gap: the detail keeps the aligned column the

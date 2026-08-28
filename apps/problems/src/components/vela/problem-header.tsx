@@ -5,6 +5,8 @@ import { CopyButton } from "@vela/ui/vela/copy-button";
 import { ScientificText } from "@vela/ui/vela/scientific-text";
 import { Popover, PopoverContent, PopoverTrigger } from "@vela/ui/components/popover";
 import { SectionNav } from "@/components/vela/section-nav";
+import { StartWorkMenu } from "@/components/vela/start-work-menu";
+import { problemWorkbenchHandoff } from "@/lib/workbench-handoff";
 import { problemReading, readingBadge, readingBasis } from "@/lib/problem-reading";
 import { problemLabel, resolveProblemStatement, statementParagraphs } from "@/lib/problem-statement";
 import type { ScientificProblemState } from "@/lib/scientific-state";
@@ -87,6 +89,15 @@ export function ProblemHeader({ state, route, current }: {
       <div className={styles.actions}>
         <CopyButton value={`https://problems.science${route}`} label="Copy link to this Problem" compact />
         <Button nativeButton={false} variant="outline" size="sm" render={<Link href={`${route}/work`} />}>Start work</Button>
+        <StartWorkMenu
+          workbenchHandoff={problemWorkbenchHandoff({
+            basePath: route,
+            repositorySlug: state.repositorySlug,
+            sourceRevision: state.source?.native_revision,
+            sourceLocators: (state.source?.locators ?? []).map(({ url }) => url).filter((url): url is string => Boolean(url)),
+          })}
+          sourceLocator={state.locator ?? null}
+        />
       </div>
     </div>
 

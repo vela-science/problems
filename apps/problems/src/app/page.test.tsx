@@ -128,8 +128,8 @@ describe("Home", () => {
     reads.previews.mockResolvedValue(previews());
     const { container } = render(await HomePage());
 
-    expect(screen.getByRole("heading", { level: 1, name: "Open problems and the evidence around them" })).toBeVisible();
-    expect(screen.getByText("Find a scientific question, read what is known, and add a result.")).toBeVisible();
+    expect(screen.getByRole("heading", { level: 1, name: "Start from the frontier." })).toBeVisible();
+    expect(screen.getByText(/Open a scientific problem and see where the work has reached/iu)).toBeVisible();
     expect(screen.getByRole("link", { name: /browse problems/iu })).toHaveAttribute("href", "/problems");
     expect(screen.getByRole("link", { name: "Add contribution" })).toHaveAttribute("href", "/contribute");
 
@@ -192,16 +192,31 @@ describe("Home", () => {
     expect(screen.getByRole("link", { name: "12 questions still open" })).toHaveAttribute("href", "/problems");
   });
 
-  it("offers topic entries that really filter the collection", async () => {
+  it("does not restate the collection's own faceted browse", async () => {
     reads.catalog.mockResolvedValue(catalogue());
     reads.previews.mockResolvedValue(previews());
     render(await HomePage());
 
-    /* The Topics come from the projection's own source-native vocabulary, and
-       `/problems/erdos-problems` filters on this key — Home invents no
-       taxonomy and advertises no count it cannot honour. */
-    const entry = screen.getByRole("link", { name: "Number Theory, 14 Problems" });
-    expect(entry).toHaveAttribute("href", "/problems/erdos-problems?topic=number-theory");
+    /* Home carried five Topic chips linking into
+       `/problems/erdos-problems?topic=…`, which made it a second and smaller
+       copy of the faceted browse on the page directly beneath it in the rail —
+       the case DESIGN.md settles against. Search and the Repository's admitted
+       state are what Home holds that a catalogue cannot. */
+    expect(screen.queryByRole("navigation", { name: /start with a topic/iu })).toBeNull();
+    expect(screen.queryByRole("link", { name: /Number Theory, \d+ Problems/iu })).toBeNull();
+  });
+
+  it("leads with the claim, not the inventory", async () => {
+    reads.catalog.mockResolvedValue(catalogue());
+    reads.previews.mockResolvedValue(previews());
+    const { container } = render(await HomePage());
+
+    /* The count is real and it stays; it simply no longer speaks first. Two of
+       the published Problems carry an accepted Result, so a leading count reads
+       as inventory rather than as anything a reader gets. */
+    const text = container.textContent ?? "";
+    expect(text.indexOf("Start from the frontier.")).toBeGreaterThanOrEqual(0);
+    expect(text.indexOf("Start from the frontier.")).toBeLessThan(text.indexOf("14 published Problems"));
   });
 
   it("does not repeat collection analytics, raw updates, or contribution onboarding", async () => {

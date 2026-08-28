@@ -312,6 +312,17 @@ function ExactPanel({ state }: { state: State }) {
           {value ? <CopyButton compact value={String(value)} label={`Copy ${label.toLowerCase()}`} /> : null}
         </span>
       </div>)}
+      {/* The agent interface, said once, where machine-facing identity already
+          lives. This page registers typed operations on `document.modelContext`,
+          which nothing visible announced — so an agent that was not already
+          driving the page, and every person evaluating the product, saw no sign
+          the capability existed. A strategy review of this site concluded the
+          interface had not been built. It had; it was only unannounced. */}
+      <p className={`${styles.note} mt-3`}>
+        This page exposes typed read and Work operations to a browser agent.{" "}
+        <a href="/llms.txt" className="font-medium text-foreground underline underline-offset-4">llms.txt</a>{" "}
+        names them and the boundary they cannot cross.
+      </p>
     </div>
   </Disclosure>;
 }

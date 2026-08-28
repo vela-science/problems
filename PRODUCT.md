@@ -127,10 +127,12 @@ Primary navigation:
 
 The product mark also returns Home. Search belongs to the header command
 control. Research map is contextual and command-searchable. Release details
-belong under About and the exact well-known manifest, not in task navigation.
-About owns the current product explanation and links across to the living vision
-essay on `vela.space`. Privacy, Terms, Accessibility, and Contact remain compact
-Problems trust routes.
+belong to the exact well-known manifest, not to task navigation. There is no
+About route: `vela.space` is the editorial origin and this application must not
+grow a second editorial surface, so the product explanation lives in the
+surfaces that carry it — a Problem's own state, `/decisions`, and
+`/repositories/<slug>/reproduce`. Privacy, Terms, Accessibility, and Contact
+remain compact Problems trust routes, reachable from the rail.
 
 The canonical Problem modes are:
 
@@ -145,8 +147,9 @@ The canonical Problem modes are:
 
 Files are an instrument inside Sources, Work, or a Result. A relationship map
 is a contextual action and an Explore destination, not another Problem tab.
-Durable old query values map into the five current modes; new links use current
-language.
+A section has one name and one address. The `?view=`, `?mode=` and `?research=`
+spellings are retired and do not resolve; a retired value renders Overview
+rather than being mapped.
 
 ## Public language
 
@@ -191,12 +194,20 @@ otherwise go, state that boundary instead.
 
 ### Discover
 
-Problems Home is the activation front door. Search is the dominant object. Its
-single-column opening contains one compact published-collections list; below it
-are three or four real Problems worth opening and
-the latest durable reviewed Results. A single link reaches all Updates. Home
-does not host the raw source-update feed, collection analytics, a manifesto, or
-a second contribution-onboarding footer.
+Problems Home is the activation front door. Search is the dominant object,
+beside the Repository's admitted state: accepted Results, each with the scope it
+does not settle, over the exact release root. Below that sits one compact
+published-collections list.
+
+Home carries what a catalogue cannot, and nothing a catalogue already carries.
+It renders no question list and no topic facets — `/problems` owns browsing, one
+click away in the rail, and Home was a weaker copy of it twice: once with a
+question list, once with Topic chips. It does not host the raw source-update
+feed, collection analytics, a manifesto, or a second contribution-onboarding
+footer. A single link reaches all Updates.
+
+Its heading is the product's one large claim. It must not imply that Vela
+discovers, ranks, or allocates work.
 
 Collection pages are familiar directories: concise identity, truthful coverage,
 useful filters, bounded pagination, and question-led rows. Numeric identity is
