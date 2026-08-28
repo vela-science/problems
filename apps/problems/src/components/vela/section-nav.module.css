@@ -1,0 +1,36 @@
+/* The two things Tailwind cannot say readably.
+ *
+ * Everything else about this row — its layout, the tabs, their counts and
+ * their current state — is utilities on the elements themselves. What is left
+ * here is a hidden scrollbar and the continuation cue DESIGN.md requires: a
+ * mask whose stops are alpha, not colour, applied on whichever side still has
+ * tabs behind it. As arbitrary values those gradients run past 200 characters
+ * and stop being legible, so they stay in CSS.
+ *
+ * `data-overflow` is set by the component from the row's own scroll position,
+ * so the fade disappears when the row fits. */
+.tabs {
+  scrollbar-width: none;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tabs[data-overflow="end"] {
+  mask-image: linear-gradient(to right, rgb(0 0 0 / 1) calc(100% - 2.25rem), rgb(0 0 0 / 0) 100%);
+}
+
+.tabs[data-overflow="start"] {
+  mask-image: linear-gradient(to right, rgb(0 0 0 / 0) 0, rgb(0 0 0 / 1) 2.25rem);
+}
+
+.tabs[data-overflow="both"] {
+  mask-image: linear-gradient(
+    to right,
+    rgb(0 0 0 / 0) 0,
+    rgb(0 0 0 / 1) 2.25rem,
+    rgb(0 0 0 / 1) calc(100% - 2.25rem),
+    rgb(0 0 0 / 0) 100%
+  );
+}

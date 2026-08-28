@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef } from "react";
-import styles from "./problem-header.module.css";
+import styles from "./section-nav.module.css";
 
 export type SectionLink = {
   key: string;
@@ -84,7 +84,7 @@ export function SectionNav({ sections, current, label }: {
 
   return <nav
     ref={navigation}
-    className={styles.tabs}
+    className={`${styles.tabs} mt-3 flex gap-0.5 overflow-x-auto`}
     aria-label={label}
     data-overflow="none"
     onScroll={syncOverflow}
@@ -92,11 +92,15 @@ export function SectionNav({ sections, current, label }: {
     {sections.map(({ key, label, href, count }) => <Link
       key={key}
       href={href}
-      className={styles.tab}
+      /* 44px where the pointer is coarse: this is primary navigation on every
+         Problem, and `globals.css` promotes buttons and inputs but not anchors. */
+      className="group inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-t-md border-b-2 border-transparent px-2.5 text-compact text-muted-foreground hover:bg-muted hover:text-foreground pointer-coarse:h-11 aria-[current=page]:border-primary aria-[current=page]:font-semibold aria-[current=page]:text-foreground"
       aria-current={current === key ? "page" : undefined}
     >
       {label}
-      {count ? <span className={styles.count}>{count}</span> : null}
+      {/* A count is information, not decoration: it says where the substance is
+          before the reader spends a navigation finding out. */}
+      {count ? <span className="inline-flex h-4 min-w-5 items-center justify-center rounded-full border bg-muted px-1.5 font-mono text-micro font-normal text-muted-foreground group-aria-[current=page]:border-primary/30 group-aria-[current=page]:bg-accent group-aria-[current=page]:text-accent-foreground">{count}</span> : null}
     </Link>)}
   </nav>;
 }

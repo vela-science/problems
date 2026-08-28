@@ -11,7 +11,6 @@ import { problemReading, readingBadge, readingBasis } from "@/lib/problem-readin
 import { problemLabel, resolveProblemStatement, statementParagraphs } from "@/lib/problem-statement";
 import type { ScientificProblemState } from "@/lib/scientific-state";
 import type { ProblemReferenceView } from "@/components/vela/problem-overview-reference";
-import styles from "./problem-header.module.css";
 
 type State = NonNullable<ScientificProblemState>;
 
@@ -51,11 +50,7 @@ export function ProblemHeader({ state, route, current }: {
   const counts = sectionCounts(state);
   const hasQuestion = statement?.form === "prose" && Boolean(question);
 
-  /* Marked so the shell can hold the header at the standard frame when the open
-     section takes the canvas. The header belongs to the Problem, not to the
-     section under it, and must not change shape as a reader moves between the
-     Problem's own five tabs. */
-  return <header data-vela-object-header className={styles.header}>
+  return <header className="-mx-(--vela-page-gutter) border-b bg-card px-(--vela-page-gutter) pt-3.5 md:pt-4">
     {/* One row, not two.
       *
         Identity, state and actions used to sit in a strip above the title: a
@@ -64,15 +59,15 @@ export function ProblemHeader({ state, route, current }: {
         and reads as one beside its name; the actions belong on the line they
         act on. The breadcrumb above carries the collection, so the slug that
         opened that row is gone with it. */}
-    <div className={styles.identity}>
+    <div className="flex flex-wrap items-center gap-2.5">
       {/* The identity is a label when a question can be the title, and becomes
           the title itself when none is retained — never a negation. Promoting
           "No written statement is retained" to the h1 would make the page
           title an absence on the 613 Problems held by identity and locator
           alone. A Problem always has a name; it does not always have prose. */}
       {hasQuestion
-        ? <p className={styles.label}>{problemLabel(state)}</p>
-        : <h1 className={styles.label}>{problemLabel(state)}</h1>}
+        ? <p className="m-0 text-label font-medium leading-tight text-muted-foreground">{problemLabel(state)}</p>
+        : <h1 className="m-0 text-label font-medium leading-tight text-muted-foreground">{problemLabel(state)}</h1>}
       {/* A derived reading, and it says so on the control that explains it.
         * There is no Problem-level Standing in the projection to promote.
         *
@@ -90,7 +85,7 @@ export function ProblemHeader({ state, route, current }: {
           <span className="font-semibold">Problems synthesis.</span> {readingBasis(reading)}
         </PopoverContent>
       </Popover>
-      <div className={styles.actions}>
+      <div className="flex gap-1.5 md:ml-auto">
         <CopyButton value={`https://problems.science${route}`} label="Copy link to this Problem" compact />
         <Button nativeButton={false} variant="outline" size="sm" render={<Link href={`${route}/work`} />}>Start work</Button>
         <StartWorkMenu
@@ -116,12 +111,19 @@ export function ProblemHeader({ state, route, current }: {
       * The identity becomes a label above it (the breadcrumb already carries
       * collection and number), and the question becomes the h1 at the
       * `statement` token — 1.375rem/400, the step the brand scale defines for
-      * exactly this and which nothing was using. Unclamped on Overview; the
-      * other four sections keep two lines so the section's own content leads,
-      * and Overview always holds the full text. */}
+      * exactly this and which nothing was using.
+      *
+      * The same on all five sections. It was clamped to two lines everywhere
+      * except Overview, on the reasoning that a section's own content should
+      * lead — but the header belongs to the Problem, not to the section, and
+      * clamping it on four of five guaranteed that the header resized whenever
+      * a reader moved between the Problem's own tabs. On a question carrying
+      * display mathematics that is a jump of 55px. A constant header is worth
+      * more than a few lines of scroll, and the question is the one thing on
+      * this page that is never redundant. */}
     {hasQuestion
-      ? <h1 className={`${styles.question} ${current === "overview" ? "" : styles.questionClamped}`}><ScientificText text={question} /></h1>
-      : <p className={styles.questionAbsent}>No written statement is retained for this problem.</p>}
+      ? <h1 className="mt-1.5 max-w-[104ch] text-statement font-normal leading-[1.4] tracking-[-0.01em] text-foreground text-pretty"><ScientificText text={question} /></h1>
+      : <p className="mt-1.5 text-body leading-normal text-muted-foreground">No written statement is retained for this problem.</p>}
 
     <SectionNav
       label="Problem sections"

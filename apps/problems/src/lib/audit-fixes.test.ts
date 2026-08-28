@@ -38,12 +38,18 @@ describe("audit fixes", () => {
        call rather than the word. */
     expect(nav).not.toMatch(/\.scrollIntoView\(/u);
 
-    const styles = source("components/vela/problem-header.module.css");
+    /* The row owns its own stylesheet now: it is shared by the Problem and the
+       Repository headers, and reaching into `problem-header.module.css` for it
+       said the Repository's tabs belonged to the Problem. What is left in CSS
+       is only what utilities cannot say readably — a hidden scrollbar and the
+       three mask gradients. */
+    const styles = source("components/vela/section-nav.module.css");
     for (const cue of ['[data-overflow="start"]', '[data-overflow="end"]', '[data-overflow="both"]']) {
       expect(styles).toContain(cue);
     }
-    /* Primary navigation, so it meets the touch target on a coarse pointer. */
-    expect(styles).toMatch(/@media \(pointer: coarse\)[\s\S]{0,80}height: 2\.75rem/u);
+    /* Primary navigation, so it meets the touch target on a coarse pointer.
+       `globals.css` promotes buttons and inputs; these are anchors. */
+    expect(nav).toContain("pointer-coarse:h-11");
   });
 
   /* An accepted partial Result must never read as resolution of the headline

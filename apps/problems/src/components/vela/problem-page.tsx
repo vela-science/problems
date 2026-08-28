@@ -130,7 +130,20 @@ export async function ProblemPageView({ repository, problem, collectionName, rou
      question, its Results, its Sources, its history — were uncapped too, and
      ran the full width of whatever display they opened on. Only the workspace
      is the instrument that wants every pixel. */
-  return <PageShell as="article" archetype="problem" layout={view === "workspace" ? "canvas" : "standard"} className="!pt-2">
+/* One layout for all five sections of one object.
+     *
+     * This switched to `canvas` on Work, which removes the page maximum — and
+     * the Problem's header is a sibling of the section inside the same shell,
+     * so the header resized whenever a reader moved between the Problem's own
+     * tabs: at 1920 the tab row went from 1472px to 1648px and shifted 88px
+     * left. The header belongs to the Problem, not to the section under it.
+     *
+     * The first fix restored the frame for the header with a computed margin in
+     * the shell. That worked and was a patch on a self-inflicted wound: the
+     * page was changing width underneath an element that had no reason to move.
+     * The section keeps whatever width the standard frame gives it, which at
+     * 1920 is 1472px for a three-column grid asking for 240px + fluid + 256px. */
+  return <PageShell as="article" archetype="problem" layout="standard" className="!pt-2">
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredDataScript(structuredData) }} />
     {/* The object's name, not its statement. Both the palette and the rail
         list this as an entry in a narrow column, and a truncated theorem reads

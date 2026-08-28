@@ -171,11 +171,16 @@ describe("Problem view addressing", () => {
   /* The frame holds still across the tabs: one archetype for all five views,
      with only the layout widening for the Workspace. A tab switch must not
      repaint the page's ground or move the hero. */
-  it("keeps one archetype across public and Workspace views", async () => {
+  it("keeps one archetype and one layout across public and Workspace views", async () => {
     const { container: statePage } = render(await page({}));
     const { container: workPage } = render(await page({ view: "work" }));
     expect(statePage.querySelector("article")).toHaveAttribute("data-archetype", "problem");
     expect(workPage.querySelector("article")).toHaveAttribute("data-archetype", "problem");
-    expect(workPage.querySelector("article")).toHaveAttribute("data-layout", "canvas");
+    /* Work used to take `canvas`, which removes the page maximum. The Problem's
+       header is a sibling of the section inside the same shell, so the header
+       resized as a reader moved between the Problem's own tabs — 176px of width
+       and 88px of offset at 1920. One object, one layout. */
+    expect(statePage.querySelector("article")).toHaveAttribute("data-layout", "standard");
+    expect(workPage.querySelector("article")).toHaveAttribute("data-layout", "standard");
   });
 });
