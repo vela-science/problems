@@ -6,7 +6,6 @@ import { Input } from "@vela/ui/components/input";
 import { Label } from "@vela/ui/components/label";
 import { PageShell } from "@vela/ui/vela/page-shell";
 import { FormSelect } from "@/components/vela/form-select";
-import { ContributionStepper } from "@/components/vela/contribution-stepper";
 import { PageIntro } from "@/components/vela/page-intro";
 import { currentActivityAccount } from "@/lib/hosted-account";
 import { importCodebase } from "./actions";
@@ -67,7 +66,6 @@ export default async function ImportPage({ searchParams }: { searchParams: Promi
   return <PageShell archetype="default" layout="reading" className="flex flex-col gap-8">
     <PageIntro className="vela-work-hero" title="Connect a codebase" description="Connect one GitHub revision to your work. problems.science reads the metadata and files needed for inspection; it does not write to GitHub."
       signals={[{ label: "Access", value: "Read only", tone: "evidence" }, { label: "Revision", value: "Immutable", tone: "neutral" }]} />
-    <ContributionStepper current={2} heading="Connect code to scientific work" />
     {error && <ImportError message={error} />}
     {!account ? <div className="grid gap-5 lg:grid-cols-[minmax(0,.75fr)_minmax(22rem,1.25fr)]"><div className="vela-data-hero rounded-xl p-5"><p className="text-eyebrow text-muted-foreground">Public inspection</p><h2 className="mt-2 text-subtitle">No account required</h2><p className="mt-2 text-body text-muted-foreground">Inspect a public codebase now. Sign in only to save the exact revision.</p>
       <Button nativeButton={false} render={<Link href="/sign-in?returnTo=/import" prefetch={false} />} className="mt-4">Sign in to save this revision</Button></div>
