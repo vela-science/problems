@@ -1,5 +1,12 @@
 # Problems image custody
 
+> **Retired 2026-08-28.** `hero.webp` was the plate on `/about`, and `/about`
+> was removed: PRODUCT.md names vela.space as the editorial origin and says
+> Problems must not carry a second editorial surface. The plate went with the
+> page. The record below is kept because custody is the point — an image whose
+> origin is not written down eventually gets treated as though it has none,
+> and that applies to one that has been removed as much as to one in use.
+
 One plate, with its record beside it. The editorial application keeps custody
 notes next to its paintings for the same reason: an image whose origin is not
 written down eventually gets treated as though it has none.
