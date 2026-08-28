@@ -50,10 +50,6 @@ function CommandDialog({
 }) {
   return (
     <Dialog {...props}>
-      <DialogHeader className="sr-only">
-        <DialogTitle>{title}</DialogTitle>
-        <DialogDescription>{description}</DialogDescription>
-      </DialogHeader>
       <DialogContent
         className={cn(
           "top-1/3 translate-y-0 overflow-hidden rounded-xl! p-0",
@@ -61,6 +57,14 @@ function CommandDialog({
         )}
         showCloseButton={showCloseButton}
       >
+        {/* Inside the content, not beside it. Outside, the header rendered
+            whether or not the dialog was open, so an `sr-only` <h2> for a
+            closed palette sat in the heading outline of every route in the
+            product — a heading pointing at nothing a reader could reach. */}
+        <DialogHeader className="sr-only">
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
+        </DialogHeader>
         {children}
       </DialogContent>
     </Dialog>

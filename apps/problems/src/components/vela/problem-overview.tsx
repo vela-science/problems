@@ -52,6 +52,33 @@ function absences(state: State) {
   return entries;
 }
 
+/* What a Claim replaced, and what replaced it.
+ *
+ * Two Results on Erdős 94 render byte-identical — the same assertion, the same
+ * evidence count — separated only by a standing badge, so a reader cannot
+ * answer "why is there a second one?" without opening both. The record already
+ * carries the answer: a `supersedes` or `corrects` relation naming the Claim it
+ * replaced. In a product about lineage, lineage was the missing column.
+ *
+ * Read in both directions, because a row needs whichever end it is on. */
+function claimLineage(claims: Array<{ id: string; record?: unknown }>) {
+  const replaces = new Map<string, string>();
+  const replacedBy = new Map<string, string>();
+  for (const claim of claims) {
+    const record = claim.record && typeof claim.record === "object" ? claim.record as { relations?: unknown } : null;
+    const relations = Array.isArray(record?.relations) ? record.relations : [];
+    for (const candidate of relations) {
+      if (!candidate || typeof candidate !== "object") continue;
+      const relation = candidate as { kind?: unknown; target_claim_id?: unknown };
+      if (!["corrects", "supersedes"].includes(String(relation.kind))) continue;
+      if (typeof relation.target_claim_id !== "string") continue;
+      replaces.set(claim.id, relation.target_claim_id);
+      replacedBy.set(relation.target_claim_id, claim.id);
+    }
+  }
+  return { replaces, replacedBy };
+}
+
 export function ProblemOverview({ state, route }: { state: State; route: string }) {
   const claims = state.claims ?? [];
   const current = claims.find((claim) => claim.id === state.currentClaimId) ?? null;
@@ -65,6 +92,7 @@ export function ProblemOverview({ state, route }: { state: State; route: string 
   const formal = state.sources?.occurrences?.filter((occurrence) => occurrence.formal) ?? [];
   const openFormal = formal.filter((occurrence) => occurrence.formal?.category_label?.toLowerCase() === "open");
   const lastSourceUpdate = metadataString(state, "status_last_update");
+  const lineage = claimLineage(claims);
 
   /* Nothing has been accepted here. That is the state of 1,215 of the 1,217
      Erdős Problems in this release, so it gets a composition of its own rather
@@ -187,7 +215,10 @@ export function ProblemOverview({ state, route }: { state: State; route: string 
           <div className={styles.rowTitle}>
             <AssertionText text={exactResultHeadline(claim.assertion) ?? claim.assertion} />
             <div className={styles.rowMeta}>
+              {claim.created ? <>{formatDate(claim.created)} · </> : null}
               {claim.evidence_count ?? 0} {claim.evidence_count === 1 ? "evidence item" : "evidence items"}
+              {lineage.replaces.has(claim.id) ? " · replaces an earlier Result" : ""}
+              {lineage.replacedBy.has(claim.id) ? " · replaced by a later Result" : ""}
               {claim.id === state.currentClaimId ? " · current" : ""}
             </div>
           </div>

@@ -88,7 +88,7 @@ export default async function RepositoryPage({ params }: PageProps<"/repositorie
               count: facet.count,
               href: `/repositories/${repository.slug}/claims?standing=accepted&source=${encodeURIComponent(facet.value)}`,
             }))}
-            caption={`Segments are the retained source_type of each accepted Claim.${submissionShare ? "" : " No accepted Claim here entered through a Submission."}`}
+            caption={`Each segment is how an accepted Claim entered this Repository.${submissionShare ? "" : " No accepted Claim here entered through a Submission."}`}
           />
         </section>
 

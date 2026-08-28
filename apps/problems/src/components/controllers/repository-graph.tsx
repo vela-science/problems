@@ -108,6 +108,10 @@ export function RepositoryGraph({ root, initialRepository, repositories, scoped 
   }, [deferredQuery, repository, kind, lens, relation, requestKey, root, selectedId, standing, trust, view]);
 
   const data = response?.key === requestKey ? response.value : null;
+  /* Anything the reader actually narrowed. `repository` is excluded: it is the
+     object being looked at, not a filter on it, and on a scoped route it is
+     not even a control. */
+  const narrowed = Boolean(q || kind !== "all" || standing || relation || trust);
   const relations = useMemo(() => [...new Set(data?.edges.map((edge) => edge.relation) ?? [])].sort(), [data]);
   const trusts = useMemo(() => [...new Set(data?.nodes.map((node) => node.trust).filter((value): value is string => Boolean(value)) ?? [])].sort(), [data]);
   const standings = useMemo(() => [...new Set(data?.nodes.map((node) => node.standing) ?? [])].sort(), [data]);
@@ -128,6 +132,11 @@ export function RepositoryGraph({ root, initialRepository, repositories, scoped 
           {scoped ? null : <RecordFilter variant="field" label="Repository" value={repository} values={repositories} onChange={(value) => replace({ repository: value, node: null, page: null })} />}
           <RecordFilter variant="field" label="Kind" value={kind} values={lensKinds[lens]} onChange={(value) => replace({ kind: value === "all" ? null : value, node: null, page: null })} />
           <RecordFilter variant="field" label="State" value={standing || "all"} values={["all", ...standings]} onChange={(value) => replace({ standing: value === "all" ? null : value, node: null, page: null })} />
+          {/* Four selects, all defaulting to "all", and no way back to
+              unfiltered except clearing each in turn. `/search` already offers
+              this and only appears once something is actually narrowed, so an
+              untouched surface still shows no control it does not need. */}
+          {narrowed ? <Button variant="ghost" size="sm" className="self-end" onClick={() => replace({ q: null, kind: null, standing: null, relation: null, trust: null, node: null, page: null })}>Clear filters</Button> : null}
         </div>
         <div className="mt-3 hidden flex-wrap items-center gap-3 md:flex">
           <ToggleGroup value={[lens]} onValueChange={(values) => { const next = values.at(-1) as GraphLens | undefined; if (next) replace({ lens: next === "research" ? null : next, kind: null, node: null, page: null }); }} aria-label="Graph lens">

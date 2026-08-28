@@ -33,9 +33,6 @@ export default function NotFound() {
       <p className="mt-3 max-w-xl text-body leading-6 text-muted-foreground">
         This site serves one published release, and only what that release retains is reachable. A Problem&rsquo;s address is its collection and its number, and that address does not change between releases.
       </p>
-      <p className="mt-2 max-w-xl text-body leading-6 text-muted-foreground">
-        If you followed a link here, the address may name something this release does not retain.
-      </p>
       {/* Around twenty `notFound()` call sites land here — an unknown Problem,
           Source, codebase, Claim or commit — and every one of them was sent on
           to the advanced record inspector. Problems is the product's centre
