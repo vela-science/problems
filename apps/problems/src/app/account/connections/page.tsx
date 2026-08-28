@@ -60,40 +60,39 @@ export default async function ConnectionsPage({ searchParams }: { searchParams: 
       <Link href="/account" className="inline-flex min-h-11 items-center gap-2 text-meta text-muted-foreground underline-offset-4 hover:text-foreground hover:underline sm:min-h-9"><HugeiconsIcon icon={ArrowLeft} aria-hidden className="size-4" />Account</Link>
       <p className="mt-5 text-eyebrow text-muted-foreground">Private account</p>
       <h1 className="mt-2 text-display">Connections</h1>
-      <p className="mt-3 max-w-2xl text-body text-muted-foreground">Manage how you sign in and which GitHub repositories problems.science may inspect. Connections never grant scientific authority.</p>
+      <p className="mt-3 max-w-2xl text-body text-muted-foreground">Manage how you sign in and which GitHub repositories problems.science may inspect.</p>
     </header>
 
-    {notice ? <Alert className="max-w-3xl">
+    {notice ? <Alert>
       <AlertTitle>{notice.title}</AlertTitle>
       <AlertDescription>{notice.description}</AlertDescription>
     </Alert> : null}
 
-    <section aria-labelledby="identity-connections-heading" className="max-w-3xl">
+    <section aria-labelledby="identity-connections-heading">
       <div className="border-b pb-4">
         <h2 id="identity-connections-heading" className="text-title">Sign-in identities</h2>
-        <p className="mt-1 text-meta text-muted-foreground">Identity providers establish this private account session. They do not establish authorship or truth.</p>
+        <p className="mt-1 text-meta text-muted-foreground">Which provider established this session, and which GitHub identity is linked to it.</p>
       </div>
       <ItemGroup className="divide-y gap-0">
         <Item className="rounded-none border-0 px-0 py-5">
           <ItemMedia variant="icon" className="size-10 rounded-md bg-muted/60"><HugeiconsIcon icon={SecurityCheckIcon} aria-hidden /></ItemMedia>
           <ItemContent>
-            <ItemTitle className="line-clamp-none flex-wrap">WorkOS account <Badge>Connected</Badge></ItemTitle>
-            <ItemDescription className="line-clamp-none">{account.hosted.displayName} · {account.hosted.email}</ItemDescription>
+            <ItemTitle className="line-clamp-none flex-wrap">WorkOS <Badge>Primary sign-in</Badge></ItemTitle>
+            <ItemDescription className="line-clamp-none">Establishes this session. Your account name and email come from here.</ItemDescription>
           </ItemContent>
-          <ItemActions><Badge variant="outline">Primary sign-in</Badge></ItemActions>
         </Item>
         <Item className="rounded-none border-0 px-0 py-5">
           <ItemMedia variant="icon" className="size-10 rounded-md bg-muted/60"><HugeiconsIcon icon={Github01Icon} aria-hidden /></ItemMedia>
           <ItemContent>
             <ItemTitle className="line-clamp-none flex-wrap">GitHub identity <Badge variant={identity ? "default" : "secondary"}>{identity ? "Connected" : "Not linked"}</Badge></ItemTitle>
-            <ItemDescription className="line-clamp-none">{identity ? "Verified by the sign-in provider and kept separate from repository installation access." : "Use Continue with GitHub to link a verified GitHub identity."}</ItemDescription>
+            <ItemDescription className="line-clamp-none">{identity ? "Verified by the sign-in provider. Separate from repository installation access below." : "Use Continue with GitHub to link a verified GitHub identity."}</ItemDescription>
           </ItemContent>
           {!identity ? <ItemActions><Button className="min-h-11 sm:min-h-7" size="sm" variant="outline" nativeButton={false} render={<Link href="/sign-in?returnTo=/account/connections" prefetch={false} />}>Continue with GitHub</Button></ItemActions> : null}
         </Item>
       </ItemGroup>
     </section>
 
-    <section aria-labelledby="repository-access-heading" className="max-w-3xl">
+    <section aria-labelledby="repository-access-heading">
       <div className="flex flex-wrap items-end justify-between gap-4 border-b pb-4">
         <div>
           <h2 id="repository-access-heading" className="text-title">Selected repository access</h2>
@@ -128,7 +127,7 @@ export default async function ConnectionsPage({ searchParams }: { searchParams: 
       </div>}
     </section>
 
-    <section aria-labelledby="connected-codebases-heading" className="max-w-3xl">
+    <section aria-labelledby="connected-codebases-heading">
       <div className="flex flex-wrap items-end justify-between gap-4 border-b pb-4">
         <div>
           <h2 id="connected-codebases-heading" className="text-title">Connected codebases</h2>

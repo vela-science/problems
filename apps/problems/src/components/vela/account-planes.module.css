@@ -1,0 +1,187 @@
+/* The two planes, drawn rather than asserted. See account-planes.tsx for what
+   this replaced and why it is a figure and not a paragraph. */
+.panel {
+  --ap-line: var(--border);
+  --ap-muted: var(--muted-foreground);
+  background: var(--card);
+  border: 1px solid var(--ap-line);
+  border-radius: 0.4375rem;
+  overflow: hidden;
+}
+
+.head {
+  padding: 0.5rem 0.8125rem;
+  border-bottom: 1px solid var(--ap-line);
+  background: var(--muted);
+}
+
+.kicker {
+  margin: 0;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--ap-muted);
+}
+
+/* Stacked on a phone, side by side once there is room for two columns and the
+   crossing between them. The crossing keeps its meaning either way: the arrow
+   turns to point down when the planes stack. */
+.figure {
+  display: grid;
+  gap: 0.875rem;
+  padding: 1.0625rem;
+}
+
+@media (min-width: 48rem) {
+  .figure {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: stretch;
+    gap: 0;
+  }
+}
+
+.plane {
+  border: 1.5px solid var(--ap-line);
+  border-radius: 0.5rem;
+  padding: 0.875rem;
+  background: var(--background);
+  display: flex;
+  flex-direction: column;
+}
+
+/* The side that decides is the side that is marked. Colour is never the only
+   carrier: the key is spelled out in the plane's own name. */
+.planeAuthority {
+  border-color: color-mix(in oklab, var(--status-evidence) 55%, var(--border));
+  background: color-mix(in oklab, var(--status-evidence) 5%, var(--card));
+}
+
+.planeName {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+
+.key {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-left: 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 400;
+  color: color-mix(in oklab, var(--status-evidence) 76%, var(--foreground));
+  white-space: nowrap;
+}
+
+.keyIcon { width: 0.8125rem; height: 0.8125rem; }
+
+.list {
+  margin: 0.6875rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.3125rem;
+  font-size: 0.78125rem;
+  line-height: 1.45;
+  color: var(--foreground);
+}
+
+.list li {
+  padding-left: 0.8125rem;
+  position: relative;
+}
+
+.list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.5em;
+  width: 0.3125rem;
+  height: 0.3125rem;
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--border) 90%, var(--foreground));
+}
+
+.foot {
+  margin: 0.75rem 0 0;
+  padding-top: 0.625rem;
+  border-top: 1px solid color-mix(in oklab, var(--border) 55%, transparent);
+  font-size: 0.71875rem;
+  line-height: 1.45;
+  color: var(--ap-muted);
+}
+
+/* The crossing is a drawn line with the arrow riding on it, not a loose glyph
+   between two boxes. A line is what makes the direction legible at a glance,
+   and there is only one line because the traffic goes one way. */
+.crossing {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4375rem;
+  text-align: center;
+}
+
+@media (min-width: 48rem) {
+  .crossing {
+    width: 13.5rem;
+    padding-inline: 0.75rem;
+  }
+}
+
+/* The line is drawn on the arrow's own row and centred in it, so it meets the
+   arrowhead exactly. Hanging it off `.crossing` meant offsetting from that
+   element's centre by a hand-measured amount, which missed by six pixels. */
+.arrowRow {
+  position: relative;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+@media (min-width: 48rem) {
+  .arrowRow::before {
+    content: "";
+    position: absolute;
+    left: 0.5rem;
+    right: 0.5rem;
+    top: 50%;
+    height: 1px;
+    background: var(--ap-line);
+  }
+}
+
+.arrowWrap {
+  position: relative;
+  display: inline-flex;
+  padding-inline: 0.3125rem;
+  background: var(--card);
+}
+
+.arrow {
+  width: 1.125rem;
+  height: 1.125rem;
+  color: var(--ap-muted);
+  flex: none;
+  /* Stacked, the planes read top to bottom, so the crossing has to as well. */
+  rotate: 90deg;
+}
+
+@media (min-width: 48rem) {
+  .arrow { rotate: none; }
+}
+
+.crossingLabel {
+  margin: 0;
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  color: var(--ap-muted);
+  /* `pretty` only protects the last line; this label is three short lines at
+     desktop width and orphaned its final two words. */
+  text-wrap: balance;
+}

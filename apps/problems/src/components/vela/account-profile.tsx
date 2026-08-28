@@ -1,8 +1,6 @@
 import Link from "next/link";
 import {
   ArrowRight01Icon as ArrowRight,
-  Github01Icon,
-  LinkSquare02Icon,
   Logout01Icon,
   SecurityCheckIcon,
   SourceCodeIcon,
@@ -23,6 +21,7 @@ import {
   ItemMedia,
   ItemTitle,
 } from "@vela/ui/components/item";
+import { AccountPlanes } from "@/components/vela/account-planes";
 import { signOutAccount } from "@/app/actions/auth";
 import type { AccountIdentity } from "@/lib/auth";
 import type { PublicProfile } from "@/lib/hosted-account";
@@ -165,14 +164,19 @@ export function AccountProfile({ account, publicProfile, workspaces, connections
         </div>
       </div>
       <p className="mt-4 max-w-2xl text-body text-muted-foreground">
-        This account signs you in and holds your private work. It never carries scientific authority: each Result keeps its own attribution, and a Decision is made through a Repository.
+        This account signs you in and holds your private work.
       </p>
     </header>
+
+    {/* The sentence that used to finish that paragraph — "it never carries
+        scientific authority" — was one of eleven placements of the same
+        negation across the signed-in pages. It is drawn once, here. */}
+    <AccountPlanes />
 
     <Section
       id="account-public-profile-heading"
       title="Public contributor profile"
-      description="What, if anything, appears publicly beside exact attribution. Presentation only, never scientific identity or review independence."
+      description="What, if anything, appears publicly beside exact attribution."
       action={<div className="flex flex-wrap gap-2">
         {profile ? <Button className="min-h-11 sm:min-h-8" size="sm" variant="outline" nativeButton={false} render={<Link href={`/people/${profile.handle}`} />}>Preview</Button> : null}
         <Button className="min-h-11 sm:min-h-8" size="sm" nativeButton={false} render={<Link href="/account/profile" />}>{profile ? "Edit profile" : "Create profile"}</Button>
@@ -198,24 +202,25 @@ export function AccountProfile({ account, publicProfile, workspaces, connections
       </ItemGroup>
     </Section>
 
+    {/* Two rows, not four. One restated the header's own name and email; one
+        was the boundary disclaimer the figure above now draws. Sign out was
+        stapled to the actions of a row about the privacy policy — two
+        unrelated things sharing a row because the row was there. It is the
+        section's action now, where this page puts its other actions. */}
     <Section
       id="session-heading"
-      title="Session and security"
-      description="Signed in on this browser. Name and email come from your connected sign-in provider."
+      title="Session"
+      description="Signed in on this browser."
+      action={<form action={signOutAccount}>
+        <Button className="min-h-11 sm:min-h-8" type="submit" size="sm" variant="outline"><HugeiconsIcon icon={Logout01Icon} aria-hidden />Sign out</Button>
+      </form>}
     >
       <ItemGroup className="divide-y gap-0">
         <Item className="rounded-none border-0 px-0 py-5">
           <ItemMedia variant="icon" className="size-10 rounded-md bg-muted/60"><HugeiconsIcon icon={SecurityCheckIcon} aria-hidden /></ItemMedia>
           <ItemContent>
-            <ItemTitle className="line-clamp-none flex-wrap">WorkOS sign-in <Badge>Connected</Badge></ItemTitle>
-            <ItemDescription className="line-clamp-none">{account.displayName} · {account.email}</ItemDescription>
-          </ItemContent>
-        </Item>
-        <Item className="rounded-none border-0 px-0 py-5">
-          <ItemMedia variant="icon" className="size-10 rounded-md bg-muted/60"><HugeiconsIcon icon={connections.status === "ready" && connections.value.githubIdentityConnected ? Github01Icon : LinkSquare02Icon} aria-hidden /></ItemMedia>
-          <ItemContent>
-            <ItemTitle className="line-clamp-none flex-wrap">Scientific attribution <Badge variant="outline">Separate</Badge></ItemTitle>
-            <ItemDescription className="line-clamp-none">Signing in controls this account only. It does not confer authorship, review independence, or Repository authority.</ItemDescription>
+            <ItemTitle className="line-clamp-none flex-wrap">Sign-in provider <Badge>WorkOS</Badge></ItemTitle>
+            <ItemDescription className="line-clamp-none">Your name and email above come from this provider. Change them there, not here.</ItemDescription>
           </ItemContent>
         </Item>
         <Item className="rounded-none border-0 px-0 py-5">
@@ -224,11 +229,6 @@ export function AccountProfile({ account, publicProfile, workspaces, connections
             <ItemTitle className="line-clamp-none">Account data</ItemTitle>
             <ItemDescription className="line-clamp-none"><Link href="/privacy" className="font-medium text-foreground underline underline-offset-4">How account data is handled</Link></ItemDescription>
           </ItemContent>
-          <ItemActions>
-            <form action={signOutAccount}>
-              <Button className="min-h-11 sm:min-h-8" type="submit" size="sm" variant="outline"><HugeiconsIcon icon={Logout01Icon} aria-hidden />Sign out</Button>
-            </form>
-          </ItemActions>
         </Item>
       </ItemGroup>
     </Section>

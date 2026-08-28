@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { AccountProfile, type AccountProfileData } from "./account-profile";
 
@@ -49,10 +49,40 @@ describe("AccountProfile", () => {
     expect(screen.getByRole("heading", { name: "Public contributor profile" })).toBeVisible();
     expect(screen.getByRole("link", { name: "Create profile" })).toHaveAttribute("href", "/account/profile");
     expect(screen.queryByRole("radio")).toBeNull();
-    /* The account holds no scientific authority, and says so. */
-    expect(screen.getByText(/does not confer authorship, review independence, or Repository authority/iu)).toBeVisible();
     expect(screen.getByRole("button", { name: "Sign out" })).toBeVisible();
     expect(screen.queryByText(/reputation|authority badge|score/iu)).not.toBeInTheDocument();
+  });
+
+  /* The boundary is the most important thing this page says, and it was said
+     eleven times across five files — a different disclaimer sentence under
+     every heading, none of them describing what the two planes hold. It is one
+     figure now: what this account holds, what a Repository holds, and the one
+     crossing between them. This asserts both halves — that the figure is here,
+     and that the prose it replaced has not crept back. */
+  it("draws the authority boundary once instead of restating it", () => {
+    render(<AccountProfile {...data()} />);
+
+    const figure = screen.getByRole("region", { name: "Where your work lives" });
+    expect(figure).toBeVisible();
+    expect(within(figure).getByText("This account")).toBeVisible();
+    expect(within(figure).getByText("A Vela Repository")).toBeVisible();
+    expect(within(figure).getByText("Holds no signing key.")).toBeVisible();
+    expect(within(figure).getByText(/holds the authority key/u)).toBeVisible();
+    expect(within(figure).getByText(/signed locally with your own key/u)).toBeVisible();
+    /* Standing, Decisions and Verification are named as things the Repository
+       holds — never as something this account could produce. */
+    for (const held of ["Claims", "Verification", "Decisions", "Standing"]) {
+      expect(within(figure).getByText(held)).toBeVisible();
+    }
+
+    for (const disclaimer of [
+      /does not confer authorship/iu,
+      /never carries scientific authority/iu,
+      /never grants scientific identity/iu,
+      /do not establish authorship or truth/iu,
+    ]) {
+      expect(screen.queryByText(disclaimer)).not.toBeInTheDocument();
+    }
   });
 
   /* The page used to preview the first four workspaces and the first four

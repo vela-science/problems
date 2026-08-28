@@ -40,26 +40,31 @@ export function PublicProfileSettings({ profile, accountName }: { profile: Publi
   const displayName = profile?.displayName ?? accountName;
   const currentHandle = state.handle ?? profile?.handle ?? "";
   const feedback = state.status === "success" || state.status === "error" ? state : null;
-  return <section aria-labelledby="public-profile-heading" className="vela-object-surface overflow-hidden">
-    <div className="flex flex-col gap-4 border-b p-5 sm:flex-row sm:items-start sm:justify-between">
-      <div className="flex min-w-0 items-start gap-3">
-        <Avatar className="size-12 shrink-0 bg-primary/8">
-          <AvatarFallback>{initials(displayName)}</AvatarFallback>
-        </Avatar>
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <h2 id="public-profile-heading" className="text-subtitle font-medium">Public contributor profile</h2>
-            <Badge variant={profile?.visibility === "public" ? "default" : "secondary"}>{profile?.visibility ?? "not created"}</Badge>
-          </div>
-          <p className="mt-1 max-w-2xl text-meta text-muted-foreground">Presentation and navigation only. This never grants scientific identity, review independence, or Repository authority.</p>
-        </div>
+  /* No card. Its two sibling pages use a flat section under a rule, and this
+     one wrapped everything in `vela-object-surface`, so three pages under
+     /account had three container idioms. The heading inside it — "Public
+     contributor profile" — restated the page's own h1, and the paragraph
+     beneath it was the boundary disclaimer, said here for the eighth time. */
+  return <section aria-label="Public contributor profile" className="flex flex-col gap-7">
+    <div className="flex flex-wrap items-center gap-3 border-b pb-5">
+      <Avatar className="size-11 shrink-0 bg-primary/8">
+        <AvatarFallback>{initials(displayName)}</AvatarFallback>
+      </Avatar>
+      <div className="min-w-0">
+        <p className="text-eyebrow text-muted-foreground">Currently</p>
+        <p className="mt-1 flex flex-wrap items-center gap-2 text-label font-medium">
+          {currentHandle
+            ? <span className="font-mono">problems.science/people/{currentHandle}</span>
+            : <span className="text-muted-foreground">Not created</span>}
+          {profile ? <Badge variant={profile.visibility === "public" ? "default" : "secondary"}>{profile.visibility}</Badge> : null}
+        </p>
       </div>
-      {currentHandle ? <Button size="sm" variant="outline" nativeButton={false} render={<Link href={`/people/${currentHandle}`} />}>
+      {currentHandle ? <Button className="ml-auto" size="sm" variant="outline" nativeButton={false} render={<Link href={`/people/${currentHandle}`} />}>
         Preview <HugeiconsIcon icon={ArrowUpRight01Icon} aria-hidden data-icon="inline-end" />
       </Button> : null}
     </div>
 
-    <form action={action} className="space-y-6 p-5">
+    <form action={action} className="space-y-6">
       <input type="hidden" name="version" value={state.version ?? profile?.version ?? 0} />
       {feedback ? <Alert variant={feedback.status === "error" ? "destructive" : "default"}>
         <HugeiconsIcon icon={UserCircle02Icon} aria-hidden />
@@ -118,7 +123,7 @@ export function PublicProfileSettings({ profile, accountName }: { profile: Publi
         </div>
       </fieldset>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 border-t pt-5">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t pt-6">
         <p className="max-w-xl text-meta text-muted-foreground">Email, WorkOS identifiers, sessions, private repository access, and private work never appear on this page.</p>
         <SubmitProfile />
       </div>
