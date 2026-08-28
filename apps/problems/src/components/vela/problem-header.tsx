@@ -47,6 +47,7 @@ export function ProblemHeader({ state, route, current }: {
     repositoryName: state.repositoryName,
   });
   const counts = sectionCounts(state);
+  const hasQuestion = statement?.form === "prose" && Boolean(question);
 
   return <header className={styles.header}>
     {/* One row, not two.
@@ -58,7 +59,14 @@ export function ProblemHeader({ state, route, current }: {
         act on. The breadcrumb above carries the collection, so the slug that
         opened that row is gone with it. */}
     <div className={styles.identity}>
-      <h1 className={styles.title}>{problemLabel(state)}</h1>
+      {/* The identity is a label when a question can be the title, and becomes
+          the title itself when none is retained — never a negation. Promoting
+          "No written statement is retained" to the h1 would make the page
+          title an absence on the 613 Problems held by identity and locator
+          alone. A Problem always has a name; it does not always have prose. */}
+      {hasQuestion
+        ? <p className={styles.label}>{problemLabel(state)}</p>
+        : <h1 className={styles.label}>{problemLabel(state)}</h1>}
       {/* A derived reading, and it says so on the control that explains it.
         * There is no Problem-level Standing in the projection to promote.
         *
@@ -82,9 +90,23 @@ export function ProblemHeader({ state, route, current }: {
       </div>
     </div>
 
-    {statement?.form === "prose" && question
-      ? <p className={styles.question}><ScientificText text={question} /></p>
-      : <p className={styles.question}>No written statement is retained for this problem.</p>}
+    {/* The question is the title, which is what DESIGN.md says twice and what
+      * the product is for. It shipped as a 13px muted caption clamped to two
+      * lines — 66% of it hidden at 375px, truncated mid-formula, and not
+      * reachable at all from Work, Results, Sources or History — while
+      * `Erdős problem 94` was the h1 at 19px and a *derived summary sentence*
+      * was 26px. The three ranks were exactly inverted: a sentence about the
+      * question outranked the identity, which outranked the science.
+      *
+      * The identity becomes a label above it (the breadcrumb already carries
+      * collection and number), and the question becomes the h1 at the
+      * `statement` token — 1.375rem/400, the step the brand scale defines for
+      * exactly this and which nothing was using. Unclamped on Overview; the
+      * other four sections keep two lines so the section's own content leads,
+      * and Overview always holds the full text. */}
+    {hasQuestion
+      ? <h1 className={`${styles.question} ${current === "overview" ? "" : styles.questionClamped}`}><ScientificText text={question} /></h1>
+      : <p className={styles.questionAbsent}>No written statement is retained for this problem.</p>}
 
     <ProblemSectionNav
       current={current}

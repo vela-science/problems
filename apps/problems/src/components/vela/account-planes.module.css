@@ -18,7 +18,7 @@
 .kicker {
   margin: 0;
   font-family: var(--font-mono, ui-monospace, monospace);
-  font-size: 0.625rem;
+  font-size: var(--text-micro);
   font-weight: 500;
   letter-spacing: 0.11em;
   text-transform: uppercase;
@@ -60,7 +60,7 @@
 
 .planeName {
   margin: 0;
-  font-size: 0.8125rem;
+  font-size: var(--text-compact);
   font-weight: 600;
   letter-spacing: -0.005em;
 }
@@ -70,7 +70,7 @@
   align-items: center;
   gap: 0.3rem;
   margin-left: 0.5rem;
-  font-size: 0.6875rem;
+  font-size: var(--text-micro);
   font-weight: 400;
   color: color-mix(in oklab, var(--status-evidence) 76%, var(--foreground));
   white-space: nowrap;
@@ -84,7 +84,7 @@
   list-style: none;
   display: grid;
   gap: 0.3125rem;
-  font-size: 0.78125rem;
+  font-size: var(--text-compact);
   line-height: 1.45;
   color: var(--foreground);
 }
@@ -109,7 +109,7 @@
   margin: 0.75rem 0 0;
   padding-top: 0.625rem;
   border-top: 1px solid color-mix(in oklab, var(--border) 55%, transparent);
-  font-size: 0.71875rem;
+  font-size: var(--text-micro);
   line-height: 1.45;
   color: var(--ap-muted);
 }
@@ -178,7 +178,7 @@
 
 .crossingLabel {
   margin: 0;
-  font-size: 0.6875rem;
+  font-size: var(--text-micro);
   line-height: 1.4;
   color: var(--ap-muted);
   /* `pretty` only protects the last line; this label is three short lines at

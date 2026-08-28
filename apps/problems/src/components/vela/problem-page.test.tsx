@@ -57,7 +57,12 @@ describe("canonical Problem source binding", () => {
         contentRoot: `sha256:${"a".repeat(64)}`,
       },
     }));
+    /* This fixture retains no prose statement, so the Problem's name is the
+       title. Where a question IS retained it becomes the h1 instead — the
+       science is the object, per DESIGN.md — and a page title is never an
+       absence either way. */
     expect(screen.getByRole("heading", { level: 1, name: "Exact Problem" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: /No written statement/u })).not.toBeInTheDocument();
   });
 
   it("refuses a canonical alias whose exact source bytes drift", async () => {

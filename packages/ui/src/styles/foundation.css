@@ -6,6 +6,18 @@
     outline: 2px solid var(--ring);
     outline-offset: 3px;
   }
+
+  /* The rail keeps its deep-marine ground in both themes, so it cannot use the
+     page's ring. In light theme `--ring` resolves to a dark navy against a
+     near-black rail: measured at **1.08:1**, where WCAG 2.4.11 asks for 3:1,
+     which means keyboard focus on every sidebar link was effectively invisible.
+     `--sidebar-ring` was already defined for this and simply never reached the
+     outline. Scoping the variable rather than duplicating the rule keeps one
+     focus declaration for the whole product. */
+  :where([data-slot="sidebar"], [data-sidebar="sidebar"]) {
+    --ring: var(--sidebar-ring);
+    --focus-ring: var(--sidebar-ring);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

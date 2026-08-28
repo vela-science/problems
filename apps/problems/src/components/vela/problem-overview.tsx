@@ -3,7 +3,6 @@ import { ArrowUp01Icon, CheckmarkCircle01Icon, MinusSignCircleIcon } from "@huge
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Badge } from "@vela/ui/components/badge";
 import { Button } from "@vela/ui/components/button";
-import { ScientificText } from "@vela/ui/vela/scientific-text";
 import { AssertionText } from "@/components/vela/assertion-text";
 import { Disclosure } from "@/components/vela/disclosure";
 import { currentReview } from "@/components/vela/problem-provenance";
@@ -31,15 +30,22 @@ function metadataString(state: State, key: string) {
 
 /* Absences the projection actually asserts, not a list of everything a reader
    might wish for. Each line here is a field that is null, an array that is
-   empty, or a record kind this release does not carry. */
+   empty, or a record kind this release does not carry.
+ *
+ * The comment was true of two entries and false of four. "Problem-level
+ * Standing", "Related Problems", "Literature or consensus coverage" and "Human
+ * identity behind the named performers" were unconditional pushes — identical
+ * on all 1,217 pages, so the panel carried zero per-page information while
+ * occupying the rail as though it were state. Worse, "Problem-level Standing"
+ * duplicated the facts panel directly above it, which renders
+ * `Problem Standing → Not recorded` in the same viewport.
+ *
+ * What this release does not carry at all belongs in one release-level note,
+ * not restated on every Problem. */
 function absences(state: State, checks: Array<{ outcome: string }>) {
   const entries: string[] = [];
-  entries.push("Problem-level Standing");
   if (!metadataString(state, "next_discriminator")) entries.push("A recorded next discriminator");
-  entries.push("Related Problems");
   if (!checks.length) entries.push("Any retained check");
-  entries.push("Literature or consensus coverage");
-  entries.push("Human identity behind the named performers");
   return entries;
 }
 
@@ -62,7 +68,10 @@ export function ProblemOverview({ state, route }: { state: State; route: string 
      than the rich page with its values removed. */
   if (reading.kind === "no-record") {
     const stages = [
-      { label: "Source identity", present: true, detail: `${state.source?.title ? "Retained" : "Retained"} from ${state.problem.source_id.replace(/^source:/u, "")}` },
+      /* Both branches of a ternary here read "Retained", so it decided
+         nothing. The source identity is retained whenever this stage renders,
+         which is always — that is what makes it stage one. */
+      { label: "Source identity", present: true, detail: `Retained from ${state.problem.source_id.replace(/^source:/u, "")}` },
       { label: "Statement text", present: Boolean(question), detail: question ? "Retained" : "Not retained" },
       { label: "Formal declaration", present: formal.length > 0, detail: formal.length ? `${formal.length} retained` : "None associated" },
       { label: "Work and checks", present: checks.length > 0, detail: checks.length ? `${checks.length} retained` : "None recorded" },
@@ -128,11 +137,16 @@ export function ProblemOverview({ state, route }: { state: State; route: string 
         </div>
         <div className={styles.scope}>
           <div className={styles.scopeOuter}>
+            {/* The outer region names the question; it no longer reprints it.
+                The question is now the page's h1 in full, a few hundred pixels
+                above, so setting the same statement again here put one long
+                mathematical sentence on the screen twice. The figure's job is
+                the containment relation, and containment needs the boundary
+                labelled, not restated. */}
             <div className={styles.scopeRow}>
-              <span className={styles.scopeLabel}>The question</span>
+              <span className={styles.scopeLabel}>The question above</span>
               <Badge variant="outline">Not established here</Badge>
             </div>
-            {question ? <p className={styles.scopeText}><ScientificText text={question} /></p> : null}
             <div className={styles.scopeInner}>
               <div className={styles.scopeRow}>
                 <span className={styles.scopeLabel}>Proved and accepted</span>
@@ -262,7 +276,12 @@ function ProblemFacts({ state, lastSourceUpdate, openFormal, formal }: {
   </section>;
 }
 
+/* Nothing to say is a reason not to draw a panel. With the four constants
+   removed, a Problem carrying a next discriminator and a check has no absences
+   left to report, and an empty bordered panel headed "Not recorded" is the
+   inventory-of-nothing shape this page is trying to stop being. */
 function AbsencePanel({ entries }: { entries: string[] }) {
+  if (!entries.length) return null;
   return <section className={styles.panel}>
     <div className={styles.panelHead}>
       <span className={styles.kicker}>Not recorded in this release</span>
