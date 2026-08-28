@@ -261,6 +261,14 @@ Hosted Problems may mutate account, shared workspace, follow, approach,
 attempt, note, discussion, assignment, artifact metadata, provider-neutral
 session reference, and unsigned draft data through `@vela/activity-data`.
 
+613 of the 1,217 Erdős Problems in this release carry a resolution their own
+source records. Those pages open with that finding, in the source's words and
+under the source's name, and the Vela boundary follows as the next fact. The
+attribution is what makes it safe: the page says who claims it and never claims
+it itself. It opened with "Nothing has been recorded here yet" until 2026-08-28,
+which measured the one axis that is near-empty by construction — Vela state
+means a Repository signed a Decision, and one Repository has signed eighteen.
+
 A follow binds to one exact anchor and never migrates to a later one, so a new
 release cannot silently inherit a reader's follow of a state they have not seen.
 `/watching` reads that invariant in the other direction: a followed root that is

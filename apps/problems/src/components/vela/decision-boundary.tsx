@@ -7,7 +7,7 @@ import { Disclosure } from "@/components/vela/disclosure";
 const previewStateCopy: Record<ProposedStatePreview["state"], { title: string; detail: string }> = {
   current: {
     title: "Current proposed state",
-    detail: "These consequences are rooted to the Repository State shown below. They remain hypothetical until an eligible, attributed performer records a Decision.",
+    detail: "Rooted to the Repository State below, and hypothetical until a Decision is recorded.",
   },
   stale_recomputable: {
     title: "Stale proposed state",
@@ -23,7 +23,7 @@ const previewStateCopy: Record<ProposedStatePreview["state"], { title: string; d
   },
   unavailable: {
     title: "Historical proposed state unavailable",
-    detail: "The exact pre-terminal Repository revision is retained, but the pinned Core reader cannot reconstruct a Decision Inbox entry for that predecessor layout. No modern hypothetical is substituted.",
+    detail: "The revision is retained, but the pinned Core reader cannot reconstruct a Decision Inbox entry for it.",
   },
 };
 
@@ -158,11 +158,7 @@ export function DecisionBoundary({ packet }: { packet: DecisionPacketSummary }) 
       <h2 id="boundary-heading" className="mb-1 text-subtitle">If this is decided</h2>
       {/* Said once, plainly, because it is the product's central claim and the
           one thing a passing verifier must never be read as having done. */}
-      <p className="max-w-[85ch] text-body text-muted-foreground">
-        No check below decides anything. Only an authorized, attributed Decision by
-        repository authority moves a Claim&rsquo;s Standing, and these are the
-        two repositories it would choose between.
-      </p>
+      <p className="max-w-[85ch] text-body text-muted-foreground">Only an attributed Decision by repository authority moves Standing.</p>
 
       <Alert className="mt-4" variant={blocked ? "destructive" : "default"}>
         <AlertTitle>
@@ -171,8 +167,8 @@ export function DecisionBoundary({ packet }: { packet: DecisionPacketSummary }) 
         </AlertTitle>
         <AlertDescription>
           {blocked
-            ? "The protocol refuses this transition until every blocker below is cleared. A Decision to accept cannot be recorded in this state."
-            : "The protocol permits this transition. Whether it happens is an attributed ruling, not a consequence of the gate opening."}
+            ? "Refused until every blocker below is cleared."
+            : "Permitted. Whether it happens is an attributed ruling."}
         </AlertDescription>
       </Alert>
 

@@ -129,7 +129,7 @@ describe("Home", () => {
     const { container } = render(await HomePage());
 
     expect(screen.getByRole("heading", { level: 1, name: "Start from the frontier." })).toBeVisible();
-    expect(screen.getByText(/Open a scientific problem and see where the work has reached/iu)).toBeVisible();
+    expect(screen.getByText(/Open a scientific problem: what its sources report/iu)).toBeVisible();
     expect(screen.getByRole("link", { name: /browse problems/iu })).toHaveAttribute("href", "/problems");
     expect(screen.getByRole("link", { name: "Add contribution" })).toHaveAttribute("href", "/contribute");
 

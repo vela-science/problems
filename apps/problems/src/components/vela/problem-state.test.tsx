@@ -188,7 +188,7 @@ describe("Problem tools", () => {
        reader should not have to know the protocol before the page will tell
        them what it concludes. */
     expect(within(inspector).getByText("What this site concludes")).toBeVisible();
-    expect(within(inspector).getByText(/Retaining a source.s file does not make its claim/u)).toBeVisible();
+    expect(within(inspector).getByText(/Only a Repository Decision establishes state here/u)).toBeVisible();
     expect(within(inspector).getByText("statement_identity")).toBeVisible();
     expect(within(inspector).getByText("not_established")).toBeVisible();
     expect(within(inspector).getByText("authority_effect")).toBeVisible();
@@ -219,7 +219,7 @@ describe("Problem tools", () => {
     render(<ProblemState state={{ ...state, sources: { coverage: state.sources.coverage, occurrences: [occurrence], statements: [] } } as never} basePath="/problems/erdos-problems/321" researchView="files" />);
     expect(screen.getByText(/formal occurrence/iu)).toBeVisible();
     expect(screen.getByText("Preview unavailable")).toBeVisible();
-    expect(screen.getByText(/not retained for display/iu)).toBeVisible();
+    expect(screen.getByText(/its text is not retained/iu)).toBeVisible();
     expect(screen.queryByText(occurrence.summary)).toBeNull();
   });
 

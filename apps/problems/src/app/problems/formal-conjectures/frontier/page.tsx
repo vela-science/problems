@@ -153,12 +153,7 @@ export default async function FormalConjecturesFrontierPage() {
 
       <PageSection aria-labelledby="frontier-provenance" className="pt-8">
         <h2 id="frontier-provenance" className="text-label border-b pb-2">Exact-state provenance</h2>
-        <p className="mt-3 max-w-[78ch] text-meta text-muted-foreground">
-          A derived, disposable projection: it holds no authority, changes no Standing,
-          and rebuilds from its census at any time. Obligation types are computed from
-          each declaration&rsquo;s axiom closure and type-level sorryAx reachability under
-          the pinned toolchain.
-        </p>
+        <p className="mt-3 max-w-[78ch] text-meta text-muted-foreground">Derived and disposable, rebuilt from its census.</p>
         <dl className="mt-3 grid gap-1 font-mono text-micro text-muted-foreground">
           <div>corpus {snapshot.corpusRepository} @ {snapshot.corpusCommit.slice(0, 12)}{snapshot.upstreamEquivalent ? ` (≡ ${snapshot.upstreamEquivalent})` : ""}</div>
           <div>census {snapshot.censusRoot} · measured {snapshot.measuredOn}</div>

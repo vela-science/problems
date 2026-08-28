@@ -106,8 +106,8 @@ describe("the exact Repository revision comparison", () => {
   test("refuses to describe an unreplayable Git state as an exact comparison", async () => {
     const html = await render(BLOCKED_COMMIT, AFTER_COMMIT);
     expect(html).toContain("Comparison unavailable");
-    expect(html).toContain("could not strictly replay both states");
-    expect(html).toContain("not presented as an exact semantic comparison");
+    expect(html).toContain("could not replay both states");
+    expect(html).toContain("Git history remains inspectable");
     expect(html).not.toContain("Semantic delta");
     expect(html.match(/<h1/g)).toHaveLength(1);
   });

@@ -86,8 +86,8 @@ describe("ProblemSourceCoverage", () => {
   it("renders one exact semantic table that recomposes without duplicating the matrix", () => {
     const { container } = render(<ProblemSourceCoverage coverage={coverage} />);
     expect(screen.getByRole("heading", { name: "2 reviewed Problems across 5 exact Sources" })).toBeVisible();
-    expect(screen.getByText(/reviewed occurrences with every exact same-number record/u)).toBeVisible();
-    expect(screen.getByText(/do not establish statement identity, equivalence, Verification, Decision, or Standing/u)).toBeVisible();
+    expect(screen.getByText(/reviewed occurrences with every same-number record/u)).toBeVisible();
+    expect(screen.getByText(/Shared numbers are navigation candidates only/u)).toBeVisible();
 
     const table = screen.getByRole("table", { name: "Reviewed Problem source occurrence coverage" });
     expect(table).toHaveClass("@4xl/source-coverage:table");

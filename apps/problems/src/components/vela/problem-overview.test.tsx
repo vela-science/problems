@@ -86,7 +86,7 @@ describe("Problem Overview, on the Problem the source contract pins", () => {
   it("separates verification from the Decision, and both from Standing", () => {
     const html = render94();
 
-    expect(html).toContain("Verification did not accept the Claim.");
+    expect(html).toContain("The Decision accepted the Claim, not the check.");
     expect(html).toContain("agent:submission-v3-cleanup-decision");
     /* The third axis reads as a sentence now: "Problem Standing: Not recorded"
        required knowing both that a Problem carries a Standing of its own and
@@ -106,7 +106,15 @@ describe("Problem Overview, on the Problem the source contract pins", () => {
   /* Every Problem is reachable by the same component, so the composition that
      carries the honesty gates is the one 1,216 other Problems get too. */
   it("gives a Problem with nothing recorded its own composition", () => {
-    const empty = { ...(problem94State() as object), claims: [], currentClaimId: null, reviews: [] } as never;
+    /* `declared_status` cleared, so this is the genuinely-open reading. The
+       fixture's own status is "proved (Lean)", which is the other branch and is
+       covered below — 613 of the 1,217 Problems in this release are in it. */
+    const base = problem94State() as { problem: Record<string, unknown> };
+    const empty = {
+      ...(base as object),
+      problem: { ...base.problem, declared_status: "open" },
+      claims: [], currentClaimId: null, reviews: [],
+    } as never;
     const html = renderToStaticMarkup(<ProblemOverview state={empty} route="/problems/erdos-problems/2" />);
 
     expect(html).toContain("Nothing has been recorded here yet.");
@@ -118,9 +126,41 @@ describe("Problem Overview, on the Problem the source contract pins", () => {
        terminal is never reached here: an open Problem is one whose question has
        not been answered, and a filled endpoint would say otherwise. */
     expect(html).toContain("How far the record reaches");
-    expect(html).toContain("2 of 5 stages");
+    expect(html).toContain("2 of 6 stages");
     expect(html).toContain("The question");
     expect(html).toContain("Not reached");
-    expect(html).toContain("No Repository has decided on this question here, so the record stops short of it.");
+    /* The track's own stages carry it — asserted two lines above — so the
+       caption that said the same thing in a sentence is gone. Work keeps its
+       caption: there the track is the only prose in the rail. */
+    expect(html).not.toContain("so the record stops short of it");
+  });
+
+  /* The sentence that was false on 613 of 1,217 pages.
+   *
+   * Erdős 16 is recorded by its own collection as disproved, in Lean, and this
+   * page opened with "Nothing has been recorded here yet" — measuring the one
+   * axis that is near-empty by construction, because Vela state means a
+   * Repository signed a Decision and one Repository has signed eighteen. The
+   * finding now leads, in the source's words and under the source's name, and
+   * the Vela boundary follows it as the next fact rather than as a denial. */
+  it("leads with the source's finding, attributed, where the source records one", () => {
+    const base = problem94State() as { problem: Record<string, unknown> };
+    const resolved = {
+      ...(base as object),
+      problem: { ...base.problem, declared_status: "disproved (Lean)" },
+      claims: [], currentClaimId: null, reviews: [],
+    } as never;
+    const html = renderToStaticMarkup(<ProblemOverview state={resolved} route="/problems/erdos-problems/16" />);
+
+    expect(html).toContain("records this as disproved (Lean).");
+    expect(html).not.toContain("Nothing has been recorded here yet.");
+    /* Attributed, never asserted. The page must never claim the finding as its
+       own, and the Vela boundary has to survive the promotion. */
+    expect(html).toContain("No Repository has ruled on it here.");
+    expect(html).not.toMatch(/>\s*Disproved \(Lean\)\.?\s*</u);
+    /* The finding is on the reach axis too, which had no stage for it: the
+       track read "3 of 5 stages" and said nothing about the disproof. */
+    expect(html).toContain("Resolution");
+    expect(html).toContain("of 6 stages");
   });
 });

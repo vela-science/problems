@@ -97,10 +97,7 @@ export default async function WatchingPage() {
         {/* What a watch is, and what it refuses to become. Both belong here:
             a reader deciding whether to follow anything is deciding whether
             this product is going to start competing for their attention. */}
-        <p className="mt-2 max-w-2xl text-body text-muted-foreground">
-          Questions you follow, and what has moved on their records since. A watch reports how far a record reaches. It
-          does not rank, digest, or tell you what to work on.
-        </p>
+        <p className="mt-2 max-w-2xl text-body text-muted-foreground">Questions you follow, and what has moved on their records since.</p>
       </div>
       <Button variant="outline" nativeButton={false} render={<Link href="/problems" />}>Find a Problem</Button>
     </header>
@@ -129,10 +126,7 @@ export default async function WatchingPage() {
       <EmptyHeader>
         <EmptyMedia variant="icon"><HugeiconsIcon icon={Telescope01Icon} aria-hidden /></EmptyMedia>
         <EmptyTitle>You are not watching anything yet</EmptyTitle>
-        <EmptyDescription>
-          Follow a question from its Work section. A follow binds to the exact state you saw, so when that state moves,
-          this page can say what moved.
-        </EmptyDescription>
+        <EmptyDescription>Follow a question from its Work section.</EmptyDescription>
       </EmptyHeader>
       <EmptyContent><Button nativeButton={false} render={<Link href="/problems" />}>Browse Problems <HugeiconsIcon icon={ArrowRight} aria-hidden data-icon="inline-end" /></Button></EmptyContent>
     </Empty>}

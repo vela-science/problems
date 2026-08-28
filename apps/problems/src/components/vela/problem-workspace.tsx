@@ -112,7 +112,7 @@ function FormField({ label, name, placeholder, required = true, value, type = "t
 }
 
 function StaleActivityNotice() {
-  return <Alert className="mt-5 bg-muted/30"><AlertTitle>Earlier activity anchor</AlertTitle><AlertDescription>This record remains readable, but controls are unavailable because its exact Problem or Repository anchor is no longer current. Start a new Approach from the current Problem instead of silently editing historical context.</AlertDescription></Alert>;
+  return <Alert className="mt-5 bg-muted/30"><AlertTitle>Earlier activity anchor</AlertTitle><AlertDescription>Readable, but not editable: its anchor is no longer current. Start a new Approach from the current Problem.</AlertDescription></Alert>;
 }
 
 /* The exact field names the record uses, not the TypeScript property names the
@@ -151,13 +151,9 @@ function WatchNotice({ watch, scope }: { watch: ProblemWatch; scope: Scope }) {
     <AlertDescription>
       <p>{problemWatchSentence(watch)}</p>
       <p className="mt-2 text-meta text-muted-foreground">
-        Watching since {formatDate(watch.since)}. {fields.length
-          ? <>Changed: <span className="font-mono text-micro">{fields.map((field) => anchorFieldNames[field] ?? field).join(" ")}</span>.</>
+        Since {formatDate(watch.since)}{fields.length
+          ? <> · <span className="font-mono text-micro">{fields.map((field) => anchorFieldNames[field] ?? field).join(" ")}</span></>
           : null}
-      </p>
-      <p className="mt-2 text-meta text-muted-foreground">
-        Reaching a stage is not a question being answered. A Repository accepting a Claim is a separate act, and this
-        notice never reports one.
       </p>
       <form action={followProblemAction} className="mt-3">
         <ScopeFields scope={scope} />
@@ -174,7 +170,7 @@ function EmptyWorkspace({ state, accountId, workbenchHandoff }: { state: State; 
   const sourceCount = state.sources?.occurrences?.length ?? 0;
   return <section aria-labelledby="empty-workspace-heading" className="mt-6 min-w-0">
     <header className="flex flex-wrap items-center justify-between gap-3"><div className="flex items-center gap-2"><h2 id="empty-workspace-heading" className="text-title">Workspace</h2><Badge variant="outline">signed in</Badge></div>{workbenchHandoff ? <Button nativeButton={false} size="sm" variant="outline" render={<a href={workbenchHandoff} />}>Continue locally</Button> : null}</header>
-    {workbenchHandoff ? <p className="mt-2 text-meta text-muted-foreground">Open this exact Problem, source revision, and authority Repository in Workbench. This handoff does not clone, switch, upload, or execute anything.</p> : null}
+    {workbenchHandoff ? <p className="mt-2 text-meta text-muted-foreground">Opens this exact Problem and source revision in Workbench. Nothing is cloned, uploaded, or executed.</p> : null}
     {/* No Files rail, no Canvas, no "Workspace tools" list.
         A hosted workspace coordinates: it keeps notes, approaches and a
         contribution draft beside the Problem. Choosing a checkout, running
@@ -185,7 +181,7 @@ function EmptyWorkspace({ state, accountId, workbenchHandoff }: { state: State; 
         empty placeholder anyway. */}
     <div className="vela-object-surface mt-5 overflow-hidden p-5 sm:p-7">
       <h3 className="text-subtitle">Start a workspace</h3>
-      <p className="mt-1 max-w-[68ch] text-compact text-muted-foreground">Keep notes, approaches and a contribution draft with this Problem. Source files and local tools stay in Workbench; this is where the work is coordinated and handed on.</p>
+      <p className="mt-1 max-w-[68ch] text-compact text-muted-foreground">Notes, approaches and a draft, kept with this Problem.</p>
       <form action={createWorkspaceAction} className="mt-6 grid gap-4 sm:max-w-lg">
         <input type="hidden" name="repository" value={state.repositorySlug} />
         <input type="hidden" name="problem" value={state.problem.problem} />
@@ -235,10 +231,10 @@ function MutationError({ code }: { code?: string }) {
   if (!code) return null;
   const title = code === "conflict" ? "A newer version is available" : "Workspace action refused";
   const body = code === "conflict"
-    ? "Another update advanced this activity record. Reloaded values are shown below; review them before trying the action again."
+    ? "Another update advanced this record. Review the reloaded values below."
     : code === "unauthorized"
       ? "Your current account no longer has permission to change this Workspace."
-      : "No activity change was retained. Review the fields and current scientific anchor before trying again.";
+      : "Nothing was retained. Review the fields and the current anchor.";
   return <Alert variant="destructive" className="mb-4"><AlertTitle>{title}</AlertTitle><AlertDescription>{body}</AlertDescription></Alert>;
 }
 
@@ -261,11 +257,11 @@ function AddNoteForm({ scope, approachId, attemptId }: { scope: Scope; approachI
 
 function ResearchBlockForm({ scope, attempts }: { scope: Scope; attempts: ProblemActivity["attempts"] }) {
   if (!attempts.length) return <Alert className="bg-muted/30"><AlertTitle>Start an Attempt first</AlertTitle><AlertDescription>A new Research Block must name the exact Attempt that produced it.</AlertDescription></Alert>;
-  return <form action={attachArtifactAction} className="grid gap-4 sm:grid-cols-2"><ScopeFields scope={scope} /><div className="sm:col-span-2"><FormSelect label="Producing Attempt" name="attemptId" options={attempts.map((attempt) => ({ value: attempt.id, label: attempt.title }))} /><p className="mt-1.5 text-meta text-muted-foreground">The selected Attempt supplies this evidence&apos;s Problem and approach scope; no internal scope label is required.</p></div><FormSelect label="Evidence type" name="kind" options={[{ value: "proof", label: "Proof or proof attempt" }, { value: "computation", label: "Computation" }, { value: "dataset", label: "Dataset" }, { value: "review", label: "Review" }, { value: "negative-result", label: "Negative result" }, { value: "correction", label: "Correction" }, { value: "other", label: "Other bounded evidence" }]} /><FormField label="Artifact reference path" name="path" placeholder="artifacts/result.json" /><div className="sm:col-span-2"><FormField label="SHA-256 root" name="contentRoot" /></div><FormField label="Locator" name="locator" placeholder="Optional external locator" required={false} /><FormField label="Media type" name="mediaType" placeholder="application/json" required={false} /><FormField label="Byte size" name="byteSize" placeholder="Optional" required={false} type="number" /><Button className="w-fit self-end" type="submit">Retain evidence reference</Button></form>;
+  return <form action={attachArtifactAction} className="grid gap-4 sm:grid-cols-2"><ScopeFields scope={scope} /><div className="sm:col-span-2"><FormSelect label="Producing Attempt" name="attemptId" options={attempts.map((attempt) => ({ value: attempt.id, label: attempt.title }))} /><p className="mt-1.5 text-meta text-muted-foreground">Scope comes from the selected Attempt.</p></div><FormSelect label="Evidence type" name="kind" options={[{ value: "proof", label: "Proof or proof attempt" }, { value: "computation", label: "Computation" }, { value: "dataset", label: "Dataset" }, { value: "review", label: "Review" }, { value: "negative-result", label: "Negative result" }, { value: "correction", label: "Correction" }, { value: "other", label: "Other bounded evidence" }]} /><FormField label="Artifact reference path" name="path" placeholder="artifacts/result.json" /><div className="sm:col-span-2"><FormField label="SHA-256 root" name="contentRoot" /></div><FormField label="Locator" name="locator" placeholder="Optional external locator" required={false} /><FormField label="Media type" name="mediaType" placeholder="application/json" required={false} /><FormField label="Byte size" name="byteSize" placeholder="Optional" required={false} type="number" /><Button className="w-fit self-end" type="submit">Retain evidence reference</Button></form>;
 }
 
 function DraftForm({ scope, state, artifacts, drafts }: { scope: Scope; state: State; artifacts: ProblemActivity["artifacts"]; drafts: ProblemActivity["drafts"] }) {
-  if (!artifacts.length) return <Alert className="bg-muted/30"><AlertTitle>Retain a Research Block first</AlertTitle><AlertDescription>The handoff derives its Artifact from one exact hosted Research Block. It does not ask you to retype roots that could drift.</AlertDescription></Alert>;
+  if (!artifacts.length) return <Alert className="bg-muted/30"><AlertTitle>Retain a Research Block first</AlertTitle><AlertDescription>Derived from one exact Research Block.</AlertDescription></Alert>;
   /* One draft per anchor, revised in place. Saving used to mint a sibling
      draft on every submit — the SQL update branch existed and the form never
      named a draft to update — so the object tree grew one near-duplicate per
@@ -297,7 +293,7 @@ export function workspaceObjects({ state, activity, workspace, scope, currentAnc
     meta: `${activity.approaches.length} approaches · ${activity.attempts.length} attempts · ${activity.artifacts.length} Research Blocks`,
     version: workspace.version,
     anchorRoot: currentAnchorRoot,
-    content: <div><div className="flex flex-wrap items-center gap-2"><h2 className="text-title">{workspace.name}</h2><Badge variant="outline">shared workspace</Badge></div><dl className="mt-5 grid overflow-hidden rounded-lg border bg-[var(--vela-surface-sunken)] sm:grid-cols-3"><div className="px-4 py-3"><dt className="text-meta text-muted-foreground">Approaches</dt><dd className="mt-1 font-mono text-subtitle">{activity.approaches.length}</dd></div><div className="border-t px-4 py-3 sm:border-l sm:border-t-0"><dt className="text-meta text-muted-foreground">Attempts</dt><dd className="mt-1 font-mono text-subtitle">{activity.attempts.length}</dd></div><div className="border-t px-4 py-3 sm:border-l sm:border-t-0"><dt className="text-meta text-muted-foreground">Research Blocks</dt><dd className="mt-1 font-mono text-subtitle">{activity.artifacts.length}</dd></div></dl><div className="mt-6 grid gap-3"><WorkAction title="New approach" description="Name a research direction."><NewApproachForm scope={scope} /></WorkAction><WorkAction title="Add note" description="Add reasoning to this workspace."><AddNoteForm scope={scope} /></WorkAction><WorkAction title="Attach evidence" description="Record a file an Attempt produced, by its exact content root. Vela calls one a Research Block."><ResearchBlockForm scope={scope} attempts={activity.attempts.filter(isCurrent)} /></WorkAction><WorkAction title="Prepare local handoff" description="Export an unsigned payload for your local tool."><DraftForm scope={scope} state={state} artifacts={activity.artifacts.filter(isCurrent)} drafts={activity.drafts.filter(isCurrent)} /></WorkAction></div></div>,
+    content: <div><div className="flex flex-wrap items-center gap-2"><h2 className="text-title">{workspace.name}</h2><Badge variant="outline">shared workspace</Badge></div><dl className="mt-5 grid overflow-hidden rounded-lg border bg-[var(--vela-surface-sunken)] sm:grid-cols-3"><div className="px-4 py-3"><dt className="text-meta text-muted-foreground">Approaches</dt><dd className="mt-1 font-mono text-subtitle">{activity.approaches.length}</dd></div><div className="border-t px-4 py-3 sm:border-l sm:border-t-0"><dt className="text-meta text-muted-foreground">Attempts</dt><dd className="mt-1 font-mono text-subtitle">{activity.attempts.length}</dd></div><div className="border-t px-4 py-3 sm:border-l sm:border-t-0"><dt className="text-meta text-muted-foreground">Research Blocks</dt><dd className="mt-1 font-mono text-subtitle">{activity.artifacts.length}</dd></div></dl><div className="mt-6 grid gap-3"><WorkAction title="New approach" description="Name a research direction."><NewApproachForm scope={scope} /></WorkAction><WorkAction title="Add note" description="Add reasoning to this workspace."><AddNoteForm scope={scope} /></WorkAction><WorkAction title="Attach evidence" description="A file an Attempt produced, by its content root."><ResearchBlockForm scope={scope} attempts={activity.attempts.filter(isCurrent)} /></WorkAction><WorkAction title="Prepare local handoff" description="Export an unsigned payload for your local tool."><DraftForm scope={scope} state={state} artifacts={activity.artifacts.filter(isCurrent)} drafts={activity.drafts.filter(isCurrent)} /></WorkAction></div></div>,
     detail: <p className="text-meta text-muted-foreground">Shared activity only. Scientific state changes through a repository Decision.</p>,
   });
 
@@ -338,7 +334,7 @@ export function workspaceObjects({ state, activity, workspace, scope, currentAnc
 
   for (const draft of activity.drafts) {
     const id = draft.id;
-    objects.push({ id: `draft:${id}`, recordId: id, parentId: null, group: "outputs", kind: "draft", label: "Unsigned Result draft", summary: "Schema-validated payload bytes ready for a compatible local tool.", meta: `Problem-scoped · ${anchorMeta(draft)}`, version: draft.version, anchorRoot: draft.anchorRoot, content: <div><div className="vela-unsigned-panel p-5"><div className="flex flex-wrap items-center gap-2"><h2 className="text-title">Unsigned Result draft</h2><Badge variant="secondary">unsigned</Badge></div><p className="mt-3 max-w-3xl text-body text-muted-foreground">Download the validated draft, then continue inside the source Repository. Hosted Problems cannot sign or submit it.</p><Button className="mt-5" nativeButton={false} variant="outline" render={<Link href={`/drafts/${id}/export?workspace=${workspace.id}`} />}>Download unsigned draft</Button></div><ol aria-label="Result handoff" className="mt-7 grid gap-0 overflow-hidden rounded-lg border sm:grid-cols-4 sm:divide-x">
+    objects.push({ id: `draft:${id}`, recordId: id, parentId: null, group: "outputs", kind: "draft", label: "Unsigned Result draft", summary: "Schema-validated payload bytes ready for a compatible local tool.", meta: `Problem-scoped · ${anchorMeta(draft)}`, version: draft.version, anchorRoot: draft.anchorRoot, content: <div><div className="vela-unsigned-panel p-5"><div className="flex flex-wrap items-center gap-2"><h2 className="text-title">Unsigned Result draft</h2><Badge variant="secondary">unsigned</Badge></div><p className="mt-3 max-w-3xl text-body text-muted-foreground">Download it, then continue in the source Repository. It cannot be signed here.</p><Button className="mt-5" nativeButton={false} variant="outline" render={<Link href={`/drafts/${id}/export?workspace=${workspace.id}`} />}>Download unsigned draft</Button></div><ol aria-label="Result handoff" className="mt-7 grid gap-0 overflow-hidden rounded-lg border sm:grid-cols-4 sm:divide-x">
       <li className="border-b p-4 sm:border-b-0"><span className="text-micro font-semibold text-primary">1</span><strong className="mt-2 block text-label">Open locally</strong><span className="mt-1 block text-micro text-muted-foreground">Use a compatible local research tool.</span></li>
       <li className="border-b p-4 sm:border-b-0"><span className="text-micro font-semibold text-primary">2</span><strong className="mt-2 block text-label">Submit in the Repository</strong><Link className="mt-1 block text-micro text-primary underline underline-offset-4" href={`/repositories/${state.repositorySlug}/contribute`}>Repository instructions</Link></li>
       <li className="border-b p-4 sm:border-b-0"><span className="text-micro font-semibold text-primary">3</span><strong className="mt-2 block text-label">Authority reviews</strong><span className="mt-1 block text-micro text-muted-foreground">A separate Repository Decision accepts or refuses it.</span></li>
@@ -401,7 +397,7 @@ export async function ProblemWorkspace({ state, hostedAccount, accountsEnabled =
     const signInHref = `/sign-in?returnTo=${encodeURIComponent(`${basePath}/work`)}`;
     return <section id="add-contribution" aria-labelledby="hosted-workspace-heading" className="mt-6 min-w-0 scroll-mt-16">
       <header className="flex flex-wrap items-center justify-between gap-3"><h2 id="hosted-workspace-heading" className="text-title">Workspace</h2><div className="flex flex-wrap gap-2">{workbenchHandoff ? <Button nativeButton={false} size="sm" variant="outline" render={<a href={workbenchHandoff} />}>Continue locally</Button> : null}{state.locator ? <Button nativeButton={false} size="sm" variant="outline" render={<a href={state.locator} />}>Open source</Button> : null}{accountsEnabled ? <Button nativeButton={false} size="sm" render={<Link href={signInHref} prefetch={false} />}>Sign in to contribute</Button> : <Badge variant="outline">sign-in unavailable</Badge>}</div></header>
-      {workbenchHandoff ? <p className="mt-2 text-meta text-muted-foreground">Open this exact Problem, source revision, and authority Repository in Workbench. This handoff does not clone, switch, upload, or execute anything.</p> : null}
+      {workbenchHandoff ? <p className="mt-2 text-meta text-muted-foreground">Opens this exact Problem and source revision in Workbench. Nothing is cloned, uploaded, or executed.</p> : null}
       <div className="vela-object-surface mt-5 overflow-hidden lg:grid lg:min-h-[34rem] lg:grid-cols-[15rem_minmax(0,1fr)_16rem]">
         <nav aria-label="Public Problem files" className="border-b bg-[var(--vela-surface-sunken)] p-4 lg:border-b-0 lg:border-r"><p className="text-meta font-semibold">Files</p><Link href={`${basePath}/sources?`} className="vela-object-row mt-3 block rounded-md border bg-background p-3"><span className="block truncate text-label font-medium">{sourceTitle}</span><span className="mt-1 block text-micro text-muted-foreground">{sourceCount} retained source records</span></Link>
           {/* Where the record already stands, read from inside the surface
@@ -427,8 +423,7 @@ export async function ProblemWorkspace({ state, hostedAccount, accountsEnabled =
               : <>
                   <p className="text-meta font-semibold">Reported activity</p>
                   <p className="mt-2 max-w-[62ch] text-compact text-muted-foreground">
-                    No source records work against this Problem. Coordination that has not reached a Repository
-                    Decision lives here; nothing has yet.
+                    No source records work against this Problem.
                   </p>
                 </>}
           </div>
@@ -491,7 +486,7 @@ export async function ProblemWorkspace({ state, hostedAccount, accountsEnabled =
     workbenchHandoff={workbenchHandoff}
     target={{ claimId: state.anchor.claimId, standing: state.anchor.claimStanding }}
   /> : null;
-  const toolbar = <div><MutationError code={mutationError} /><MutationDone code={mutationDone} />{watch ? <WatchNotice watch={watch} scope={scope} /> : null}{candidateBanner ? <div className="mb-5">{candidateBanner}</div> : null}<div className="flex flex-wrap items-start justify-between gap-4"><div className="flex flex-wrap items-center gap-2"><h2 id="workspace-heading" className="text-title">{workspace.name}</h2><Badge variant="outline">{workspace.role}</Badge>{activity.following ? <Badge variant="secondary">following</Badge> : null}</div><div className="flex flex-wrap items-center justify-end gap-2">{workbenchHandoff ? <Button nativeButton={false} size="sm" variant="outline" render={<a href={workbenchHandoff} />}>Continue locally</Button> : null}{workspaces.map((entry) => <Button key={entry.id} nativeButton={false} size="sm" variant={entry.id === workspace.id ? "default" : "outline"} render={<Link href={`${basePath}/work?workspace=${entry.id}`} />}>{entry.name}</Button>)}<form action={followProblemAction}><ScopeFields scope={scope} /><input type="hidden" name="following" value={activity.following ? "false" : "true"} /><Button type="submit" size="sm" variant="outline">{activity.following ? "Unfollow" : "Follow"}</Button></form></div></div>{workbenchHandoff ? <p className="mt-2 text-meta text-muted-foreground">The handoff carries this exact Problem, source revision, and authority Repository. It does not clone, switch, upload, or execute anything.</p> : null}<div className="mt-5"><Reach stops={problemReachStops(state)} endpoint="The question" caption={problemReachCaption(state)} /></div></div>;
+  const toolbar = <div><MutationError code={mutationError} /><MutationDone code={mutationDone} />{watch ? <WatchNotice watch={watch} scope={scope} /> : null}{candidateBanner ? <div className="mb-5">{candidateBanner}</div> : null}<div className="flex flex-wrap items-start justify-between gap-4"><div className="flex flex-wrap items-center gap-2"><h2 id="workspace-heading" className="text-title">{workspace.name}</h2><Badge variant="outline">{workspace.role}</Badge>{activity.following ? <Badge variant="secondary">following</Badge> : null}</div><div className="flex flex-wrap items-center justify-end gap-2">{workbenchHandoff ? <Button nativeButton={false} size="sm" variant="outline" render={<a href={workbenchHandoff} />}>Continue locally</Button> : null}{workspaces.map((entry) => <Button key={entry.id} nativeButton={false} size="sm" variant={entry.id === workspace.id ? "default" : "outline"} render={<Link href={`${basePath}/work?workspace=${entry.id}`} />}>{entry.name}</Button>)}<form action={followProblemAction}><ScopeFields scope={scope} /><input type="hidden" name="following" value={activity.following ? "false" : "true"} /><Button type="submit" size="sm" variant="outline">{activity.following ? "Unfollow" : "Follow"}</Button></form></div></div>{workbenchHandoff ? <p className="mt-2 text-meta text-muted-foreground">Carries this exact Problem, source revision and authority Repository.</p> : null}<div className="mt-5"><Reach stops={problemReachStops(state)} endpoint="The question" caption={problemReachCaption(state)} /></div></div>;
   const canvasNote = <WorkspaceCrdtNote updates={activity.crdtUpdates} scope={scope} action={appendWorkspaceCrdtUpdateAction} />;
   return <WorkspaceShell objects={objects} selectedObject={object} inspectorTab={inspector} anchors={anchors} audit={audit} discussion={discussion} toolbar={toolbar} canvasNote={canvasNote} initialSurface={selectedObject ? "object" : "canvas"} />;
 }

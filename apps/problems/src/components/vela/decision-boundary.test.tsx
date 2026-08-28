@@ -55,8 +55,8 @@ describe("DecisionBoundary", () => {
     const view = render(<DecisionBoundary packet={packet()} />);
 
     expect(screen.getByText("Protocol gate satisfied")).toBeVisible();
-    expect(screen.getByText(/attributed ruling, not a consequence of the gate opening/u)).toBeVisible();
-    expect(screen.getByText(/Only an authorized, attributed Decision/u)).toBeVisible();    view.unmount();
+    expect(screen.getByText(/Whether it happens is an attributed ruling/u)).toBeVisible();
+    expect(screen.getByText(/Only an attributed Decision by repository authority/u)).toBeVisible();    view.unmount();
   });
 
   it("names every blocker holding a blocked gate", () => {
@@ -75,7 +75,7 @@ describe("DecisionBoundary", () => {
     expect(screen.getByText("target_index_stale")).toBeVisible();
     expect(screen.getByText("The target index is behind the commit.")).toBeVisible();
     expect(screen.getByText(/rejection unavailable/u)).toBeVisible();
-    expect(screen.getByText(/cannot be recorded in this state/u)).toBeVisible();    view.unmount();
+    expect(screen.getByText(/Refused until every blocker below is cleared/u)).toBeVisible();    view.unmount();
   });
 
   it("carries the obligation each ruling would leave", () => {

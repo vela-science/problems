@@ -45,7 +45,7 @@ export function ProblemActivityRecords({ state }: { state: State }) {
   return <section aria-labelledby="reported-activity-heading" className="min-w-0">
     <h2 id="reported-activity-heading" className="text-title">Reported activity</h2>
     <p className="mt-2 max-w-[68ch] text-compact text-muted-foreground">
-      Work these sources record against this Problem. Source-reported attribution, not reviewed here.
+      Reported by these sources. Not reviewed here.
     </p>
     <ul className="mt-4 divide-y rounded-lg border">
       {entries.map(({ occurrence, record }) => {

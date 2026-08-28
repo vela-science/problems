@@ -163,10 +163,7 @@ export default async function HomePage() {
               * something exact. It claims no ranking, discovery or allocation,
               * which `PRODUCT.md` forbids the product from implying. */}
             <h1 className={styles.title}>Start from the frontier.</h1>
-            <p className={styles.lead}>
-              Open a scientific problem and see where the work has reached: what its sources
-              report, what has been accepted here, and the scope no Result covers yet.
-            </p>
+            <p className={styles.lead}>Open a scientific problem: what its sources report, what has been accepted, and the scope no Result covers yet.</p>
             <p className={styles.pill}>
               <span aria-hidden className="size-1.5 rounded-full bg-status-progress" />
               <span>{catalog.length.toLocaleString()} published Problems</span>

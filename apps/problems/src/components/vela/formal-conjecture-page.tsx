@@ -103,10 +103,10 @@ function Overview({ item, route }: { item: FormalConjectureOccurrence; route: st
 function Work({ item }: { item: FormalConjectureOccurrence }) {
   return <section className="mt-6 grid gap-5 lg:grid-cols-[minmax(0,1fr)_20rem]">
     <div className="vela-object-surface p-5 sm:p-6">
-      <div className="flex items-start gap-3"><span className="grid size-10 shrink-0 place-items-center rounded-md bg-primary/10 text-primary"><HugeiconsIcon icon={GitBranchIcon} aria-hidden className="size-5" /></span><div><h2 className="text-title">Work on the upstream declaration</h2><p className="mt-1 max-w-2xl text-body text-muted-foreground">Formal Conjectures uses GitHub pull requests for source contributions and maintainer decisions. problems.science does not run its review bot or CI.</p></div></div>
+      <div className="flex items-start gap-3"><span className="grid size-10 shrink-0 place-items-center rounded-md bg-primary/10 text-primary"><HugeiconsIcon icon={GitBranchIcon} aria-hidden className="size-5" /></span><div><h2 className="text-title">Work on the upstream declaration</h2><p className="mt-1 max-w-2xl text-body text-muted-foreground">Formal Conjectures uses GitHub pull requests for contributions and maintainer decisions.</p></div></div>
       <div className="mt-5 flex flex-wrap gap-3"><Button nativeButton={false} render={<a href={item.source_url} />}>Open exact source <HugeiconsIcon icon={ArrowUpRight01Icon} aria-hidden data-icon="inline-end" /></Button><Button nativeButton={false} variant="outline" render={<Link href="/contribute" />}>Add a Result</Button></div>
     </div>
-    <aside className="border-l pl-5"><h2 className="text-label">Browser boundary</h2><p className="mt-2 text-meta text-muted-foreground">Open or coordinate work here; use GitHub or a local tool for files, Lean execution, credentials, and commits.</p></aside>
+    <aside className="border-l pl-5"><h2 className="text-label">Browser boundary</h2><p className="mt-2 text-meta text-muted-foreground">Coordinate here; use GitHub or a local tool for files and Lean.</p></aside>
   </section>;
 }
 

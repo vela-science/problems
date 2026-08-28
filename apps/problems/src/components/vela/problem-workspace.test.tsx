@@ -36,13 +36,13 @@ describe("Problem Workspace", () => {
     expect(screen.queryByText("public preview")).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Sign in to contribute" })).toBeVisible();
     expect(screen.getByRole("link", { name: "Continue locally" })).toHaveAttribute("href", expect.stringMatching(/^vela-workbench:\/\/continue\?/u));
-    expect(screen.getByText(/does not clone, switch, upload, or execute/iu)).toBeVisible();
+    expect(screen.getByText(/Nothing is cloned, uploaded, or executed/iu)).toBeVisible();
     /* Coordination features are still named, so a signed-out reader knows
        they exist and what an account is for — but they no longer occupy the
        panel. What is scientific and public (which statements the source still
        marks open) is shown; what is coordination stays behind the account. */
     expect(screen.getByRole("complementary", { name: "Open work" })).toBeVisible();
-    expect(screen.getByText(/need an account/u)).toBeVisible();
+    expect(screen.getAllByText(/Needs an account/u).length).toBeGreaterThan(0);
     expect(screen.queryByText("Sign in to view")).not.toBeInTheDocument();
   });
 
@@ -58,7 +58,7 @@ describe("Problem Workspace", () => {
     render(<EmptyHostedWorkspace state={state} accountId="account-1" workbenchHandoff={`vela-workbench://continue?v=1&ref=${"a".repeat(40)}`} />);
     expect(screen.getByRole("heading", { name: "Start a workspace" })).toBeVisible();
     expect(screen.getByRole("link", { name: "Continue locally" })).toBeVisible();
-    expect(screen.getByText(/does not clone, switch, upload, or execute/iu)).toBeVisible();
+    expect(screen.getByText(/Nothing is cloned, uploaded, or executed/iu)).toBeVisible();
     /* No Files rail and no "Workspace tools" list. The hosted workspace
        coordinates — notes, approaches, a contribution draft — and the file and
        tool work belongs to Workbench, which is what "Continue locally" above
@@ -66,7 +66,7 @@ describe("Problem Workspace", () => {
        a product that is not this one. */
     expect(screen.queryByLabelText("Problem files")).toBeNull();
     expect(screen.queryByLabelText("Workspace tools")).toBeNull();
-    expect(screen.getByText(/Source files and local tools stay in Workbench/iu)).toBeVisible();
+    expect(screen.getByText(/Notes, approaches and a draft, kept with this Problem/iu)).toBeVisible();
     expect(screen.queryByText("account-1")).toBeNull();
   });
 

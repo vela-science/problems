@@ -81,7 +81,7 @@ describe("Workspaces", () => {
     mocks.catalog.mockRejectedValueOnce(new Error("projection unavailable"));
     render(await WorkspacesPage({ searchParams: Promise.resolve({ workspace: anchored.id }) }));
     expect(screen.getByText("Problem catalogue temporarily unavailable")).toBeVisible();
-    expect(screen.getByText(/exact workspace context is retained/iu)).toBeVisible();
+    expect(screen.getByText(/context is retained/iu)).toBeVisible();
     expect(screen.queryByText(/does not resolve in the current public catalogue/iu)).not.toBeInTheDocument();
   });
 });

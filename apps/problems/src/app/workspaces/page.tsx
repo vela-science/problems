@@ -53,7 +53,7 @@ export default async function WorkspacesPage({ searchParams }: { searchParams: P
     <header className="flex flex-wrap items-start justify-between gap-5 border-b pb-7">
       <div>
         <h1 className="text-display">Workspaces</h1>
-        <p className="mt-2 max-w-2xl text-body text-muted-foreground">Research objects and drafts you can continue. Private to your account, and never scientific state.</p>
+        <p className="mt-2 max-w-2xl text-body text-muted-foreground">Drafts and research objects you can continue. Private to your account.</p>
       </div>
       <div className="flex flex-wrap items-center gap-4">
         <Performer name={account.hosted.displayName} kind="human" detail="Private account" />
@@ -64,7 +64,7 @@ export default async function WorkspacesPage({ searchParams }: { searchParams: P
     {result.status === "unavailable" ? <Empty className="border-0">
       <EmptyHeader>
         <EmptyTitle>Your work could not be loaded</EmptyTitle>
-        <EmptyDescription>Your sign-in is intact, but saved work is temporarily unavailable. Public Problems and Results are unaffected.</EmptyDescription>
+        <EmptyDescription>Saved work is temporarily unavailable. Public Problems and Results are unaffected.</EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
         <Button variant="outline" nativeButton={false} render={<Link href="/problems" />}>Browse Problems</Button>
@@ -93,7 +93,7 @@ export default async function WorkspacesPage({ searchParams }: { searchParams: P
         </div>
         {selected.problemContexts.length ? catalog.status === "unavailable" ? <div className="mt-5 rounded-lg border border-dashed bg-background p-5">
           <p className="text-label font-medium">Problem catalogue temporarily unavailable</p>
-          <p className="mt-1 max-w-2xl text-meta text-muted-foreground">The exact workspace context is retained, but its current public route cannot be checked right now. Reload before continuing.</p>
+          <p className="mt-1 max-w-2xl text-meta text-muted-foreground">The context is retained; its public route cannot be checked right now.</p>
         </div> : <ItemGroup className="mt-5 gap-2">
           {workspaceProblemLinks(selected, catalog.problems).map((problem) => problem.href ? <Item key={problem.context.anchorRoot} variant="outline" render={<Link href={problem.href} />}>
             <ItemContent><ItemTitle>{problem.label}</ItemTitle><ItemDescription>{problem.state === "current" ? "Current Problem context" : "Earlier release · current state will be checked when opened"}</ItemDescription></ItemContent>
@@ -103,7 +103,7 @@ export default async function WorkspacesPage({ searchParams }: { searchParams: P
           </Item>)}
         </ItemGroup> : <div className="mt-5 rounded-lg border border-dashed bg-background p-5">
           <p className="text-label font-medium">No Problem context retained</p>
-          <p className="mt-1 max-w-2xl text-meta text-muted-foreground">This older workspace can still be identified, but it cannot be attached to a Problem from its name alone.</p>
+          <p className="mt-1 max-w-2xl text-meta text-muted-foreground">Identifiable, but not attachable to a Problem from its name alone.</p>
           <Button className="mt-4" size="sm" variant="outline" nativeButton={false} render={<Link href="/problems" />}>Find a Problem</Button>
         </div>}
       </div> : null}
@@ -114,7 +114,7 @@ export default async function WorkspacesPage({ searchParams }: { searchParams: P
         {/* The workspace is reached through a Problem, never created here, so
             the action is the Problem — not a "new workspace" button this page
             has no way to honour. */}
-        <EmptyDescription>A workspace opens from a Problem. Choose one, open its Work section, and an approach, note, or Result draft is retained here.</EmptyDescription>
+        <EmptyDescription>A workspace opens from a Problem&apos;s Work section.</EmptyDescription>
       </EmptyHeader>
       {/* `EmptyContent` stacks by default, which is right for one action and
           wrong for two of equal weight. */}

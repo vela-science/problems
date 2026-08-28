@@ -39,7 +39,8 @@ const segment = "absolute left-[0.3125rem] top-4 bottom-0 w-0.5 @lg/reach:inset-
 export function Reach({ stops, endpoint, caption }: {
   stops: readonly ReachStop[];
   endpoint: string;
-  caption: string;
+  /** Omitted where the surface above already states it. */
+  caption?: string;
 }) {
   const furthest = stops.reduce((last, stop, index) => (stop.reached ? index : last), -1);
   /* A segment is the stretch between two nodes, so it is travelled only when
@@ -76,7 +77,7 @@ export function Reach({ stops, endpoint, caption }: {
           <span className="block text-micro text-muted-foreground">Not reached</span>
         </li>
       </ol>
-      <figcaption className="mt-3 text-compact text-muted-foreground">{caption}</figcaption>
+      {caption ? <figcaption className="mt-3 text-compact text-muted-foreground">{caption}</figcaption> : null}
     </figure>
   );
 }

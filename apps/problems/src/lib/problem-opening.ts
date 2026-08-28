@@ -1,4 +1,5 @@
 import { problemReachStops } from "@/lib/problem-reach";
+import { problemSourceResolution } from "@/lib/problem-reading";
 import type { ScientificProblemState } from "@/lib/scientific-state";
 
 type State = NonNullable<ScientificProblemState>;
@@ -43,7 +44,7 @@ export function problemOpening(state: State, route: string): ProblemOpening | nu
     return {
       stage: "Statement",
       missing: "No source retained here has filed the text of this question.",
-      step: "The question's wording is the source's to file. Until a source records it, this Problem is an identity and a locator, and nothing on this page can quote it.",
+      step: "The wording is the source's to file.",
       action: locator ? { label: "Open the source record", href: locator } : null,
     };
   }
@@ -52,17 +53,36 @@ export function problemOpening(state: State, route: string): ProblemOpening | nu
     return {
       stage: "Formal declaration",
       missing: "No formal declaration is associated with this question.",
-      step: "Writing the statement down formally is the step that moves this record forward. It is a source contribution, made where the source lives, and it is the first thing a check can be run against.",
+      step: "A formal statement is the first thing a check can run against.",
       action: { label: "Read what the sources hold", href: `${route}/sources` },
+    };
+  }
+
+  if (next.label === "Resolution") {
+    return {
+      stage: "Resolution",
+      missing: "No source retained here records an outcome for this question.",
+      step: "Its collection still marks it open.",
+      action: locator ? { label: "Open the source record", href: locator } : null,
     };
   }
 
   if (next.label === "Work") {
     const count = formal.length;
+    const resolution = problemSourceResolution(state);
+    /* The generic sentence is wrong here in the way that matters most: on a
+       Problem whose collection records a disproof, "no check is recorded"
+       without naming the finding reads as though there were nothing to check. */
     return {
       stage: "Work",
-      missing: `${count} formal ${count === 1 ? "declaration is" : "declarations are"} retained, and no check is recorded against any of them.`,
-      step: "A check runs against a declaration and reports exactly what its own scope covers. It does not accept anything; it produces evidence a Repository can decide on.",
+      /* The headline three inches above already names the source and its
+         finding. This says only what is absent. */
+      missing: resolution
+        ? "Nothing here has checked that finding."
+        : `${count} formal ${count === 1 ? "declaration is" : "declarations are"} retained, and no check is recorded against any of them.`,
+      step: resolution
+        ? "Reproducing it here turns a report into evidence."
+        : "A check reports its own scope, and produces evidence a Repository can decide on.",
       action: { label: "Open the work surface", href: `${route}/work` },
     };
   }
@@ -70,7 +90,7 @@ export function problemOpening(state: State, route: string): ProblemOpening | nu
   return {
     stage: "Decision",
     missing: "Checks are recorded, and no Repository has decided on this question here.",
-    step: "A Decision is a Repository act with a signature behind it. This site cannot make one, and does not hold a key that could. The evidence is public; the ruling happens in the Repository.",
+    step: "A signed Repository act. This site holds no key that could make one.",
     action: { label: "Open the Repository", href: `/repositories/${state.repositorySlug}` },
   };
 }

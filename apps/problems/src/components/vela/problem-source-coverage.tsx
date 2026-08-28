@@ -54,9 +54,7 @@ export function ProblemSourceCoverage({ coverage }: { coverage: ReviewedProblemS
         </div>
         <p className="font-mono text-micro tabular-nums text-muted-foreground">reviewed / current records</p>
       </div>
-      <p className="mt-3 max-w-[84ch] text-compact text-muted-foreground">
-        Each reading compares reviewed occurrences with every exact same-number record in the configured resolver source family. Shared numbers remain navigation candidates only. They do not establish statement identity, equivalence, Verification, Decision, or Standing.
-      </p>
+      <p className="mt-3 max-w-[84ch] text-compact text-muted-foreground">Compares reviewed occurrences with every same-number record in the resolver source family. Shared numbers are navigation candidates only.</p>
 
       <div className="mt-6 min-w-0 rounded-xl bg-muted/35 p-3 sm:p-4">
         <table data-coverage-table className="block w-full min-w-0 text-left @4xl/source-coverage:table @4xl/source-coverage:table-fixed @4xl/source-coverage:border-collapse">

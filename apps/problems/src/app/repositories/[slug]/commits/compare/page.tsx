@@ -125,9 +125,7 @@ export default async function RevisionComparePage({
         <PageHero density="compact">
           <p className="text-eyebrow text-muted-foreground">Exact State history</p>
           <h1 className="mt-2 text-display">Comparison unavailable</h1>
-          <p className="mt-3 max-w-2xl text-body text-muted-foreground">
-            Current Core could not strictly replay both states under one Repository identity. Raw Git history remains inspectable, but it is not presented as an exact semantic comparison.
-          </p>
+          <p className="mt-3 max-w-2xl text-body text-muted-foreground">Core could not replay both states under one Repository identity. Git history remains inspectable.</p>
         </PageHero>
         <div className="mt-6 divide-y border-y">
           <RevisionFacts label="Before" revision={before} />

@@ -251,7 +251,7 @@ export default async function FindingPage({ params }: PageProps<"/repositories/[
         <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
           <div>
             <h2 id="relationships-heading" className="text-subtitle">Exact relationships</h2>
-            <p className="mt-1 text-meta text-muted-foreground">Typed edges retained by this rooted repository projection. They describe declared structure; they do not change either record&apos;s standing.</p>
+            <p className="mt-1 text-meta text-muted-foreground">Typed edges retained by this projection.</p>
           </div>
           <span className="font-mono text-meta text-muted-foreground">{context?.relationship_count ?? 0} relationships</span>
         </div>
@@ -292,7 +292,7 @@ export default async function FindingPage({ params }: PageProps<"/repositories/[
               </Item>)}
             </ItemGroup>
           </section>)}
-        </div> : <Item variant="muted"><ItemContent><ItemTitle>No rooted graph relationships</ItemTitle><ItemDescription>This claim remains inspectable and reproducible, but the current graph projection retains no typed edge for it.</ItemDescription></ItemContent></Item>}
+        </div> : <Item variant="muted"><ItemContent><ItemTitle>No rooted graph relationships</ItemTitle><ItemDescription>No typed edge is retained for it.</ItemDescription></ItemContent></Item>}
       </section>
 
       <div className="mt-10 grid gap-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
@@ -305,7 +305,7 @@ export default async function FindingPage({ params }: PageProps<"/repositories/[
             <ul className="max-w-3xl space-y-1 text-compact text-muted-foreground">
               {claim.evidence_count ? null : <li>No evidence span is retained.</li>}
               {affectedCount ? null : <li>No correction supersedes, succeeds, or depends on it.</li>}
-              {standingView.lineage_state === "not_projected" ? <li>No exact current Proposal is bound to it in the read projection. The product does not infer missing Submission, Verification, or Decision records from text, dates, or graph proximity.</li> : null}
+              {standingView.lineage_state === "not_projected" ? <li>No current Proposal is bound to it.</li> : null}
               {claim.evidence_count && affectedCount && standingView.lineage_state !== "not_projected" ? <li>Every projected relation for this Claim is shown above.</li> : null}
             </ul>
           </section>
@@ -337,10 +337,7 @@ export default async function FindingPage({ params }: PageProps<"/repositories/[
             * Repository-local and a citation that omits whose Standing it is
             * would assert more than the record does. */}
           <Disclosure className="rounded-lg border px-3 py-2" summary="Cite this Result" summaryClassName="text-compact font-medium">
-            <p className="mt-2 text-meta text-muted-foreground">
-              The record root identifies these exact bytes. A later correction or supersession
-              produces a different record, so this reference does not silently follow the Claim.
-            </p>
+            <p className="mt-2 text-meta text-muted-foreground">Identifies these exact bytes. A correction or supersession produces a different record.</p>
             <div className="mt-2 flex items-start gap-2">
               <p className="min-w-0 flex-1 break-all font-mono text-micro leading-5">{citation}</p>
               <CopyButton compact value={citation} label="Copy citation" />
@@ -448,8 +445,8 @@ function Lineage({ repository, lineage }: { repository: string; lineage: ClaimSt
           <ExactValue value={verification.id} label="Verification Record ID" />
           <ExactValue value={verification.root} label="Verification Record root" />
         </ItemContent></Item>) : <Item className="items-start rounded-none px-0 py-3"><ItemContent><ItemTitle>Verification Record</ItemTitle><ItemDescription>No exact Verification Record is retained for this Proposal.</ItemDescription></ItemContent></Item>}
-        <Item className="items-start rounded-none px-0 py-3"><ItemContent><div className="flex flex-wrap items-center gap-2"><ItemTitle>Proposal</ItemTitle><StatusBadge axis="proposal" state={lineage.proposal.status}>{lineage.proposal.status.replaceAll("_", " ")}</StatusBadge></div><ItemDescription>The requested change to scientific Standing. The projected record retains the Claim root bound by this Proposal; it does not expose a separate canonical Proposal root.</ItemDescription><ExactValue value={lineage.proposal.id} label="Proposal ID" />{lineage.proposal.claim_root ? <ExactValue value={lineage.proposal.claim_root} label="Claim root bound by Proposal" /> : <p className="mt-2 text-meta text-muted-foreground">The exact bound Claim root is not projected for this historical Proposal.</p>}</ItemContent><ItemActions className="basis-full justify-end sm:basis-auto"><Button nativeButton={false} variant="ghost" size="sm" render={<Link href={`/repositories/${repository}/proposals/${encodeURIComponent(lineage.proposal.id)}`} />}>Proposal record <HugeiconsIcon icon={ArrowRight} aria-hidden data-icon="inline-end" /></Button></ItemActions></Item>
-        <Item className="items-start rounded-none px-0 py-3"><ItemContent><ItemTitle>Decision</ItemTitle>{lineage.decision ? <><ItemDescription>{lineage.decision.reason ?? "A Decision is retained, but its historical reason is not projected."}</ItemDescription>{lineage.decision.event_id ? <ExactValue value={lineage.decision.event_id} label="Decision event" /> : <p className="mt-2 text-meta text-muted-foreground">Decision event ID is not projected.</p>}{lineage.decision.plan_root ? <ExactValue value={lineage.decision.plan_root} label="Decision plan root" /> : null}</> : <ItemDescription>No Decision is retained. Every declared verification property may have a passing Verification Record while Standing remains unassessed.</ItemDescription>}</ItemContent></Item>
+        <Item className="items-start rounded-none px-0 py-3"><ItemContent><div className="flex flex-wrap items-center gap-2"><ItemTitle>Proposal</ItemTitle><StatusBadge axis="proposal" state={lineage.proposal.status}>{lineage.proposal.status.replaceAll("_", " ")}</StatusBadge></div><ItemDescription>The requested change to Standing, and the Claim root it binds.</ItemDescription><ExactValue value={lineage.proposal.id} label="Proposal ID" />{lineage.proposal.claim_root ? <ExactValue value={lineage.proposal.claim_root} label="Claim root bound by Proposal" /> : <p className="mt-2 text-meta text-muted-foreground">The exact bound Claim root is not projected for this historical Proposal.</p>}</ItemContent><ItemActions className="basis-full justify-end sm:basis-auto"><Button nativeButton={false} variant="ghost" size="sm" render={<Link href={`/repositories/${repository}/proposals/${encodeURIComponent(lineage.proposal.id)}`} />}>Proposal record <HugeiconsIcon icon={ArrowRight} aria-hidden data-icon="inline-end" /></Button></ItemActions></Item>
+        <Item className="items-start rounded-none px-0 py-3"><ItemContent><ItemTitle>Decision</ItemTitle>{lineage.decision ? <><ItemDescription>{lineage.decision.reason ?? "A Decision is retained, but its historical reason is not projected."}</ItemDescription>{lineage.decision.event_id ? <ExactValue value={lineage.decision.event_id} label="Decision event" /> : <p className="mt-2 text-meta text-muted-foreground">Decision event ID is not projected.</p>}{lineage.decision.plan_root ? <ExactValue value={lineage.decision.plan_root} label="Decision plan root" /> : null}</> : <ItemDescription>No Decision is retained. Every check can pass while Standing stays unassessed.</ItemDescription>}</ItemContent></Item>
       </ItemGroup>
     </CollapsibleContent>
   </Collapsible>;

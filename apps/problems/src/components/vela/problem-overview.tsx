@@ -10,7 +10,7 @@ import { Reach } from "@/components/vela/reach";
 import { problemReachCaption, problemReachStops } from "@/lib/problem-reach";
 import { currentReview } from "@/components/vela/problem-provenance";
 import { formatDate } from "@/lib/format";
-import { problemReading } from "@/lib/problem-reading";
+import { problemReading, problemSourceResolution } from "@/lib/problem-reading";
 import { problemOpening } from "@/lib/problem-opening";
 import { activityStrings } from "@/components/vela/problem-activity-records";
 import type { ProblemNeighbourhood, ScientificProblemState } from "@/lib/scientific-state";
@@ -68,7 +68,8 @@ export function ProblemOverview({ state, route, neighbourhood }: {
   const current = claims.find((claim) => claim.id === state.currentClaimId) ?? null;
   const review = currentReview(state);
   const checks = review?.verification_records ?? [];
-  const reading = problemReading({ currentAssertion: current?.assertion ?? null, repositoryName: state.repositoryName });
+  const sourceResolution = problemSourceResolution(state);
+  const reading = problemReading({ currentAssertion: current?.assertion ?? null, repositoryName: state.repositoryName, sourceResolution });
   const established = current ? exactResultHeadline(current.assertion) : null;
   const limitation = current ? exactResultLimitation(current.assertion) : null;
   const formal = state.sources?.occurrences?.filter((occurrence) => occurrence.formal) ?? [];
@@ -84,15 +85,16 @@ export function ProblemOverview({ state, route, neighbourhood }: {
   /* Nothing has been accepted here. That is the state of 1,215 of the 1,217
      Erdős Problems in this release, so it gets a composition of its own rather
      than the rich page with its values removed. */
-  if (reading.kind === "no-record") {
+  if (reading.kind === "no-record" || reading.kind === "source-resolved") {
     return <div className={styles.overview}>
       <div className={styles.column}>
         <div className={styles.answer}>
           <h2 className={styles.answerHeadline}>{reading.headline}</h2>
-          <p className={styles.answerDetail}>
-            This question is held by identity and source locator. No Result, check or Decision is represented for it in
-            this release.
-          </p>
+          {/* One clause. The boundary was stated four times on this screen —
+              here, in the reach caption, in a paragraph above the actions, and
+              in the rail note — and the track below already draws Decision as
+              unreached. Structure carries it; the sentence only names it. */}
+          {sourceResolution ? <p className={styles.answerDetail}>No Repository has ruled on it here.</p> : null}
         </div>
 
         <section className={styles.panel} aria-labelledby="exists-heading">
@@ -101,7 +103,12 @@ export function ProblemOverview({ state, route, neighbourhood }: {
             <span className={styles.kicker}>{reachStops.filter((stop) => stop.reached).length} of {reachStops.length} stages</span>
           </div>
           <div className={styles.scope}>
-            <Reach stops={reachStops} endpoint="The question" caption={reachCaption} />
+            {/* No caption on this branch. The headline states the reading and
+                the track's own stages read "Decision · None here" and "The
+                question · Not reached" — a caption is the third telling of one
+                fact. Work keeps its caption: there the track is the only prose
+                in the rail. */}
+            <Reach stops={reachStops} endpoint="The question" caption={undefined} />
           </div>
         </section>
 
@@ -109,10 +116,6 @@ export function ProblemOverview({ state, route, neighbourhood }: {
 
         {neighbourhood ? <NeighbourhoodPanel neighbourhood={neighbourhood} /> : null}
 
-        <p className={styles.answerDetail}>
-          Work happens in a Vela Repository, not on this page. When a Repository accepts a Result against this question,
-          its Decision and evidence project here with their scope and authority intact.
-        </p>
         <div className={styles.actions}>
           <Button nativeButton={false} render={<Link href={`${route}/work`} />}>Start work</Button>
           <Button nativeButton={false} variant="outline" render={<Link href={`${route}/sources`} />}>Open sources</Button>
@@ -120,7 +123,7 @@ export function ProblemOverview({ state, route, neighbourhood }: {
       </div>
 
       <aside className={styles.rail} aria-label="Problem facts">
-        <ProblemFacts state={state} lastSourceUpdate={lastSourceUpdate} />
+        <ProblemFacts lastSourceUpdate={lastSourceUpdate} />
         <ReportedActivityPanel state={state} route={route} />
         <ExactPanel state={state} />
       </aside>
@@ -235,9 +238,10 @@ export function ProblemOverview({ state, route, neighbourhood }: {
           </div>
           <span className="text-right text-[0.78125rem] capitalize">{humanize(check.outcome)}</span>
         </div>) : <div className={styles.note}>No check is retained for this Problem.</div>}
+        {/* Kept, shortened: a reader who takes a passing check for acceptance
+            has misread the product's central distinction. */}
         {checks.length ? <div className={styles.note}>
-          Verification did not accept the Claim. The Repository Decision did, and a passing check reports only what its
-          own scope covers.
+          A check reports only its own scope. The Decision accepted the Claim, not the check.
         </div> : null}
       </section>
 
@@ -273,14 +277,13 @@ export function ProblemOverview({ state, route, neighbourhood }: {
         </div>
       </section>
 
-      <ProblemFacts state={state} lastSourceUpdate={lastSourceUpdate} openFormal={openFormal.length} formal={formal.length} />
+      <ProblemFacts lastSourceUpdate={lastSourceUpdate} openFormal={openFormal.length} formal={formal.length} />
       <ExactPanel state={state} />
     </aside>
   </div>;
 }
 
-function ProblemFacts({ state, lastSourceUpdate, openFormal, formal }: {
-  state: State;
+function ProblemFacts({ lastSourceUpdate, openFormal, formal }: {
   lastSourceUpdate: string | null;
   openFormal?: number;
   formal?: number;
@@ -290,10 +293,12 @@ function ProblemFacts({ state, lastSourceUpdate, openFormal, formal }: {
       <span className={styles.kicker}>Source axes</span>
       <span className={styles.kicker}>Attributed</span>
     </div>
-    <div className={styles.fact}>
-      <span className={styles.factKey}>Source reports</span>
-      <span className={`${styles.factValue} capitalize`}>{humanize(state.problem.declared_status, "Not stated")}</span>
-    </div>
+    {/* The source's own word is no longer restated here. It is the page's
+        headline where the source records a finding, and it is a stage on the
+        reach axis in every case — so this row was the third telling of one
+        fact, and the only one of the three that gave it no context. What
+        remains is what the axis does not carry: when the source last touched
+        the record, and how much of it is formal. */}
     {typeof formal === "number" ? <div className={styles.fact}>
       <span className={styles.factKey}>Formal declarations</span>
       <span className={styles.factValue}>{formal}{openFormal ? ` · ${openFormal} open` : ""}</span>
@@ -302,7 +307,6 @@ function ProblemFacts({ state, lastSourceUpdate, openFormal, formal }: {
       <span className={styles.factKey}>Source updated</span>
       <span className={styles.factValue}>{lastSourceUpdate ? formatDate(lastSourceUpdate) : "Not recorded"}</span>
     </div>
-    <div className={styles.note}>A source report is not this Problem&apos;s state here.</div>
   </section>;
 }
 
@@ -391,15 +395,10 @@ function NeighbourhoodPanel({ neighbourhood }: { neighbourhood: ProblemNeighbour
         <span className={styles.rowMeta} style={{ marginTop: 0, textAlign: "right" }}>{humanize(sibling.standing)}</span>
       </Link>)}
       <div className={styles.note}>
-        Questions under these topics that carry a Repository Standing.{" "}
-        <Link href={neighbourhood.href} className={styles.noteLink}>Browse the topic</Link> for the rest.
+        Carrying a Standing. <Link href={neighbourhood.href} className={styles.noteLink}>Browse the topic</Link>.
       </div>
     </> : <div className={styles.note}>
-      {/* The most useful sentence available on a page like this, and it is a
-          plain count rather than a judgement: nothing under these topics has
-          been decided anywhere in this release. */}
-      No question under these topics carries a Repository Standing in this release.{" "}
-      <Link href={neighbourhood.href} className={styles.noteLink}>Browse the topic</Link>.
+      None carries a Standing. <Link href={neighbourhood.href} className={styles.noteLink}>Browse the topic</Link>.
     </div>}
   </section>;
 }
@@ -433,7 +432,7 @@ function ReportedActivityPanel({ state, route }: { state: State; route: string }
       <span className={styles.factValue}>{name}</span>
     </div>)}
     <div className={styles.note}>
-      Source-reported attribution, not reviewed here. <Link href={`${route}/work`} className={styles.noteLink}>The records</Link> carry what each one says.
+      Reported, not reviewed. <Link href={`${route}/work`} className={styles.noteLink}>The records</Link>.
     </div>
   </section>;
 }

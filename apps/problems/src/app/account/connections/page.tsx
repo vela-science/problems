@@ -123,7 +123,7 @@ export default async function ConnectionsPage({ searchParams }: { searchParams: 
         </Item>)}
       </ItemGroup> : <div className="border-b py-8">
         <p className="text-eyebrow text-muted-foreground">No selected access</p>
-        <p className="mt-2 max-w-xl text-body text-muted-foreground">Public GitHub URLs can still be inspected without an installation. Connect selected access only when you need a private or explicitly chosen repository.</p>
+        <p className="mt-2 max-w-xl text-body text-muted-foreground">Public GitHub URLs need no installation. Connect access only for private repositories.</p>
       </div>}
     </section>
 

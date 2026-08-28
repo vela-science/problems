@@ -7,7 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@vela/ui/components/pop
 import { SectionNav } from "@/components/vela/section-nav";
 import { StartWorkMenu } from "@/components/vela/start-work-menu";
 import { problemWorkbenchHandoff } from "@/lib/workbench-handoff";
-import { problemReading, readingBadge, readingBasis } from "@/lib/problem-reading";
+import { problemReading, readingBadge, readingBasis, problemSourceResolution } from "@/lib/problem-reading";
 import { problemLabel, resolveProblemStatement, statementParagraphs } from "@/lib/problem-statement";
 import type { ScientificProblemState } from "@/lib/scientific-state";
 import type { ProblemReferenceView } from "@/components/vela/problem-overview-reference";
@@ -46,6 +46,7 @@ export function ProblemHeader({ state, route, current }: {
   const reading = problemReading({
     currentAssertion: claim?.assertion ?? null,
     repositoryName: state.repositoryName,
+    sourceResolution: problemSourceResolution(state),
   });
   const counts = sectionCounts(state);
   const hasQuestion = statement?.form === "prose" && Boolean(question);

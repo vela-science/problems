@@ -115,7 +115,7 @@ function ProblemRows({ problems, statements }: {
     return <Empty className="border-0">
       <EmptyHeader>
         <EmptyTitle>No Problems match this view</EmptyTitle>
-        <EmptyDescription>Every filter is combined, so narrowing on several at once can leave nothing.</EmptyDescription>
+        <EmptyDescription>Filters combine.</EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
         <Button nativeButton={false} size="sm" variant="outline" render={<Link href={COLLECTION_PATH} />}>Clear filters</Button>
@@ -301,7 +301,7 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
     return <PageShell archetype="problem">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredDataScript(collectionStructuredData) }} />
       <PageHero className="vela-route-hero grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,.42fr)] lg:items-end">
-        <div><h1 className="text-display">Erdős Problems</h1><p className="typeset typeset-compact mt-4 max-w-2xl text-muted-foreground">Browse this source-owned collection by topic, then inspect each question, its evidence, prior work, and current Repository state.</p><div className="mt-6 flex flex-wrap gap-3"><Button nativeButton={false} render={<Link href={{ pathname: COLLECTION_PATH, query: { view: "all", ...scopeQuery() } }} />}>Open collection directory <HugeiconsIcon icon={ArrowRight} aria-hidden data-icon="inline-end" /></Button><Button nativeButton={false} variant="outline" render={<Link href="/contribute" />}>Add a contribution</Button></div></div>
+        <div><h1 className="text-display">Erdős Problems</h1><p className="typeset typeset-compact mt-4 max-w-2xl text-muted-foreground">Browse by topic, then inspect each question.</p><div className="mt-6 flex flex-wrap gap-3"><Button nativeButton={false} render={<Link href={{ pathname: COLLECTION_PATH, query: { view: "all", ...scopeQuery() } }} />}>Open collection directory <HugeiconsIcon icon={ArrowRight} aria-hidden data-icon="inline-end" /></Button><Button nativeButton={false} variant="outline" render={<Link href="/contribute" />}>Add a contribution</Button></div></div>
         <div className="vela-evidence-surface rounded-xl px-5 py-5"><p className="text-eyebrow text-muted-foreground">Collection scope</p><p className="mt-2 text-title">{catalog.length.toLocaleString()} Erdős problems</p><p className="mt-2 text-meta text-muted-foreground">This source profile organizes the collection into {new Set(catalog.flatMap(({ topics }) => topics.map(({ key }) => key))).size} source-owned Topics. Supporting sources remain evidence attached to each Problem.</p><div className="mt-4 flex flex-wrap gap-2">{domains.map(([key, name]) => <Link key={key} href={{ pathname: COLLECTION_PATH, query: { domain: key } }} className="rounded-full bg-background/70 px-3 py-1.5 text-meta font-medium hover:bg-background">Area · {name}</Link>)}</div></div>
       </PageHero>
 
@@ -326,7 +326,7 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
       {sourceCoverage ? <PageSection><ProblemSourceCoverage coverage={sourceCoverage} /></PageSection> : null}
 
       <PageSection className="grid gap-8 xl:grid-cols-[minmax(0,1.15fr)_minmax(20rem,.85fr)]">
-        <section className="vela-direction-surface rounded-xl px-5 py-6 sm:px-7" aria-labelledby="source-owned-contribution"><p className="text-eyebrow text-muted-foreground">Choose what to do next</p><h2 id="source-owned-contribution" className="mt-2 text-title">Contributions stay with their source</h2><p className="mt-4 max-w-[65ch] text-body text-muted-foreground">Choose a Problem, review its source repository, and continue in your preferred local tool when you need to run code or edit files. The site publishes no central scientific priority queue.</p><Button className="mt-5" nativeButton={false} variant="outline" render={<Link href="/contribute" />}>Add a contribution</Button></section>
+        <section className="vela-direction-surface rounded-xl px-5 py-6 sm:px-7" aria-labelledby="source-owned-contribution"><p className="text-eyebrow text-muted-foreground">Choose what to do next</p><h2 id="source-owned-contribution" className="mt-2 text-title">Contributions stay with their source</h2><p className="mt-4 max-w-[65ch] text-body text-muted-foreground">Choose a Problem, then continue in your own tools.</p><Button className="mt-5" nativeButton={false} variant="outline" render={<Link href="/contribute" />}>Add a contribution</Button></section>
         <section className="vela-evidence-surface rounded-xl px-5 py-6 sm:px-7" aria-labelledby="reviewed-evidence"><div className="flex items-center gap-2"><HugeiconsIcon icon={Compass01Icon} aria-hidden className="size-5 text-[var(--status-evidence)]" /><p className="text-eyebrow text-muted-foreground">Reviewed evidence</p></div><h2 id="reviewed-evidence" className="mt-2 text-title">Problems with reviewed Results</h2>{stateProblems.length ? <ProblemRows problems={stateProblems.slice(0, 3)} statements={statements} /> : <div className="py-8"><p className="text-subtitle">No reviewed Result in this scope.</p><p className="mt-2 text-meta text-muted-foreground">Source questions remain discoverable without implying that they were reviewed here.</p></div>}</section>
       </PageSection>
 

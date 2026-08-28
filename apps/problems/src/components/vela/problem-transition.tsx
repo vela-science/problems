@@ -1,5 +1,5 @@
 import { currentReview } from "@/components/vela/problem-provenance";
-import { problemReading } from "@/lib/problem-reading";
+import { problemReading, problemSourceResolution } from "@/lib/problem-reading";
 import type { ScientificProblemState } from "@/lib/scientific-state";
 import styles from "./problem-transition.module.css";
 
@@ -57,7 +57,7 @@ export function problemTransition(state: State): TransitionStage[] {
   const passed = checks.filter((check) => check.outcome === "pass").length;
   const current = (state.claims ?? []).find((claim) => claim.id === state.currentClaimId) ?? null;
   const prior = priorClaim(state);
-  const reading = problemReading({ currentAssertion: current?.assertion ?? null, repositoryName: state.repositoryName });
+  const reading = problemReading({ sourceResolution: problemSourceResolution(state), currentAssertion: current?.assertion ?? null, repositoryName: state.repositoryName });
   const producer = review?.producer_package?.producer_actor ?? null;
   const evidence = current?.evidence_count ?? 0;
   const nextGap = metadataString(state, "next_discriminator");

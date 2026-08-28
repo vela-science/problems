@@ -362,6 +362,32 @@ sat in the left 45% of a 1920px window; nine ledger routes were declared
 canvases and stretched without limit. A route that looks unfinished on a wide
 display is usually one of these two, not a spacing problem.
 
+### Say it once
+
+Product surfaces state facts. They do not explain themselves.
+
+The failure mode this replaced was consistent enough to name: every element
+stated what it was, then stated what it was not. A Problem page said "the source
+records a disproof" in three places and "no Repository has ruled" in two, and a
+handoff button carried "does not clone, switch, upload, or execute anything"
+three times on one screen. The negations read as anxiety, and the repetition
+made the page feel written rather than built.
+
+Three rules, in order:
+
+- **A fact appears once, in the place with the most context.** If a track's
+  stage already reads `Decision · None here`, no caption below it says so in a
+  sentence. Structure is the statement; prose is the fallback.
+- **Do not describe what something is not.** The absence of a control already
+  says the capability is absent. The exception is a real side effect a reader is
+  about to trigger and cannot see — a handoff to an external tool keeps
+  "Nothing is cloned, uploaded, or executed", once.
+- **Never explain a design decision in the product.** A notice that added "this
+  notice never reports one" was telling the reader about its own author.
+
+Policy pages — privacy, terms, accessibility, contact — are prose, and are
+exempt. Everything else is a product surface.
+
 ### The empty Problem
 
 1,215 of the 1,217 Problems in this release hold identity and a source locator
@@ -369,6 +395,13 @@ and nothing else, so the screen a reader is most likely to open is the one with
 the least on it. Overview's no-record composition therefore carries three things
 past the reach track, all of them read off the record rather than invented:
 
+- **The headline is the source's finding where it has one**, attributed by
+  name, with the Vela boundary as the next clause rather than a denial of it.
+  The badge names its actor too — `Source: disproved (Lean)`, never a bare
+  `Disproved`, which would read as this site's ruling.
+- **Reach carries a Resolution stage**, between Formal and Work: a source files
+  a finding, Vela work checks it, a Repository decides. Two actors on one axis,
+  kept apart by the Source stage naming the collection directly above.
 - **What this record is missing** — the first reach stage the record has not
   got to, and what acquiring it takes. Its last stage is deliberately one this
   site cannot perform: a Decision is a Repository act with a signature behind

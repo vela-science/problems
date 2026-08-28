@@ -268,7 +268,7 @@ describe("the proposal record route", () => {
     const html = await render("erdos", "vpr_pending");
     expect(html).toContain("Authority effect · none");
     expect(html).toContain("Current proposed state");
-    expect(html).toContain("remain hypothetical until an eligible, attributed performer records a Decision");
+    expect(html).toContain("hypothetical until a Decision is recorded");
     expect(html).toContain("If accepted");
     expect(html).toContain("If rejected");
     expect(html).not.toContain("Applied exactly as reviewed");

@@ -184,7 +184,7 @@ export function ProblemFiles({ state, basePath, entries, selected, activeRecord,
 
   return <section aria-labelledby="research-files-heading" className="min-w-0">
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <div><h2 id="research-files-heading" className="text-title">Sources</h2><p className="mt-1 text-meta text-muted-foreground">Everything below is the source&apos;s own material, retained exactly. None of it is this Problem&apos;s state here.</p></div>
+      <div><h2 id="research-files-heading" className="text-title">Sources</h2><p className="mt-1 text-meta text-muted-foreground">The source&apos;s own material, retained exactly.</p></div>
       <div className="flex flex-wrap items-center gap-3">
         <p className="text-meta text-muted-foreground">
           {state.sources.statements.length} retained {state.sources.statements.length === 1 ? "statement" : "statements"}
@@ -229,7 +229,7 @@ export function ProblemFiles({ state, basePath, entries, selected, activeRecord,
           {declaration && retained ? <FormalStatementCard occurrence={declaration} />
             : declaration ? <Alert className="bg-muted/25">
               <AlertTitle>Preview unavailable</AlertTitle>
-              <AlertDescription>The exact declaration is discoverable, but its text is not retained for display. Open the source to inspect it under the provider&apos;s terms.</AlertDescription>
+              <AlertDescription>Discoverable, but its text is not retained. Open the source to read it.</AlertDescription>
             </Alert>
               : excerpt ? <>
                 <p className="max-w-[72ch] text-body leading-7">{excerpt.text}</p>
@@ -306,8 +306,7 @@ export function ProblemFiles({ state, basePath, entries, selected, activeRecord,
           <div className="mt-4 border-t pt-4">
             <h3 className="text-meta font-semibold">What this site concludes</h3>
             <p className="mt-1.5 text-compact text-muted-foreground">
-              Nothing. Retaining a source&apos;s file does not make its claim this Problem&apos;s state here, however
-              complete the proof inside it looks. Only a Repository Decision does that.
+              Nothing. Only a Repository Decision establishes state here.
             </p>
             <dl className="mt-3 grid gap-1.5">
               <Fact term="statement_identity" detail="not_established" mono />
@@ -331,7 +330,7 @@ export function ProblemFiles({ state, basePath, entries, selected, activeRecord,
             </div>
           </dl>
         </> : <p className="text-compact text-muted-foreground">
-          Select a retained path to inspect the record behind it — what its source reports, how it is bound to this Problem, and its exact roots.
+          Select a path to inspect its record, binding and roots.
         </p>}
       </aside>
     </div>

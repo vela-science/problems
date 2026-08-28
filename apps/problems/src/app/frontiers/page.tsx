@@ -22,15 +22,13 @@ export default function FrontiersPage() {
   return <PageShell archetype="data" className="flex flex-col gap-8">
     <PageIntro
       title="Frontiers"
-      description="Rebuildable discovery queries over exact, attributed Repository state. A Frontier is never a Repository and never determines what globally stands."
+      description="Rebuildable queries over attributed Repository state."
     />
 
     <PageSection className="grid gap-8 pt-0">
       <Alert>
         <AlertTitle>Reference demonstration</AlertTitle>
-        <AlertDescription>
-          The two authority histories below are exact Protocol 1 fixtures replayed from frozen Git bundles. The correction and downstream work are deliberately synthetic until the real consequential-correction packet is available.
-        </AlertDescription>
+        <AlertDescription>The two authority histories below are exact Protocol 1 fixtures replayed from frozen Git bundles. The correction and downstream work are synthetic.</AlertDescription>
       </Alert>
 
       <section aria-labelledby="portable-input-heading" className="grid gap-4">
@@ -106,7 +104,7 @@ export default function FrontiersPage() {
       <section aria-labelledby="derived-frontiers-heading" className="grid gap-4">
         <div className="border-b pb-3">
           <h2 id="derived-frontiers-heading" className="text-title">Derived Frontiers</h2>
-          <p className="mt-1.5 max-w-3xl text-meta text-muted-foreground">Each identity belongs to a query definition. Results are rooted to this registry projection, disposable, and rebuilt when source roots change.</p>
+          <p className="mt-1.5 max-w-3xl text-meta text-muted-foreground">Each identity belongs to a query definition, rooted to this projection.</p>
         </div>
         <ItemGroup className="divide-y rounded-lg border bg-card px-4">
           {view.frontiers.map((frontier) => <Item key={frontier.id} className="rounded-none px-0 py-4" size="sm">

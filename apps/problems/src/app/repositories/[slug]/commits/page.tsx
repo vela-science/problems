@@ -216,11 +216,7 @@ export default async function CommitsPage({
         <Empty className="mt-6 border">
           <EmptyHeader>
             <EmptyTitle>No commit is retained for this release</EmptyTitle>
-            <EmptyDescription>
-              Commit history is ingested when a projection is built. A release
-              generated before that ingest existed retains none, which is the
-              honest answer rather than an empty repository.
-            </EmptyDescription>
+            <EmptyDescription>Commit history is ingested when a projection is built. This release predates that ingest.</EmptyDescription>
           </EmptyHeader>
           <EmptyContent><Button nativeButton={false} variant="outline" size="sm" render={<Link href={`/repositories/${slug}`} />}>Open Repository overview</Button></EmptyContent>
         </Empty>
