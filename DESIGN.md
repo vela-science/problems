@@ -188,7 +188,11 @@ register. Product surfaces link directly to the canonical folio at
 
 ### Canvas and color
 
-Light mode is a cool near-white application canvas with warm-tinted working surfaces.
+Light mode is a cool near-white application canvas. Raised working surfaces
+(`--card`) ship as `oklch(1 0 0)`, not the warm `surface` token in this file's
+frontmatter: the warm tint was specified and never adopted, and the shipped
+white is the decision of record. The frontmatter value remains the brand
+surface for editorial use.
 The sidebar is deep marine. Cobalt means interaction, selection, and focus.
 Success, warning, error, and evidence colors encode real state only.
 
@@ -323,13 +327,20 @@ display is usually one of these two, not a spacing problem.
 ### Problem sections
 
 The five Problem sections — Overview, Work, Results, Sources, History — live in
-the sidebar, scoped under the open Problem, with a cobalt active indicator.
-Each is its own path segment, so every section is a real page a reader can link
-to. Icons may support recognition but must not dominate or replace labels.
+the Problem's own header, with a count on each saying what it holds. Each is
+its own path segment, so every section is a real page a reader can link to.
+Icons may support recognition but must not dominate or replace labels.
 
-A border-bottom tab row remains correct for switching *within* one page's
-content, where the panels are not separately addressable. It is not how a
-Problem's sections are reached.
+They lived in the sidebar for a while, on the reading that the rail should
+become the object a reader is inside. In practice the page then named the same
+Problem three times over and offered no way to another destination without
+first leaving the object; GitHub and Hugging Face both settle it the other way.
+The rail moves between objects, the header between sections. `AGENTS.md`
+carries the full reasoning.
+
+The row scrolls on a narrow viewport, so it must keep the open section scrolled
+into view and show a visible continuation cue at whichever edge still has tabs
+behind it. Hiding a section with no cue is how this was got wrong once already.
 
 ### Rows and lists
 

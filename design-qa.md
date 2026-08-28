@@ -1,5 +1,11 @@
 # Problem 94 restored Option-1 design QA
 
+> **Historical, 2026-08-27.** This records the rollback to the Option-1 layout
+> as it stood that day. The platform redesign that followed replaced every
+> surface described below — there is no longer an answer card, a right evidence
+> rail, or a framed question. Kept unedited as the record of a decision that
+> was current when it was written.
+
 ## Outcome
 
 The sparse redesign was fully rolled back. Problem 94 again uses the previously approved Option-1 implementation: framed retained question, structured answer card, visible update and rights blocks, and the complete right evidence rail.

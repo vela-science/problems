@@ -48,12 +48,21 @@ describe("AppShell accessibility boundary", () => {
       </AppShell>,
     );
 
+    /* The target is the content, not the frame around it. `#main-content` sat
+       on the `main` element, whose first child is the app bar — so the skip
+       link landed the reader before the breadcrumb, command palette,
+       notifications, appearance control and Sign in, and skipped nothing. */
     const main = screen.getByRole("main");
-    expect(main).toHaveAttribute("id", "main-content");
-    expect(main).toHaveAttribute("tabindex", "-1");
-    main.focus();
-    expect(main).toHaveFocus();
-    expect(main).not.toHaveClass("overflow-hidden");
+    const target = document.getElementById("main-content");
+    expect(target).not.toBeNull();
+    expect(target).toHaveAttribute("tabindex", "-1");
+    expect(main).not.toHaveAttribute("id", "main-content");
+    expect(main.contains(target)).toBe(true);
+    expect(target!.querySelector("header")).toBeNull();
+    expect(target).toHaveTextContent("Published state");
+    target!.focus();
+    expect(target).toHaveFocus();
+    expect(target).not.toHaveClass("overflow-hidden");
   });
 
   it("lets the canonical provider own sidebar state, geometry, and shortcut", () => {

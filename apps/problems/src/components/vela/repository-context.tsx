@@ -100,10 +100,23 @@ export function RepositoryContext({
         </div>
       </div>
 
+      {/* A fact strip, not a KPI grid.
+        *
+        * `composition-bar.tsx` explains in its own header why the metric tile
+        * is listed under Avoid, and it replaced the tile on /repositories —
+        * but not here, fourteen files away. It is not a clean swap either:
+        * only Standing is a share of a whole, while Integrity is two badges
+        * and Activity is three separate counts, so a stacked bar would encode
+        * a composition that does not exist.
+        *
+        * What made this the banned shape was the hero numeral: `text-title`
+        * mono figures as the largest thing on the page, above the heading that
+        * answers what actually Stands. The numbers keep their weight relative
+        * to their labels and stop competing with the page. */}
       <dl className="mt-5 grid grid-cols-2 overflow-hidden rounded-lg border md:grid-cols-4">
         <div className="min-w-0 border-b border-r p-3 md:border-b-0">
           <dt className="text-eyebrow text-muted-foreground">Standing</dt>
-          <dd className="mt-1 font-mono text-title tabular-nums">{number.format(counts.accepted_claims)}</dd>
+          <dd className="mt-1 font-mono text-compact font-semibold tabular-nums">{number.format(counts.accepted_claims)}</dd>
           <dd className="mt-1 text-micro text-muted-foreground">accepted Repository-local Claim{counts.accepted_claims === 1 ? "" : "s"}</dd>
         </div>
         <div className="min-w-0 border-b p-3 md:border-b-0 md:border-r">
@@ -135,7 +148,7 @@ export function RepositoryContext({
         </div>
         <div className="min-w-0 p-3">
           <dt className="text-eyebrow text-muted-foreground">Human authority</dt>
-          <dd className="mt-1 font-mono text-title tabular-nums">{number.format(loop.decisions)}</dd>
+          <dd className="mt-1 font-mono text-compact font-semibold tabular-nums">{number.format(loop.decisions)}</dd>
           <dd className="mt-1 text-micro text-muted-foreground">authorized Decision{loop.decisions === 1 ? "" : "s"} retained</dd>
         </div>
       </dl>

@@ -41,15 +41,22 @@ export function AppShell({
           >
             <AppSidebar problemCollections={problemCollections} />
             <SidebarInset
-              id="main-content"
-              tabIndex={-1}
               className="min-w-0 md:shadow-[0_12px_40px_-28px_color-mix(in_oklab,var(--foreground)_38%,transparent)] print:m-0 print:overflow-visible print:rounded-none"
             >
               <AppHeader
                 repositories={publishedRepositories}
                 problemCollections={problemCollections}
               />
-              <div className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain print:h-auto print:overflow-visible">
+              {/* The skip link targets the content, not the frame around it.
+                  `#main-content` was on `SidebarInset`, whose first child is
+                  the app bar — so "Skip to content" landed the reader *before*
+                  the breadcrumb, command palette, notifications, appearance
+                  control and Sign in. It skipped nothing. */}
+              <div
+                id="main-content"
+                tabIndex={-1}
+                className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain print:h-auto print:overflow-visible"
+              >
                 {children}
               </div>
             </SidebarInset>
