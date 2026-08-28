@@ -254,6 +254,75 @@ for (const [, name, value] of themeRoot.matchAll(/(--vela-[a-z0-9-]+):\s*([^;]+)
   failures.push(`${name} is a light-only colour token with a consumer: give it a .dark value or retire it`);
 }
 
+/* Every ground carries readable ink, in all four theme states.
+ *
+ * The rule above models the theme as one `:root`/`.dark` pair and only reads
+ * `--vela-*` names, so it could not see the axis where this actually broke:
+ * `:root[data-contrast="high"]` flipped `--sidebar` from deep marine to
+ * near-white and left `--sidebar-foreground` at the dark rail's light ink, so
+ * every item in the rail measured 1.05:1 and its focus ring 2.03:1 — in the
+ * mode chosen by readers who need contrast most.
+ *
+ * Requiring a redeclaration would be both too strict and too weak: the dark
+ * high-contrast rail correctly inherits its ink, and a redeclared pair can
+ * still be unreadable. So this resolves each state the way the cascade does and
+ * measures the result. */
+const PAIRS = [
+  ["background", "foreground"], ["card", "card-foreground"], ["popover", "popover-foreground"],
+  ["primary", "primary-foreground"], ["secondary", "secondary-foreground"],
+  ["muted", "muted-foreground"], ["accent", "accent-foreground"],
+  ["sidebar", "sidebar-foreground"], ["sidebar-accent", "sidebar-accent-foreground"],
+  ["sidebar-primary", "sidebar-primary-foreground"],
+];
+const blockOf = (selector) => {
+  const escaped = selector.replace(/[.*+?^${}()|[\]\\]/gu, (character) => `\\${character}`);
+  const match = themeCss.match(new RegExp(`${escaped}\\s*\\{([^}]*)\\}`, "u"));
+  return match ? Object.fromEntries([...match[1].matchAll(/(--[a-z0-9-]+):\s*([^;]+);/gu)].map(([, k, v]) => [k.slice(2), v.trim()])) : {};
+};
+/* Least to most specific, matching how the cascade resolves each state. */
+const STATES = {
+  "light": [":root"],
+  "dark": [":root", ".dark"],
+  "light high-contrast": [":root", ':root[data-contrast="high"]'],
+  "dark high-contrast": [":root", ".dark", ':root[data-contrast="high"]', ':root.dark[data-contrast="high"]'],
+};
+const srgb = (channel) => {
+  const linear = channel <= 0.0031308 ? channel * 12.92 : 1.055 * Math.pow(channel, 1 / 2.4) - 0.055;
+  return Math.min(1, Math.max(0, linear));
+};
+/* oklch -> linear sRGB, enough for a relative-luminance comparison. */
+function luminance(value) {
+  const oklch = /oklch\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)/u.exec(value);
+  if (!oklch) return null;
+  const [, l, c, hDeg] = oklch.map(Number);
+  const h = (hDeg * Math.PI) / 180;
+  const a = c * Math.cos(h), b = c * Math.sin(h);
+  const lp = (l + 0.3963377774 * a + 0.2158037573 * b) ** 3;
+  const mp = (l - 0.1055613458 * a - 0.0638541728 * b) ** 3;
+  const sp = (l - 0.0894841775 * a - 1.2914855480 * b) ** 3;
+  const rgb = [
+    srgb(+4.0767416621 * lp - 3.3077115913 * mp + 0.2309699292 * sp),
+    srgb(-1.2684380046 * lp + 2.6097574011 * mp - 0.3413193965 * sp),
+    srgb(-0.0041960863 * lp - 0.7034186147 * mp + 1.7076147010 * sp),
+  ].map((channel) => channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4);
+  return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+}
+for (const [state, selectors] of Object.entries(STATES)) {
+  const resolved = Object.assign({}, ...selectors.map(blockOf));
+  const value = (name, depth = 0) => {
+    const raw = resolved[name];
+    if (!raw || depth > 4) return raw;
+    const ref = /^var\(--([a-z0-9-]+)\)$/u.exec(raw.trim());
+    return ref ? value(ref[1], depth + 1) : raw;
+  };
+  for (const [ground, ink] of PAIRS) {
+    const back = luminance(value(ground) ?? ""), front = luminance(value(ink) ?? "");
+    if (back === null || front === null) continue;
+    const ratio = (Math.max(back, front) + 0.05) / (Math.min(back, front) + 0.05);
+    if (ratio < 4.5) failures.push(`${state}: --${ink} on --${ground} is ${ratio.toFixed(2)}:1, below 4.5`);
+  }
+}
+
 if (failures.length) {
   console.error(["Vela design-system check failed:", ...failures.map((failure) => `- ${failure}`)].join("\n"));
   process.exit(1);

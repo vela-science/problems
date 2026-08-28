@@ -79,7 +79,12 @@
   --border: oklch(0.53 0.006 260);
   --input: oklch(0.34 0.006 260);
   --focus-ring: oklch(0.16 0.04 258);
+  /* High contrast turns the rail near-white, so its ink must turn with it. It
+     did not: every item in the rail sat at 1.05:1 and focus at 2.03:1. A ground
+     is never redefined without its paired ink. */
   --sidebar: oklch(0.955 0.002 260); --sidebar-accent: oklch(0.88 0.004 260);
+  --sidebar-foreground: var(--foreground); --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: var(--border); --sidebar-ring: var(--focus-ring);
   --command: oklch(0.12 0.004 260);
   color-scheme: light;
 }

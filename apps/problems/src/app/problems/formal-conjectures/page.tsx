@@ -11,6 +11,7 @@ import { PageHero, PageSection, PageShell } from "@vela/ui/vela/page-shell";
 import { ScientificText } from "@vela/ui/vela/scientific-text";
 import { Disclosure } from "@/components/vela/disclosure";
 import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from "@vela/ui/components/item";
+import { structuredDataScript } from "@/lib/structured-data";
 
 export const metadata: Metadata = {
   title: "Formal Conjectures",
@@ -44,7 +45,7 @@ export default async function FormalConjecturesPage({ searchParams }: { searchPa
   const structuredData = { "@context": "https://schema.org", "@type": "CollectionPage", name: formalConjecturesCollection.name, url: "https://problems.science/problems/formal-conjectures", numberOfItems: formalConjecturesCollection.data.items.length, isPartOf: { "@type": "CollectionPage", name: "Problems", url: "https://problems.science/problems" } };
 
   return <PageShell archetype="problem">
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredDataScript(structuredData) }} />
     <PageHero density="compact" className="vela-route-hero grid gap-6 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-end">
       <div><div className="flex flex-wrap items-center gap-3"><h1 className="text-display">Formal Conjectures</h1><Badge variant="secondary">Published subset · 7</Badge></div><p className="mt-3 max-w-3xl text-body text-muted-foreground">Exact formalized conjecture occurrences from the upstream repository. This release includes seven rights-reviewed <span className="font-medium text-foreground">research open</span> declarations; it is not the whole repository.</p><div className="mt-5 flex flex-wrap gap-3"><Button nativeButton={false} render={<a href={formalConjecturesCollection.source_snapshot.repository} />}>Open upstream repository <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden data-icon="inline-end" /></Button><Button nativeButton={false} variant="outline" render={<Link href="/contribute" />}>Add a Result</Button></div></div>
       <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border bg-border text-meta"><div className="bg-card p-4"><dt className="text-muted-foreground">Lean toolchain</dt><dd className="mt-1 font-mono text-micro">{formalConjecturesCollection.source_snapshot.lean_toolchain.replace("leanprover/lean4:", "")}</dd></div><div className="bg-card p-4"><dt className="text-muted-foreground">Source families</dt><dd className="mt-1 font-medium">{families.length}</dd></div><div className="col-span-2 bg-card p-4"><dt className="text-muted-foreground">Exact revision</dt><dd className="mt-1 font-mono text-micro">{formalConjecturesCollection.source_snapshot.commit.slice(0, 12)}</dd></div></dl>

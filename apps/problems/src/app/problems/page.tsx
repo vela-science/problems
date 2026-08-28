@@ -11,6 +11,7 @@ import { ScientificText } from "@vela/ui/vela/scientific-text";
 import { ProblemQuestionRow } from "@/components/vela/problem-question-row";
 import { discoveredProblems, problemDiscoveryCollections, problemStatePreviews } from "@/lib/scientific-state";
 import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from "@vela/ui/components/item";
+import { structuredDataScript } from "@/lib/structured-data";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Problems", description: "Browse published scientific Problem collections and formalized conjecture occurrences.", alternates: { canonical: "/problems" } };
@@ -33,7 +34,7 @@ export default async function ProblemsPage(props?: { searchParams?: Promise<Reco
   const structuredData = { "@context": "https://schema.org", "@type": "CollectionPage", name: "Problems", url: "https://problems.science/problems", numberOfItems: collections.length, hasPart: collections.map((collection) => ({ "@type": "CollectionPage", name: collection.name, url: `https://problems.science${collection.href}`, numberOfItems: collection.count })) };
 
   return <PageShell archetype="problem">
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredDataScript(structuredData) }} />
     <PageHero density="compact" className="vela-route-hero grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,.42fr)] lg:items-end">
       <div><div className="flex flex-wrap items-center gap-3"><h1 className="text-display">Problems</h1><Badge variant="secondary">2 published collections</Badge></div><p className="mt-3 max-w-2xl text-body text-muted-foreground">Find a scientific question, inspect what is known, and follow its exact sources and Results.</p></div>
       <form action="/search" className="vela-object-surface flex items-center gap-2 p-2"><label className="relative min-w-0 flex-1"><span className="sr-only">Search all Problems</span><HugeiconsIcon icon={Search01Icon} aria-hidden className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /><Input name="q" className="h-11 border-0 bg-transparent pl-9 shadow-none" placeholder="Search across collections…" /></label><Button type="submit">Search</Button></form>

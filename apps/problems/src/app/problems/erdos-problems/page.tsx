@@ -34,6 +34,7 @@ import { CollectionDistribution } from "@/components/vela/collection-distributio
 import { CollectionCoverageBar, collectionCoverage } from "@/components/vela/collection-coverage-bar";
 import { isJustTheName } from "@/lib/problem-label";
 import { statementPlainText } from "@/lib/problem-statement";
+import { structuredDataScript } from "@/lib/structured-data";
 import { SourceCorpusMap } from "@/components/vela/source-corpus-map";
 import { ProblemSourceCoverage } from "@/components/vela/problem-source-coverage";
 import { LedgerPager } from "@/components/vela/ledger-pager";
@@ -138,7 +139,13 @@ function ProblemRows({ problems, statements }: {
    * question instead, which is the same switch seen from the other side.
    *
    * The question cell is `max-w-0` so it flexes into whatever the fixed columns
-   * leave, and the measure and overflow guard sit on a span inside the anchor
+   * leave, and `whitespace-normal` because `TableCell` ships `nowrap`: with the
+   * overflow guard below, `nowrap` clipped the statement mid-formula on 18 of
+   * 48 rows at 1440 and every row at 375, with no ellipsis, which traded a
+   * layout bug for a silent data-loss one. Wrapping lets the
+   * `overflow-wrap: anywhere` this codebase already sets do the work, and only
+   * an unbreakable formula reaches the guard. The measure and overflow guard sit
+   * on a span inside the anchor
    * rather than on the anchor: an `overflow-hidden` anchor would clip its own
    * `after:inset-0`, and the stretched link is the row's click target. Without
    * that guard a single unbreakable KaTeX box set a 1333px min-content floor in
@@ -170,7 +177,7 @@ function ProblemRows({ problems, statements }: {
           const solved = ["solved", "proved", "disproved"].includes(record.declared_status);
           return <TableRow key={`${problem.repository}/${problem.problem}`} className="group relative">
             <TableCell className="align-baseline font-mono text-meta tabular-nums text-muted-foreground">#{problem.problem}</TableCell>
-            <TableCell className="max-w-0 align-baseline">
+            <TableCell className="max-w-0 align-baseline whitespace-normal">
               {/* One stretched link per row: a table row cannot be wrapped in an
                   anchor, and a link per cell would put six of them in the tab
                   order for one destination. */}
@@ -277,7 +284,7 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
       .sort((left, right) => right.topic.problemCount - left.topic.problemCount || left.topic.name.localeCompare(right.topic.name));
 
     return <PageShell archetype="problem">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionStructuredData) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredDataScript(collectionStructuredData) }} />
       <PageHero className="vela-route-hero grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,.42fr)] lg:items-end">
         <div><h1 className="text-display">Erdős Problems</h1><p className="typeset typeset-compact mt-4 max-w-2xl text-muted-foreground">Browse this source-owned collection by topic, then inspect each question, its evidence, prior work, and current Repository state.</p><div className="mt-6 flex flex-wrap gap-3"><Button nativeButton={false} render={<Link href={{ pathname: COLLECTION_PATH, query: { view: "all", ...scopeQuery() } }} />}>Open collection directory <HugeiconsIcon icon={ArrowRight} aria-hidden data-icon="inline-end" /></Button><Button nativeButton={false} variant="outline" render={<Link href="/contribute" />}>Add a contribution</Button></div></div>
         <div className="vela-evidence-surface rounded-xl px-5 py-5"><p className="text-eyebrow text-muted-foreground">Collection scope</p><p className="mt-2 text-title">{catalog.length.toLocaleString()} Erdős problems</p><p className="mt-2 text-meta text-muted-foreground">This source profile organizes the collection into {new Set(catalog.flatMap(({ topics }) => topics.map(({ key }) => key))).size} source-owned Topics. Supporting sources remain evidence attached to each Problem.</p><div className="mt-4 flex flex-wrap gap-2">{domains.map(([key, name]) => <Link key={key} href={{ pathname: COLLECTION_PATH, query: { domain: key } }} className="rounded-full bg-background/70 px-3 py-1.5 text-meta font-medium hover:bg-background">Area · {name}</Link>)}</div></div>
@@ -359,7 +366,7 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
   const advancedActive = selectedHub !== "all" || selectedField !== "all" || selectedTopic !== "all" || standing !== "all" || source !== "all" || repository !== "all" || formalized !== "all" || coverage !== "all" || Boolean(exactId);
 
   return <PageShell archetype="problem">
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionStructuredData) }} />
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredDataScript(collectionStructuredData) }} />
     {/* A list page's job is the list. The hero used to take most of the first
         screen for a title the breadcrumb already carries and a coverage panel
         of five numbers nobody acts on — the same pattern as the four-tile
