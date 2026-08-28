@@ -47,7 +47,7 @@ export default async function WorkPage() {
 
   return (
     <PageShell archetype="work">
-      <PageHero density="compact" className="vela-work-hero">
+      <PageHero density="compact" className="vela-route-hero">
         <h1 className="text-display">Choose a Problem</h1>
         <p className="mt-3 max-w-2xl text-body text-muted-foreground">Open its Work view to check prior approaches, attach evidence, and prepare a Result.</p>
         <form action="/search" method="get" aria-label="Find a Problem to contribute to" className="mt-6 max-w-3xl">

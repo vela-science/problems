@@ -46,7 +46,7 @@ export default async function FormalConjecturesFrontierPage() {
   if (!snapshot) {
     return (
       <PageShell archetype="problem">
-        <PageHero density="compact" className="vela-product-hero">
+        <PageHero density="compact" className="vela-route-hero">
           <h1 className="text-display">The Frontier</h1>
           <p className="mt-3 max-w-3xl text-body text-muted-foreground">
             No census snapshot has been ingested yet. Ingest one with
@@ -63,7 +63,7 @@ export default async function FormalConjecturesFrontierPage() {
   const obligations = obligationCopy.map((o) => ({ ...o, n: totals[o.key] }));
   return (
     <PageShell archetype="problem">
-      <PageHero density="compact" className="vela-product-hero grid gap-6 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-end">
+      <PageHero density="compact" className="vela-route-hero grid gap-6 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-end">
         <div>
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-display">The Frontier</h1>

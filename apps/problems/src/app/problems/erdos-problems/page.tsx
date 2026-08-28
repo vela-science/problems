@@ -266,7 +266,7 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
 
     return <PageShell archetype="problem">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionStructuredData) }} />
-      <PageHero className="vela-collection-hero grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,.42fr)] lg:items-end">
+      <PageHero className="vela-route-hero grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,.42fr)] lg:items-end">
         <div><h1 className="text-display">Erdős Problems</h1><p className="typeset typeset-compact mt-4 max-w-2xl text-muted-foreground">Browse this source-owned collection by topic, then inspect each question, its evidence, prior work, and current Repository state.</p><div className="mt-6 flex flex-wrap gap-3"><Button nativeButton={false} render={<Link href={{ pathname: COLLECTION_PATH, query: { view: "all", ...scopeQuery() } }} />}>Open collection directory <HugeiconsIcon icon={ArrowRight} aria-hidden data-icon="inline-end" /></Button><Button nativeButton={false} variant="outline" render={<Link href="/contribute" />}>Add a contribution</Button></div></div>
         <div className="vela-evidence-surface rounded-xl px-5 py-5"><p className="text-eyebrow text-muted-foreground">Collection scope</p><p className="mt-2 text-title">{catalog.length.toLocaleString()} Erdős problems</p><p className="mt-2 text-meta text-muted-foreground">This source profile organizes the collection into {new Set(catalog.flatMap(({ topics }) => topics.map(({ key }) => key))).size} source-owned Topics. Supporting sources remain evidence attached to each Problem.</p><div className="mt-4 flex flex-wrap gap-2">{domains.map(([key, name]) => <Link key={key} href={{ pathname: COLLECTION_PATH, query: { domain: key } }} className="rounded-full bg-background/70 px-3 py-1.5 text-meta font-medium hover:bg-background">Area · {name}</Link>)}</div></div>
       </PageHero>
@@ -354,7 +354,7 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
         status rail on a Problem. The counts that do orient a reader (how many
         Problems, how many carry formal material) ride one line, and the
         distribution moves behind a disclosure for anyone who wants it. */}
-    <PageHero density="compact" className="vela-collection-hero">
+    <PageHero density="compact" className="vela-route-hero">
       <div>
         <h1 className="text-display">Erdős Problems</h1>
         <p className="mt-1.5 max-w-[62ch] text-compact text-muted-foreground">{catalog.length.toLocaleString()} source-owned questions · {catalog.filter((entry) => entry.record.formalized).length.toLocaleString()} with a formal statement · searchable by statement, number, topic and source status.</p>

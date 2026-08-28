@@ -98,34 +98,24 @@
 }
 
 /* Route leads are ordinary product headers. The sidebar carries the deep marine
-   brand colour; route content stays on the neutral working canvas. */
-.vela-product-hero,
-.vela-collection-hero,
-.vela-data-hero,
-.vela-work-hero,
-.vela-history-hero {
+   brand colour; route content stays on the neutral working canvas.
+ *
+   One class, not five. `product`, `collection`, `data`, `work` and `history`
+   heroes resolved to the same three declarations — and `color: var(--foreground)`
+   was written twice across two arbitrary groupings of them. Five names for one
+   behaviour is a distinction a reader of the code has to test to disbelieve,
+   and `history` had no users left at all. The forced-colors muted override
+   applied to two of the five for no stated reason; it applies to the one. */
+.vela-route-hero {
   border-bottom: 1px solid var(--border);
   border-radius: 0;
   background: transparent;
-}
-
-.vela-product-hero,
-.vela-collection-hero {
   color: var(--foreground);
 }
 
-.vela-data-hero,
-.vela-work-hero,
-.vela-history-hero { color: var(--foreground); }
-
 @media (forced-colors: active) {
-  .vela-product-hero,
-  .vela-collection-hero,
-  .vela-data-hero,
-  .vela-work-hero,
-  .vela-history-hero { border: 2px solid CanvasText; background: Canvas; color: CanvasText; }
-  .vela-product-hero .text-muted-foreground,
-  .vela-collection-hero .text-muted-foreground { color: CanvasText; }
+  .vela-route-hero { border: 2px solid CanvasText; background: Canvas; color: CanvasText; }
+  .vela-route-hero .text-muted-foreground { color: CanvasText; }
 }
 
 @media print {
@@ -136,9 +126,5 @@
      creates an 8px horizontal overflow at the page edge. */
   .vela-object-row { margin-inline: 0 !important; }
   details::details-content { display: block !important; content-visibility: visible !important; }
-  .vela-product-hero,
-  .vela-collection-hero,
-  .vela-data-hero,
-  .vela-work-hero,
-  .vela-history-hero { border: 1px solid CanvasText !important; background: Canvas !important; color: CanvasText !important; }
+  .vela-route-hero { border: 1px solid CanvasText !important; background: Canvas !important; color: CanvasText !important; }
 }
