@@ -130,18 +130,28 @@ function ProblemRows({ problems, statements }: {
    * own horizontal scroll container, which DESIGN.md:424 requires of wide
    * material — "within their own instrument, never the document".
    *
-   * The narrow columns stay `hidden sm:table-cell` rather than forcing a phone
-   * to scroll sideways; their values ride the compact line under the question,
-   * as they did before. */
-  return <div className="vela-object-surface mt-3 overflow-hidden">
+   * The narrow columns reveal on the *container's* width, not the viewport's.
+   * Keyed to `sm:` they appeared at a 640px viewport, but the rail takes ~250px
+   * before this table sees any of it: at 768 the four state columns claimed
+   * 343px and left the question 60px, so the page's own subject got 12% of the
+   * width. Below the threshold their values ride the compact line under the
+   * question instead, which is the same switch seen from the other side.
+   *
+   * The question cell is `max-w-0` so it flexes into whatever the fixed columns
+   * leave, and the measure and overflow guard sit on a span inside the anchor
+   * rather than on the anchor: an `overflow-hidden` anchor would clip its own
+   * `after:inset-0`, and the stretched link is the row's click target. Without
+   * that guard a single unbreakable KaTeX box set a 1333px min-content floor in
+   * a 1166px container and pushed the state columns out of view. */
+  return <div className="vela-object-surface @container/directory mt-3 overflow-hidden">
     <Table>
       <TableHeader>
         <TableRow className="hover:bg-transparent">
           <TableHead className="w-14">Number</TableHead>
           <TableHead>Question</TableHead>
-          <TableHead className="hidden w-28 sm:table-cell">Source says</TableHead>
-          <TableHead className="hidden w-24 sm:table-cell">Formal</TableHead>
-          <TableHead className="hidden w-32 sm:table-cell">Result here</TableHead>
+          <TableHead className="hidden w-28 @2xl/directory:table-cell">Source says</TableHead>
+          <TableHead className="hidden w-24 @2xl/directory:table-cell">Formal</TableHead>
+          <TableHead className="hidden w-32 @2xl/directory:table-cell">Result here</TableHead>
           <TableHead className="w-8"><span className="sr-only">Open</span></TableHead>
         </TableRow>
       </TableHeader>
@@ -160,14 +170,14 @@ function ProblemRows({ problems, statements }: {
           const solved = ["solved", "proved", "disproved"].includes(record.declared_status);
           return <TableRow key={`${problem.repository}/${problem.problem}`} className="group relative">
             <TableCell className="align-baseline font-mono text-meta tabular-nums text-muted-foreground">#{problem.problem}</TableCell>
-            <TableCell className="min-w-0 align-baseline">
+            <TableCell className="max-w-0 align-baseline">
               {/* One stretched link per row: a table row cannot be wrapped in an
                   anchor, and a link per cell would put six of them in the tab
                   order for one destination. */}
               <Link
                 aria-label={rowName}
                 href={problem.canonicalPath ?? "/problems"}
-                className="block max-w-[74ch] text-label leading-snug after:absolute after:inset-0 group-hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-[-2px]"
+                className="block text-label leading-snug after:absolute after:inset-0 group-hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-[-2px]"
               >
                 {/* A Problem with no retained statement used to show its own name
                     — "Erdős problem 2" — in the Question column, which reads as a
@@ -175,26 +185,28 @@ function ProblemRows({ problems, statements }: {
                     absence. Testing the field is not enough: these rows carry the
                     generated name as their label, so the test is whether the text
                     on offer IS the name. */}
-                {question
-                  ? <ScientificText text={question} />
-                  : isJustTheName(readableLabel, problem.problem)
-                    ? <span className="text-muted-foreground">No statement retained &mdash; open to read what the source holds</span>
-                    : <StatementText statement={kind === "formal" ? readableLabel : record.statement || readableLabel} kind={kind === "formal" ? "label" : kind} className="text-label" />}
+                <span className="block max-w-[74ch] overflow-hidden">
+                  {question
+                    ? <ScientificText text={question} />
+                    : isJustTheName(readableLabel, problem.problem)
+                      ? <span className="text-muted-foreground">No statement retained &mdash; open to read what the source holds</span>
+                      : <StatementText statement={kind === "formal" ? readableLabel : record.statement || readableLabel} kind={kind === "formal" ? "label" : kind} className="text-label" />}
+                </span>
               </Link>
-              <span className="mt-1.5 flex flex-wrap gap-x-2 text-meta text-muted-foreground sm:hidden">
+              <span className="mt-1.5 flex flex-wrap gap-x-2 text-meta text-muted-foreground @2xl/directory:hidden">
                 <span className="capitalize">{record.declared_status}</span><span>{record.formalized ? "Formalized" : "No formal declaration"}</span>{record.local_standing ? <span>Result {record.local_standing.replaceAll("_", " ")}</span> : null}
               </span>
             </TableCell>
-            <TableCell className="hidden align-baseline text-meta capitalize sm:table-cell">
+            <TableCell className="hidden align-baseline text-meta capitalize @2xl/directory:table-cell">
               <span className="inline-flex items-center gap-1.5">
                 <span aria-hidden className={`size-1.5 rounded-full ${solved ? "bg-status-progress" : "bg-status-caution"}`} />{record.declared_status}
               </span>
             </TableCell>
-            <TableCell className="hidden align-baseline text-meta text-muted-foreground sm:table-cell">{record.formalized ? "In Lean" : <><span aria-hidden>—</span><span className="sr-only">No formal statement</span></>}</TableCell>
+            <TableCell className="hidden align-baseline text-meta text-muted-foreground @2xl/directory:table-cell">{record.formalized ? "In Lean" : <><span aria-hidden>—</span><span className="sr-only">No formal statement</span></>}</TableCell>
             {/* 1,215 of 1,217 rows said "Not reviewed", so the column spent a
                 fifth of the width restating the default. The two that carry a
                 reviewed Result are the information, and they now say so. */}
-            <TableCell className="hidden align-baseline text-meta sm:table-cell">{record.local_standing
+            <TableCell className="hidden align-baseline text-meta @2xl/directory:table-cell">{record.local_standing
               ? <span className="inline-flex items-center gap-1.5 font-medium text-status-progress"><span aria-hidden className="size-1.5 rounded-full bg-status-progress" />{record.local_standing.replaceAll("_", " ")}</span>
               : <><span aria-hidden className="text-muted-foreground/50">—</span><span className="sr-only">No Result decision</span></>}</TableCell>
             <TableCell className="align-baseline">

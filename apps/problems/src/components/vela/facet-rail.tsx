@@ -66,6 +66,11 @@ export function FacetRail({
   if (!live.length) return null;
   return (
     <nav aria-label="Narrow the ledger" className={className}>
+      {/* The nav is named, but a name is not a heading: each group heads itself
+          at `h3` under the route's `h1`, so a reader moving by heading fell two
+          levels in one step. The rail's own level closes that, and says the
+          same thing the nav is labelled, because that is what it is. */}
+      <h2 className="sr-only">Narrow the ledger</h2>
       {live.map((group) => {
         const active = selected[group.name] ?? "";
         const largest = Math.max(...group.values.map((value) => value.count), 1);

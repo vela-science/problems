@@ -63,6 +63,19 @@ if (productCss.split("\n").length + themeCss.split("\n").length > 180) failures.
 const typesetCss = readFileSync(join(ui, "src/styles/typeset.css"), "utf8");
 if (!productCss.includes('@source "../components"')) failures.push("@vela/ui product profile must own Tailwind workspace source detection");
 if (!productCss.includes('@import "./foundation.css"')) failures.push("@vela/ui product profile must import the shared interaction foundation");
+
+/* Two guarantees that used to be asserted in @vela/brand against a semantic
+   layer theme.css shadowed and always beat. The brand no longer defines
+   surfaces, so they are asserted here, against the CSS that actually paints.
+   The forced-colors rule is the one that keeps a focus ring visible when
+   box-shadow is dropped; it went missing once already, on eight of twelve
+   focusable elements. */
+const foundationCss = readFileSync(join(ui, "src/styles/foundation.css"), "utf8");
+if (!/@media \(forced-colors: active\)/u.test(foundationCss)) failures.push("foundation.css must keep the forced-colors focus rule");
+for (const [name, css] of [["theme", themeCss], ["product", productCss]]) {
+  const white = css.match(/#fff(?:fff)?\b|\brgb\(\s*255\s*,\s*255\s*,\s*255\s*\)/giu);
+  if (white) failures.push(`${name}.css uses pure white (${white[0]}); neutrals carry a brand tint`);
+}
 for (const preset of [".typeset-reading", ".typeset-docs", ".typeset-compact", ".not-typeset", ".typeset-scroll"]) {
   if (!typesetCss.includes(preset)) failures.push(`Typeset contract missing ${preset}`);
 }

@@ -28,30 +28,6 @@ function metadataString(state: State, key: string) {
   return typeof value === "string" && value.trim() ? value.trim() : null;
 }
 
-/* Absences the projection actually asserts, not a list of everything a reader
-   might wish for. Each line here is a field that is null, an array that is
-   empty, or a record kind this release does not carry.
- *
- * The comment was true of two entries and false of four. "Problem-level
- * Standing", "Related Problems", "Literature or consensus coverage" and "Human
- * identity behind the named performers" were unconditional pushes — identical
- * on all 1,217 pages, so the panel carried zero per-page information while
- * occupying the rail as though it were state. Worse, "Problem-level Standing"
- * duplicated the facts panel directly above it, which renders
- * `Problem Standing → Not recorded` in the same viewport.
- *
- * What this release does not carry at all belongs in one release-level note,
- * not restated on every Problem. */
-function absences(state: State) {
-  const entries: string[] = [];
-  if (!metadataString(state, "next_discriminator")) entries.push("A recorded next discriminator");
-  /* "Any retained check" used to sit here too, on `!checks.length` — the same
-     condition the stage ladder already reports as "Work and checks / None
-     recorded", in the same viewport. Removing four unconditional constants
-     left a fifth that was a straight duplicate. */
-  return entries;
-}
-
 /* What a Claim replaced, and what replaced it.
  *
  * Two Results on Erdős 94 render byte-identical — the same assertion, the same
@@ -146,7 +122,6 @@ export function ProblemOverview({ state, route }: { state: State; route: string 
 
       <aside className={styles.rail} aria-label="Problem facts">
         <ProblemFacts state={state} lastSourceUpdate={lastSourceUpdate} />
-        <AbsencePanel entries={absences(state)} />
         <ExactPanel state={state} />
       </aside>
     </div>;
@@ -249,7 +224,7 @@ export function ProblemOverview({ state, route }: { state: State; route: string 
           <div className={styles.rowTitle}>
             {sentenceCase(humanize(check.property, "Scope not recorded"))}
             {check.does_not_establish?.length
-              ? <div className={styles.rowMeta}>Does not establish: {check.does_not_establish.join("; ")}</div>
+              ? <div className={styles.rowMeta}>Does not establish: {check.does_not_establish.join(" ")}</div>
               : null}
           </div>
           <span className="text-right text-[0.78125rem] capitalize">{humanize(check.outcome)}</span>
@@ -284,7 +259,6 @@ export function ProblemOverview({ state, route }: { state: State; route: string 
       </section>
 
       <ProblemFacts state={state} lastSourceUpdate={lastSourceUpdate} openFormal={openFormal.length} formal={formal.length} />
-      <AbsencePanel entries={absences(state)} />
       <ExactPanel state={state} />
     </aside>
   </div>;
@@ -314,23 +288,6 @@ function ProblemFacts({ state, lastSourceUpdate, openFormal, formal }: {
       <span className={styles.factValue}>{lastSourceUpdate ? formatDate(lastSourceUpdate) : "Not recorded"}</span>
     </div>
     <div className={styles.note}>A source report is not this Problem&apos;s state here.</div>
-  </section>;
-}
-
-/* Nothing to say is a reason not to draw a panel. With the four constants
-   removed, a Problem carrying a next discriminator and a check has no absences
-   left to report, and an empty bordered panel headed "Not recorded" is the
-   inventory-of-nothing shape this page is trying to stop being. */
-function AbsencePanel({ entries }: { entries: string[] }) {
-  if (!entries.length) return null;
-  return <section className={styles.panel}>
-    <div className={styles.panelHead}>
-      <span className={styles.kicker}>Not recorded in this release</span>
-      <span className={styles.kicker}>{entries.length}</span>
-    </div>
-    {entries.map((entry) => <div key={entry} className={styles.absent}>
-      <span className={styles.absentMark} aria-hidden />{entry}
-    </div>)}
   </section>;
 }
 

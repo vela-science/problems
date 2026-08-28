@@ -21,6 +21,16 @@ export const metadata: Metadata = {
 type Query = { q?: string; family?: string };
 const families = [...new Set(formalConjecturesCollection.data.items.map(({ source_family }) => source_family))].sort();
 
+/* A group is context only when it says something the title has not. Several
+   occurrences are the sole member of a group named after them, so appending it
+   unconditionally rendered "Oppermann's Conjecture · Oppermann.oppermann_conjecture
+   · Oppermann's Conjecture" — the row's own title, printed twice, two fields
+   apart. */
+function groupTitle(item: { group_id?: string | null; title: string }) {
+  const title = formalConjecturesCollection.data.groups.find(({ id }) => id === item.group_id)?.title;
+  return title && title !== item.title ? title : null;
+}
+
 export default async function FormalConjecturesPage({ searchParams }: { searchParams: Promise<Query> }) {
   const query = await searchParams;
   const q = (query.q ?? "").trim().slice(0, 256);
@@ -50,7 +60,7 @@ export default async function FormalConjecturesPage({ searchParams }: { searchPa
         <Item className="vela-object-row gap-3 rounded-none px-2 py-4" render={<Link href={`/problems/formal-conjectures/${item.route_slug}`} />}>
           <ItemContent>
             <ItemTitle className="line-clamp-none block max-w-[78ch] text-compact font-medium leading-6 group-hover/item:text-primary"><ScientificText text={item.title} /></ItemTitle>
-            <ItemDescription className="line-clamp-none flex flex-wrap gap-x-2 gap-y-1 text-meta"><span className="font-mono text-micro">{item.declaration}</span>{item.group_id ? <><span aria-hidden>·</span><span>{formalConjecturesCollection.data.groups.find(({ id }) => id === item.group_id)?.title}</span></> : null}</ItemDescription>
+            <ItemDescription className="line-clamp-none flex flex-wrap gap-x-2 gap-y-1 text-meta"><span className="font-mono text-micro">{item.declaration}</span>{groupTitle(item) ? <><span aria-hidden>·</span><span>{groupTitle(item)}</span></> : null}</ItemDescription>
           </ItemContent>
           {/* Fixed bases keep the two aligned columns the grid template gave. */}
           <ItemActions className="text-meta sm:w-36 sm:justify-start">{item.source_family}</ItemActions>

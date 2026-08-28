@@ -33,6 +33,7 @@ import {
 } from "@vela/ui/components/sidebar";
 import { BrandMark as VelaMark } from "@vela/ui/vela/brand-mark";
 import { useAccountState } from "@/components/vela/account-state";
+import { INFORMATION_ROUTES } from "@/components/vela/public-information-page";
 import { recentObjectsServerSnapshot, recentObjectsSnapshot, subscribeRecentObjects } from "@/lib/recent-objects";
 import type { PublishedProblemCollection } from "@/lib/problem-collections";
 
@@ -211,6 +212,26 @@ export function AppSidebar({ problemCollections = [{ namespace: "erdos-problems"
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Privacy, Terms, Accessibility and Contact were reachable only through
+            the command palette and the signed-in account menu, so a signed-out
+            visitor had no visible path to any of them — and a touch user has no
+            ⌘K to fall back on. They sit in the rail because it is the one piece
+            of chrome on every route and the shell carries no footer landmark by
+            decision. Hidden when the rail is collapsed to icons, where a row of
+            four words cannot render. */}
+        <SidebarGroup className="border-t border-sidebar-border py-1 group-data-[collapsible=icon]:hidden">
+          <SidebarGroupContent>
+            <nav aria-label="Policies" className="flex flex-wrap items-center gap-x-3 px-2 text-micro">
+              {INFORMATION_ROUTES.map((route) => <Link
+                key={route.href}
+                href={route.href}
+                onClick={closeMobileNavigation}
+                className="inline-flex min-h-8 items-center rounded text-sidebar-foreground/70 hover:text-sidebar-foreground hover:underline"
+              >{route.label}</Link>)}
+            </nav>
           </SidebarGroupContent>
         </SidebarGroup>
 

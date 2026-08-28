@@ -84,22 +84,6 @@
     },
     "context": {
       "light": {
-        "surfaceInset": {
-          "$value": "#EEEDE7",
-          "$type": "color"
-        },
-        "surfaceRaised": {
-          "$value": "#FBFAF7",
-          "$type": "color"
-        },
-        "textSecondary": {
-          "$value": "#4B5565",
-          "$type": "color"
-        },
-        "textMuted": {
-          "$value": "#626A76",
-          "$type": "color"
-        },
         "evidence": {
           "$value": "#2F6F6B",
           "$type": "color"
@@ -116,40 +100,12 @@
           "$value": "#9C3F4A",
           "$type": "color"
         },
-        "borderSubtle": {
-          "$value": "#D9DBDF",
-          "$type": "color"
-        },
-        "borderStrong": {
-          "$value": "#B8BDC5",
-          "$type": "color"
-        },
         "direction": {
           "$value": "#846315",
           "$type": "color"
         }
       },
       "dark": {
-        "surfaceInset": {
-          "$value": "#0B1629",
-          "$type": "color"
-        },
-        "surfaceEmphasis": {
-          "$value": "#050C18",
-          "$type": "color"
-        },
-        "textSecondary": {
-          "$value": "#C5CAD2",
-          "$type": "color"
-        },
-        "borderSubtle": {
-          "$value": "#263247",
-          "$type": "color"
-        },
-        "borderStrong": {
-          "$value": "#3A465A",
-          "$type": "color"
-        },
         "conflict": {
           "$value": "#D97783",
           "$type": "color"
@@ -399,154 +355,6 @@
         "$value": "0.01em",
         "$type": "dimension"
       }
-    }
-  },
-  "space": {
-    "1": {
-      "$value": "4px",
-      "$type": "dimension"
-    },
-    "2": {
-      "$value": "8px",
-      "$type": "dimension"
-    },
-    "3": {
-      "$value": "12px",
-      "$type": "dimension"
-    },
-    "4": {
-      "$value": "16px",
-      "$type": "dimension"
-    },
-    "5": {
-      "$value": "20px",
-      "$type": "dimension"
-    },
-    "6": {
-      "$value": "24px",
-      "$type": "dimension"
-    },
-    "7": {
-      "$value": "28px",
-      "$type": "dimension"
-    },
-    "8": {
-      "$value": "32px",
-      "$type": "dimension"
-    },
-    "9": {
-      "$value": "36px",
-      "$type": "dimension"
-    },
-    "10": {
-      "$value": "40px",
-      "$type": "dimension"
-    },
-    "11": {
-      "$value": "44px",
-      "$type": "dimension"
-    },
-    "12": {
-      "$value": "48px",
-      "$type": "dimension"
-    },
-    "13": {
-      "$value": "52px",
-      "$type": "dimension"
-    },
-    "14": {
-      "$value": "56px",
-      "$type": "dimension"
-    },
-    "15": {
-      "$value": "60px",
-      "$type": "dimension"
-    },
-    "16": {
-      "$value": "64px",
-      "$type": "dimension"
-    },
-    "17": {
-      "$value": "68px",
-      "$type": "dimension"
-    },
-    "18": {
-      "$value": "72px",
-      "$type": "dimension"
-    },
-    "19": {
-      "$value": "76px",
-      "$type": "dimension"
-    },
-    "20": {
-      "$value": "80px",
-      "$type": "dimension"
-    },
-    "21": {
-      "$value": "84px",
-      "$type": "dimension"
-    },
-    "22": {
-      "$value": "88px",
-      "$type": "dimension"
-    },
-    "23": {
-      "$value": "92px",
-      "$type": "dimension"
-    },
-    "24": {
-      "$value": "96px",
-      "$type": "dimension"
-    }
-  },
-  "radius": {
-    "none": {
-      "$value": "0px",
-      "$type": "dimension"
-    },
-    "sm": {
-      "$value": "6px",
-      "$type": "dimension"
-    },
-    "md": {
-      "$value": "12px",
-      "$type": "dimension"
-    },
-    "lg": {
-      "$value": "18px",
-      "$type": "dimension"
-    },
-    "pill": {
-      "$value": "999px",
-      "$type": "dimension"
-    }
-  },
-  "motion": {
-    "fast": {
-      "$value": "140ms",
-      "$type": "duration"
-    },
-    "base": {
-      "$value": "240ms",
-      "$type": "duration"
-    },
-    "slow": {
-      "$value": "420ms",
-      "$type": "duration"
-    },
-    "hero": {
-      "$value": "1000ms",
-      "$type": "duration"
-    }
-  },
-  "easing": {
-    "standard": {
-      "$value": "cubic-bezier(0.2, 0.8, 0.2, 1)",
-      "$type": "cubicBezier"
-    },
-    "enter": {
-      "$value": "cubic-bezier(0.16, 1, 0.3, 1)",
-      "$type": "cubicBezier"
     }
   }
 }

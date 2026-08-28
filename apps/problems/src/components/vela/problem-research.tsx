@@ -123,7 +123,7 @@ function CurrentResult({ state, basePath }: { state: State; basePath: string }) 
                       most likely to assume away, so it is stated rather than
                       disclosed. A pass that is silent about its limits reads
                       as a pass without any. */}
-                  {check.does_not_establish?.length ? <p className="mt-2 max-w-[72ch] rounded-md bg-status-caution/8 px-2.5 py-2 text-micro leading-5 text-muted-foreground"><span className="font-medium text-foreground">Does not establish:</span> {check.does_not_establish.join("; ")}</p> : null}
+                  {check.does_not_establish?.length ? <p className="mt-2 max-w-[72ch] rounded-md bg-status-caution/8 px-2.5 py-2 text-micro leading-5 text-muted-foreground"><span className="font-medium text-foreground">Does not establish:</span> {check.does_not_establish.join(" ")}</p> : null}
                 </ItemContent>
                 {/* A Badge is `shrink-0 whitespace-nowrap`, and these two are
                     long ("Independent · 1 shared"). Beside the content on a
