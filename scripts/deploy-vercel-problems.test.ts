@@ -1,9 +1,12 @@
 import { describe, expect, test } from "bun:test";
-import { readFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { resolve } from "node:path";
 import {
   deployVercelProblems,
   deployVercelProblemsViaCli,
+  problemsDeploymentEnvironment,
   problemsDeploymentTargetFrom,
   vercelProblemsDeploymentRequest,
   verifyVercelProblemsDeployment,
@@ -199,8 +202,63 @@ describe("exact Problems Vercel deployment", () => {
       "/v13/deployments?teamId=team_fixture&forceNew=1",
     );
     expect(invocation.args).toContain("--raw");
-    expect(invocation.args).toContain("constellate-dc388081");
+    /* The scope is the target's own team, not a slug written down here. One
+       team named in source was the same mistake the four other identifiers had
+       already been corrected for, and it would have sent a fork's deployment at
+       this team's scope. */
+    expect(invocation.args).toContain("team_fixture");
+    expect(invocation.args).not.toContain("constellate-dc388081");
     expect(invocation.args).toContain("/operator/vercel-config");
     expect(invocation.options.env).not.toHaveProperty("VERCEL_TOKEN");
+  });
+
+  /* The link is the ergonomic half of the fix. The fork-safety half is that an
+     unlinked checkout is still exactly as loud as it was before. */
+  test("resolves the whole target from a linked checkout", () => {
+    const root = mkdtempSync(join(tmpdir(), "vela-link-"));
+    mkdirSync(join(root, ".vercel"));
+    writeFileSync(join(root, ".vercel", "project.json"), JSON.stringify({
+      projectId: "prj_linked", orgId: "team_linked", projectName: "problems",
+    }));
+    const resolved = problemsDeploymentEnvironment({
+      environment: { VERCEL_GLOBAL_CONFIG: "/operator/vercel-config" },
+      root,
+      execute: () => JSON.stringify({ link: { repoId: 42, org: "vela-science", repo: "problems" } }),
+    });
+    rmSync(root, { recursive: true, force: true });
+
+    expect(problemsDeploymentTargetFrom(resolved)).toEqual({
+      teamId: "team_linked",
+      projectId: "prj_linked",
+      projectName: "problems",
+      repositoryId: 42,
+      repositoryRef: "main",
+      repositorySlug: "vela-science/problems",
+    });
+  });
+
+  test("lets the environment override every linked value", () => {
+    const root = mkdtempSync(join(tmpdir(), "vela-link-"));
+    mkdirSync(join(root, ".vercel"));
+    writeFileSync(join(root, ".vercel", "project.json"), JSON.stringify({
+      projectId: "prj_linked", orgId: "team_linked", projectName: "problems",
+    }));
+    const resolved = problemsDeploymentEnvironment({
+      environment: { ...target, VERCEL_GLOBAL_CONFIG: "/operator/vercel-config" },
+      root,
+      execute: () => { throw new Error("must not ask Vercel when the environment is complete"); },
+    });
+    rmSync(root, { recursive: true, force: true });
+
+    expect(resolved.VERCEL_PROJECT_ID).toBe(target.VERCEL_PROJECT_ID);
+    expect(resolved.VERCEL_TEAM_ID).toBe(target.VERCEL_TEAM_ID);
+  });
+
+  test("stays loud in an unlinked checkout", () => {
+    const root = mkdtempSync(join(tmpdir(), "vela-unlinked-"));
+    const resolved = problemsDeploymentEnvironment({ environment: {}, root, execute: () => "" });
+    rmSync(root, { recursive: true, force: true });
+
+    expect(() => problemsDeploymentTargetFrom(resolved)).toThrow(/missing required deployment target/u);
   });
 });

@@ -213,9 +213,12 @@ cancellation probes rather than concluding from a keystroke that did nothing.
 - Do not attach `problems.science`, change
   DNS, merge, or tag a final release without user authorization.
 - Keep prior production deployments available for the rollback window.
-- Deploy through `bun run deploy:problems`. Without `VERCEL_TOKEN` it falls
-  back to the authenticated Vercel CLI and needs `VERCEL_GLOBAL_CONFIG` set to
-  the CLI config directory — a path, not a secret. Do not deploy with
+- Deploy through `bun run deploy:problems`, which needs nothing exported from a
+  checkout that `vercel link` has linked: it reads the target from
+  `.vercel/project.json`, asks the linked project for the Git repository id and
+  slug, and defaults `VERCEL_GLOBAL_CONFIG` to the platform CLI directory.
+  Without `VERCEL_TOKEN` it uses the authenticated Vercel CLI. The environment
+  overrides every value, which is how CI supplies them. Do not deploy with
   `vercel --prod`: the script pins the project and team, asserts the
   deployment is production, and binds `VELA_SITE_COMMIT` to an exact SHA,
   which is what the deployment manifest reports.

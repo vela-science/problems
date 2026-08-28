@@ -543,11 +543,20 @@ This repository deploys one Vercel project:
 | --- | --- | --- |
 | `problems` | `apps/problems` | `problems.science` canonical; `www.problems.science` redirects here |
 
-The deployment target is not written down here. `deploy:problems` reads
-`VERCEL_TEAM_ID`, `VERCEL_PROJECT_ID`, `VERCEL_PROJECT_NAME`,
-`VERCEL_GIT_REPO_ID` and `VELA_DEPLOY_REPOSITORY` from the environment, because
-this source is public and a fork running the script would otherwise aim a build
-at someone else's project.
+The deployment target is not written down here, because this source is public
+and a fork running the script must never aim a build at someone else's project.
+
+From a linked checkout there is nothing to export. `deploy:problems` resolves
+`VERCEL_TEAM_ID`, `VERCEL_PROJECT_ID` and `VERCEL_PROJECT_NAME` from
+`.vercel/project.json`, asks the linked project itself for `VERCEL_GIT_REPO_ID`
+and `VELA_DEPLOY_REPOSITORY`, and defaults `VERCEL_GLOBAL_CONFIG` to the
+platform's Vercel CLI directory. `.vercel/` is gitignored, so it is
+per-checkout, absent from the published source, and absent from a fork that has
+not linked its own project — an unlinked checkout with an empty environment
+still fails loudly, naming the first variable it could not resolve.
+
+All five remain environment variables and the environment always wins, so CI is
+unchanged: it exports them and never reads a link.
 
 `vela-web-problems` historically served `problems.science` from the private
 `vela-web` monorepo. That Vercel project and the parallel `vela-web-www`

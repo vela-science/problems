@@ -2,11 +2,12 @@ import { execFileSync } from "node:child_process";
 import {
   appendFileSync,
   mkdtempSync,
+  readFileSync,
   rmSync,
   writeFileSync,
 } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { homedir, platform, tmpdir } from "node:os";
+import { join, resolve } from "node:path";
 
 /* The deployment target is configuration, not source.
  *
@@ -25,6 +26,83 @@ function targetString(environment, name) {
     throw new Error(`missing required deployment target ${name}`);
   }
   return value;
+}
+
+/* Where the deployment target comes from when nobody exported it.
+ *
+ * The five values are configuration and not source, for a reason the comment
+ * above states: a public fork must never aim a build at this project. But
+ * "configuration" was read as "five environment variables the operator retypes
+ * every time", which is its own failure — an operator who cannot remember them
+ * reaches for `vercel --prod`, and that is the one path with none of the
+ * assertions this script exists to make.
+ *
+ * Vercel already solved this. `vercel link` writes `.vercel/project.json`, which
+ * is gitignored, so it is per-checkout, absent from the published source, and
+ * absent from a fork that has not linked its own project. Reading it preserves
+ * the property exactly — an unlinked checkout with no environment still fails
+ * loudly — while removing the retyping.
+ *
+ * The remaining two values belong to the linked project itself, so they are
+ * asked of it rather than stored a second time. One source of truth.
+ *
+ * The environment always wins, so CI is unchanged: it exports all five and
+ * never reads a link. */
+function linkedProject(root) {
+  try {
+    const link = JSON.parse(readFileSync(join(root, ".vercel", "project.json"), "utf8"));
+    return typeof link?.projectId === "string" && typeof link?.orgId === "string" ? link : null;
+  } catch {
+    return null;
+  }
+}
+
+function defaultGlobalConfig() {
+  return platform() === "darwin"
+    ? join(homedir(), "Library", "Application Support", "com.vercel.cli")
+    : join(homedir(), ".config", "vercel");
+}
+
+export function problemsDeploymentEnvironment({
+  environment = process.env,
+  root = resolve(import.meta.dirname, ".."),
+  execute = execFileSync,
+} = {}) {
+  const resolved = { ...environment };
+  const link = linkedProject(root);
+  if (!link) return resolved;
+
+  resolved.VERCEL_PROJECT_ID ||= link.projectId;
+  resolved.VERCEL_TEAM_ID ||= link.orgId;
+  resolved.VERCEL_PROJECT_NAME ||= link.projectName ?? "";
+  resolved.VERCEL_GLOBAL_CONFIG ||= defaultGlobalConfig();
+
+  if (resolved.VERCEL_GIT_REPO_ID && resolved.VELA_DEPLOY_REPOSITORY) return resolved;
+
+  /* Only when something is still missing: the deploy should not depend on a
+     second network round trip it does not need. */
+  try {
+    const stdout = execute("vercel", [
+      "api",
+      `/v9/projects/${encodeURIComponent(link.projectId)}?teamId=${encodeURIComponent(link.orgId)}`,
+      "--scope",
+      link.orgId,
+      "--global-config",
+      resolved.VERCEL_GLOBAL_CONFIG,
+    ], { encoding: "utf8", env: resolved, maxBuffer: 8 * 1024 * 1024, stdio: ["ignore", "pipe", "inherit"] });
+    const project = JSON.parse(stdout);
+    const gitLink = project?.link ?? {};
+    if (typeof gitLink.repoId === "number" && Number.isSafeInteger(gitLink.repoId)) {
+      resolved.VERCEL_GIT_REPO_ID ||= String(gitLink.repoId);
+    }
+    if (typeof gitLink.org === "string" && typeof gitLink.repo === "string") {
+      resolved.VELA_DEPLOY_REPOSITORY ||= `${gitLink.org}/${gitLink.repo}`;
+    }
+  } catch {
+    /* Leave the gap. `problemsDeploymentTargetFrom` names the missing variable,
+       which is a better error than anything this could invent. */
+  }
+  return resolved;
 }
 
 export function problemsDeploymentTargetFrom(environment = process.env) {
@@ -210,6 +288,7 @@ export function deployVercelProblemsViaCli({
     throw new Error("exact Problems deployment is restricted to refs/heads/main");
   }
 
+  const target = problemsDeploymentTargetFrom(environment);
   const request = vercelProblemsDeploymentRequest(environment.VELA_SITE_COMMIT, environment);
   const url = new URL(request.url);
   const directory = mkdtempSync(join(tmpdir(), "vela-vercel-request-"));
@@ -225,7 +304,7 @@ export function deployVercelProblemsViaCli({
       input,
       "--raw",
       "--scope",
-      "constellate-dc388081",
+      target.teamId,
       "--global-config",
       globalConfig,
     ], {
@@ -241,9 +320,10 @@ export function deployVercelProblemsViaCli({
 }
 
 if (import.meta.main) {
-  const deployment = process.env.VERCEL_TOKEN
-    ? await deployVercelProblems()
-    : deployVercelProblemsViaCli();
+  const environment = problemsDeploymentEnvironment();
+  const deployment = environment.VERCEL_TOKEN
+    ? await deployVercelProblems({ environment })
+    : deployVercelProblemsViaCli({ environment });
   console.log(JSON.stringify({
     schema: "vela.vercel-problems-deployment.v1",
     deployment_id: deployment.deploymentId,
