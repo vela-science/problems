@@ -50,11 +50,8 @@ function resolve(namespace: string, problem: string) {
 }
 
 function referenceView(query: ProblemPageQuery): ProblemReferenceView {
-  if (["work", "workspace"].includes(query.view ?? "")) return "work";
-  if (["results", "contributions", "evidence", "map"].includes(query.view ?? "")) return "results";
-  if (["sources", "files"].includes(query.view ?? "")) return "sources";
-  if (["history", "timeline", "record"].includes(query.view ?? "")) return "history";
-  return "overview";
+  const view = query.view ?? "";
+  return view === "work" || view === "results" || view === "sources" || view === "history" ? view : "overview";
 }
 
 export async function generateMetadata({ params }: PageProps<"/problems/[namespace]/[problem]/[[...view]]">): Promise<Metadata> {
@@ -83,9 +80,7 @@ export async function generateMetadata({ params }: PageProps<"/problems/[namespa
 export default async function ProblemPage({ params, searchParams }: PageProps<"/problems/[namespace]/[problem]/[[...view]]"> & { searchParams: Promise<ProblemPageQuery> }) {
   const [{ namespace, problem, view }, query] = await Promise.all([params, searchParams]);
   /* A section is a path segment, the way Entire addresses one, so the rail can
-     mark the open section from the path alone. `?view=` still resolves: it is
-     how the rest of the product links here today, and how every address
-     already published reaches a section. */
+     mark the open section from the path alone. */
   const requested: ProblemPageQuery = view?.[0] ? { ...query, view: view[0] } : query;
   const resolved = resolve(namespace, problem);
   if (!resolved) notFound();

@@ -97,8 +97,8 @@ when their authors wrote them. Do not rewrite them to match the current system.
   substantive question-first reference screen, not a navigation summary. Work owns mutable coordination; Results owns
   durable outputs; Sources owns files, declarations, and excerpts; History
   owns semantic chronology. The exact map is a contextual action, not a sixth
-  section. Preserve old `?view=` query values for shared-link compatibility but
-  emit only path segments from internal navigation.
+  section. A section has one name and one address: the retired `?view=`,
+  `?mode=` and `?research=` spellings no longer resolve.
 - Treat redundancy as a product defect. A fact shown in a state rail, node,
   badge, row, edge, or control is not restated beside it unless the second
   presentation changes interpretation or is the accessible fallback.

@@ -60,9 +60,7 @@ The front page and its retained-painting custody live outside this repository.
 Problems keeps its own reviewed copy of the one plate it reuses. Neither
 surface generates replacement art or redraws the sail.
 
-The editorial origin is live. Problems links to `https://vela.space`; its
-`/about/endless-frontiers` address is retained only as a permanent cross-origin
-redirect to that root, and is not published in the Problems sitemap.
+The editorial origin is live. Problems links to `https://vela.space`.
 
 ## People and jobs
 

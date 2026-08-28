@@ -208,14 +208,12 @@ describe("the zero state", () => {
   });
 });
 
-describe("the retired selection query", () => {
-  test("?proposal= permanently redirects to the record route", async () => {
-    await expect(render("erdos", { proposal: "vpr_w1" })).rejects.toThrow("REDIRECT /repositories/erdos/proposals/vpr_w1");
-  });
-
-  /* `?standing=` filtered this ledger while the page called a Proposal status a
-     standing. It is Claim standing on /claims, so it does not resolve here. */
-  test("?standing= permanently redirects to the ?status= form", async () => {
-    await expect(render("erdos", { standing: "rejected" })).rejects.toThrow("REDIRECT /repositories/erdos/proposals?status=rejected");
+/* `?proposal=` selected a Sheet and `?standing=` filtered the ledger, both
+   before a Proposal had its own route and before `?status=` named this axis.
+   Neither redirects any more; an unread key renders the ledger. */
+describe("the retired selection queries", () => {
+  test("no longer redirect", async () => {
+    await expect(render("erdos", { proposal: "vpr_w1" })).resolves.toBeDefined();
+    await expect(render("erdos", { standing: "rejected" })).resolves.toBeDefined();
   });
 });

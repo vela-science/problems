@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { authConfiguration } from "@/lib/auth";
 
-/* `/my-work` is the retired name for `/workspaces`. It stays allowed because a
-   sign-in link minted before the rename still carries it; the return lands on
-   the permanent redirect rather than being dropped to the default. */
-const allowedReturns = new Set(["/account", "/account/connections", "/account/profile", "/import", "/my-work", "/workspaces"]);
+const allowedReturns = new Set(["/account", "/account/connections", "/account/profile", "/import", "/workspaces"]);
 
 /* A Problem or repository address may also round-trip, so signing in from a
  * Workspace returns to that Workspace instead of stranding the reader on
@@ -35,11 +32,9 @@ export function safeReturnTo(requested: string | null): string {
     return "/account";
   }
   if (url.origin !== "https://relative.invalid" || !PROBLEM_RETURN_PATH.test(url.pathname)) return "/account";
+  /* A section is a path segment, which `PROBLEM_RETURN_PATH` already admits,
+     so `workspace` is the only query this needs to carry. */
   const params = new URLSearchParams();
-  const view = url.searchParams.get("view");
-  /* Current section names plus the retired ones, which the Problem page
-     still resolves to their successors. */
-  if (view && ["evidence", "work", "history", "sources", "record", "workspace"].includes(view)) params.set("view", view);
   const workspace = url.searchParams.get("workspace");
   if (workspace && /^[A-Za-z0-9_-]{1,64}$/u.test(workspace)) params.set("workspace", workspace);
   const query = params.toString();

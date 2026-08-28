@@ -126,7 +126,10 @@ for (const file of [
   join(problems, "src/app/page.tsx"),
   join(problems, "src/app/problems/page.tsx"),
   join(problems, "src/app/contribute/page.tsx"),
-  join(problems, "src/app/activity/page.tsx"),
+  /* Was `activity/page.tsx`, which held two lines of `permanentRedirect` and
+     no markup, so this check could never fire on it. `/activity` is retired;
+     the separator budget belongs on the surface it addressed. */
+  join(problems, "src/app/updates/page.tsx"),
   join(problems, "src/components/vela/problem-state.tsx"),
 ]) {
   const source = readFileSync(file, "utf8");

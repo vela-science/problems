@@ -18,8 +18,6 @@ export function publicProblemPath(repository: string, problem: string): string |
 export function publicProblemWorkspacePath(repository: string, problem: string, workspaceId?: string): string | null {
   const path = publicProblemPath(repository, problem);
   if (!path) return null;
-  /* Work is a path segment; `?view=work` still resolves for shared links but
-     is not what internal navigation emits (AGENTS.md). */
   const query = new URLSearchParams();
   if (workspaceId) query.set("workspace", workspaceId);
   return query.size ? `${path}/work?${query.toString()}` : `${path}/work`;

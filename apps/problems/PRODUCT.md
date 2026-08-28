@@ -16,22 +16,19 @@ product: problems.science application
 | `/problems/erdos-problems/{number}` | Question and current state | Read Overview |
 | `/problems/formal-conjectures` | Rights-reviewed formalization subset | Open a formalization |
 | `/problems/formal-conjectures/{occurrence}` | Exact declaration occurrence | Read Overview or Sources |
-| `?view=work` | Canvas, files, and research objects | Continue work |
-| `?view=results` | Durable outputs and checks | Open a Result |
-| `?view=sources` | File browser and exact preview | Select a source |
-| `?view=history` | Chronology and correction diffs | Open an event |
+| `/work` | Canvas, files, and research objects | Continue work |
+| `/results` | Durable outputs and checks | Open a Result |
+| `/sources` | File browser and exact preview | Select a source |
+| `/history` | Chronology and correction diffs | Open an event |
 | `/graph` | Exact relationship canvas | Choose a Problem or Result |
 | `/updates` | Meaningful published changes | Open affected context |
-| `/activity` | Permanent compatibility redirect | Continue to Updates |
 | `/search` | Cross-product results | Open the named object |
 | `/contribute` | Problem chooser and code handoff | Search or open Work |
 | `/import` | Exact GitHub revision | Inspect or connect code |
 | `/workspaces` | Private work continuity | Open saved work |
-| `/my-work` | Retired name for `/workspaces` | Permanent redirect |
 | `/account` | Identity, connections, and session | Manage or continue |
 | `/people/{handle-or-id}` | Public contributor attribution | Open exact activity context |
 | `/about` | Current product explanation and vision | Understand the boundary or open the essay |
-| `/about/endless-frontiers` | Permanent compatibility redirect | Continue to the canonical essay at vela.space |
 
 About is the living bridge between product and editorial registers. The full
 vision essay lives at `https://vela.space/constellations`. Privacy, Terms,

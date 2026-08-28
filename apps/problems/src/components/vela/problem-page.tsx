@@ -19,7 +19,7 @@ import { authConfiguration, currentAccount } from "@/lib/auth";
 import { problemFrontierMovement } from "@/lib/frontier-timeline";
 import { scientificProblemState } from "@/lib/scientific-state";
 
-export type ProblemPageQuery = { view?: string; research?: string; file?: string; symbol?: string; mode?: string; workspace?: string; object?: string; inspector?: string; workError?: string };
+export type ProblemPageQuery = { view?: string; file?: string; symbol?: string; workspace?: string; object?: string; inspector?: string; workError?: string };
 export type ExpectedProblemSource = {
   sourceId: string;
   nativeId: string;
@@ -27,12 +27,15 @@ export type ExpectedProblemSource = {
   contentRoot: string;
 };
 
+/* The five sections, by their one name each.
+ *
+ * This used to accept eleven more spellings — `workspace`, `evidence`, `map`,
+ * `contributions`, `files`, `timeline`, `record`, plus `?mode=` and
+ * `?research=` — so that addresses published before the sections became path
+ * segments kept resolving. Those aliases are retired: one section, one name. */
 function resolveReferenceView(query: ProblemPageQuery): ProblemReferenceView {
-  if (["workspace", "work"].includes(query.view ?? "") || query.mode === "work") return "work";
-  if (["results", "contributions", "evidence", "map"].includes(query.view ?? "") || ["map", "contributions"].includes(query.research ?? "")) return "results";
-  if (["sources", "files"].includes(query.view ?? "") || query.research === "files") return "sources";
-  if (["history", "timeline", "record"].includes(query.view ?? "") || query.research === "timeline") return "history";
-  return "overview";
+  const view = query.view ?? "";
+  return view === "work" || view === "results" || view === "sources" || view === "history" ? view : "overview";
 }
 
 export async function ProblemPageView({ repository, problem, collectionName, route, query, expectedSource }: {

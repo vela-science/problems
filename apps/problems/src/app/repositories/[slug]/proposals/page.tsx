@@ -2,7 +2,7 @@ import { PageShell } from "@vela/ui/vela/page-shell";
 
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound, permanentRedirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import {
   allRepositories,
   repositoryBySlug,
@@ -44,19 +44,7 @@ export async function generateMetadata({ params }: PageProps<"/repositories/[slu
    Proposal look like the accepted successor. */
 export default async function ProposalsPage({ params, searchParams }: PageProps<"/repositories/[slug]/proposals">) {
   const { slug } = await params;
-  const { proposal, standing, status: requestedStatus } = await searchParams;
-  /* `?proposal=` selected a Sheet. A record a reader can send to a colleague is
-     a URL, so the old query keeps resolving by becoming one. */
-  if (typeof proposal === "string" && proposal) {
-    permanentRedirect(`/repositories/${slug}/proposals/${encodeURIComponent(proposal)}`);
-  }
-  /* This filter was `?standing=` while the page called a Proposal status a
-     standing. `?standing=` is Claim standing on /claims, so one key named two
-     axes; it redirects rather than resolving in place, because a fallback would
-     leave both keys live on the surface whose collision this closes. */
-  if (typeof standing === "string" && standing && typeof requestedStatus !== "string") {
-    permanentRedirect(`/repositories/${slug}/proposals?status=${encodeURIComponent(standing)}`);
-  }
+  const { status: requestedStatus } = await searchParams;
   const repository = await repositoryBySlug(slug);
   if (!repository) notFound();
   const reviews = [...repository.reviews].sort((left, right) =>

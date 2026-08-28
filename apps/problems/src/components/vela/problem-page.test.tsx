@@ -142,36 +142,21 @@ describe("Problem view addressing", () => {
     expect(screen.getByText(`Public tool: ${surface}`)).toBeInTheDocument();
   });
 
-  it("folds the retired Map address into Results", async () => {
-    render(await page({ view: "map" }));
-    expect(screen.getByText("Public tool: contributions")).toBeInTheDocument();
-  });
-
-  it("maps the retired Work address to Workspace", async () => {
+  it("opens Work from the section's one name", async () => {
     render(await page({ view: "work" }));
     expect(screen.getByText("Workspace surface")).toBeInTheDocument();
   });
 
-  /* Published links keep meaning what they meant: every retired address
-     resolves to the section that absorbed it rather than 404ing or falling
-     silently to the default. */
-  it.each([
-    ["evidence", "Public tool: contributions"],
-    ["contributions", "Public tool: contributions"],
-    ["files", "Public tool: files"],
-    ["sources", "Public tool: files"],
-    ["history", "Public tool: timeline"],
-    ["record", "Public tool: timeline"],
-    ["workspace", "Workspace surface"],
-  ] as const)("resolves the retired view=%s address", async (view, expected) => {
-    render(await page({ view }));
-    expect(screen.getByText(expected)).toBeInTheDocument();
-  });
-
-  it("resolves the legacy mode=work address to the Work view", async () => {
-    render(await page({ mode: "work" }));
-    expect(screen.getByText("Workspace surface")).toBeInTheDocument();
-  });
+  /* The retired spellings are gone, and gone means Overview — the same place
+     any other unrecognised value lands. A section that answered to seven names
+     could never be pointed at from one. */
+  it.each(["map", "evidence", "contributions", "files", "record", "timeline", "workspace"] as const)(
+    "no longer answers to the retired view=%s address",
+    async (view) => {
+      render(await page({ view }));
+      expect(screen.getByText("Overview surface")).toBeInTheDocument();
+    },
+  );
 
   it("resolves an unknown view to Overview rather than an empty page", async () => {
     render(await page({ view: "poem" }));
@@ -183,7 +168,7 @@ describe("Problem view addressing", () => {
      repaint the page's ground or move the hero. */
   it("keeps one archetype across public and Workspace views", async () => {
     const { container: statePage } = render(await page({}));
-    const { container: workPage } = render(await page({ view: "workspace" }));
+    const { container: workPage } = render(await page({ view: "work" }));
     expect(statePage.querySelector("article")).toHaveAttribute("data-archetype", "problem");
     expect(workPage.querySelector("article")).toHaveAttribute("data-archetype", "problem");
     expect(workPage.querySelector("article")).toHaveAttribute("data-layout", "canvas");
