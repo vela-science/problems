@@ -228,8 +228,14 @@ over the wire, and the size was never the problem.
 
 **Prove SQL against Neon, not a throwaway local cluster.**
 `bun run --filter @vela/activity-data db:live-proof` drives the real
-`vela_activity` database with two accounts and cleans up after itself; it is
-where a new read function's tenancy and semantics belong. The connection string
+`vela_activity` database with two accounts and sweeps its own tenant away on
+the way in as well as on the way out; it is where a new read function's tenancy
+and semantics belong. The sweep matches the shape every generated row carries
+(`liveproof-%@example.invalid`, a `live-proof-` workspace slug, a `live-`
+handle) rather than a list of ids gathered during the run, because the id list
+could not run at all when an assertion threw before reaching it: two runs on
+2026-08-19 stranded six accounts, four workspaces and four profiles in the real
+database until they were removed by hand. The connection string
 comes from the authenticated Neon CLI rather than a checked-out credential:
 
 ```bash
