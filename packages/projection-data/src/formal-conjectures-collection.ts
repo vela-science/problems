@@ -174,11 +174,19 @@ export const formalConjecturesCollectionRoot = formalConjecturesCollection.roots
 
 export function compositeSearchRoot(projectionRoot: HashRoot): HashRoot {
   return sha256(canonicalJson({
-    /* v3 includes the projection-owned Problem catalogue and its two explicit
+    /* v3 included the projection-owned Problem catalogue and its two explicit
        source-status/Result-standing fields in the public search body. The salt
        is part of the immutable response identity: changing bytes selected from
-       an unchanged projection must not reuse a year-long cache key. */
-    schema: "site.composite-search-identity.v3",
+       an unchanged projection must not reuse a year-long cache key.
+     *
+       v4 titles a Problem with its written question and carries the formal
+       statement in its own field. That is a changed body from an unchanged
+       projection, which is precisely the case this salt exists for — and it was
+       missed on the first deploy: the API served the new shape while every
+       browser that had searched before kept the old one, `immutable` for a
+       year, because the key had not moved. `search-identity.test.ts` now fails
+       if the record's fields change without this version changing with them. */
+    schema: "site.composite-search-identity.v4",
     projection_root: projectionRoot,
     projection_collections: ["erdos-problems"],
     supplemental_collections: [{
