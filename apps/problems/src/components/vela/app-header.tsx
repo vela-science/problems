@@ -48,6 +48,9 @@ const globalTitles: Record<string, string> = {
   "/graph": "Research map",
   "/account": "Account",
   "/workspaces": "Workspaces",
+  /* Without an entry the header falls back to the brand, so /watching titled
+     itself "Vela" while every sibling named its own destination. */
+  "/watching": "Watching",
   "/privacy": "Privacy",
   "/terms": "Terms",
   "/accessibility": "Accessibility",

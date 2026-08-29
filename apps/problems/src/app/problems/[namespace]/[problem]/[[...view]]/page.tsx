@@ -100,11 +100,26 @@ export async function generateMetadata({ params }: PageProps<"/problems/[namespa
   };
 }
 
+/* The five sections, lowercase, exactly as `resolveReferenceView` reads them.
+   Kept beside the route because this is the file that owns the address. */
+const SECTIONS = new Set(["work", "results", "sources", "history"]);
+
 export default async function ProblemPage({ params, searchParams }: PageProps<"/problems/[namespace]/[problem]/[[...view]]"> & { searchParams: Promise<ProblemPageQuery> }) {
   const [{ namespace, problem, view }, query] = await Promise.all([params, searchParams]);
   /* A section is a path segment, the way Entire addresses one, so the rail can
      mark the open section from the path alone. */
-  const requested: ProblemPageQuery = view?.[0] ? { ...query, view: view[0] } : query;
+  /* One section, one address — a segment this route does not know is a 404.
+   *
+   * Every unknown segment resolved: `/problems/erdos-problems/94/anything`
+   * answered 200, rendered Overview, and title-cased the segment into the
+   * breadcrumb — so the page announced "Bogus" as the current page in the
+   * breadcrumb while the section row announced "Overview", two `aria-current`
+   * marks disagreeing about where the reader was, on an indexable URL. Wrong
+   * case did the same: `/WORK` rendered Overview rather than reaching Work. */
+  if (view && view.length > 1) notFound();
+  const segment = view?.[0];
+  if (segment && !SECTIONS.has(segment)) notFound();
+  const requested: ProblemPageQuery = segment ? { ...query, view: segment } : query;
   const resolved = resolve(namespace, problem);
   if (!resolved) notFound();
   if (resolved.kind === "formal-conjecture") return <FormalConjecturePage item={resolved.occurrence} route={resolved.route} current={referenceView(requested)} />;

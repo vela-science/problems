@@ -77,6 +77,15 @@ export default async function DecisionsPage({ searchParams }: PageProps<"/decisi
   const asked = (key: string) => (typeof query[key] === "string" ? (query[key] as string) : "");
   const status = statuses.some(([value]) => value === asked("status")) ? asked("status") : "";
   const repositorySlug = repositoryFacets.some(([value]) => value === asked("repository")) ? asked("repository") : "";
+  /* A filter this release cannot honour is dropped, and said.
+   *
+   * `?status=zzz` answered 200 and listed everything, with the chips showing
+   * unfiltered — so a link shared after a status was renamed, or a value that
+   * simply has no rows in this release, looked identical to no filter at all.
+   * Failing open is the right behaviour; failing open silently is not. */
+  const dropped = (["status", "repository"] as const)
+    .filter((key) => asked(key) && asked(key) !== (key === "status" ? status : repositorySlug))
+    .map((key) => `${key}=${asked(key)}`);
   const visible = decisions.filter((entry) =>
     (!status || entry.status === status) && (!repositorySlug || entry.repository === repositorySlug));
   const chipHref = (next: Record<string, string | null>) => {
@@ -101,6 +110,11 @@ export default async function DecisionsPage({ searchParams }: PageProps<"/decisi
             : `${decisions.length.toLocaleString()} recorded`}
           {" · "}{accepted.toLocaleString()} accepted
         </span>
+        {dropped.length ? (
+          <span className="text-meta text-muted-foreground">
+            Ignored <span className="font-mono text-micro">{dropped.join(" ")}</span>: not a value in this release.
+          </span>
+        ) : null}
         <FilterChips
           label="Filter decisions"
           chips={[
