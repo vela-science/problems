@@ -215,6 +215,17 @@ asserts that a fragment grants execute on what it creates and revokes from
 PUBLIC — `base.sql`'s schema-wide grant runs first and cannot reach a function a
 later fragment has not created yet.
 
+**A projection read that aggregates the corpus belongs behind
+`unstable_cache`, keyed at the release root.** `problemsForRepository` builds a
+`problem_sources` aggregate over all 19,827 retained native records to resolve
+each row's statement and status: 4.6s of database time, run on every request,
+for a page showing eighty rows. Measured TTFB on `/repositories/math/problems`
+was 4.9s against 0.45s for the collection directory beside it, which renders
+more rows through a cache. A release is immutable, so the root is the whole key
+alongside the query — `repositoryProblems` in `lib/scientific-state.ts` is the
+shape to copy. Measure TTFB, not payload size: the same page's "467 KB" is 37 KB
+over the wire, and the size was never the problem.
+
 **Prove SQL against Neon, not a throwaway local cluster.**
 `bun run --filter @vela/activity-data db:live-proof` drives the real
 `vela_activity` database with two accounts and cleans up after itself; it is

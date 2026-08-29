@@ -33,7 +33,11 @@ let ledger: unknown = null;
 
 vi.mock("@vela/projection-data", () => ({
   repositoryBySlug: async () => repository,
-  problemsForRepository: async () => ledger,
+}));
+/* Server-only. The ledger read moved behind a release-root cache — the query
+   aggregates the whole retained corpus and took 4.6s on every request. */
+vi.mock("@/lib/scientific-state", () => ({
+  repositoryProblems: async () => ledger,
 }));
 
 const { default: ProblemsPage } = await import("./page");

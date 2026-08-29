@@ -148,7 +148,7 @@ export default async function CommitsPage({
                   <div className="flex min-w-0 items-baseline justify-between gap-3">
                     <p className="min-w-0 break-words text-body font-medium">
                       {href ? (
-                        <a href={href} className="hover:underline">{commit.subject}</a>
+                        <a data-slot="text-action" href={href} className="hover:underline">{commit.subject}</a>
                       ) : commit.subject}
                     </p>
                     <RelativeTime value={commit.committed_at} className="shrink-0 text-micro text-muted-foreground" />

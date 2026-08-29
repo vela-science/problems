@@ -5,7 +5,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { GitForkIcon, Search01Icon as Search } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { repositoryBySlug, problemsForRepository } from "@vela/projection-data";
+import { repositoryBySlug } from "@vela/projection-data";
+import { repositoryProblems } from "@/lib/scientific-state";
 import { Button } from "@vela/ui/components/button";
 import {
   Empty,
@@ -60,7 +61,7 @@ export default async function ProblemsPage({
   const sort = (["number", "sources"] as const).find((value) => value === text("sort")) ?? "number";
   const filter = { q, status, formalization, tag, source, sort } as const;
   const initialPage = pageFromSearchParams(query);
-  let result = await problemsForRepository(slug, {
+  let result = await repositoryProblems(slug, {
     ...filter,
     limit: pageSize,
     offset: (initialPage - 1) * pageSize,
@@ -74,7 +75,7 @@ export default async function ProblemsPage({
   const pages = Math.max(1, Math.ceil(result.total / pageSize));
   const page = Math.min(initialPage, pages);
   if (page !== initialPage)
-    result = await problemsForRepository(slug, {
+    result = await repositoryProblems(slug, {
       ...filter,
       limit: pageSize,
       offset: (page - 1) * pageSize,

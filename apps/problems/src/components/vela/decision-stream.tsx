@@ -150,6 +150,7 @@ export function DecisionStream({ entries }: { entries: DecisionEntry[] }) {
                     <div className="mt-2 flex min-w-0 items-baseline gap-2 border-t pt-2">
                       <span className="shrink-0 text-micro text-muted-foreground">Decided on</span>
                       <Link
+                        data-slot="text-action"
                         className="min-w-0 truncate text-compact underline-offset-2 hover:underline"
                         title={assertion}
                         href={`/repositories/${entry.repository}/proposals/${encodeURIComponent(entry.proposalId)}`}

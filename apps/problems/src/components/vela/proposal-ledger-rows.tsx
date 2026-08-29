@@ -49,6 +49,7 @@ export function ProposalLedgerRows({ entries }: { entries: ProposalEntry[] }) {
             <p className="min-w-0 break-words text-body">
               <Link
                 href={`/repositories/${entry.repository}/proposals/${encodeURIComponent(entry.proposalId)}`}
+                data-slot="text-action"
                 className="hover:underline"
               >
                 <ScientificText text={entry.claim || entry.proposalId} />

@@ -3,6 +3,7 @@ import "server-only";
 import { unstable_cache } from "next/cache";
 
 import {
+  problemsForRepository,
   allRepositories,
   classifyProblemDiscovery,
   commitsForRepository,
@@ -584,4 +585,35 @@ export async function problemNeighbourhood(
     total,
     href: topics[0] ? topics[0].href : collectionPath,
   };
+}
+
+
+/* The Repository Problem ledger, cached at its release root.
+ *
+ * `problemsForRepository` builds a `problem_sources` aggregate over the whole
+ * retained corpus — 19,827 native records across twelve sources — to resolve
+ * each row's statement, status and source list. That is 4.6 seconds of database
+ * time, and the page ran it on every request: measured TTFB on
+ * `/repositories/math/problems` was 4.9s against 0.45s for the collection
+ * directory beside it, which renders more rows and reads through a cache.
+ *
+ * A projection release is immutable, so the root is the whole cache key
+ * alongside the query. This is the same shape `discoveredProblems` already
+ * uses; the ledger simply never got it. */
+const cachedRepositoryProblemsAtRoot = unstable_cache(
+  async (root: string, slug: string, query: string) => (
+    problemsForRepository(slug, { ...(JSON.parse(query) as ProblemLedgerQuery), root })
+  ),
+  ["problems-repository-problem-ledger-v1"],
+  { revalidate: 3_600 },
+);
+
+/** The filter a Repository Problem ledger page asks for, minus the root. */
+export type ProblemLedgerQuery = Omit<Parameters<typeof problemsForRepository>[1], "root">;
+
+export async function repositoryProblems(slug: string, query: ProblemLedgerQuery = {}) {
+  const root = (await projectionManifest()).release_root;
+  /* Serialized, so two calls with the same filter share one entry: the cache
+     keys on the argument list, and an object literal would not compare equal. */
+  return cachedRepositoryProblemsAtRoot(root, slug, JSON.stringify(query));
 }

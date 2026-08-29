@@ -378,6 +378,17 @@ Exact roots do not sit in prose. A 64-character root wrapping mid-sentence is
 unreadable as text and unusable as a value; it belongs in a disclosure with a
 copy control, which is where every other exact identity in this product lives.
 
+### The touch floor needs a box
+
+`min-height` does not apply to a non-replaced inline box, so tagging an inline
+`<a>` with the `text-action` slot left it at 18px and looked like it had worked.
+The slot sets `display: inline-block` — not `inline-flex`, which would stop a
+long commit subject wrapping as ordinary text.
+
+A link inside a sentence keeps its own line box and stays exempt, which WCAG
+2.5.8 allows: "accepted **in** Vela Mathematics Program" is one sentence, and
+promoting the repository name inside it would break the line.
+
 ### Say it once
 
 Product surfaces state facts. They do not explain themselves.

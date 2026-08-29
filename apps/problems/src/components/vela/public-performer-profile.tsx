@@ -55,7 +55,7 @@ function ActivityRows({ activity }: { activity: PublicPerformerActivity[] }) {
         </div>
         <div className="p-4">
           <Link href={entry.problemHref} className="inline-flex min-h-8 items-center text-meta font-medium text-primary hover:underline">{entry.collectionLabel}</Link>
-          <h3 className="mt-1 text-subtitle font-medium"><Link href={entry.problemHref} className="hover:underline"><AssertionText text={entry.problemLabel} /></Link></h3>
+          <h3 className="mt-1 text-subtitle font-medium"><Link data-slot="text-action" href={entry.problemHref} className="hover:underline"><AssertionText text={entry.problemLabel} /></Link></h3>
           <p className="mt-2 text-body text-muted-foreground"><AssertionText text={objectLabel} /></p>
           <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
             <Link href={entry.objectHref} className="inline-flex min-h-8 items-center gap-1 text-meta font-medium text-primary hover:underline">Open exact context <HugeiconsIcon icon={ArrowRight01Icon} aria-hidden className="size-3.5" /></Link>

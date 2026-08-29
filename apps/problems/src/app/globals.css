@@ -190,7 +190,15 @@
      the slot is the same fix the rest of this block uses, and it keeps the
      exemption that matters: WCAG 2.5.8 exempts a link inside a sentence, and
      `Inspect coverage` mid-paragraph must stay on its own line box. */
-  [data-slot="text-action"] { min-width: 2rem; min-height: 2rem; }
+  /* `inline-block`, because `min-height` does not apply to a non-replaced
+     inline box — the slot alone left a commit-message link at 18px and looked
+     like it had worked. `inline-block` honours the floor and, unlike
+     `inline-flex`, leaves a long subject wrapping as ordinary text. */
+  [data-slot="text-action"] {
+    display: inline-block;
+    min-width: 2rem;
+    min-height: 2rem;
+  }
   [data-slot="input"], [data-slot="textarea"], [data-slot="command-input"] { min-height: 2.5rem; }
   .min-h-6, .min-h-7, .min-h-8, .min-h-9 { min-height: 2rem; }
 }
