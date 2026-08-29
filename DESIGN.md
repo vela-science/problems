@@ -362,6 +362,22 @@ sat in the left 45% of a 1920px window; nine ledger routes were declared
 canvases and stretched without limit. A route that looks unfinished on a wide
 display is usually one of these two, not a spacing problem.
 
+### A record row leads with what is this record&rsquo;s
+
+Six Decisions printed one assertion six times: two consecutive rows were
+byte-identical for 130 words because both decided the same Claim, and the row
+opened with that Claim. The ruling &mdash; the written reason, the performer, the
+date &mdash; sat underneath in smaller type.
+
+A row leads with the field that differs between two of them. Where a Decision
+retains a reason, that is the reason; the assertion keeps one truncated line
+under a rule, because it is the record and the full text is one link away. The
+same test applies to any list of records that share a subject.
+
+Exact roots do not sit in prose. A 64-character root wrapping mid-sentence is
+unreadable as text and unusable as a value; it belongs in a disclosure with a
+copy control, which is where every other exact identity in this product lives.
+
 ### Say it once
 
 Product surfaces state facts. They do not explain themselves.

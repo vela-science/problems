@@ -91,6 +91,22 @@ export function SourceRegistryView({
       observation?.native_revision.value,
     ].some((value) => value?.toLocaleLowerCase("en-US").includes(normalizedQuery));
   });
+
+  /* Ordered by what each source actually holds.
+   *
+   * The list was in registry order, so `alphaproof-nexus-results` led it with
+   * zero projected rows and zero Repository bindings — the first thing the
+   * inventory said was a source holding nothing, with an Inspect control onto
+   * an empty record. Three of the fifteen declarations are in that state.
+   *
+   * A registered source projecting nothing is a real fact and stays in the
+   * list; it just sorts last, where it reads as the exception rather than as
+   * the headline. Ties keep the publisher's own name. */
+  const orderedSources = [...visibleSources].sort((left, right) => (
+    (right.native_record_count - left.native_record_count)
+    || (right.repository_binding_count - left.repository_binding_count)
+    || left.declaration.publisher_or_maintainer.localeCompare(right.declaration.publisher_or_maintainer)
+  ));
   const sourceKinds = [...new Set(
     registry.sources.map(({ declaration }) => declaration.source_kind),
   )].sort();
@@ -220,7 +236,7 @@ export function SourceRegistryView({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {visibleSources.map((source) => (
+              {orderedSources.map((source) => (
                 <SourceTableRow
                   key={source.declaration.source_id}
                   source={source}
@@ -231,7 +247,7 @@ export function SourceRegistryView({
         </div>
 
         <ItemGroup className={visibleSources.length > 0 ? "grid gap-2 lg:hidden" : "hidden"}>
-          {visibleSources.map((source) => (
+          {orderedSources.map((source) => (
             <SourceMobileItem
               key={source.declaration.source_id}
               source={source}

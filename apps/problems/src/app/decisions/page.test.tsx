@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, test, vi } from "vitest";
 
@@ -137,5 +139,38 @@ describe("the Decision stream's controls", () => {
   test("ignores a status no Decision carries", async () => {
     const markup = await html({ status: "not-a-status" });
     expect(markup).toContain("vpr_accepted");
+  });
+
+  /* Six Decisions on this page printed one assertion six times.
+   *
+   * Two consecutive rows were byte-identical for 130 words, because both
+   * decided the same Claim and the row opened with that Claim's assertion — so
+   * a reader comparing two rulings was comparing the part they already knew,
+   * while the reason, the performer and the date sat under it in smaller type.
+   *
+   * The reason is written on the Decision by whoever made it, so promoting it
+   * invents nothing. The assertion keeps a line, truncated, because it is the
+   * record; the full text lives on the Proposal the line links to. */
+  test("leads with the ruling and keeps the assertion on its own line", async () => {
+    const markup = await html();
+    const reason = markup.indexOf("Accept the exact bounded negative result.");
+    const assertion = markup.indexOf("A bounded assertion.");
+
+    expect(reason).toBeGreaterThan(-1);
+    expect(assertion).toBeGreaterThan(-1);
+    expect(reason).toBeLessThan(assertion);
+    expect(markup).toContain("Decided on");
+  });
+
+  /* Where a Decision retains no reason the assertion keeps the headline, and
+     the "Decided on" line is then dropped rather than printing one string
+     twice. The fixtures all carry a reason, so this is pinned at the source. */
+  test("never prints the assertion twice on one row", () => {
+    const source = readFileSync(
+      resolve(import.meta.dirname, "../../components/vela/decision-stream.tsx"),
+      "utf8",
+    );
+    expect(source).toContain("entry.reason || assertion");
+    expect(source).toContain("headline !== assertion");
   });
 });

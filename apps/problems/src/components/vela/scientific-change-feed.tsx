@@ -66,15 +66,21 @@ export function ScientificChangeFeed({
   const rows = (entries: ScientificChange[]) => <ol className="relative before:absolute before:bottom-7 before:left-[.8125rem] before:top-7 before:w-px before:bg-border">
     {entries.map(({ repository, commit }) => {
       const transitionSummary = commit.transition && plainLanguage ? plainTransitionSummary(commit.transition) : null;
+      const kindBadge = commit.transition
+        ? <Badge>{plainLanguage ? "Evidence update" : "State change"}</Badge>
+        : <Badge variant="secondary">{plainLanguage ? "Source update" : "Repository commit"}</Badge>;
       return <li key={`${repository.slug}/${commit.sha}`} className={`${compact ? "relative py-3 pl-10" : "relative py-5 pl-10 sm:grid sm:grid-cols-[7rem_minmax(0,1fr)_auto] sm:gap-4"} vela-object-row rounded-md pe-2`}>
       <span className={`absolute left-0 top-[.8rem] z-10 grid size-7 place-items-center rounded-full border border-background ring-1 ring-border forced-colors:border-2 ${commit.transition ? "bg-status-evidence/15 text-status-evidence" : "bg-muted text-muted-foreground"}`} aria-hidden><HugeiconsIcon aria-hidden icon={commit.transition ? Activity01Icon : GitCommitIcon} className="size-3.5" /></span>
       {!compact ? <time dateTime={commit.committed_at} title={formatDate(commit.committed_at)} className="text-meta text-muted-foreground">{formatAgo(commit.committed_at)}</time> : null}
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-2">
-          <Link href={`/repositories/${repository.slug}/commits`} className={`${compact ? "text-label" : "text-subtitle"} font-medium underline-offset-4 hover:underline`}>{plainLanguage ? plainChangeTitle(commit.subject) : commit.subject}</Link>
-          {commit.transition
-            ? <Badge>{plainLanguage ? "Evidence update" : "State change"}</Badge>
-            : <Badge variant="secondary">{plainLanguage ? "Source update" : "Repository commit"}</Badge>}
+          <Link data-slot="text-action" href={`/repositories/${repository.slug}/commits`} className={`${compact ? "text-label" : "text-subtitle"} font-medium underline-offset-4 hover:underline`}>{plainLanguage ? plainChangeTitle(commit.subject) : commit.subject}</Link>
+          {/* The kind rides the trailing column on a wide row, not this one.
+              Sharing a wrapping flex line with the title meant a long commit
+              message pushed it onto its own line, so consecutive rows in the
+              same feed put the same badge in two different places. It stays
+              inline in the compact variant, which has no trailing column. */}
+          {compact ? kindBadge : null}
           {commit.machine ? <Badge variant="outline">{plainLanguage ? "Automated update" : "machine-authored"}</Badge> : null}
         </div>
         <div className="mt-1 flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-meta text-muted-foreground">
@@ -86,7 +92,10 @@ export function ScientificChangeFeed({
         {commit.transition && !plainLanguage ? <p className="mt-2 text-meta">{commit.transition.accepted_added.length} accepted local assertions added · {commit.transition.accepted_removed.length} removed · {commit.transition.pending_added.length} pending added</p> : null}
         {transitionSummary ? <p className="mt-2 text-meta">{transitionSummary}</p> : null}
       </div>
-      {!compact ? <code className="mt-2 font-mono text-meta text-muted-foreground sm:mt-0">{commit.sha.slice(0, 10)}</code> : null}
+      {!compact ? <div className="mt-2 flex items-center gap-2 sm:mt-0 sm:flex-col sm:items-end sm:gap-1.5">
+        {kindBadge}
+        <code className="font-mono text-meta text-muted-foreground">{commit.sha.slice(0, 10)}</code>
+      </div> : null}
     </li>})}
   </ol>;
 

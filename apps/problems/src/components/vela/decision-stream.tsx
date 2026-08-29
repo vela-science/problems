@@ -91,6 +91,14 @@ export function DecisionStream({ entries }: { entries: DecisionEntry[] }) {
       {entries.map((entry, index) => {
         const mark = markFor(entry.status);
         const badge = entry.actor ? initials(entry.actor) : null;
+        const assertion = entry.claim || entry.target || entry.proposalId;
+        /* A withdrawal is not a ruling, so it keeps its own note. Otherwise the
+           written reason is the row's subject, and the assertion falls back to
+           it only when no reason was retained — in which case the "Decided on"
+           line is dropped rather than printing the same string twice. */
+        const headline = entry.provenance === "producer_withdrawal"
+          ? WITHDRAWAL_NOTE
+          : entry.reason || assertion;
         return (
           <li key={`${entry.repository}:${entry.proposalId}`}>
             <div className="relative pb-6">
@@ -113,27 +121,43 @@ export function DecisionStream({ entries }: { entries: DecisionEntry[] }) {
                     <RelativeTime className="shrink-0 text-micro text-muted-foreground" value={entry.recordedAt} />
                   </div>
 
-                  {/* `vela-exact-text`, because these assertions open with an
-                      unbreakable commit hash ("At lean-proofs commit 4233443…").
-                      Nothing could wrap it, so the line ran to 547px inside a
-                      244px column at 320 and was clipped mid-hash — no ellipsis,
-                      no scroll, no copy, and no signal that the string was
-                      incomplete. A truncated hash that looks whole is the one
-                      failure an exact-state product cannot ship. */}
-                  <Link
-                    className="vela-exact-text mt-1 block text-body underline-offset-2 hover:underline"
-                    href={`/repositories/${entry.repository}/proposals/${encodeURIComponent(entry.proposalId)}`}
-                  >
-                    {entry.claim || entry.target || entry.proposalId}
-                  </Link>
+                  {/* The ruling leads, not the assertion it ruled on.
+                    *
+                      Two consecutive Decisions on this page were byte-identical
+                      for 130 words, because both decided the same Claim and the
+                      row opened with that Claim's assertion — a reader
+                      comparing them was comparing the part they already knew,
+                      and the parts that differ (the reason, the performer, the
+                      date) sat below it in smaller type.
+                    *
+                      `reason` is written on the Decision by whoever made it, so
+                      promoting it invents nothing. Where a Decision retains
+                      none, the assertion keeps the headline rather than leaving
+                      the row with a sentence about absence at its top. */}
+                  {headline ? (
+                    <p className="mt-1 max-w-[80ch] text-body leading-5 font-medium">{headline}</p>
+                  ) : null}
 
-                  {entry.provenance === "producer_withdrawal" ? (
-                    <p className="mt-1.5 text-compact text-muted-foreground">{WITHDRAWAL_NOTE}</p>
-                  ) : entry.reason ? (
-                    <p className="mt-1.5 max-w-[80ch] text-compact text-muted-foreground">{entry.reason}</p>
-                  ) : (
-                    <p className="mt-1.5 text-compact text-muted-foreground">No reason is retained with this Decision.</p>
-                  )}
+                  {/* One line, with an ellipsis and the full text on the
+                      element. The old full-bleed rendering was `vela-exact-text`
+                      because these assertions open with an unbreakable commit
+                      hash and a 64-character root sits mid-sentence: nothing
+                      could wrap it, so at 320 it clipped mid-hash with no
+                      ellipsis and no signal the string was incomplete. Truncating
+                      shows the cut; the record behind the link is where the
+                      whole assertion and its exact roots live. */}
+                  {assertion && headline !== assertion ? (
+                    <div className="mt-2 flex min-w-0 items-baseline gap-2 border-t pt-2">
+                      <span className="shrink-0 text-micro text-muted-foreground">Decided on</span>
+                      <Link
+                        className="min-w-0 truncate text-compact underline-offset-2 hover:underline"
+                        title={assertion}
+                        href={`/repositories/${entry.repository}/proposals/${encodeURIComponent(entry.proposalId)}`}
+                      >
+                        {assertion}
+                      </Link>
+                    </div>
+                  ) : null}
 
                   <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
                     {entry.actor ? (

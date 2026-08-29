@@ -20,7 +20,14 @@ type View = "all" | "transitions" | "commits";
 
 export default async function UpdatesPage({ searchParams }: { searchParams: Promise<{ view?: string }> }) {
   const [query, activity] = await Promise.all([searchParams, recentScientificChanges(120)]);
-  const view: View = query.view === "transitions" || query.view === "commits" ? query.view : "all";
+  /* State changes by default, not all history.
+   *
+   * The default was `all`, and 33 of the 52 published entries are repository
+   * commits — so the product's activity feed opened on
+   * "ci: bind Math qualification to Python 3.13" and
+   * "chore(result-runner): repin Vela 0.977.6". This site is a record of
+   * scientific state; its build pipeline is one chip away, unchanged. */
+  const view: View = query.view === "all" || query.view === "commits" ? query.view : "transitions";
   const filtered = activity.filter(({ commit }) => view === "all" || (view === "transitions" ? Boolean(commit.transition) : !commit.transition));
   const transitions = activity.filter(({ commit }) => commit.transition).length;
   const commits = activity.length - transitions;
@@ -41,7 +48,7 @@ export default async function UpdatesPage({ searchParams }: { searchParams: Prom
     <FilterChips
       className="mt-6"
       label="Updates views"
-      chips={([["all", "All history", activity.length], ["transitions", "State changes", transitions], ["commits", "Repository commits", commits]] as const).map(([value, label, count]) => ({
+      chips={([["transitions", "State changes", transitions], ["commits", "Repository commits", commits], ["all", "All history", activity.length]] as const).map(([value, label, count]) => ({
         key: value,
         label,
         count,
