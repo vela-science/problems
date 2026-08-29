@@ -77,6 +77,10 @@ export default async function ProposalsPage({ params, searchParams }: PageProps<
     .filter(([, count]) => count > 0);
   const requested = typeof requestedStatus === "string" ? requestedStatus as ProposalStatusFilter : undefined;
   const active = requested && present.some(([value]) => value === requested) ? requested : undefined;
+  /* Named when it is dropped, the way /decisions names its own. A status with
+     no rows in this release is a legitimate filter that cannot be honoured, and
+     silently showing everything makes a stale link look like no link at all. */
+  const ignored = requested && !active ? requested : null;
   const visible = active ? reviews.filter((review) => review.status === active) : reviews;
   const verifications = reviews.reduce((total, review) => total + (review.verification_records?.length ?? 0), 0);
   const pending = reviews.filter((review) => review.status === "pending_review").length;
@@ -91,6 +95,7 @@ export default async function ProposalsPage({ params, searchParams }: PageProps<
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
           <span className="font-mono text-micro tabular-nums text-muted-foreground">
             {reviews.length} proposed {reviews.length === 1 ? "change" : "changes"} · {verifications} {verifications === 1 ? "Check" : "Checks"} · {pending ? `${pending} pending` : "none pending"}
+            {ignored ? <> · <span className="text-muted-foreground">ignored <span className="font-mono text-micro">status={ignored}</span></span></> : null}
           </span>
           {present.length > 1 ? <FilterChips
             label="Filter proposed changes"

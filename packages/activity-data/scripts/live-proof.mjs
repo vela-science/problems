@@ -70,6 +70,49 @@ async function ownerTransaction(statements) {
   ]);
 }
 
+/* Every generated row this proof creates is named for the proof: accounts and
+   profiles under the reserved `example.invalid` domain, workspaces and handles
+   under a `live-proof` / `live-` prefix. Sweeping by that shape rather than by
+   a list of ids collected during the run is what makes the cleanup total.
+   The id list missed the deletion fixture's profile, and it could not run at
+   all when an assertion threw before reaching it. Two runs on 2026-08-19 did
+   exactly that and stranded six accounts, four workspaces and four profiles in
+   the real database until they were removed by hand. Sweeping on the way in as
+   well as on the way out bounds the damage of a failed run to that one run. */
+async function sweepLiveProofResidue() {
+  const results = await ownerTransaction((transaction) => [
+    /* The audit log is append-only to every application path, including a
+       workspace cascade. The migrator owns this one bounded transaction:
+       disable only the named trigger, remove the generated tenants, then
+       restore it before commit. Any intervening failure rolls the DDL back
+       with the sweep. */
+    transaction.query(
+      "ALTER TABLE activity.activity_audit_entries DISABLE TRIGGER activity_audit_append_only",
+    ),
+    transaction.query("DELETE FROM activity.workspaces WHERE slug LIKE 'live-proof-%'"),
+    transaction.query(
+      "DELETE FROM activity.accounts WHERE email LIKE 'liveproof-%@example.invalid'",
+    ),
+    transaction.query(
+      "DELETE FROM activity.public_profiles WHERE handle LIKE 'live-current-%' OR handle LIKE 'live-deleted-%'",
+    ),
+    transaction.query(
+      "ALTER TABLE activity.activity_audit_entries ENABLE TRIGGER activity_audit_append_only",
+    ),
+    transaction.query(
+      `SELECT
+         (SELECT count(*) FROM activity.workspaces WHERE slug LIKE 'live-proof-%')::integer AS workspaces,
+         (SELECT count(*) FROM activity.accounts WHERE email LIKE 'liveproof-%@example.invalid')::integer AS accounts,
+         (SELECT count(*) FROM activity.public_profiles
+           WHERE handle LIKE 'live-current-%' OR handle LIKE 'live-deleted-%')::integer AS profiles`,
+    ),
+  ]);
+  const remaining = results.at(-1)?.[0];
+  if (Number(remaining?.workspaces) || Number(remaining?.accounts) || Number(remaining?.profiles)) {
+    throw new Error(`activity live-proof sweep left rows behind: ${JSON.stringify(remaining)}`);
+  }
+}
+
 async function standingSnapshot() {
   const [current] = await projectionSql.query(
     "SELECT release_root FROM projection.current_release",
@@ -82,6 +125,9 @@ async function standingSnapshot() {
   return { releaseRoot: current.release_root, count: rows.length, root: sha256(canonicalJson(rows)) };
 }
 
+/* Clear anything a previously failed run left behind, so a green proof is
+   evidence the database is clean rather than evidence this run tidied itself. */
+await sweepLiveProofResidue();
 const standingBefore = await standingSnapshot();
 const accountA = await ensureCurrentAccount({
   workosUserId: `user_liveproofa${suffix}`,
@@ -123,7 +169,9 @@ await ownerTransaction((transaction) => [transaction.query(
 )]);
 if (!await publicProfileByHandle(privateHandle)) throw new Error("unlisted profile was not readable by exact handle");
 if (await publicProfileForPerformer(linkedPerformerId)) throw new Error("unlisted profile leaked through public attribution");
-const renamedProfile = await savePublicProfile(accountA.id, {
+/* The rename is proved through the reads below, not through its return
+   value. */
+await savePublicProfile(accountA.id, {
   handle: currentHandle,
   displayName: "Live proof contributor",
   bio: "Bounded public-profile proof.",
@@ -580,42 +628,10 @@ const forkAudits = activity.audit.filter(
 if (forkAudits.length !== 1 || forkAudits[0]?.requestRoot !== forkRequestRoot) {
   throw new Error("Problem-scoped fork audit did not retain the exact request root once");
 }
-const cleanupResults = await ownerTransaction((transaction) => [
-  /* The audit log is append-only to every application path, including a
-     workspace cascade. The migrator owns this one bounded proof transaction:
-     disable only the named trigger, remove the generated tenant, then restore
-     it before commit. Any intervening failure rolls the DDL back with the
-     cleanup. */
-  transaction.query(
-    "ALTER TABLE activity.activity_audit_entries DISABLE TRIGGER activity_audit_append_only",
-  ),
-  transaction.query(
-    "DELETE FROM activity.workspaces WHERE id = ANY($1::uuid[])",
-    [[workspaceA.id, workspaceB.id]],
-  ),
-  transaction.query(
-    "DELETE FROM activity.accounts WHERE id = ANY($1::uuid[])",
-    [[accountA.id, accountB.id, accountD.id]],
-  ),
-  transaction.query(
-    "DELETE FROM activity.public_profiles WHERE id = ANY($1::uuid[])",
-    [[renamedProfile.id, deletedProfile.id]],
-  ),
-  transaction.query(
-    "ALTER TABLE activity.activity_audit_entries ENABLE TRIGGER activity_audit_append_only",
-  ),
-  transaction.query(
-    `SELECT
-       (SELECT count(*) FROM activity.workspaces WHERE id = ANY($1::uuid[]))::integer AS workspaces,
-       (SELECT count(*) FROM activity.accounts WHERE id = ANY($2::uuid[]))::integer AS accounts,
-       (SELECT count(*) FROM activity.public_profiles WHERE id = ANY($3::uuid[]))::integer AS profiles`,
-    [[workspaceA.id, workspaceB.id], [accountA.id, accountB.id, accountD.id], [renamedProfile.id, deletedProfile.id]],
-  ),
-]);
-const cleanup = cleanupResults.at(-1)?.[0];
-if (Number(cleanup?.workspaces) !== 0 || Number(cleanup?.accounts) !== 0 || Number(cleanup?.profiles) !== 0) {
-  throw new Error(`activity live-proof cleanup failed: ${JSON.stringify(cleanup)}`);
-}
+/* The tenant is generated, so it leaves with the same sweep that cleared the
+   way in, including the deletion fixture's orphaned profile that the old id
+   list never named. */
+await sweepLiveProofResidue();
 const standingAfter = await standingSnapshot();
 if (canonicalJson(standingAfter) !== canonicalJson(standingBefore)) {
   throw new Error("activity proof changed Problems Standing");

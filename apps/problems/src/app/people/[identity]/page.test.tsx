@@ -110,7 +110,11 @@ describe("Contributor profile route", () => {
     }]);
     render(await ContributorProfilePage({ params: Promise.resolve({ identity }) }));
     expect(screen.getByRole("heading", { level: 1, name: "Review model" })).toBeVisible();
-    expect(screen.getByText("Advisory check")).toBeVisible();
+    /* The role used to be an outline badge above the row. It is now the row's
+       own headline, because a profile's rows differ by what the performer did
+       and every one of them opened with the same Problem statement instead. */
+    expect(screen.getByText("Ran an advisory check")).toBeVisible();
+    expect(screen.getByText("Checks")).toBeVisible();
     expect(screen.getByText("Role scope")).toBeVisible();
     expect(screen.getByText("Mathematical truth.")).toBeInTheDocument();
   });

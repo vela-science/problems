@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { authConfiguration } from "@/lib/auth";
+import { authConfiguration, callbackUriFor } from "@/lib/auth";
 
 const allowedReturns = new Set(["/account", "/account/connections", "/account/profile", "/import", "/workspaces"]);
 
@@ -49,7 +49,12 @@ export async function GET(request: NextRequest) {
     });
   }
   const { getSignInUrl } = await import("@workos-inc/authkit-nextjs");
-  const response = NextResponse.redirect(await getSignInUrl({ returnTo: safeReturnTo(request.nextUrl.searchParams.get("returnTo")) }));
+  /* The callback follows the request, so a development server on any port
+     signs in without a rebuild. Loopback only — see `callbackUriFor`. */
+  const response = NextResponse.redirect(await getSignInUrl({
+    returnTo: safeReturnTo(request.nextUrl.searchParams.get("returnTo")),
+    redirectUri: callbackUriFor(request.url),
+  }));
   /* The 503 branch above said `no-store` and this one said nothing, so the
      framework default applied: `public, max-age=0, must-revalidate`. Every
      response here is unique to one attempt — it sets a PKCE verifier cookie and

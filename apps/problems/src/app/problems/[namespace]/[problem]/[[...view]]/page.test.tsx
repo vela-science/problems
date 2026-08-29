@@ -120,4 +120,37 @@ describe("the canonical Problem address", () => {
     expect(await generateMetadata({ params: Promise.resolve({ namespace: "formal-conjectures", problem: "wikipedia-oppermann-conjecture" }), searchParams: Promise.resolve({}) }))
       .toMatchObject({ title: "Oppermann's Conjecture", alternates: { canonical: "/problems/formal-conjectures/wikipedia-oppermann-conjecture" } });
   });
+
+  /* One section, one address.
+   *
+   * Every unknown segment used to resolve: `/problems/erdos-problems/94/bogus`
+   * answered 200, rendered Overview, and title-cased the segment into the
+   * breadcrumb — so the breadcrumb announced "Bogus" as the current page while
+   * the section row announced "Overview", two `aria-current` marks disagreeing
+   * about where the reader was, on a `robots: index, follow` URL. Case did the
+   * same: `/WORK` rendered Overview instead of reaching Work. */
+  const openSection = (segments: string[]) => ProblemPage({
+    params: Promise.resolve({ namespace: "erdos-problems", problem: "321", view: segments }),
+    searchParams: Promise.resolve({} as never),
+  } as never);
+
+  it.each(["work", "results", "sources", "history"])("resolves the %s section", async (section) => {
+    mocks.reviewed.mockReturnValue({ entity_id: "problem:erdos:321" });
+    render(await openSection([section]));
+    expect(mocks.notFound).not.toHaveBeenCalled();
+    expect(mocks.view).toHaveBeenCalledWith(expect.objectContaining({
+      query: expect.objectContaining({ view: section }),
+    }));
+  });
+
+  it.each(["bogus", "WORK", "Overview"])("refuses %s as a section", async (segment) => {
+    mocks.reviewed.mockReturnValue({ entity_id: "problem:erdos:321" });
+    await expect(openSection([segment])).rejects.toThrow("NOT_FOUND");
+    expect(mocks.notFound).toHaveBeenCalled();
+  });
+
+  it("refuses a segment below a section", async () => {
+    mocks.reviewed.mockReturnValue({ entity_id: "problem:erdos:321" });
+    await expect(openSection(["work", "extra"])).rejects.toThrow("NOT_FOUND");
+  });
 });

@@ -38,6 +38,48 @@ function validRedirectUri(value: string): boolean {
   }
 }
 
+/* The callback this request should use, which is not always the one the build
+ * was given.
+ *
+ * `NEXT_PUBLIC_WORKOS_REDIRECT_URI` carries a `NEXT_PUBLIC_` prefix, so Next
+ * inlines it into the server bundle at build time, and AuthKit reads it into a
+ * module constant on first import. Both freeze it: a server started on another
+ * port with the variable overridden still sent the built-in value, so changing
+ * the development port meant a rebuild rather than a restart.
+ *
+ * A loopback request may therefore name its own origin. Nothing else may: a
+ * request's Host is attacker-controllable, and letting it choose the callback
+ * is how a sign-in gets pointed at somebody else's domain. Every non-loopback
+ * origin falls back to the configured value, unchanged.
+ *
+ * This does not widen what can sign in. WorkOS validates the callback against
+ * its own registered list and rejects an unregistered one — the port still has
+ * to be registered, this only removes the rebuild. */
+export function callbackUriFor(
+  requestUrl: string | URL,
+  environment: Readonly<Record<string, string | undefined>> = process.env,
+): string | undefined {
+  const configured = environment.NEXT_PUBLIC_WORKOS_REDIRECT_URI;
+  let origin: URL;
+  try {
+    origin = new URL(requestUrl);
+  } catch {
+    return configured;
+  }
+  /* `0.0.0.0` is the bind address, not a host a browser ever used. `next start`
+     binds every interface, and Next builds `request.url` from that bind rather
+     than from the Host header — so a development server on 3000 reported
+     `http://0.0.0.0:3000/sign-in`. The port is the part that matters and the
+     host normalizes to `localhost`, which is what a developer typed and what
+     WorkOS has registered. Deliberately not the Host header: that is
+     attacker-controllable, and Next not trusting it here is the reason this
+     function can be safe at all. */
+  const devBind = origin.hostname === "0.0.0.0" || localHosts.has(origin.hostname);
+  if (!devBind || origin.protocol !== "http:") return configured;
+  const candidate = new URL("/auth/callback", `http://localhost:${origin.port || "80"}`).toString();
+  return validRedirectUri(candidate) ? candidate : configured;
+}
+
 export function authConfiguration(environment: Readonly<Record<string, string | undefined>> = process.env): AuthConfiguration {
   if (requiredAuthVariables.some((name) => !environment[name])) return { enabled: false, reason: "missing" };
   if ((environment.WORKOS_COOKIE_PASSWORD?.length ?? 0) < 32) {
