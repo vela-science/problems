@@ -9,7 +9,15 @@ import styles from "./scientific-text.module.css";
    English sentence was typeset as a formula and KaTeX ran the words together:
    `100foranyimprovementoftheconstant`. Prize amounts are common in this corpus,
    so the failure fired on ordinary problem statements. */
-const tokenPattern = /((?<!\\)\$\$[\s\S]+?\$\$|\\\[[\s\S]+?\\\]|(?<!\\)\$[^$\n]+?\$|\\\([^\n]+?\\\)|\\cite\{[^}]+\})/gu;
+/* `[key](url)` joins the token set because the retained statements use it and
+   nothing rendered it: the reference reached the page as its own markdown
+   source, set at heading size in an h1.
+
+   Two constructs, not a markdown parser. A general pipeline here would let a
+   source inject headings, images and raw HTML into a page whose whole claim is
+   that it shows exact retained bytes; `\cite{}` and this are what the corpus
+   actually writes, and everything else stays literal text. */
+const tokenPattern = /((?<!\\)\$\$[\s\S]+?\$\$|\\\[[\s\S]+?\\\]|(?<!\\)\$[^$\n]+?\$|\\\([^\n]+?\\\)|\\cite\{[^}]+\}|\[[^\]\n]{1,120}\]\(https?:\/\/[^)\s]{1,500}\))/gu;
 
 /* Text-mode accents, which KaTeX never sees because they are outside the math
    delimiters — so `Erd\H{o}s and Moser` reached the page as those literal
@@ -213,6 +221,19 @@ export function ScientificText({ text }: { text: string }) {
       {segments.map((segment, index) => {
         const citation = /^\\cite\{([^}]+)\}$/u.exec(segment);
         if (citation) return <cite key={`${segment}:${index}`}>[{citation[1]}]</cite>;
+
+        /* The scheme is pinned in the pattern, so a source cannot put a
+           `javascript:` or `data:` target into a page through its statement. */
+        const reference = /^\[([^\]\n]+)\]\((https?:\/\/[^)\s]+)\)$/u.exec(segment);
+        if (reference) {
+          return <a
+            key={`${segment}:${index}`}
+            href={reference[2]}
+            data-scientific-cite=""
+            rel="noreferrer nofollow"
+            target="_blank"
+          >{plainTextSegment(reference[1])}</a>;
+        }
 
         const display = (segment.startsWith("$$") && segment.endsWith("$$"))
           || (segment.startsWith("\\[") && segment.endsWith("\\]"));

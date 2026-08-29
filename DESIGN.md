@@ -419,6 +419,26 @@ past the reach track, all of them read off the record rather than invented:
   question. The section tab already counts these records; a bare count is not
   the fact a reader wants on an empty page, and a name is.
 
+### What the statement renderer accepts
+
+Two constructs beyond mathematics, and no more: `\cite{key}` and
+`[key](https://…)`. Both are what the retained statements actually write, and
+both render as a reference rather than as their own source — Erd&#337;s 470's
+heading printed a MathSciNet URL at heading size until 2026-08-28.
+
+A general markdown pipeline here would let a source put headings, images and raw
+HTML into a page whose claim is that it shows exact retained bytes, so the
+scheme is pinned in the token pattern and anything else stays literal text.
+
+### Search rows lead with the question
+
+A Problem's row is titled by the written question wherever a source retained
+one, with the formal statement kept under it, truncated. The catalogue's own
+best statement is formal notation for the Erd&#337;s collection: two of four
+results for "prime gaps" opened with the word `sorry`, which proves nothing.
+A declaration whose body is `sorry` reads "Stated, not proved" &mdash; showing it as
+a theorem is the one comprehension error this product exists to prevent.
+
 ### Watching
 
 A watch speaks the reach axis and no other language. `Reach advanced to

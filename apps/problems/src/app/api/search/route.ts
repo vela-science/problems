@@ -11,19 +11,46 @@ import {
 import { searchRead } from "@vela/projection-data/read-contracts";
 import { ProjectionReadError } from "@vela/projection-data/refusal";
 import { immutableCompositeSearchHeaders, projectionErrorAnswer } from "@/lib/projection-response";
+import { problemStatementIndex, type ProblemStatementIndex } from "@/lib/scientific-state";
 
 export const dynamic = "force-dynamic";
 
 const ERDOS_COLLECTION = "erdos-problems";
 
-function erdosProblemSearchRecord(repository: string, problem: Awaited<ReturnType<typeof problemsForRepository>>["items"][number]): SiteSearchRecord {
+/* The written question, where a source retained one.
+ *
+ * `problem.statement` is the catalogue's own best statement, which for this
+ * collection is formal notation: a search for "weird numbers" matched Erdős 470
+ * through the Lean identifier `n.Weird` and then titled the row
+ * `sorry ↔ ∃ n, n.Weird ∧ Odd n`. Two of the four results for "prime gaps"
+ * opened with the word `sorry`, which is a placeholder for an unproved
+ * statement — the least readable thing the row could have said, on the surface
+ * a first-time reader meets first.
+ *
+ * The prose exists and is already resolved: `problemStatementIndex` reads the
+ * retaining sources once per release and the collection directory has been
+ * leading its rows with it. Search now reads the same index, so one Problem
+ * cannot be a question in the directory and a Lean expression in search.
+ *
+ * The formal statement is not discarded — it moves to `formal_statement`, where
+ * the row can keep showing it under the question. */
+function erdosProblemSearchRecord(
+  repository: string,
+  problem: Awaited<ReturnType<typeof problemsForRepository>>["items"][number],
+  statements: ProblemStatementIndex,
+): SiteSearchRecord {
   const href = canonicalProblemPath(repository, problem.problem);
   if (!href) throw new Error(`Erdős Problem ${problem.problem} has no canonical route`);
+  const formal = problem.statement.trim();
+  const written = statements[`${ERDOS_COLLECTION}:${problem.problem}`]?.text?.trim();
   return {
     kind: "problem",
     repository,
     id: `${ERDOS_COLLECTION}:${problem.problem}`,
-    assertion: problem.statement.trim() || problem.label,
+    assertion: written || formal || problem.label,
+    /* Present only when it is not already the headline, so the row never prints
+       one string twice. */
+    formal_statement: written && formal && written !== formal ? formal : null,
     source_title: "Erdős Problems",
     /* Repository-local Standing only. The collection's own open/solved status
        remains on the Problem row and is not relabelled as Vela Standing. */
@@ -76,7 +103,10 @@ export async function GET(request: NextRequest) {
       !requestedStanding
       || (requestedStanding === "unassessed" ? problem.local_standing === null : problem.local_standing === requestedStanding)
     ));
-    const erdosRecords = erdosMatches.slice(0, pageLimit).map((problem) => erdosProblemSearchRecord(erdosRepository, problem));
+    /* Cached per release, and already read by the collection directory. */
+    const statements = erdosEligible ? await problemStatementIndex(root) : {};
+    const erdosRecords = erdosMatches.slice(0, pageLimit)
+      .map((problem) => erdosProblemSearchRecord(erdosRepository, problem, statements));
     const databaseEligible = !collection && requestedKind !== "problem";
     const result = await searchRead({
       root, q: params.get("q") ?? undefined, repository: requestedRepository,

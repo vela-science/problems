@@ -1,7 +1,10 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { NextRequest } from "next/server";
 
-const mocks = vi.hoisted(() => ({ search: vi.fn(), formal: vi.fn(), problems: vi.fn() }));
+const mocks = vi.hoisted(() => ({ search: vi.fn(), formal: vi.fn(), problems: vi.fn(), statements: vi.fn() }));
+/* Server-only, like the projection readers below. The index it returns is the
+   written question this route now titles a Problem row with. */
+vi.mock("@/lib/scientific-state", () => ({ problemStatementIndex: mocks.statements }));
 vi.mock("@vela/projection-data/read-contracts", () => ({ searchRead: mocks.search }));
 vi.mock("@vela/projection-data", () => ({
   compositeSearchRoot: () => `sha256:${"c".repeat(64)}`,
@@ -30,6 +33,7 @@ const formal = { kind: "problem", repository: "source:formal-conjectures", id: "
 describe("cross-collection search route", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.statements.mockResolvedValue({});
     mocks.search.mockResolvedValue(database);
     mocks.formal.mockReturnValue([formal]);
     mocks.problems.mockResolvedValue({ items: [erdos], total: 1, facets: { status: [], formalization: [], tag: [], source: [] } });
@@ -89,5 +93,53 @@ describe("cross-collection search route", () => {
     const response = await GET(new NextRequest(`https://problems.science/api/search?root=${root}&search_root=${root}&q=oppermann`));
     expect(response.status).toBe(409);
     expect(response.headers.get("Cache-Control")).toBe("no-store");
+  });
+
+  /* The row a first-time reader meets.
+   *
+   * `problem.statement` is the catalogue's best statement and for this
+   * collection it is Lean: a search for "weird numbers" matched Erdős 470
+   * through the identifier `n.Weird` and titled the row
+   * `sorry ↔ ∃ n, n.Weird ∧ Odd n`, while the Problem page showed the question
+   * in English. Two of four results for "prime gaps" opened with the word
+   * `sorry`, which proves nothing and reads as broken.
+   *
+   * The prose was already resolved and already used by the collection
+   * directory; search reads the same index, so one Problem cannot be a question
+   * in one surface and a Lean expression in another. */
+  test("titles a Problem with its written question and keeps the formal statement", async () => {
+    mocks.search.mockResolvedValue({ ...database, records: [] });
+    mocks.formal.mockReturnValue([]);
+    mocks.problems.mockResolvedValue({
+      items: [{ ...erdos, problem: "470", label: "Erdős problem 470", statement: "sorry ↔ ∃ n, n.Weird ∧ Odd n" }],
+      total: 1,
+    });
+    mocks.statements.mockResolvedValue({
+      "erdos-problems:470": { text: "Benkoski and Erdős proved that the set of weird numbers has positive density.", source_id: "source:erdos-problems" },
+    });
+
+    const answer = await GET(new NextRequest(`https://problems.science/api/search?root=${root}&search_root=${searchRoot}&q=weird`));
+    const body = await answer.json();
+    const record = body.records.find((entry: { id: string }) => entry.id === "erdos-problems:470");
+
+    expect(record.assertion).toBe("Benkoski and Erdős proved that the set of weird numbers has positive density.");
+    /* Kept, not discarded: it is what a prover works against, and it is what
+       actually matched this query. */
+    expect(record.formal_statement).toBe("sorry ↔ ∃ n, n.Weird ∧ Odd n");
+  });
+
+  test("falls back to the formal statement where no source retained a question", async () => {
+    mocks.search.mockResolvedValue({ ...database, records: [] });
+    mocks.formal.mockReturnValue([]);
+    mocks.problems.mockResolvedValue({ items: [{ ...erdos, statement: "1 ∈ Erdos9.Erdos9A" }], total: 1 });
+    mocks.statements.mockResolvedValue({});
+
+    const answer = await GET(new NextRequest(`https://problems.science/api/search?root=${root}&search_root=${searchRoot}&q=erdos`));
+    const body = await answer.json();
+    const record = body.records.find((entry: { kind: string }) => entry.kind === "problem");
+
+    expect(record.assertion).toBe("1 ∈ Erdos9.Erdos9A");
+    /* Never printed twice on one row. */
+    expect(record.formal_statement).toBeNull();
   });
 });

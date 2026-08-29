@@ -37,3 +37,20 @@
   font-family: var(--font-mono);
   font-size: 0.88em;
 }
+
+/* A source's own reference, as a link rather than as its markdown source.
+ *
+ * Erdős 470's statement is "Benkoski and Erdős [BeEr74](https://mathscinet…)
+ * proved that the set of weird numbers has positive density", and the whole
+ * bracket-and-parenthesis run was set at heading size in the page's h1. The
+ * label is the source's citation key, so it keeps `cite`'s treatment and gains
+ * the href the source already retained. */
+.root a[data-scientific-cite] {
+  font-style: normal;
+  font-size: 0.9em;
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: from-font;
+}
+.root a[data-scientific-cite]:hover { color: var(--foreground); }

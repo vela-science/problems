@@ -183,6 +183,14 @@
   [data-slot="tabs-trigger"],
   [data-slot="tooltip-trigger"] { min-width: 2rem; min-height: 2rem; }
   [data-slot="select-trigger"] { min-height: 2.5rem; }
+  /* A standalone text action — a row of links that act, not a link inside a
+     sentence. Those rows declared their 24px floor with `[&>a]:min-h-6`, which
+     compiles the class onto the PARENT and the height onto `> a`, so the anchor
+     never carried `.min-h-6` and the promotion below never reached it. Naming
+     the slot is the same fix the rest of this block uses, and it keeps the
+     exemption that matters: WCAG 2.5.8 exempts a link inside a sentence, and
+     `Inspect coverage` mid-paragraph must stay on its own line box. */
+  [data-slot="text-action"] { min-width: 2rem; min-height: 2rem; }
   [data-slot="input"], [data-slot="textarea"], [data-slot="command-input"] { min-height: 2.5rem; }
   .min-h-6, .min-h-7, .min-h-8, .min-h-9 { min-height: 2rem; }
 }

@@ -150,7 +150,7 @@ export function SearchResults({ projectionRoot, searchRoot, collectionRoot, repo
         exists because rank on a scientific record is the one place a reader
         might read position as standing, and that stays true whichever order
         produced it. */}
-    <div className="border-b px-4 py-2 text-meta text-muted-foreground"><span aria-live="polite">{!hasIntent ? "Ready for a query" : records ? (records.length < total ? `Showing ${records.length.toLocaleString()} of ${total.toLocaleString()} results` : `${total.toLocaleString()} results`) : "Verifying search projection…"}</span>
+    <div className="border-b px-4 py-2 text-meta text-muted-foreground"><span aria-live="polite">{!hasIntent ? "Ready for a query" : records ? (records.length < total ? `Showing ${records.length.toLocaleString()} of ${total.toLocaleString()} ${total === 1 ? "result" : "results"}` : `${total.toLocaleString()} ${total === 1 ? "result" : "results"}`) : "Verifying search projection…"}</span>
       {hasIntent && records ? <p className="mt-1">
         {/* The comment above this block said "the sentence exists". It did not:
             results are a fixed concatenation — Formal Conjectures, then the
@@ -188,6 +188,19 @@ export function SearchResults({ projectionRoot, searchRoot, collectionRoot, repo
             <p className="line-clamp-2 text-body leading-5 font-medium">
               {heading ? <LazyScientificText text={heading} /> : <span className="font-mono text-meta">{record.id}</span>}
             </p>
+            {/* The formal statement, under the question rather than instead of
+                it. It is what a prover works against and often what matched the
+                query, so dropping it would lose the match; leading with it made
+                two of four results for "prime gaps" open with the word `sorry`.
+                One line, truncated: the record itself carries the whole thing. */}
+            {record.formal_statement ? <p className="mt-1 truncate font-mono text-micro text-muted-foreground">
+              {record.formal_statement.startsWith("sorry")
+                /* A declaration whose body is `sorry` states the question and
+                   proves nothing. Printing it as a theorem is the single
+                   comprehension error this product exists to prevent. */
+                ? <>Stated, not proved · <span className="text-foreground/70">{record.formal_statement.replace(/^sorry\s*(↔|<->)?\s*/u, "")}</span></>
+                : record.formal_statement}
+            </p> : null}
             <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-micro text-muted-foreground">
               <span>{problem?.problem ? problemCollectionRecordLabel(problem) : record.repository}</span>
               <span aria-hidden>·</span>

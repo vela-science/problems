@@ -11,6 +11,13 @@ export interface SiteSearchRecord {
   source_status?: string | null;
   /** Repository-local Result standing for a Problem, absent when no Result is bound. */
   result_standing?: string | null;
+  /* The formal statement, when the assertion above is the written question.
+   *
+   * Both are retained and both are wanted: the question is what a reader
+   * searched for, the formal statement is what a prover works against and is
+   * often what actually matched. Absent when there is no formal statement, or
+   * when it is already the assertion. */
+  formal_statement?: string | null;
   href: string;
 }
 

@@ -408,7 +408,7 @@ export default async function ErdosProblemsPage({ searchParams }: { searchParams
       <div>
         <h1 className="text-display">Erdős Problems</h1>
         <p className="mt-1.5 max-w-[62ch] text-compact text-muted-foreground">{catalog.length.toLocaleString()} source-owned questions · {catalog.filter((entry) => entry.record.formalized).length.toLocaleString()} with a formal statement · searchable by statement, number, topic and source status.</p>
-        <div className="mt-4 flex flex-wrap items-center gap-4 text-meta [&>a]:inline-flex [&>a]:min-h-6 [&>a]:items-center"><Link href="/contribute" className="font-semibold text-primary underline-offset-4 hover:underline">Add a contribution</Link><Link href={{ pathname: COLLECTION_PATH, query: { view: "overview" } }} className="font-semibold text-primary underline-offset-4 hover:underline">Collection details</Link></div>
+        <div className="mt-4 flex flex-wrap items-center gap-4 text-meta [&>a]:inline-flex [&>a]:min-h-6 [&>a]:items-center"><Link data-slot="text-action" href="/contribute" className="font-semibold text-primary underline-offset-4 hover:underline">Add a contribution</Link><Link data-slot="text-action" href={{ pathname: COLLECTION_PATH, query: { view: "overview" } }} className="font-semibold text-primary underline-offset-4 hover:underline">Collection details</Link></div>
       </div>
       {/* One figure, not five numbers: how much of this collection carries
           anything. A reader who meets a page of rows with nothing in the
