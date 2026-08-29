@@ -35,6 +35,7 @@ import { ProblemEvidence } from "@/components/vela/problem-evidence";
 import type { FrontierTimelineData } from "@/components/vela/frontier-timeline";
 import { ProblemHistory } from "@/components/vela/problem-history";
 import { currentReview } from "@/components/vela/problem-provenance";
+import { ProblemActivityRecords } from "@/components/vela/problem-activity-records";
 import type { ProblemResearchView } from "@/components/vela/problem-state";
 import { formatAgo, formatDate } from "@/lib/format";
 import type { ScientificProblemState } from "@/lib/scientific-state";
@@ -250,7 +251,17 @@ export function ProblemResearch({ state, basePath, view, selectedFile, selectedD
     <div className={`min-w-0 ${view === "contributions" || view === "timeline" ? "space-y-12" : ""}`}>
       {view === "map" ? <CurrentResult state={state} basePath={basePath} /> : null}
       {view === "contributions" ? <><CurrentResult state={state} basePath={basePath} /><ProblemEvidence state={state} /></> : null}
-      {view === "files" ? <ResearchFiles state={state} basePath={basePath} selectedFile={selectedFile} selectedDeclaration={selectedDeclaration} /> : null}
+      {view === "files" ? <>
+        <ResearchFiles state={state} basePath={basePath} selectedFile={selectedFile} selectedDeclaration={selectedDeclaration} />
+        {/* Source-attributed work reports. They lived under Work, where the
+            section row counted them as "Work" while the reach rail four lines
+            above reported "Work — None recorded": two counts, one word, one
+            screen. They are the source's material, and this is the section
+            that promises the source's material. */}
+        {(state.attributedRecords ?? []).length
+          ? <div className="mt-12"><ProblemActivityRecords state={state} /></div>
+          : null}
+      </> : null}
       {view === "timeline" ? <>
         <ProblemHistory state={state} frontier={frontier} />
         {/* Upstream review of the source material itself. For a Problem with

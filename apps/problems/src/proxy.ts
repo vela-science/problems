@@ -2,6 +2,7 @@ import type { NextFetchEvent, NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { authkit, authkitProxy } from "@workos-inc/authkit-nextjs";
 import { authConfiguration } from "@/lib/auth";
+import { signInPath } from "@/app/sign-in/route";
 
 const configuredProxy = authkitProxy();
 
@@ -29,7 +30,7 @@ export default async function proxy(request: NextRequest, event: NextFetchEvent)
     if (!session.user) {
       const destination = request.nextUrl.clone();
       destination.pathname = "/sign-in";
-      destination.search = `?returnTo=${encodeURIComponent(request.nextUrl.pathname)}`;
+      destination.search = new URL(signInPath(request.nextUrl.pathname), request.nextUrl.origin).search;
       return NextResponse.redirect(destination);
     }
   }

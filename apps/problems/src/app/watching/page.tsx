@@ -14,6 +14,7 @@ import { formatDate } from "@/lib/format";
 import { currentActivityAccount } from "@/lib/hosted-account";
 import { problemWatch, problemWatchSentence, type ProblemWatch } from "@/lib/problem-watch";
 import { discoveredProblems, scientificProblemState } from "@/lib/scientific-state";
+import { signInPath } from "@/app/sign-in/route";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -74,7 +75,7 @@ async function rowFor(follow: FollowedProblem, catalog: Awaited<ReturnType<typeo
 
 export default async function WatchingPage() {
   const account = await currentActivityAccount();
-  if (!account) redirect("/sign-in?returnTo=/watching");
+  if (!account) redirect(signInPath("/watching"));
 
   let follows: FollowedProblem[] | null = null;
   try {

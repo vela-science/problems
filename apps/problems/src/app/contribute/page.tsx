@@ -24,6 +24,8 @@ import { ProblemQuestionRow } from "@/components/vela/problem-question-row";
 import { discoveredProblems, problemStatePreviews } from "@/lib/scientific-state";
 import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from "@vela/ui/components/item";
 import { statementPlainText } from "@/lib/problem-statement";
+import { ContributionPath } from "@/components/vela/contribution-path";
+import { authConfiguration } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -35,6 +37,7 @@ const ERDOS_COLLECTION = "/problems/erdos-problems";
 const FORMAL_COLLECTION = "/problems/formal-conjectures";
 
 export default async function WorkPage() {
+  const accountsEnabled = authConfiguration().enabled;
   const catalog = await discoveredProblems();
   const candidates = [
     ...catalog
@@ -120,6 +123,12 @@ export default async function WorkPage() {
           </Button>
           <p className="mt-5 border-t pt-4 text-micro text-muted-foreground">Problems keeps the draft and handoff visible. Source files, local tools, credentials, and execution stay in GitHub or your local workspace.</p>
         </aside>
+      </PageSection>
+      {/* The full seven-step path, once, on the page whose subject is starting
+          one. It used to render on every Problem's Work section, identically
+          on all 1,217 of them, standing in for the surface it occupied. */}
+      <PageSection>
+        <ContributionPath accountsEnabled={accountsEnabled} />
       </PageSection>
     </PageShell>
   );

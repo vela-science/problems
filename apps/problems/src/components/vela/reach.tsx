@@ -73,8 +73,15 @@ export function Reach({ stops, endpoint, caption }: {
           {/* Dashed and open. A filled endpoint would say the question is
               settled, which is the one thing an open Problem is not. */}
           <span aria-hidden className={`${dot} border-dashed border-muted-foreground bg-card @lg/reach:left-auto @lg/reach:right-0`} />
+          {/* Named for what is absent, like the five stages before it.
+              "The question — Not reached" sat under a page whose largest
+              element is the question, so it read as the question being
+              missing rather than unanswered. "Not established" also survives
+              the accepted case: a scoped Result can be accepted here while
+              the question itself stays open, which "None accepted" would
+              have contradicted. */}
           <span className="block text-micro font-medium text-muted-foreground">{endpoint}</span>
-          <span className="block text-micro text-muted-foreground">Not reached</span>
+          <span className="block text-micro text-muted-foreground">Not established</span>
         </li>
       </ol>
       {caption ? <figcaption className="mt-3 text-compact text-muted-foreground">{caption}</figcaption> : null}

@@ -2,10 +2,32 @@ import { describe, expect, it } from "vitest";
 import { problemReading, readingBadge } from "./problem-reading";
 
 describe("problemReading", () => {
-  it("reads a Problem with no accepted Claim as no record, not as open", () => {
+  it("reads a Problem with no accepted Claim as no Result, not as open", () => {
     const reading = problemReading({ currentAssertion: null, repositoryName: "Vela Mathematics Program" });
     expect(reading.kind).toBe("no-record");
-    expect(readingBadge(reading)).toBe("No record");
+    expect(readingBadge(reading)).toBe("No Result");
+    expect(reading.headline).toBe("Nothing has been recorded here yet.");
+  });
+
+  /* Erdős 1 opened with "Nothing has been recorded here yet" while its own rail
+     counted eight retained formalizations and its Sources tab counted nine
+     occurrences. The denial has to know what the record holds. */
+  it("names what is retained rather than denying the whole record", () => {
+    const reading = problemReading({
+      currentAssertion: null,
+      repositoryName: "Vela Mathematics Program",
+      retained: { formal: 8, occurrences: 9 },
+    });
+    expect(reading.headline).toBe("No Result is current here. 8 formal statements are.");
+  });
+
+  it("counts source records where no formal statement is retained", () => {
+    const reading = problemReading({
+      currentAssertion: null,
+      repositoryName: "Vela Mathematics Program",
+      retained: { formal: 0, occurrences: 1 },
+    });
+    expect(reading.headline).toBe("No Result is current here. 1 source record is.");
   });
 
   it("reads an accepted Claim that declares its limit as leaving the Problem open", () => {

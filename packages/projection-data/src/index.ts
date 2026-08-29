@@ -3528,32 +3528,73 @@ export async function commitsForRepository(
   return {
     total: rows[0]?.total ?? 0,
     machine: rows[0]?.machine_total ?? 0,
-    items: rows.map((row) => ({
-      sha: row.sha,
-      parent_sha: row.parent_sha ?? null,
-      author_name: row.author_name,
-      committed_at: instant(row.committed_at) ?? "",
-      subject: row.subject,
-      body: row.body ?? "",
-      changed_paths: Array.isArray(row.changed_paths) ? row.changed_paths.map(String) : [],
-      machine: row.machine === true,
-      transition: row.repository_root_after
-        ? {
-            repository_root_before: row.repository_root_before ?? null,
-            repository_root_after: row.repository_root_after,
-            accepted_added: row.accepted_added ?? [],
-            accepted_removed: row.accepted_removed ?? [],
-            pending_added: row.pending_added ?? [],
-            pending_removed: row.pending_removed ?? [],
-            counts: row.counts,
-            comparison_state: row.comparison_state ?? "unavailable",
-            before_revision_root: row.before_revision_root ?? null,
-            after_revision_root: row.after_revision_root ?? null,
-            semantic_delta_root: row.semantic_delta_root ?? null,
-          }
-        : null,
-    })),
+    items: rows.map(commitFromRow),
   };
+}
+
+/* One shape for a commit, whether it arrives in the history list or on its own
+   page. Two mappers would be two chances for the list and the detail to
+   disagree about the same commit. */
+function commitFromRow(row: Record<string, any>): RepositoryCommit {
+  return {
+    sha: row.sha,
+    parent_sha: row.parent_sha ?? null,
+    author_name: row.author_name,
+    committed_at: instant(row.committed_at) ?? "",
+    subject: row.subject,
+    body: row.body ?? "",
+    changed_paths: Array.isArray(row.changed_paths) ? row.changed_paths.map(String) : [],
+    machine: row.machine === true,
+    transition: row.repository_root_after
+      ? {
+          repository_root_before: row.repository_root_before ?? null,
+          repository_root_after: row.repository_root_after,
+          accepted_added: row.accepted_added ?? [],
+          accepted_removed: row.accepted_removed ?? [],
+          pending_added: row.pending_added ?? [],
+          pending_removed: row.pending_removed ?? [],
+          counts: row.counts,
+          comparison_state: row.comparison_state ?? "unavailable",
+          before_revision_root: row.before_revision_root ?? null,
+          after_revision_root: row.after_revision_root ?? null,
+          semantic_delta_root: row.semantic_delta_root ?? null,
+        }
+      : null,
+  };
+}
+
+/* One commit by its sha, full or abbreviated.
+ *
+ * Every row on `/updates` linked to the Repository's whole commit list, so
+ * nineteen distinct events shared one destination and the shorthand each row
+ * printed pointed at nothing. A commit is the unit the history plane records
+ * and had no address; this is it. Abbreviations resolve by prefix because that
+ * is the form the timeline, the Decisions stream and the diffs all display. */
+export async function commitForRepository(slug: string, sha: string): Promise<RepositoryCommit | null> {
+  const requested = sha.trim().toLowerCase();
+  /* A prefix shorter than seven characters is ambiguous across a real history,
+     and a non-hex string is not a sha at all. Both are a 404, not a scan. */
+  if (!/^[0-9a-f]{7,40}$/u.test(requested)) return null;
+  const sql = neon(projectionDatabaseUrl());
+  const root = await boundReleaseRoot();
+  const rows = await sql.query(
+    `SELECT c.sha, c.parent_sha, c.author_name, c.committed_at, c.subject, c.body,
+            c.changed_paths, c.machine,
+            t.repository_root_before, t.repository_root_after,
+            t.accepted_added, t.accepted_removed, t.pending_added, t.pending_removed, t.counts,
+            t.comparison_state, t.before_revision_root, t.after_revision_root,
+            t.semantic_delta_root
+     FROM projection.commits c
+     LEFT JOIN projection.repository_transitions t
+       ON t.release_root = c.release_root AND t.repository_id = c.repository_id AND t.commit_sha = c.sha
+     WHERE c.release_root = $1 AND c.repository_id = $2 AND starts_with(c.sha, $3)
+     ORDER BY c.sha
+     LIMIT 2`,
+    [root, repositoryKey(slug), requested],
+  ) as Record<string, any>[];
+  /* An ambiguous prefix resolves to nothing rather than to whichever row sorted
+     first. */
+  return rows.length === 1 ? commitFromRow(rows[0]!) : null;
 }
 
 

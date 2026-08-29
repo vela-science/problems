@@ -10,7 +10,7 @@ import { Reach } from "@/components/vela/reach";
 import { problemReachCaption, problemReachStops } from "@/lib/problem-reach";
 import { currentReview } from "@/components/vela/problem-provenance";
 import { formatDate } from "@/lib/format";
-import { problemReading, problemSourceResolution } from "@/lib/problem-reading";
+import { problemReading, problemSourceResolution, problemRetained } from "@/lib/problem-reading";
 import { problemOpening } from "@/lib/problem-opening";
 import { activityStrings } from "@/components/vela/problem-activity-records";
 import type { ProblemNeighbourhood, ScientificProblemState } from "@/lib/scientific-state";
@@ -69,7 +69,7 @@ export function ProblemOverview({ state, route, neighbourhood }: {
   const review = currentReview(state);
   const checks = review?.verification_records ?? [];
   const sourceResolution = problemSourceResolution(state);
-  const reading = problemReading({ currentAssertion: current?.assertion ?? null, repositoryName: state.repositoryName, sourceResolution });
+  const reading = problemReading({ currentAssertion: current?.assertion ?? null, repositoryName: state.repositoryName, sourceResolution, retained: problemRetained(state) });
   const established = current ? exactResultHeadline(current.assertion) : null;
   const limitation = current ? exactResultLimitation(current.assertion) : null;
   const formal = state.sources?.occurrences?.filter((occurrence) => occurrence.formal) ?? [];
@@ -108,7 +108,7 @@ export function ProblemOverview({ state, route, neighbourhood }: {
                 question · Not reached" — a caption is the third telling of one
                 fact. Work keeps its caption: there the track is the only prose
                 in the rail. */}
-            <Reach stops={reachStops} endpoint="The question" caption={undefined} />
+            <Reach stops={reachStops} endpoint="Answer" caption={undefined} />
           </div>
         </section>
 
@@ -145,7 +145,7 @@ export function ProblemOverview({ state, route, neighbourhood }: {
           <span className={styles.kicker}>{reachStops.filter((stop) => stop.reached).length} of {reachStops.length} stages</span>
         </div>
         <div className={styles.scope}>
-          <Reach stops={reachStops} endpoint="The question" caption={reachCaption} />
+          <Reach stops={reachStops} endpoint="Answer" caption={reachCaption} />
         </div>
       </section>
 
@@ -338,7 +338,11 @@ function ExactPanel({ state }: { state: State }) {
           interface had not been built. It had; it was only unannounced. */}
       <p className={`${styles.note} mt-3`}>
         This page exposes typed read and Work operations to a browser agent.{" "}
-        <a href="/llms.txt" className="font-medium text-foreground underline underline-offset-4">llms.txt</a>{" "}
+        {/* The one control on this page under the 24px AA floor, at 15.5px, and
+            it is the only affordance pointing at the agent interface. The app's
+            own coarse-pointer slot raises it to 32px on touch and leaves the
+            pointer layout alone. */}
+        <a data-slot="text-action" href="/llms.txt" className="font-medium text-foreground underline underline-offset-4">llms.txt</a>{" "}
         names them and the boundary they cannot cross.
       </p>
     </div>

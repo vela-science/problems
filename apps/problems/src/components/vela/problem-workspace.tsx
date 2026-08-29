@@ -19,8 +19,7 @@ import { Textarea } from "@vela/ui/components/textarea";
 import { RootedArtifactFrame } from "@vela/ui/vela/rooted-artifact-frame";
 import { IdempotencyField } from "@/components/vela/idempotency-field";
 import { formalFilePath } from "@/components/vela/formal-statement-card";
-import { ProblemActivityRecords } from "@/components/vela/problem-activity-records";
-import { ContributionPath } from "@/components/vela/contribution-path";
+import { NextContributionStep } from "@/components/vela/contribution-path";
 import type { AccountIdentity } from "@/lib/auth";
 import type { ScientificProblemState } from "@/lib/scientific-state";
 import { problemWorkbenchHandoff } from "@/lib/workbench-handoff";
@@ -54,6 +53,7 @@ import {
   updateAttemptAction,
 } from "@/app/actions/activity";
 import { Disclosure } from "@/components/vela/disclosure";
+import { signInPath } from "@/app/sign-in/route";
 
 type State = NonNullable<ScientificProblemState>;
 type Scope = { repository: string; problem: string; workspaceId: string; expectedAnchorRoot: string };
@@ -394,7 +394,7 @@ export async function ProblemWorkspace({ state, hostedAccount, accountsEnabled =
     const openStatements = (state.sources?.occurrences ?? []).filter(
       (occurrence) => occurrence.formal?.category_label?.trim().toLowerCase() === "open",
     );
-    const signInHref = `/sign-in?returnTo=${encodeURIComponent(`${basePath}/work`)}`;
+    const signInHref = signInPath(`${basePath}/work`);
     return <section id="add-contribution" aria-labelledby="hosted-workspace-heading" className="mt-6 min-w-0 scroll-mt-16">
       <header className="flex flex-wrap items-center justify-between gap-3"><h2 id="hosted-workspace-heading" className="text-title">Workspace</h2><div className="flex flex-wrap gap-2">{workbenchHandoff ? <Button nativeButton={false} size="sm" variant="outline" render={<a href={workbenchHandoff} />}>Continue locally</Button> : null}{state.locator ? <Button nativeButton={false} size="sm" variant="outline" render={<a href={state.locator} />}>Open source</Button> : null}{accountsEnabled ? <Button nativeButton={false} size="sm" render={<Link href={signInHref} prefetch={false} />}>Sign in to contribute</Button> : <Badge variant="outline">sign-in unavailable</Badge>}</div></header>
       {workbenchHandoff ? <p className="mt-2 text-meta text-muted-foreground">Opens this exact Problem and source revision in Workbench. Nothing is cloned, uploaded, or executed.</p> : null}
@@ -404,7 +404,7 @@ export async function ProblemWorkspace({ state, hostedAccount, accountsEnabled =
               where someone is deciding whether to add to it. The rail is
               narrow, so the track draws in its vertical form. */}
           <p className="mt-6 text-meta font-semibold">Reach</p>
-          <div className="mt-3"><Reach stops={problemReachStops(state)} endpoint="The question" caption={problemReachCaption(state)} /></div></nav>
+          <div className="mt-3"><Reach stops={problemReachStops(state)} endpoint="Answer" caption={problemReachCaption(state)} /></div></nav>
         <div className="min-w-0 border-b bg-[var(--vela-surface-sunken)] p-4 lg:border-b-0 lg:p-6">
           {/* The real work, where a preview of an unusable canvas used to sit.
             *
@@ -416,16 +416,12 @@ export async function ProblemWorkspace({ state, hostedAccount, accountsEnabled =
               transition. The attributed activity underneath it was the only
               thing here a reader could not get elsewhere, and it was below the
               fold. They swap. */}
-          <ContributionPath accountsEnabled={accountsEnabled} />
-          <div aria-label="Public workspace context" className="mt-8">
-            {(state.attributedRecords ?? []).length
-              ? <ProblemActivityRecords state={state} />
-              : <>
-                  <p className="text-meta font-semibold">Reported activity</p>
-                  <p className="mt-2 max-w-[62ch] text-compact text-muted-foreground">
-                    No source records work against this Problem.
-                  </p>
-                </>}
+          {/* Reported activity moved to Sources, where the source's other
+              material lives. Leaving a copy here is what made one word carry
+              two counts on one screen: the section row counted the source's
+              records as "Work" while the rail beside it read "None recorded". */}
+          <div aria-label="Public workspace context">
+            <NextContributionStep accountsEnabled={accountsEnabled} />
           </div>
         </div>
         {/* What is left to prove, rather than three tiles saying "Sign in to
@@ -492,7 +488,7 @@ export async function ProblemWorkspace({ state, hostedAccount, accountsEnabled =
           button labelled "Follow", so the screen told the reader both that they
           were watching and that they were not. `following` is exact-anchor by
           design; the button is the thing that has to stop implying otherwise. */}
-      {watch ? null : <form action={followProblemAction}><ScopeFields scope={scope} /><input type="hidden" name="following" value={activity.following ? "false" : "true"} /><Button type="submit" size="sm" variant="outline">{activity.following ? "Unfollow" : "Follow"}</Button></form>}</div></div>{workbenchHandoff ? <p className="mt-2 text-meta text-muted-foreground">Carries this exact Problem, source revision and authority Repository.</p> : null}<div className="mt-5"><Reach stops={problemReachStops(state)} endpoint="The question" caption={problemReachCaption(state)} /></div></div>;
+      {watch ? null : <form action={followProblemAction}><ScopeFields scope={scope} /><input type="hidden" name="following" value={activity.following ? "false" : "true"} /><Button type="submit" size="sm" variant="outline">{activity.following ? "Unfollow" : "Follow"}</Button></form>}</div></div>{workbenchHandoff ? <p className="mt-2 text-meta text-muted-foreground">Carries this exact Problem, source revision and authority Repository.</p> : null}<div className="mt-5"><Reach stops={problemReachStops(state)} endpoint="Answer" caption={problemReachCaption(state)} /></div></div>;
   const canvasNote = <WorkspaceCrdtNote updates={activity.crdtUpdates} scope={scope} action={appendWorkspaceCrdtUpdateAction} />;
   return <WorkspaceShell objects={objects} selectedObject={object} inspectorTab={inspector} anchors={anchors} audit={audit} discussion={discussion} toolbar={toolbar} canvasNote={canvasNote} initialSurface={selectedObject ? "object" : "canvas"} />;
 }

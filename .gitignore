@@ -45,3 +45,6 @@ apps/www/public/
 /sources/
 .scratch/
 deploy.env
+
+# Design-canvas working files. The published canvas is the deliverable.
+.design-audit/

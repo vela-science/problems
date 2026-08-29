@@ -117,7 +117,11 @@ describe("Problem Overview, on the Problem the source contract pins", () => {
     } as never;
     const html = renderToStaticMarkup(<ProblemOverview state={empty} route="/problems/erdos-problems/2" />);
 
-    expect(html).toContain("Nothing has been recorded here yet.");
+    /* The fixture retains source occurrences, so the empty reading names them
+       rather than denying the whole record. Erdős 1 shipped the denial over
+       eight retained formalizations and nine occurrences. */
+    expect(html).toMatch(/No Result is current here\. \d+ (formal statements? (is|are)|source records? (is|are))\./u);
+    expect(html).not.toContain("Nothing has been recorded here yet.");
     expect(html).not.toContain("Scope of what is proved");
     expect(html).not.toContain("No result has been accepted here yet.");
 
@@ -127,8 +131,8 @@ describe("Problem Overview, on the Problem the source contract pins", () => {
        not been answered, and a filled endpoint would say otherwise. */
     expect(html).toContain("How far the record reaches");
     expect(html).toContain("2 of 6 stages");
-    expect(html).toContain("The question");
-    expect(html).toContain("Not reached");
+    expect(html).toContain("Answer");
+    expect(html).toContain("Not established");
     /* The track's own stages carry it — asserted two lines above — so the
        caption that said the same thing in a sentence is gone. Work keeps its
        caption: there the track is the only prose in the rail. */

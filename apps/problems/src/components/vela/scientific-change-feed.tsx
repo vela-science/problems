@@ -74,7 +74,7 @@ export function ScientificChangeFeed({
       {!compact ? <time dateTime={commit.committed_at} title={formatDate(commit.committed_at)} className="text-meta text-muted-foreground">{formatAgo(commit.committed_at)}</time> : null}
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-2">
-          <Link data-slot="text-action" href={`/repositories/${repository.slug}/commits`} className={`${compact ? "text-label" : "text-subtitle"} font-medium underline-offset-4 hover:underline`}>{plainLanguage ? plainChangeTitle(commit.subject) : commit.subject}</Link>
+          <Link data-slot="text-action" href={`/repositories/${repository.slug}/commits/${commit.sha}`} className={`${compact ? "text-label" : "text-subtitle"} font-medium underline-offset-4 hover:underline`}>{plainLanguage ? plainChangeTitle(commit.subject) : commit.subject}</Link>
           {/* The kind rides the trailing column on a wide row, not this one.
               Sharing a wrapping flex line with the title meant a long commit
               message pushed it onto its own line, so consecutive rows in the
@@ -94,7 +94,10 @@ export function ScientificChangeFeed({
       </div>
       {!compact ? <div className="mt-2 flex items-center gap-2 sm:mt-0 sm:flex-col sm:items-end sm:gap-1.5">
         {kindBadge}
-        <code className="font-mono text-meta text-muted-foreground">{commit.sha.slice(0, 10)}</code>
+        {/* Every row printed this and linked nowhere, while the title above
+            linked to the Repository's whole commit list: nineteen distinct
+            events, one destination. Both now address the commit itself. */}
+        <Link href={`/repositories/${repository.slug}/commits/${commit.sha}`} className="font-mono text-meta text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">{commit.sha.slice(0, 10)}</Link>
       </div> : null}
     </li>})}
   </ol>;
