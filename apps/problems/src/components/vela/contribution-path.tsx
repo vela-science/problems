@@ -1,3 +1,4 @@
+import Link from "next/link";
 /* What it takes for a contribution to reach this record, said before the
  * account rather than after it.
  *
@@ -43,5 +44,39 @@ export function ContributionPath({ accountsEnabled }: { accountsEnabled: boolean
         </span>
       </li>)}
     </ol>
+  </section>;
+}
+
+/* The one step this reader is at, for a Problem's Work section.
+ *
+ * The full table above is one fact about the product, not about this Problem,
+ * and it rendered identically on all 1,217 of them — a numbered explanation
+ * standing in for the surface it occupies, which is the thing `AGENTS.md`
+ * names as a defect. It keeps its home on `/contribute`, where choosing what
+ * to work on is the page's whole subject. Here, only the next move. */
+export function NextContributionStep({ accountsEnabled }: { accountsEnabled: boolean }) {
+  /* Reading the sources is step one and it is what this page is. The move is
+     the second: off this site, onto the reader's own machine. Nothing further
+     can be named without knowing what they have already done, and guessing
+     would put the table back. */
+  const step = steps[1]!;
+  const gated = steps.filter((entry) => entry.where === "account").length;
+  return <section aria-labelledby="next-step-heading" className="min-w-0">
+    <h2 id="next-step-heading" className="text-title">Next</h2>
+    <div className="mt-3 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 rounded-lg border px-4 py-3">
+      <p className="min-w-0 text-compact">{step.text}</p>
+      <span className="text-micro text-muted-foreground">{grounds[step.where]}</span>
+    </div>
+    {/* What an account is for, still said before the account and without the
+        seven-row table. A signed-out reader learning nothing about the gated
+        steps was the defect the table was written to fix; repeating the table
+        on all 1,217 Problems was the defect it became. */}
+    <p className="mt-3 max-w-[62ch] text-compact text-muted-foreground">
+      {gated} of the seven steps run here and need an account: keeping an Approach and its Attempts,
+      attaching evidence by its content root, and preparing an unsigned Submission draft.
+      {accountsEnabled ? " " : " Sign-in is unavailable on this deployment. "}
+      <Link href="/contribute" className="font-medium text-foreground underline underline-offset-4">The whole path</Link>
+      {" "}covers all seven, in four places.
+    </p>
   </section>;
 }

@@ -16,6 +16,10 @@ export default async function PublicInspectionPage({ searchParams }: { searchPar
   const requested = normalizeRequestedCommit(parameters.commit);
   if (!requested) redirect("/import?error=invalid_commit");
   const requestedCommit = requested.commit;
+  /* Arriving with no URL at all is not a bad URL, it is no request. The form
+     lives on `/import`, so send the reader there with nothing to correct;
+     `?error=invalid_url` accused them of a mistake they had not made. */
+  if (!url) redirect("/import");
   let fullName: string;
   try {
     ({ fullName } = normalizeGitHubLocator(url));

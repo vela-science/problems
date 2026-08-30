@@ -69,8 +69,16 @@ describe("RepositoryGraph ledger", () => {
     render(<RepositoryGraph root="sha256:test" initialRepository="erdos" repositories={["erdos"]} />);
 
     expect(await screen.findByRole("tab", { name: "Map", selected: true })).toBeVisible();
-    expect(screen.getByText("Accepted Result")).toBeVisible();
+    /* The row leads with what makes it different from the row above it. The
+       title used to prepend the standing — "Superseded Result" — while a badge
+       on the same row read "standing · superseded", so the map's entry list
+       opened on three rows sharing a title, a badge, and the first line of one
+       commit sentence. The state has one channel now, and the title has the
+       identity. */
     expect(screen.getByText(longAssertion)).toHaveClass("line-clamp-2");
+    expect(screen.getByText("Result")).toBeVisible();
+    expect(screen.queryByText("Accepted Result")).toBeNull();
+    expect(screen.getAllByText(/accepted/iu)).toHaveLength(1);
     expect(screen.queryByRole("table")).toBeNull();
   });
 

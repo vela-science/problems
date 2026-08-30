@@ -13,7 +13,6 @@ import { Actor } from "@/components/vela/actor";
 import { RelativeTime } from "@/components/vela/relative-time";
 import { RouteTitle } from "@/components/vela/route-title";
 import { StatRow } from "@/components/vela/stat-row";
-import { commitHref } from "@/components/vela/source-file";
 
 import { pageFromSearchParams, queryHref } from "@/lib/query-state";
 import { FilterChips } from "@/components/vela/filter-chips";
@@ -136,7 +135,6 @@ export default async function CommitsPage({
               </h2>
               <ItemGroup className="divide-y">
           {day.commits.map((commit) => {
-            const href = commitHref(repository.source.remote, commit.sha);
             const delta = commit.transition;
             const accepted = delta ? delta.counts.accepted_after - delta.counts.accepted_before : 0;
             return (
@@ -147,9 +145,10 @@ export default async function CommitsPage({
                       column of times scannable instead of a wall of dates. */}
                   <div className="flex min-w-0 items-baseline justify-between gap-3">
                     <p className="min-w-0 break-words text-body font-medium">
-                      {href ? (
-                        <a data-slot="text-action" href={href} className="hover:underline">{commit.subject}</a>
-                      ) : commit.subject}
+                      {/* The commit's own page, not the source host. The
+                          outbound link stays on that page, next to the index
+                          delta this product holds and GitHub does not. */}
+                      <Link data-slot="text-action" href={`/repositories/${slug}/commits/${commit.sha}`} className="hover:underline">{commit.subject}</Link>
                     </p>
                     <RelativeTime value={commit.committed_at} className="shrink-0 text-micro text-muted-foreground" />
                   </div>

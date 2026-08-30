@@ -39,11 +39,6 @@ const lensKinds: Record<GraphLens, string[]> = {
   all: ["all"],
 };
 
-function sentenceCase(value: string) {
-  const normalized = value.replaceAll("_", " ");
-  return normalized ? `${normalized[0].toUpperCase()}${normalized.slice(1)}` : "";
-}
-
 function isTechnicalLabel(value: string) {
   return /^(?:sha256:)?[a-f0-9]{32,}$/iu.test(value.trim());
 }
@@ -53,13 +48,29 @@ function nodeSummary(node: NonNullable<GraphResponse>["nodes"][number]) {
   return node.label;
 }
 
+/* The chooser's title carries what makes a row different from the row above
+   it, and nothing else.
+ *
+ * It used to prepend the standing — "Superseded Result" — while a badge on the
+ * same row read "standing · superseded". The map's entry list opened on three
+ * rows sharing a title, a badge and the first line of a commit sentence, so
+ * the only thing separating them was a truncated hash. The state has one
+ * channel here, the badge, and the title has the identity. */
 function nodeTitle(node: NonNullable<GraphResponse>["nodes"][number]) {
-  const state = node.standing ? sentenceCase(node.standing) : "";
-  if (node.kind === "claim") return `${state || "Research"} Result`;
-  if (node.kind === "proposal") return `${state || "Proposed"} change`;
-  if (node.kind === "verifier_attachment") return `${state || "Scoped"} check`;
-  if (node.kind === "artifact" && isTechnicalLabel(node.label)) return "Research artifact";
-  return node.label || kindLabel(node.kind);
+  if (node.label && node.label !== node.id && !isTechnicalLabel(node.label)) return node.label;
+  if (node.kind === "claim") return "Result";
+  if (node.kind === "proposal") return "Proposed change";
+  if (node.kind === "verifier_attachment") return "Scoped check";
+  if (node.kind === "artifact") return "Research artifact";
+  return kindLabel(node.kind);
+}
+
+/* The kind, for the second line, when the title is carrying a label instead. */
+function nodeKindWord(node: NonNullable<GraphResponse>["nodes"][number]) {
+  if (node.kind === "claim") return "Result";
+  if (node.kind === "proposal") return "Proposed change";
+  if (node.kind === "verifier_attachment") return "Scoped check";
+  return kindLabel(node.kind);
 }
 
 /* One ledger, four vocabularies: `graph_nodes.standing` is written from
@@ -183,7 +194,7 @@ function GraphRecords({ records, choose }: { records: NonNullable<GraphResponse>
 const CHOOSER_LIMIT = 24;
 
 function GraphMapChooser({ records, total, choose }: { records: NonNullable<GraphResponse>["nodes"]; total: number; choose: (id: string) => void }) {
-  return <div className="grid min-h-[34rem] grid-cols-[minmax(0,1fr)] md:grid-cols-[24rem_minmax(0,1fr)]"><div className="min-w-0 border-b bg-[var(--vela-surface-sunken)] p-4 md:border-b-0 md:border-r"><h2 className="text-subtitle">Choose an item</h2><ItemGroup className="mt-3 max-h-[28rem] gap-1 overflow-y-auto overscroll-contain">{records.map((node) => <Item key={node.id} size="sm" className="vela-object-row min-w-0 rounded-md px-2 py-3" render={<button type="button" onClick={() => choose(node.id)} />}><ItemContent className="min-w-0"><ItemTitle className="line-clamp-1 text-compact">{nodeTitle(node)}</ItemTitle><ItemDescription className="line-clamp-2">{nodeSummary(node) !== nodeTitle(node) ? nodeSummary(node) : kindLabel(node.kind)}</ItemDescription><RecordId value={node.id} prefix={8} copy={false} label={`identifier for ${nodeTitle(node)}`} /></ItemContent><StatusBadge {...stateBadge(node.standing, node.kind)} /></Item>)}</ItemGroup>{total > records.length ? <p className="mt-3 text-meta text-muted-foreground">{(total - records.length).toLocaleString()} more in the List tab.</p> : null}</div><div className="grid min-h-72 min-w-0 place-items-center bg-[var(--vela-surface-sunken)] p-8 text-center"><div><HugeiconsIcon icon={GitFork} aria-hidden className="mx-auto size-9 text-primary" /><h2 className="mt-4 text-title">Open an exact neighbourhood</h2><p className="mt-2 max-w-md text-compact text-muted-foreground">Select a Problem, Result, source, or check. The map draws only retained relationships.</p></div></div></div>;
+  return <div className="grid min-h-[34rem] grid-cols-[minmax(0,1fr)] md:grid-cols-[24rem_minmax(0,1fr)]"><div className="min-w-0 border-b bg-[var(--vela-surface-sunken)] p-4 md:border-b-0 md:border-r"><h2 className="text-subtitle">Choose an item</h2><ItemGroup className="mt-3 max-h-[28rem] gap-1 overflow-y-auto overscroll-contain">{records.map((node) => <Item key={node.id} size="sm" className="vela-object-row min-w-0 rounded-md px-2 py-3" render={<button type="button" onClick={() => choose(node.id)} />}><ItemContent className="min-w-0"><ItemTitle className="line-clamp-2 text-compact">{nodeTitle(node)}</ItemTitle><ItemDescription className="line-clamp-1">{nodeKindWord(node)}</ItemDescription><RecordId value={node.id} prefix={8} copy={false} label={`identifier for ${nodeTitle(node)}`} /></ItemContent><StatusBadge {...stateBadge(node.standing, node.kind)} /></Item>)}</ItemGroup>{total > records.length ? <p className="mt-3 text-meta text-muted-foreground">{(total - records.length).toLocaleString()} more in the List tab.</p> : null}</div><div className="grid min-h-72 min-w-0 place-items-center bg-[var(--vela-surface-sunken)] p-8 text-center"><div><HugeiconsIcon icon={GitFork} aria-hidden className="mx-auto size-9 text-primary" /><h2 className="mt-4 text-title">Open an exact neighbourhood</h2><p className="mt-2 max-w-md text-compact text-muted-foreground">Select a Problem, Result, source, or check. The map draws only retained relationships.</p></div></div></div>;
 }
 
 function GraphPagination({ page, pages, replace }: { page: number; pages: number; replace: (updates: Record<string, string | null>) => void }) {

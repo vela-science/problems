@@ -21,6 +21,18 @@ const PROBLEM_RETURN_PATH = new RegExp(
   "u",
 );
 
+/* One spelling of the sign-in destination.
+ *
+ * Three call sites built this string by hand and two of them agreed: the proxy
+ * percent-encoded the path and the `/watching` and `/workspaces` pages
+ * interpolated it raw. Both round-trip through `safeReturnTo`, so nothing was
+ * broken — but a reader comparing two redirects saw two different URLs for the
+ * same intent, and a path that ever needs encoding would have been correct in
+ * one place and wrong in the other two. */
+export function signInPath(returnTo: string): string {
+  return `/sign-in?returnTo=${encodeURIComponent(returnTo)}`;
+}
+
 export function safeReturnTo(requested: string | null): string {
   if (!requested) return "/account";
   if (allowedReturns.has(requested)) return requested;

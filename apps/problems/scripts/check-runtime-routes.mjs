@@ -1,6 +1,6 @@
 import {
   allRepositories,
-  claimsForRepository,
+  commitsForRepository, claimsForRepository,
   compositeSearchRoot,
   formalConjecturesCollection,
   problemPublicRoutes,
@@ -88,6 +88,7 @@ try {
   if (!declared) throw new Error(`${slug} is published without a manifest entry`);
 
   const claims = (await claimsForRepository(slug, { limit: 2 })).items;
+  const commits = (await commitsForRepository(slug, { limit: 1 })).items;
   const problems = (await problemsForRepository(slug, { limit: 1 })).items;
   const skipped = [];
 
@@ -108,6 +109,9 @@ try {
     "/sources",
   ];
   if (!problems.length) skipped.push("problem record route: the release publishes no Problem");
+  /* A commit is the unit the history plane records, and until this release it
+     had no address: every `/updates` row linked to the whole commit list. */
+  if (!commits.length) skipped.push("commit record route: the release publishes no commit");
   if (!claims.length) skipped.push("claim record routes: the release publishes no Claim");
 
   await waitForServer();
@@ -117,6 +121,16 @@ try {
     if (!(await response.text()).includes(claim.id)) throw new Error(`${claim.id}: Claim identity missing from rendered response`);
   }
   await expectStatus(`/repositories/${slug}/claims/vf_not-a-real-finding`, 404);
+  for (const commit of commits) {
+    const response = await expectStatus(`/repositories/${slug}/commits/${commit.sha}`, 200);
+    if (!(await response.text()).includes(commit.sha.slice(0, 12))) {
+      throw new Error(`${commit.sha}: commit identity missing from rendered response`);
+    }
+    /* The abbreviated form is what every timeline row and diff link prints. */
+    await expectStatus(`/repositories/${slug}/commits/${commit.sha.slice(0, 10)}`, 200);
+  }
+  await expectStatus(`/repositories/${slug}/commits/0000000000000000000000000000000000000000`, 404);
+  await expectStatus(`/repositories/${slug}/commits/not-a-sha`, 404);
   const missingRepository = await expectStatus("/repositories/not-a-repository", 404);
   const missingRepositoryHtml = await missingRepository.text();
   if (

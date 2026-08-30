@@ -8,6 +8,30 @@ import { WorkSessionRef } from "@/components/vela/work-session-ref";
 import { RelativeTime } from "@/components/vela/relative-time";
 import { WITHDRAWAL_NOTE } from "@/components/vela/proposal-ledger";
 
+/* The decided assertion, minus the exact-locator preamble it opens with.
+ *
+ * The "Decided on" line truncates to one row, which at 232px shows 38
+ * characters. On every Erdős 94 Decision those 38 characters were
+ * "At lean-proofs commit 423344341fbfdf4f" — a repository name and a clipped
+ * commit hash, and nothing about what was decided. The exact locator is not
+ * dropped from the record: it is on the Proposal this line links to, on the
+ * Claim, and in the title attribute. It is only moved out of the position
+ * where a reader has room for one clause.
+ *
+ * Deliberately narrow. It matches the one preamble shape the projection
+ * actually holds and leaves anything else exactly as written, because a
+ * greedy rule here would silently eat the first clause of an assertion that
+ * merely happened to mention a commit. */
+const LOCATOR_PREAMBLE = /^(?:at|under)\s+[^,]{0,80}?\bcommit\s+[0-9a-f]{7,40}\s*,\s*/iu;
+
+export function decidedAssertionLead(assertion: string): string {
+  const trimmed = assertion.trim();
+  const lead = trimmed.replace(LOCATOR_PREAMBLE, "");
+  /* Never return an empty or near-empty string: an assertion that is only its
+     locator keeps the locator. */
+  return lead.length >= 24 ? lead : trimmed;
+}
+
 /* The authority event stream, which is the thing "Activity" was always naming.
  *
  * `vela log` emits `vela.authority-log.v1` — every covered repository-authority
@@ -155,7 +179,7 @@ export function DecisionStream({ entries }: { entries: DecisionEntry[] }) {
                         title={assertion}
                         href={`/repositories/${entry.repository}/proposals/${encodeURIComponent(entry.proposalId)}`}
                       >
-                        {assertion}
+                        {decidedAssertionLead(assertion)}
                       </Link>
                     </div>
                   ) : null}

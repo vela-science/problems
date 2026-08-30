@@ -48,6 +48,15 @@ export function sourceResolutionOf(
   return { label: label?.trim() || "This Problem's source", status };
 }
 
+/* What this Problem retains regardless of any Result, so the empty reading can
+   name it rather than deny it. */
+export function problemRetained(state: {
+  sources?: { occurrences?: Array<{ formal?: unknown }> } | null;
+}): { formal: number; occurrences: number } {
+  const occurrences = state.sources?.occurrences ?? [];
+  return { formal: occurrences.filter((occurrence) => occurrence.formal).length, occurrences: occurrences.length };
+}
+
 export type ProblemReading = {
   kind: "no-record" | "source-resolved" | "open" | "accepted";
   /** Sentence-length reading, safe to render as the page's answer line. */
@@ -58,11 +67,30 @@ export type ProblemReading = {
   sourceResolution: SourceResolution | null;
 };
 
+/* What the record does hold, for the one reading that has to deny something.
+ *
+ * "Nothing has been recorded here yet" was measured against accepted Claims
+ * alone, so Erdős 1 opened with it while its own rail counted eight retained
+ * formalizations and its Sources tab counted nine occurrences. The sentence
+ * meant "no Result is current"; it said "no record", and the Results section
+ * one click away already phrased it correctly. */
+function retainedPhrase(retained: { formal: number; occurrences: number }): string | null {
+  if (retained.formal > 0) {
+    return `${retained.formal} formal statement${retained.formal === 1 ? " is" : "s are"}`;
+  }
+  if (retained.occurrences > 0) {
+    return `${retained.occurrences} source record${retained.occurrences === 1 ? " is" : "s are"}`;
+  }
+  return null;
+}
+
 export function problemReading(input: {
   currentAssertion: string | null;
   repositoryName: string;
   /** What the Problem's own source says about it, if anything but open. */
   sourceResolution?: SourceResolution | null;
+  /** What the projection retains for this Problem regardless of any Result. */
+  retained?: { formal: number; occurrences: number };
 }): ProblemReading {
   if (!input.currentAssertion) {
     /* 613 of the 1,217 Erdős Problems in this release carry a resolution their
@@ -86,9 +114,14 @@ export function problemReading(input: {
         sourceResolution: resolution,
       };
     }
+    const retained = retainedPhrase(input.retained ?? { formal: 0, occurrences: 0 });
     return {
       kind: "no-record",
-      headline: "Nothing has been recorded here yet.",
+      /* Name the one thing absent and the one thing present. The bare denial
+         is kept only for a Problem where it is literally true. */
+      headline: retained
+        ? `No Result is current here. ${retained}.`
+        : "Nothing has been recorded here yet.",
       limitation: null,
       sourceResolution: null,
     };
@@ -116,7 +149,9 @@ export function readingBadge(reading: ProblemReading): string {
   /* Named by its actor. A bare "Disproved (Lean)" would read as this site's
      finding, which is the one thing the badge must never say. */
   if (reading.kind === "source-resolved") return `Source: ${reading.sourceResolution?.status ?? "recorded"}`;
-  if (reading.kind === "no-record") return "No record";
+  /* "No record" on a Problem carrying nine source occurrences was the badge
+     form of the same false denial. It says what is missing instead. */
+  if (reading.kind === "no-record") return "No Result";
   if (reading.kind === "open") return "Open";
   return "Result accepted";
 }

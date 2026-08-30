@@ -42,7 +42,7 @@ describe("Problem Workspace", () => {
        panel. What is scientific and public (which statements the source still
        marks open) is shown; what is coordination stays behind the account. */
     expect(screen.getByRole("complementary", { name: "Open work" })).toBeVisible();
-    expect(screen.getAllByText(/Needs an account/u).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/needs? an account/iu).length).toBeGreaterThan(0);
     expect(screen.queryByText("Sign in to view")).not.toBeInTheDocument();
   });
 
@@ -169,7 +169,7 @@ describe("Problem Workspace", () => {
     const rail = screen.getByRole("navigation", { name: "Public Problem files" });
     expect(within(rail).getByText("Source")).toBeVisible();
     expect(within(rail).getByText("Decision")).toBeVisible();
-    expect(within(rail).getByText("The question")).toBeVisible();
-    expect(within(rail).getByText("Not reached")).toBeVisible();
+    expect(within(rail).getByText("Answer")).toBeVisible();
+    expect(within(rail).getByText("Not established")).toBeVisible();
   });
 });

@@ -7,10 +7,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@vela/ui/components/pop
 import { SectionNav } from "@/components/vela/section-nav";
 import { StartWorkMenu } from "@/components/vela/start-work-menu";
 import { problemWorkbenchHandoff } from "@/lib/workbench-handoff";
-import { problemReading, readingBadge, readingBasis, problemSourceResolution } from "@/lib/problem-reading";
+import { problemReading, readingBadge, readingBasis, problemSourceResolution, problemRetained } from "@/lib/problem-reading";
 import { problemLabel, resolveProblemStatement, statementParagraphs } from "@/lib/problem-statement";
 import type { ScientificProblemState } from "@/lib/scientific-state";
 import type { ProblemReferenceView } from "@/components/vela/problem-overview-reference";
+import { currentReview } from "@/components/vela/problem-provenance";
 
 type State = NonNullable<ScientificProblemState>;
 
@@ -20,9 +21,14 @@ type State = NonNullable<ScientificProblemState>;
    these are quantities. */
 function sectionCounts(state: State) {
   return {
-    work: state.attributedRecords?.length ?? 0,
+    /* Work counts the checks Vela holds, which is exactly what the reach rail
+       on the same screen reports under the same word. It used to count the
+       source's reported-activity records, so Erdős 7 read "Work 2" in the row
+       and "Work — None recorded" in the rail. Those records now sit under
+       Sources and are counted there. */
+    work: currentReview(state)?.verification_records?.length ?? 0,
     results: state.claims?.length ?? 0,
-    sources: state.sources?.occurrences?.length ?? 0,
+    sources: (state.sources?.occurrences?.length ?? 0) + (state.attributedRecords?.length ?? 0),
     history: state.reviews?.length ?? 0,
   };
 }
@@ -47,6 +53,7 @@ export function ProblemHeader({ state, route, current }: {
     currentAssertion: claim?.assertion ?? null,
     repositoryName: state.repositoryName,
     sourceResolution: problemSourceResolution(state),
+    retained: problemRetained(state),
   });
   const counts = sectionCounts(state);
   const hasQuestion = statement?.form === "prose" && Boolean(question);

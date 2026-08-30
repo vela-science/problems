@@ -14,6 +14,7 @@ import { formatDate } from "@/lib/format";
 import { currentActivityAccount } from "@/lib/hosted-account";
 import { discoveredProblems } from "@/lib/scientific-state";
 import { workspaceProblemLinks } from "@/lib/workspace-links";
+import { signInPath } from "@/app/sign-in/route";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -36,7 +37,7 @@ async function loadWorkspaces(accountId: string): Promise<WorkspacesResult> {
 
 export default async function WorkspacesPage({ searchParams }: { searchParams: Promise<{ workspace?: string | string[] }> }) {
   const account = await currentActivityAccount();
-  if (!account) redirect("/sign-in?returnTo=/workspaces");
+  if (!account) redirect(signInPath("/workspaces"));
   const result = await loadWorkspaces(account.activity.id);
   const query = await searchParams;
   const selectedId = typeof query.workspace === "string" ? query.workspace : undefined;
