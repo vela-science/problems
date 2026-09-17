@@ -20,6 +20,20 @@
 
 ---
 
+## Programme context
+
+Problems is the current public problem library, hosted-work activity surface,
+and read-only projection of Vela state. It does not issue Vela events or
+Decisions, and it is not a unified Frontiers implementation.
+
+The broader direction and repository responsibilities are maintained in the
+[autonomous-science programme
+vision](https://github.com/williamjblair/autonomous-science/blob/master/VISION.md)
+and [repository
+map](https://github.com/williamjblair/autonomous-science/blob/master/docs/REPOSITORY_MAP.md).
+
+---
+
 ## WebMCP: the agent interface
 
 A browser agent on a Problem page does not read the DOM and guess which button
